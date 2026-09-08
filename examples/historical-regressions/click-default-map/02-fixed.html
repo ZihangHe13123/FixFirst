@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>命令帮助展示错误的配置默认值 · FixFirst 排查报告</title>
+<style>
+:root{--ink:#142822;--muted:#65746d;--bg:#f3f5f1;--line:#dae2db;--green:#17664a;--light:#e5f0e8;--amber:#865516;--red:#a34134}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}aside{width:220px;background:#142f26;color:#dce9df;position:fixed;inset:0 auto 0 0;padding:35px 25px;display:flex;flex-direction:column}.brand{font-size:27px;font-weight:750;letter-spacing:-1px}.brand span{background:#b8dda6;color:#193326;border-radius:10px;padding:5px 9px;margin-right:7px;font-size:20px}.tag{font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:.65;margin-top:14px}nav{margin-top:60px}nav a{display:block;color:#cfddd4;text-decoration:none;padding:11px 0}nav a:hover{color:white}aside footer{margin-top:auto;font-size:12px;color:#9cb2a4}main{margin-left:220px;padding:42px 5vw 70px;max-width:1550px}.eyebrow{font-size:12px;text-transform:uppercase;color:var(--green);letter-spacing:2px;font-weight:700}h1{font-size:34px;line-height:1.2;letter-spacing:-1px;margin:15px 0 12px}h2{font-size:23px;letter-spacing:-.4px;margin:0}h3{font-size:18px;line-height:1.5;margin:8px 0}p{margin:8px 0}.muted{color:var(--muted)}.hero{display:flex;justify-content:space-between;gap:24px;align-items:start}.hero .badge{margin-top:12px}.badge{display:inline-block;border-radius:30px;padding:5px 13px;font-size:12px;font-weight:650;background:#edf0ec;white-space:nowrap}.achieved,.resolved{background:#dceedd;color:#27623b}.blocked,.open{background:#f7e9d3;color:#825216}.unknown,.not_observed{background:#e9edf1;color:#596477}.awaiting_verification{background:#e2eafb;color:#395a8e}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:30px 0}.stat{background:white;border:1px solid var(--line);padding:20px 24px;border-radius:13px}.stat b{font-size:32px;font-weight:600;display:block;line-height:1.1;margin-bottom:9px}.stat span{color:var(--muted);font-size:13px}.pipeline{padding:13px 18px;background:#e7ece5;border-radius:9px;color:#48604d;font-size:13px;margin-bottom:32px}.section-head{display:flex;gap:20px;align-items:center;justify-content:space-between;margin:35px 0 18px}.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.card{background:white;border:1px solid var(--line);border-radius:13px;padding:22px;min-width:0}.card.featured{border:2px solid var(--green);background:#fcfffa}.number{background:#e7eee5;border-radius:7px;padding:3px 9px;color:var(--green);font-size:12px;font-weight:bold}.card .kind{float:right;color:var(--muted);font-size:12px}.card small{display:block;margin:14px 0 5px;font-weight:600;color:#50695b}.command{margin-top:15px;padding:11px;background:#edf2ed;border-radius:7px;display:flex;gap:8px;align-items:center}.command code{overflow-wrap:anywhere;font-size:11px;flex:1}button{cursor:pointer;border:1px solid #bdcdbf;background:white;color:#28533c;border-radius:6px;padding:6px 11px;white-space:nowrap}button:hover{background:#dcebdd}.issue{margin-bottom:12px;padding:18px 22px;background:white;border:1px solid var(--line);border-radius:10px}.issue-top{display:flex;gap:15px;justify-content:space-between;align-items:flex-start}.issue-title{overflow-wrap:anywhere;font-weight:650;max-width:80%}.meta{font-size:12px;color:var(--muted);margin-top:7px}.details{margin-top:12px}summary{cursor:pointer;color:var(--green);font-size:13px;font-weight:550}pre{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;background:#f1f4ef;border:1px solid var(--line);border-radius:8px;padding:14px;font:12px/1.7 ui-monospace,Menlo,monospace;max-height:460px;overflow:auto}code{font-family:ui-monospace,Menlo,monospace}.facts{font-size:13px;border-left:3px solid #b6cbb6;padding:8px 12px;margin:9px 0}.facts code{font-size:11px;overflow-wrap:anywhere}.tablewrap{overflow:auto;background:white;border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;font-size:13px}td,th{text-align:left;padding:14px 17px;border-bottom:1px solid #e7ece5}th{color:#526556;font-size:12px;background:#ebf0e9}td code{font-size:11px}.history{border-left:2px solid #b8ccbd;padding-left:20px;margin-left:8px}.history article{margin:18px 0;padding-bottom:10px}.history time{font-size:12px;color:var(--muted)}input{border:1px solid var(--line);border-radius:8px;padding:10px 14px;font:inherit;width:260px;background:white}.empty{padding:25px;background:#e7f0e5;border-radius:12px}.note{font-size:12px;color:var(--muted);margin-top:13px}.footnote{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}.anchor{scroll-margin-top:25px}.hidden{display:none!important}@media(max-width:1000px){aside{width:180px;padding:30px 18px}main{margin-left:180px;padding:35px 25px}.stats{gap:9px}.stat{padding:18px}.actions{grid-template-columns:1fr}}@media(max-width:700px){aside{position:relative;width:auto;padding:20px 25px}aside nav,aside footer,.tag{display:none}main{margin-left:0;padding:25px 18px}.hero{display:block}h1{font-size:28px}.stats{grid-template-columns:repeat(2,1fr)}.section-head{align-items:start;flex-direction:column}input{width:100%}.issue-title{max-width:70%}}@media print{aside,button,input{display:none}main{margin:0;padding:15px}.actions{display:block}.card{break-inside:avoid;margin-bottom:10px}body{background:white}}
+</style></head><body>
+<aside><div class="brand"><span>F</span>FixFirst</div><div class="tag">Local troubleshooting</div><nav><a href="#overview">01　排查概览</a><a href="#actions">02　下一步行动</a><a href="#issues">03　问题与证据</a><a href="#dependencies">04　项目依赖声明</a><a href="#knowledge">05　依据知识图谱</a><a href="#history">06　检查与历史</a></nav><footer>证据先行 · 每次验证有记录<br>本地报告 / v0.3.0</footer></aside>
+<main><section id="overview" class="anchor"><div class="hero"><div><div class="eyebrow">Troubleshooting workspace</div><h1>命令帮助展示错误的配置默认值</h1><p class="muted">当前目标：通过测试运行　·　排查进行中</p></div><span class="badge achieved">目标已验证达成</span></div>
+<p class="note">session-686941fc5467　·　创建于 2026-09-08T02:50:32+00:00　·　分享版本</p>
+<div class="stats"><div class="stat"><b>0</b><span>仍存在的问题组</span></div><div class="stat"><b>1</b><span>已验证解决</span></div><div class="stat"><b>0</b><span>未检查或待验证</span></div><div class="stat"><b>8</b><span>检查与导入记录</span></div></div>
+<div class="pipeline">导入与检查　→　归并症状　→　依据推荐　→　用户处理　→　重新验证</div>
+<div class="empty">当前目标已通过最近一次对应检查。你可以结束本次排查，或继续处理其他事项。结果只覆盖记录中的检查范围；跳过和预期失败仍单独列出。</div>
+
+</section>
+<section id="actions" class="anchor"><div class="section-head"><h2>下一步行动</h2><span class="muted">先核对依据，再执行检查</span></div><div class="actions">
+<article class="card "><span class="number">01</span><span class="kind">重新验证</span><h3>验证完整测试运行</h3><p>只更新本次检查覆盖的问题；其他问题保留。若未做改动且没有新证据，无需反复运行同一检查。</p><small>完成后怎样确认</small><p class="muted">查看新的检查记录和状态变化</p>
+
+<p class="note">分享报告仅供阅读</p>
+<details class="details"><summary>推荐依据与关联问题</summary><p class="note">目标对应的验证检查</p></details></article></div><p class="note">报告不会自行执行命令或修改项目。建议排名依据当前目标、证据与成本规则；不代表根因概率或全局最优顺序。</p></section>
+<section id="issues" class="anchor"><div class="section-head"><h2>问题与证据</h2><input id="search" type="search" placeholder="搜索消息、组件或状态" aria-label="搜索问题"></div>
+<article class="issue" data-search="断言失败 · test_regression.py::test_help_uses_default_map  已验证解决"><div class="issue-top"><div class="issue-title">断言失败 · test_regression.py::test_help_uses_default_map</div><span class="badge resolved">已验证解决</span></div><div class="meta">测试执行 · call · 1 条消息 · issue-df76ba943109d2</div><p class="note">同一环境中的全部关联测试节点已执行通过</p><details><summary>展开消息和出处</summary><p class="meta">test_regression.py::test_help_uses_default_map:1　run-ac49460a7375:probe:2 · run-ac49460a7375:probe:3</p><p class="meta">异常抛出位置：&lt;project&gt;/test_regression.py:13</p><pre>AssertionError: assert &#39;[default: long]&#39; in &#39;Usage: command [OPTIONS]\n\nOptions:\n  --long / --short  [default: short]\n  --help            Show this message and exit.\n&#39;
+ +  where &#39;Usage: command [OPTIONS]\n\nOptions:\n  --long / --short  [default: short]\n  --help            Show this message and exit.\n&#39; = &lt;Result okay&gt;.output</pre></details></article></section>
+<section id="dependencies" class="anchor"><div class="section-head"><h2>项目依赖声明</h2><span class="muted">1 份文件 · 检查时点的声明与版本</span></div>
+<p class="note">必需依赖、可选组和环境条件分开判断。直接引用、约束文件、未支持格式的边界保留在表格与备注中。</p>
+<div class="tablewrap"><table><thead><tr><th>声明 / 来源</th><th>当前版本</th><th>检查结论</th></tr></thead><tbody>
+<tr><td><b>click&gt;=0</b><br><span class="muted">requirements.txt:1 · required</span></td><td>8.1.8</td><td>满足声明</td></tr>
+</tbody></table></div>
+<details class="details"><summary>声明文件来源与 SHA256</summary><p class="facts">requirements.txt<br><code>0198a60e86c2e3e4b86026ec5f3555ceb21bbe138d16150a35615e842cd76da5</code></p></details></section>
+<section id="knowledge" class="anchor"><div class="section-head"><h2>依据知识图谱</h2><span class="muted">16 个实体 · 9 条显式关系</span></div>
+<p>选择一个目标、行动或问题，沿关系查看它的检查来源。图谱保存证据与规则关系。</p>
+<label for="graph-entity">查询实体</label><select id="graph-entity" style="width:100%;padding:12px;border:1px solid #bdcdbf;border-radius:8px;background:white;font:inherit"><option value="goal:pass_tests">通过测试运行 · goal:pass_tests</option><option value="issue-df76ba943109d2">断言失败 · test_regression.py::test_help_uses_default_map · issue-df76ba943109d2</option><option value="check-pytest_run">验证完整测试运行 · check-pytest_run</option></select>
+<div id="graph-path" style="display:flex;gap:8px;overflow:auto;padding:16px 0" aria-label="证据关系路径"></div>
+<pre id="graph-answer" aria-live="polite"></pre>
+<p class="note">终端也可问：ask SESSION_ID "为什么推荐这个行动"。完整图谱保存在同名 .graph.json 文件。</p>
+<script type="application/json" id="graph-views">[{"answer": "Goal\uff1a\u901a\u8fc7\u6d4b\u8bd5\u8fd0\u884c\uff08goal:pass_tests\uff09\n\u8bb0\u5f55\u4e2d\u7684\u76ee\u6807\u72b6\u6001\uff1aachieved\n\u56fe\u8c31\u6ca1\u6709\u8be5\u76ee\u6807\u5173\u8054\u7684\u5df2\u77e5\u95ee\u9898\uff1b\u4ecd\u9700\u68c0\u67e5\u5b8c\u6210\u8bc1\u636e\u5224\u65ad\u662f\u5426\u901a\u8fc7\u3002\n\u8bc1\u636e\u8def\u5f84\uff1a\ngoal:pass_tests \u2192 \u6700\u8fd1\u68c0\u67e5\uff1arun-f28f328bf359\n\u4ee5\u4e0a\u662f\u8bb0\u5f55\u4e0e\u63a8\u7406\u7684\u5173\u8054\uff0c\u4e0d\u8868\u793a\u5df2\u7ecf\u8bc1\u5b9e\u5171\u540c\u6839\u56e0\u3002", "bounded": false, "edges": [{"relation": "evaluated_by", "source": "goal:pass_tests", "target": "run-f28f328bf359"}, {"relation": "recommends", "source": "goal:pass_tests", "target": "check-pytest_run"}], "entity": "goal:pass_tests", "nodes": [{"attributes": {"status": "achieved"}, "id": "goal:pass_tests", "label": "\u901a\u8fc7\u6d4b\u8bd5\u8fd0\u884c", "type": "Goal"}, {"attributes": {"exit_code": 0, "scope": "tests:project", "source": "executed", "status": "completed", "summary": {"failed": 0, "incomplete": 0, "passed": 1, "selected": 1, "skipped": 0, "xfail_or_xpass": 0}, "targets": [], "tool": "pytest_run", "verified_pass": true}, "id": "run-f28f328bf359", "label": "pytest_run \u00b7 2026-09-08T02:50:33+00:00", "type": "Run"}, {"attributes": {"explanation": "\u53ea\u66f4\u65b0\u672c\u6b21\u68c0\u67e5\u8986\u76d6\u7684\u95ee\u9898\uff1b\u5176\u4ed6\u95ee\u9898\u4fdd\u7559\u3002\u82e5\u672a\u505a\u6539\u52a8\u4e14\u6ca1\u6709\u65b0\u8bc1\u636e\uff0c\u65e0\u9700\u53cd\u590d\u8fd0\u884c\u540c\u4e00\u68c0\u67e5\u3002", "goal_impact": 1, "priority": 1, "targets": [], "verification": "\u67e5\u770b\u65b0\u7684\u68c0\u67e5\u8bb0\u5f55\u548c\u72b6\u6001\u53d8\u5316"}, "id": "check-pytest_run", "label": "\u9a8c\u8bc1\u5b8c\u6574\u6d4b\u8bd5\u8fd0\u884c", "type": "Action"}], "paths": [[{"relation": "evaluated_by", "source": "goal:pass_tests", "target": "run-f28f328bf359"}]], "supported": true}, {"answer": "Issue\uff1a\u65ad\u8a00\u5931\u8d25 \u00b7 test_regression.py::test_help_uses_default_map\uff08issue-df76ba943109d2\uff09\n\u95ee\u9898\u72b6\u6001\uff1aresolved\n\u8bc1\u636e\u8def\u5f84\uff1a\nissue-df76ba943109d2 \u2192 \u5305\u542b\u4e8b\u4ef6\uff1aevent-b9031c4c691b \u2192 \u5f15\u7528\u8bc1\u636e\uff1aevidence:run-ac49460a7375:probe:2 \u2192 \u8bb0\u5f55\u4e8e\u68c0\u67e5\uff1arun-ac49460a7375\n\u4ee5\u4e0a\u662f\u8bb0\u5f55\u4e0e\u63a8\u7406\u7684\u5173\u8054\uff0c\u4e0d\u8868\u793a\u5df2\u7ecf\u8bc1\u5b9e\u5171\u540c\u6839\u56e0\u3002", "bounded": false, "edges": [{"relation": "cites", "source": "event-b9031c4c691b", "target": "evidence:run-ac49460a7375:probe:2"}, {"relation": "cites", "source": "event-b9031c4c691b", "target": "evidence:run-ac49460a7375:probe:3"}, {"relation": "observed_in", "source": "evidence:run-ac49460a7375:probe:2", "target": "run-ac49460a7375"}, {"relation": "observed_in", "source": "evidence:run-ac49460a7375:probe:3", "target": "run-ac49460a7375"}, {"relation": "has_event", "source": "issue-df76ba943109d2", "target": "event-b9031c4c691b"}], "entity": "issue-df76ba943109d2", "nodes": [{"attributes": {"exit_code": 1, "scope": "tests:project", "source": "executed", "status": "completed", "summary": {"failed": 1, "incomplete": 0, "passed": 0, "selected": 1, "skipped": 0, "xfail_or_xpass": 0}, "targets": [], "tool": "pytest_run", "verified_pass": false}, "id": "run-ac49460a7375", "label": "pytest_run \u00b7 2026-09-08T02:50:33+00:00", "type": "Run"}, {"attributes": {}, "id": "evidence:run-ac49460a7375:probe:2", "label": "run-ac49460a7375:probe:2", "type": "Evidence"}, {"attributes": {}, "id": "evidence:run-ac49460a7375:probe:3", "label": "run-ac49460a7375:probe:3", "type": "Evidence"}, {"attributes": {"kind": "test_assertion", "location": "test_regression.py::test_help_uses_default_map", "stage": "call"}, "id": "event-b9031c4c691b", "label": "AssertionError: assert \u0027[default: long]\u0027 in \u0027Usage: command [OPTIONS]\\n\\nOptions:\\n  --long / --short  [default: short]\\n  --help            Show this message and exit.\\n\u0027\n +  where \u0027Usage: command [OPTIONS]\\n\\nOptions:\\n  --long / --short ", "type": "Event"}, {"attributes": {"note": "\u540c\u4e00\u73af\u5883\u4e2d\u7684\u5168\u90e8\u5173\u8054\u6d4b\u8bd5\u8282\u70b9\u5df2\u6267\u884c\u901a\u8fc7", "status": "resolved", "targets": ["test_regression.py::test_help_uses_default_map"], "tool": "pytest_run"}, "id": "issue-df76ba943109d2", "label": "\u65ad\u8a00\u5931\u8d25 \u00b7 test_regression.py::test_help_uses_default_map", "type": "Issue"}], "paths": [[{"relation": "has_event", "source": "issue-df76ba943109d2", "target": "event-b9031c4c691b"}, {"relation": "cites", "source": "event-b9031c4c691b", "target": "evidence:run-ac49460a7375:probe:2"}, {"relation": "observed_in", "source": "evidence:run-ac49460a7375:probe:2", "target": "run-ac49460a7375"}]], "supported": true}, {"answer": "Action\uff1a\u9a8c\u8bc1\u5b8c\u6574\u6d4b\u8bd5\u8fd0\u884c\uff08check-pytest_run\uff09\n\u53ea\u66f4\u65b0\u672c\u6b21\u68c0\u67e5\u8986\u76d6\u7684\u95ee\u9898\uff1b\u5176\u4ed6\u95ee\u9898\u4fdd\u7559\u3002\u82e5\u672a\u505a\u6539\u52a8\u4e14\u6ca1\u6709\u65b0\u8bc1\u636e\uff0c\u65e0\u9700\u53cd\u590d\u8fd0\u884c\u540c\u4e00\u68c0\u67e5\u3002\n\u9a8c\u8bc1\u65b9\u6cd5\uff1a\u67e5\u770b\u65b0\u7684\u68c0\u67e5\u8bb0\u5f55\u548c\u72b6\u6001\u53d8\u5316\n\u8bc1\u636e\u8def\u5f84\uff1a\n\u5c1a\u65e0\u53ef\u8ffd\u6eaf\u5230\u68c0\u67e5\u8bb0\u5f55\u7684\u8bc1\u636e\uff1b\u8fd9\u662f\u5f85\u6267\u884c\u9a8c\u8bc1\u6216\u7f3a\u5c11\u6765\u6e90\u3002\n\u4ee5\u4e0a\u662f\u8bb0\u5f55\u4e0e\u63a8\u7406\u7684\u5173\u8054\uff0c\u4e0d\u8868\u793a\u5df2\u7ecf\u8bc1\u5b9e\u5171\u540c\u6839\u56e0\u3002", "bounded": false, "edges": [], "entity": "check-pytest_run", "nodes": [{"attributes": {"explanation": "\u53ea\u66f4\u65b0\u672c\u6b21\u68c0\u67e5\u8986\u76d6\u7684\u95ee\u9898\uff1b\u5176\u4ed6\u95ee\u9898\u4fdd\u7559\u3002\u82e5\u672a\u505a\u6539\u52a8\u4e14\u6ca1\u6709\u65b0\u8bc1\u636e\uff0c\u65e0\u9700\u53cd\u590d\u8fd0\u884c\u540c\u4e00\u68c0\u67e5\u3002", "goal_impact": 1, "priority": 1, "targets": [], "verification": "\u67e5\u770b\u65b0\u7684\u68c0\u67e5\u8bb0\u5f55\u548c\u72b6\u6001\u53d8\u5316"}, "id": "check-pytest_run", "label": "\u9a8c\u8bc1\u5b8c\u6574\u6d4b\u8bd5\u8fd0\u884c", "type": "Action"}], "paths": [], "supported": true}]</script>
+</section>
+<section id="history" class="anchor"><div class="section-head"><h2>检查与运行历史</h2><span class="muted">tfidf 归并 · 阈值 0.82</span></div><div class="tablewrap"><table><thead><tr><th>来源</th><th>最近运行</th><th>状态</th><th>退出码</th><th>耗时</th></tr></thead><tbody><tr><td>环境快照</td><td>2026-09-08T02:50:33+00:00</td><td>completed / 已验证通过</td><td>0</td><td>0.041 s</td></tr><tr><td>依赖一致性</td><td>2026-09-08T02:50:33+00:00</td><td>completed / 已验证通过</td><td>0</td><td>0.103 s</td></tr><tr><td>测试执行</td><td>2026-09-08T02:50:33+00:00</td><td>completed / 已验证通过</td><td>0</td><td>0.084 s</td></tr><tr><td>项目依赖声明</td><td>2026-09-08T02:50:33+00:00</td><td>completed / 已验证通过</td><td>0</td><td>0.001 s</td></tr></tbody></table></div>
+<div class="history"><article><time>2026-09-08T02:50:33+00:00</time><p>完成一轮检查或导入</p><p class="note">issue-df76ba943109d2 · 已验证解决</p></article><article><time>2026-09-08T02:50:33+00:00</time><p>完成一轮检查或导入</p><p class="note">issue-df76ba943109d2 · 新出现</p></article></div>
+<details><summary>查看完整检查记录和原始输出</summary><details class="details"><summary>项目依赖声明 · 2026-09-08T02:50:33+00:00 · completed · run-8580188a52c4</summary><p class="note">executed / declarations:project / 工具版本 unknown / 环境 e41177d2f33dcfae</p><pre></pre><p class="note">只读声明快照；可选组未指定启用，直接引用和锁文件来源不据此验证。</p><p class="meta">stdout</p><pre>{
+  &#34;files&#34;: [
+    {
+      &#34;path&#34;: &#34;requirements.txt&#34;,
+      &#34;sha256&#34;: &#34;0198a60e86c2e3e4b86026ec5f3555ceb21bbe138d16150a35615e842cd76da5&#34;,
+      &#34;bytes&#34;: 9
+    }
+  ],
+  &#34;declarations&#34;: [
+    {
+      &#34;name&#34;: &#34;click&#34;,
+      &#34;requirement&#34;: &#34;click&gt;=0&#34;,
+      &#34;source&#34;: &#34;requirements.txt:1&#34;,
+      &#34;group&#34;: &#34;required&#34;,
+      &#34;constraint&#34;: false,
+      &#34;installed&#34;: &#34;8.1.8&#34;,
+      &#34;status&#34;: &#34;satisfied&#34;
+    }
+  ],
+  &#34;notes&#34;: [],
+  &#34;requires_python&#34;: [],
+  &#34;environment_run_id&#34;: &#34;run-14dcf0528348&#34;,
+  &#34;local_modules&#34;: [
+    {
+      &#34;name&#34;: &#34;test_regression&#34;,
+      &#34;path&#34;: &#34;test_regression.py&#34;
+    }
+  ]
+}</pre><p class="meta">stderr</p><pre>(空)</pre></details><details class="details"><summary>测试执行 · 2026-09-08T02:50:33+00:00 · completed · run-f28f328bf359</summary><p class="note">executed / tests:project / 工具版本 8.3.5 / 环境 e41177d2f33dcfae</p><pre>&lt;python&gt; -m pytest -q --color=no -o addopts= -p _fixfirst_probe --rootdir &lt;project&gt;</pre><p class="note">测试收集会执行项目导入和 conftest；与目标项目正常运行一样需信任源码。</p><p class="note">本次执行测试体与 fixture；目标范围以项目配置及记录的测试节点为准。</p><p class="facts">测试节点 1 · 通过 1 · 失败 0 · 跳过 0 · xfail/xpass 0 · 未完成 0</p><p class="meta">stdout</p><pre>.                                                                        [100%]
+1 passed in 0.01s
+</pre><p class="meta">stderr</p><pre>(空)</pre><p class="meta">结构化测试事件</p><pre>[
+  {
+    "nodeid": "test_regression.py::test_help_uses_default_map",
+    "outcome": "passed",
+    "stage": "setup",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_regression.py::test_help_uses_default_map",
+    "outcome": "passed",
+    "stage": "call",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_regression.py::test_help_uses_default_map",
+    "outcome": "passed",
+    "stage": "teardown",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "collect_only": false,
+    "collected": 1,
+    "exit_code": 0,
+    "nodes": [
+      "test_regression.py::test_help_uses_default_map"
+    ],
+    "records_dropped": false,
+    "type": "finish"
+  }
+]</pre></details><details class="details"><summary>依赖一致性 · 2026-09-08T02:50:33+00:00 · completed · run-bfd5b6d5a218</summary><p class="note">executed / dependencies:environment / 工具版本 25.0.1 / 环境 e41177d2f33dcfae</p><pre>&lt;python&gt; -m pip check</pre><p class="meta">stdout</p><pre>No broken requirements found.
+</pre><p class="meta">stderr</p><pre>(空)</pre></details><details class="details"><summary>环境快照 · 2026-09-08T02:50:33+00:00 · completed · run-14dcf0528348</summary><p class="note">executed / environment / 工具版本 3.12.14 / 环境 e41177d2f33dcfae</p><pre>&lt;python&gt; -c 
+import sys, json, os, platform, importlib.metadata as m
+v = sys.implementation.version
+implementation_version = f&#39;{v.major}.{v.minor}.{v.micro}&#39;
+if v.releaselevel != &#39;final&#39;:
+    implementation_version += {&#39;alpha&#39;: &#39;a&#39;, &#39;beta&#39;: &#39;b&#39;, &#39;candidate&#39;: &#39;rc&#39;}.get(v.releaselevel, v.releaselevel) + str(v.serial)
+packages = []
+for d in m.distributions():
+    packages.append({&#39;name&#39;: d.metadata.get(&#39;Name&#39;, &#39;&#39;), &#39;version&#39;: d.version,
+                     &#39;requires&#39;: d.requires or []})
+print(json.dumps({&#39;executable&#39;: sys.executable, &#39;prefix&#39;: sys.prefix,
+ &#39;python_version&#39;: sys.version.split()[0], &#39;packages&#39;: packages,
+ &#39;import_distributions&#39;: m.packages_distributions(),
+ &#39;markers&#39;: {&#39;implementation_name&#39;: sys.implementation.name,
+ &#39;implementation_version&#39;: implementation_version, &#39;os_name&#39;: os.name,
+ &#39;platform_machine&#39;: platform.machine(), &#39;platform_release&#39;: platform.release(),
+ &#39;platform_system&#39;: platform.system(), &#39;platform_version&#39;: platform.version(),
+ &#39;python_full_version&#39;: platform.python_version(),
+ &#39;platform_python_implementation&#39;: platform.python_implementation(),
+ &#39;python_version&#39;: &#39;.&#39;.join(platform.python_version_tuple()[:2]), &#39;sys_platform&#39;: sys.platform}}))
+</pre><p class="meta">stdout</p><pre>{&#34;executable&#34;: &#34;&lt;python&gt;&#34;, &#34;prefix&#34;: &#34;&lt;home&gt;/Project/课程Projec/FixFirst/workbench/historical-v03-release/click-default-map/.venv&#34;, &#34;python_version&#34;: &#34;3.12.14&#34;, &#34;packages&#34;: [{&#34;name&#34;: &#34;pytest&#34;, &#34;version&#34;: &#34;8.3.5&#34;, &#34;requires&#34;: [&#34;colorama; sys_platform == \&#34;win32\&#34;&#34;, &#34;exceptiongroup&gt;=1.0.0rc8; python_version &lt; \&#34;3.11\&#34;&#34;, &#34;iniconfig&#34;, &#34;packaging&#34;, &#34;pluggy&lt;2,&gt;=1.5&#34;, &#34;tomli&gt;=1; python_version &lt; \&#34;3.11\&#34;&#34;, &#34;argcomplete; extra == \&#34;dev\&#34;&#34;, &#34;attrs&gt;=19.2; extra == \&#34;dev\&#34;&#34;, &#34;hypothesis&gt;=3.56; extra == \&#34;dev\&#34;&#34;, &#34;mock; extra == \&#34;dev\&#34;&#34;, &#34;pygments&gt;=2.7.2; extra == \&#34;dev\&#34;&#34;, &#34;requests; extra == \&#34;dev\&#34;&#34;, &#34;setuptools; extra == \&#34;dev\&#34;&#34;, &#34;xmlschema; extra == \&#34;dev\&#34;&#34;]}, {&#34;name&#34;: &#34;click&#34;, &#34;version&#34;: &#34;8.1.8&#34;, &#34;requires&#34;: [&#34;colorama; platform_system == &#39;Windows&#39;&#34;, &#34;importlib-metadata; python_version &lt; &#39;3.8&#39;&#34;]}, {&#34;name&#34;: &#34;pip&#34;, &#34;version&#34;: &#34;25.0.1&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;packaging&#34;, &#34;version&#34;: &#34;24.2&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;pluggy&#34;, &#34;version&#34;: &#34;1.5.0&#34;, &#34;requires&#34;: [&#34;pre-commit ; extra == &#39;dev&#39;&#34;, &#34;tox ; extra == &#39;dev&#39;&#34;, &#34;pytest ; extra == &#39;testing&#39;&#34;, &#34;pytest-benchmark ; extra == &#39;testing&#39;&#34;]}, {&#34;name&#34;: &#34;iniconfig&#34;, &#34;version&#34;: &#34;2.1.0&#34;, &#34;requires&#34;: []}], &#34;import_distributions&#34;: {&#34;_pytest&#34;: [&#34;pytest&#34;], &#34;py&#34;: [&#34;pytest&#34;], &#34;pytest&#34;: [&#34;pytest&#34;], &#34;click&#34;: [&#34;click&#34;], &#34;pip&#34;: [&#34;pip&#34;], &#34;packaging&#34;: [&#34;packaging&#34;], &#34;pluggy&#34;: [&#34;pluggy&#34;], &#34;iniconfig&#34;: [&#34;iniconfig&#34;]}, &#34;markers&#34;: {&#34;implementation_name&#34;: &#34;cpython&#34;, &#34;implementation_version&#34;: &#34;3.12.14&#34;, &#34;os_name&#34;: &#34;posix&#34;, &#34;platform_machine&#34;: &#34;arm64&#34;, &#34;platform_release&#34;: &#34;25.6.0&#34;, &#34;platform_system&#34;: &#34;Darwin&#34;, &#34;platform_version&#34;: &#34;Darwin Kernel Version 25.6.0: Fri Jul 31 19:19:08 PDT 2026; root:xnu-12377.161.14~5/RELEASE_ARM64_T6050&#34;, &#34;python_full_version&#34;: &#34;3.12.14&#34;, &#34;platform_python_implementation&#34;: &#34;CPython&#34;, &#34;python_version&#34;: &#34;3.12&#34;, &#34;sys_platform&#34;: &#34;darwin&#34;}}</pre><p class="meta">stderr</p><pre>(空)</pre></details><details class="details"><summary>项目依赖声明 · 2026-09-08T02:50:33+00:00 · completed · run-9c3ae06324a1</summary><p class="note">executed / declarations:project / 工具版本 unknown / 环境 e41177d2f33dcfae</p><pre></pre><p class="note">只读声明快照；可选组未指定启用，直接引用和锁文件来源不据此验证。</p><p class="meta">stdout</p><pre>{
+  &#34;files&#34;: [
+    {
+      &#34;path&#34;: &#34;requirements.txt&#34;,
+      &#34;sha256&#34;: &#34;0198a60e86c2e3e4b86026ec5f3555ceb21bbe138d16150a35615e842cd76da5&#34;,
+      &#34;bytes&#34;: 9
+    }
+  ],
+  &#34;declarations&#34;: [
+    {
+      &#34;name&#34;: &#34;click&#34;,
+      &#34;requirement&#34;: &#34;click&gt;=0&#34;,
+      &#34;source&#34;: &#34;requirements.txt:1&#34;,
+      &#34;group&#34;: &#34;required&#34;,
+      &#34;constraint&#34;: false,
+      &#34;installed&#34;: &#34;8.1.7&#34;,
+      &#34;status&#34;: &#34;satisfied&#34;
+    }
+  ],
+  &#34;notes&#34;: [],
+  &#34;requires_python&#34;: [],
+  &#34;environment_run_id&#34;: &#34;run-4cc380469634&#34;,
+  &#34;local_modules&#34;: [
+    {
+      &#34;name&#34;: &#34;test_regression&#34;,
+      &#34;path&#34;: &#34;test_regression.py&#34;
+    }
+  ]
+}</pre><p class="meta">stderr</p><pre>(空)</pre></details><details class="details"><summary>测试执行 · 2026-09-08T02:50:33+00:00 · completed · run-ac49460a7375</summary><p class="note">executed / tests:project / 工具版本 8.3.5 / 环境 e41177d2f33dcfae</p><pre>&lt;python&gt; -m pytest -q --color=no -o addopts= -p _fixfirst_probe --rootdir &lt;project&gt;</pre><p class="note">测试收集会执行项目导入和 conftest；与目标项目正常运行一样需信任源码。</p><p class="note">本次执行测试体与 fixture；目标范围以项目配置及记录的测试节点为准。</p><p class="facts">测试节点 1 · 通过 0 · 失败 1 · 跳过 0 · xfail/xpass 0 · 未完成 0</p><p class="meta">stdout</p><pre>F                                                                        [100%]
+=================================== FAILURES ===================================
+__________________________ test_help_uses_default_map __________________________
+
+    def test_help_uses_default_map():
+        @click.command()
+        @click.option(&#34;--long/--short&#34;, show_default=True)
+        def command(long):
+            click.echo(long)
+    
+        result = CliRunner().invoke(command, [&#34;--help&#34;], default_map={&#34;long&#34;: True})
+        assert result.exit_code == 0
+&gt;       assert &#34;[default: long]&#34; in result.output
+E       AssertionError: assert &#39;[default: long]&#39; in &#39;Usage: command [OPTIONS]\n\nOptions:\n  --long / --short  [default: short]\n  --help            Show this message and exit.\n&#39;
+E        +  where &#39;Usage: command [OPTIONS]\n\nOptions:\n  --long / --short  [default: short]\n  --help            Show this message and exit.\n&#39; = &lt;Result okay&gt;.output
+
+test_regression.py:13: AssertionError
+=========================== short test summary info ============================
+FAILED test_regression.py::test_help_uses_default_map - AssertionError: asser...
+1 failed in 0.01s
+</pre><p class="meta">stderr</p><pre>(空)</pre><p class="meta">结构化测试事件</p><pre>[
+  {
+    "nodeid": "test_regression.py::test_help_uses_default_map",
+    "outcome": "passed",
+    "stage": "setup",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_regression.py::test_help_uses_default_map",
+    "outcome": "failed",
+    "stage": "call",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "message": "def test_help_uses_default_map():\n        @click.command()\n        @click.option(\"--long/--short\", show_default=True)\n        def command(long):\n            click.echo(long)\n    \n        result = CliRunner().invoke(command, [\"--help\"], default_map={\"long\": True})\n        assert result.exit_code == 0\n\u003e       assert \"[default: long]\" in result.output\nE       AssertionError: assert \u0027[default: long]\u0027 in \u0027Usage: command [OPTIONS]\\n\\nOptions:\\n  --long / --short  [default: short]\\n  --help            Show this message and exit.\\n\u0027\nE        +  where \u0027Usage: command [OPTIONS]\\n\\nOptions:\\n  --long / --short  [default: short]\\n  --help            Show this message and exit.\\n\u0027 = \u003cResult okay\u003e.output\n\ntest_regression.py:13: AssertionError",
+    "nodeid": "test_regression.py::test_help_uses_default_map",
+    "stage": "call",
+    "type": "failure"
+  },
+  {
+    "exception_message": "assert \u0027[default: long]\u0027 in \u0027Usage: command [OPTIONS]\\n\\nOptions:\\n  --long / --short  [default: short]\\n  --help            Show this message and exit.\\n\u0027\n +  where \u0027Usage: command [OPTIONS]\\n\\nOptions:\\n  --long / --short  [default: short]\\n  --help            Show this message and exit.\\n\u0027 = \u003cResult okay\u003e.output",
+    "exception_module": "builtins",
+    "exception_type": "AssertionError",
+    "nodeid": "test_regression.py::test_help_uses_default_map",
+    "source_file": "\u003cproject\u003e/test_regression.py",
+    "source_line": 13,
+    "stage": "call",
+    "type": "exception"
+  },
+  {
+    "nodeid": "test_regression.py::test_help_uses_default_map",
+    "outcome": "passed",
+    "stage": "teardown",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "collect_only": false,
+    "collected": 1,
+    "exit_code": 1,
+    "nodes": [
+      "test_regression.py::test_help_uses_default_map"
+    ],
+    "records_dropped": false,
+    "type": "finish"
+  }
+]</pre></details><details class="details"><summary>依赖一致性 · 2026-09-08T02:50:32+00:00 · completed · run-6e99b660027d</summary><p class="note">executed / dependencies:environment / 工具版本 25.0.1 / 环境 e41177d2f33dcfae</p><pre>&lt;python&gt; -m pip check</pre><p class="meta">stdout</p><pre>No broken requirements found.
+</pre><p class="meta">stderr</p><pre>(空)</pre></details><details class="details"><summary>环境快照 · 2026-09-08T02:50:32+00:00 · completed · run-4cc380469634</summary><p class="note">executed / environment / 工具版本 3.12.14 / 环境 e41177d2f33dcfae</p><pre>&lt;python&gt; -c 
+import sys, json, os, platform, importlib.metadata as m
+v = sys.implementation.version
+implementation_version = f&#39;{v.major}.{v.minor}.{v.micro}&#39;
+if v.releaselevel != &#39;final&#39;:
+    implementation_version += {&#39;alpha&#39;: &#39;a&#39;, &#39;beta&#39;: &#39;b&#39;, &#39;candidate&#39;: &#39;rc&#39;}.get(v.releaselevel, v.releaselevel) + str(v.serial)
+packages = []
+for d in m.distributions():
+    packages.append({&#39;name&#39;: d.metadata.get(&#39;Name&#39;, &#39;&#39;), &#39;version&#39;: d.version,
+                     &#39;requires&#39;: d.requires or []})
+print(json.dumps({&#39;executable&#39;: sys.executable, &#39;prefix&#39;: sys.prefix,
+ &#39;python_version&#39;: sys.version.split()[0], &#39;packages&#39;: packages,
+ &#39;import_distributions&#39;: m.packages_distributions(),
+ &#39;markers&#39;: {&#39;implementation_name&#39;: sys.implementation.name,
+ &#39;implementation_version&#39;: implementation_version, &#39;os_name&#39;: os.name,
+ &#39;platform_machine&#39;: platform.machine(), &#39;platform_release&#39;: platform.release(),
+ &#39;platform_system&#39;: platform.system(), &#39;platform_version&#39;: platform.version(),
+ &#39;python_full_version&#39;: platform.python_version(),
+ &#39;platform_python_implementation&#39;: platform.python_implementation(),
+ &#39;python_version&#39;: &#39;.&#39;.join(platform.python_version_tuple()[:2]), &#39;sys_platform&#39;: sys.platform}}))
+</pre><p class="meta">stdout</p><pre>{&#34;executable&#34;: &#34;&lt;python&gt;&#34;, &#34;prefix&#34;: &#34;&lt;home&gt;/Project/课程Projec/FixFirst/workbench/historical-v03-release/click-default-map/.venv&#34;, &#34;python_version&#34;: &#34;3.12.14&#34;, &#34;packages&#34;: [{&#34;name&#34;: &#34;pytest&#34;, &#34;version&#34;: &#34;8.3.5&#34;, &#34;requires&#34;: [&#34;colorama; sys_platform == \&#34;win32\&#34;&#34;, &#34;exceptiongroup&gt;=1.0.0rc8; python_version &lt; \&#34;3.11\&#34;&#34;, &#34;iniconfig&#34;, &#34;packaging&#34;, &#34;pluggy&lt;2,&gt;=1.5&#34;, &#34;tomli&gt;=1; python_version &lt; \&#34;3.11\&#34;&#34;, &#34;argcomplete; extra == \&#34;dev\&#34;&#34;, &#34;attrs&gt;=19.2; extra == \&#34;dev\&#34;&#34;, &#34;hypothesis&gt;=3.56; extra == \&#34;dev\&#34;&#34;, &#34;mock; extra == \&#34;dev\&#34;&#34;, &#34;pygments&gt;=2.7.2; extra == \&#34;dev\&#34;&#34;, &#34;requests; extra == \&#34;dev\&#34;&#34;, &#34;setuptools; extra == \&#34;dev\&#34;&#34;, &#34;xmlschema; extra == \&#34;dev\&#34;&#34;]}, {&#34;name&#34;: &#34;pip&#34;, &#34;version&#34;: &#34;25.0.1&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;packaging&#34;, &#34;version&#34;: &#34;24.2&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;pluggy&#34;, &#34;version&#34;: &#34;1.5.0&#34;, &#34;requires&#34;: [&#34;pre-commit ; extra == &#39;dev&#39;&#34;, &#34;tox ; extra == &#39;dev&#39;&#34;, &#34;pytest ; extra == &#39;testing&#39;&#34;, &#34;pytest-benchmark ; extra == &#39;testing&#39;&#34;]}, {&#34;name&#34;: &#34;iniconfig&#34;, &#34;version&#34;: &#34;2.1.0&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;click&#34;, &#34;version&#34;: &#34;8.1.7&#34;, &#34;requires&#34;: [&#34;colorama ; platform_system == \&#34;Windows\&#34;&#34;, &#34;importlib-metadata ; python_version &lt; \&#34;3.8\&#34;&#34;]}], &#34;import_distributions&#34;: {&#34;_pytest&#34;: [&#34;pytest&#34;], &#34;py&#34;: [&#34;pytest&#34;], &#34;pytest&#34;: [&#34;pytest&#34;], &#34;pip&#34;: [&#34;pip&#34;], &#34;packaging&#34;: [&#34;packaging&#34;], &#34;pluggy&#34;: [&#34;pluggy&#34;], &#34;iniconfig&#34;: [&#34;iniconfig&#34;], &#34;click&#34;: [&#34;click&#34;]}, &#34;markers&#34;: {&#34;implementation_name&#34;: &#34;cpython&#34;, &#34;implementation_version&#34;: &#34;3.12.14&#34;, &#34;os_name&#34;: &#34;posix&#34;, &#34;platform_machine&#34;: &#34;arm64&#34;, &#34;platform_release&#34;: &#34;25.6.0&#34;, &#34;platform_system&#34;: &#34;Darwin&#34;, &#34;platform_version&#34;: &#34;Darwin Kernel Version 25.6.0: Fri Jul 31 19:19:08 PDT 2026; root:xnu-12377.161.14~5/RELEASE_ARM64_T6050&#34;, &#34;python_full_version&#34;: &#34;3.12.14&#34;, &#34;platform_python_implementation&#34;: &#34;CPython&#34;, &#34;python_version&#34;: &#34;3.12&#34;, &#34;sys_platform&#34;: &#34;darwin&#34;}}</pre><p class="meta">stderr</p><pre>(空)</pre></details></details>
+<details class="details"><summary>完整规则推理轨迹</summary><div class="facts"><code>environment:available</code><br>observed · 原始观察<br>来源 run-14dcf0528348:stdout:1</div></details></section>
+<footer class="footnote">本报告反映记录中的检查时点。项目在外部发生改动后需要重新验证。原始文本已进行常见凭据脱敏；分享前仍请检查内容。HTML 可离线阅读，旁边的 JSON 文件可供实验与交接使用。</footer></main>
+<script>
+const graphViews=JSON.parse(document.getElementById('graph-views').textContent);
+const graphSelect=document.getElementById('graph-entity');
+function showGraph(){const view=graphViews.find(v=>v.entity===graphSelect.value);if(!view)return;document.getElementById('graph-answer').textContent=view.answer;const container=document.getElementById('graph-path');container.replaceChildren();const nodes=new Map(view.nodes.map(n=>[n.id,n]));const path=view.paths[0]||[];const ids=[view.entity,...path.map(e=>e.target)];ids.forEach((id,i)=>{if(i){const arrow=document.createElement('span');arrow.textContent='→ '+path[i-1].relation;arrow.style.cssText='white-space:nowrap;color:#65746d;align-self:center';container.append(arrow)}const card=document.createElement('div');card.style.cssText='min-width:170px;max-width:230px;padding:13px;border:1px solid #bdcdbf;border-radius:9px;background:#fff;overflow-wrap:anywhere';const type=document.createElement('small');type.textContent=nodes.get(id)?.type||'Entity';const label=document.createElement('div');label.textContent=nodes.get(id)?.label||id;card.append(type,label);container.append(card)})}
+graphSelect.addEventListener('change',showGraph);showGraph();
+document.querySelectorAll('.copy').forEach(button=>button.addEventListener('click',async()=>{const value=button.dataset.command;try{await navigator.clipboard.writeText(value);button.textContent='已复制'}catch{const area=document.createElement('textarea');area.value=value;document.body.append(area);area.select();document.execCommand('copy');area.remove();button.textContent='已复制'}}));
+document.getElementById('search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('.issue').forEach(item=>item.classList.toggle('hidden',!item.dataset.search.toLowerCase().includes(q)))});
+</script></body></html>

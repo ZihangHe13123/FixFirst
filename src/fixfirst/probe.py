@@ -56,12 +56,23 @@ def pytest_runtest_logreport(report):
 
 def pytest_exception_interact(node, call, report):
     if call.excinfo is not None:
+        # Structured exception metadata avoids guessing from words inside assertion text or
+        # from an earlier, handled exception in a chained traceback.
+        entry = call.excinfo.traceback[-1] if call.excinfo.traceback else None
+        try:
+            message = str(call.excinfo.value)[:16000]
+        except Exception:
+            message = "异常文本无法转换，请查看完整 traceback"
         emit(
             {
                 "type": "exception",
                 "nodeid": report.nodeid,
                 "stage": getattr(report, "when", "collect"),
                 "exception_type": call.excinfo.type.__name__,
+                "exception_message": message,
+                "exception_module": call.excinfo.type.__module__,
+                "source_file": str(entry.path) if entry else "",
+                "source_line": entry.lineno + 1 if entry else None,
             }
         )
 

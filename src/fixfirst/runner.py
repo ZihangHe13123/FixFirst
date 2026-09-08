@@ -14,7 +14,7 @@ import time
 from .models import Run, Session
 
 MAX_OUTPUT = 1_000_000
-DEFAULT_CHECKS = ("environment", "pip_check", "pytest", "ruff")
+DEFAULT_CHECKS = ("environment", "pip_check", "pytest", "ruff", "project")
 TOOLS = (*DEFAULT_CHECKS, "pytest_run")
 
 
@@ -36,6 +36,17 @@ def redact(text: str) -> str:
 def environment_id(python: str) -> str:
     # Do not resolve symlinks: distinct venv interpreters may point at the same binary.
     return hashlib.sha256(os.path.abspath(python).encode()).hexdigest()[:16]
+
+
+def redact_data(value):
+    """Redact string values without damaging the enclosing JSON syntax."""
+    if isinstance(value, str):
+        return redact(value)
+    if isinstance(value, list):
+        return [redact_data(item) for item in value]
+    if isinstance(value, dict):
+        return {key: redact_data(item) for key, item in value.items()}
+    return value
 
 
 def execute(
@@ -123,20 +134,37 @@ def execute(
         proc.stderr.close()
     run.exit_code = proc.returncode
     run.duration_s = round(time.monotonic() - start, 3)
-    run.stdout = redact(buffers["stdout"].decode("utf-8", errors="replace"))
+    stdout = buffers["stdout"].decode("utf-8", errors="replace")
+    run.stdout = redact(stdout)
+    if tool == "environment":
+        try:
+            run.stdout = json.dumps(redact_data(json.loads(stdout)), ensure_ascii=False)
+        except ValueError:
+            pass
     run.stderr = redact(buffers["stderr"].decode("utf-8", errors="replace"))
     return run
 
 
 SNAPSHOT = """
-import sys, json, importlib.metadata as m
+import sys, json, os, platform, importlib.metadata as m
+v = sys.implementation.version
+implementation_version = f'{v.major}.{v.minor}.{v.micro}'
+if v.releaselevel != 'final':
+    implementation_version += {'alpha': 'a', 'beta': 'b', 'candidate': 'rc'}.get(v.releaselevel, v.releaselevel) + str(v.serial)
 packages = []
 for d in m.distributions():
     packages.append({'name': d.metadata.get('Name', ''), 'version': d.version,
                      'requires': d.requires or []})
 print(json.dumps({'executable': sys.executable, 'prefix': sys.prefix,
  'python_version': sys.version.split()[0], 'packages': packages,
- 'import_distributions': m.packages_distributions()}))
+ 'import_distributions': m.packages_distributions(),
+ 'markers': {'implementation_name': sys.implementation.name,
+ 'implementation_version': implementation_version, 'os_name': os.name,
+ 'platform_machine': platform.machine(), 'platform_release': platform.release(),
+ 'platform_system': platform.system(), 'platform_version': platform.version(),
+ 'python_full_version': platform.python_version(),
+ 'platform_python_implementation': platform.python_implementation(),
+ 'python_version': '.'.join(platform.python_version_tuple()[:2]), 'sys_platform': sys.platform}}))
 """
 
 
@@ -180,6 +208,12 @@ def collect(session: Session, tool: str, timeout: float = 30, targets=None) -> R
             raise ValueError("只有 pytest_run 支持指定测试节点")
         validate_targets(session, targets)
     python, cwd = session.target_python, session.project_root
+    if tool == "project":
+        from .project import collect_project
+
+        return collect_project(session, environment_id(python))
+    if tool == "environment":
+        session.environment = {}  # A failed refresh must not leave the previous snapshot active.
     commands = {
         "environment": [python, "-c", SNAPSHOT],
         "pip_check": [python, "-m", "pip", "check"],
@@ -236,7 +270,7 @@ def collect(session: Session, tool: str, timeout: float = 30, targets=None) -> R
                 raw = records_file.read_bytes()[:MAX_OUTPUT]
                 for line in raw.decode("utf-8", "replace").splitlines():
                     try:
-                        record = json.loads(redact(line))
+                        record = redact_data(json.loads(line))
                         if isinstance(record, dict):
                             run.records.append(record)
                     except ValueError:
@@ -255,6 +289,8 @@ def collect(session: Session, tool: str, timeout: float = 30, targets=None) -> R
             if not isinstance(payload, dict) or "packages" not in payload:
                 raise ValueError()
             session.environment = payload
+            session.environment["_run_id"] = run.run_id
+            session.environment["_environment_id"] = run.environment_id
             run.tool_version = payload["python_version"]
         except (ValueError, KeyError):
             run.notes.append("环境快照格式无法识别")

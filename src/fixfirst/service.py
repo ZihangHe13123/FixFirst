@@ -131,6 +131,10 @@ def ingest(session: Session, runs: list[Run]):
         passed = any(
             r.verified_pass and r.coverage_complete and r.source == "executed" for r in matching
         )
+        if old.tool == "project":
+            from .project import declaration_verified
+
+            passed = declaration_verified(old, session.runs, runs)
         if old.tool == "pytest_run" and old.targets:
             passed = any(
                 r.tool == old.tool
@@ -145,6 +149,8 @@ def ingest(session: Session, runs: list[Run]):
             copy.note = (
                 "同一环境中的全部关联测试节点已执行通过"
                 if old.targets
+                else "原依赖声明已在同一环境中逐项验证满足"
+                if old.tool == "project"
                 else "同一环境与检查范围已实际通过"
             )
         elif old.status != "resolved":
@@ -185,6 +191,10 @@ def scan(session, checks=None, timeout=30, targets=None):
         raise ValueError("同一批检查不能重复")
     runs = []
     for check in checks:
+        # Declaration checks compare installed metadata. Always refresh that metadata as part
+        # of this operation, including when a user runs the single project action after a fix.
+        if check == "project" and not any(r.tool == "environment" for r in runs):
+            runs.append(collect(session, "environment", timeout))
         run = collect(session, check, timeout, targets=targets)
         runs.append(run)
         if run.status == "cancelled":

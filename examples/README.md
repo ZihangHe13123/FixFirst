@@ -1,5 +1,7 @@
 # 随源码附带的运行记录
 
+v0.3 新增 `historical-regressions/` 和 `dependency-demo/`，详见各目录报告与根 README。历史记录来自两个第三方库的四个官方缺陷，配套 wheel、SHA256 和原许可证保存在 `historical-regressions/assets/`；**这些外部资产不属于 CC0 自建 fixture**。`03-model-disagreement.html` 展示旧模型的真实错误候选。旧目录继续保留原来的版本与运行时点。
+
 v0.2 新增 `execution-demo/`、`execution-dataset/` 和 `execution-evaluation/`。它们分别展示测试执行故事、30 个新增执行故障与实验；下文 `demo/` / `dataset/` / `evaluation/` 仍是 v0.1 原始记录。
 
 执行故事的顺序为：`00-healthy` → `01-two-failures` → `02-selected-pass` → `03-skipped-is-not-fixed` → `04-restored`。每个阶段都有 HTML、session JSON 和 `.graph.json`。可以直接打开 `execution-demo/01-two-failures.html` 查看新功能。

@@ -1,0 +1,636 @@
+{
+  "schema_version": 1,
+  "session_id": "session-8f22c97f4613",
+  "name": "项目声明与实际版本不符",
+  "project_root": "<project>",
+  "target_python": "<python>",
+  "created_at": "2026-09-08T02:50:35+00:00",
+  "goal": "pass_tests",
+  "grouping": "tfidf",
+  "threshold": 0.82,
+  "model_path": null,
+  "sbert_model": null,
+  "runs": [
+    {
+      "schema_version": 1,
+      "run_id": "run-93741a428de6",
+      "tool": "environment",
+      "started_at": "2026-09-08T02:50:35+00:00",
+      "argv": [
+        "<python>",
+        "-c",
+        "\nimport sys, json, os, platform, importlib.metadata as m\nv = sys.implementation.version\nimplementation_version = f'{v.major}.{v.minor}.{v.micro}'\nif v.releaselevel != 'final':\n    implementation_version += {'alpha': 'a', 'beta': 'b', 'candidate': 'rc'}.get(v.releaselevel, v.releaselevel) + str(v.serial)\npackages = []\nfor d in m.distributions():\n    packages.append({'name': d.metadata.get('Name', ''), 'version': d.version,\n                     'requires': d.requires or []})\nprint(json.dumps({'executable': sys.executable, 'prefix': sys.prefix,\n 'python_version': sys.version.split()[0], 'packages': packages,\n 'import_distributions': m.packages_distributions(),\n 'markers': {'implementation_name': sys.implementation.name,\n 'implementation_version': implementation_version, 'os_name': os.name,\n 'platform_machine': platform.machine(), 'platform_release': platform.release(),\n 'platform_system': platform.system(), 'platform_version': platform.version(),\n 'python_full_version': platform.python_version(),\n 'platform_python_implementation': platform.python_implementation(),\n 'python_version': '.'.join(platform.python_version_tuple()[:2]), 'sys_platform': sys.platform}}))\n"
+      ],
+      "cwd": "<project>",
+      "environment_id": "3cc97e28e2a2a3c7",
+      "tool_version": "3.12.14",
+      "scope": "environment",
+      "status": "completed",
+      "source": "executed",
+      "exit_code": 0,
+      "stdout": "{\"executable\": \"<python>\", \"prefix\": \"<home>/Project/课程Projec/FixFirst/workbench/dependency-v03-release/declared-version-mismatch/.venv\", \"python_version\": \"3.12.14\", \"packages\": [{\"name\": \"pytest\", \"version\": \"8.3.5\", \"requires\": [\"colorama; sys_platform == \\\"win32\\\"\", \"exceptiongroup>=1.0.0rc8; python_version < \\\"3.11\\\"\", \"iniconfig\", \"packaging\", \"pluggy<2,>=1.5\", \"tomli>=1; python_version < \\\"3.11\\\"\", \"argcomplete; extra == \\\"dev\\\"\", \"attrs>=19.2; extra == \\\"dev\\\"\", \"hypothesis>=3.56; extra == \\\"dev\\\"\", \"mock; extra == \\\"dev\\\"\", \"pygments>=2.7.2; extra == \\\"dev\\\"\", \"requests; extra == \\\"dev\\\"\", \"setuptools; extra == \\\"dev\\\"\", \"xmlschema; extra == \\\"dev\\\"\"]}, {\"name\": \"packaging\", \"version\": \"24.1\", \"requires\": []}, {\"name\": \"pip\", \"version\": \"25.0.1\", \"requires\": []}, {\"name\": \"pluggy\", \"version\": \"1.5.0\", \"requires\": [\"pre-commit ; extra == 'dev'\", \"tox ; extra == 'dev'\", \"pytest ; extra == 'testing'\", \"pytest-benchmark ; extra == 'testing'\"]}, {\"name\": \"iniconfig\", \"version\": \"2.1.0\", \"requires\": []}], \"import_distributions\": {\"_pytest\": [\"pytest\"], \"py\": [\"pytest\"], \"pytest\": [\"pytest\"], \"packaging\": [\"packaging\"], \"pip\": [\"pip\"], \"pluggy\": [\"pluggy\"], \"iniconfig\": [\"iniconfig\"]}, \"markers\": {\"implementation_name\": \"cpython\", \"implementation_version\": \"3.12.14\", \"os_name\": \"posix\", \"platform_machine\": \"arm64\", \"platform_release\": \"25.6.0\", \"platform_system\": \"Darwin\", \"platform_version\": \"Darwin Kernel Version 25.6.0: Fri Jul 31 19:19:08 PDT 2026; root:xnu-12377.161.14~5/RELEASE_ARM64_T6050\", \"python_full_version\": \"3.12.14\", \"platform_python_implementation\": \"CPython\", \"python_version\": \"3.12\", \"sys_platform\": \"darwin\"}}",
+      "stderr": "",
+      "duration_s": 0.039,
+      "truncated": false,
+      "verified_pass": true,
+      "coverage_complete": true,
+      "notes": [],
+      "records": [],
+      "targets": [],
+      "passed_nodes": [],
+      "test_summary": {}
+    },
+    {
+      "schema_version": 1,
+      "run_id": "run-d24408910717",
+      "tool": "pip_check",
+      "started_at": "2026-09-08T02:50:35+00:00",
+      "argv": [
+        "<python>",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "cwd": "<project>",
+      "environment_id": "3cc97e28e2a2a3c7",
+      "tool_version": "25.0.1",
+      "scope": "dependencies:environment",
+      "status": "completed",
+      "source": "executed",
+      "exit_code": 0,
+      "stdout": "No broken requirements found.\n",
+      "stderr": "",
+      "duration_s": 0.108,
+      "truncated": false,
+      "verified_pass": true,
+      "coverage_complete": true,
+      "notes": [],
+      "records": [],
+      "targets": [],
+      "passed_nodes": [],
+      "test_summary": {}
+    },
+    {
+      "schema_version": 1,
+      "run_id": "run-8736735ec9d2",
+      "tool": "pytest_run",
+      "started_at": "2026-09-08T02:50:35+00:00",
+      "argv": [
+        "<python>",
+        "-m",
+        "pytest",
+        "-q",
+        "--color=no",
+        "-o",
+        "addopts=",
+        "-p",
+        "_fixfirst_probe",
+        "--rootdir",
+        "<project>"
+      ],
+      "cwd": "<project>",
+      "environment_id": "3cc97e28e2a2a3c7",
+      "tool_version": "8.3.5",
+      "scope": "tests:project",
+      "status": "completed",
+      "source": "executed",
+      "exit_code": 1,
+      "stdout": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________________________ test_prerelease_is_accepted __________________________\n\n    def test_prerelease_is_accepted():\n        requirement = Specifier(\"<3.0.0a8\")\n        actual = requirement.contains(\"3.0.0a7\")\n>       assert actual, \"An earlier prerelease should match the exclusive prerelease bound\"\nE       AssertionError: An earlier prerelease should match the exclusive prerelease bound\nE       assert False\n\ntest_regression.py:7: AssertionError\n=========================== short test summary info ============================\nFAILED test_regression.py::test_prerelease_is_accepted - AssertionError: An e...\n1 failed in 0.01s\n",
+      "stderr": "",
+      "duration_s": 0.09,
+      "truncated": false,
+      "verified_pass": false,
+      "coverage_complete": true,
+      "notes": [
+        "测试收集会执行项目导入和 conftest；与目标项目正常运行一样需信任源码。",
+        "本次执行测试体与 fixture；目标范围以项目配置及记录的测试节点为准。"
+      ],
+      "records": [
+        {
+          "type": "outcome",
+          "stage": "setup",
+          "nodeid": "test_regression.py::test_prerelease_is_accepted",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "call",
+          "nodeid": "test_regression.py::test_prerelease_is_accepted",
+          "outcome": "failed",
+          "wasxfail": false
+        },
+        {
+          "type": "failure",
+          "stage": "call",
+          "nodeid": "test_regression.py::test_prerelease_is_accepted",
+          "message": "def test_prerelease_is_accepted():\n        requirement = Specifier(\"<3.0.0a8\")\n        actual = requirement.contains(\"3.0.0a7\")\n>       assert actual, \"An earlier prerelease should match the exclusive prerelease bound\"\nE       AssertionError: An earlier prerelease should match the exclusive prerelease bound\nE       assert False\n\ntest_regression.py:7: AssertionError"
+        },
+        {
+          "type": "exception",
+          "nodeid": "test_regression.py::test_prerelease_is_accepted",
+          "stage": "call",
+          "exception_type": "AssertionError",
+          "exception_message": "An earlier prerelease should match the exclusive prerelease bound\nassert False",
+          "exception_module": "builtins",
+          "source_file": "<project>/test_regression.py",
+          "source_line": 7
+        },
+        {
+          "type": "outcome",
+          "stage": "teardown",
+          "nodeid": "test_regression.py::test_prerelease_is_accepted",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "finish",
+          "exit_code": 1,
+          "collected": 1,
+          "collect_only": false,
+          "nodes": [
+            "test_regression.py::test_prerelease_is_accepted"
+          ],
+          "records_dropped": false
+        }
+      ],
+      "targets": [],
+      "passed_nodes": [],
+      "test_summary": {
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "xfail_or_xpass": 0,
+        "selected": 1,
+        "incomplete": 0
+      }
+    },
+    {
+      "schema_version": 1,
+      "run_id": "run-c91a13553422",
+      "tool": "project",
+      "started_at": "2026-09-08T02:50:35+00:00",
+      "argv": [],
+      "cwd": "<project>",
+      "environment_id": "3cc97e28e2a2a3c7",
+      "tool_version": "unknown",
+      "scope": "declarations:project",
+      "status": "completed",
+      "source": "executed",
+      "exit_code": 0,
+      "stdout": "{\n  \"files\": [\n    {\n      \"path\": \"requirements.txt\",\n      \"sha256\": \"1ecfc0d9ee8bbff3e639e74a3ecfa0a3727f0b83336a6d175be27c490821368e\",\n      \"bytes\": 16\n    }\n  ],\n  \"declarations\": [\n    {\n      \"name\": \"packaging\",\n      \"requirement\": \"packaging>=24.2\",\n      \"source\": \"requirements.txt:1\",\n      \"group\": \"required\",\n      \"constraint\": false,\n      \"installed\": \"24.1\",\n      \"status\": \"version_mismatch\"\n    }\n  ],\n  \"notes\": [],\n  \"requires_python\": [],\n  \"environment_run_id\": \"run-93741a428de6\",\n  \"local_modules\": [\n    {\n      \"name\": \"test_regression\",\n      \"path\": \"test_regression.py\"\n    }\n  ]\n}",
+      "stderr": "",
+      "duration_s": 0.001,
+      "truncated": false,
+      "verified_pass": false,
+      "coverage_complete": true,
+      "notes": [
+        "只读声明快照；可选组未指定启用，直接引用和锁文件来源不据此验证。"
+      ],
+      "records": [],
+      "targets": [],
+      "passed_nodes": [],
+      "test_summary": {}
+    },
+    {
+      "schema_version": 1,
+      "run_id": "run-7845fc734b89",
+      "tool": "environment",
+      "started_at": "2026-09-08T02:50:36+00:00",
+      "argv": [
+        "<python>",
+        "-c",
+        "\nimport sys, json, os, platform, importlib.metadata as m\nv = sys.implementation.version\nimplementation_version = f'{v.major}.{v.minor}.{v.micro}'\nif v.releaselevel != 'final':\n    implementation_version += {'alpha': 'a', 'beta': 'b', 'candidate': 'rc'}.get(v.releaselevel, v.releaselevel) + str(v.serial)\npackages = []\nfor d in m.distributions():\n    packages.append({'name': d.metadata.get('Name', ''), 'version': d.version,\n                     'requires': d.requires or []})\nprint(json.dumps({'executable': sys.executable, 'prefix': sys.prefix,\n 'python_version': sys.version.split()[0], 'packages': packages,\n 'import_distributions': m.packages_distributions(),\n 'markers': {'implementation_name': sys.implementation.name,\n 'implementation_version': implementation_version, 'os_name': os.name,\n 'platform_machine': platform.machine(), 'platform_release': platform.release(),\n 'platform_system': platform.system(), 'platform_version': platform.version(),\n 'python_full_version': platform.python_version(),\n 'platform_python_implementation': platform.python_implementation(),\n 'python_version': '.'.join(platform.python_version_tuple()[:2]), 'sys_platform': sys.platform}}))\n"
+      ],
+      "cwd": "<project>",
+      "environment_id": "3cc97e28e2a2a3c7",
+      "tool_version": "3.12.14",
+      "scope": "environment",
+      "status": "completed",
+      "source": "executed",
+      "exit_code": 0,
+      "stdout": "{\"executable\": \"<python>\", \"prefix\": \"<home>/Project/课程Projec/FixFirst/workbench/dependency-v03-release/declared-version-mismatch/.venv\", \"python_version\": \"3.12.14\", \"packages\": [{\"name\": \"pytest\", \"version\": \"8.3.5\", \"requires\": [\"colorama; sys_platform == \\\"win32\\\"\", \"exceptiongroup>=1.0.0rc8; python_version < \\\"3.11\\\"\", \"iniconfig\", \"packaging\", \"pluggy<2,>=1.5\", \"tomli>=1; python_version < \\\"3.11\\\"\", \"argcomplete; extra == \\\"dev\\\"\", \"attrs>=19.2; extra == \\\"dev\\\"\", \"hypothesis>=3.56; extra == \\\"dev\\\"\", \"mock; extra == \\\"dev\\\"\", \"pygments>=2.7.2; extra == \\\"dev\\\"\", \"requests; extra == \\\"dev\\\"\", \"setuptools; extra == \\\"dev\\\"\", \"xmlschema; extra == \\\"dev\\\"\"]}, {\"name\": \"pip\", \"version\": \"25.0.1\", \"requires\": []}, {\"name\": \"packaging\", \"version\": \"24.2\", \"requires\": []}, {\"name\": \"pluggy\", \"version\": \"1.5.0\", \"requires\": [\"pre-commit ; extra == 'dev'\", \"tox ; extra == 'dev'\", \"pytest ; extra == 'testing'\", \"pytest-benchmark ; extra == 'testing'\"]}, {\"name\": \"iniconfig\", \"version\": \"2.1.0\", \"requires\": []}], \"import_distributions\": {\"_pytest\": [\"pytest\"], \"py\": [\"pytest\"], \"pytest\": [\"pytest\"], \"pip\": [\"pip\"], \"packaging\": [\"packaging\"], \"pluggy\": [\"pluggy\"], \"iniconfig\": [\"iniconfig\"]}, \"markers\": {\"implementation_name\": \"cpython\", \"implementation_version\": \"3.12.14\", \"os_name\": \"posix\", \"platform_machine\": \"arm64\", \"platform_release\": \"25.6.0\", \"platform_system\": \"Darwin\", \"platform_version\": \"Darwin Kernel Version 25.6.0: Fri Jul 31 19:19:08 PDT 2026; root:xnu-12377.161.14~5/RELEASE_ARM64_T6050\", \"python_full_version\": \"3.12.14\", \"platform_python_implementation\": \"CPython\", \"python_version\": \"3.12\", \"sys_platform\": \"darwin\"}}",
+      "stderr": "",
+      "duration_s": 0.038,
+      "truncated": false,
+      "verified_pass": true,
+      "coverage_complete": true,
+      "notes": [],
+      "records": [],
+      "targets": [],
+      "passed_nodes": [],
+      "test_summary": {}
+    },
+    {
+      "schema_version": 1,
+      "run_id": "run-8c350dfe6cf6",
+      "tool": "pip_check",
+      "started_at": "2026-09-08T02:50:36+00:00",
+      "argv": [
+        "<python>",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "cwd": "<project>",
+      "environment_id": "3cc97e28e2a2a3c7",
+      "tool_version": "25.0.1",
+      "scope": "dependencies:environment",
+      "status": "completed",
+      "source": "executed",
+      "exit_code": 0,
+      "stdout": "No broken requirements found.\n",
+      "stderr": "",
+      "duration_s": 0.105,
+      "truncated": false,
+      "verified_pass": true,
+      "coverage_complete": true,
+      "notes": [],
+      "records": [],
+      "targets": [],
+      "passed_nodes": [],
+      "test_summary": {}
+    },
+    {
+      "schema_version": 1,
+      "run_id": "run-fc718f8348f7",
+      "tool": "pytest_run",
+      "started_at": "2026-09-08T02:50:36+00:00",
+      "argv": [
+        "<python>",
+        "-m",
+        "pytest",
+        "-q",
+        "--color=no",
+        "-o",
+        "addopts=",
+        "-p",
+        "_fixfirst_probe",
+        "--rootdir",
+        "<project>"
+      ],
+      "cwd": "<project>",
+      "environment_id": "3cc97e28e2a2a3c7",
+      "tool_version": "8.3.5",
+      "scope": "tests:project",
+      "status": "completed",
+      "source": "executed",
+      "exit_code": 0,
+      "stdout": ".                                                                        [100%]\n1 passed in 0.01s\n",
+      "stderr": "",
+      "duration_s": 0.078,
+      "truncated": false,
+      "verified_pass": true,
+      "coverage_complete": true,
+      "notes": [
+        "测试收集会执行项目导入和 conftest；与目标项目正常运行一样需信任源码。",
+        "本次执行测试体与 fixture；目标范围以项目配置及记录的测试节点为准。"
+      ],
+      "records": [
+        {
+          "type": "outcome",
+          "stage": "setup",
+          "nodeid": "test_regression.py::test_prerelease_is_accepted",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "call",
+          "nodeid": "test_regression.py::test_prerelease_is_accepted",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "teardown",
+          "nodeid": "test_regression.py::test_prerelease_is_accepted",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "finish",
+          "exit_code": 0,
+          "collected": 1,
+          "collect_only": false,
+          "nodes": [
+            "test_regression.py::test_prerelease_is_accepted"
+          ],
+          "records_dropped": false
+        }
+      ],
+      "targets": [],
+      "passed_nodes": [
+        "test_regression.py::test_prerelease_is_accepted"
+      ],
+      "test_summary": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "xfail_or_xpass": 0,
+        "selected": 1,
+        "incomplete": 0
+      }
+    },
+    {
+      "schema_version": 1,
+      "run_id": "run-9dcfbdd35cc3",
+      "tool": "project",
+      "started_at": "2026-09-08T02:50:36+00:00",
+      "argv": [],
+      "cwd": "<project>",
+      "environment_id": "3cc97e28e2a2a3c7",
+      "tool_version": "unknown",
+      "scope": "declarations:project",
+      "status": "completed",
+      "source": "executed",
+      "exit_code": 0,
+      "stdout": "{\n  \"files\": [\n    {\n      \"path\": \"requirements.txt\",\n      \"sha256\": \"1ecfc0d9ee8bbff3e639e74a3ecfa0a3727f0b83336a6d175be27c490821368e\",\n      \"bytes\": 16\n    }\n  ],\n  \"declarations\": [\n    {\n      \"name\": \"packaging\",\n      \"requirement\": \"packaging>=24.2\",\n      \"source\": \"requirements.txt:1\",\n      \"group\": \"required\",\n      \"constraint\": false,\n      \"installed\": \"24.2\",\n      \"status\": \"satisfied\"\n    }\n  ],\n  \"notes\": [],\n  \"requires_python\": [],\n  \"environment_run_id\": \"run-7845fc734b89\",\n  \"local_modules\": [\n    {\n      \"name\": \"test_regression\",\n      \"path\": \"test_regression.py\"\n    }\n  ]\n}",
+      "stderr": "",
+      "duration_s": 0.001,
+      "truncated": false,
+      "verified_pass": true,
+      "coverage_complete": true,
+      "notes": [
+        "只读声明快照；可选组未指定启用，直接引用和锁文件来源不据此验证。"
+      ],
+      "records": [],
+      "targets": [],
+      "passed_nodes": [],
+      "test_summary": {}
+    }
+  ],
+  "events": [
+    {
+      "schema_version": 1,
+      "event_id": "event-5a885f39f349",
+      "run_id": "run-8736735ec9d2",
+      "tool": "pytest_run",
+      "stage": "call",
+      "kind": "test_assertion",
+      "message": "AssertionError: An earlier prerelease should match the exclusive prerelease bound\nassert False",
+      "component": "",
+      "location": "test_regression.py::test_prerelease_is_accepted",
+      "line": 1,
+      "code": "AssertionError",
+      "source_file": "<project>/test_regression.py",
+      "source_line": 7,
+      "evidence_refs": [
+        "run-8736735ec9d2:probe:2",
+        "run-8736735ec9d2:probe:3"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "event_id": "event-e0ff895d7390",
+      "run_id": "run-c91a13553422",
+      "tool": "project",
+      "stage": "dependency",
+      "kind": "dependency_conflict",
+      "message": "requirements.txt:1 声明 packaging>=24.2；当前 24.1。版本不满足声明",
+      "component": "packaging",
+      "location": "requirements.txt:1",
+      "line": 1,
+      "code": "version_mismatch",
+      "source_file": "",
+      "source_line": null,
+      "evidence_refs": [
+        "run-c91a13553422:declaration:0"
+      ]
+    }
+  ],
+  "issues": [
+    {
+      "schema_version": 1,
+      "issue_id": "issue-73804767a03c4f",
+      "fingerprint": "73804767a03c4f",
+      "tool": "pytest_run",
+      "stage": "call",
+      "kind": "test_assertion",
+      "component": "",
+      "title": "断言失败 · test_regression.py::test_prerelease_is_accepted",
+      "event_ids": [
+        "event-5a885f39f349"
+      ],
+      "evidence_refs": [
+        "run-8736735ec9d2:probe:2",
+        "run-8736735ec9d2:probe:3"
+      ],
+      "member_keys": [
+        "a75dc684866faa"
+      ],
+      "scope": "tests:project",
+      "environment_id": "3cc97e28e2a2a3c7",
+      "category": "test_assertion",
+      "prediction": null,
+      "prediction_note": "",
+      "group_score": 1.0,
+      "status": "resolved",
+      "first_seen": "2026-09-08T02:50:36+00:00",
+      "last_seen": "2026-09-08T02:50:36+00:00",
+      "note": "同一环境中的全部关联测试节点已执行通过",
+      "targets": [
+        "test_regression.py::test_prerelease_is_accepted"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "issue_id": "issue-e7520cb8ca2b57",
+      "fingerprint": "e7520cb8ca2b57",
+      "tool": "project",
+      "stage": "dependency",
+      "kind": "dependency_conflict",
+      "component": "packaging",
+      "title": "requirements.txt:1 声明 packaging>=24.2；当前 24.1。版本不满足声明",
+      "event_ids": [
+        "event-e0ff895d7390"
+      ],
+      "evidence_refs": [
+        "run-c91a13553422:declaration:0"
+      ],
+      "member_keys": [
+        "ff390654e3bcdd"
+      ],
+      "scope": "declarations:project",
+      "environment_id": "3cc97e28e2a2a3c7",
+      "category": "dependency_conflict",
+      "prediction": null,
+      "prediction_note": "",
+      "group_score": 1.0,
+      "status": "resolved",
+      "first_seen": "2026-09-08T02:50:36+00:00",
+      "last_seen": "2026-09-08T02:50:36+00:00",
+      "note": "原依赖声明已在同一环境中逐项验证满足",
+      "targets": []
+    }
+  ],
+  "facts": [
+    {
+      "schema_version": 1,
+      "fact_id": "environment:available",
+      "subject": "environment",
+      "predicate": "snapshot",
+      "value": "available",
+      "status": "observed",
+      "rule_id": null,
+      "inputs": [],
+      "evidence_refs": [
+        "run-7845fc734b89:stdout:1"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "schema_version": 1,
+      "action_id": "check-pytest_run",
+      "kind": "rerun",
+      "title": "验证完整测试运行",
+      "explanation": "只更新本次检查覆盖的问题；其他问题保留。若未做改动且没有新证据，无需反复运行同一检查。",
+      "verification": "查看新的检查记录和状态变化",
+      "check": "pytest_run",
+      "issue_ids": [],
+      "reason_refs": [],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 1,
+      "cost": 3,
+      "priority": 1,
+      "targets": []
+    }
+  ],
+  "history": [
+    {
+      "time": "2026-09-08T02:50:36+00:00",
+      "kind": "checks",
+      "run_ids": [
+        "run-93741a428de6",
+        "run-d24408910717",
+        "run-8736735ec9d2",
+        "run-c91a13553422"
+      ],
+      "changes": [
+        {
+          "issue_id": "issue-73804767a03c4f",
+          "change": "new"
+        },
+        {
+          "issue_id": "issue-e7520cb8ca2b57",
+          "change": "new"
+        }
+      ]
+    },
+    {
+      "time": "2026-09-08T02:50:36+00:00",
+      "kind": "checks",
+      "run_ids": [
+        "run-7845fc734b89",
+        "run-8c350dfe6cf6",
+        "run-fc718f8348f7",
+        "run-9dcfbdd35cc3"
+      ],
+      "changes": [
+        {
+          "issue_id": "issue-73804767a03c4f",
+          "change": "resolved"
+        },
+        {
+          "issue_id": "issue-e7520cb8ca2b57",
+          "change": "resolved"
+        }
+      ]
+    }
+  ],
+  "goal_status": "achieved",
+  "stopped": false,
+  "environment": {
+    "executable": "<python>",
+    "prefix": "<home>/Project/课程Projec/FixFirst/workbench/dependency-v03-release/declared-version-mismatch/.venv",
+    "python_version": "3.12.14",
+    "packages": [
+      {
+        "name": "pytest",
+        "version": "8.3.5",
+        "requires": [
+          "colorama; sys_platform == \"win32\"",
+          "exceptiongroup>=1.0.0rc8; python_version < \"3.11\"",
+          "iniconfig",
+          "packaging",
+          "pluggy<2,>=1.5",
+          "tomli>=1; python_version < \"3.11\"",
+          "argcomplete; extra == \"dev\"",
+          "attrs>=19.2; extra == \"dev\"",
+          "hypothesis>=3.56; extra == \"dev\"",
+          "mock; extra == \"dev\"",
+          "pygments>=2.7.2; extra == \"dev\"",
+          "requests; extra == \"dev\"",
+          "setuptools; extra == \"dev\"",
+          "xmlschema; extra == \"dev\""
+        ]
+      },
+      {
+        "name": "pip",
+        "version": "25.0.1",
+        "requires": []
+      },
+      {
+        "name": "packaging",
+        "version": "24.2",
+        "requires": []
+      },
+      {
+        "name": "pluggy",
+        "version": "1.5.0",
+        "requires": [
+          "pre-commit ; extra == 'dev'",
+          "tox ; extra == 'dev'",
+          "pytest ; extra == 'testing'",
+          "pytest-benchmark ; extra == 'testing'"
+        ]
+      },
+      {
+        "name": "iniconfig",
+        "version": "2.1.0",
+        "requires": []
+      }
+    ],
+    "import_distributions": {
+      "_pytest": [
+        "pytest"
+      ],
+      "py": [
+        "pytest"
+      ],
+      "pytest": [
+        "pytest"
+      ],
+      "pip": [
+        "pip"
+      ],
+      "packaging": [
+        "packaging"
+      ],
+      "pluggy": [
+        "pluggy"
+      ],
+      "iniconfig": [
+        "iniconfig"
+      ]
+    },
+    "markers": {
+      "implementation_name": "cpython",
+      "implementation_version": "3.12.14",
+      "os_name": "posix",
+      "platform_machine": "arm64",
+      "platform_release": "25.6.0",
+      "platform_system": "Darwin",
+      "platform_version": "Darwin Kernel Version 25.6.0: Fri Jul 31 19:19:08 PDT 2026; root:xnu-12377.161.14~5/RELEASE_ARM64_T6050",
+      "python_full_version": "3.12.14",
+      "platform_python_implementation": "CPython",
+      "python_version": "3.12",
+      "sys_platform": "darwin"
+    },
+    "_run_id": "run-7845fc734b89",
+    "_environment_id": "3cc97e28e2a2a3c7"
+  }
+}

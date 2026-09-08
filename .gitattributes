@@ -1,3 +1,5 @@
 # Generated reports preserve whitespace inside captured command text.
 examples/demo/*.html -whitespace
 examples/execution-demo/*.html -whitespace
+examples/dependency-demo/*.html -whitespace
+examples/historical-regressions/**/*.html -whitespace

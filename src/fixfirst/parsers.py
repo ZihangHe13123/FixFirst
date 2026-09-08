@@ -132,6 +132,56 @@ def parse(run: Run) -> list[Event]:
             if run.verified_pass
             else [event(run, "环境快照未成功取得", stage="tool", kind="tool_failure")]
         )
+    if run.tool == "project":
+        try:
+            payload = json.loads(run.stdout)
+            rows = payload["declarations"] + payload["requires_python"]
+            results = []
+            for index, row in enumerate(rows):
+                state = row["status"]
+                if state not in ("missing", "version_mismatch", "python_mismatch"):
+                    continue
+                requirement = row.get("requirement", "Python " + row.get("specifier", ""))
+                item = event(
+                    run,
+                    f"{row['source']} 声明 {requirement}；当前 {row['installed']}。"
+                    + {
+                        "missing": "必需依赖缺失",
+                        "version_mismatch": "版本不满足声明",
+                        "python_mismatch": "Python 不满足声明",
+                    }[state],
+                    stage="dependency",
+                    kind="environment_mismatch"
+                    if state == "python_mismatch"
+                    else "dependency_conflict",
+                    component=row.get("name", "python"),
+                    location=row["source"],
+                    code=state,
+                )
+                item.evidence_refs = [f"{run.run_id}:declaration:{index}"]
+                results.append(item)
+            run.coverage_complete = bool(
+                payload.get("environment_run_id")
+                and payload.get("files")
+                and not payload.get("notes")
+                and all(
+                    r["status"]
+                    in (
+                        "satisfied",
+                        "missing",
+                        "version_mismatch",
+                        "python_mismatch",
+                        "inactive_marker",
+                        "optional",
+                    )
+                    for r in rows
+                )
+            )
+            run.verified_pass = run.coverage_complete and not results and run.exit_code == 0
+            run.notes.extend(payload.get("notes", []))
+            return results
+        except (ValueError, KeyError, TypeError):
+            return [event(run, "项目声明快照无法解析", stage="tool", kind="tool_failure")]
     if run.tool == "ruff":
         try:
             rows = json.loads(run.stdout)
@@ -257,6 +307,32 @@ def parse(run: Run) -> list[Event]:
                         ),
                         {},
                     )
+                    if "exception_message" in exception and not (
+                        item.stage == "collect" and exception.get("exception_type") == "CollectError"
+                    ):
+                        exception_type = str(exception.get("exception_type", "Exception"))
+                        message = str(exception["exception_message"])
+                        # The emitted type is the actual unhandled exception. Message contents
+                        # can mention other errors without having those errors as their type.
+                        item.message = f"{exception_type}: {message}"
+                        item.code = exception_type
+                        item.component = ""
+                        item.source_file = str(exception.get("source_file", ""))
+                        item.source_line = exception.get("source_line")
+                        item.kind = (
+                            "test_runtime_error"
+                            if item.stage in ("call", "setup", "teardown")
+                            else "other_unknown"
+                        )
+                        if exception_type in ("ModuleNotFoundError", "ImportError"):
+                            item.kind = "import_failure"
+                            match = IMPORT.search(item.message)
+                            item.component = match.group(1) if match else ""
+                        elif exception_type != "AssertionError" and CONFIG.search(message):
+                            item.kind = "explicit_config_missing"
+                            item.component = CONFIG.search(message).group(1)
+                        exception_index = run.records.index(exception)
+                        item.evidence_refs.append(f"{run.run_id}:probe:{exception_index}")
                     if exception.get("exception_type") == "AssertionError" and item.stage == "call":
                         item.kind, item.code = "test_assertion", "AssertionError"
                     result.append(item)

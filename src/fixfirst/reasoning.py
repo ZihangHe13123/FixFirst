@@ -1,5 +1,9 @@
 """Forward chaining with provenance, then stable goal-sensitive action ordering."""
 
+import json
+
+from packaging.utils import canonicalize_name
+
 from .models import Action, Fact, Session, GOAL_CHECKS, PROJECT_SCOPES
 from .runner import environment_id
 
@@ -22,6 +26,7 @@ RULES = [
     ("R15", ("stage", "collect"), ("affects", "pass_tests")),
     ("R16", ("kind", "test_assertion"), ("needs", "assertion_review")),
     ("R17", ("kind", "test_runtime_error"), ("needs", "runtime_review")),
+    ("R18", ("kind", "environment_mismatch"), ("needs", "python_review")),
 ]
 
 
@@ -104,6 +109,78 @@ def infer_and_plan(session: Session):
                 evidence_refs=[f"{latest_env.run_id}:stdout:1"],
             )
         )
+    project_run = next((r for r in reversed(session.runs) if r.tool == "project"), None)
+    project = {}
+    if (
+        project_run
+        and project_run.source == "executed"
+        and project_run.environment_id == current_environment
+    ):
+        try:
+            payload = json.loads(project_run.stdout)
+            if (
+                latest_env
+                and latest_env.verified_pass
+                and payload.get("environment_run_id") == latest_env.run_id
+            ):
+                project = payload
+        except (ValueError, AttributeError):
+            pass
+    import_details = {}
+    for issue in active:
+        if (
+            issue.kind != "import_failure"
+            or issue.environment_id != current_environment
+            or not project
+        ):
+            continue
+        top = issue.component.split(".", 1)[0]
+        distributions = session.environment.get("import_distributions", {}).get(top, [])
+        names = {canonicalize_name(name) for name in distributions}
+        details = []
+        if distributions:
+            details.append(
+                f"安装元数据将导入名 {top} 映射到发行包 {', '.join(distributions)}；包存在仍可能有路径或子模块问题。"
+            )
+        for index, row in enumerate(project.get("declarations", [])):
+            if row["name"] in names or (top and row["name"] == canonicalize_name(top)):
+                value = f"{row['source']}：{row['requirement']}；快照版本 {row['installed']}；{row['status']}"
+                details.append(
+                    value
+                    + ("（同名声明线索，不证明导入名与包名等价）" if not distributions else "")
+                )
+                observations.append(
+                    Fact(
+                        fact_id=f"{issue.issue_id}:declaration:{index}",
+                        subject=issue.issue_id,
+                        predicate="declaration",
+                        value=value,
+                        evidence_refs=[
+                            f"{project_run.run_id}:declaration:{index}",
+                            f"{latest_env.run_id}:stdout:1",
+                        ],
+                    )
+                )
+        local = [r["path"] for r in project.get("local_modules", []) if r["name"] == top]
+        if local:
+            details.append(
+                f"项目内存在同名路径 {', '.join(local)}；先核对项目安装方式、src 布局和导入路径。路径存在不证明可导入。"
+            )
+        if distributions or local:
+            observations.append(
+                Fact(
+                    fact_id=f"{issue.issue_id}:import_context",
+                    subject=issue.issue_id,
+                    predicate="declaration",
+                    value=" ".join(details),
+                    evidence_refs=[
+                        f"{project_run.run_id}:stdout:1",
+                        f"{latest_env.run_id}:stdout:1",
+                    ],
+                )
+            )
+        if details:
+            import_details[issue.issue_id] = " ".join(details)
     session.facts = forward_chain(observations)
     actions = []
     grouped = {}
@@ -169,17 +246,47 @@ def infer_and_plan(session: Session):
                 "environment",
                 impact=2 if session.goal in ("collect_tests", "pass_tests") else 0,
             )
-        else:
+        elif not project:
+            add(
+                "inspect-project",
+                "inspect",
+                "读取项目依赖声明与当前版本",
+                "当前需要项目声明证据。读取 pyproject.toml、requirements 与 setup.cfg，并刷新解释器快照；不执行安装。",
+                "查看必需依赖、可选组、环境条件及来源，再决定修改",
+                affected,
+                "project",
+                cost=1,
+            )
+        elif imports:
             add(
                 "review-import",
                 "manual_fix",
                 "核对导入路径与依赖声明",
-                "已取得当前环境快照。将它与安装时使用的环境核对；import 名可能不同于发行包名，也可能是项目自己的模块。根据证据手动处理。",
+                " ".join(import_details.values())
+                or "已取得当前环境与项目声明快照，尚无可靠的导入名映射。核对错误位置、项目安装方式和声明；不能只凭 import 名生成安装命令。",
                 "处理后重新运行测试收集；pip check 通过不代表 import 一定成功",
                 affected,
                 preconditions=["environment:available"],
                 cost=2,
             )
+            actions[-1].reason_refs += [
+                f.fact_id for f in session.facts if f.predicate == "declaration"
+            ]
+    # Give each concrete declaration conflict its own reviewable instruction.
+    concrete = [i for i in active if i.tool == "project" and project]
+    for issue in concrete:
+        add(
+            "review-" + issue.issue_id,
+            "manual_fix",
+            "核对 Python 版本要求"
+            if issue.kind == "environment_mismatch"
+            else f"核对 {issue.component} 的声明与版本",
+            issue.title + "。依据项目说明调整环境或声明，使用同一解释器重新检查。",
+            "重新运行项目声明检查（同时刷新环境），再验证当前目标",
+            [issue],
+            cost=2,
+            impact=int(session.goal in ("collect_tests", "pass_tests")),
+        )
     for kind, title, explanation in [
         (
             "dependency_conflict",
@@ -227,7 +334,7 @@ def infer_and_plan(session: Session):
             "当前输入没有足够证据支持自动判断，请从原文核对；业务逻辑修复超出首版范围。",
         ),
     ]:
-        issues = grouped.get(kind, [])
+        issues = [i for i in grouped.get(kind, []) if i not in concrete]
         if issues:
             add(
                 "review-" + kind,
@@ -239,6 +346,7 @@ def infer_and_plan(session: Session):
                 cost=2,
             )
     for tool, title in (
+        ("project", "刷新并验证项目依赖声明"),
         ("pip_check", "重新检查依赖一致性"),
         ("pytest", "重新验证测试收集"),
         ("ruff", "重新检查代码"),

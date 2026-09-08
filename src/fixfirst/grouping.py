@@ -13,6 +13,7 @@ def normalize(text: str) -> str:
     text = re.sub(r"\x1b\[[0-9;]*m", "", text)
     text = re.sub(r"\b\d{4}-\d\d-\d\d[T ][\d:.+Z-]+", "<time>", text)
     text = re.sub(r"(?:/private)?/tmp/[^\s:]+", "<temporary-path>", text)
+    text = re.sub(r"(?<= object at )0x[0-9a-fA-F]+(?=>)", "<address>", text)
     return " ".join(text.split())
 
 
@@ -109,7 +110,7 @@ def group_events(
                         title=(
                             f"断言失败 · {first.location}"
                             if first.kind == "test_assertion"
-                            else f"{first.stage} · {first.message[:140]} · {first.location}"
+                            else f"{first.code or first.stage} · {first.location}"
                             if first.kind == "test_runtime_error"
                             else first.message[:240]
                         ),

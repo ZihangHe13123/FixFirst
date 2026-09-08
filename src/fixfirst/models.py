@@ -20,7 +20,7 @@ class Record(BaseModel):
     schema_version: int = 1
 
 
-Tool = Literal["environment", "pip_check", "pip_install", "pytest", "pytest_run", "ruff"]
+Tool = Literal["environment", "project", "pip_check", "pip_install", "pytest", "pytest_run", "ruff"]
 Goal = Literal["collect_tests", "check_style", "pass_tests"]
 GOAL_CHECKS = {"collect_tests": "pytest", "check_style": "ruff", "pass_tests": "pytest_run"}
 PROJECT_SCOPES = {
@@ -69,6 +69,8 @@ class Event(Record):
     location: str = ""
     line: int = 1
     code: str = ""
+    source_file: str = ""
+    source_line: int | None = None
     evidence_refs: list[str] = Field(default_factory=list)
 
 
@@ -87,6 +89,7 @@ class Issue(Record):
     environment_id: str
     category: str = "other_unknown"
     prediction: str | None = None
+    prediction_note: str = ""
     group_score: float = 1
     status: Literal["open", "awaiting_verification", "resolved", "not_observed", "unknown"] = "open"
     first_seen: str = Field(default_factory=now)

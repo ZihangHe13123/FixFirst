@@ -1,0 +1,171 @@
+{
+  "created_at": "2026-09-08T02:50:10+00:00",
+  "python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
+  "cases": [
+    {
+      "id": "packaging-prerelease",
+      "package": "packaging",
+      "broken": "24.1",
+      "fixed": "24.2",
+      "title": "预发布版本被错误排除",
+      "kind": "test_assertion",
+      "source": "https://github.com/pypa/packaging/issues/788",
+      "fix": "https://github.com/pypa/packaging/pull/794",
+      "commit": "cf2cbe2aec28f87c6228a6fb136c27931c9af407",
+      "status": "reproduced",
+      "test_sha256": "b85578572581700a592be0e5d920229e3f54aa923551e2b8c018489d5d871768",
+      "reproducer_origin": "Locally authored minimal test based on the linked upstream defect; not the entire upstream suite",
+      "broken_exit_code": 1,
+      "broken_nodes": {
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "xfail_or_xpass": 0,
+        "selected": 1,
+        "incomplete": 0
+      },
+      "observed_kinds": [
+        "test_assertion"
+      ],
+      "broken_version_observed": "24.1",
+      "pip_check_passed_before_fix": true,
+      "fixed_exit_code": 0,
+      "fixed_nodes": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "xfail_or_xpass": 0,
+        "selected": 1,
+        "incomplete": 0
+      },
+      "fixed_version_observed": "24.2",
+      "test_unchanged": true,
+      "issues_closed": true,
+      "goal_status": "achieved"
+    },
+    {
+      "id": "packaging-full-version",
+      "package": "packaging",
+      "broken": "24.1",
+      "fixed": "24.2",
+      "title": "未打标签的 Python 版本令条件判断异常",
+      "kind": "test_runtime_error",
+      "source": "https://github.com/pypa/packaging/issues/678",
+      "fix": "https://github.com/pypa/packaging/pull/825",
+      "commit": "c385b58c4d0e4d66f5c8273ebb155801c92aadf3",
+      "status": "reproduced",
+      "test_sha256": "2038e8a08bead108348cc79a0fe556e9f6fe43fe786194ba5a26c0d41dc08521",
+      "reproducer_origin": "Locally authored minimal test based on the linked upstream defect; not the entire upstream suite",
+      "broken_exit_code": 1,
+      "broken_nodes": {
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "xfail_or_xpass": 0,
+        "selected": 1,
+        "incomplete": 0
+      },
+      "observed_kinds": [
+        "test_runtime_error"
+      ],
+      "broken_version_observed": "24.1",
+      "pip_check_passed_before_fix": true,
+      "fixed_exit_code": 0,
+      "fixed_nodes": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "xfail_or_xpass": 0,
+        "selected": 1,
+        "incomplete": 0
+      },
+      "fixed_version_observed": "24.2",
+      "test_unchanged": true,
+      "issues_closed": true,
+      "goal_status": "achieved"
+    },
+    {
+      "id": "click-empty-default",
+      "package": "click",
+      "broken": "8.1.7",
+      "fixed": "8.1.8",
+      "title": "命令帮助漏掉空字符串默认值",
+      "kind": "test_assertion",
+      "source": "https://github.com/pallets/click/issues/2500",
+      "fix": "https://github.com/pallets/click/pull/2724",
+      "commit": "d3e3852eba45a6f7ce0ae5e02ca49106e228add6",
+      "status": "reproduced",
+      "test_sha256": "dddbf23dcda0ae745e14e321b90fd1773ebd19cf9792d022f4f10559821484d3",
+      "reproducer_origin": "Locally authored minimal test based on the linked upstream defect; not the entire upstream suite",
+      "broken_exit_code": 1,
+      "broken_nodes": {
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "xfail_or_xpass": 0,
+        "selected": 1,
+        "incomplete": 0
+      },
+      "observed_kinds": [
+        "test_assertion"
+      ],
+      "broken_version_observed": "8.1.7",
+      "pip_check_passed_before_fix": true,
+      "fixed_exit_code": 0,
+      "fixed_nodes": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "xfail_or_xpass": 0,
+        "selected": 1,
+        "incomplete": 0
+      },
+      "fixed_version_observed": "8.1.8",
+      "test_unchanged": true,
+      "issues_closed": true,
+      "goal_status": "achieved"
+    },
+    {
+      "id": "click-default-map",
+      "package": "click",
+      "broken": "8.1.7",
+      "fixed": "8.1.8",
+      "title": "命令帮助展示错误的配置默认值",
+      "kind": "test_assertion",
+      "source": "https://github.com/pallets/click/issues/2632",
+      "fix": "https://github.com/pallets/click/pull/2730",
+      "commit": "bc16dbf788861266177661b576291a1b264fb5de",
+      "status": "reproduced",
+      "test_sha256": "6c3fd285934f729aa54f6ecffd1343e3fdd58b35cdbac37b9298d36a6284c436",
+      "reproducer_origin": "Locally authored minimal test based on the linked upstream defect; not the entire upstream suite",
+      "broken_exit_code": 1,
+      "broken_nodes": {
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "xfail_or_xpass": 0,
+        "selected": 1,
+        "incomplete": 0
+      },
+      "observed_kinds": [
+        "test_assertion"
+      ],
+      "broken_version_observed": "8.1.7",
+      "pip_check_passed_before_fix": true,
+      "fixed_exit_code": 0,
+      "fixed_nodes": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "xfail_or_xpass": 0,
+        "selected": 1,
+        "incomplete": 0
+      },
+      "fixed_version_observed": "8.1.8",
+      "test_unchanged": true,
+      "issues_closed": true,
+      "goal_status": "achieved"
+    }
+  ],
+  "all_reproduced": true
+}

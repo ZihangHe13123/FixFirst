@@ -25,6 +25,7 @@ STATES = {
 }
 TOOL_NAMES = {
     "environment": "环境快照",
+    "project": "项目依赖声明",
     "pip_check": "依赖一致性",
     "pip_install": "安装日志",
     "pytest": "测试收集",
@@ -77,6 +78,14 @@ def render(session: Session, store_root: Path, output: Path, public=False):
     latest = {}
     for run in data["runs"]:
         latest[run["tool"]] = run
+    project = {}
+    if "project" in latest:
+        try:
+            project = json.loads(latest["project"]["stdout"])
+            if not isinstance(project, dict):
+                project = {}
+        except ValueError:
+            pass
     text = env.get_template("report.html").render(
         session=data,
         goal_name=GOALS[session.goal],
@@ -88,6 +97,19 @@ def render(session: Session, store_root: Path, output: Path, public=False):
         public=public,
         graph=graph,
         graph_views=views,
+        project=project,
+        dependency_states={
+            "satisfied": "满足声明",
+            "missing": "必需依赖缺失",
+            "version_mismatch": "版本不符",
+            "python_mismatch": "Python 版本不符",
+            "inactive_marker": "环境条件未生效",
+            "optional": "可选组，未判断启用",
+            "constraint_only": "约束文件，非安装清单",
+            "direct_reference": "直接来源，未验证",
+            "ambiguous_install": "发现多个版本，需核对",
+            "unknown": "证据不足",
+        },
     )
     atomic_write(output, text)
     atomic_write(output.with_suffix(".json"), json.dumps(data, ensure_ascii=False, indent=2))

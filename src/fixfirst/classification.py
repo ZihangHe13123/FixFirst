@@ -73,6 +73,11 @@ def classify(issues: list[Issue], path: str | None = None):
         issue.category = rule_classify(issue)
         # Prediction is separate; it cannot invent evidence or override the observed category.
         issue.prediction = predict_tree(issue, model) if model else None
+        issue.prediction_note = (
+            "模型候选与规则证据不同；行动仍依据实际异常，不把候选当作根因。"
+            if issue.prediction and issue.prediction != issue.category
+            else ""
+        )
 
 
 def train_tree(rows: list[dict], output: Path) -> dict:

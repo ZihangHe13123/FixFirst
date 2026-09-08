@@ -94,6 +94,9 @@ def parser():
     evaluation.add_argument("dataset")
     evaluation.add_argument("--output", default="workbench/evaluation")
     evaluation.add_argument("--sbert-model")
+    historical = sub.add_parser("historical", help="在新建独立环境离线复现有来源的历史库故障")
+    historical.add_argument("--assets", required=True, help="包含 manifest.json 与官方 wheel 的资产目录")
+    historical.add_argument("--output", required=True, help="必须使用新的输出目录")
     return cli
 
 
@@ -111,6 +114,13 @@ def main(argv=None):
     args = parser().parse_args(argv)
     store = Store(args.store)
     try:
+        if args.command == "historical":
+            from .historical_cases import replay
+
+            report = replay(Path(args.output), Path(args.assets))
+            print(report)
+            complete = json.loads(report.with_name("results.json").read_text())["all_reproduced"]
+            return 0 if complete else 2
         if args.command == "interactive":
             from .interactive import menu
 

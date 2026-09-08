@@ -1,6 +1,6 @@
 # FixFirst
 
-当前版本 **0.2.0**：新增测试执行、失败节点重跑、证据知识图谱和中文依据查询。课程要求是三个**技术组**，对应关系见 [课程核对](docs/COURSE_ALIGNMENT.md)。
+当前版本 **0.3.0**：新增项目依赖声明核对、四个官方历史回归的离线复现、真实异常摘要和模型分歧提示。先看 [给队友的 v0.3 说明](docs/V0.3_队友讨论与验收.md)。课程要求是三个**技术组**，对应关系见 [课程核对](docs/COURSE_ALIGNMENT.md)。
 
 帮助 Python 开发者把一堆报错整理成问题清单，判断下一步先检查什么，修改后再验证是否解决。
 
@@ -38,12 +38,15 @@
 | 队友难以了解排查过程 | 展示历史、原始证据和行动清单 | HTML / JSON 报告与脱敏导出 |
 | 不知道建议从哪里来 | 选择行动或问题，沿图谱追溯事实、事件与检查 | 有类型的证据知识图谱、中文查询与图谱 JSON |
 | 测试能启动，但执行失败 | 分开定位测试体、fixture 准备与清理；指定失败测试重跑 | pytest 执行协议与逐节点验证 |
+| pip check 通过，项目仍缺依赖或用错版本 | 对照项目声明与目标解释器，指出文件、包名、约束、实际版本 | pyproject.toml / requirements / setup.cfg 静态读取 + 标准版本与条件判断 |
+| traceback 很长，模型又可能误导 | 显示真实异常类型和抛出位置，提示模型与证据的分歧 | pytest 结构化异常信息；模型候选不改变行动依据 |
 
 ## 支持的输入和目标
 
 | 输入 | 自动运行 | 历史日志导入 |
 |---|---|---|
 | Python 解释器、安装包及版本快照 | 支持 | 不支持 |
+| 项目静态依赖声明 | 支持，只读；自动刷新目标环境快照 | 不支持 |
 | `pip check` 依赖一致性检查 | 支持 | 支持文本 |
 | `pip install` 安装失败 | 不自动安装 | 支持部分常见冲突、缺包、网络错误文本 |
 | pytest 测试收集 | 支持，附带结构化采集插件 | 支持常见 traceback；信息不足时保留未知 |
@@ -80,6 +83,7 @@ fixfirst init /path/to/project --python /path/to/project/.venv/bin/python
 # 运行全部检查，或只验证测试收集
 fixfirst scan SESSION_ID
 fixfirst scan SESSION_ID --checks pytest
+fixfirst scan SESSION_ID --checks project
 fixfirst show SESSION_ID
 fixfirst report SESSION_ID --open
 
@@ -163,9 +167,9 @@ v0.2 另附 `examples/execution-dataset/`：**30 个执行故障案例、35 条�
 | B：算法与实验 | `grouping.py`、`classification.py`、`reasoning.py`、`evaluation.py` | 增加困难样本；比较误归并、分类与行动排序效果；检验模型增益 |
 | C：产品与整合 | `cli.py`、`interactive.py`、`service.py`、`report.py`、模板 | 组织用户试用；改进流程与文案；验证重跑状态和分享报告 |
 
-共享接口在 `models.py`，存储在 `storage.py`。完整实现流程见 [模块与数据流](docs/FLOW.md)，当前交付证据与限制见 [验收说明](docs/DELIVERY.md)。
+共享接口在 `models.py`，存储在 `storage.py`。完整实现流程见 [模块与数据流](docs/FLOW.md)，当前交付证据与限制见 [v0.3 说明](docs/V0.3_队友讨论与验收.md)；`docs/DELIVERY.md` 保留 v0.1 历史验收。
 
-新模块中，A 可接手 `test_results.py`、`execution_cases.py`；B 可接手 `knowledge_graph.py` 的关系与查询；C 负责把图谱解释与失败测试重跑融入用户试用。v0.2 的当前结果见 [优化记录](docs/OPTIMIZATION_LOG.md)。
+新模块中，A 可接手 `test_results.py`、`execution_cases.py`；B 可接手 `knowledge_graph.py` 的关系与查询；C 负责把图谱解释与失败测试重跑融入用户试用。历次版本结果见 [优化记录](docs/OPTIMIZATION_LOG.md)。
 
 ```bash
 .venv/bin/ruff check src tests scripts
@@ -174,3 +178,19 @@ v0.2 另附 `examples/execution-dataset/`：**30 个执行故障案例、35 条�
 ```
 
 当前还需小组补充不同结构的自然故障、真实用户操作对比和课程最终报告。受控案例已证明流程能运行，尚不能证明真实用户节省多少调试时间。
+
+## v0.3：有来源的历史故障与依赖核对
+
+新增 [项目声明冲突演示](examples/dependency-demo/01-broken.html)、[历史回归报告](examples/historical-regressions/REPORT.md) 和 [模型分歧示例](examples/historical-regressions/packaging-full-version/03-model-disagreement.html)。四个历史缺陷来自 Packaging 和 Click 官方修复记录；每例用同一测试源码实际验证故障版本失败、官方修复版本通过。它们是两个库的最小复现，不是四个完整项目，也不与原来 60 个受控案例混算。
+
+```bash
+# 官方 wheel、SHA256、来源和许可证随源码提供；复现实验不联网。
+# 安装仅发生在输出目录中新建的专用虚拟环境。
+.venv/bin/fixfirst historical --assets examples/historical-regressions/assets --output workbench/my-historical-replay
+.venv/bin/python scripts/demo_dependencies.py --output workbench/my-dependency-demo
+.venv/bin/python scripts/evaluate_historical.py examples/historical-regressions --model examples/execution-evaluation/decision_tree.json --output workbench/my-historical-evaluation.json
+```
+
+项目声明检查支持标准 `[project]` 依赖、可选组、`requires-python`、根目录 requirements 文本及项目内递归 `-r` / `-c`、setup.cfg 静态依赖。每次最多 30 个文件、每文件 128 KB、2000 条依赖。可选组不假定已经启用；约束文件不当成安装清单；直接引用、动态依赖、Poetry 专用配置和锁文件不据此验证。文件 SHA256 随快照保存。安装元数据提供导入名映射，同名声明只算线索。删除或放宽原声明不自动证明原问题修复。
+
+旧 Gini 模型在这四例中准确率 **75%**、Macro F1 **0.333**；规则分别为 **100% / 1.0**。Macro F1 使用真实和预测标签的并集，包括误预测的 `import_failure` 类。小样本不能用于泛化结论，但已揭示自建模板高分的局限；这四例未参与重新训练。产品显示分歧并继续使用真实异常证据。

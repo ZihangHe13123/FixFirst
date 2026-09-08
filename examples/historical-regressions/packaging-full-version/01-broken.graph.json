@@ -1,0 +1,407 @@
+{
+  "schema_version": 1,
+  "session_id": "session-94478b81b38e",
+  "goal": "goal:pass_tests",
+  "ontology": {
+    "entities": [
+      "Action",
+      "Event",
+      "Evidence",
+      "Fact",
+      "Goal",
+      "Issue",
+      "Run"
+    ],
+    "relations": {
+      "recommends": [
+        "Goal",
+        "Action"
+      ],
+      "has_open_issue": [
+        "Goal",
+        "Issue"
+      ],
+      "evaluated_by": [
+        "Goal",
+        "Run"
+      ],
+      "addresses": [
+        "Action",
+        "Issue"
+      ],
+      "justified_by": [
+        "Action",
+        "Fact"
+      ],
+      "inferred_from": [
+        "Fact",
+        "Fact"
+      ],
+      "supported_by": [
+        "Fact",
+        "Evidence"
+      ],
+      "has_event": [
+        "Issue",
+        "Event"
+      ],
+      "cites": [
+        "Event",
+        "Evidence"
+      ],
+      "observed_in": [
+        "Evidence",
+        "Run"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "goal:pass_tests",
+      "type": "Goal",
+      "label": "通过测试运行",
+      "attributes": {
+        "status": "blocked"
+      }
+    },
+    {
+      "id": "run-23150abd1a5e",
+      "type": "Run",
+      "label": "environment · 2026-09-08T02:50:28+00:00",
+      "attributes": {
+        "tool": "environment",
+        "status": "completed",
+        "source": "executed",
+        "scope": "environment",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-b0548b86b60d",
+      "type": "Run",
+      "label": "pip_check · 2026-09-08T02:50:28+00:00",
+      "attributes": {
+        "tool": "pip_check",
+        "status": "completed",
+        "source": "executed",
+        "scope": "dependencies:environment",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-4d1017b48b7c",
+      "type": "Run",
+      "label": "pytest_run · 2026-09-08T02:50:28+00:00",
+      "attributes": {
+        "tool": "pytest_run",
+        "status": "completed",
+        "source": "executed",
+        "scope": "tests:project",
+        "exit_code": 1,
+        "verified_pass": false,
+        "targets": [],
+        "summary": {
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      }
+    },
+    {
+      "id": "run-0919bee73891",
+      "type": "Run",
+      "label": "project · 2026-09-08T02:50:28+00:00",
+      "attributes": {
+        "tool": "project",
+        "status": "completed",
+        "source": "executed",
+        "scope": "declarations:project",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "evidence:run-23150abd1a5e:stdout:1",
+      "type": "Evidence",
+      "label": "run-23150abd1a5e:stdout:1",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-4d1017b48b7c:probe:2",
+      "type": "Evidence",
+      "label": "run-4d1017b48b7c:probe:2",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-4d1017b48b7c:probe:3",
+      "type": "Evidence",
+      "label": "run-4d1017b48b7c:probe:3",
+      "attributes": {}
+    },
+    {
+      "id": "event-dcf3d0a83275",
+      "type": "Event",
+      "label": "InvalidVersion: Invalid version: '3.11.1+'",
+      "attributes": {
+        "stage": "call",
+        "location": "test_regression.py::test_untagged_python_version",
+        "kind": "test_runtime_error"
+      }
+    },
+    {
+      "id": "issue-7b1ade6e80adcf",
+      "type": "Issue",
+      "label": "InvalidVersion · test_regression.py::test_untagged_python_version",
+      "attributes": {
+        "status": "open",
+        "tool": "pytest_run",
+        "targets": [
+          "test_regression.py::test_untagged_python_version"
+        ],
+        "note": ""
+      }
+    },
+    {
+      "id": "issue-7b1ade6e80adcf:kind:test_runtime_error",
+      "type": "Fact",
+      "label": "kind = test_runtime_error",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-7b1ade6e80adcf"
+      }
+    },
+    {
+      "id": "issue-7b1ade6e80adcf:stage:call",
+      "type": "Fact",
+      "label": "stage = call",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-7b1ade6e80adcf"
+      }
+    },
+    {
+      "id": "environment:available",
+      "type": "Fact",
+      "label": "snapshot = available",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "environment"
+      }
+    },
+    {
+      "id": "issue-7b1ade6e80adcf:affects:pass_tests",
+      "type": "Fact",
+      "label": "affects = pass_tests",
+      "attributes": {
+        "rule": "R12",
+        "status": "derived",
+        "subject": "issue-7b1ade6e80adcf"
+      }
+    },
+    {
+      "id": "issue-7b1ade6e80adcf:needs:runtime_review",
+      "type": "Fact",
+      "label": "needs = runtime_review",
+      "attributes": {
+        "rule": "R17",
+        "status": "derived",
+        "subject": "issue-7b1ade6e80adcf"
+      }
+    },
+    {
+      "id": "review-test_runtime_error",
+      "type": "Action",
+      "label": "检查测试执行阶段的异常",
+      "attributes": {
+        "priority": 1,
+        "explanation": "依据 setup / call / teardown 区分 fixture 准备、测试体与清理失败；不能把 fixture 或清理错误当成格式问题。",
+        "verification": "处理后重新运行对应范围的检查",
+        "targets": [],
+        "goal_impact": 1
+      }
+    },
+    {
+      "id": "check-failed-tests",
+      "type": "Action",
+      "label": "先验证关联的失败测试",
+      "attributes": {
+        "priority": 2,
+        "explanation": "只运行已观察到的失败节点，保留未覆盖问题。全部选中节点通过后，仍需完整测试验证项目目标。",
+        "verification": "查看每个节点的 setup、call、teardown 结果；跳过与 xfail 不算已修复",
+        "targets": [
+          "test_regression.py::test_untagged_python_version"
+        ],
+        "goal_impact": 1
+      }
+    },
+    {
+      "id": "check-pytest_run",
+      "type": "Action",
+      "label": "验证完整测试运行",
+      "attributes": {
+        "priority": 3,
+        "explanation": "只更新本次检查覆盖的问题；其他问题保留。若未做改动且没有新证据，无需反复运行同一检查。",
+        "verification": "查看新的检查记录和状态变化",
+        "targets": [],
+        "goal_impact": 1
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "check-failed-tests",
+      "relation": "addresses",
+      "target": "issue-7b1ade6e80adcf"
+    },
+    {
+      "source": "check-failed-tests",
+      "relation": "justified_by",
+      "target": "issue-7b1ade6e80adcf:affects:pass_tests"
+    },
+    {
+      "source": "check-pytest_run",
+      "relation": "addresses",
+      "target": "issue-7b1ade6e80adcf"
+    },
+    {
+      "source": "check-pytest_run",
+      "relation": "justified_by",
+      "target": "issue-7b1ade6e80adcf:affects:pass_tests"
+    },
+    {
+      "source": "environment:available",
+      "relation": "supported_by",
+      "target": "evidence:run-23150abd1a5e:stdout:1"
+    },
+    {
+      "source": "event-dcf3d0a83275",
+      "relation": "cites",
+      "target": "evidence:run-4d1017b48b7c:probe:2"
+    },
+    {
+      "source": "event-dcf3d0a83275",
+      "relation": "cites",
+      "target": "evidence:run-4d1017b48b7c:probe:3"
+    },
+    {
+      "source": "evidence:run-23150abd1a5e:stdout:1",
+      "relation": "observed_in",
+      "target": "run-23150abd1a5e"
+    },
+    {
+      "source": "evidence:run-4d1017b48b7c:probe:2",
+      "relation": "observed_in",
+      "target": "run-4d1017b48b7c"
+    },
+    {
+      "source": "evidence:run-4d1017b48b7c:probe:3",
+      "relation": "observed_in",
+      "target": "run-4d1017b48b7c"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "evaluated_by",
+      "target": "run-4d1017b48b7c"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "has_open_issue",
+      "target": "issue-7b1ade6e80adcf"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "recommends",
+      "target": "check-failed-tests"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "recommends",
+      "target": "check-pytest_run"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "recommends",
+      "target": "review-test_runtime_error"
+    },
+    {
+      "source": "issue-7b1ade6e80adcf",
+      "relation": "has_event",
+      "target": "event-dcf3d0a83275"
+    },
+    {
+      "source": "issue-7b1ade6e80adcf:affects:pass_tests",
+      "relation": "inferred_from",
+      "target": "issue-7b1ade6e80adcf:stage:call"
+    },
+    {
+      "source": "issue-7b1ade6e80adcf:affects:pass_tests",
+      "relation": "supported_by",
+      "target": "evidence:run-4d1017b48b7c:probe:2"
+    },
+    {
+      "source": "issue-7b1ade6e80adcf:affects:pass_tests",
+      "relation": "supported_by",
+      "target": "evidence:run-4d1017b48b7c:probe:3"
+    },
+    {
+      "source": "issue-7b1ade6e80adcf:kind:test_runtime_error",
+      "relation": "supported_by",
+      "target": "evidence:run-4d1017b48b7c:probe:2"
+    },
+    {
+      "source": "issue-7b1ade6e80adcf:kind:test_runtime_error",
+      "relation": "supported_by",
+      "target": "evidence:run-4d1017b48b7c:probe:3"
+    },
+    {
+      "source": "issue-7b1ade6e80adcf:needs:runtime_review",
+      "relation": "inferred_from",
+      "target": "issue-7b1ade6e80adcf:kind:test_runtime_error"
+    },
+    {
+      "source": "issue-7b1ade6e80adcf:needs:runtime_review",
+      "relation": "supported_by",
+      "target": "evidence:run-4d1017b48b7c:probe:2"
+    },
+    {
+      "source": "issue-7b1ade6e80adcf:needs:runtime_review",
+      "relation": "supported_by",
+      "target": "evidence:run-4d1017b48b7c:probe:3"
+    },
+    {
+      "source": "issue-7b1ade6e80adcf:stage:call",
+      "relation": "supported_by",
+      "target": "evidence:run-4d1017b48b7c:probe:2"
+    },
+    {
+      "source": "issue-7b1ade6e80adcf:stage:call",
+      "relation": "supported_by",
+      "target": "evidence:run-4d1017b48b7c:probe:3"
+    },
+    {
+      "source": "review-test_runtime_error",
+      "relation": "addresses",
+      "target": "issue-7b1ade6e80adcf"
+    },
+    {
+      "source": "review-test_runtime_error",
+      "relation": "justified_by",
+      "target": "issue-7b1ade6e80adcf:needs:runtime_review"
+    }
+  ],
+  "meaning": "来源与规则关系；不从文本相似度生成因果边。"
+}
