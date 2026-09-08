@@ -1,0 +1,15 @@
+{
+  "case_id": "p2-dependency",
+  "variant": "dependency",
+  "labels": [
+    {
+      "issue_id": "issue-6a5d24d058237d",
+      "label": "dependency_conflict"
+    }
+  ],
+  "expected_kinds": [
+    "dependency_conflict"
+  ],
+  "repair": "repair_fixture for this controlled fixture only",
+  "expected_groups": 1
+}

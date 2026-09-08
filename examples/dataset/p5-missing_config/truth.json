@@ -1,0 +1,15 @@
+{
+  "case_id": "p5-missing_config",
+  "variant": "missing_config",
+  "labels": [
+    {
+      "issue_id": "issue-a243e54d9b2955",
+      "label": "explicit_config_missing"
+    }
+  ],
+  "expected_kinds": [
+    "explicit_config_missing"
+  ],
+  "repair": "repair_fixture for this controlled fixture only",
+  "expected_groups": 1
+}

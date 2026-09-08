@@ -1,0 +1,15 @@
+{
+  "case_id": "p3-code_check",
+  "variant": "code_check",
+  "labels": [
+    {
+      "issue_id": "issue-969b1bc1f4f4b6",
+      "label": "other_unknown"
+    }
+  ],
+  "expected_kinds": [
+    "code_check"
+  ],
+  "repair": "repair_fixture for this controlled fixture only",
+  "expected_groups": 1
+}

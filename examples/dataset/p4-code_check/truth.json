@@ -1,0 +1,15 @@
+{
+  "case_id": "p4-code_check",
+  "variant": "code_check",
+  "labels": [
+    {
+      "issue_id": "issue-75de9e3d4923ab",
+      "label": "other_unknown"
+    }
+  ],
+  "expected_kinds": [
+    "code_check"
+  ],
+  "repair": "repair_fixture for this controlled fixture only",
+  "expected_groups": 1
+}

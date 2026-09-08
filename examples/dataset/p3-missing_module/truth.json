@@ -1,0 +1,15 @@
+{
+  "case_id": "p3-missing_module",
+  "variant": "missing_module",
+  "labels": [
+    {
+      "issue_id": "issue-d349a10654ffd5",
+      "label": "import_failure"
+    }
+  ],
+  "expected_kinds": [
+    "import_failure"
+  ],
+  "repair": "repair_fixture for this controlled fixture only",
+  "expected_groups": 1
+}

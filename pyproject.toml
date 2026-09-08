@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fixfirst-local"
+version = "0.1.0"
+description = "Evidence-based local Python troubleshooting assistant"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["pydantic>=2.8,<3", "Jinja2>=3.1,<4", "scikit-learn>=1.5,<2"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "ruff>=0.9,<1", "build>=1,<2"]
+semantic = ["sentence-transformers>=3,<6"]
+
+[project.scripts]
+fixfirst = "fixfirst.cli:main"
+
+[tool.setuptools.package-data]
+fixfirst = ["templates/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]

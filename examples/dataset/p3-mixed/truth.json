@@ -1,0 +1,20 @@
+{
+  "case_id": "p3-mixed",
+  "variant": "mixed",
+  "labels": [
+    {
+      "issue_id": "issue-93185473b48cc6",
+      "label": "import_failure"
+    },
+    {
+      "issue_id": "issue-1862cb2741f4a6",
+      "label": "style_issue"
+    }
+  ],
+  "expected_kinds": [
+    "import_failure",
+    "style_issue"
+  ],
+  "repair": "repair_fixture for this controlled fixture only",
+  "expected_groups": 2
+}

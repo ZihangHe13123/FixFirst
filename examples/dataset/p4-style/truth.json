@@ -1,0 +1,15 @@
+{
+  "case_id": "p4-style",
+  "variant": "style",
+  "labels": [
+    {
+      "issue_id": "issue-c55f73103dedb3",
+      "label": "style_issue"
+    }
+  ],
+  "expected_kinds": [
+    "style_issue"
+  ],
+  "repair": "repair_fixture for this controlled fixture only",
+  "expected_groups": 1
+}
