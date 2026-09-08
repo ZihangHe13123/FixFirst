@@ -14,7 +14,8 @@ import time
 from .models import Run, Session
 
 MAX_OUTPUT = 1_000_000
-TOOLS = ("environment", "pip_check", "pytest", "ruff")
+DEFAULT_CHECKS = ("environment", "pip_check", "pytest", "ruff")
+TOOLS = (*DEFAULT_CHECKS, "pytest_run")
 
 
 def redact(text: str) -> str:
@@ -139,11 +140,47 @@ print(json.dumps({'executable': sys.executable, 'prefix': sys.prefix,
 """
 
 
-def collect(session: Session, tool: str, timeout: float = 30) -> Run:
+def validate_targets(session: Session, targets: list[str]):
+    if not targets or len(targets) > 200 or len(targets) != len(set(targets)):
+        raise ValueError("一次请选择 1–200 个不同的已观察测试节点")
+    known = {
+        r.get("nodeid")
+        for run in session.runs
+        if run.tool == "pytest_run"
+        and run.source == "executed"
+        and run.environment_id == environment_id(session.target_python)
+        for r in run.records
+        if r.get("type") in ("outcome", "failure")
+    }
+    root = Path(session.project_root).resolve()
+    for node in targets:
+        if (
+            not isinstance(node, str)
+            or len(node) > 2000
+            or any(c in node for c in ("\n", "\r", "\0"))
+            or node.startswith("-")
+            or "::" not in node
+        ):
+            raise ValueError("测试节点格式无效；请从已有执行记录复制完整 node ID")
+        path = Path(node.split("::", 1)[0])
+        if (
+            path.is_absolute()
+            or not (root / path).resolve().is_relative_to(root)
+            or node not in known
+        ):
+            raise ValueError("只允许重跑当前项目、当前解释器已观察到的测试节点")
+
+
+def collect(session: Session, tool: str, timeout: float = 30, targets=None) -> Run:
     if tool not in TOOLS:
-        raise ValueError("仅允许 environment、pip_check、pytest、ruff 检查")
+        raise ValueError("不支持的检查工具")
+    targets = list(targets or [])
+    if targets:
+        if tool != "pytest_run":
+            raise ValueError("只有 pytest_run 支持指定测试节点")
+        validate_targets(session, targets)
     python, cwd = session.target_python, session.project_root
-    argv = {
+    commands = {
         "environment": [python, "-c", SNAPSHOT],
         "pip_check": [python, "-m", "pip", "check"],
         "ruff": [
@@ -171,14 +208,20 @@ def collect(session: Session, tool: str, timeout: float = 30) -> Run:
             "-p",
             "_fixfirst_probe",
         ],
-    }[tool]
+    }
+    commands["pytest_run"] = [arg for arg in commands["pytest"] if arg != "--collect-only"]
+    commands["pytest_run"] += ["--rootdir", cwd]
+    if targets:
+        commands["pytest_run"] += ["--", *targets]
+    argv = commands[tool]
     scope = {
         "pytest": "collect:project",
         "ruff": "lint:project",
         "pip_check": "dependencies:environment",
         "environment": "environment",
+        "pytest_run": "tests:selected" if targets else "tests:project",
     }[tool]
-    if tool == "pytest":
+    if tool in ("pytest", "pytest_run"):
         with tempfile.TemporaryDirectory(prefix="fixfirst-probe-") as directory:
             probe = Path(directory) / "_fixfirst_probe.py"
             probe.write_text(Path(__file__).with_name("probe.py").read_text())
@@ -186,6 +229,7 @@ def collect(session: Session, tool: str, timeout: float = 30) -> Run:
             extra = {
                 "PYTHONPATH": directory + os.pathsep + os.environ.get("PYTHONPATH", ""),
                 "FIXFIRST_PROBE": str(records_file),
+                "PYTHONDONTWRITEBYTECODE": "1",
             }
             run = execute(argv, cwd, tool, scope, python, timeout, extra_env=extra)
             if records_file.exists():
@@ -202,6 +246,9 @@ def collect(session: Session, tool: str, timeout: float = 30) -> Run:
             )
     else:
         run = execute(argv, cwd, tool, scope, python, timeout)
+    run.targets = targets
+    if tool == "pytest_run":
+        run.notes.append("本次执行测试体与 fixture；目标范围以项目配置及记录的测试节点为准。")
     if tool == "environment" and run.status == "completed" and run.exit_code == 0:
         try:
             payload = json.loads(run.stdout)
@@ -211,7 +258,9 @@ def collect(session: Session, tool: str, timeout: float = 30) -> Run:
             run.tool_version = payload["python_version"]
         except (ValueError, KeyError):
             run.notes.append("环境快照格式无法识别")
-    package = {"pytest": "pytest", "ruff": "ruff", "pip_check": "pip"}.get(tool)
+    package = {"pytest": "pytest", "pytest_run": "pytest", "ruff": "ruff", "pip_check": "pip"}.get(
+        tool
+    )
     if package:
         run.tool_version = next(
             (

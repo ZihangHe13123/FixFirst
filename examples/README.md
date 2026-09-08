@@ -1,5 +1,11 @@
 # 随源码附带的运行记录
 
+v0.2 新增 `execution-demo/`、`execution-dataset/` 和 `execution-evaluation/`。它们分别展示测试执行故事、30 个新增执行故障与实验；下文 `demo/` / `dataset/` / `evaluation/` 仍是 v0.1 原始记录。
+
+执行故事的顺序为：`00-healthy` → `01-two-failures` → `02-selected-pass` → `03-skipped-is-not-fixed` → `04-restored`。每个阶段都有 HTML、session JSON 和 `.graph.json`。可以直接打开 `execution-demo/01-two-failures.html` 查看新功能。
+
+执行套件同样使用相近模板，新增 35 条问题标签、180 次独立检查记录；`truth.json` 的 `event_groups` 明确区分同一工具的独立故障。新评测不再包含无法反映实际修复的固定检查次数模拟。
+
 这些文件来自 2026-09-08 在 macOS / Python 3.12 上的真实执行。为便于分享，已替换常见个人路径并移除临时环境和缓存。HTML 是静态结果，不会在页面内运行检查。
 
 ## 按故事看演示

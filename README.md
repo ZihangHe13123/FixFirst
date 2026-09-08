@@ -1,5 +1,7 @@
 # FixFirst
 
+当前版本 **0.2.0**：新增测试执行、失败节点重跑、证据知识图谱和中文依据查询。课程要求是三个**技术组**，对应关系见 [课程核对](docs/COURSE_ALIGNMENT.md)。
+
 帮助 Python 开发者把一堆报错整理成问题清单，判断下一步先检查什么，修改后再验证是否解决。
 
 首版已具备实际检查、日志导入、问题归并、行动排序、状态更新和 HTML 报告。交互入口是终端菜单，报告可在浏览器离线打开。支持 macOS / Linux 的 Python 3.10+；已在 macOS Apple Silicon、Python 3.12 上验收，Windows 原生运行尚未支持。
@@ -8,9 +10,10 @@
 
 双击项目根目录的 **`启动FixFirst.command`**，选择：
 
-1. **体验完整演示**：自动创建一个小项目，实际运行“正常 → 缺少模块并出现格式问题 → 只修格式 → 恢复模块”四个阶段，最后打开报告。
+1. **体验导入与风格排查**：自动创建一个小项目，实际运行“正常 → 缺少模块并出现格式问题 → 只修格式 → 恢复模块”四个阶段，最后打开报告。
 2. **开始排查自己的项目**：输入项目目录与该项目使用的 Python 解释器路径。
 3. **继续已有排查**：重跑检查、导入日志、查看报告、切换目标或导出结果。
+4. **体验测试执行与知识图谱**：测试能收集，但折扣和税费两个断言失败；只修其中一个、跳过另一个、最后全部恢复，逐步查看状态与依据。
 
 本机 `.venv` 已安装好。也可以在本目录运行：
 
@@ -33,6 +36,8 @@
 | 相同异常可能有不同原因 | 区分观察事实、推导结论与候选类别 | 规则分类；可选 Gini 决策树预测 |
 | 改完不确定是否真正解决 | 对相同环境、范围的完整检查进行前后对比 | 已解决、仍存在、待验证、本次未检查等状态 |
 | 队友难以了解排查过程 | 展示历史、原始证据和行动清单 | HTML / JSON 报告与脱敏导出 |
+| 不知道建议从哪里来 | 选择行动或问题，沿图谱追溯事实、事件与检查 | 有类型的证据知识图谱、中文查询与图谱 JSON |
+| 测试能启动，但执行失败 | 分开定位测试体、fixture 准备与清理；指定失败测试重跑 | pytest 执行协议与逐节点验证 |
 
 ## 支持的输入和目标
 
@@ -42,9 +47,10 @@
 | `pip check` 依赖一致性检查 | 支持 | 支持文本 |
 | `pip install` 安装失败 | 不自动安装 | 支持部分常见冲突、缺包、网络错误文本 |
 | pytest 测试收集 | 支持，附带结构化采集插件 | 支持常见 traceback；信息不足时保留未知 |
+| pytest 测试执行 | 明确选择执行目标或 `pytest_run` 时支持；可指定已观察节点 | 支持文本；历史文本不能证明节点已通过 |
 | Ruff 代码检查 | 支持 JSON 输出 | 支持 Ruff JSON 数组 |
 
-两个目标分别是 **恢复测试收集**、**通过代码检查**。测试收集成功表示能发现测试，不表示测试执行全部通过。代码检查采用目标项目的 Ruff 配置，不代表所有潜在代码缺陷都消失。
+三个目标分别是 **恢复测试收集**、**通过代码检查**、**通过测试运行**。默认目标仍只做收集。测试执行会运行测试体及 fixture；只有明确选择该目标或检查才执行。全项目目标需要完整检查，单个节点通过只能更新相关问题；跳过、xfail 或删除旧失败测试不能充当修复证明。代码检查采用目标项目的 Ruff 配置。
 
 外部库纳入环境与依赖检查，但不会把任意 `ImportError` 都认定为“需要安装包”。项目本地模块、导入名与发行包名差异，都可能需要进一步核查。未知报错仍保留原文。
 
@@ -91,6 +97,20 @@ fixfirst stop SESSION_ID
 fixfirst resume SESSION_ID
 ```
 
+新增测试执行与依据查询：
+
+```bash
+fixfirst configure SESSION_ID --goal pass_tests
+fixfirst scan SESSION_ID --checks pytest_run
+fixfirst scan SESSION_ID --checks pytest_run --nodes 'test_cart.py::test_discount'
+fixfirst run SESSION_ID check-failed-tests
+fixfirst ask SESSION_ID '为什么推荐这个行动'
+fixfirst ask SESSION_ID '当前目标有哪些问题'
+fixfirst graph SESSION_ID --output workbench/evidence-graph.json
+```
+
+节点必须已经出现在当前解释器的执行记录中。HTML 的「依据知识图谱」可以选择目标、行动或问题，查看关系路径。`ask` 是基于图谱实体和受控意图的查询，支持范围外的问题会明确提示；它没有调用聊天模型。报告旁现在同时生成 session JSON 与 `.graph.json`。
+
 默认记录保存在当前工作目录的 `.fixfirst/`。从不同目录调用时，用全局参数 `fixfirst --store /absolute/path/to/.fixfirst ...` 指向同一记录目录。报告内可复制的检查命令已经包含完整路径。分享版会隐藏可执行命令、替换常见个人路径及凭据；自定义日志内容仍需自行预览。
 
 `run SESSION_ID ACTION_ID` 只执行清单中的预定义检查。手动修复行动是说明，不会被当作 shell 命令运行。
@@ -109,11 +129,21 @@ fixfirst resume SESSION_ID
 
 随源码附带的 `examples/dataset/` 有 **30 个受控案例、35 条问题级标签、360 次检查记录**。已移除本机临时虚拟环境并替换常见个人路径，原始本地记录在 `workbench/dataset-v2/`。附带数据可以直接重新评价；要重新执行故障，请使用上面的 `dataset` 命令在自己的机器上重建。
 
+v0.2 另附 `examples/execution-dataset/`：**30 个执行故障案例、35 条标签、180 次检查记录**，涵盖断言、setup、teardown、运行时导入、独立混合故障及运行时配置。两个套件合计 60 个受控案例，仍不能称为自然故障数据集。
+
+```bash
+.venv/bin/fixfirst demo --scenario execution --output workbench/my-execution-demo --open
+.venv/bin/fixfirst dataset --suite execution --output workbench/my-execution-data
+.venv/bin/fixfirst evaluate examples/execution-dataset --output workbench/my-execution-evaluation
+```
+
+执行套件的 `truth.json` 为每条错误事件提供独立分组标签，同一工具的不同故障不会自动被当成同一组。新评测已移除固定检查次数模拟，因为它无法评价真实排查效率。
+
 这里的 5 个“项目”来自相近模板，不能当作 5 个独立真实项目。训练使用模板项目 1–3，验证使用 4，测试使用 5。当前测试集只有 7 条问题，规则与决策树 Macro F1 均为 1.0；精确匹配、TF-IDF、SBERT 的归并结果也相同。**目前没有证据说明复杂模型优于简单基线。** 详见 [实验记录](examples/evaluation/REPORT.md)。
 
 ## 启用课程中的模型方法
 
-三条技术路线均有可运行代码：文本向量与相似度归并、Gini 决策树、前向推理。默认产品走 TF-IDF + 规则 + 前向推理，训练后的决策树可以作为候选输出接入，SBERT 可以替换归并向量。
+课程三个组的实际对应为：**Decision automation**（前向推理）、**Knowledge discovery / data mining**（文本归并和决策树）、**Cognitive techniques/tools**（证据知识图谱）。TF-IDF 和决策树属于同一组，不能单独算成两个技术组。默认产品使用 TF-IDF、规则、前向推理和图谱；可选 Gini 模型及 SBERT。模型格式 v2 使用 12 个特征，旧版 8 特征 JSON 模型仍可加载。
 
 ```bash
 .venv/bin/python -m pip install -e '.[semantic]'
@@ -134,6 +164,8 @@ fixfirst resume SESSION_ID
 | C：产品与整合 | `cli.py`、`interactive.py`、`service.py`、`report.py`、模板 | 组织用户试用；改进流程与文案；验证重跑状态和分享报告 |
 
 共享接口在 `models.py`，存储在 `storage.py`。完整实现流程见 [模块与数据流](docs/FLOW.md)，当前交付证据与限制见 [验收说明](docs/DELIVERY.md)。
+
+新模块中，A 可接手 `test_results.py`、`execution_cases.py`；B 可接手 `knowledge_graph.py` 的关系与查询；C 负责把图谱解释与失败测试重跑融入用户试用。v0.2 的当前结果见 [优化记录](docs/OPTIMIZATION_LOG.md)。
 
 ```bash
 .venv/bin/ruff check src tests scripts

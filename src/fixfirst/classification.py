@@ -12,8 +12,11 @@ LABELS = [
     "explicit_config_missing",
     "style_issue",
     "other_unknown",
+    "test_assertion",
+    "test_runtime_error",
 ]
-FEATURE_NAMES = ["import", "dependency", "config", "style", "tool", "collect", "lint", "install"]
+LEGACY_FEATURES = ["import", "dependency", "config", "style", "tool", "collect", "lint", "install"]
+FEATURE_NAMES = LEGACY_FEATURES + ["test_call", "test_setup", "test_teardown", "assertion"]
 
 
 def features(issue: Issue) -> list[int]:
@@ -26,6 +29,10 @@ def features(issue: Issue) -> list[int]:
         int(issue.stage == "collect"),
         int(issue.stage == "lint"),
         int(issue.stage == "install"),
+        int(issue.stage == "call"),
+        int(issue.stage == "setup"),
+        int(issue.stage == "teardown"),
+        int(issue.kind == "test_assertion"),
     ]
 
 
@@ -34,9 +41,13 @@ def rule_classify(issue: Issue) -> str:
 
 
 def predict_tree(issue: Issue, model: dict) -> str:
-    if model.get("feature_names") != FEATURE_NAMES or model.get("schema_version") != 1:
+    names = model.get("feature_names")
+    if not (
+        (model.get("schema_version") == 1 and names == LEGACY_FEATURES)
+        or (model.get("schema_version") == 2 and names == FEATURE_NAMES)
+    ):
         raise ValueError("分类模型结构与当前特征不匹配")
-    values = features(issue)
+    values = features(issue)[: len(names)]
     nodes, labels = model["nodes"], model["classes"]
     at = 0
     visited = set()
@@ -77,7 +88,7 @@ def train_tree(rows: list[dict], output: Path) -> dict:
     clf.fit([features(issue) for issue in issues], labels)
     tree = clf.tree_
     model = {
-        "schema_version": 1,
+        "schema_version": 2,
         "feature_names": FEATURE_NAMES,
         "classes": list(clf.classes_),
         "training_projects": sorted({r["project_id"] for r in rows}),

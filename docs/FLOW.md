@@ -2,6 +2,8 @@
 
 本文件描述已经落地的代码；产品定位和使用方式见根目录 README。修改模块前，以 `models.py` 的 Pydantic 数据结构为共同约定。
 
+v0.2 在以下基础流程上增加测试执行与知识图谱，详见本文件末尾。旧模型和运行记录继续可读。
+
 ## 一次排查的完整流程
 
 1. **创建记录**：CLI / 菜单收集项目路径、解释器、目标及算法选项。`service.create_session` 验证路径，`storage.Store` 保存排查记录。
@@ -27,6 +29,8 @@
 当前“环境 ID”区分解释器路径，不是整个环境内容的不可变快照。用户在同一路径更新依赖后，应重新运行环境与相关检查。报告中的“已验证”对应记录中的检查时刻，不代表后台持续监控。
 
 ## 三类课程技术怎样落地
+
+此表按算法列举，**不代表三个课程技术组**；文本归并与决策树都属于知识发现组。当前按前向推理、知识发现、证据知识图谱三个组映射，详见 `COURSE_ALIGNMENT.md`。
 
 | 技术 | 实际输入与输出 | 已实现的可比较项 |
 |---|---|---|
@@ -59,3 +63,15 @@
 - [pytest hooks](https://docs.pytest.org/en/stable/reference/reference.html#hooks)：采集阶段与完成信息。
 - [Ruff configuration](https://docs.astral.sh/ruff/configuration/)：检查配置与命令行覆盖。
 - [pip check](https://pip.pypa.io/en/stable/cli/pip_check/)：已安装依赖的一致性检查。
+
+## v0.2 执行与查询流程
+
+新增 `pytest_run` 与 `pass_tests`。`probe.py` 记录每个测试的 setup/call/teardown、异常类型、最终选中节点和采集是否截断；`test_results.py` 根据完整协议产生 `passed_nodes`、覆盖状态和结果计数。pytest 的过程定义参考 [运行协议](https://docs.pytest.org/en/stable/reference/reference.html#pytest_runtest_protocol)。
+
+指定节点的重跑需要 `--checks pytest_run --nodes ...`，节点必须来自本项目当前解释器的已有记录。成功的部分重跑可关闭全部关联节点确实通过的问题；它不能证明项目目标。已跳过、xfail、删除、未完成或其他环境的问题会保留。同组有多个节点时，新的失败与旧的未覆盖成员合并维护，完整重跑再更新成员。
+
+规则新增测试执行阶段到目标及处理行动的映射。相同证据和目标影响下，先提出需要的人工处理，再提出重跑；声明已修改后提高验证的相对优先级。旧环境问题保留在历史中，不用于生成当前环境的处理建议。
+
+`knowledge_graph.build_graph` 将 Session 转成 7 类实体及 10 类有类型关系。每个关系都来自真实事件、事实、动作引用或最近检查，不用相似度生成因果关系。`query_graph` 做有限的中文意图和实体匹配，再遍历关系返回证据路径。未知问题返回不支持。HTML 用同一批查询结果展示可切换的关系路径，导出提供独立 `.graph.json`。
+
+训练器现在输出模型 schema v2（12 个可观测特征）；预测器兼容 v1 的 8 特征模型。执行套件的成对归并评价读取独立 `event_groups`，允许一个工具内有多个真实故障组。v0.1 的固定查询次数模拟已从新评测移除。

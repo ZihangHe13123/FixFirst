@@ -1,0 +1,17 @@
+{
+  "case_id": "x5-runtime_config",
+  "variant": "runtime_config",
+  "labels": [
+    {
+      "issue_id": "issue-20ac3d0d6dc191",
+      "label": "explicit_config_missing"
+    }
+  ],
+  "expected_kinds": [
+    "explicit_config_missing"
+  ],
+  "event_groups": {
+    "event-a661157d595a": "test_cart.py::test_discount"
+  },
+  "repair": "Restore owned cart.py and conftest.py from HEALTHY/FIXTURE"
+}

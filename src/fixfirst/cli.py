@@ -42,18 +42,25 @@ def parser():
         ("stop", "结束排查"),
         ("resume", "恢复排查"),
         ("delete", "删除某次排查的本地记录"),
+        ("graph", "导出证据知识图谱"),
+        ("ask", "依据知识图谱查询问题与推荐理由"),
     ]:
         command = sub.add_parser(name, help=help_text)
         command.add_argument("session")
         if name in ("scan", "run"):
             command.add_argument("--timeout", type=float, default=30)
         if name == "scan":
-            command.add_argument("--checks", nargs="+", choices=TOOLS, default=list(TOOLS))
+            command.add_argument("--checks", nargs="+", choices=TOOLS)
+            command.add_argument(
+                "--nodes", nargs="+", help="仅重跑已观察的测试节点，需要 --checks pytest_run"
+            )
         if name == "run":
             command.add_argument("action")
         if name == "import":
             command.add_argument(
-                "--tool", required=True, choices=["pip_install", "pip_check", "pytest", "ruff"]
+                "--tool",
+                required=True,
+                choices=["pip_install", "pip_check", "pytest", "pytest_run", "ruff"],
             )
             command.add_argument("--file", required=True)
             command.add_argument("--exit-code", type=int)
@@ -70,11 +77,19 @@ def parser():
         if name == "configure":
             command.add_argument("--goal", choices=list(GOALS))
             command.add_argument("--python")
+        if name == "graph":
+            command.add_argument("--output", required=True)
+        if name == "ask":
+            command.add_argument("question")
+            command.add_argument("--entity", help="可选 action / issue / fact 编号")
+            command.add_argument("--json", action="store_true")
     demo = sub.add_parser("demo", help="创建并实际运行自建故障案例，不修改用户项目")
     demo.add_argument("--output", default="workbench/demo")
     demo.add_argument("--open", action="store_true")
+    demo.add_argument("--scenario", choices=["collection", "execution"], default="collection")
     dataset = sub.add_parser("dataset", help="创建可复现受控案例及独立标签")
     dataset.add_argument("--output", default="workbench/dataset")
+    dataset.add_argument("--suite", choices=["collection", "execution"], default="collection")
     evaluation = sub.add_parser("evaluate", help="按项目划分训练并评价规则、归并及决策树")
     evaluation.add_argument("dataset")
     evaluation.add_argument("--output", default="workbench/evaluation")
@@ -102,6 +117,12 @@ def main(argv=None):
             return menu(store.root)
         if args.command in ("demo", "dataset", "evaluate"):
             from . import cases
+
+            if (
+                getattr(args, "scenario", None) == "execution"
+                or getattr(args, "suite", None) == "execution"
+            ):
+                from . import execution_cases as cases
 
             if args.command == "demo":
                 path = cases.demo(Path(args.output), store)
@@ -142,7 +163,7 @@ def main(argv=None):
             session = store.load(args.session)
             path = store.directory(args.session) / "report.html"
             if args.command == "scan":
-                scan(session, args.checks, args.timeout)
+                scan(session, args.checks, args.timeout, targets=args.nodes)
             elif args.command == "import":
                 import_log(session, args.file, args.tool, args.exit_code)
             elif args.command == "run":
@@ -150,7 +171,7 @@ def main(argv=None):
                 if not action or not action.check or action.blocked_reasons:
                     raise ValueError("这不是可执行的检查行动；手动处理请依照原始证据进行")
                 print(f"运行：{action.title}，项目 {session.project_root}", flush=True)
-                scan(session, [action.check], args.timeout)
+                scan(session, [action.check], args.timeout, targets=action.targets)
             elif args.command == "mark-fixed":
                 mark_fixed(session, args.issue)
             elif args.command == "configure":
@@ -186,6 +207,28 @@ def main(argv=None):
                 print(f"已导出：{path}（请预览内容后分享）")
                 if args.open:
                     webbrowser.open(path.as_uri())
+                return 0
+            elif args.command in ("graph", "ask"):
+                from .knowledge_graph import build_graph, query_graph
+                from .report import public_data
+                from .models import Session
+
+                graph = build_graph(Session.model_validate(public_data(session)))
+                if args.command == "graph":
+                    from .storage import atomic_write
+
+                    atomic_write(
+                        Path(args.output).expanduser().resolve(),
+                        json.dumps(graph, ensure_ascii=False, indent=2),
+                    )
+                    print(f"已导出知识图谱：{args.output}")
+                else:
+                    answer = query_graph(graph, args.question, args.entity)
+                    print(
+                        json.dumps(answer, ensure_ascii=False, indent=2)
+                        if args.json
+                        else answer["answer"]
+                    )
                 return 0
             store.save(session)
             render(session, store.root, path)

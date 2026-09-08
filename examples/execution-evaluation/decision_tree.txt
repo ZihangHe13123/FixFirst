@@ -1,0 +1,10 @@
+|--- assertion <= 0.50
+|   |--- test_call <= 0.50
+|   |   |--- class: test_runtime_error
+|   |--- test_call >  0.50
+|   |   |--- config <= 0.50
+|   |   |   |--- class: import_failure
+|   |   |--- config >  0.50
+|   |   |   |--- class: explicit_config_missing
+|--- assertion >  0.50
+|   |--- class: test_assertion

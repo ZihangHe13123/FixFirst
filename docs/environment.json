@@ -5,7 +5,7 @@
   "machine": "arm64",
   "python": "3.12.14",
   "dependencies": {
-    "fixfirst-local": "0.1.0",
+    "fixfirst-local": "0.2.0",
     "pydantic": "2.13.5",
     "Jinja2": "3.1.6",
     "scikit-learn": "1.9.0",
@@ -15,5 +15,6 @@
     "torch": "2.14.0",
     "transformers": "5.16.1",
     "build": "1.6.0"
-  }
+  },
+  "application_version": "0.2.0"
 }

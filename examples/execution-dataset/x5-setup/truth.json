@@ -1,0 +1,17 @@
+{
+  "case_id": "x5-setup",
+  "variant": "setup",
+  "labels": [
+    {
+      "issue_id": "issue-d5a6aa09c1b84c",
+      "label": "test_runtime_error"
+    }
+  ],
+  "expected_kinds": [
+    "test_runtime_error"
+  ],
+  "event_groups": {
+    "event-af98c89f79a6": "test_cart.py::test_fixture"
+  },
+  "repair": "Restore owned cart.py and conftest.py from HEALTHY/FIXTURE"
+}

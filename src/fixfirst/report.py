@@ -9,8 +9,13 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 from .models import Session
 from .runner import redact
 from .storage import atomic_write
+from .knowledge_graph import build_graph, query_graph
 
-GOALS = {"collect_tests": "恢复测试收集", "check_style": "通过代码检查"}
+GOALS = {
+    "collect_tests": "恢复测试收集",
+    "check_style": "通过代码检查",
+    "pass_tests": "通过测试运行",
+}
 STATES = {
     "open": "仍存在",
     "resolved": "已验证解决",
@@ -23,6 +28,7 @@ TOOL_NAMES = {
     "pip_check": "依赖一致性",
     "pip_install": "安装日志",
     "pytest": "测试收集",
+    "pytest_run": "测试执行",
     "ruff": "代码检查",
 }
 
@@ -54,6 +60,12 @@ def render(session: Session, store_root: Path, output: Path, public=False):
         loader=PackageLoader("fixfirst", "templates"), autoescape=select_autoescape(["html"])
     )
     data = public_data(session) if public else session.model_dump()
+    graph = build_graph(Session.model_validate(data))
+    views = [
+        query_graph(graph, "依据", n["id"])
+        for n in graph["nodes"]
+        if n["type"] in ("Goal", "Action", "Issue")
+    ]
     counts = {state: sum(i.status == state for i in session.issues) for state in STATES}
     command_prefix = shlex.join([sys.executable, "-m", "fixfirst", "--store", str(store_root)])
     commands = {}
@@ -74,7 +86,10 @@ def render(session: Session, store_root: Path, output: Path, public=False):
         commands=commands,
         latest=latest,
         public=public,
+        graph=graph,
+        graph_views=views,
     )
     atomic_write(output, text)
     atomic_write(output.with_suffix(".json"), json.dumps(data, ensure_ascii=False, indent=2))
+    atomic_write(output.with_suffix(".graph.json"), json.dumps(graph, ensure_ascii=False, indent=2))
     return output

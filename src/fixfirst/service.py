@@ -2,11 +2,11 @@ from pathlib import Path
 import os
 
 from .classification import classify
-from .grouping import group_events
-from .models import Run, Session, now
+from .grouping import group_events, digest, member_key
+from .models import Run, Session, now, GOAL_CHECKS
 from .parsers import parse
 from .reasoning import infer_and_plan
-from .runner import collect, environment_id, redact, MAX_OUTPUT
+from .runner import collect, environment_id, redact, MAX_OUTPUT, DEFAULT_CHECKS, validate_targets
 
 
 def create_session(
@@ -52,6 +52,56 @@ def ingest(session: Session, runs: list[Run]):
     updated_tools = {r.tool for r in runs}
     previous = session.issues
     by_id = {i.issue_id: i for i in previous}
+    claimed = set()
+    for issue in fresh:
+        # The same text in different interpreters must not overwrite the prior environment.
+        if issue.issue_id in by_id and by_id[issue.issue_id].environment_id != issue.environment_id:
+            issue.issue_id = "issue-" + digest(issue.fingerprint + issue.environment_id)
+        if issue.tool != "pytest_run" or not issue.targets:
+            continue
+        candidates = [
+            old
+            for old in previous
+            if old.issue_id not in claimed
+            and (old.tool, old.environment_id, old.kind, old.stage, old.component)
+            == (issue.tool, issue.environment_id, issue.kind, issue.stage, issue.component)
+            and set(old.targets) & set(issue.targets)
+        ]
+        if len(candidates) != 1:
+            continue
+        old = candidates[0]
+        issue.issue_id, issue.first_seen = old.issue_id, old.first_seen
+        claimed.add(old.issue_id)
+        passed = {
+            node
+            for run in runs
+            if run.tool == issue.tool
+            and run.environment_id == issue.environment_id
+            and run.source == "executed"
+            for node in run.passed_nodes
+        }
+        represented = {
+            node
+            for other in fresh
+            if other.tool == issue.tool
+            and other.environment_id == issue.environment_id
+            and other.kind == issue.kind
+            and other.stage == issue.stage
+            and other.component == issue.component
+            for node in other.targets
+        }
+        pending = set(old.targets) - passed - represented if old.status != "resolved" else set()
+        carried = [
+            e for e in session.events if e.event_id in old.event_ids and e.location in pending
+        ]
+        if carried:
+            issue.targets = sorted(set(issue.targets) | pending)
+            issue.event_ids += [e.event_id for e in carried]
+            issue.evidence_refs = sorted(
+                set(issue.evidence_refs) | {ref for e in carried for ref in e.evidence_refs}
+            )
+            issue.member_keys = sorted(set(issue.member_keys) | {member_key(e) for e in carried})
+            issue.note = f"本轮只重新观察部分成员；{len(pending)} 个节点保留先前未验证证据"
     fresh_ids = {i.issue_id for i in fresh}
     changes = []
     for issue in fresh:
@@ -81,9 +131,22 @@ def ingest(session: Session, runs: list[Run]):
         passed = any(
             r.verified_pass and r.coverage_complete and r.source == "executed" for r in matching
         )
+        if old.tool == "pytest_run" and old.targets:
+            passed = any(
+                r.tool == old.tool
+                and r.environment_id == old.environment_id
+                and r.source == "executed"
+                and r.coverage_complete
+                and set(old.targets).issubset(r.passed_nodes)
+                for r in runs
+            )
         if passed:
             copy.status = "resolved"
-            copy.note = "同一环境与检查范围已实际通过"
+            copy.note = (
+                "同一环境中的全部关联测试节点已执行通过"
+                if old.targets
+                else "同一环境与检查范围已实际通过"
+            )
         elif old.status != "resolved":
             copy.status = "not_observed" if old.status != "awaiting_verification" else old.status
             copy.note = "本轮未覆盖该问题，或检查未成功完成；保留之前证据"
@@ -100,20 +163,29 @@ def ingest(session: Session, runs: list[Run]):
     )
     infer_and_plan(session)
     # Prevent stale success after changing the target interpreter.
-    target = "pytest" if session.goal == "collect_tests" else "ruff"
+    target = GOAL_CHECKS[session.goal]
     last = next((r for r in reversed(session.runs) if r.tool == target), None)
     if last and last.environment_id != environment_id(session.target_python):
         session.goal_status = "unknown"
 
 
-def scan(session, checks, timeout=30):
+def scan(session, checks=None, timeout=30, targets=None):
     if session.stopped:
         raise ValueError("排查已结束；使用 resume 恢复后再检查")
+    if checks is None:
+        checks = [
+            "pytest_run" if c == "pytest" and session.goal == "pass_tests" else c
+            for c in DEFAULT_CHECKS
+        ]
+    if targets:
+        if list(checks) != ["pytest_run"]:
+            raise ValueError("--nodes 必须与 --checks pytest_run 单独使用")
+        validate_targets(session, targets)
     if len(checks) != len(set(checks)):
         raise ValueError("同一批检查不能重复")
     runs = []
     for check in checks:
-        run = collect(session, check, timeout)
+        run = collect(session, check, timeout, targets=targets)
         runs.append(run)
         if run.status == "cancelled":
             break

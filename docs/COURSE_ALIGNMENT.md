@@ -11,7 +11,7 @@
 | Decision automation：规则 / 知识推理 | 带来源的前向推理、行动前置条件、目标排序 | v0.1 已运行 |
 | Business resource optimization：informed search / evolutionary computing | 当前未采用 | 现有启发式评分不能冒称 A* 或进化计算 |
 | Knowledge discovery / data mining | TF-IDF / SBERT 问题归并、Gini 决策树分类 | v0.1 已运行；都归入此组，不能拆成两组 |
-| Cognitive techniques / tools：知识图谱、框架等知识库组件 | 证据知识图谱：问题、事件、检查、事实、行动、目标的实体和显式关系；关系查询与依据追溯 | v0.2 正在实现，必须有运行和查询证据后才能记作已集成 |
+| Cognitive techniques / tools：知识图谱、框架等知识库组件 | 证据知识图谱：问题、事件、检查、事实、行动、目标及证据位置的实体和显式关系；关系查询与依据追溯 | v0.2 已集成 `knowledge_graph.py`、`ask` / `graph` 命令和 HTML 图谱；实际执行案例与查询回归通过 |
 
 v0.1 的“三类技术”表述描述了算法数量，不能据此证明已满足三技术组要求。后续以 Decision automation + Knowledge discovery + 知识图谱三个组组织演示和报告。最终课程归类仍需在 proposal 中让教师明确审阅。
 

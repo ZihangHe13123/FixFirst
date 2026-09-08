@@ -1,0 +1,17 @@
+{
+  "case_id": "x4-assertion",
+  "variant": "assertion",
+  "labels": [
+    {
+      "issue_id": "issue-6de8e0ff1e6419",
+      "label": "test_assertion"
+    }
+  ],
+  "expected_kinds": [
+    "test_assertion"
+  ],
+  "event_groups": {
+    "event-6077bbbbb0ba": "test_cart.py::test_discount"
+  },
+  "repair": "Restore owned cart.py and conftest.py from HEALTHY/FIXTURE"
+}

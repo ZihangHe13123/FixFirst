@@ -1,6 +1,6 @@
 """Forward chaining with provenance, then stable goal-sensitive action ordering."""
 
-from .models import Action, Fact, Session
+from .models import Action, Fact, Session, GOAL_CHECKS, PROJECT_SCOPES
 from .runner import environment_id
 
 # Conditions and consequences operate on (predicate, value), keeping issue subjects separate.
@@ -16,6 +16,12 @@ RULES = [
     ("R09", ("kind", "tool_failure"), ("needs", "tool_review")),
     ("R10", ("kind", "style_issue"), ("needs", "style_review")),
     ("R11", ("kind", "code_check"), ("needs", "code_review")),
+    ("R12", ("stage", "call"), ("affects", "pass_tests")),
+    ("R13", ("stage", "setup"), ("affects", "pass_tests")),
+    ("R14", ("stage", "teardown"), ("affects", "pass_tests")),
+    ("R15", ("stage", "collect"), ("affects", "pass_tests")),
+    ("R16", ("kind", "test_assertion"), ("needs", "assertion_review")),
+    ("R17", ("kind", "test_runtime_error"), ("needs", "runtime_review")),
 ]
 
 
@@ -56,6 +62,7 @@ def order_actions(actions, facts):
             bool(a.blocked_reasons),
             -a.goal_impact,
             -a.evidence_rank,
+            {"inspect": 0, "manual_fix": 1, "rerun": 2}[a.kind],
             a.cost,
             a.action_id,
         ),
@@ -66,7 +73,12 @@ def order_actions(actions, facts):
 
 
 def infer_and_plan(session: Session):
-    active = [i for i in session.issues if i.status != "resolved"]
+    current_environment = environment_id(session.target_python)
+    active = [
+        i
+        for i in session.issues
+        if i.status != "resolved" and i.environment_id in (current_environment, "unknown")
+    ]
     observations = []
     for issue in active:
         for predicate, value in (("kind", issue.kind), ("stage", issue.stage)):
@@ -110,6 +122,7 @@ def infer_and_plan(session: Session):
         preconditions=None,
         impact=None,
         predicate="needs",
+        targets=None,
     ):
         ids = [i.issue_id for i in issues]
         evidence = [
@@ -129,14 +142,15 @@ def infer_and_plan(session: Session):
                 preconditions=preconditions or [],
                 goal_impact=impact
                 if impact is not None
-                else int(
-                    any(
-                        (i.tool == "pytest" and session.goal == "collect_tests")
-                        or (i.tool == "ruff" and session.goal == "check_style")
-                        for i in issues
-                    )
-                ),
-                evidence_rank=2 if evidence else 1,
+                else int(any(i.tool == GOAL_CHECKS[session.goal] for i in issues)),
+                evidence_rank=0
+                if kind == "manual_fix"
+                and issues
+                and all(i.status == "awaiting_verification" for i in issues)
+                else 2
+                if evidence
+                else 1,
+                targets=targets or [],
             )
         )
 
@@ -153,7 +167,7 @@ def infer_and_plan(session: Session):
                 "检查快照中的解释器路径与包信息，再决定是否手动调整",
                 affected,
                 "environment",
-                impact=2 if session.goal == "collect_tests" else 0,
+                impact=2 if session.goal in ("collect_tests", "pass_tests") else 0,
             )
         else:
             add(
@@ -198,6 +212,16 @@ def infer_and_plan(session: Session):
             "这是代码检查器报告的诊断，可能涉及未定义名称等问题，不能全部称作格式问题。",
         ),
         (
+            "test_assertion",
+            "核对失败断言的预期与实际结果",
+            "查看具体测试节点、断言和原始 traceback，核对业务预期及实现；修改后先验证相关节点，再运行完整测试。",
+        ),
+        (
+            "test_runtime_error",
+            "检查测试执行阶段的异常",
+            "依据 setup / call / teardown 区分 fixture 准备、测试体与清理失败；不能把 fixture 或清理错误当成格式问题。",
+        ),
+        (
             "other_unknown",
             "补充信息或人工排查",
             "当前输入没有足够证据支持自动判断，请从原文核对；业务逻辑修复超出首版范围。",
@@ -218,13 +242,10 @@ def infer_and_plan(session: Session):
         ("pip_check", "重新检查依赖一致性"),
         ("pytest", "重新验证测试收集"),
         ("ruff", "重新检查代码"),
+        ("pytest_run", "验证完整测试运行"),
     ):
         issues = [i for i in active if i.tool == tool]
-        if (
-            issues
-            or (tool == "pytest" and session.goal == "collect_tests")
-            or (tool == "ruff" and session.goal == "check_style")
-        ):
+        if issues or tool == GOAL_CHECKS[session.goal]:
             add(
                 "check-" + tool,
                 "rerun",
@@ -234,16 +255,34 @@ def infer_and_plan(session: Session):
                 issues,
                 tool,
                 cost=3,
-                impact=1
-                if (tool == "pytest" and session.goal == "collect_tests")
-                or (tool == "ruff" and session.goal == "check_style")
-                else 0,
+                impact=1 if tool == GOAL_CHECKS[session.goal] else 0,
                 predicate="affects",
             )
+    test_issues = [
+        i
+        for i in active
+        if i.tool == "pytest_run"
+        and i.targets
+        and i.environment_id == environment_id(session.target_python)
+    ]
+    nodes = sorted({node for i in test_issues for node in i.targets})
+    if nodes and len(nodes) <= 200:
+        add(
+            "check-failed-tests",
+            "rerun",
+            "先验证关联的失败测试",
+            "只运行已观察到的失败节点，保留未覆盖问题。全部选中节点通过后，仍需完整测试验证项目目标。",
+            "查看每个节点的 setup、call、teardown 结果；跳过与 xfail 不算已修复",
+            test_issues,
+            "pytest_run",
+            cost=2,
+            predicate="affects",
+            targets=nodes,
+        )
     session.actions = order_actions(actions, session.facts)
-    target = "pytest" if session.goal == "collect_tests" else "ruff"
+    target = GOAL_CHECKS[session.goal]
     last = next((r for r in reversed(session.runs) if r.tool == target), None)
-    expected_scope = "collect:project" if target == "pytest" else "lint:project"
+    expected_scope = PROJECT_SCOPES[target]
     eligible = bool(
         last
         and last.source == "executed"
@@ -255,3 +294,18 @@ def infer_and_plan(session: Session):
     )
     if any(i.status == "awaiting_verification" and i.tool == target for i in active):
         session.goal_status = "unknown"
+    if session.goal == "pass_tests":
+        if last and last.coverage_complete and last.exit_code == 0 and not last.verified_pass:
+            session.goal_status = "unknown"
+        if session.goal_status == "achieved" and any(
+            i.tool == target and i.environment_id == current_environment for i in active
+        ):
+            session.goal_status = "unknown"
+        if (
+            last
+            and last.source == "executed"
+            and last.environment_id == environment_id(session.target_python)
+            and last.scope == "tests:selected"
+            and last.test_summary.get("failed", 0)
+        ):
+            session.goal_status = "blocked"

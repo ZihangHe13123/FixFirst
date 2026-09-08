@@ -1,0 +1,480 @@
+{
+  "schema_version": 1,
+  "session_id": "session-3ca474ea7d1c",
+  "name": "x5-setup",
+  "project_root": "<project>",
+  "target_python": "<python>",
+  "created_at": "2026-09-08T01:59:48+00:00",
+  "goal": "pass_tests",
+  "grouping": "tfidf",
+  "threshold": 0.82,
+  "model_path": null,
+  "sbert_model": null,
+  "runs": [
+    {
+      "schema_version": 1,
+      "run_id": "run-03b342109446",
+      "tool": "pytest",
+      "started_at": "2026-09-08T01:59:48+00:00",
+      "argv": [
+        "<python>",
+        "-m",
+        "pytest",
+        "--collect-only",
+        "-q",
+        "--color=no",
+        "-o",
+        "addopts=",
+        "-p",
+        "_fixfirst_probe"
+      ],
+      "cwd": "<project>",
+      "environment_id": "6c069519e4f32cc8",
+      "tool_version": "unknown",
+      "scope": "collect:project",
+      "status": "completed",
+      "source": "executed",
+      "exit_code": 0,
+      "stdout": "workbench/execution-dataset/x5-setup/project/test_cart.py::test_discount\nworkbench/execution-dataset/x5-setup/project/test_cart.py::test_tax\nworkbench/execution-dataset/x5-setup/project/test_cart.py::test_fixture\n\n3 tests collected in 0.01s\n",
+      "stderr": "",
+      "duration_s": 0.13,
+      "truncated": false,
+      "verified_pass": true,
+      "coverage_complete": true,
+      "notes": [
+        "测试收集会执行项目导入和 conftest；与目标项目正常运行一样需信任源码。"
+      ],
+      "records": [
+        {
+          "type": "finish",
+          "exit_code": 0,
+          "collected": 3,
+          "collect_only": true,
+          "nodes": [
+            "workbench/execution-dataset/x5-setup/project/test_cart.py::test_discount",
+            "workbench/execution-dataset/x5-setup/project/test_cart.py::test_tax",
+            "workbench/execution-dataset/x5-setup/project/test_cart.py::test_fixture"
+          ],
+          "records_dropped": false
+        }
+      ],
+      "targets": [],
+      "passed_nodes": [],
+      "test_summary": {}
+    },
+    {
+      "schema_version": 1,
+      "run_id": "run-619c89ccc18b",
+      "tool": "pytest_run",
+      "started_at": "2026-09-08T01:59:48+00:00",
+      "argv": [
+        "<python>",
+        "-m",
+        "pytest",
+        "-q",
+        "--color=no",
+        "-o",
+        "addopts=",
+        "-p",
+        "_fixfirst_probe",
+        "--rootdir",
+        "<project>"
+      ],
+      "cwd": "<project>",
+      "environment_id": "6c069519e4f32cc8",
+      "tool_version": "unknown",
+      "scope": "tests:project",
+      "status": "completed",
+      "source": "executed",
+      "exit_code": 1,
+      "stdout": "..E                                                                      [100%]\n==================================== ERRORS ====================================\n________________________ ERROR at setup of test_fixture ________________________\n\n    @pytest.fixture\n    def ready():\n>       raise RuntimeError('fixture preparation failed')\nE       RuntimeError: fixture preparation failed\n\nconftest.py:5: RuntimeError\n=============================== warnings summary ===============================\n../../../../.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624\n  <home>/Project/课程Projec/FixFirst/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624: PytestConfigWarning: No files were found in testpaths; consider removing or adjusting your testpaths configuration. Searching recursively from the current directory instead.\n    self.args, self.args_source = self._decide_args(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nERROR test_cart.py::test_fixture - RuntimeError: fixture preparation failed\n2 passed, 1 warning, 1 error in 0.02s\n",
+      "stderr": "",
+      "duration_s": 0.165,
+      "truncated": false,
+      "verified_pass": false,
+      "coverage_complete": true,
+      "notes": [
+        "测试收集会执行项目导入和 conftest；与目标项目正常运行一样需信任源码。",
+        "本次执行测试体与 fixture；目标范围以项目配置及记录的测试节点为准。"
+      ],
+      "records": [
+        {
+          "type": "outcome",
+          "stage": "setup",
+          "nodeid": "test_cart.py::test_discount",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "call",
+          "nodeid": "test_cart.py::test_discount",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "teardown",
+          "nodeid": "test_cart.py::test_discount",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "setup",
+          "nodeid": "test_cart.py::test_tax",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "call",
+          "nodeid": "test_cart.py::test_tax",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "teardown",
+          "nodeid": "test_cart.py::test_tax",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "setup",
+          "nodeid": "test_cart.py::test_fixture",
+          "outcome": "failed",
+          "wasxfail": false
+        },
+        {
+          "type": "failure",
+          "stage": "setup",
+          "nodeid": "test_cart.py::test_fixture",
+          "message": "@pytest.fixture\n    def ready():\n>       raise RuntimeError('fixture preparation failed')\nE       RuntimeError: fixture preparation failed\n\nconftest.py:5: RuntimeError"
+        },
+        {
+          "type": "exception",
+          "nodeid": "test_cart.py::test_fixture",
+          "stage": "setup",
+          "exception_type": "RuntimeError"
+        },
+        {
+          "type": "outcome",
+          "stage": "teardown",
+          "nodeid": "test_cart.py::test_fixture",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "finish",
+          "exit_code": 1,
+          "collected": 3,
+          "collect_only": false,
+          "nodes": [
+            "test_cart.py::test_discount",
+            "test_cart.py::test_tax",
+            "test_cart.py::test_fixture"
+          ],
+          "records_dropped": false
+        }
+      ],
+      "targets": [],
+      "passed_nodes": [
+        "test_cart.py::test_discount",
+        "test_cart.py::test_tax"
+      ],
+      "test_summary": {
+        "passed": 2,
+        "failed": 1,
+        "skipped": 0,
+        "xfail_or_xpass": 0,
+        "selected": 3,
+        "incomplete": 0
+      }
+    },
+    {
+      "schema_version": 1,
+      "run_id": "run-9c0bcedbea8a",
+      "tool": "pytest",
+      "started_at": "2026-09-08T01:59:48+00:00",
+      "argv": [
+        "<python>",
+        "-m",
+        "pytest",
+        "--collect-only",
+        "-q",
+        "--color=no",
+        "-o",
+        "addopts=",
+        "-p",
+        "_fixfirst_probe"
+      ],
+      "cwd": "<project>",
+      "environment_id": "6c069519e4f32cc8",
+      "tool_version": "unknown",
+      "scope": "collect:project",
+      "status": "completed",
+      "source": "executed",
+      "exit_code": 0,
+      "stdout": "workbench/execution-dataset/x5-setup/project/test_cart.py::test_discount\nworkbench/execution-dataset/x5-setup/project/test_cart.py::test_tax\nworkbench/execution-dataset/x5-setup/project/test_cart.py::test_fixture\n\n3 tests collected in 0.01s\n",
+      "stderr": "",
+      "duration_s": 0.131,
+      "truncated": false,
+      "verified_pass": true,
+      "coverage_complete": true,
+      "notes": [
+        "测试收集会执行项目导入和 conftest；与目标项目正常运行一样需信任源码。"
+      ],
+      "records": [
+        {
+          "type": "finish",
+          "exit_code": 0,
+          "collected": 3,
+          "collect_only": true,
+          "nodes": [
+            "workbench/execution-dataset/x5-setup/project/test_cart.py::test_discount",
+            "workbench/execution-dataset/x5-setup/project/test_cart.py::test_tax",
+            "workbench/execution-dataset/x5-setup/project/test_cart.py::test_fixture"
+          ],
+          "records_dropped": false
+        }
+      ],
+      "targets": [],
+      "passed_nodes": [],
+      "test_summary": {}
+    },
+    {
+      "schema_version": 1,
+      "run_id": "run-4b0d11041847",
+      "tool": "pytest_run",
+      "started_at": "2026-09-08T01:59:48+00:00",
+      "argv": [
+        "<python>",
+        "-m",
+        "pytest",
+        "-q",
+        "--color=no",
+        "-o",
+        "addopts=",
+        "-p",
+        "_fixfirst_probe",
+        "--rootdir",
+        "<project>"
+      ],
+      "cwd": "<project>",
+      "environment_id": "6c069519e4f32cc8",
+      "tool_version": "unknown",
+      "scope": "tests:project",
+      "status": "completed",
+      "source": "executed",
+      "exit_code": 0,
+      "stdout": "...                                                                      [100%]\n=============================== warnings summary ===============================\n../../../../.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624\n  <home>/Project/课程Projec/FixFirst/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624: PytestConfigWarning: No files were found in testpaths; consider removing or adjusting your testpaths configuration. Searching recursively from the current directory instead.\n    self.args, self.args_source = self._decide_args(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n3 passed, 1 warning in 0.01s\n",
+      "stderr": "",
+      "duration_s": 0.137,
+      "truncated": false,
+      "verified_pass": true,
+      "coverage_complete": true,
+      "notes": [
+        "测试收集会执行项目导入和 conftest；与目标项目正常运行一样需信任源码。",
+        "本次执行测试体与 fixture；目标范围以项目配置及记录的测试节点为准。"
+      ],
+      "records": [
+        {
+          "type": "outcome",
+          "stage": "setup",
+          "nodeid": "test_cart.py::test_discount",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "call",
+          "nodeid": "test_cart.py::test_discount",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "teardown",
+          "nodeid": "test_cart.py::test_discount",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "setup",
+          "nodeid": "test_cart.py::test_tax",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "call",
+          "nodeid": "test_cart.py::test_tax",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "teardown",
+          "nodeid": "test_cart.py::test_tax",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "setup",
+          "nodeid": "test_cart.py::test_fixture",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "call",
+          "nodeid": "test_cart.py::test_fixture",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "teardown",
+          "nodeid": "test_cart.py::test_fixture",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "finish",
+          "exit_code": 0,
+          "collected": 3,
+          "collect_only": false,
+          "nodes": [
+            "test_cart.py::test_discount",
+            "test_cart.py::test_tax",
+            "test_cart.py::test_fixture"
+          ],
+          "records_dropped": false
+        }
+      ],
+      "targets": [],
+      "passed_nodes": [
+        "test_cart.py::test_discount",
+        "test_cart.py::test_fixture",
+        "test_cart.py::test_tax"
+      ],
+      "test_summary": {
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "xfail_or_xpass": 0,
+        "selected": 3,
+        "incomplete": 0
+      }
+    }
+  ],
+  "events": [
+    {
+      "schema_version": 1,
+      "event_id": "event-af98c89f79a6",
+      "run_id": "run-619c89ccc18b",
+      "tool": "pytest_run",
+      "stage": "setup",
+      "kind": "test_runtime_error",
+      "message": "RuntimeError: fixture preparation failed",
+      "component": "",
+      "location": "test_cart.py::test_fixture",
+      "line": 1,
+      "code": "RuntimeError",
+      "evidence_refs": [
+        "run-619c89ccc18b:probe:7"
+      ]
+    }
+  ],
+  "issues": [
+    {
+      "schema_version": 1,
+      "issue_id": "issue-d5a6aa09c1b84c",
+      "fingerprint": "d5a6aa09c1b84c",
+      "tool": "pytest_run",
+      "stage": "setup",
+      "kind": "test_runtime_error",
+      "component": "",
+      "title": "RuntimeError: fixture preparation failed",
+      "event_ids": [
+        "event-af98c89f79a6"
+      ],
+      "evidence_refs": [
+        "run-619c89ccc18b:probe:7"
+      ],
+      "member_keys": [
+        "40c7ca39cad2c2"
+      ],
+      "scope": "tests:project",
+      "environment_id": "6c069519e4f32cc8",
+      "category": "test_runtime_error",
+      "prediction": null,
+      "group_score": 1.0,
+      "status": "resolved",
+      "first_seen": "2026-09-08T01:59:48+00:00",
+      "last_seen": "2026-09-08T01:59:48+00:00",
+      "note": "同一环境中的全部关联测试节点已执行通过",
+      "targets": [
+        "test_cart.py::test_fixture"
+      ]
+    }
+  ],
+  "facts": [],
+  "actions": [
+    {
+      "schema_version": 1,
+      "action_id": "check-pytest_run",
+      "kind": "rerun",
+      "title": "验证完整测试运行",
+      "explanation": "只更新本次检查覆盖的问题；其他问题保留。若未做改动且没有新证据，无需反复运行同一检查。",
+      "verification": "查看新的检查记录和状态变化",
+      "check": "pytest_run",
+      "issue_ids": [],
+      "reason_refs": [],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 1,
+      "cost": 3,
+      "priority": 1,
+      "targets": []
+    }
+  ],
+  "history": [
+    {
+      "time": "2026-09-08T01:59:48+00:00",
+      "kind": "checks",
+      "run_ids": [
+        "run-03b342109446",
+        "run-619c89ccc18b"
+      ],
+      "changes": [
+        {
+          "issue_id": "issue-d5a6aa09c1b84c",
+          "change": "new"
+        }
+      ]
+    },
+    {
+      "time": "2026-09-08T01:59:48+00:00",
+      "kind": "checks",
+      "run_ids": [
+        "run-9c0bcedbea8a",
+        "run-4b0d11041847"
+      ],
+      "changes": [
+        {
+          "issue_id": "issue-d5a6aa09c1b84c",
+          "change": "resolved"
+        }
+      ]
+    }
+  ],
+  "goal_status": "achieved",
+  "stopped": false,
+  "environment": {}
+}

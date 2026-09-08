@@ -106,7 +106,13 @@ def group_events(
                         stage=first.stage,
                         kind=first.kind,
                         component=first.component,
-                        title=first.message[:240],
+                        title=(
+                            f"断言失败 · {first.location}"
+                            if first.kind == "test_assertion"
+                            else f"{first.stage} · {first.message[:140]} · {first.location}"
+                            if first.kind == "test_runtime_error"
+                            else first.message[:240]
+                        ),
                         event_ids=[item.event_id for item in members],
                         evidence_refs=sorted(
                             {ref for item in members for ref in item.evidence_refs}
@@ -115,6 +121,15 @@ def group_events(
                         scope=run.scope,
                         environment_id=run.environment_id,
                         group_score=round(score, 4),
+                        targets=sorted(
+                            {
+                                m.location
+                                for m in members
+                                if m.tool == "pytest_run"
+                                and m.stage in ("setup", "call", "teardown")
+                                and "::" in m.location
+                            }
+                        ),
                     )
                 )
     return issues

@@ -20,8 +20,14 @@ class Record(BaseModel):
     schema_version: int = 1
 
 
-Tool = Literal["environment", "pip_check", "pip_install", "pytest", "ruff"]
-Goal = Literal["collect_tests", "check_style"]
+Tool = Literal["environment", "pip_check", "pip_install", "pytest", "pytest_run", "ruff"]
+Goal = Literal["collect_tests", "check_style", "pass_tests"]
+GOAL_CHECKS = {"collect_tests": "pytest", "check_style": "ruff", "pass_tests": "pytest_run"}
+PROJECT_SCOPES = {
+    "pytest": "collect:project",
+    "ruff": "lint:project",
+    "pytest_run": "tests:project",
+}
 
 
 class Run(Record):
@@ -47,6 +53,9 @@ class Run(Record):
     coverage_complete: bool = False
     notes: list[str] = Field(default_factory=list)
     records: list[dict] = Field(default_factory=list)
+    targets: list[str] = Field(default_factory=list)
+    passed_nodes: list[str] = Field(default_factory=list)
+    test_summary: dict[str, int] = Field(default_factory=dict)
 
 
 class Event(Record):
@@ -83,6 +92,7 @@ class Issue(Record):
     first_seen: str = Field(default_factory=now)
     last_seen: str = Field(default_factory=now)
     note: str = ""
+    targets: list[str] = Field(default_factory=list)
 
 
 class Fact(Record):
@@ -111,6 +121,7 @@ class Action(Record):
     evidence_rank: int = 1
     cost: int = 1
     priority: int = 0
+    targets: list[str] = Field(default_factory=list)
 
 
 class Session(Record):

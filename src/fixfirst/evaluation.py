@@ -42,14 +42,14 @@ def evaluate(dataset: Path, output: Path, sbert_model=None):
     train = [r for r in rows if r["project_id"] in split["train"]]
     model = train_tree(train, output / "decision_tree.json")
     result = {
-        "origin": "controlled_injection",
+        "origin": manifest.get("origin", "controlled_injection"),
         "split": split,
         "classification": {},
         "grouping": {},
         "limitations": [
             manifest["limitations"],
             "分类使用解析后的故障信号，可能仅复现规则，不能据此声称模型带来增益。",
-            "未做真人用户试验或付费 AI 基线。操作数对比是受控验证动作模拟，不代表实际修复耗时。",
+            "未做真人用户试验或付费 AI 基线。没有测量实际修复耗时或用户收益。",
         ],
     }
     for partition in ("validation", "test"):
@@ -76,14 +76,17 @@ def evaluate(dataset: Path, output: Path, sbert_model=None):
             session = Session.model_validate_json(
                 (dataset / case["path"] / "input.json").read_text()
             )
+            case_truth = json.loads((dataset / case["path"] / "truth.json").read_text())
             all_groups = []
             truth = {}
             for run in session.runs:
                 events = [e for e in session.events if e.run_id == run.run_id]
                 all_groups.extend(group_events(events, run, method, 0.82, sbert_model))
-                # Controlled cases are constructed with one independent failure per tool.
+                # Execution cases label independent defects within the same tool separately.
                 for event in events:
-                    truth[event.event_id] = event.tool
+                    truth[event.event_id] = case_truth.get("event_groups", {}).get(
+                        event.event_id, event.tool
+                    )
             metrics = pairwise_metrics(all_groups, truth)
             for key in totals:
                 totals[key] += metrics[key]
@@ -100,22 +103,6 @@ def evaluate(dataset: Path, output: Path, sbert_model=None):
             "threshold_tuned": False,
             "cases": case_results,
         }
-    # Transparent diagnostic-order microbenchmark: queries reveal known case symptoms.
-    # It measures only queries until the blocking category is inspected, not repair success.
-    scheduling = []
-    for case in manifest["cases"]:
-        if case["variant"] not in ("missing_module", "missing_config", "mixed"):
-            continue
-        for order in (["ruff", "pytest"], ["pytest", "ruff"]):
-            scheduling.append(
-                {
-                    "case_id": case["case_id"],
-                    "input_order": order,
-                    "log_order_queries_to_collection_check": order.index("pytest") + 1,
-                    "goal_order_queries_to_collection_check": 1,
-                }
-            )
-    result["diagnostic_order_simulation"] = scheduling
     (output / "metrics.json").write_text(json.dumps(result, ensure_ascii=False, indent=2))
     test = result["classification"]["test"]
     text = f"""# FixFirst 受控案例实验记录
@@ -131,7 +118,7 @@ def evaluate(dataset: Path, output: Path, sbert_model=None):
 
 归并指标与逐案例记录见 metrics.json。阈值 0.82 是明确记录的初始值，本轮没有利用测试集调参。{"SBERT 已使用指定本地模型运行。" if sbert_model else "本轮未运行 SBERT，未下载的模型不计作已实现效果。"}
 
-额外的行动顺序模拟仅比较先检查当前目标与日志顺序的检查次数。它没有模拟真正修复，也不能支持节省用户时间的结论。真实用户与通用 AI 助手对比仍需小组另行执行。
+本轮未进行行动调度收益评价。v0.1 的固定检查次数模拟已从新评测移除，它无法反映实际修复。真实用户与通用 AI 助手对比仍需小组另行执行。
 
 继续研究应补充自然故障、误导性相似日志和不同结构的真实项目，再检验模型是否比规则有额外价值。
 """

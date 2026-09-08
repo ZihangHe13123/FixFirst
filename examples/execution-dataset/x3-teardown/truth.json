@@ -1,0 +1,17 @@
+{
+  "case_id": "x3-teardown",
+  "variant": "teardown",
+  "labels": [
+    {
+      "issue_id": "issue-d502c8304ed6a0",
+      "label": "test_runtime_error"
+    }
+  ],
+  "expected_kinds": [
+    "test_runtime_error"
+  ],
+  "event_groups": {
+    "event-796417e663e7": "test_cart.py::test_fixture"
+  },
+  "repair": "Restore owned cart.py and conftest.py from HEALTHY/FIXTURE"
+}

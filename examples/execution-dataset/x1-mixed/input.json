@@ -1,0 +1,527 @@
+{
+  "schema_version": 1,
+  "session_id": "session-2e7c1cf4e19d",
+  "name": "x1-mixed",
+  "project_root": "<project>",
+  "target_python": "<python>",
+  "created_at": "2026-09-08T01:59:30+00:00",
+  "goal": "pass_tests",
+  "grouping": "tfidf",
+  "threshold": 0.82,
+  "model_path": null,
+  "sbert_model": null,
+  "runs": [
+    {
+      "schema_version": 1,
+      "run_id": "run-1db6cd0ca14f",
+      "tool": "pytest",
+      "started_at": "2026-09-08T01:59:30+00:00",
+      "argv": [
+        "<python>",
+        "-m",
+        "pytest",
+        "--collect-only",
+        "-q",
+        "--color=no",
+        "-o",
+        "addopts=",
+        "-p",
+        "_fixfirst_probe"
+      ],
+      "cwd": "<project>",
+      "environment_id": "6c069519e4f32cc8",
+      "tool_version": "unknown",
+      "scope": "collect:project",
+      "status": "completed",
+      "source": "executed",
+      "exit_code": 0,
+      "stdout": "workbench/execution-dataset/x1-mixed/project/test_cart.py::test_discount\nworkbench/execution-dataset/x1-mixed/project/test_cart.py::test_tax\nworkbench/execution-dataset/x1-mixed/project/test_cart.py::test_fixture\n\n3 tests collected in 0.00s\n",
+      "stderr": "",
+      "duration_s": 0.129,
+      "truncated": false,
+      "verified_pass": true,
+      "coverage_complete": true,
+      "notes": [
+        "测试收集会执行项目导入和 conftest；与目标项目正常运行一样需信任源码。"
+      ],
+      "records": [
+        {
+          "type": "finish",
+          "exit_code": 0,
+          "collected": 3,
+          "collect_only": true,
+          "nodes": [
+            "workbench/execution-dataset/x1-mixed/project/test_cart.py::test_discount",
+            "workbench/execution-dataset/x1-mixed/project/test_cart.py::test_tax",
+            "workbench/execution-dataset/x1-mixed/project/test_cart.py::test_fixture"
+          ],
+          "records_dropped": false
+        }
+      ],
+      "targets": [],
+      "passed_nodes": [],
+      "test_summary": {}
+    },
+    {
+      "schema_version": 1,
+      "run_id": "run-c88716f2bffd",
+      "tool": "pytest_run",
+      "started_at": "2026-09-08T01:59:30+00:00",
+      "argv": [
+        "<python>",
+        "-m",
+        "pytest",
+        "-q",
+        "--color=no",
+        "-o",
+        "addopts=",
+        "-p",
+        "_fixfirst_probe",
+        "--rootdir",
+        "<project>"
+      ],
+      "cwd": "<project>",
+      "environment_id": "6c069519e4f32cc8",
+      "tool_version": "unknown",
+      "scope": "tests:project",
+      "status": "completed",
+      "source": "executed",
+      "exit_code": 1,
+      "stdout": "FF.                                                                      [100%]\n=================================== FAILURES ===================================\n________________________________ test_discount _________________________________\n\n    def test_discount():\n>       assert cart.discount(100) == 90\nE       assert 70.0 == 90\nE        +  where 70.0 = <function discount at 0x10b367060>(100)\nE        +    where <function discount at 0x10b367060> = cart.discount\n\ntest_cart.py:4: AssertionError\n___________________________________ test_tax ___________________________________\n\n    def test_tax():\n>       assert cart.tax(100) == 10\nE       assert 20.0 == 10\nE        +  where 20.0 = <function tax at 0x10b367a60>(100)\nE        +    where <function tax at 0x10b367a60> = cart.tax\n\ntest_cart.py:7: AssertionError\n=============================== warnings summary ===============================\n../../../../.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624\n  <home>/Project/课程Projec/FixFirst/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624: PytestConfigWarning: No files were found in testpaths; consider removing or adjusting your testpaths configuration. Searching recursively from the current directory instead.\n    self.args, self.args_source = self._decide_args(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_cart.py::test_discount - assert 70.0 == 90\nFAILED test_cart.py::test_tax - assert 20.0 == 10\n2 failed, 1 passed, 1 warning in 0.02s\n",
+      "stderr": "",
+      "duration_s": 0.163,
+      "truncated": false,
+      "verified_pass": false,
+      "coverage_complete": true,
+      "notes": [
+        "测试收集会执行项目导入和 conftest；与目标项目正常运行一样需信任源码。",
+        "本次执行测试体与 fixture；目标范围以项目配置及记录的测试节点为准。"
+      ],
+      "records": [
+        {
+          "type": "outcome",
+          "stage": "setup",
+          "nodeid": "test_cart.py::test_discount",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "call",
+          "nodeid": "test_cart.py::test_discount",
+          "outcome": "failed",
+          "wasxfail": false
+        },
+        {
+          "type": "failure",
+          "stage": "call",
+          "nodeid": "test_cart.py::test_discount",
+          "message": "def test_discount():\n>       assert cart.discount(100) == 90\nE       assert 70.0 == 90\nE        +  where 70.0 = <function discount at 0x10b367060>(100)\nE        +    where <function discount at 0x10b367060> = cart.discount\n\ntest_cart.py:4: AssertionError"
+        },
+        {
+          "type": "exception",
+          "nodeid": "test_cart.py::test_discount",
+          "stage": "call",
+          "exception_type": "AssertionError"
+        },
+        {
+          "type": "outcome",
+          "stage": "teardown",
+          "nodeid": "test_cart.py::test_discount",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "setup",
+          "nodeid": "test_cart.py::test_tax",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "call",
+          "nodeid": "test_cart.py::test_tax",
+          "outcome": "failed",
+          "wasxfail": false
+        },
+        {
+          "type": "failure",
+          "stage": "call",
+          "nodeid": "test_cart.py::test_tax",
+          "message": "def test_tax():\n>       assert cart.tax(100) == 10\nE       assert 20.0 == 10\nE        +  where 20.0 = <function tax at 0x10b367a60>(100)\nE        +    where <function tax at 0x10b367a60> = cart.tax\n\ntest_cart.py:7: AssertionError"
+        },
+        {
+          "type": "exception",
+          "nodeid": "test_cart.py::test_tax",
+          "stage": "call",
+          "exception_type": "AssertionError"
+        },
+        {
+          "type": "outcome",
+          "stage": "teardown",
+          "nodeid": "test_cart.py::test_tax",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "setup",
+          "nodeid": "test_cart.py::test_fixture",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "call",
+          "nodeid": "test_cart.py::test_fixture",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "outcome",
+          "stage": "teardown",
+          "nodeid": "test_cart.py::test_fixture",
+          "outcome": "passed",
+          "wasxfail": false
+        },
+        {
+          "type": "finish",
+          "exit_code": 1,
+          "collected": 3,
+          "collect_only": false,
+          "nodes": [
+            "test_cart.py::test_discount",
+            "test_cart.py::test_tax",
+            "test_cart.py::test_fixture"
+          ],
+          "records_dropped": false
+        }
+      ],
+      "targets": [],
+      "passed_nodes": [
+        "test_cart.py::test_fixture"
+      ],
+      "test_summary": {
+        "passed": 1,
+        "failed": 2,
+        "skipped": 0,
+        "xfail_or_xpass": 0,
+        "selected": 3,
+        "incomplete": 0
+      }
+    }
+  ],
+  "events": [
+    {
+      "schema_version": 1,
+      "event_id": "event-2b68ab6211bd",
+      "run_id": "run-c88716f2bffd",
+      "tool": "pytest_run",
+      "stage": "call",
+      "kind": "test_assertion",
+      "message": "def test_discount():\n>       assert cart.discount(100) == 90\nE       assert 70.0 == 90\nE        +  where 70.0 = <function discount at 0x10b367060>(100)\nE        +    where <function discount at 0x10b367060> = cart.discount\n\ntest_cart.py:4: AssertionError",
+      "component": "",
+      "location": "test_cart.py::test_discount",
+      "line": 1,
+      "code": "AssertionError",
+      "evidence_refs": [
+        "run-c88716f2bffd:probe:2"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "event_id": "event-6b4385bc02f1",
+      "run_id": "run-c88716f2bffd",
+      "tool": "pytest_run",
+      "stage": "call",
+      "kind": "test_assertion",
+      "message": "def test_tax():\n>       assert cart.tax(100) == 10\nE       assert 20.0 == 10\nE        +  where 20.0 = <function tax at 0x10b367a60>(100)\nE        +    where <function tax at 0x10b367a60> = cart.tax\n\ntest_cart.py:7: AssertionError",
+      "component": "",
+      "location": "test_cart.py::test_tax",
+      "line": 1,
+      "code": "AssertionError",
+      "evidence_refs": [
+        "run-c88716f2bffd:probe:7"
+      ]
+    }
+  ],
+  "issues": [
+    {
+      "schema_version": 1,
+      "issue_id": "issue-e4c077b36285a7",
+      "fingerprint": "e4c077b36285a7",
+      "tool": "pytest_run",
+      "stage": "call",
+      "kind": "test_assertion",
+      "component": "",
+      "title": "def test_tax():\n>       assert cart.tax(100) == 10\nE       assert 20.0 == 10\nE        +  where 20.0 = <function tax at 0x10b367a60>(100)\nE        +    where <function tax at 0x10b367a60> = cart.tax\n\ntest_cart.py:7: AssertionError",
+      "event_ids": [
+        "event-6b4385bc02f1"
+      ],
+      "evidence_refs": [
+        "run-c88716f2bffd:probe:7"
+      ],
+      "member_keys": [
+        "9ecab02290aa1e"
+      ],
+      "scope": "tests:project",
+      "environment_id": "6c069519e4f32cc8",
+      "category": "test_assertion",
+      "prediction": null,
+      "group_score": 1.0,
+      "status": "open",
+      "first_seen": "2026-09-08T01:59:30+00:00",
+      "last_seen": "2026-09-08T01:59:30+00:00",
+      "note": "",
+      "targets": [
+        "test_cart.py::test_tax"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "issue_id": "issue-ffe176133832d7",
+      "fingerprint": "ffe176133832d7",
+      "tool": "pytest_run",
+      "stage": "call",
+      "kind": "test_assertion",
+      "component": "",
+      "title": "def test_discount():\n>       assert cart.discount(100) == 90\nE       assert 70.0 == 90\nE        +  where 70.0 = <function discount at 0x10b367060>(100)\nE        +    where <function discount at 0x10b367060> = cart.discount\n\ntest_cart.py:4: ",
+      "event_ids": [
+        "event-2b68ab6211bd"
+      ],
+      "evidence_refs": [
+        "run-c88716f2bffd:probe:2"
+      ],
+      "member_keys": [
+        "c58b86c38695cc"
+      ],
+      "scope": "tests:project",
+      "environment_id": "6c069519e4f32cc8",
+      "category": "test_assertion",
+      "prediction": null,
+      "group_score": 1.0,
+      "status": "open",
+      "first_seen": "2026-09-08T01:59:30+00:00",
+      "last_seen": "2026-09-08T01:59:30+00:00",
+      "note": "",
+      "targets": [
+        "test_cart.py::test_discount"
+      ]
+    }
+  ],
+  "facts": [
+    {
+      "schema_version": 1,
+      "fact_id": "issue-e4c077b36285a7:kind:test_assertion",
+      "subject": "issue-e4c077b36285a7",
+      "predicate": "kind",
+      "value": "test_assertion",
+      "status": "observed",
+      "rule_id": null,
+      "inputs": [],
+      "evidence_refs": [
+        "run-c88716f2bffd:probe:7"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "fact_id": "issue-e4c077b36285a7:stage:call",
+      "subject": "issue-e4c077b36285a7",
+      "predicate": "stage",
+      "value": "call",
+      "status": "observed",
+      "rule_id": null,
+      "inputs": [],
+      "evidence_refs": [
+        "run-c88716f2bffd:probe:7"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "fact_id": "issue-ffe176133832d7:kind:test_assertion",
+      "subject": "issue-ffe176133832d7",
+      "predicate": "kind",
+      "value": "test_assertion",
+      "status": "observed",
+      "rule_id": null,
+      "inputs": [],
+      "evidence_refs": [
+        "run-c88716f2bffd:probe:2"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "fact_id": "issue-ffe176133832d7:stage:call",
+      "subject": "issue-ffe176133832d7",
+      "predicate": "stage",
+      "value": "call",
+      "status": "observed",
+      "rule_id": null,
+      "inputs": [],
+      "evidence_refs": [
+        "run-c88716f2bffd:probe:2"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "fact_id": "issue-e4c077b36285a7:affects:pass_tests",
+      "subject": "issue-e4c077b36285a7",
+      "predicate": "affects",
+      "value": "pass_tests",
+      "status": "derived",
+      "rule_id": "R12",
+      "inputs": [
+        "issue-e4c077b36285a7:stage:call"
+      ],
+      "evidence_refs": [
+        "run-c88716f2bffd:probe:7"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "fact_id": "issue-ffe176133832d7:affects:pass_tests",
+      "subject": "issue-ffe176133832d7",
+      "predicate": "affects",
+      "value": "pass_tests",
+      "status": "derived",
+      "rule_id": "R12",
+      "inputs": [
+        "issue-ffe176133832d7:stage:call"
+      ],
+      "evidence_refs": [
+        "run-c88716f2bffd:probe:2"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "fact_id": "issue-e4c077b36285a7:needs:assertion_review",
+      "subject": "issue-e4c077b36285a7",
+      "predicate": "needs",
+      "value": "assertion_review",
+      "status": "derived",
+      "rule_id": "R16",
+      "inputs": [
+        "issue-e4c077b36285a7:kind:test_assertion"
+      ],
+      "evidence_refs": [
+        "run-c88716f2bffd:probe:7"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "fact_id": "issue-ffe176133832d7:needs:assertion_review",
+      "subject": "issue-ffe176133832d7",
+      "predicate": "needs",
+      "value": "assertion_review",
+      "status": "derived",
+      "rule_id": "R16",
+      "inputs": [
+        "issue-ffe176133832d7:kind:test_assertion"
+      ],
+      "evidence_refs": [
+        "run-c88716f2bffd:probe:2"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "schema_version": 1,
+      "action_id": "review-test_assertion",
+      "kind": "manual_fix",
+      "title": "核对失败断言的预期与实际结果",
+      "explanation": "查看具体测试节点、断言和原始 traceback，核对业务预期及实现；修改后先验证相关节点，再运行完整测试。",
+      "verification": "处理后重新运行对应范围的检查",
+      "check": null,
+      "issue_ids": [
+        "issue-e4c077b36285a7",
+        "issue-ffe176133832d7"
+      ],
+      "reason_refs": [
+        "issue-e4c077b36285a7:needs:assertion_review",
+        "issue-ffe176133832d7:needs:assertion_review"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 2,
+      "cost": 2,
+      "priority": 1,
+      "targets": []
+    },
+    {
+      "schema_version": 1,
+      "action_id": "check-failed-tests",
+      "kind": "rerun",
+      "title": "先验证关联的失败测试",
+      "explanation": "只运行已观察到的失败节点，保留未覆盖问题。全部选中节点通过后，仍需完整测试验证项目目标。",
+      "verification": "查看每个节点的 setup、call、teardown 结果；跳过与 xfail 不算已修复",
+      "check": "pytest_run",
+      "issue_ids": [
+        "issue-e4c077b36285a7",
+        "issue-ffe176133832d7"
+      ],
+      "reason_refs": [
+        "issue-e4c077b36285a7:affects:pass_tests",
+        "issue-ffe176133832d7:affects:pass_tests"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 2,
+      "cost": 2,
+      "priority": 2,
+      "targets": [
+        "test_cart.py::test_discount",
+        "test_cart.py::test_tax"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "action_id": "check-pytest_run",
+      "kind": "rerun",
+      "title": "验证完整测试运行",
+      "explanation": "只更新本次检查覆盖的问题；其他问题保留。若未做改动且没有新证据，无需反复运行同一检查。",
+      "verification": "查看新的检查记录和状态变化",
+      "check": "pytest_run",
+      "issue_ids": [
+        "issue-e4c077b36285a7",
+        "issue-ffe176133832d7"
+      ],
+      "reason_refs": [
+        "issue-e4c077b36285a7:affects:pass_tests",
+        "issue-ffe176133832d7:affects:pass_tests"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 2,
+      "cost": 3,
+      "priority": 3,
+      "targets": []
+    }
+  ],
+  "history": [
+    {
+      "time": "2026-09-08T01:59:30+00:00",
+      "kind": "checks",
+      "run_ids": [
+        "run-1db6cd0ca14f",
+        "run-c88716f2bffd"
+      ],
+      "changes": [
+        {
+          "issue_id": "issue-e4c077b36285a7",
+          "change": "new"
+        },
+        {
+          "issue_id": "issue-ffe176133832d7",
+          "change": "new"
+        }
+      ]
+    }
+  ],
+  "goal_status": "blocked",
+  "stopped": false,
+  "environment": {}
+}

@@ -1,0 +1,22 @@
+{
+  "case_id": "x4-mixed",
+  "variant": "mixed",
+  "labels": [
+    {
+      "issue_id": "issue-3a9978287eddba",
+      "label": "test_assertion"
+    },
+    {
+      "issue_id": "issue-b7f8788aedfca8",
+      "label": "test_assertion"
+    }
+  ],
+  "expected_kinds": [
+    "test_assertion"
+  ],
+  "event_groups": {
+    "event-979a89836805": "test_cart.py::test_discount",
+    "event-ab23d968832b": "test_cart.py::test_tax"
+  },
+  "repair": "Restore owned cart.py and conftest.py from HEALTHY/FIXTURE"
+}

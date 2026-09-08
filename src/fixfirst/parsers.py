@@ -4,6 +4,7 @@ import json
 import re
 
 from .models import Event, Run
+from .test_results import summarize_tests
 
 IMPORT = re.compile(r"ModuleNotFoundError:\s*No module named ['\"]([^'\"]+)['\"]")
 EXCEPTION = re.compile(r"\b([A-Za-z_]\w*(?:Error|Exception)):\s*(.*)")
@@ -64,7 +65,15 @@ def exception_event(run, text, location="", stage="collect", line=1, stream="std
             run,
             match.group(0),
             stage=stage,
-            kind="import_failure" if match.group(1) == "ImportError" else "other_unknown",
+            kind=(
+                "import_failure"
+                if match.group(1) == "ImportError"
+                else "test_assertion"
+                if stage == "call" and match.group(1) == "AssertionError"
+                else "test_runtime_error"
+                if stage in ("call", "setup", "teardown")
+                else "other_unknown"
+            ),
             location=location,
             line=line,
             code=match.group(1),
@@ -74,7 +83,7 @@ def exception_event(run, text, location="", stage="collect", line=1, stream="std
         run,
         text[-2000:] or "未知测试失败",
         stage=stage,
-        kind="other_unknown",
+        kind="test_runtime_error" if stage in ("call", "setup", "teardown") else "other_unknown",
         location=location,
         line=line,
         stream=stream,
@@ -84,6 +93,8 @@ def exception_event(run, text, location="", stage="collect", line=1, stream="std
 def parse(run: Run) -> list[Event]:
     run.verified_pass = False
     run.coverage_complete = False
+    run.passed_nodes = []
+    run.test_summary = {}
     if run.status != "completed" or run.truncated:
         return [
             event(
@@ -222,7 +233,7 @@ def parse(run: Run) -> list[Event]:
                 kind="other_unknown",
             )
         ]
-    if run.tool == "pytest":
+    if run.tool in ("pytest", "pytest_run"):
         failures = [r for r in run.records if r.get("type") == "failure"]
         finishes = [r for r in run.records if r.get("type") == "finish"]
         if run.records:
@@ -236,6 +247,18 @@ def parse(run: Run) -> list[Event]:
                         str(record.get("stage", "unknown")),
                     )
                     item.evidence_refs = [f"{run.run_id}:probe:{index}"]
+                    exception = next(
+                        (
+                            r
+                            for r in run.records
+                            if r.get("type") == "exception"
+                            and r.get("nodeid") == record.get("nodeid")
+                            and r.get("stage") == record.get("stage")
+                        ),
+                        {},
+                    )
+                    if exception.get("exception_type") == "AssertionError" and item.stage == "call":
+                        item.kind, item.code = "test_assertion", "AssertionError"
                     result.append(item)
             run.verified_pass = bool(
                 finishes
@@ -243,12 +266,26 @@ def parse(run: Run) -> list[Event]:
                 and run.exit_code == 0
                 and not failures
                 and finishes[-1].get("exit_code") == 0
+                and not finishes[-1].get("records_dropped", False)
             )
             run.coverage_complete = run.verified_pass
+            if run.tool == "pytest_run":
+                run.verified_pass = False
+                run.coverage_complete = False
+                summarize_tests(run)
             if result:
                 return result
             if run.verified_pass:
                 return []
+            if run.tool == "pytest_run" and run.coverage_complete and run.exit_code == 0:
+                return [
+                    event(
+                        run,
+                        "测试未提供实际通过的节点；全部跳过或标记为预期失败不等于修复",
+                        stage="verification",
+                        kind="other_unknown",
+                    )
+                ]
         else:
             # Text imports retain context but cannot prove collection coverage.
             result = []
@@ -272,6 +309,8 @@ def parse(run: Run) -> list[Event]:
             4: "pytest 使用错误",
             5: "没有收集到测试",
         }
-        message = descriptions.get(run.exit_code, "缺少可验证的测试收集完成记录")
+        message = descriptions.get(
+            run.exit_code, "缺少可验证的测试完成记录；可能全部跳过或执行未覆盖"
+        )
         return [event(run, message + "；请查看原始输出", stage="tool", kind="tool_failure")]
     raise ValueError("不支持的来源")

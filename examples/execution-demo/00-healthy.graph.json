@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "session_id": "session-01a484ffa8b2",
+  "goal": "goal:pass_tests",
+  "ontology": {
+    "entities": [
+      "Action",
+      "Event",
+      "Evidence",
+      "Fact",
+      "Goal",
+      "Issue",
+      "Run"
+    ],
+    "relations": {
+      "recommends": [
+        "Goal",
+        "Action"
+      ],
+      "has_open_issue": [
+        "Goal",
+        "Issue"
+      ],
+      "evaluated_by": [
+        "Goal",
+        "Run"
+      ],
+      "addresses": [
+        "Action",
+        "Issue"
+      ],
+      "justified_by": [
+        "Action",
+        "Fact"
+      ],
+      "inferred_from": [
+        "Fact",
+        "Fact"
+      ],
+      "supported_by": [
+        "Fact",
+        "Evidence"
+      ],
+      "has_event": [
+        "Issue",
+        "Event"
+      ],
+      "cites": [
+        "Event",
+        "Evidence"
+      ],
+      "observed_in": [
+        "Evidence",
+        "Run"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "goal:pass_tests",
+      "type": "Goal",
+      "label": "通过测试运行",
+      "attributes": {
+        "status": "achieved"
+      }
+    },
+    {
+      "id": "run-1c1e47f002ac",
+      "type": "Run",
+      "label": "pytest · 2026-09-08T02:05:03+00:00",
+      "attributes": {
+        "tool": "pytest",
+        "status": "completed",
+        "source": "executed",
+        "scope": "collect:project",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-b3849e4e5542",
+      "type": "Run",
+      "label": "pytest_run · 2026-09-08T02:05:03+00:00",
+      "attributes": {
+        "tool": "pytest_run",
+        "status": "completed",
+        "source": "executed",
+        "scope": "tests:project",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 3,
+          "incomplete": 0
+        }
+      }
+    },
+    {
+      "id": "check-pytest_run",
+      "type": "Action",
+      "label": "验证完整测试运行",
+      "attributes": {
+        "priority": 1,
+        "explanation": "只更新本次检查覆盖的问题；其他问题保留。若未做改动且没有新证据，无需反复运行同一检查。",
+        "verification": "查看新的检查记录和状态变化",
+        "targets": [],
+        "goal_impact": 1
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "goal:pass_tests",
+      "relation": "evaluated_by",
+      "target": "run-b3849e4e5542"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "recommends",
+      "target": "check-pytest_run"
+    }
+  ],
+  "meaning": "来源与规则关系；不从文本相似度生成因果边。"
+}

@@ -1,0 +1,18 @@
+{
+  "case_id": "x5-runtime_import",
+  "variant": "runtime_import",
+  "labels": [
+    {
+      "issue_id": "issue-08651724adb3ad",
+      "label": "import_failure"
+    }
+  ],
+  "expected_kinds": [
+    "import_failure"
+  ],
+  "event_groups": {
+    "event-c1ce3f3fef2f": "missing-package",
+    "event-ea02c1d22eb1": "missing-package"
+  },
+  "repair": "Restore owned cart.py and conftest.py from HEALTHY/FIXTURE"
+}

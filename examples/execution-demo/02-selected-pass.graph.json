@@ -1,0 +1,420 @@
+{
+  "schema_version": 1,
+  "session_id": "session-01a484ffa8b2",
+  "goal": "goal:pass_tests",
+  "ontology": {
+    "entities": [
+      "Action",
+      "Event",
+      "Evidence",
+      "Fact",
+      "Goal",
+      "Issue",
+      "Run"
+    ],
+    "relations": {
+      "recommends": [
+        "Goal",
+        "Action"
+      ],
+      "has_open_issue": [
+        "Goal",
+        "Issue"
+      ],
+      "evaluated_by": [
+        "Goal",
+        "Run"
+      ],
+      "addresses": [
+        "Action",
+        "Issue"
+      ],
+      "justified_by": [
+        "Action",
+        "Fact"
+      ],
+      "inferred_from": [
+        "Fact",
+        "Fact"
+      ],
+      "supported_by": [
+        "Fact",
+        "Evidence"
+      ],
+      "has_event": [
+        "Issue",
+        "Event"
+      ],
+      "cites": [
+        "Event",
+        "Evidence"
+      ],
+      "observed_in": [
+        "Evidence",
+        "Run"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "goal:pass_tests",
+      "type": "Goal",
+      "label": "通过测试运行",
+      "attributes": {
+        "status": "unknown"
+      }
+    },
+    {
+      "id": "run-1c1e47f002ac",
+      "type": "Run",
+      "label": "pytest · 2026-09-08T02:05:03+00:00",
+      "attributes": {
+        "tool": "pytest",
+        "status": "completed",
+        "source": "executed",
+        "scope": "collect:project",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-b3849e4e5542",
+      "type": "Run",
+      "label": "pytest_run · 2026-09-08T02:05:03+00:00",
+      "attributes": {
+        "tool": "pytest_run",
+        "status": "completed",
+        "source": "executed",
+        "scope": "tests:project",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 3,
+          "incomplete": 0
+        }
+      }
+    },
+    {
+      "id": "run-bc763eb72c16",
+      "type": "Run",
+      "label": "pytest · 2026-09-08T02:05:03+00:00",
+      "attributes": {
+        "tool": "pytest",
+        "status": "completed",
+        "source": "executed",
+        "scope": "collect:project",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-c9ae1dcb9083",
+      "type": "Run",
+      "label": "pytest_run · 2026-09-08T02:05:03+00:00",
+      "attributes": {
+        "tool": "pytest_run",
+        "status": "completed",
+        "source": "executed",
+        "scope": "tests:project",
+        "exit_code": 1,
+        "verified_pass": false,
+        "targets": [],
+        "summary": {
+          "passed": 1,
+          "failed": 2,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 3,
+          "incomplete": 0
+        }
+      }
+    },
+    {
+      "id": "run-ef65bf5e5301",
+      "type": "Run",
+      "label": "pytest_run · 2026-09-08T02:05:04+00:00",
+      "attributes": {
+        "tool": "pytest_run",
+        "status": "completed",
+        "source": "executed",
+        "scope": "tests:selected",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [
+          "test_cart.py::test_discount"
+        ],
+        "summary": {
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      }
+    },
+    {
+      "id": "evidence:run-c9ae1dcb9083:probe:2",
+      "type": "Evidence",
+      "label": "run-c9ae1dcb9083:probe:2",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-c9ae1dcb9083:probe:7",
+      "type": "Evidence",
+      "label": "run-c9ae1dcb9083:probe:7",
+      "attributes": {}
+    },
+    {
+      "id": "event-7831b1781f56",
+      "type": "Event",
+      "label": "def test_discount():\n>       assert cart.discount(100) == 90\nE       assert 70.0 == 90\nE        +  where 70.0 = <function discount at 0x10950b4c0>(100)\nE        +    where <function discount at 0x10950b4c0> = cart.discount\n\ntest_cart.py:4: ",
+      "attributes": {
+        "stage": "call",
+        "location": "test_cart.py::test_discount",
+        "kind": "test_assertion"
+      }
+    },
+    {
+      "id": "event-9ae024418745",
+      "type": "Event",
+      "label": "def test_tax():\n>       assert cart.tax(100) == 10\nE       assert 20.0 == 10\nE        +  where 20.0 = <function tax at 0x10950ba60>(100)\nE        +    where <function tax at 0x10950ba60> = cart.tax\n\ntest_cart.py:7: AssertionError",
+      "attributes": {
+        "stage": "call",
+        "location": "test_cart.py::test_tax",
+        "kind": "test_assertion"
+      }
+    },
+    {
+      "id": "issue-f151c3f0b6afcf",
+      "type": "Issue",
+      "label": "断言失败 · test_cart.py::test_tax",
+      "attributes": {
+        "status": "not_observed",
+        "tool": "pytest_run",
+        "targets": [
+          "test_cart.py::test_tax"
+        ],
+        "note": "环境或检查范围不同，不能直接比较"
+      }
+    },
+    {
+      "id": "issue-c8577715fc10bc",
+      "type": "Issue",
+      "label": "断言失败 · test_cart.py::test_discount",
+      "attributes": {
+        "status": "resolved",
+        "tool": "pytest_run",
+        "targets": [
+          "test_cart.py::test_discount"
+        ],
+        "note": "同一环境中的全部关联测试节点已执行通过"
+      }
+    },
+    {
+      "id": "issue-f151c3f0b6afcf:kind:test_assertion",
+      "type": "Fact",
+      "label": "kind = test_assertion",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-f151c3f0b6afcf"
+      }
+    },
+    {
+      "id": "issue-f151c3f0b6afcf:stage:call",
+      "type": "Fact",
+      "label": "stage = call",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-f151c3f0b6afcf"
+      }
+    },
+    {
+      "id": "issue-f151c3f0b6afcf:affects:pass_tests",
+      "type": "Fact",
+      "label": "affects = pass_tests",
+      "attributes": {
+        "rule": "R12",
+        "status": "derived",
+        "subject": "issue-f151c3f0b6afcf"
+      }
+    },
+    {
+      "id": "issue-f151c3f0b6afcf:needs:assertion_review",
+      "type": "Fact",
+      "label": "needs = assertion_review",
+      "attributes": {
+        "rule": "R16",
+        "status": "derived",
+        "subject": "issue-f151c3f0b6afcf"
+      }
+    },
+    {
+      "id": "review-test_assertion",
+      "type": "Action",
+      "label": "核对失败断言的预期与实际结果",
+      "attributes": {
+        "priority": 1,
+        "explanation": "查看具体测试节点、断言和原始 traceback，核对业务预期及实现；修改后先验证相关节点，再运行完整测试。",
+        "verification": "处理后重新运行对应范围的检查",
+        "targets": [],
+        "goal_impact": 1
+      }
+    },
+    {
+      "id": "check-failed-tests",
+      "type": "Action",
+      "label": "先验证关联的失败测试",
+      "attributes": {
+        "priority": 2,
+        "explanation": "只运行已观察到的失败节点，保留未覆盖问题。全部选中节点通过后，仍需完整测试验证项目目标。",
+        "verification": "查看每个节点的 setup、call、teardown 结果；跳过与 xfail 不算已修复",
+        "targets": [
+          "test_cart.py::test_tax"
+        ],
+        "goal_impact": 1
+      }
+    },
+    {
+      "id": "check-pytest_run",
+      "type": "Action",
+      "label": "验证完整测试运行",
+      "attributes": {
+        "priority": 3,
+        "explanation": "只更新本次检查覆盖的问题；其他问题保留。若未做改动且没有新证据，无需反复运行同一检查。",
+        "verification": "查看新的检查记录和状态变化",
+        "targets": [],
+        "goal_impact": 1
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "check-failed-tests",
+      "relation": "addresses",
+      "target": "issue-f151c3f0b6afcf"
+    },
+    {
+      "source": "check-failed-tests",
+      "relation": "justified_by",
+      "target": "issue-f151c3f0b6afcf:affects:pass_tests"
+    },
+    {
+      "source": "check-pytest_run",
+      "relation": "addresses",
+      "target": "issue-f151c3f0b6afcf"
+    },
+    {
+      "source": "check-pytest_run",
+      "relation": "justified_by",
+      "target": "issue-f151c3f0b6afcf:affects:pass_tests"
+    },
+    {
+      "source": "event-7831b1781f56",
+      "relation": "cites",
+      "target": "evidence:run-c9ae1dcb9083:probe:2"
+    },
+    {
+      "source": "event-9ae024418745",
+      "relation": "cites",
+      "target": "evidence:run-c9ae1dcb9083:probe:7"
+    },
+    {
+      "source": "evidence:run-c9ae1dcb9083:probe:2",
+      "relation": "observed_in",
+      "target": "run-c9ae1dcb9083"
+    },
+    {
+      "source": "evidence:run-c9ae1dcb9083:probe:7",
+      "relation": "observed_in",
+      "target": "run-c9ae1dcb9083"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "evaluated_by",
+      "target": "run-ef65bf5e5301"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "has_open_issue",
+      "target": "issue-f151c3f0b6afcf"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "recommends",
+      "target": "check-failed-tests"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "recommends",
+      "target": "check-pytest_run"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "recommends",
+      "target": "review-test_assertion"
+    },
+    {
+      "source": "issue-c8577715fc10bc",
+      "relation": "has_event",
+      "target": "event-7831b1781f56"
+    },
+    {
+      "source": "issue-f151c3f0b6afcf",
+      "relation": "has_event",
+      "target": "event-9ae024418745"
+    },
+    {
+      "source": "issue-f151c3f0b6afcf:affects:pass_tests",
+      "relation": "inferred_from",
+      "target": "issue-f151c3f0b6afcf:stage:call"
+    },
+    {
+      "source": "issue-f151c3f0b6afcf:affects:pass_tests",
+      "relation": "supported_by",
+      "target": "evidence:run-c9ae1dcb9083:probe:7"
+    },
+    {
+      "source": "issue-f151c3f0b6afcf:kind:test_assertion",
+      "relation": "supported_by",
+      "target": "evidence:run-c9ae1dcb9083:probe:7"
+    },
+    {
+      "source": "issue-f151c3f0b6afcf:needs:assertion_review",
+      "relation": "inferred_from",
+      "target": "issue-f151c3f0b6afcf:kind:test_assertion"
+    },
+    {
+      "source": "issue-f151c3f0b6afcf:needs:assertion_review",
+      "relation": "supported_by",
+      "target": "evidence:run-c9ae1dcb9083:probe:7"
+    },
+    {
+      "source": "issue-f151c3f0b6afcf:stage:call",
+      "relation": "supported_by",
+      "target": "evidence:run-c9ae1dcb9083:probe:7"
+    },
+    {
+      "source": "review-test_assertion",
+      "relation": "addresses",
+      "target": "issue-f151c3f0b6afcf"
+    },
+    {
+      "source": "review-test_assertion",
+      "relation": "justified_by",
+      "target": "issue-f151c3f0b6afcf:needs:assertion_review"
+    }
+  ],
+  "meaning": "来源与规则关系；不从文本相似度生成因果边。"
+}
