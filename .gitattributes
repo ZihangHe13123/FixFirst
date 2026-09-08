@@ -1,0 +1,2 @@
+# Generated reports preserve whitespace inside captured command text.
+examples/demo/*.html -whitespace
