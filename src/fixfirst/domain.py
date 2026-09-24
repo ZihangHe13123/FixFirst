@@ -87,6 +87,8 @@ def facts_for(entities) -> list[Fact]:
                 knowledge(entity, "deprecated_in_version", entry["version"], source),
                 knowledge(entity, "replacement", entry["replacement"], source),
             ]
+            if entry.get("removal"):
+                result.append(knowledge(entity, "scheduled_removal", entry["removal"], source))
         entry = kb["fixture_index"].get(entity)
         if entry:
             result.append(

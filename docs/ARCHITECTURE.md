@@ -61,15 +61,17 @@ page describes the code as of v0.4. `models.py` holds the shared Pydantic record
    ≥ 0.6 becomes a *hypothesis* fact.
 6. **Reason.** `engine.run` applies the rule base phase by phase to a fixpoint:
    - `derive`: goal relevance (`affects`, `blocks`) and helper facts;
-   - `diagnose`: root causes from evidence + knowledge (rules D01–D45), including pip check
+   - `diagnose`: root causes from evidence + knowledge (rules D01–D46), including pip check
      conflicts linked to missing names (D06), missing pytest plugins (D23) and deprecation
-     warnings that break a test's warning count (D44, D45);
+     warnings that break a test's warning count (D44, D45). D44/D45 also conclude that the
+     failure does not affect how the code runs, and D46 that a scheduled removal will break
+     the code later;
    - `heuristic`: likely causes from general experience when no rule is certain, worded as
      unconfirmed (H01–H04);
    - `fallback`: the tree's suggestion, only when neither matched (F01);
    - `plan`: actions (P01–P51), merged by action id across issues.
 
-   83 rules in total: 10 derive, 29 diagnose, 4 heuristic, 1 fallback, 39 plan.
+   84 rules in total: 10 derive, 30 diagnose, 4 heuristic, 1 fallback, 39 plan.
    Negation is stratified: a rule may only negate predicates concluded in an earlier phase,
    which `engine.validate` checks when the rule base loads.
 7. **Order.** `reasoning.order_actions` sorts by: blocked preconditions, goal impact (affects +

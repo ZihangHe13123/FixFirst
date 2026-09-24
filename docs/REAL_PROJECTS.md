@@ -57,7 +57,7 @@ Three additions now explain every remaining failure:
 |---|---|---|
 | 4 tests, `TypeError ... not <class 'NoneType'>` | Replace pytest.warns(None): removed in pytest 8.0 (or pin pytest below 8.0), citing the pytest deprecation notes | D07: a *removed usage* in the knowledge base, recognised by its error message |
 | `test_egg_installed_paths` | Likely: install setuptools, with the command; the test runs `setup.py bdist_egg` and Python 3.12 virtual environments no longer include setuptools | H03 (heuristic). Verified separately: the same command fails without setuptools and succeeds with it |
-| `test_max_cookie_size` (4 warnings instead of 1) | Count only the warnings the test checks: werkzeug also triggers ast.Str deprecation warnings (or run the tests with Python older than 3.12) | D45 + P33: the probe records which warnings the test's recorder held; the knowledge base says Python warns about `ast.Str` since 3.12 |
+| `test_max_cookie_size` (4 warnings instead of 1) | Optional: make the test ignore werkzeug's ast.Str deprecation warnings (or run the tests with Python older than 3.12). Your code runs normally; Python 3.14 removes ast.Str, so werkzeug 1.0.1 will fail there | D45 + P33, D46: the probe records which warnings the test's recorder held; the knowledge base says Python warns about `ast.Str` since 3.12 and removes it in 3.14 |
 
 Doing both (pytest<8 and installing setuptools, as a user following the steps) gives
 **525 passed, 1 failed, 14 skipped, 1 xfail**. The last failure, `test_max_cookie_size`,
@@ -67,7 +67,10 @@ accepts, uses it to compile the test's route, and Python 3.12 deprecates it. The
 of FixFirst only saw `assert 4 == 1` and called it a code defect. The probe now also records
 which warnings the test held when it failed, so FixFirst names the library, the line
 (`werkzeug/routing.py:957`) and the warning text, and suggests counting only the warning the
-test checks, or using Python older than 3.12. Changing the assertion to
+test checks, or using Python older than 3.12. Because the code itself works, the page lists
+this as an optional step and its headline reads "No problems that affect your code" instead
+of "1 problem to fix". It also warns that Python 3.14 removes `ast.Str`: Werkzeug 1.0.1 uses
+it when compiling routes, so on 3.14 the application itself would fail. Changing the assertion to
 `recwarn.pop(UserWarning)` makes the test pass (checked on a copy of the tests).
 
 Every step was verified by a real check before FixFirst marked it fixed: after round 4 the
@@ -114,6 +117,10 @@ was fixed and is covered by a test:
     the fixture and to the project's declarations (D23, P21, P22). A fixture defined in the
     project but out of the test's reach (D24) and an unknown fixture (heuristic H04) get their
     own advice.
+13. **Must fix vs optional.** Failures that rules judge not to affect how the code runs (so
+    far: a warning count broken by the environment's deprecation warnings) are shown as
+    optional and left out of the problem count; knowledge of a scheduled removal adds when they
+    will start to matter.
 
 ## Limits seen on real projects
 

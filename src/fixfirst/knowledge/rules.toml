@@ -351,7 +351,10 @@ when = [
   ["?i", "exception", "AssertionError"], ["?i", "warning_noise", "?x"],
   ["?x", "emitted_by", "?e"], ["test", "eq", "?e", "project"],
 ]
-then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "replace_deprecated"], ["?i", "because", "?x"]]
+then = [
+  ["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "replace_deprecated"], ["?i", "because", "?x"],
+  ["?i", "affects_running", "no"],
+]
 
 [[rule]]
 id = "D45"
@@ -361,7 +364,18 @@ when = [
   ["?i", "exception", "AssertionError"], ["?i", "warning_noise", "?x"],
   ["?x", "emitted_by", "?e"], ["test", "ne", "?e", "project"],
 ]
-then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "count_checked_warnings"], ["?i", "because", "?x"]]
+then = [
+  ["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "count_checked_warnings"], ["?i", "because", "?x"],
+  ["?i", "affects_running", "no"],
+]
+
+[[rule]]
+id = "D46"
+phase = "diagnose"
+description = "The deprecated name the warnings are about is scheduled for removal: the code that uses it will stop working in that release."
+source = "knowledge: deprecations"
+when = [["?i", "warning_noise", "?x"], ["?x", "scheduled_removal", "?r"]]
+then = [["?i", "breaks_in_future", "?x"]]
 
 [[rule]]
 id = "D41"
@@ -875,8 +889,8 @@ kind = "manual_fix"
 cause = "version_incompatibility"
 issue = "?i"
 cost = 2
-title = "Count only the warnings the test checks: {?e} also triggers {?x} deprecation warnings"
-explanation = "The test counts every warning recorded while it runs, and deprecation warnings from outside your code make up {?k} of the {?n} it recorded; one comes from {?loc}: \"{?w}\". {?d} warns about {?x} since {?v}, and this environment has {?d} {?iv}, so the count no longer matches. Make the assertion count only the warning it is about (for example pytest.warns(UserWarning, match=...), or filter the recorded warnings by category), or run the tests with {?d} older than {?v}."
+title = "Make the test ignore {?e}'s {?x} deprecation warnings"
+explanation = "The test counts every warning recorded while it runs. Deprecation warnings from outside your code make up {?k} of the {?n} it recorded, such as the one about {?x} at {?loc}: this environment has {?d} {?iv}, which warns about {?x} since {?v}. To make the test pass, count only the warning the test is about, for example recwarn.pop(UserWarning) instead of len(recwarn) == 1, or run the tests with {?d} older than {?v}."
 verification = "Re-run the tests with the same interpreter"
 
 [[rule]]
@@ -895,8 +909,8 @@ kind = "manual_fix"
 cause = "version_incompatibility"
 issue = "?i"
 cost = 2
-title = "Count only the warnings the test checks: {?e} also triggers {?x} deprecation warnings"
-explanation = "The test counts every warning recorded while it runs, and deprecation warnings from outside your code make up {?k} of the {?n} it recorded; one comes from {?loc}: \"{?w}\". New releases of Python and of libraries add warnings like this, so the count no longer matches. Make the assertion count only the warning it is about (for example pytest.warns(UserWarning, match=...), or filter the recorded warnings by category), or use the Python and library versions the tests were written for."
+title = "Make the test ignore {?e}'s {?x} deprecation warnings"
+explanation = "The test counts every warning recorded while it runs. Deprecation warnings from outside your code make up {?k} of the {?n} it recorded, such as the one about {?x} at {?loc}; new releases of Python and of libraries add warnings like this. To make the test pass, count only the warning the test is about, for example recwarn.pop(UserWarning) instead of len(recwarn) == 1, or use the Python and library versions the tests were written for."
 verification = "Re-run the tests with the same interpreter"
 
 [[rule]]
@@ -914,8 +928,8 @@ kind = "manual_fix"
 cause = "version_incompatibility"
 issue = "?i"
 cost = 2
-title = "Replace {?x} at {?loc}: its deprecation warnings break the test's warning count"
-explanation = "Your code at {?loc} uses {?x}, and the installed version warns: \"{?w}\". The test counts every warning recorded while it runs, and deprecation warnings like this one make up {?k} of the {?n} it recorded, so it fails. Change the code as the warning says. Making the test count only the warning it checks would also work, but keeps the deprecated call."
+title = "Replace {?x} at {?loc}: the installed version warns about it"
+explanation = "Your code at {?loc} uses {?x}, and the test counts every warning recorded while it runs: deprecation warnings like this one make up {?k} of the {?n} it recorded. Change the code as the warning suggests, and the test passes without changes. Making the test count only the warning it checks also works, but keeps the deprecated call."
 verification = "Re-run the tests with the same interpreter"
 
 # ======================================================================================

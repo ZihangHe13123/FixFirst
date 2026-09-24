@@ -11,7 +11,7 @@ import subprocess
 import sys
 import tempfile
 
-from . import domain
+from . import domain, engine
 from .evidence import issue_evidence
 from .models import Session
 from .report import GOALS, TOOL_NAMES, shell
@@ -40,7 +40,13 @@ def build_view(session: Session) -> dict:
     events = {e.event_id: e for e in session.events}
     facts = {f.fact_id: f for f in session.facts}
     rule_text = _rule_descriptions()
-    steps, other = [], []
+    known: dict[tuple, list[str]] = {}
+    for fact in session.facts:
+        known.setdefault((fact.subject, fact.predicate), []).append(fact.value)
+    # Failures the rules judged not to change how the code runs (for example a test that
+    # only counts warnings) are optional: they never count as problems in the headline.
+    optional_ids = {i for (i, p), values in known.items() if p == "affects_running" and "no" in values}
+    steps, optional, other = [], [], []
     for action in session.actions:
         if action.kind == "rerun":
             continue  # "Check again" covers every verification re-run
@@ -64,6 +70,10 @@ def build_view(session: Session) -> dict:
             errors.append(issue.title)
             if issue.diagnosis_rule and issue.diagnosis_rule in rule_text:
                 rules.append(f"{issue.diagnosis_rule}: {rule_text[issue.diagnosis_rule]}")
+            rules += [
+                f"{f.rule_id}: {rule_text[f.rule_id]}" for f in session.facts
+                if f.subject == issue.issue_id and f.predicate == "breaks_in_future" and f.rule_id in rule_text
+            ]
         sources = []
         for fact_id in action.reason_refs:
             for ref in getattr(facts.get(fact_id), "evidence_refs", []):
@@ -75,7 +85,10 @@ def build_view(session: Session) -> dict:
         hedged = not suspected and any(
             i.diagnosis_source == "heuristic" and i.diagnosis == action.cause for i in related
         )
-        (steps if action.goal_impact > 0 else other).append(
+        is_optional = bool(related) and all(i.issue_id in optional_ids for i in related)
+        impact = _impact(related, known) if is_optional else {}
+        target = other if action.goal_impact <= 0 else optional if is_optional else steps
+        target.append(
             {
                 "id": action.action_id,
                 "issue_ids": [i.issue_id for i in related],
@@ -94,9 +107,13 @@ def build_view(session: Session) -> dict:
                 "errors": list(dict.fromkeys(errors)),
                 "rules": list(dict.fromkeys(rules)),
                 "sources": sources,
+                "optional": is_optional,
+                "impact": impact.get("now"),
+                "risk": impact.get("later"),
+                "warnings": impact.get("warnings", []),
             }
         )
-    steps, other = _fold_suggestions(steps), _fold_suggestions(other)
+    steps, optional, other = _fold_suggestions(steps), _fold_suggestions(optional), _fold_suggestions(other)
     fixed = [
         {"title": i.title, "cause": cause_name(i.diagnosis), "note": i.note}
         for i in session.issues
@@ -109,20 +126,62 @@ def build_view(session: Session) -> dict:
         i for i in session.issues
         if i.status in ("open", "awaiting_verification") and i.issue_id in blocking
     ]
+    must = [i for i in open_issues if i.issue_id not in optional_ids]
+    optional_issues = [i for i in open_issues if i.issue_id in optional_ids]
     return {
         "project": session.name or Path(session.project_root).name,
         "project_root": session.project_root,
         "python": session.target_python,
         "goal": session.goal,
         "goal_name": GOALS[session.goal],
-        "status": _status(session, steps, open_issues),
+        "status": _status(session, steps, must, optional_issues),
         "steps": steps,
+        "optional": optional,
         "other": other,
         "fixed": fixed,
         "pending": pending,
         "checked": bool(session.runs),
         "last_checked": session.runs[-1].started_at if session.runs else None,
     }
+
+
+def _impact(issues, known: dict) -> dict:
+    """Plain-language impact of failures that do not change how the code runs."""
+
+    def first(subject, predicate):
+        values = known.get((subject, predicate))
+        return values[0] if values else None
+
+    several = len(issues) != 1
+    result = {
+        "now": "Your code runs normally. Only "
+        + ("these tests fail" if several else "this test fails")
+        + ", because "
+        + ("they count" if several else "it counts")
+        + " warnings and a newer Python or library adds some.",
+        "later": None,
+        "warnings": [],
+    }
+    for issue in issues:
+        name = first(issue.issue_id, "extra_warning")
+        text = first(name, "warning_text") if name else None
+        if text and text not in result["warnings"]:
+            result["warnings"].append(f"{first(name, 'emitted_at')}: {text}")
+        future = first(issue.issue_id, "breaks_in_future")
+        if future and not result["later"]:
+            owner = first(future, "deprecated_in") or ""
+            release = f"{engine.display(owner)} {first(future, 'scheduled_removal')}"
+            head = f"{release} removes {engine.display(future)}"
+            user = first(future, "emitted_by") or ""
+            if user == "project":
+                result["later"] = f"{head}, so your code at {first(future, 'emitted_at')} will stop working on {release}."
+            elif user.startswith("dist:") and user != owner:
+                version = first(user, "installed_version")
+                used_by = engine.display(user) + (f" {version}" if version else "")
+                result["later"] = f"{head}. {used_by} uses it in code your tests run, so that code will fail on {release}."
+            else:
+                result["later"] = f"{head}. Code your tests run uses it, so it will fail on {release}."
+    return result
 
 
 def _fold_suggestions(steps: list[dict]) -> list[dict]:
@@ -151,7 +210,7 @@ def _rule_descriptions() -> dict:
     return {r.rule_id: r.description for r in rule_base()}
 
 
-def _status(session: Session, steps, open_issues) -> dict:
+def _status(session: Session, steps, open_issues, optional_issues=()) -> dict:
     if not session.runs:
         return {
             "kind": "new",
@@ -171,12 +230,29 @@ def _status(session: Session, steps, open_issues) -> dict:
     count = len(steps) if steps else len(open_issues)
     fixed = sum(i.status == "resolved" for i in session.issues)
     progress = f"{fixed} fixed so far. " if fixed else ""
+    waiting = len(optional_issues)
     if count:
+        extra = (
+            f" {waiting} more failing test{'s' if waiting != 1 else ''} below "
+            f"{'do' if waiting != 1 else 'does'} not affect how your code runs (optional)."
+            if waiting else ""
+        )
         return {
             "kind": "todo",
             "headline": f"{count} problem{'s' if count != 1 else ''} to fix",
             "detail": progress + "Start with step 1. After changing your code, press Check "
-            "again: a step only counts as fixed when a real check passes.",
+            "again: a step only counts as fixed when a real check passes." + extra,
+        }
+    if waiting:
+        several = waiting != 1
+        return {
+            "kind": "advisory",
+            "headline": "No problems that affect your code",
+            "detail": progress
+            + f"{waiting} test{'s' if several else ''} still fail{'' if several else 's'}, but for a "
+            "reason that does not change how your code runs. The optional step below makes "
+            + ("them" if several else "it")
+            + " pass if you want every test to pass.",
         }
     others = sum(i.status != "resolved" for i in session.issues)
     return {

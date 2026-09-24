@@ -229,13 +229,53 @@ def test_library_deprecation_warnings_that_break_a_warning_count(tmp_path):
         "test_one_warning": ("version_incompatibility", "D45"),
         "test_plain_assertion": ("code_defect", "D40"),
     }
-    step = next(s for s in build_view(session)["steps"] if s["id"].startswith("count-expected-warnings"))
-    assert step["title"] == (
-        "Count only the warnings the test checks: oldlib also triggers oldlib.tree deprecation warnings"
-    )
+    view = build_view(session)
+    # The plain assertion is a problem to fix; the warning count does not affect running.
+    assert view["status"]["headline"] == "1 problem to fix"
+    assert "1 more failing test below does not affect how your code runs" in view["status"]["detail"]
+    assert [s["id"] for s in view["steps"]] == ["review-test_assertion"]
+    step = view["optional"][0]
+    assert step["title"] == "Make the test ignore oldlib's oldlib.tree deprecation warnings"
     assert "make up 1 of the 2 it recorded" in step["explanation"]
-    assert "one comes from oldlib/__init__.py:4" in step["explanation"]
-    assert step["where"] == ["test_count.py:8"]
+    assert "oldlib.tree at oldlib/__init__.py:4" in step["explanation"]
+    assert step["where"] == ["test_count.py:8"] and step["optional"]
+    assert step["impact"].startswith("Your code runs normally. Only this test fails")
+    assert step["risk"] is None  # not in the knowledge base: no removal date to warn about
+    assert step["warnings"] == [
+        "oldlib/__init__.py:4: oldlib.tree is deprecated and will be removed in Python 3.99; "
+        "use oldlib.graph instead"
+    ]
+
+
+def test_only_optional_failures_left_is_not_a_problem(tmp_path):
+    library = tmp_path / "vendor" / "site-packages" / "routes"
+    library.mkdir(parents=True)
+    (library / "__init__.py").write_text(
+        "import warnings\n\ndef compile_rule():\n"
+        "    warnings.warn('ast.Str is deprecated and will be removed in Python 3.14; "
+        "use ast.Constant instead', DeprecationWarning)\n"
+    )
+    (tmp_path / "test_cookie.py").write_text(
+        "import pathlib, sys, warnings\n"
+        "sys.path.insert(0, str(pathlib.Path(__file__).parent / 'vendor' / 'site-packages'))\n"
+        "import routes\n\n"
+        "def test_cookie(recwarn):\n"
+        "    routes.compile_rule()\n"
+        "    warnings.warn('cookie is too large', UserWarning)\n"
+        "    assert len(recwarn) == 1\n"
+    )
+    session, issues = scan_project(tmp_path)
+    assert [(i.diagnosis, i.diagnosis_rule) for i in issues] == [("version_incompatibility", "D45")]
+    view = build_view(session)
+    assert view["status"]["kind"] == "advisory"
+    assert view["status"]["headline"] == "No problems that affect your code"
+    assert view["steps"] == [] and len(view["optional"]) == 1
+    step = view["optional"][0]
+    # The knowledge base knows Python 3.14 removes ast.Str (rule D46).
+    assert step["risk"] == (
+        "Python 3.14 removes ast.Str. routes uses it in code your tests run, so that code will fail on Python 3.14."
+    )
+    assert any(rule.startswith("D46:") for rule in step["rules"])
 
 
 def test_deprecation_knowledge_and_project_origin_choose_the_fix():
@@ -266,6 +306,8 @@ def test_deprecation_knowledge_and_project_origin_choose_the_fix():
     action = next(p for p in proposals if p.action_id == "count-expected-warnings-ast.str")
     assert action.rule_ids == ["P33"]
     text = engine.render(action.template["explanation"], action.bindings)
-    assert "Python warns about ast.Str since 3.12" in text and "Python older than 3.12" in text
+    assert "which warns about ast.Str since 3.12" in text and "Python older than 3.12" in text
+    assert ("issue-1", "affects_running", "no") in base.keys
+    assert ("issue-1", "breaks_in_future", "api:ast.Str") in base.keys
     _, proposals = plan("project", "src/app.py:12")
     assert [p.action_id for p in proposals if p.rule_ids == ["P34"]] == ["replace-deprecated-ast.str"]

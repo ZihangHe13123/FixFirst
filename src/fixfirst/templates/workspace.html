@@ -6,7 +6,7 @@
 .context{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;color:var(--muted);font-size:14px;margin-bottom:16px}
 .context .path{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;direction:rtl;text-align:left}.context label{display:flex;align-items:center;gap:8px;flex:none}.context select{width:auto;padding:6px 10px;font-size:14px}
 .status{border-radius:16px;padding:26px 28px;display:flex;gap:22px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--line);background:#fff}
-.status.todo{background:var(--amber-soft);border-color:#efd9b0}.status.done{background:var(--green-soft);border-color:#bfdcc8}.status.unknown,.status.new{background:#fff}
+.status.todo{background:var(--amber-soft);border-color:#efd9b0}.status.advisory{background:var(--blue-soft);border-color:#c9d8ec}.status.done{background:var(--green-soft);border-color:#bfdcc8}.status.unknown,.status.new{background:#fff}
 .status h1{margin:0 0 6px}.status p{margin:0;color:#4a5a50;max-width:540px}.status .icon{font-size:28px;margin-right:4px}
 .status .act{display:flex;flex-direction:column;align-items:flex-end;gap:6px}.status .act .small{color:var(--muted)}
 .steps{list-style:none;margin:0;padding:0;display:grid;gap:14px}
@@ -23,6 +23,10 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
 .fixed:not(.other) li::before{content:"✓ ";color:var(--green);font-weight:700}
 .more{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);display:flex;gap:18px;flex-wrap:wrap;font-size:14px}
 .hint{margin:22px 0 0;font-size:14px;color:var(--muted)}
+.section-note{margin:-6px 0 12px;color:var(--muted);font-size:14px}
+.step.optional{border-style:dashed;background:#fbfcfb}.step.optional .num{background:#eef1ee;color:var(--muted);font-size:15px}
+.tag.optional{background:#eef1ee;color:#55665c}
+.impact{background:var(--blue-soft);border-radius:8px;padding:8px 12px;font-size:15px}.impact b{color:var(--blue)}
 .cmd{display:flex;gap:10px;align-items:center;background:#15302a;border-radius:9px;padding:10px 12px;margin:10px 0 4px}
 .cmd code{flex:1;color:#e6f2ea;overflow-wrap:anywhere;font-size:13px}.cmd button{padding:5px 12px;font-size:13px;flex:none}
 {% endblock %}
@@ -44,35 +48,50 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
 </section>
 <p id="error" role="alert"></p>
 
-{% if view.steps and view.status.kind != 'done' %}
-<h2>What to do</h2>
-<ol class="steps">
-{% for step in view.steps %}
-  <li class="step {{ 'first' if loop.first }}">
-    <div class="num">{{ loop.index }}</div>
+{% macro card(step, number, first) %}
+  <li class="step {{ 'first' if first }} {{ 'optional' if step.optional }}">
+    <div class="num">{{ number }}</div>
     <div class="body">
       <div class="tags">
-        {% if loop.first %}<span class="tag first">Start here</span>{% endif %}
+        {% if first %}<span class="tag first">Start here</span>{% endif %}
+        {% if step.optional %}<span class="tag optional">Optional</span>{% endif %}
         {% if step.suspected %}<span class="tag maybe">Possible cause · not confirmed</span>{% elif step.cause %}<span class="tag cause">{{ step.cause }}</span>{% endif %}
         {% if step.possible %}<span class="tag maybe" title="The decision tree's guess from similar cases; no rule confirmed it">Likely: {{ step.possible }} · not confirmed</span>{% endif %}
       </div>
       <h3>{{ step.title }}</h3>
       {% if step.where %}<div class="where">{% for place in step.where[:4] %}<code>{{ place }}</code>{% endfor %}{% if step.where|length > 4 %}<span class="muted small">and {{ step.where|length - 4 }} more</span>{% endif %}</div>{% endif %}
+      {% if step.impact %}<p class="impact"><b>Impact:</b> {{ step.impact }}{% if step.risk %}<br><b>Later:</b> {{ step.risk }}{% endif %}</p>{% endif %}
       <p>{{ step.explanation }}</p>
       {% if step.command %}<div class="cmd"><code>{{ step.command }}</code><button type="button" class="copy" data-copy="{{ step.command }}">Copy</button></div>
       <p class="muted small">Run it in a terminal. It uses this project's own Python, so the package goes where FixFirst checks. Then press <b>Check again</b>.<br>pip may print a red <code>ERROR</code> listing other version conflicts. If its last line says <i>Successfully installed</i>, the step worked: the conflicts it lists are the next steps, and FixFirst takes them one at a time.</p>{% endif %}
       {% if step.gather %}<p class="muted small">Press <b>Check again</b> and FixFirst collects this for you.</p>{% endif %}
       <details><summary>Details</summary>
         {% if step.errors %}<h4>Error</h4>{% for error in step.errors[:3] %}<pre>{{ error }}</pre>{% endfor %}{% endif %}
+        {% if step.warnings %}<h4>Warning the test recorded</h4>{% for warning in step.warnings[:3] %}<pre>{{ warning }}</pre>{% endfor %}{% endif %}
         {% if step.rules or step.sources %}<h4>Why FixFirst thinks so</h4><ul>{% for rule in step.rules %}<li>Rule {{ rule }}</li>{% endfor %}{% for source in step.sources %}<li>Source: <a href="{{ source.url }}" target="_blank" rel="noreferrer">{{ source.title }}</a></li>{% endfor %}</ul>{% endif %}
         {% if step.suspected %}<p class="small muted">No rule matched the recorded evidence, so this is the decision tree's best guess from similar cases. Check it against the error before acting on it.</p>{% endif %}
         <h4>How to confirm</h4><p class="small">{{ step.confirm }}</p>
       </details>
     </div>
   </li>
-{% endfor %}
+{% endmacro %}
+
+{% if view.status.kind != 'done' %}
+{% if view.steps %}
+<h2>{{ 'Must fix' if view.optional else 'What to do' }}</h2>
+{% if view.optional %}<p class="section-note">These stop your code or your tests from working.</p>{% endif %}
+<ol class="steps">
+{% for step in view.steps %}{{ card(step, loop.index, loop.first) }}{% endfor %}
 </ol>
 <p class="hint">Fix the steps in order, then press <b>Check again</b>. FixFirst never changes your files; it only reruns the checks and marks what is really fixed.</p>
+{% endif %}
+{% if view.optional %}
+<h2>Optional</h2>
+<p class="section-note">These do not change how your code runs. Fix them if you want every test to pass.</p>
+<ol class="steps">
+{% for step in view.optional %}{{ card(step, "–", False) }}{% endfor %}
+</ol>
+{% endif %}
 {% endif %}
 
 {% if view.other %}

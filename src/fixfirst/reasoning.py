@@ -87,6 +87,7 @@ def base_facts(session: Session, active, knowledge=True) -> tuple[list[Fact], di
         | {f.value for f in known if f.predicate in ("removed_from", "deprecated_in", "provided_by_plugin")}
         | {f.subject for f in evidence_facts if f.predicate == "required_spec"}
         | {f.value for f in evidence_facts if f.predicate == "provided_by"}
+        | {f.value for f in evidence_facts if f.predicate == "emitted_by" and f.value.startswith("dist:")}
     )
     facts += environment_facts(session, distributions)
     return facts, details
