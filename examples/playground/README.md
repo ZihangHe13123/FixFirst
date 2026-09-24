@@ -13,5 +13,5 @@ the reports in order:
 3. `03-verified.html`: after the last two changes the goal is verified.
 
 The changes made between steps are listed in `FIXES.md`. To do this live, run
-`fixfirst serve` and choose *Open the playground*, or `fixfirst demo --scenario playground`.
+`fixfirst serve` and choose *Open a sample project*, or `fixfirst demo --scenario playground`.
 This recording was produced by `scripts/record_playground.py`.

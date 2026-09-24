@@ -53,7 +53,7 @@ def playground(output: Path, store, python: str | None = None):
     root = output / "project"
     for name, text in FILES.items():
         write(root / name, text)
-    session = create_session(root, python or sys.executable, "Playground: four faults, four causes",
+    session = create_session(root, python or sys.executable, "Sample project with 4 problems",
                              goal="pass_tests")
     scan(session, ["environment", "project", "pytest_run"])
     with store.lock(session.session_id):

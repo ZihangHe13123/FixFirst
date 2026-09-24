@@ -26,14 +26,20 @@ powershell -ExecutionPolicy Bypass -File scripts\setup.ps1
 .venv\Scripts\fixfirst serve
 ```
 
-The browser opens the local interface. Choose **Open the playground** to get a small project
-with four faults and four different causes; fix them in any editor (`FIXES.md` lists the
-changes) and press *Run the checks* after each step. You can also double-click
-`start-fixfirst.command` (macOS) or `start-fixfirst.bat` (Windows).
+The browser opens the local interface:
 
-To troubleshoot your own project, enter its directory and the interpreter it uses (for
-example `/path/to/project/.venv/bin/python`). Checks import the project's code, as its tests
-would; only use projects you trust.
+1. Choose your project folder (type it or press *Browse…*). FixFirst finds the project's own
+   `.venv` and tells you if pytest is missing there.
+2. Pick a goal (*Make my tests pass* by default) and press **Check my project**.
+3. Follow the numbered steps. Each says which file and line to change, why, and how to confirm.
+   After changing your code, press **Check again**; a step only counts as fixed when a real
+   check passes.
+
+No project at hand? Press *Open a sample project* on the start page: four faults, four causes,
+with the changes listed in its `FIXES.md`. You can also double-click `start-fixfirst.command`
+(macOS) or `start-fixfirst.bat` (Windows). Checks import the project's code, as its tests would;
+only use projects you trust. The evidence graph, rules and raw output are one click away under
+*Technical details*.
 
 ## Why
 
@@ -129,7 +135,7 @@ fixfirst historical --assets examples/historical-regressions/assets --output wor
 |---|---|
 | `src/fixfirst/` | the package (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)) |
 | `src/fixfirst/knowledge/` | rule base, domain knowledge, bundled decision tree |
-| `tests/` | 103 tests, most running real subprocesses |
+| `tests/` | 104 tests, most running real subprocesses |
 | `examples/` | recorded runs, datasets and experiment reports ([overview](examples/README.md)) |
 | `docs/` | architecture, course alignment, team notes |
 

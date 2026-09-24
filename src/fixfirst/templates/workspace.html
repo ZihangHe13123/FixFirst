@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}{{ view.project }} · FixFirst{% endblock %}
+{% block crumb %}<span class="crumb">/ {{ view.project }}</span>{% endblock %}
+{% block nav %}<a href="/">All projects</a>{% endblock %}
+{% block style %}
+.context{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;color:var(--muted);font-size:14px;margin-bottom:16px}
+.context .path{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;direction:rtl;text-align:left}.context label{display:flex;align-items:center;gap:8px;flex:none}.context select{width:auto;padding:6px 10px;font-size:14px}
+.status{border-radius:16px;padding:26px 28px;display:flex;gap:22px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--line);background:#fff}
+.status.todo{background:var(--amber-soft);border-color:#efd9b0}.status.done{background:var(--green-soft);border-color:#bfdcc8}.status.unknown,.status.new{background:#fff}
+.status h1{margin:0 0 6px}.status p{margin:0;color:#4a5a50;max-width:540px}.status .icon{font-size:28px;margin-right:4px}
+.status .act{display:flex;flex-direction:column;align-items:flex-end;gap:6px}.status .act .small{color:var(--muted)}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.step{display:flex;gap:16px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+.step.first{border:2px solid var(--green);padding:19px 21px}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--green-soft);color:var(--green);font-weight:700;display:flex;align-items:center;justify-content:center}
+.step.first .num{background:var(--green);color:#fff}
+.step .body{min-width:0;flex:1}.tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+.where{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 8px}.where code{background:#f1f5f1;border:1px solid var(--line);border-radius:6px;padding:2px 8px}
+.step p{margin:6px 0}details{margin-top:8px}summary{cursor:pointer;color:var(--green);font-size:14px;font-weight:600}
+details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 4px}details ul{margin:4px 0;padding-left:20px;font-size:14px}
+.fixed{margin-top:26px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 20px}
+.fixed summary{font-size:16px;color:var(--ink)}.fixed ul{list-style:none;padding:0;margin:10px 0 0}.fixed li{padding:8px 0;border-top:1px solid #eef2ee;font-size:15px;overflow-wrap:anywhere}
+.fixed:not(.other) li::before{content:"✓ ";color:var(--green);font-weight:700}
+.more{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);display:flex;gap:18px;flex-wrap:wrap;font-size:14px}
+.hint{margin:22px 0 0;font-size:14px;color:var(--muted)}
+{% endblock %}
+{% block main %}
+<div class="context">
+  <span class="path mono" title="{{ view.project_root }}">&#8206;{{ view.project_root }}</span>
+  <label>Goal <select id="goal" aria-label="Goal">{% for key, name in goals.items() %}<option value="{{ key }}" {{ 'selected' if key == view.goal }}>{{ name }}</option>{% endfor %}</select></label>
+</div>
+
+<section class="status {{ view.status.kind }}">
+  <div>
+    <h1>{% if view.status.kind == 'done' %}<span class="icon" aria-hidden="true">✓</span>{% endif %}{{ view.status.headline }}</h1>
+    <p>{{ view.status.detail }}</p>
+  </div>
+  <div class="act">
+    <button class="primary big" id="check">{{ 'Run the first check' if not view.checked else 'Check again' }}</button>
+    {% if view.last_checked %}<span class="small">Last checked <span data-time="{{ view.last_checked }}"></span></span>{% endif %}
+  </div>
+</section>
+<p id="error" role="alert"></p>
+
+{% if view.steps and view.status.kind != 'done' %}
+<h2>What to do</h2>
+<ol class="steps">
+{% for step in view.steps %}
+  <li class="step {{ 'first' if loop.first }}">
+    <div class="num">{{ loop.index }}</div>
+    <div class="body">
+      <div class="tags">
+        {% if loop.first %}<span class="tag first">Start here</span>{% endif %}
+        {% if step.suspected %}<span class="tag maybe">Possible cause · not confirmed</span>{% elif step.cause %}<span class="tag cause">{{ step.cause }}</span>{% endif %}
+      </div>
+      <h3>{{ step.title }}</h3>
+      {% if step.where %}<div class="where">{% for place in step.where[:4] %}<code>{{ place }}</code>{% endfor %}{% if step.where|length > 4 %}<span class="muted small">and {{ step.where|length - 4 }} more</span>{% endif %}</div>{% endif %}
+      <p>{{ step.explanation }}</p>
+      {% if step.gather %}<p class="muted small">Press <b>Check again</b> and FixFirst collects this for you.</p>{% endif %}
+      <details><summary>Details</summary>
+        {% if step.errors %}<h4>Error</h4>{% for error in step.errors[:3] %}<pre>{{ error }}</pre>{% endfor %}{% endif %}
+        {% if step.rules or step.sources %}<h4>Why FixFirst thinks so</h4><ul>{% for rule in step.rules %}<li>Rule {{ rule }}</li>{% endfor %}{% for source in step.sources %}<li>Source: <a href="{{ source.url }}" target="_blank" rel="noreferrer">{{ source.title }}</a></li>{% endfor %}</ul>{% endif %}
+        {% if step.suspected %}<p class="small muted">No rule matched the recorded evidence, so this is the decision tree's best guess from similar cases. Check it against the error before acting on it.</p>{% endif %}
+        <h4>How to confirm</h4><p class="small">{{ step.confirm }}</p>
+      </details>
+    </div>
+  </li>
+{% endfor %}
+</ol>
+<p class="hint">Fix the steps in order, then press <b>Check again</b>. FixFirst never changes your files; it only reruns the checks and marks what is really fixed.</p>
+{% endif %}
+
+{% if view.other %}
+<details class="fixed other"><summary>Other findings that do not block this goal ({{ view.other|length }})</summary>
+<ul>{% for step in view.other %}<li><b>{{ step.title }}</b>{% if step.where %} <span class="muted small">· {{ step.where[:3]|join(', ') }}</span>{% endif %}<br><span class="small">{{ step.explanation }}</span></li>{% endfor %}</ul></details>
+{% endif %}
+
+{% if view.fixed %}
+<details class="fixed" {{ 'open' if view.status.kind == 'done' }}><summary>Fixed and verified ({{ view.fixed|length }})</summary>
+<ul>{% for item in view.fixed %}<li>{{ item.title }}{% if item.cause %} <span class="muted small">· {{ item.cause }}</span>{% endif %}</li>{% endfor %}</ul></details>
+{% endif %}
+
+<div class="more">
+  <a href="/sessions/{{ session_id }}/details">Technical details: evidence graph, rules and raw output</a>
+  <a href="/sessions/{{ session_id }}/export">Download a shareable report</a>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+const SESSION={{ session_id|tojson }};
+document.getElementById('check').onclick=async()=>{
+  busy('Checking your project…','Running the environment, dependency and test checks. Large test suites take longer.');
+  try{await post(`/api/sessions/${SESSION}/scan`,{});location.reload()}catch(err){showError(err.message)}};
+document.getElementById('goal').onchange=async e=>{
+  busy('Changing the goal…','');
+  try{await post(`/api/sessions/${SESSION}/goal`,{goal:e.target.value});location.reload()}catch(err){showError(err.message)}};
+</script>
+{% endblock %}

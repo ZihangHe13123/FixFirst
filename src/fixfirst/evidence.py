@@ -199,6 +199,13 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
         last = frames[-1]
     raised_in = classify_path(last, session.project_root, environment)
     kinds = [classify_path(f, session.project_root, environment) for f in frames]
+    # The last frame in the user's own code is where they should look.
+    root = session.project_root.replace("\\", "/").rstrip("/") + "/"
+    where = ""
+    for (path, line), kind in zip(FRAME.findall(traceback), kinds):
+        if kind in ("project", "test"):
+            shown = path.replace("\\", "/")
+            where = f"{shown[len(root):] if shown.startswith(root) else shown}:{line}"
 
     evidence = {
         "issue_id": issue.issue_id,
@@ -206,6 +213,7 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
         "message": message[:2000],
         "stage": issue.stage,
         "raised_in": raised_in,
+        "where": where,
         "third_party_frame_ratio": round(kinds.count("third_party") / len(kinds), 3) if kinds else 0.0,
         "missing_module": None,
         "modules": [],

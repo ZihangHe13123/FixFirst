@@ -45,7 +45,9 @@ class Store:
         for path in sorted(self.root.glob("session-*/session.json")):
             try:
                 data = json.loads(path.read_text(encoding="utf-8"))
-                rows.append({k: data[k] for k in ("session_id", "name", "goal", "goal_status")})
+                rows.append(
+                    {k: data.get(k) for k in ("session_id", "name", "goal", "goal_status", "created_at")}
+                )
             except (ValueError, KeyError, OSError):
                 continue
         return rows

@@ -1,48 +1,104 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'">
-<meta name="fixfirst-token" content="{{ token }}">
-<title>FixFirst</title>
-<style>
-:root{--ink:#142822;--muted:#65746d;--bg:#f3f5f1;--line:#dae2db;--green:#17664a;--amber:#865516}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-header{background:#142f26;color:#dce9df;padding:26px 5vw}.brand{font-size:26px;font-weight:750;letter-spacing:-1px}.brand span{background:#b8dda6;color:#193326;border-radius:10px;padding:4px 9px;margin-right:7px;font-size:19px}
-header p{margin:6px 0 0;opacity:.8;font-size:14px}main{padding:34px 5vw 60px;max-width:1200px}h2{font-size:21px;margin:30px 0 14px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.card{background:white;border:1px solid var(--line);border-radius:13px;padding:22px}
-label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px}input,select{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit;background:white}
-button{cursor:pointer;border:1px solid #bdcdbf;background:white;color:#28533c;border-radius:8px;padding:9px 14px;font:inherit;font-size:14px;margin-top:14px}button.primary{background:var(--green);color:white;border-color:var(--green)}button:disabled{opacity:.5;cursor:wait}
-table{border-collapse:collapse;width:100%;background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:14px}td,th{text-align:left;padding:12px 16px;border-bottom:1px solid #e7ece5}th{font-size:12px;color:#526556;background:#ebf0e9}
-a{color:var(--green)}.badge{border-radius:30px;padding:3px 11px;font-size:12px;font-weight:650;background:#e9edf1}.achieved{background:#dceedd;color:#27623b}.blocked{background:#f7e9d3;color:#825216}
-.note{font-size:13px;color:var(--muted)}#status{color:var(--amber);font-size:14px;min-height:22px}
-@media(max-width:760px){.grid{grid-template-columns:1fr}main{padding:24px 16px}header{padding:22px 16px}}
-</style></head><body>
-<header><div class="brand"><span>F</span>FixFirst</div><p>Find the cause of Python test failures from real evidence, then verify every fix. Runs only on this computer.</p></header>
-<main>
-<p id="status" aria-live="polite"></p>
-<div class="grid">
-<section class="card"><h2 style="margin-top:0">Troubleshoot a project</h2>
-<label for="project">Project directory</label><input id="project" placeholder="/path/to/your/project">
-<label for="python">Project's Python interpreter</label><input id="python" value="{{ python }}">
-<label for="goal">Goal</label><select id="goal">{% for key, name in goals.items() %}<option value="{{ key }}">{{ name }}</option>{% endfor %}</select>
-<button class="primary" id="create">Create session</button>
-<p class="note">Checks import your project's code (like running its tests). Only use projects you trust. FixFirst never edits files or installs packages.</p></section>
-<section class="card"><h2 style="margin-top:0">Try a demo</h2>
-<p><b>Playground:</b> a project with four faults and four different causes. Fix them yourself and let FixFirst verify each step (the changes are listed in the project's FIXES.md).</p>
-<button class="primary" data-demo="playground">Open the playground</button>
-<p style="margin-top:18px">Recorded walk-throughs, where FixFirst also applies the fixes:</p>
-<button data-demo="collection">Import error + style findings</button><br>
-<button data-demo="execution">Failing tests + evidence graph</button>
-<p class="note">Demo projects are created under workbench/; your code is not touched.</p></section>
-</div>
-<h2>Sessions</h2>
-{% if sessions %}<table><thead><tr><th>Name</th><th>Goal</th><th>Status</th><th>Session</th></tr></thead><tbody>
-{% for row in sessions %}<tr><td><a href="/sessions/{{ row.session_id }}">{{ row.name }}</a></td><td>{{ goals.get(row.goal, row.goal) }}</td><td><span class="badge {{ row.goal_status }}">{{ row.goal_status }}</span></td><td class="note">{{ row.session_id }}</td></tr>{% endfor %}
-</tbody></table>{% else %}<p class="note">No sessions yet.</p>{% endif %}
-</main>
+{% extends "base.html" %}
+{% block style %}
+.field{margin-bottom:24px}.label{display:block;font-weight:650;margin-bottom:8px}.label .n{color:var(--green);margin-right:6px}
+.row{display:flex;gap:10px}.row input{flex:1}
+.info{margin-top:12px;border-radius:10px;padding:12px 14px;font-size:15px;background:var(--green-soft)}
+.info.warn{background:var(--amber-soft)}.info ul{margin:6px 0 0;padding-left:20px}.info .py{margin-top:4px}
+.linkish{background:none;border:none;color:var(--green);padding:0;text-decoration:underline;font-size:14px}
+#browser{margin-top:10px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+#browser .head{display:flex;gap:8px;align-items:center;padding:10px;background:#f6f8f5;border-bottom:1px solid var(--line)}
+#browser .head .path{flex:1;font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:rtl;text-align:left}
+#browser ul{list-style:none;margin:0;padding:0;max-height:280px;overflow:auto}
+#browser li{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid #eef2ee;cursor:pointer}
+#browser li:hover{background:#f3f8f4}#browser li .name{flex:1}#browser li button{padding:4px 10px;font-size:13px}
+#browser .empty{padding:14px;color:var(--muted);font-size:14px}
+.choices{display:grid;gap:10px}
+.choice{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:11px;padding:12px 14px;cursor:pointer}
+.choice:has(input:checked){border-color:var(--green);background:#f6fbf7;box-shadow:0 0 0 1px var(--green) inset}
+.choice input{margin-top:5px;accent-color:var(--green)}.choice b{display:block}.choice span{color:var(--muted);font-size:14px}
+.start{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.recent{list-style:none;margin:0;padding:0;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.recent li{border-bottom:1px solid #eef2ee}.recent li:last-child{border-bottom:none}
+.recent a{display:flex;gap:12px;align-items:center;padding:13px 16px;text-decoration:none;color:var(--ink)}.recent a:hover{background:#f6f9f6}
+.recent .name{font-weight:600;flex:1}.st{font-size:13px;font-weight:600;border-radius:999px;padding:2px 10px}
+.st.achieved{background:var(--green-soft);color:var(--green)}.st.blocked{background:var(--amber-soft);color:var(--amber)}.st.unknown{background:#edf1ed;color:#55665b}
+.sample{margin-top:14px;font-size:15px}
+{% endblock %}
+{% block main %}
+<h1>Why is my Python project failing?</h1>
+<p class="lead">FixFirst runs your project's own checks, finds the cause of each failure and tells you what to fix first. It never edits your files or installs anything.</p>
+
+<section class="card">
+  <div class="field">
+    <label class="label" for="folder"><span class="n">1</span>Project folder</label>
+    <div class="row"><input type="text" id="folder" placeholder="/path/to/your/project" autocomplete="off" spellcheck="false"><button id="browse" type="button">Browse…</button></div>
+    <div id="browser" hidden>
+      <div class="head"><button id="up" type="button" title="Parent folder">↑ Up</button><span class="path" id="where"></span><button id="choose-here" type="button" class="primary">Use this folder</button></div>
+      <ul id="folders"></ul>
+    </div>
+    <div id="folder-info" class="info" hidden></div>
+    <div id="other-python" hidden style="margin-top:10px"><label class="small muted" for="python">Python interpreter to use</label><input type="text" id="python" placeholder="/path/to/project/.venv/bin/python" spellcheck="false"></div>
+  </div>
+
+  <div class="field">
+    <span class="label"><span class="n">2</span>What do you want?</span>
+    <div class="choices">
+      {% for key, title, hint in choices %}<label class="choice"><input type="radio" name="goal" value="{{ key }}" {{ 'checked' if loop.first }}><div><b>{{ title }}</b><span>{{ hint }}</span></div></label>{% endfor %}
+    </div>
+  </div>
+
+  <div class="start"><button class="primary big" id="start" disabled>Check my project</button><span class="muted small">Your project's code runs locally, the same as running its tests yourself.</span></div>
+  <p id="error" role="alert"></p>
+</section>
+
+<h2>Recent projects</h2>
+{% if sessions %}
+<ul class="recent">{% for row in sessions %}<li><a href="/sessions/{{ row.session_id }}"><span class="name">{{ row.name }}</span><span class="muted small">{{ goals.get(row.goal, row.goal) }}</span><span class="st {{ row.goal_status }}">{{ {'achieved':'Done','blocked':'Needs fixes','unknown':'Not confirmed'}.get(row.goal_status, row.goal_status) }}</span></a></li>{% endfor %}</ul>
+<p class="sample muted">Want to see how it works first? <button class="linkish" data-sample>Open a sample project</button></p>
+{% else %}
+<div class="card"><p style="margin:0">No projects yet. New to FixFirst? <button class="linkish" data-sample style="font-size:16px">Open a sample project</button> with four common problems and fix them step by step.</p></div>
+{% endif %}
+{% endblock %}
+{% block script %}
 <script>
-const token=document.querySelector('meta[name=fixfirst-token]').content,status=document.getElementById('status');
-async function post(url,body){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','X-FixFirst-Token':token},body:JSON.stringify(body)});const data=await r.json();if(!r.ok)throw new Error(data.error||r.statusText);return data}
-async function go(url,body,message){document.querySelectorAll('button').forEach(b=>b.disabled=true);status.textContent=message;try{const data=await post(url,body);location.href='/sessions/'+data.session_id}catch(err){status.textContent='Error: '+err.message;document.querySelectorAll('button').forEach(b=>b.disabled=false)}}
-document.getElementById('create').addEventListener('click',()=>go('/api/sessions',{project:document.getElementById('project').value,python:document.getElementById('python').value,goal:document.getElementById('goal').value},'Creating session…'));
-document.querySelectorAll('button[data-demo]').forEach(b=>b.addEventListener('click',()=>go('/api/demo',{scenario:b.dataset.demo},'Building and running the demo project (about 10 seconds)…')));
-</script></body></html>
+const folder=document.getElementById('folder'),info=document.getElementById('folder-info'),start=document.getElementById('start'),python=document.getElementById('python');
+let checked=null,timer=null;
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+async function inspect(){
+  const path=folder.value.trim();checked=null;start.disabled=true;document.getElementById('error').textContent='';
+  if(!path){info.hidden=true;return}
+  info.hidden=false;info.className='info';info.textContent='Looking at this folder…';
+  try{
+    const r=await post('/api/folder',{path,python:python.value.trim()||null});
+    if(!r.path){info.className='info warn';info.textContent=r.error;return}
+    const py=r.python;
+    const found=r.markers.length?'Python project ('+r.markers.map(esc).join(', ')+')':'Folder '+esc(r.name);
+    const pyline=py.version?`Python ${esc(py.version)} · ${esc(py.origin)} · pytest ${py.pytest?'✓':'✗'} · Ruff ${py.ruff?'✓':'✗'}`:'Python could not be started';
+    info.className='info'+(r.warnings.length?' warn':'');
+    info.innerHTML=`<b>${r.warnings.length?'':'✓ '}${found}</b><div class="py">${pyline} <button class="linkish" id="change-python" type="button">use another Python</button></div>`+(r.warnings.length?'<ul>'+r.warnings.map(w=>'<li>'+esc(w)+'</li>').join('')+'</ul>':'');
+    document.getElementById('change-python').onclick=()=>{document.getElementById('other-python').hidden=false;python.value=python.value||py.path;python.focus()};
+    if(r.ok){checked={project:r.path,python:py.path};start.disabled=false}
+  }catch(err){info.className='info warn';info.textContent=err.message}
+}
+folder.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(inspect,450)});
+python.addEventListener('change',inspect);
+// Folder browser
+const browser=document.getElementById('browser'),list=document.getElementById('folders');let here=null,parent=null;
+async function openFolder(path){
+  const r=await post('/api/browse',{path});here=r.path;parent=r.parent;document.getElementById('where').textContent='\u200e'+r.path;
+  document.getElementById('up').disabled=!parent;list.innerHTML='';
+  if(!r.entries.length){list.innerHTML='<li class="empty">No sub-folders here.</li>'}
+  for(const e of r.entries){const li=document.createElement('li');li.innerHTML=`<span aria-hidden="true">📁</span><span class="name">${esc(e.name)}</span>`+(e.project?'<span class="tag cause">Python project</span><button type="button">Choose</button>':'');
+    li.onclick=ev=>{if(ev.target.tagName==='BUTTON'){choose(e.path)}else{openFolder(e.path)}};list.append(li)}
+}
+function choose(path){folder.value=path;browser.hidden=true;inspect()}
+document.getElementById('browse').onclick=()=>{if(browser.hidden){browser.hidden=false;openFolder(folder.value.trim()||null)}else{browser.hidden=true}};
+document.getElementById('up').onclick=()=>parent&&openFolder(parent);
+document.getElementById('choose-here').onclick=()=>choose(here);
+start.onclick=async()=>{if(!checked)return;const goal=document.querySelector('input[name=goal]:checked').value;
+  busy('Checking your project…','FixFirst runs your environment, dependency and test checks. This can take a little while for large test suites.');
+  try{const r=await post('/api/start',{...checked,goal});location.href='/sessions/'+r.session_id}catch(err){showError(err.message)}};
+document.querySelectorAll('[data-sample]').forEach(b=>b.onclick=async()=>{busy('Creating the sample project…','A small project with four problems, checked for the first time.');
+  try{const r=await post('/api/sample',{});location.href='/sessions/'+r.session_id}catch(err){showError(err.message)}});
+</script>
+{% endblock %}

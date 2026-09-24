@@ -1,6 +1,8 @@
 """Local web interface over the same service functions as the CLI.
 
-Binds to 127.0.0.1 only. Every state-changing request must carry the per-launch token that
+Pages: the start page (choose a project and a goal), a workspace per project (status, the
+next steps, one "Check again" button) and a read-only technical report. Binds to 127.0.0.1
+only. Every request that reads folders or changes state must carry the per-launch token that
 is embedded in the served pages, and the Host header must name this server (a guard against
 DNS rebinding). Checks run synchronously in the request thread; the session lock rejects a
 second concurrent change to the same session.
@@ -22,9 +24,10 @@ from .reasoning import infer_and_plan
 from .report import ENV, GOALS, html, public_data
 from .service import create_session, mark_fixed, scan
 from .storage import Store
+from .workspace import GOAL_CHOICES, browse, build_view, inspect_folder
 
 MAX_BODY = 64_000
-SESSION_PATH = re.compile(r"^/sessions/(session-[a-f0-9]{12})$")
+PAGE = re.compile(r"^/sessions/(session-[a-f0-9]{12})(/details|/export)?$")
 API_PATH = re.compile(r"^/api/sessions/(session-[a-f0-9]{12})/([a-z-]+)$")
 
 
@@ -36,39 +39,49 @@ class App:
         self.port = 0
 
     def index(self) -> str:
-        rows = sorted(self.store.list(), key=lambda r: r["session_id"])
+        rows = sorted(self.store.list(), key=lambda r: r.get("created_at") or "", reverse=True)
         return ENV.get_template("index.html").render(
-            sessions=rows, goals=GOALS, token=self.token, python=sys.executable
+            sessions=rows, goals=GOALS, choices=GOAL_CHOICES, token=self.token
         )
 
-    def page(self, session_id: str) -> str:
+    def workspace(self, session_id: str) -> str:
         session = self.store.load(session_id)
-        return html(session, self.store.root, live={"token": self.token})[0]
+        return ENV.get_template("workspace.html").render(
+            view=build_view(session), goals=GOALS, session_id=session_id, token=self.token
+        )
 
-    def create(self, body: dict) -> dict:
+    def details(self, session_id: str) -> str:
+        return html(self.store.load(session_id), self.store.root, live={"token": self.token})[0]
+
+    def export(self, session_id: str) -> tuple[str, str]:
+        session = self.store.load(session_id)
+        name = re.sub(r"[^A-Za-z0-9_.-]+", "-", Path(session.project_root).name) or "project"
+        return html(session, self.store.root, public=True)[0], f"fixfirst-{name}.html"
+
+    def create(self, body: dict) -> Session:
         session = create_session(
-            body.get("project", ""), body.get("python") or sys.executable,
-            goal=body.get("goal", "collect_tests"),
+            body.get("project", ""),
+            body.get("python") or sys.executable,
+            goal=body.get("goal") if body.get("goal") in GOALS else "collect_tests",
         )
         with self.store.lock(session.session_id):
             infer_and_plan(session)
             self.store.save(session)
+        return session
+
+    def start(self, body: dict) -> dict:
+        """Create a session and run its first check in one step."""
+        session = self.create(body)
+        with self.store.lock(session.session_id):
+            scan(session)
+            self.store.save(session)
         return {"session_id": session.session_id}
 
-    def demo(self, body: dict) -> dict:
-        from . import cases, execution_cases
+    def sample(self) -> dict:
         from .playground import playground
 
-        output = self.workbench / ("web-demo-" + datetime.now().strftime("%Y%m%d-%H%M%S-%f"))
-        if body.get("scenario") == "playground":
-            return {"session_id": playground(output, self.store).session_id}
-        module = execution_cases if body.get("scenario") == "execution" else cases
-        module.demo(output, self.store)
-        project = str((output / "project").resolve())
-        for row in self.store.list():
-            if self.store.load(row["session_id"]).project_root == project:
-                return {"session_id": row["session_id"]}
-        raise ValueError("Demo finished but its session was not found")
+        output = self.workbench / ("sample-" + datetime.now().strftime("%Y%m%d-%H%M%S-%f"))
+        return {"session_id": playground(output, self.store).session_id}
 
     def act(self, session_id: str, op: str, body: dict) -> dict:
         if op == "ask":
@@ -101,6 +114,22 @@ class App:
             self.store.save(session)
         return {"ok": True}
 
+    def post(self, path: str, body: dict) -> dict:
+        if path == "/api/folder":
+            return inspect_folder(str(body.get("path", "")), body.get("python") or None)
+        if path == "/api/browse":
+            return browse(body.get("path"))
+        if path == "/api/start":
+            return self.start(body)
+        if path == "/api/sample":
+            return self.sample()
+        if path == "/api/sessions":
+            return {"session_id": self.create(body).session_id}
+        match = API_PATH.match(path)
+        if not match:
+            raise KeyError(path)
+        return self.act(match[1], match[2], body)
+
 
 def handler_for(app: App):
     class Handler(BaseHTTPRequestHandler):
@@ -109,7 +138,7 @@ def handler_for(app: App):
         def log_message(self, format, *args):
             return
 
-        def reply(self, status, body: str, content_type="text/html; charset=utf-8"):
+        def reply(self, status, body: str, content_type="text/html; charset=utf-8", filename=None):
             data = body.encode("utf-8")
             self.send_response(status)
             self.send_header("Content-Type", content_type)
@@ -118,6 +147,8 @@ def handler_for(app: App):
             self.send_header("X-Content-Type-Options", "nosniff")
             self.send_header("X-Frame-Options", "DENY")
             self.send_header("Referrer-Policy", "no-referrer")
+            if filename:
+                self.send_header("Content-Disposition", f'attachment; filename="{filename}"')
             self.end_headers()
             self.wfile.write(data)
 
@@ -134,9 +165,14 @@ def handler_for(app: App):
             try:
                 if path == "/":
                     return self.reply(HTTPStatus.OK, app.index())
-                match = SESSION_PATH.match(path)
+                match = PAGE.match(path)
+                if match and match[2] == "/details":
+                    return self.reply(HTTPStatus.OK, app.details(match[1]))
+                if match and match[2] == "/export":
+                    text, filename = app.export(match[1])
+                    return self.reply(HTTPStatus.OK, text, filename=filename)
                 if match:
-                    return self.reply(HTTPStatus.OK, app.page(match[1]))
+                    return self.reply(HTTPStatus.OK, app.workspace(match[1]))
             except (OSError, ValueError) as exc:
                 return self.reply(HTTPStatus.NOT_FOUND, f"Not found: {exc}", "text/plain; charset=utf-8")
             self.reply(HTTPStatus.NOT_FOUND, "Not found", "text/plain; charset=utf-8")
@@ -153,15 +189,7 @@ def handler_for(app: App):
                 body = json.loads(self.rfile.read(length) or b"{}")
                 if not isinstance(body, dict):
                     raise ValueError("Expected a JSON object")
-                path = self.path.split("?", 1)[0]
-                if path == "/api/sessions":
-                    return self.json_reply(HTTPStatus.OK, app.create(body))
-                if path == "/api/demo":
-                    return self.json_reply(HTTPStatus.OK, app.demo(body))
-                match = API_PATH.match(path)
-                if not match:
-                    return self.json_reply(HTTPStatus.NOT_FOUND, {"error": "Unknown endpoint"})
-                return self.json_reply(HTTPStatus.OK, app.act(match[1], match[2], body))
+                return self.json_reply(HTTPStatus.OK, app.post(self.path.split("?", 1)[0], body))
             except KeyError:
                 return self.json_reply(HTTPStatus.NOT_FOUND, {"error": "Unknown operation"})
             except (ValueError, OSError) as exc:

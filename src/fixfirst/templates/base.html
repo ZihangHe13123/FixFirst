@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="fixfirst-token" content="{{ token }}">
+<title>{% block title %}FixFirst{% endblock %}</title>
+<style>
+:root{--ink:#142822;--muted:#62716a;--bg:#f4f6f2;--card:#fff;--line:#dde4dd;--green:#17664a;--green-soft:#e3f0e6;--amber:#8a5716;--amber-soft:#fbf1dd;--blue:#2f5d8c;--blue-soft:#e6eef8;--danger:#a3402f}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+a{color:var(--green)}
+header.bar{background:#15302a;color:#e2ece5}
+header.bar .inner{max-width:880px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:14px}
+.logo{font-weight:750;font-size:20px;letter-spacing:-.5px;color:#fff;text-decoration:none;display:flex;align-items:center;gap:8px}
+.logo span{background:#b8dda6;color:#193326;border-radius:8px;padding:1px 7px;font-size:16px}
+header.bar .crumb{color:#cfe0d5;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+header.bar nav{margin-left:auto}header.bar nav a{color:#cfe0d5;font-size:14px;text-decoration:none}header.bar nav a:hover{color:#fff}
+main{max-width:880px;margin:0 auto;padding:32px 20px 70px}
+h1{font-size:30px;line-height:1.2;letter-spacing:-.6px;margin:0 0 10px}h2{font-size:20px;margin:36px 0 14px}h3{font-size:18px;line-height:1.35;margin:4px 0 6px}
+.lead{color:var(--muted);font-size:17px;margin:0 0 26px;max-width:640px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px}
+.muted{color:var(--muted)}.small{font-size:14px}
+button{font:inherit;cursor:pointer;border-radius:9px;border:1px solid #c3d2c6;background:#fff;color:#234b36;padding:9px 16px;font-size:15px}
+button:hover{background:#eef5ef}button:disabled{opacity:.45;cursor:not-allowed}
+button.primary{background:var(--green);border-color:var(--green);color:#fff;font-weight:600}button.primary:hover{background:#0f5239}
+button.big{padding:13px 24px;font-size:17px}
+input[type=text],select{font:inherit;font-size:15px;border:1px solid #c9d5cc;border-radius:9px;padding:10px 12px;background:#fff;color:var(--ink);width:100%}
+input[type=text]:focus,select:focus,button:focus-visible{outline:3px solid #9ccfb0;outline-offset:1px}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13.5px}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f6f2;border:1px solid var(--line);border-radius:8px;padding:12px;font:13px/1.6 ui-monospace,Menlo,Consolas,monospace;margin:6px 0;max-height:320px;overflow:auto}
+.tag{display:inline-block;border-radius:999px;padding:2px 10px;font-size:13px;font-weight:600;background:#edf1ed;color:#44564b}
+.tag.cause{background:var(--green-soft);color:var(--green)}.tag.maybe{background:var(--amber-soft);color:var(--amber)}.tag.first{background:var(--blue-soft);color:var(--blue)}
+#busy{position:fixed;inset:0;background:rgba(244,246,242,.86);display:flex;align-items:center;justify-content:center;z-index:10}
+#busy[hidden]{display:none}#busy .box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:26px 30px;max-width:420px;text-align:center;box-shadow:0 10px 30px rgba(20,40,34,.08)}
+.spinner{width:34px;height:34px;border:4px solid var(--green-soft);border-top-color:var(--green);border-radius:50%;margin:0 auto 14px;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#error{color:var(--danger);font-size:15px;margin:10px 0 0}#error:empty{display:none}
+@media(max-width:640px){main{padding:22px 16px 60px}h1{font-size:25px}.card{padding:18px}header.bar .crumb{display:none}}
+@media(prefers-reduced-motion:reduce){.spinner{animation:none}}
+{% block style %}{% endblock %}
+</style></head>
+<body>
+<header class="bar"><div class="inner"><a class="logo" href="/"><span>F</span>FixFirst</a>{% block crumb %}{% endblock %}<nav>{% block nav %}{% endblock %}</nav></div></header>
+<main>{% block main %}{% endblock %}</main>
+<div id="busy" hidden role="status" aria-live="polite"><div class="box"><div class="spinner"></div><b id="busy-title">Working…</b><p class="muted small" id="busy-detail"></p></div></div>
+<script>
+const TOKEN=document.querySelector('meta[name=fixfirst-token]').content;
+async function post(url,body){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','X-FixFirst-Token':TOKEN},body:JSON.stringify(body||{})});const data=await r.json().catch(()=>({error:r.statusText}));if(!r.ok)throw new Error(data.error||r.statusText);return data}
+function busy(title,detail){const b=document.getElementById('busy');b.hidden=!title;document.getElementById('busy-title').textContent=title||'';document.getElementById('busy-detail').textContent=detail||''}
+function showError(message){busy(null);const e=document.getElementById('error');if(e)e.textContent=message;else alert(message)}
+document.querySelectorAll('[data-time]').forEach(el=>{const t=new Date(el.dataset.time),s=(Date.now()-t)/1000;el.textContent=s<60?'just now':s<3600?Math.round(s/60)+' min ago':s<86400?Math.round(s/3600)+' h ago':t.toLocaleDateString()});
+</script>
+{% block script %}{% endblock %}
+</body></html>
