@@ -47,7 +47,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("target", nargs="?", default="../test-projects/generalisation")
     parser.add_argument("--only", nargs="*", default=[])
-    parser.add_argument("--output", default=str(HERE / "results.json"))
+    parser.add_argument("--output", default=str(HERE / "results-latest.json"))
     args = parser.parse_args()
     target = Path(args.target).resolve()
     store = Store(target / ".fixfirst")

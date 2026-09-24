@@ -36,7 +36,9 @@ page describes the code as of v0.4. `models.py` holds the shared Pydantic record
 
 1. **Collect.** `runner.collect` runs one allowlisted check with the selected interpreter.
    Arguments go straight to the subprocess (no shell); each check has a 10-minute timeout and a
-   1 MB output cap; process groups are killed on timeout. The environment snapshot and `pip
+   1 MB output cap; process groups are killed on timeout. Checks run as if the target's virtual
+   environment were activated (its `bin`/`Scripts` folder first on `PATH`), because tests often
+   start console scripts by name. The snapshot works on Python 3.8 and later. The environment snapshot and `pip
    check` run in a temporary directory so that a project file such as `random.py` cannot
    shadow the standard library during the check. Output is redacted (credentials, URL
    passwords, `os.environ` dumps, secret-like dictionary values).
@@ -72,7 +74,7 @@ page describes the code as of v0.4. `models.py` holds the shared Pydantic record
    - `fallback`: the tree's suggestion, only when neither matched (F01);
    - `plan`: actions (P01–P51), merged by action id across issues.
 
-   89 rules in total: 10 derive, 32 diagnose, 4 heuristic, 1 fallback, 42 plan.
+   91 rules in total: 9 derive, 33 diagnose, 4 heuristic, 1 fallback, 44 plan.
 
    The web page shows steps for issues concluded `affects_running = no` as optional and
    leaves them out of the problem count.

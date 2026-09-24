@@ -79,7 +79,8 @@ def base_facts(session: Session, active, knowledge=True) -> tuple[list[Fact], di
     mentioned = {
         f.value for f in evidence_facts
         if f.predicate in (
-            "module", "api", "attribute", "kwarg", "usage", "missing_fixture", "extra_warning", "lint_rule"
+            "module", "api", "attribute", "kwarg", "usage", "missing_fixture", "extra_warning", "lint_rule",
+            "raised_by_library",
         )
     }
     known = domain.facts_for(mentioned) if knowledge else []
@@ -90,6 +91,7 @@ def base_facts(session: Session, active, knowledge=True) -> tuple[list[Fact], di
         | {f.subject for f in evidence_facts if f.predicate == "required_spec"}
         | {f.value for f in evidence_facts if f.predicate == "provided_by"}
         | {f.value for f in evidence_facts if f.predicate == "emitted_by" and f.value.startswith("dist:")}
+        | {f.value for f in evidence_facts if f.predicate == "raised_by_library"}
     )
     facts += environment_facts(session, distributions)
     return facts, details

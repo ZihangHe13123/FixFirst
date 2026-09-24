@@ -11,3 +11,4 @@ build/
 .playwright-cli/
 output/
 .DS_Store
+examples/real-world/results-latest.json

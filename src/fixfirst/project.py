@@ -1,5 +1,6 @@
 """Bounded, static dependency declarations checked against the target interpreter snapshot."""
 
+import ast
 import configparser
 import hashlib
 from itertools import islice
@@ -161,6 +162,21 @@ def read_project(root: Path) -> dict:
                     )
                 if "dependencies" in project.get("dynamic", []):
                     note("pyproject.toml declares dynamic dependencies, which are not executed or parsed")
+                # flit before PEP 621 kept its metadata in [tool.flit.metadata].
+                flit = data.get("tool", {}).get("flit", {}).get("metadata", {})
+                if isinstance(flit, dict):
+                    for item in declaration_list(flit.get("requires", []), "tool.flit.metadata.requires"):
+                        add(item, "pyproject.toml [tool.flit.metadata.requires]")
+                    for group, values in (flit.get("requires-extra") or {}).items():
+                        for item in declaration_list(values, "tool.flit.metadata.requires-extra"):
+                            add(item, f"pyproject.toml [tool.flit.metadata.requires-extra.{group}]", group)
+                    if flit.get("requires-python"):
+                        result["requires_python"].append(
+                            {
+                                "specifier": str(flit["requires-python"]),
+                                "source": "pyproject.toml [tool.flit.metadata.requires-python]",
+                            }
+                        )
                 if data.get("tool", {}).get("poetry"):
                     note("Poetry-specific declarations are not parsed; standard [project] declarations are read separately")
             except (ValueError, TypeError, AttributeError):
@@ -201,10 +217,63 @@ def read_project(root: Path) -> dict:
             except configparser.Error:
                 note("setup.cfg could not be parsed")
     if (root / "setup.py").exists():
-        note("setup.py is not executed; only static declarations are read")
+        text = read(root / "setup.py")
+        found = setup_py_declarations(text) if text is not None else None
+        if found is None:
+            note("setup.py could not be read statically")
+        else:
+            for value, source, group in found:
+                add(value, source, group)
+        note("setup.py is not executed; only literal declarations in its setup() call are read")
     if not result["files"]:
         note("No supported static declaration file was found")
     return result
+
+
+def setup_py_declarations(text: str) -> list[tuple[str, str, str]] | None:
+    """Literal requirement lists passed to setup(), read from the syntax tree, never executed.
+
+    Handles lists written in the call and lists first assigned to a top-level name
+    (``install_requires=INSTALL_REQUIRES``). Anything computed is skipped.
+    """
+    try:
+        tree = ast.parse(text)
+    except (SyntaxError, ValueError):
+        return None
+    names = {
+        node.targets[0].id: node.value
+        for node in tree.body
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name)
+    }
+
+    def strings(node):
+        node = names.get(node.id, node) if isinstance(node, ast.Name) else node
+        if isinstance(node, (ast.List, ast.Tuple)):
+            return [e.value for e in node.elts if isinstance(e, ast.Constant) and isinstance(e.value, str)]
+        return []
+
+    found = []
+    for call in ast.walk(tree):
+        if not isinstance(call, ast.Call):
+            continue
+        callee = call.func.attr if isinstance(call.func, ast.Attribute) else getattr(call.func, "id", "")
+        if callee != "setup":
+            continue
+        for keyword in call.keywords:
+            if keyword.arg == "install_requires":
+                found += [(v, "setup.py install_requires", "required") for v in strings(keyword.value)]
+            elif keyword.arg == "tests_require":
+                found += [(v, "setup.py tests_require", "tests_require") for v in strings(keyword.value)]
+            elif keyword.arg == "extras_require":
+                value = keyword.value
+                value = names.get(value.id, value) if isinstance(value, ast.Name) else value
+                if not isinstance(value, ast.Dict):
+                    continue
+                for key, values in zip(value.keys, value.values):
+                    group = key.value if isinstance(key, ast.Constant) and isinstance(key.value, str) else ""
+                    if group and not group.startswith(":"):
+                        found += [(v, f"setup.py extras_require[{group}]", group) for v in strings(values)]
+    return found
 
 
 def assess_project(data: dict, environment: dict) -> dict:

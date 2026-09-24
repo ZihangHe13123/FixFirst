@@ -34,6 +34,10 @@ def pytest_collectreport(report):
 
 
 def pytest_runtest_logreport(report):
+    # pytest 9 reports every subtest; thousands of passing ones would crowd out the records
+    # that matter. Failing subtests are kept.
+    if type(report).__name__ == "SubtestReport" and not report.failed:
+        return
     emit(
         {
             "type": "outcome",

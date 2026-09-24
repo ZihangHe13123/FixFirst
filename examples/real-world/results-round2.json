@@ -1,60 +1,15 @@
 [
   {
     "id": "flask-sqlalchemy",
-    "session_id": "session-13d6d8e22824",
+    "session_id": "session-15d0ece7aaf0",
     "python": "3.12.13",
-    "seconds": 1.2,
-    "headline": "4 problems to fix",
+    "seconds": 0.8,
+    "headline": "1 problem to fix",
     "status": "todo",
     "tests": {},
     "steps": [
       {
         "title": "Try an older flask: flask 3.1.3 no longer provides flask._app_ctx_stack",
-        "cause": null,
-        "possible": "Version incompatibility",
-        "suspected": false,
-        "optional": false,
-        "where": [
-          "flask_sqlalchemy/__init__.py:14"
-        ],
-        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/flask-sqlalchemy/.venv/bin/python' -m pip install 'flask<3'",
-        "rules": [
-          "H01"
-        ],
-        "issues": 1
-      },
-      {
-        "title": "Try an older flask: flask 3.1.3 no longer provides flask.abort",
-        "cause": null,
-        "possible": "Version incompatibility",
-        "suspected": false,
-        "optional": false,
-        "where": [
-          "flask_sqlalchemy/__init__.py:14"
-        ],
-        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/flask-sqlalchemy/.venv/bin/python' -m pip install 'flask<3'",
-        "rules": [
-          "H01"
-        ],
-        "issues": 1
-      },
-      {
-        "title": "Try an older flask: flask 3.1.3 no longer provides flask.current_app",
-        "cause": null,
-        "possible": "Version incompatibility",
-        "suspected": false,
-        "optional": false,
-        "where": [
-          "flask_sqlalchemy/__init__.py:14"
-        ],
-        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/flask-sqlalchemy/.venv/bin/python' -m pip install 'flask<3'",
-        "rules": [
-          "H01"
-        ],
-        "issues": 1
-      },
-      {
-        "title": "Try an older flask: flask 3.1.3 no longer provides flask.request",
         "cause": null,
         "possible": "Version incompatibility",
         "suspected": false,
@@ -95,10 +50,10 @@
   },
   {
     "id": "django-model-utils",
-    "session_id": "session-a49e5f2067ee",
+    "session_id": "session-036c5b11d31e",
     "python": "3.11.15",
-    "seconds": 0.6,
-    "headline": "4 problems to fix",
+    "seconds": 0.3,
+    "headline": "1 problem to fix",
     "status": "todo",
     "tests": {},
     "steps": [
@@ -108,55 +63,21 @@
         "possible": "Version incompatibility",
         "suspected": false,
         "optional": false,
-        "where": [],
+        "where": [
+          "model_utils/models.py:4"
+        ],
         "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/django-model-utils/.venv/bin/python' -m pip install 'django<5'",
         "rules": [
           "H01"
         ],
         "issues": 1
-      },
-      {
-        "title": "Check the declaration and installed version of sphinx",
-        "cause": null,
-        "possible": null,
-        "suspected": false,
-        "optional": false,
-        "where": [
-          "requirements.txt:4"
-        ],
-        "command": null,
-        "rules": [],
-        "issues": 1
-      },
-      {
-        "title": "Check the declaration and installed version of twine",
-        "cause": null,
-        "possible": null,
-        "suspected": false,
-        "optional": false,
-        "where": [
-          "requirements.txt:5"
-        ],
-        "command": null,
-        "rules": [],
-        "issues": 1
-      },
-      {
-        "title": "Check the declaration and installed version of tox",
-        "cause": null,
-        "possible": null,
-        "suspected": false,
-        "optional": false,
-        "where": [
-          "requirements.txt:3"
-        ],
-        "command": null,
-        "rules": [],
-        "issues": 1
       }
     ],
     "optional": [],
     "other": [
+      "Check the declaration and installed version of sphinx",
+      "Check the declaration and installed version of twine",
+      "Check the declaration and installed version of tox",
       "Check that the tool is available and ran to completion"
     ],
     "pending": 0,
@@ -205,21 +126,21 @@
   },
   {
     "id": "requests",
-    "session_id": "session-ae6adb5d0565",
+    "session_id": "session-7f67836be889",
     "python": "3.12.13",
-    "seconds": 0.4,
+    "seconds": 0.2,
     "headline": "1 problem to fix",
     "status": "todo",
     "tests": {},
     "steps": [
       {
-        "title": "Replace imp: removed in Python 3.12",
+        "title": "Upgrade pytest: pytest 3.10.1 still uses imp, which Python 3.12 removed",
         "cause": "Version incompatibility",
         "possible": null,
         "suspected": false,
         "optional": false,
         "where": [],
-        "command": null,
+        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/requests/.venv/bin/python' -m pip install 'pytest>3.10.1'",
         "rules": [
           "D01"
         ],
@@ -252,9 +173,9 @@
   },
   {
     "id": "seaborn",
-    "session_id": "session-8aad76845b64",
+    "session_id": "session-7cd9ce8374f1",
     "python": "3.12.13",
-    "seconds": 0.7,
+    "seconds": 0.6,
     "headline": "1 problem to fix",
     "status": "todo",
     "tests": {
@@ -308,9 +229,9 @@
   },
   {
     "id": "imbalanced-learn",
-    "session_id": "session-182ee97df682",
+    "session_id": "session-7b4a285dc6a4",
     "python": "3.12.13",
-    "seconds": 2.1,
+    "seconds": 2.2,
     "headline": "3 problems to fix",
     "status": "todo",
     "tests": {
@@ -506,9 +427,9 @@
   },
   {
     "id": "typer",
-    "session_id": "session-c94803b41a03",
+    "session_id": "session-f8a34599b040",
     "python": "3.10.20",
-    "seconds": 0.8,
+    "seconds": 0.4,
     "headline": "1 problem to fix",
     "status": "todo",
     "tests": {
@@ -521,17 +442,17 @@
     },
     "steps": [
       {
-        "title": "Check the import path and dependency declarations",
-        "cause": null,
-        "possible": "Missing third-party dependency",
+        "title": "Install the declared dependency that provides shellingham",
+        "cause": "Missing third-party dependency",
+        "possible": null,
         "suspected": false,
         "optional": false,
         "where": [
           "tests/test_completion/test_completion_install.py:6"
         ],
-        "command": null,
+        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/typer/.venv/bin/python' -m pip install shellingham",
         "rules": [
-          "F01"
+          "D20"
         ],
         "issues": 1
       }
@@ -547,8 +468,8 @@
         "tool": "pytest_run",
         "kind": "import_failure",
         "diagnosis": "missing_dependency",
-        "source": "model",
-        "rule": "F01"
+        "source": "rule",
+        "rule": "D20"
       },
       {
         "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/typer/.venv/bin/python: No module named ruff",
@@ -562,7 +483,7 @@
   },
   {
     "id": "aiostream",
-    "session_id": "session-a7e6c0d0e1f5",
+    "session_id": "session-615746ede9fa",
     "python": "3.12.13",
     "seconds": 250.1,
     "headline": "3 problems to fix",
@@ -576,6 +497,21 @@
       "incomplete": 0
     },
     "steps": [
+      {
+        "title": "Replace event_loop: removed in pytest-asyncio 1.0",
+        "cause": "Version incompatibility",
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "tests/test_task_group.py:34"
+        ],
+        "command": null,
+        "rules": [
+          "D25"
+        ],
+        "issues": 1
+      },
       {
         "title": "Compare the failed assertion's expected and actual values",
         "cause": "Defect in project code or tests",
@@ -605,21 +541,6 @@
         "command": null,
         "rules": [],
         "issues": 43
-      },
-      {
-        "title": "Make the event_loop fixture visible to the test",
-        "cause": "Defect in project code or tests",
-        "possible": null,
-        "suspected": false,
-        "optional": false,
-        "where": [
-          "tests/test_task_group.py:34"
-        ],
-        "command": null,
-        "rules": [
-          "D24"
-        ],
-        "issues": 1
       }
     ],
     "optional": [],
@@ -952,10 +873,10 @@
   },
   {
     "id": "jmespath",
-    "session_id": "session-b267d7abfe1b",
+    "session_id": "session-00cc8b23461c",
     "python": "3.12.13",
-    "seconds": 0.6,
-    "headline": "7 problems to fix",
+    "seconds": 0.5,
+    "headline": "1 problem to fix",
     "status": "todo",
     "tests": {
       "passed": 0,
@@ -967,7 +888,7 @@
     },
     "steps": [
       {
-        "title": "Install Python below 3.12: the installed nose still uses imp",
+        "title": "Stop using nose: its last release, 1.3.7, uses imp, which Python 3.12 removed",
         "cause": "Version incompatibility",
         "possible": null,
         "suspected": false,
@@ -975,93 +896,21 @@
         "where": [
           "extra/test_hypothesis.py:9"
         ],
-        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/jmespath/.venv/bin/python' -m pip install 'Python<3.12'",
+        "command": null,
         "rules": [
           "D01"
         ],
-        "issues": 1
-      },
-      {
-        "title": "Check the declaration and installed version of wheel",
-        "cause": null,
-        "possible": null,
-        "suspected": false,
-        "optional": false,
-        "where": [
-          "requirements.txt:4"
-        ],
-        "command": null,
-        "rules": [],
-        "issues": 1
-      },
-      {
-        "title": "Check the declaration and installed version of tox",
-        "cause": null,
-        "possible": null,
-        "suspected": false,
-        "optional": false,
-        "where": [
-          "requirements.txt:3"
-        ],
-        "command": null,
-        "rules": [],
-        "issues": 1
-      },
-      {
-        "title": "Check the declaration and installed version of py",
-        "cause": null,
-        "possible": null,
-        "suspected": false,
-        "optional": false,
-        "where": [
-          "requirements.txt:2"
-        ],
-        "command": null,
-        "rules": [],
-        "issues": 1
-      },
-      {
-        "title": "Check the declaration and installed version of hypothesis",
-        "cause": null,
-        "possible": null,
-        "suspected": false,
-        "optional": false,
-        "where": [
-          "requirements.txt:7"
-        ],
-        "command": null,
-        "rules": [],
-        "issues": 1
-      },
-      {
-        "title": "Check the declaration and installed version of nose",
-        "cause": null,
-        "possible": null,
-        "suspected": false,
-        "optional": false,
-        "where": [
-          "requirements.txt:1"
-        ],
-        "command": null,
-        "rules": [],
-        "issues": 1
-      },
-      {
-        "title": "Check the declaration and installed version of coverage",
-        "cause": null,
-        "possible": null,
-        "suspected": false,
-        "optional": false,
-        "where": [
-          "requirements.txt:6"
-        ],
-        "command": null,
-        "rules": [],
         "issues": 1
       }
     ],
     "optional": [],
     "other": [
+      "Check the declaration and installed version of wheel",
+      "Check the declaration and installed version of tox",
+      "Check the declaration and installed version of py",
+      "Check the declaration and installed version of hypothesis",
+      "Check the declaration and installed version of nose",
+      "Check the declaration and installed version of coverage",
       "Check that the tool is available and ran to completion"
     ],
     "pending": 0,
@@ -1134,10 +983,10 @@
   },
   {
     "id": "parsel",
-    "session_id": "session-4e9281b8cd42",
+    "session_id": "session-540587abee92",
     "python": "3.12.13",
-    "seconds": 0.5,
-    "headline": "3 problems to fix",
+    "seconds": 0.4,
+    "headline": "1 problem to fix",
     "status": "todo",
     "tests": {
       "passed": 0,
@@ -1149,54 +998,28 @@
     },
     "steps": [
       {
-        "title": "Check the import path and dependency declarations",
-        "cause": null,
-        "possible": null,
-        "suspected": false,
-        "optional": false,
-        "where": [
-          "tests/test_selector.py:4"
-        ],
-        "command": null,
-        "rules": [
-          "F01"
-        ],
-        "issues": 1
-      },
-      {
-        "title": "Read the original output and investigate by hand",
-        "cause": null,
-        "possible": null,
-        "suspected": false,
-        "optional": false,
-        "where": [
-          "parsel/selector.py:7"
-        ],
-        "command": null,
-        "rules": [
-          "F01"
-        ],
-        "issues": 1
-      },
-      {
-        "title": "Check whether this is a missing third-party dependency problem",
+        "title": "Install the declared dependency that provides six",
         "cause": "Missing third-party dependency",
         "possible": null,
-        "suspected": true,
+        "suspected": false,
         "optional": false,
         "where": [
           "tests/test_selector.py:4",
           "parsel/selector.py:7"
         ],
-        "command": null,
+        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/parsel/.venv/bin/python' -m pip install six",
         "rules": [
-          "F01"
+          "D20"
         ],
         "issues": 2
       }
     ],
     "optional": [],
     "other": [
+      "Check the declaration and installed version of six",
+      "Check the declaration and installed version of cssselect",
+      "Check the declaration and installed version of w3lib",
+      "Check the declaration and installed version of lxml",
       "Check that the tool is available and ran to completion"
     ],
     "pending": 0,
@@ -1206,16 +1029,16 @@
         "tool": "pytest_run",
         "kind": "import_failure",
         "diagnosis": "missing_dependency",
-        "source": "model",
-        "rule": "F01"
+        "source": "rule",
+        "rule": "D20"
       },
       {
         "title": "ConftestImportFailure: ModuleNotFoundError: No module named 'six' (from /Users/zhihang/Project/课程Projec/test-projects/generalisation/parsel/docs/conftest.py)",
         "tool": "pytest_run",
         "kind": "other_unknown",
         "diagnosis": "missing_dependency",
-        "source": "model",
-        "rule": "F01"
+        "source": "rule",
+        "rule": "D20"
       },
       {
         "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/parsel/.venv/bin/python: No module named ruff",
@@ -1224,14 +1047,46 @@
         "diagnosis": null,
         "source": null,
         "rule": null
+      },
+      {
+        "title": "setup.py install_requires declares cssselect>=0.9; installed: not in snapshot. Required dependency missing",
+        "tool": "project",
+        "kind": "dependency_conflict",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "setup.py install_requires declares lxml; installed: not in snapshot. Required dependency missing",
+        "tool": "project",
+        "kind": "dependency_conflict",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "setup.py install_requires declares six>=1.6.0; installed: not in snapshot. Required dependency missing",
+        "tool": "project",
+        "kind": "dependency_conflict",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "setup.py install_requires declares w3lib>=1.19.0; installed: not in snapshot. Required dependency missing",
+        "tool": "project",
+        "kind": "dependency_conflict",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
       }
     ]
   },
   {
     "id": "records",
-    "session_id": "session-5df283297084",
+    "session_id": "session-de914a44f221",
     "python": "3.12.13",
-    "seconds": 1.2,
+    "seconds": 1.1,
     "headline": "1 problem to fix",
     "status": "todo",
     "tests": {
@@ -1405,9 +1260,9 @@
   },
   {
     "id": "cachetools",
-    "session_id": "session-82bfb58153dc",
-    "python": null,
-    "seconds": 0.7,
+    "session_id": "session-7a812efcccb7",
+    "python": "3.9.6",
+    "seconds": 0.5,
     "headline": "1 problem to fix",
     "status": "todo",
     "tests": {
@@ -1420,9 +1275,9 @@
     },
     "steps": [
       {
-        "title": "Record the current Python environment first",
-        "cause": null,
-        "possible": "Missing third-party dependency",
+        "title": "Make the project module cachetools importable",
+        "cause": "Local module or path problem",
+        "possible": null,
         "suspected": false,
         "optional": false,
         "where": [
@@ -1430,7 +1285,7 @@
         ],
         "command": null,
         "rules": [
-          "F01"
+          "D13"
         ],
         "issues": 1
       }
@@ -1442,20 +1297,12 @@
     "pending": 0,
     "issues": [
       {
-        "title": "The environment snapshot could not be taken",
-        "tool": "environment",
-        "kind": "tool_failure",
-        "diagnosis": null,
-        "source": null,
-        "rule": null
-      },
-      {
         "title": "ModuleNotFoundError: No module named 'cachetools'",
         "tool": "pytest_run",
         "kind": "import_failure",
-        "diagnosis": "missing_dependency",
-        "source": "model",
-        "rule": "F01"
+        "diagnosis": "local_module",
+        "source": "rule",
+        "rule": "D13"
       },
       {
         "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/cachetools/.venv/bin/python: No module named ruff",
@@ -1469,47 +1316,29 @@
   },
   {
     "id": "more-itertools",
-    "session_id": "session-52f4f0f29e6e",
+    "session_id": "session-d6d1dce6cee8",
     "python": "3.14.6",
-    "seconds": 4.4,
-    "headline": "1 problem to fix",
-    "status": "todo",
+    "seconds": 4.1,
+    "headline": "All tests pass",
+    "status": "done",
     "tests": {
-      "passed": 666,
+      "passed": 670,
       "failed": 0,
       "skipped": 1,
       "xfail_or_xpass": 0,
       "selected": 671,
-      "incomplete": 4
+      "incomplete": 0
     },
-    "steps": [
-      {
-        "title": "Check that the tool is available and ran to completion",
-        "cause": null,
-        "possible": null,
-        "suspected": false,
-        "optional": false,
-        "where": [],
-        "command": null,
-        "rules": [],
-        "issues": 3
-      }
-    ],
+    "steps": [],
     "optional": [],
-    "other": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
     "pending": 0,
     "issues": [
       {
         "title": "Could not start pip in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/more-itertools/.venv/bin/python: No module named pip",
         "tool": "pip_check",
-        "kind": "tool_failure",
-        "diagnosis": null,
-        "source": null,
-        "rule": null
-      },
-      {
-        "title": "No verifiable completion record; tests may all have been skipped or not run; see the original output",
-        "tool": "pytest_run",
         "kind": "tool_failure",
         "diagnosis": null,
         "source": null,
@@ -1527,36 +1356,36 @@
   },
   {
     "id": "attrs",
-    "session_id": "session-915723b89d0a",
+    "session_id": "session-299df3644931",
     "python": "3.13.14",
-    "seconds": 4.4,
+    "seconds": 11.9,
     "headline": "1 problem to fix",
     "status": "todo",
     "tests": {
-      "passed": 1049,
-      "failed": 55,
-      "skipped": 1,
-      "xfail_or_xpass": 0,
+      "passed": 1394,
+      "failed": 33,
+      "skipped": 4,
+      "xfail_or_xpass": 1,
       "selected": 0,
       "incomplete": 0
     },
     "steps": [
       {
-        "title": "Compare the failed assertion's expected and actual values",
-        "cause": "Defect in project code or tests",
-        "possible": null,
+        "title": "Inspect the exception raised while running the test",
+        "cause": null,
+        "possible": "Defect in project code or tests",
         "suspected": false,
         "optional": false,
         "where": [
-          "tests/test_mypy.yml::attr_s_with_type_annotations",
-          "tests/test_mypy.yml::attr_s_with_type_argument[val=a = attr.ib(type=int)]",
-          "tests/test_mypy.yml::attr_s_with_type_argument[val=a: int = attr.ib()]"
+          "tests/test_mypy.yml::testAttrsAnnotated",
+          "tests/test_mypy.yml::testAttrsAutoAttribs",
+          "tests/test_mypy.yml::testAttrsCmpTrue"
         ],
         "command": null,
         "rules": [
-          "D40"
+          "F01"
         ],
-        "issues": 50
+        "issues": 33
       }
     ],
     "optional": [],
@@ -1566,324 +1395,276 @@
     "pending": 0,
     "issues": [
       {
-        "title": "Assertion failed · tests/test_mypy.yml::attr_s_with_type_annotations",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsAnnotated",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::attr_s_with_type_argument[val=a = attr.ib(type=int)]",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsAutoAttribs",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::attr_s_with_type_argument[val=a: int = attr.ib()]",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsCmpTrue",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsAnnotated",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsCmpWithSubclasses",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsAutoAttribs",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsComplexSuperclass",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsCmpEqOrderValues",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsDataClass",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsCmpTrue",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsEqFalse",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsCmpWithSubclasses",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsForwardReference",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsComplexSuperclass",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsForwardReferenceInClass",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsDataClass",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsGeneric",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsDefaultDecorator",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsGenericClassmethod",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsDefaultErrors",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsGenericInheritance",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsEqFalse",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsImporting",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsForwardReference",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsInheritance",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsForwardReferenceInClass",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsInheritanceNoAnnotation",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsFrozen",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsInheritanceOverride",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsGeneric",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsKwOnlyAttrib",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsGenericClassmethod",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsMultiAssign",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsGenericInheritance",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsNestedInClasses",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsImporting",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsNextGenDetect",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsInheritance",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsOrderFalse",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsInheritanceOverride",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsOtherMethods",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsInitAttribFalse",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsOtherOverloads",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsInitFalse",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsPython2Annotations",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsLocalVariablesInClassMethod",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsRepeatedName",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsMultiAssign",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsSeriousNames",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsMultiAssign2",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsTypeAlias",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsNestedInClasses",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsTypeEquals",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsNextGenDetect",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsUnionForward",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsNextGenFrozen",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsUsingConverter",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsNotBooleans",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsUsingConverterAndSubclass",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsOrderFalse",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testFields",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsOtherMethods",
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testThreeArgConverterTypes",
         "tool": "pytest_run",
-        "kind": "test_assertion",
+        "kind": "test_runtime_error",
         "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "source": "model",
+        "rule": "F01"
       },
       {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsOtherOverloads",
-        "tool": "pytest_run",
-        "kind": "test_assertion",
-        "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
-      },
-      {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsPython2Annotations",
-        "tool": "pytest_run",
-        "kind": "test_assertion",
-        "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
-      },
-      {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsSeriousNames",
-        "tool": "pytest_run",
-        "kind": "test_assertion",
-        "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
-      },
-      {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsSimple",
-        "tool": "pytest_run",
-        "kind": "test_assertion",
-        "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
-      },
-      {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsTypeAlias",
-        "tool": "pytest_run",
-        "kind": "test_assertion",
-        "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
-      },
-      {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsTypeEquals",
-        "tool": "pytest_run",
-        "kind": "test_assertion",
-        "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
-      },
-      {
-        "title": "Assertion failed · tests/test_mypy.yml::testAttrsUnionForward",
-        "tool": "pytest_run",
-        "kind": "test_assertion",
-        "diagnosis": "code_defect",
-        "source": "rule",
-        "rule": "D40"
+        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/attrs/.venv/bin/python: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
       }
     ]
   }

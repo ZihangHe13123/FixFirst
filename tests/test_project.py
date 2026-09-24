@@ -105,3 +105,29 @@ def test_multiple_distributions_and_direct_reference_are_not_verified(tmp_path):
         {"packages": [{"name": "example", "version": "1"}, {"name": "example", "version": "2"}]},
     )
     assert [r["status"] for r in data["declarations"]] == ["ambiguous_install", "direct_reference"]
+
+
+def test_setup_py_and_flit_declarations_are_read_without_running_them(tmp_path):
+    from fixfirst.project import read_project
+
+    (tmp_path / "setup.py").write_text(
+        "from setuptools import setup\n"
+        "import os\n"
+        "REQUIRES = ['six>=1.6', 'lxml']\n"
+        "EXTRAS = {'tests': ['pytest'], ':python_version<\"3\"': ['futures']}\n"
+        "setup(name='demo', install_requires=REQUIRES, extras_require=EXTRAS,\n"
+        "      tests_require=['pytest-cov'], package_data=os.listdir('.'))\n"
+    )
+    (tmp_path / "pyproject.toml").write_text(
+        '[tool.flit.metadata]\nmodule = "demo"\nrequires = ["click >= 7.1.1, <7.2.0"]\n'
+        '[tool.flit.metadata.requires-extra]\ntest = ["shellingham >=1.3.0"]\n'
+    )
+    rows = {(r["name"], r["source"], r["group"]) for r in read_project(tmp_path)["declarations"]}
+    assert rows == {
+        ("six", "setup.py install_requires", "required"),
+        ("lxml", "setup.py install_requires", "required"),
+        ("pytest", "setup.py extras_require[tests]", "tests"),
+        ("pytest-cov", "setup.py tests_require", "tests_require"),
+        ("click", "pyproject.toml [tool.flit.metadata.requires]", "required"),
+        ("shellingham", "pyproject.toml [tool.flit.metadata.requires-extra.test]", "test"),
+    }

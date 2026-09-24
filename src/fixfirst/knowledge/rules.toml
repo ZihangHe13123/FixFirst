@@ -38,12 +38,6 @@ description = "Failures while running tests (setup, call or teardown) affect the
 when = [["?i", "stage", "?s"], ["test", "in", "?s", "setup,call,teardown"]]
 then = [["?i", "affects", "pass_tests"]]
 
-[[rule]]
-id = "G04"
-phase = "derive"
-description = "Unsatisfied project declarations can prevent tests from importing or running."
-when = [["?i", "tool", "project"]]
-then = [["?i", "affects", "collect_tests"], ["?i", "affects", "pass_tests"]]
 
 [[rule]]
 id = "G05"
@@ -294,10 +288,22 @@ when = [
 then = [["?i", "diagnosis", "missing_dependency"], ["?i", "remedy", "install_plugin"], ["?i", "because", "?d"]]
 
 [[rule]]
+id = "D25"
+phase = "diagnose"
+description = "The test asks for a fixture that the installed plugin release no longer provides."
+source = "knowledge: removed fixtures"
+when = [
+  ["?i", "missing_fixture", "?f"],
+  ["?f", "removed_from", "?d"], ["?f", "removed_in_version", "?v"],
+  ["?d", "installed_version", "?iv"], ["test", "version_gte", "?iv", "?v"],
+]
+then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "replace_removed"], ["?i", "because", "?f"]]
+
+[[rule]]
 id = "D24"
 phase = "diagnose"
 description = "The missing fixture is defined in the project, but not where this test can see it."
-when = [["?i", "missing_fixture", "?f"], ["?f", "defined_locally", "yes"]]
+when = [["?i", "missing_fixture", "?f"], ["?f", "defined_locally", "yes"], ["not", "?f", "removed_from", "?_"]]
 then = [["?i", "diagnosis", "code_defect"], ["?i", "remedy", "share_fixture"], ["?i", "because", "?f"]]
 
 # ======================================================================================
@@ -575,7 +581,7 @@ description = "An installed library still uses a name its dependency removed: pi
 when = [
   ["?i", "used_by_library", "?lib"], ["?i", "because", "?x"],
   ["?x", "removed_from", "?d"], ["?x", "removed_in_version", "?v"], ["?d", "installed_version", "?iv"],
-  ["not", "?d", "required_spec", "?_"],
+  ["not", "?d", "required_spec", "?_"], ["test", "ne", "?d", "dist:python"],
 ]
 [rule.action]
 id = "pin-{?d}"
@@ -586,6 +592,46 @@ cost = 1
 title = "Install {?d} below {?v}: the installed {?lib} still uses {?x}"
 explanation = "The installed {?lib} (not your code) uses {?x}, which {?d} removed in {?v}; this environment has {?d} {?iv}. Install an older {?d}, or upgrade {?lib} to a release that supports the newer {?d}."
 pip_install = "{?d}<{?v}"
+verification = "Re-run the tests with the same interpreter"
+
+[[rule]]
+id = "P55"
+phase = "plan"
+description = "An installed library still uses a module or function that Python removed: upgrade the library (pip cannot install another Python)."
+when = [
+  ["?i", "used_by_library", "?lib"], ["?i", "because", "?x"],
+  ["?x", "removed_from", "dist:python"], ["?x", "removed_in_version", "?v"], ["dist:python", "installed_version", "?iv"],
+  ["?lib", "installed_version", "?lv"], ["not", "?lib", "unmaintained", "?_"],
+]
+[rule.action]
+id = "upgrade-{?lib}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 1
+title = "Upgrade {?lib}: {?lib} {?lv} still uses {?x}, which Python {?v} removed"
+explanation = "The installed {?lib} {?lv} (not your code) uses {?x}, which Python removed in {?v}; this environment has Python {?iv}. Install a newer {?lib}; if the project pins {?lib} to an old version, relax that pin. Using Python older than {?v} also works."
+pip_install = "{?lib}>{?lv}"
+verification = "Re-run the tests with the same interpreter"
+
+[[rule]]
+id = "P56"
+phase = "plan"
+description = "An unmaintained library uses a module Python removed: no newer release exists, so stop depending on it."
+source = "knowledge: unmaintained packages"
+when = [
+  ["?i", "used_by_library", "?lib"], ["?i", "because", "?x"],
+  ["?x", "removed_from", "dist:python"], ["?x", "removed_in_version", "?v"],
+  ["?lib", "unmaintained", "?last"], ["?lib", "replacement", "?r"],
+]
+[rule.action]
+id = "replace-{?lib}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 2
+title = "Stop using {?lib}: its last release, {?last}, uses {?x}, which Python {?v} removed"
+explanation = "{?lib} is no longer maintained and no release works on Python {?v} or later. Replace it in the code that imports it: {?r}. Using Python older than {?v} also works, but only postpones the change."
 verification = "Re-run the tests with the same interpreter"
 
 [[rule]]

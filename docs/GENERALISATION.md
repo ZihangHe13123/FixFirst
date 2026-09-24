@@ -76,7 +76,7 @@ Each cause is general, not specific to one project:
    line were also treated as missing (flask-sqlalchemy's 4 problems are 1). Tracebacks that
    are not in pytest's format (pytest or a plugin crashing at start-up) were not read, so the
    failing library and location were unknown (requests, django-model-utils).
-3. **Declarations.** Dependencies declared in `setup.py` (8 of the 13 projects) and in flit's
+3. **Declarations.** Dependencies declared in `setup.py` (9 of the 13 projects) and in flit's
    old `[tool.flit.metadata]` table were not read, so "declared but not installed" could not be
    recognised (parsel, typer). Packages declared for development only (sphinx, tox, twine)
    counted as problems blocking the tests (django-model-utils, jmespath).
@@ -88,3 +88,57 @@ Each cause is general, not specific to one project:
 5. **Out of reach of the evidence.** Behaviour changes that raise no removed-name error
    (SQLAlchemy 2.0 results in records, pytest-asyncio 1.0 ignoring aiostream's loop fixture)
    look like code defects to FixFirst.
+
+## Round 2: after fixing the general causes (not held out)
+
+Every change fixes a cause from the list above, not a single project, and is covered by a test:
+
+| Cause | Change |
+|---|---|
+| Python 3.8/3.9 targets | The environment snapshot falls back to `top_level.txt`/installed files and the standard-library folder when `packages_distributions` and `sys.stdlib_module_names` are missing |
+| pytest 9 subtests | The probe records failing subtests only (a test with 9,000 passing subtests failed before and passes now) |
+| Commands started by tests | Checks run as if the environment were activated: its `bin`/`Scripts` folder first on `PATH`, `VIRTUAL_ENV` set |
+| One missing name counted as several | When the error names the missing name, the rest of the import line is not treated as missing |
+| Start-up crashes | Python's own traceback format is read, so the location and the library that raised are known |
+| Declarations | `setup.py` is read statically (its syntax tree, never executed): literal `install_requires`, `extras_require` and `tests_require`, also through a variable; flit's old `[tool.flit.metadata]` is read |
+| Development-only declarations | Declared-but-missing packages no longer block the test goals by themselves (rule G04 removed); a failing test that needs one still gets the declaration as evidence (D20) |
+| Python removals used by a library | New rules: upgrade the library (`pip install 'pytest>3.10.1'`, P55), or stop using it when it is unmaintained (P56); pinning is kept for names a library removed (P08) |
+
+Two knowledge-base entries were added **after seeing round 1**, and the results that depend
+on them are marked: nose is unmaintained (last release 1.3.7), and pytest-asyncio 1.0 removed
+the `event_loop` fixture (new rule D25 for removed fixtures). Both are documented upstream and
+affect many projects, but they were chosen because of this set.
+
+Raw results: examples/real-world/results-round2.json.
+
+| Project | Headline | First step | Score (round 1 → 2) |
+|---|---|---|---|
+| seaborn | 1 problem | Replace distutils: removed in Python 3.12 | Correct → **Correct** |
+| flask-sqlalchemy | 1 problem | Try an older flask: `pip install 'flask<3'` | Correct (hedged) → **Correct** (hedged); headline now right |
+| requests | 1 problem | Upgrade pytest: pytest 3.10.1 still uses imp, which Python 3.12 removed; `pip install 'pytest>3.10.1'` | Partial → **Correct** |
+| typer | 1 problem | Install the declared dependency that provides shellingham (`[tool.flit.metadata.requires-extra.test]`) | Generic → **Correct** |
+| parsel | 1 problem | Install the declared dependency that provides six (`setup.py install_requires`) | Generic → **Correct** |
+| cachetools | 1 problem | Make the project module cachetools importable (src layout) | Wrong → **Correct** |
+| more-itertools | All tests pass | (none) | Wrong → **Correct** |
+| jmespath | 1 problem | Stop using nose: its last release, 1.3.7, uses imp, which Python 3.12 removed | Wrong → **Correct**, knowledge added after round 1 (without it: upgrade nose, which has no newer release: Partial) |
+| aiostream | 3 problems | Replace event_loop: removed in pytest-asyncio 1.0, or pin pytest-asyncio below 1.0 | Wrong → **Correct**, knowledge added after round 1 |
+| django-model-utils | 1 problem | Try an older django: `pip install 'django<5'` | Partial → **Partial** (4.2 still lacks the name; the next round suggests < 4) |
+| imbalanced-learn | 3 problems | Try an older scikit-learn: `pip install 'scikit-learn<1'` | Partial → **Partial** |
+| records | 1 problem | Inspect the exception raised while running the test | Generic → **Generic** |
+| attrs | 1 problem | Inspect the exception raised while running the test | Wrong → **Generic**: FixFirst now finds `mypy` itself, and the next layer (33 tests needing an older mypy) gets generic advice |
+
+**Round 2: 9 correct (8 confirmed by rules, 1 hedged), 2 partial, 2 generic, 0 wrong.**
+Without the two knowledge entries added after round 1 it would be 7 correct.
+
+### How to read the two rounds
+
+- **Round 1 is the honest measure of generalisation**: 2 of 13 first steps worked as given,
+  and the cause was named in 6. It is the number to quote for "FixFirst on unseen projects".
+- **Round 2 is not held out.** It shows that the failures had general causes that could be
+  fixed without special cases, and the diagnosis evaluation on the generated dataset is
+  unchanged by these fixes. Measuring the improved version fairly needs a new set of
+  projects, ideally chosen by someone other than the author.
+- **What remains out of reach**: version bounds need release history that FixFirst does not
+  have offline (Django needs two rounds; scikit-learn's previous series does not install on
+  Python 3.12), and behaviour changes that raise no removed-name error (SQLAlchemy 2.0 results,
+  mypy's changed messages) still look like code defects.

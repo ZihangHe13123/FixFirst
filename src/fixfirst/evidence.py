@@ -36,6 +36,8 @@ EXPLICIT_CONFIG = re.compile(
 )
 EXCEPTION_LINE = re.compile(r"^E\s+([A-Za-z_][\w.]*(?:Error|Exception|Exit|Warning)):?\s?(.*)$", re.M)
 FRAME = re.compile(r"^(\S.*?\.py|<[^>]+>):(\d+):? (?:in \S+|\w+(?:Error|Exception))?\s*$", re.M)
+# Plain Python tracebacks, printed when pytest or a plugin fails before pytest can format them.
+PLAIN_FRAME = re.compile(r'^\s*File "([^"]+)", line (\d+), in \S+', re.M)
 IMPORT_STATEMENT = re.compile(r"^(?:from ([\w.]+) import ([\w, ()]+)|import ([\w.]+))")
 NUMPY_REMOVED = re.compile(r"`(?:np|numpy)\.(\w+)` was removed")
 FIXTURE_MISSING = re.compile(r"fixture '(\w+)' not found")
@@ -143,6 +145,16 @@ def classify_path(path: str, project_root: str, environment: dict) -> str:
     return "unknown"
 
 
+def frames_in(traceback: str) -> list[tuple[str, str]]:
+    """(path, line) of every traceback frame, in pytest's format or Python's own."""
+    found = []
+    for line in traceback.splitlines():
+        match = FRAME.match(line) or PLAIN_FRAME.match(line)
+        if match:
+            found.append((match[1], match[2]))
+    return found
+
+
 def source_lines(traceback: str) -> str:
     """Code shown in a pytest traceback (not the error text or file paths)."""
     return "\n".join(
@@ -158,7 +170,7 @@ def executed_lines(traceback: str) -> list[str]:
     for index, line in enumerate(lines):
         if line.startswith(">"):
             executed.append(line[1:].strip())
-        elif FRAME.match(line) and " in " in line and index + 1 < len(lines):
+        elif ((FRAME.match(line) and " in " in line) or PLAIN_FRAME.match(line)) and index + 1 < len(lines):
             following = lines[index + 1]
             if following.startswith("    ") and following.strip():
                 executed.append(following.strip())
@@ -283,7 +295,8 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
     text = message + "\n" + traceback
     environment = current_environment(session)
 
-    frames = [m[0] for m in FRAME.findall(traceback)]
+    located = frames_in(traceback)
+    frames = [path for path, _ in located]
     source_file = str(exception_record.get("source_file") or "")
     last = source_file if source_file and exception_record.get("stage") != "collect" else ""
     if not last and frames:
@@ -300,7 +313,7 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
     # The last frame in the user's own code is where they should look.
     root = session.project_root.replace("\\", "/").rstrip("/") + "/"
     where = ""
-    for (path, line), kind in zip(FRAME.findall(traceback), kinds):
+    for (path, line), kind in zip(located, kinds):
         if kind in ("project", "test"):
             shown = path.replace("\\", "/")
             where = f"{shown[len(root):] if shown.startswith(root) else shown}:{line}"
@@ -390,8 +403,10 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
         module, names, plain = statements[-1]
         if module:
             add("modules", module)
-            for name in re.findall(r"\w+", names):
-                add("apis", f"{module}.{name}")
+            # When the error names the missing name, the rest of the import line is fine.
+            if not CANNOT_IMPORT.search(text):
+                for name in re.findall(r"\w+", names):
+                    add("apis", f"{module}.{name}")
         elif plain and not evidence["modules"]:
             add("modules", plain)
     for key in re.findall(r"environ\[['\"]([A-Za-z_][\w]*)['\"]\]", traceback):

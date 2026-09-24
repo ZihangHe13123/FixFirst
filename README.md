@@ -55,7 +55,7 @@ real check before calling anything fixed.
 
 | Technique | What it does | Code |
 |---|---|---|
-| Knowledge-based rules | A production system with variables, stratified negation and provenance. 89 rules in five phases derive goal relevance, diagnose causes, add likely causes from general heuristics, fall back to the classifier, and propose actions. | `engine.py`, `knowledge/rules.toml` |
+| Knowledge-based rules | A production system with variables, stratified negation and provenance. 91 rules in five phases derive goal relevance, diagnose causes, add likely causes from general heuristics, fall back to the classifier, and propose actions. | `engine.py`, `knowledge/rules.toml` |
 | Knowledge graph | A curated domain graph (5 causes, 118 removed modules, APIs, arguments and usages with the release that removed them, 10 deprecations that emit warnings, 44 pytest fixtures mapped to their plugins, which Ruff rules indicate likely bugs, import-name → distribution mappings, 20 cited sources) that the rules query, and a per-session evidence graph (10 entity types, 15 relations) for explanations and questions. | `domain.py`, `knowledge/domain.toml`, `knowledge_graph.py` |
 | Data mining | A Gini decision tree over 44 evidence features suggests a cause when no rule applies; TF-IDF + cosine similarity with complete-link grouping merges repeated messages. | `evidence.py`, `classification.py`, `grouping.py` |
 

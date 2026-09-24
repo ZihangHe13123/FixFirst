@@ -17,7 +17,7 @@ from packaging.utils import canonicalize_name
 
 from .models import Fact
 
-KINDS = {"module", "api", "attribute", "kwarg", "usage"}
+KINDS = {"module", "api", "attribute", "kwarg", "usage", "fixture"}
 
 
 def dist_id(name: str) -> str:
@@ -48,6 +48,7 @@ def load() -> dict:
             key = f"api:{entry['module']}.{name}"
             deprecated[key] = {**entry, "name": name, "id": key}
     data["deprecated_index"] = deprecated
+    data["unmaintained_index"] = {dist_id(e["distribution"]): e for e in data.get("unmaintained", [])}
     # Fixtures are cited by the plugin's PyPI page unless the entry names another source.
     lint = data.setdefault("lint", {"likely_bug": [], "categories": {}})
     if lint.get("likely_bug") and lint.get("source") not in data["sources"]:
@@ -98,6 +99,12 @@ def facts_for(entities) -> list[Fact]:
                 knowledge(entity, "provided_by_plugin", dist_id(entry["distribution"]),
                           entry.get("source", "pypi:" + canonicalize_name(entry["distribution"])))
             )
+        entry = kb["unmaintained_index"].get(entity)
+        if entry:
+            result += [
+                knowledge(entity, "unmaintained", entry["last"], entry["source"]),
+                knowledge(entity, "replacement", entry["replacement"], entry["source"]),
+            ]
         if entity.startswith("lint:") and likely_bug(entity[len("lint:"):]):
             result.append(knowledge(entity, "indicates", "possible_bug", kb["lint"]["source"]))
         if entity.startswith("module:"):

@@ -47,6 +47,20 @@ def venv_python(root: Path) -> Path:
     return root / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
 
 
+def activation_env(python: str) -> dict:
+    """What activating the interpreter's environment would set.
+
+    Tests often start console scripts by name (mypy, flask, a project's own command); they
+    only find them when the environment's bin/Scripts folder is on PATH, as it is for a user
+    who activated the environment.
+    """
+    folder = Path(python).parent
+    root = folder.parent
+    if not ((root / "pyvenv.cfg").is_file() or (root / "conda-meta").is_dir()):
+        return {}
+    return {"VIRTUAL_ENV": str(root), "PATH": str(folder) + os.pathsep + os.environ.get("PATH", "")}
+
+
 def venv_site_packages(root: Path) -> Path:
     if os.name == "nt":
         return root / "Lib" / "site-packages"
@@ -114,6 +128,8 @@ def execute(
     )
     env.pop("RUFF_OUTPUT_FILE", None)
     env.pop("PYTEST_ADDOPTS", None)
+    env.pop("PYTHONHOME", None)
+    env.update(activation_env(python))
     if extra_env:
         env.update(extra_env)
     # A new process group/session lets a timeout stop the whole tree, and keeps a Ctrl+C in
@@ -210,10 +226,33 @@ for d in m.distributions():
                      'requires': d.requires or []})
 import sysconfig
 paths = sysconfig.get_paths()
+# Python 3.8/3.9 have neither packages_distributions() nor sys.stdlib_module_names.
+try:
+    imports = m.packages_distributions()
+except AttributeError:
+    imports = {}
+    for d in m.distributions():
+        tops = (d.read_text('top_level.txt') or '').split()
+        if not tops:
+            for f in d.files or ():
+                top = f.parts[0] if f.parts else ''
+                top = top[:-3] if top.endswith('.py') else top
+                if top.isidentifier() and top not in tops:
+                    tops.append(top)
+        for top in tops:
+            imports.setdefault(top, []).append(d.metadata.get('Name', ''))
+stdlib = getattr(sys, 'stdlib_module_names', None)
+if stdlib is None:
+    stdlib = set(sys.builtin_module_names)
+    for folder in (paths['stdlib'], os.path.join(paths['stdlib'], 'lib-dynload')):
+        for entry in (os.listdir(folder) if os.path.isdir(folder) else ()):
+            base = entry.split('.')[0]
+            if base.isidentifier() and entry != 'site-packages':
+                stdlib.add(base)
 print(json.dumps({'executable': sys.executable, 'prefix': sys.prefix,
  'python_version': sys.version.split()[0], 'packages': packages,
- 'import_distributions': m.packages_distributions(),
- 'stdlib_modules': sorted(getattr(sys, 'stdlib_module_names', ())),
+ 'import_distributions': imports,
+ 'stdlib_modules': sorted(stdlib),
  'paths': {k: paths.get(k, '') for k in ('stdlib', 'platstdlib', 'purelib', 'platlib')},
  'markers': {'implementation_name': sys.implementation.name,
  'implementation_version': implementation_version, 'os_name': os.name,

@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 
 import pytest
@@ -357,3 +358,90 @@ def test_code_check_goal_counts_only_findings_that_may_be_bugs(tmp_path):
     assert view["steps"] == [] and view["status"]["kind"] == "advisory"
     assert view["status"]["headline"] == "No problems that affect your code"
     assert "Ruff still has 2 clean-up suggestions" in view["status"]["detail"]
+
+
+def test_plain_python_tracebacks_give_frames_and_source_lines():
+    from fixfirst.evidence import frames_in
+
+    text = (
+        'Traceback (most recent call last):\n'
+        '  File "/venv/lib/python3.12/site-packages/_pytest/assertion/rewrite.py", line 8, in <module>\n'
+        '    import imp\n'
+        "ModuleNotFoundError: No module named 'imp'\n"
+    )
+    assert frames_in(text) == [("/venv/lib/python3.12/site-packages/_pytest/assertion/rewrite.py", "8")]
+    assert executed_lines(text) == ["import imp"]
+
+
+def test_checks_run_as_if_the_environment_were_activated(tmp_path):
+    from fixfirst.runner import activation_env
+
+    python = tmp_path / "venv" / "bin" / "python"
+    python.parent.mkdir(parents=True)
+    assert activation_env(str(python)) == {}  # not a virtual environment
+    (tmp_path / "venv" / "pyvenv.cfg").write_text("home = /usr/bin\n")
+    env = activation_env(str(python))
+    assert env["VIRTUAL_ENV"] == str(tmp_path / "venv")
+    assert env["PATH"].split(os.pathsep)[0] == str(python.parent)
+
+
+def test_only_the_name_the_error_reports_is_missing(tmp_path):
+    (tmp_path / "test_imports.py").write_text("from json import dumps, loads, no_such_name\n\ndef test_x():\n    pass\n")
+    session, issues = scan_project(tmp_path)
+    from fixfirst.evidence import issue_evidence
+
+    assert issue_evidence(session, issues[0])["apis"] == ["json.no_such_name"]
+
+
+def test_many_passing_subtests_still_verify_the_run(tmp_path):
+    # pytest 9 reports every subtest; 9000 passing ones used to overflow the probe's records.
+    (tmp_path / "test_many.py").write_text(
+        "def test_many(subtests):\n    for i in range(9000):\n        with subtests.test(i=i):\n            assert i >= 0\n"
+    )
+    session, issues = scan_project(tmp_path)
+    assert issues == [] and session.goal_status == "achieved"
+
+
+def test_declared_packages_no_test_needs_do_not_block_the_tests(tmp_path):
+    (tmp_path / "requirements.txt").write_text("sphinx-theme-that-is-not-installed\n")
+    (tmp_path / "test_ok.py").write_text("def test_ok():\n    assert True\n")
+    session, _ = scan_project(tmp_path)
+    view = build_view(session)
+    assert view["status"]["headline"] == "All tests pass" and view["steps"] == []
+
+
+def test_python_removals_used_by_libraries_suggest_upgrading_or_replacing_them():
+    from fixfirst import domain, engine
+    from fixfirst.models import Fact
+
+    def plan(library, version):
+        facts = [
+            Fact(fact_id="a", subject="issue-1", predicate="missing_module", value="module:imp"),
+            Fact(fact_id="b", subject="issue-1", predicate="module", value="module:imp"),
+            Fact(fact_id="c", subject="issue-1", predicate="raised_by_library", value=library),
+            Fact(fact_id="d", subject="dist:python", predicate="installed_version", value="3.12.4"),
+            Fact(fact_id="e", subject=library, predicate="installed_version", value=version),
+            *domain.facts_for({"module:imp", library}),
+        ]
+        return {p.action_id: p for p in engine.propose(rule_base(), engine.run(rule_base(), facts))}
+
+    upgrade = plan("dist:pytest", "3.10.1")
+    assert "pin-python" not in upgrade  # pip cannot install another Python
+    assert engine.render(upgrade["upgrade-pytest"].template["pip_install"], upgrade["upgrade-pytest"].bindings) == "pytest>3.10.1"
+    replace = plan("dist:nose", "1.3.7")
+    assert "replace-nose" in replace and "upgrade-nose" not in replace
+
+
+def test_a_fixture_removed_by_a_plugin_release_is_a_version_problem():
+    from fixfirst import domain, engine
+    from fixfirst.models import Fact
+
+    facts = [
+        Fact(fact_id="a", subject="issue-1", predicate="missing_fixture", value="fixture:event_loop"),
+        Fact(fact_id="b", subject="fixture:event_loop", predicate="defined_locally", value="yes"),
+        Fact(fact_id="c", subject="dist:pytest-asyncio", predicate="installed_version", value="1.4.0"),
+        *domain.facts_for({"fixture:event_loop"}),
+    ]
+    base = engine.run(rule_base(), facts)
+    assert ("issue-1", "diagnosis", "version_incompatibility") in base.keys
+    assert ("issue-1", "remedy", "share_fixture") not in base.keys
