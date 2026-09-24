@@ -124,3 +124,12 @@ def test_diagnosis_dataset_and_cross_validation_end_to_end(tmp_path):
     rules = metrics["protocols"]["leave_one_template_out"]["overall"]["rules"]
     assert rules["accuracy"] == 1.0
     assert (tmp_path / "evaluation" / "decision_tree.txt").exists()
+
+
+def test_install_advice_comes_with_a_command_for_the_project_interpreter(tmp_path):
+    session, _ = run_scenario(tmp_path, "md_known_import")
+    action = session.actions[0]
+    assert action.action_id == "install-requests"
+    assert action.command == [session.target_python, "-m", "pip", "install", "requests"]
+    step = build_view(session)["steps"][0]
+    assert step["command"].endswith("-m pip install requests")

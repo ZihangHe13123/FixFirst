@@ -211,6 +211,10 @@ def rule_actions(session: Session, base: engine.FactBase, by_id) -> list[Action]
                 cost=template.get("cost", 2),
                 cause=engine.resolve(template.get("cause"), bindings) if template.get("cause") else None,
                 rule_ids=proposal.rule_ids,
+                # Always the project's own interpreter, so the package lands where the checks run.
+                command=[session.target_python, "-m", "pip", "install",
+                         engine.render(template["pip_install"], bindings)]
+                if template.get("pip_install") else [],
             )
         )
     return actions

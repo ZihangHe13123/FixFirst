@@ -14,7 +14,7 @@ import tempfile
 from . import domain
 from .evidence import issue_evidence
 from .models import Session
-from .report import GOALS, TOOL_NAMES
+from .report import GOALS, TOOL_NAMES, shell
 
 GOAL_DONE = {
     "collect_tests": "All tests load",
@@ -82,6 +82,7 @@ def build_view(session: Session) -> dict:
                 "possible": cause_name(action.cause) if hedged else None,
                 "title": action.title,
                 "explanation": action.explanation,
+                "command": shell(action.command) if action.command else None,
                 "confirm": action.verification,
                 # Only a rule's conclusion is shown as the cause; guesses are marked as such.
                 "cause": None if hedged else cause_name(action.cause or next(

@@ -23,6 +23,8 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
 .fixed:not(.other) li::before{content:"✓ ";color:var(--green);font-weight:700}
 .more{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);display:flex;gap:18px;flex-wrap:wrap;font-size:14px}
 .hint{margin:22px 0 0;font-size:14px;color:var(--muted)}
+.cmd{display:flex;gap:10px;align-items:center;background:#15302a;border-radius:9px;padding:10px 12px;margin:10px 0 4px}
+.cmd code{flex:1;color:#e6f2ea;overflow-wrap:anywhere;font-size:13px}.cmd button{padding:5px 12px;font-size:13px;flex:none}
 {% endblock %}
 {% block main %}
 <div class="context">
@@ -57,6 +59,8 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
       <h3>{{ step.title }}</h3>
       {% if step.where %}<div class="where">{% for place in step.where[:4] %}<code>{{ place }}</code>{% endfor %}{% if step.where|length > 4 %}<span class="muted small">and {{ step.where|length - 4 }} more</span>{% endif %}</div>{% endif %}
       <p>{{ step.explanation }}</p>
+      {% if step.command %}<div class="cmd"><code>{{ step.command }}</code><button type="button" class="copy" data-copy="{{ step.command }}">Copy</button></div>
+      <p class="muted small">Run it in a terminal. It uses this project's own Python, so the package goes where FixFirst checks. Then press <b>Check again</b>.</p>{% endif %}
       {% if step.gather %}<p class="muted small">Press <b>Check again</b> and FixFirst collects this for you.</p>{% endif %}
       <details><summary>Details</summary>
         {% if step.errors %}<h4>Error</h4>{% for error in step.errors[:3] %}<pre>{{ error }}</pre>{% endfor %}{% endif %}
@@ -98,6 +102,7 @@ const SESSION={{ session_id|tojson }};
 document.getElementById('check').onclick=async()=>{
   busy('Checking your project…','Running the environment, dependency and test checks. Large test suites take longer.');
   try{await post(`/api/sessions/${SESSION}/scan`,{});location.reload()}catch(err){showError(err.message)}};
+document.querySelectorAll('.copy').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent='Copied'}catch{b.textContent='Select and copy'}setTimeout(()=>b.textContent='Copy',2000)});
 document.getElementById('goal').onchange=async e=>{
   busy('Changing the goal…','');
   try{await post(`/api/sessions/${SESSION}/goal`,{goal:e.target.value});location.reload()}catch(err){showError(err.message)}};

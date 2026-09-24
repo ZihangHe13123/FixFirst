@@ -456,7 +456,8 @@ cause = "version_incompatibility"
 issue = "?i"
 cost = 1
 title = "Install the {?d} version that {?who} requires ({?spec})"
-explanation = "{?who} requires {?d}{?spec}, but this environment has {?d} {?iv}, which removed {?x} in {?v}. Reinstall the versions your packages declare (for example python -m pip install \"{?d}{?spec}\"), or upgrade {?who} to a release that supports the newer {?d}. Editing library code is not the fix."
+explanation = "{?who} requires {?d}{?spec}, but this environment has {?d} {?iv}, which removed {?x} in {?v}. Install the version {?who} requires, or upgrade {?who} to a release that supports the newer {?d}. Editing library code is not the fix."
+pip_install = "{?d}{?spec}"
 verification = "Re-run the dependency check and the tests with the same interpreter"
 
 [[rule]]
@@ -475,7 +476,8 @@ cause = "version_incompatibility"
 issue = "?i"
 cost = 1
 title = "Install {?d} below {?v}: the installed {?lib} still uses {?x}"
-explanation = "The installed {?lib} (not your code) uses {?x}, which {?d} removed in {?v}; this environment has {?d} {?iv}. Install an older {?d} (for example python -m pip install \"{?d}<{?v}\") or upgrade {?lib} to a release that supports the newer {?d}."
+explanation = "The installed {?lib} (not your code) uses {?x}, which {?d} removed in {?v}; this environment has {?d} {?iv}. Install an older {?d}, or upgrade {?lib} to a release that supports the newer {?d}."
+pip_install = "{?d}<{?v}"
 verification = "Re-run the tests with the same interpreter"
 
 [[rule]]
@@ -494,7 +496,8 @@ cause = "version_incompatibility"
 issue = "?i"
 cost = 1
 title = "Install the {?d} version that {?who} requires ({?spec})"
-explanation = "{?who} requires {?d}{?spec}, but this environment has {?d} {?iv}, and the import fails inside that newer {?d}. Reinstall the versions your packages declare (for example python -m pip install \"{?d}{?spec}\"), or upgrade {?who} to a release that supports the newer {?d}."
+explanation = "{?who} requires {?d}{?spec}, but this environment has {?d} {?iv}, and the import fails inside that newer {?d}. Install the version {?who} requires, or upgrade {?who} to a release that supports the newer {?d}."
+pip_install = "{?d}{?spec}"
 verification = "Re-run the dependency check and the tests with the same interpreter"
 
 [[rule]]
@@ -604,7 +607,8 @@ cause = "missing_dependency"
 issue = "?i"
 cost = 2
 title = "Install the declared dependency that provides {?m}"
-explanation = "{?src} declares it, but the target interpreter cannot import {?m}. Install the project's dependencies into this interpreter (for example python -m pip install -r requirements.txt, or pip install -e .). FixFirst does not install anything itself."
+explanation = "{?src} declares it, but the target interpreter cannot import {?m}. Install it into this interpreter, or install all of the project's declared dependencies at once. FixFirst does not install anything itself."
+pip_install = "{?m}"
 verification = "Re-run the project declaration check and test collection"
 
 [[rule]]
@@ -619,7 +623,8 @@ cause = "missing_dependency"
 issue = "?i"
 cost = 2
 title = "Install {?d}, which provides the import {?m}"
-explanation = "The import {?m} comes from the PyPI distribution {?d}, which is not installed in the target interpreter. Install it there (python -m pip install {?d}) and declare it in the project's dependencies."
+explanation = "The import {?m} comes from the PyPI distribution {?d}, which is not installed in the target interpreter. Install it there and declare it in the project's dependencies."
+pip_install = "{?d}"
 verification = "Re-run the project declaration check and test collection"
 
 [[rule]]

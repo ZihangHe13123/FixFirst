@@ -132,6 +132,8 @@ class Action(Record):
     targets: list[str] = Field(default_factory=list)
     cause: str | None = None
     rule_ids: list[str] = Field(default_factory=list)
+    # A command the user can run themselves (argv); FixFirst never runs it.
+    command: list[str] = Field(default_factory=list)
 
 
 class Session(Record):

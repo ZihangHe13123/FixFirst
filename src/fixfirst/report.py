@@ -50,6 +50,14 @@ DEPENDENCY_STATES = {
 ENV = Environment(loader=PackageLoader("fixfirst", "templates"), autoescape=select_autoescape(["html"]))
 
 
+def shell(argv: list[str]) -> str:
+    """Quote a command for the user's own terminal."""
+    return subprocess.list2cmdline(argv) if os.name == "nt" else shlex.join(argv)
+
+
+ENV.filters["shell"] = shell
+
+
 def public_data(session: Session):
     replacements = [(session.project_root, "<project>"), (session.target_python, "<python>")]
 
@@ -84,8 +92,7 @@ def html(session: Session, store_root: Path, public=False, live: dict | None = N
         if n["type"] in ("Goal", "Action", "Issue")
     ]
     counts = {state: sum(i.status == state for i in session.issues) for state in STATES}
-    quote = subprocess.list2cmdline if os.name == "nt" else shlex.join
-    command_prefix = quote([sys.executable, "-m", "fixfirst", "--store", str(store_root)])
+    command_prefix = shell([sys.executable, "-m", "fixfirst", "--store", str(store_root)])
     commands = {}
     for action in session.actions:
         if action.check and not action.blocked_reasons and not public:

@@ -141,7 +141,7 @@ fixfirst historical --assets examples/historical-regressions/assets --output wor
 |---|---|
 | `src/fixfirst/` | the package (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)) |
 | `src/fixfirst/knowledge/` | rule base, domain knowledge, bundled decision tree |
-| `tests/` | 105 tests, most running real subprocesses |
+| `tests/` | 106 tests, most running real subprocesses |
 | `examples/` | recorded runs, datasets and experiment reports ([overview](examples/README.md)) |
 | `docs/` | architecture, course alignment, team notes |
 
