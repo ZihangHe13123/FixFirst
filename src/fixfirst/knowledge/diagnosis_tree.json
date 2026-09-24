@@ -1,0 +1,513 @@
+{
+  "schema_version": 3,
+  "task": "root_cause",
+  "feature_names": [
+    "exception_ModuleNotFoundError",
+    "exception_ImportError",
+    "exception_AttributeError",
+    "exception_KeyError",
+    "exception_FileNotFoundError",
+    "exception_TypeError",
+    "exception_AssertionError",
+    "exception_RuntimeError",
+    "exception_ValueError",
+    "exception_NameError",
+    "exception_SyntaxError",
+    "exception_other",
+    "stage_collect",
+    "stage_setup",
+    "stage_call",
+    "stage_teardown",
+    "raised_in_project",
+    "raised_in_test",
+    "raised_in_third_party",
+    "raised_in_stdlib",
+    "raised_in_unknown",
+    "third_party_frame_ratio",
+    "module_mentioned",
+    "module_installed",
+    "module_stdlib",
+    "module_local",
+    "module_similar_local",
+    "module_declared",
+    "missing_module_dotted",
+    "api_mentioned",
+    "owner_defined_locally",
+    "signal_no_attribute",
+    "signal_cannot_import_name",
+    "signal_unexpected_kwarg",
+    "signal_environ_lookup",
+    "signal_getenv",
+    "signal_nonetype",
+    "signal_config_words",
+    "signal_config_file",
+    "signal_config_context",
+    "signal_file_missing",
+    "signal_partially_initialized",
+    "signal_relative_import",
+    "signal_removed_hint"
+  ],
+  "classes": [
+    "code_defect",
+    "config_missing",
+    "local_module",
+    "missing_dependency",
+    "version_incompatibility"
+  ],
+  "training_examples": 215,
+  "training_groups": [
+    ""
+  ],
+  "hyperparameters": {
+    "max_depth": 6,
+    "min_samples_leaf": 2
+  },
+  "description": "Gini decision tree over observed evidence features; suggestions only.",
+  "feature_importances": {
+    "stage_call": 0.0038,
+    "raised_in_project": 0.0335,
+    "raised_in_test": 0.0549,
+    "module_mentioned": 0.2265,
+    "module_local": 0.1256,
+    "module_similar_local": 0.0602,
+    "module_declared": 0.0033,
+    "missing_module_dotted": 0.043,
+    "api_mentioned": 0.19,
+    "signal_cannot_import_name": 0.0201,
+    "signal_environ_lookup": 0.0482,
+    "signal_nonetype": 0.0421,
+    "signal_config_file": 0.0439,
+    "signal_config_context": 0.1049
+  },
+  "nodes": [
+    {
+      "left": 1,
+      "right": 12,
+      "feature": 22,
+      "threshold": 0.5,
+      "values": [
+        0.27906976744186046,
+        0.13953488372093023,
+        0.13953488372093023,
+        0.13953488372093023,
+        0.3023255813953488
+      ]
+    },
+    {
+      "left": 2,
+      "right": 11,
+      "feature": 39,
+      "threshold": 0.5,
+      "values": [
+        0.5789473684210527,
+        0.3157894736842105,
+        0.0,
+        0.0,
+        0.10526315789473684
+      ]
+    },
+    {
+      "left": 3,
+      "right": 10,
+      "feature": 36,
+      "threshold": 0.5,
+      "values": [
+        0.6962025316455697,
+        0.17721518987341772,
+        0.0,
+        0.0,
+        0.12658227848101267
+      ]
+    },
+    {
+      "left": 4,
+      "right": 9,
+      "feature": 34,
+      "threshold": 0.5,
+      "values": [
+        0.7432432432432432,
+        0.12162162162162163,
+        0.0,
+        0.0,
+        0.13513513513513514
+      ]
+    },
+    {
+      "left": 5,
+      "right": 8,
+      "feature": 38,
+      "threshold": 0.5,
+      "values": [
+        0.7971014492753623,
+        0.057971014492753624,
+        0.0,
+        0.0,
+        0.14492753623188406
+      ]
+    },
+    {
+      "left": 6,
+      "right": 7,
+      "feature": 29,
+      "threshold": 0.5,
+      "values": [
+        0.8461538461538461,
+        0.0,
+        0.0,
+        0.0,
+        0.15384615384615385
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.5,
+        0.0,
+        0.0,
+        0.0,
+        0.5
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "left": 13,
+      "right": 22,
+      "feature": 29,
+      "threshold": 0.5,
+      "values": [
+        0.041666666666666664,
+        0.0,
+        0.25,
+        0.25,
+        0.4583333333333333
+      ]
+    },
+    {
+      "left": 14,
+      "right": 21,
+      "feature": 28,
+      "threshold": 0.5,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.75,
+        0.25
+      ]
+    },
+    {
+      "left": 15,
+      "right": 20,
+      "feature": 14,
+      "threshold": 0.5,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.8571428571428571,
+        0.14285714285714285
+      ]
+    },
+    {
+      "left": 16,
+      "right": 19,
+      "feature": 27,
+      "threshold": 0.5,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.8,
+        0.2
+      ]
+    },
+    {
+      "left": 17,
+      "right": 18,
+      "feature": 17,
+      "threshold": 0.5,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.75,
+        0.25
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666,
+        0.3333333333333333
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "left": 23,
+      "right": 28,
+      "feature": 25,
+      "threshold": 0.5,
+      "values": [
+        0.0625,
+        0.0,
+        0.375,
+        0.0,
+        0.5625
+      ]
+    },
+    {
+      "left": 24,
+      "right": 27,
+      "feature": 17,
+      "threshold": 0.5,
+      "values": [
+        0.0,
+        0.0,
+        0.18181818181818182,
+        0.0,
+        0.8181818181818182
+      ]
+    },
+    {
+      "left": 25,
+      "right": 26,
+      "feature": 26,
+      "threshold": 0.5,
+      "values": [
+        0.0,
+        0.0,
+        0.1,
+        0.0,
+        0.9
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "left": 29,
+      "right": 30,
+      "feature": 32,
+      "threshold": 0.5,
+      "values": [
+        0.2,
+        0.0,
+        0.8,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "left": 31,
+      "right": 32,
+      "feature": 16,
+      "threshold": 0.5,
+      "values": [
+        0.5,
+        0.0,
+        0.5,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ]
+    }
+  ]
+}

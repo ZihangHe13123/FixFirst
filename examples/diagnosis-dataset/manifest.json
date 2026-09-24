@@ -1,0 +1,1796 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-09-24T01:57:26+00:00",
+  "origin": "diagnosis_injection",
+  "python": "3.12.14",
+  "license": "CC0-1.0 for generated fixture code",
+  "templates": [
+    "flat-shop",
+    "src-billing",
+    "pkg-inventory",
+    "unittest-grades",
+    "fixture-orders"
+  ],
+  "scenarios": [
+    {
+      "id": "md_known_import",
+      "label": "missing_dependency",
+      "knowledge": true,
+      "description": "Import of a known third-party package that is not installed"
+    },
+    {
+      "id": "md_known_runtime",
+      "label": "missing_dependency",
+      "knowledge": true,
+      "description": "Runtime import of a known package with a different distribution name"
+    },
+    {
+      "id": "md_declared",
+      "label": "missing_dependency",
+      "knowledge": false,
+      "description": "Dependency declared in requirements.txt but not installed"
+    },
+    {
+      "id": "md_declared_alias",
+      "label": "missing_dependency",
+      "knowledge": true,
+      "description": "Declared distribution whose import name differs, not installed"
+    },
+    {
+      "id": "md_unknown_runtime",
+      "label": "missing_dependency",
+      "knowledge": false,
+      "description": "Undeclared package unknown to the knowledge base, imported at run time"
+    },
+    {
+      "id": "md_unknown_test",
+      "label": "missing_dependency",
+      "knowledge": false,
+      "description": "Undeclared package unknown to the knowledge base, imported by a test module"
+    },
+    {
+      "id": "lm_renamed",
+      "label": "local_module",
+      "knowledge": false,
+      "description": "Helper module renamed; imports still use the old name"
+    },
+    {
+      "id": "lm_src_layout",
+      "label": "local_module",
+      "knowledge": false,
+      "description": "Package moved under src/ without putting src on the path"
+    },
+    {
+      "id": "lm_shadow_library",
+      "label": "local_module",
+      "knowledge": true,
+      "description": "Project file named like an installed library hides it"
+    },
+    {
+      "id": "lm_shadow_stdlib",
+      "label": "local_module",
+      "knowledge": false,
+      "description": "Project file named like a standard-library module hides it"
+    },
+    {
+      "id": "lm_circular",
+      "label": "local_module",
+      "knowledge": false,
+      "description": "Two project modules import each other"
+    },
+    {
+      "id": "lm_relative",
+      "label": "local_module",
+      "knowledge": false,
+      "description": "Relative import in a test module that is not in a package"
+    },
+    {
+      "id": "vi_stdlib_module",
+      "label": "version_incompatibility",
+      "knowledge": true,
+      "description": "Standard-library module removed in Python 3.12"
+    },
+    {
+      "id": "vi_collections_abc",
+      "label": "version_incompatibility",
+      "knowledge": true,
+      "description": "collections ABC alias removed in Python 3.10"
+    },
+    {
+      "id": "vi_numpy_alias",
+      "label": "version_incompatibility",
+      "knowledge": true,
+      "description": "NumPy type alias removed in 1.24"
+    },
+    {
+      "id": "vi_numpy2",
+      "label": "version_incompatibility",
+      "knowledge": true,
+      "description": "NumPy name removed in 2.0"
+    },
+    {
+      "id": "vi_jinja2",
+      "label": "version_incompatibility",
+      "knowledge": true,
+      "description": "Jinja2 name removed in 3.1"
+    },
+    {
+      "id": "vi_library_import",
+      "label": "version_incompatibility",
+      "knowledge": true,
+      "description": "Name removed from MarkupSafe, packaging, pydantic or SciPy"
+    },
+    {
+      "id": "vi_library_runtime",
+      "label": "version_incompatibility",
+      "knowledge": true,
+      "description": "Removed scikit-learn or SciPy function imported at run time"
+    },
+    {
+      "id": "vi_removed_kwarg",
+      "label": "version_incompatibility",
+      "knowledge": true,
+      "description": "scikit-learn keyword argument removed"
+    },
+    {
+      "id": "vi_unittest_alias",
+      "label": "version_incompatibility",
+      "knowledge": true,
+      "description": "unittest alias removed in Python 3.12"
+    },
+    {
+      "id": "vi_asyncio_coroutine",
+      "label": "version_incompatibility",
+      "knowledge": true,
+      "description": "asyncio.coroutine removed in Python 3.11"
+    },
+    {
+      "id": "vi_unknown_attribute",
+      "label": "version_incompatibility",
+      "knowledge": false,
+      "description": "NumPy function removed but absent from the knowledge base"
+    },
+    {
+      "id": "vi_unknown_import",
+      "label": "version_incompatibility",
+      "knowledge": false,
+      "description": "SciPy or scikit-learn name removed but absent from the knowledge base"
+    },
+    {
+      "id": "vi_unknown_submodule",
+      "label": "version_incompatibility",
+      "knowledge": false,
+      "description": "Library submodule removed but absent from the knowledge base"
+    },
+    {
+      "id": "cm_environ",
+      "label": "config_missing",
+      "knowledge": false,
+      "description": "Required environment variable read with os.environ"
+    },
+    {
+      "id": "cm_config_file",
+      "label": "config_missing",
+      "knowledge": false,
+      "description": "Configuration file missing"
+    },
+    {
+      "id": "cm_explicit",
+      "label": "config_missing",
+      "knowledge": false,
+      "description": "Project raises an explicit missing-configuration error"
+    },
+    {
+      "id": "cm_getenv_none",
+      "label": "config_missing",
+      "knowledge": false,
+      "description": "os.getenv returns None and the value is used"
+    },
+    {
+      "id": "cm_fixture_env",
+      "label": "config_missing",
+      "knowledge": false,
+      "description": "Fixture needs an environment variable"
+    },
+    {
+      "id": "cm_settings_key",
+      "label": "config_missing",
+      "knowledge": false,
+      "description": "Settings file lacks a required key"
+    },
+    {
+      "id": "cd_assertion",
+      "label": "code_defect",
+      "knowledge": false,
+      "description": "Wrong result makes an assertion fail"
+    },
+    {
+      "id": "cd_zero_division",
+      "label": "code_defect",
+      "knowledge": false,
+      "description": "Division by zero in project code"
+    },
+    {
+      "id": "cd_name_error",
+      "label": "code_defect",
+      "knowledge": false,
+      "description": "Misspelt variable"
+    },
+    {
+      "id": "cd_index_error",
+      "label": "code_defect",
+      "knowledge": false,
+      "description": "Index out of range"
+    },
+    {
+      "id": "cd_syntax_error",
+      "label": "code_defect",
+      "knowledge": false,
+      "description": "Syntax error in a project module"
+    },
+    {
+      "id": "cd_wrong_arguments",
+      "label": "code_defect",
+      "knowledge": false,
+      "description": "Project function called with too many arguments"
+    },
+    {
+      "id": "cd_local_kwarg",
+      "label": "code_defect",
+      "knowledge": false,
+      "description": "Project function called with an unknown keyword argument"
+    },
+    {
+      "id": "cd_attribute_typo",
+      "label": "code_defect",
+      "knowledge": false,
+      "description": "Misspelt method on a project class"
+    },
+    {
+      "id": "cd_dict_key",
+      "label": "code_defect",
+      "knowledge": false,
+      "description": "Missing key in a data dictionary"
+    },
+    {
+      "id": "cd_value_error",
+      "label": "code_defect",
+      "knowledge": false,
+      "description": "Invalid literal converted in project code"
+    },
+    {
+      "id": "cd_fixture_bug",
+      "label": "code_defect",
+      "knowledge": false,
+      "description": "Fixture raises because of a bug in its data preparation"
+    },
+    {
+      "id": "cd_missing_name",
+      "label": "code_defect",
+      "knowledge": false,
+      "description": "Test imports a name the project module does not define"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "flat-shop--md_known_import",
+      "template": "flat-shop",
+      "scenario": "md_known_import",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--md_known_runtime",
+      "template": "flat-shop",
+      "scenario": "md_known_runtime",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--md_declared",
+      "template": "flat-shop",
+      "scenario": "md_declared",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--md_declared_alias",
+      "template": "flat-shop",
+      "scenario": "md_declared_alias",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--md_unknown_runtime",
+      "template": "flat-shop",
+      "scenario": "md_unknown_runtime",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--md_unknown_test",
+      "template": "flat-shop",
+      "scenario": "md_unknown_test",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--lm_renamed",
+      "template": "flat-shop",
+      "scenario": "lm_renamed",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--lm_src_layout",
+      "template": "flat-shop",
+      "scenario": "lm_src_layout",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--lm_shadow_library",
+      "template": "flat-shop",
+      "scenario": "lm_shadow_library",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--lm_shadow_stdlib",
+      "template": "flat-shop",
+      "scenario": "lm_shadow_stdlib",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--lm_circular",
+      "template": "flat-shop",
+      "scenario": "lm_circular",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--lm_relative",
+      "template": "flat-shop",
+      "scenario": "lm_relative",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--vi_stdlib_module",
+      "template": "flat-shop",
+      "scenario": "vi_stdlib_module",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--vi_collections_abc",
+      "template": "flat-shop",
+      "scenario": "vi_collections_abc",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--vi_numpy_alias",
+      "template": "flat-shop",
+      "scenario": "vi_numpy_alias",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--vi_numpy2",
+      "template": "flat-shop",
+      "scenario": "vi_numpy2",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--vi_jinja2",
+      "template": "flat-shop",
+      "scenario": "vi_jinja2",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--vi_library_import",
+      "template": "flat-shop",
+      "scenario": "vi_library_import",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--vi_library_runtime",
+      "template": "flat-shop",
+      "scenario": "vi_library_runtime",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--vi_removed_kwarg",
+      "template": "flat-shop",
+      "scenario": "vi_removed_kwarg",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--vi_unittest_alias",
+      "template": "flat-shop",
+      "scenario": "vi_unittest_alias",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--vi_asyncio_coroutine",
+      "template": "flat-shop",
+      "scenario": "vi_asyncio_coroutine",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--vi_unknown_attribute",
+      "template": "flat-shop",
+      "scenario": "vi_unknown_attribute",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--vi_unknown_import",
+      "template": "flat-shop",
+      "scenario": "vi_unknown_import",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--vi_unknown_submodule",
+      "template": "flat-shop",
+      "scenario": "vi_unknown_submodule",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cm_environ",
+      "template": "flat-shop",
+      "scenario": "cm_environ",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cm_config_file",
+      "template": "flat-shop",
+      "scenario": "cm_config_file",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cm_explicit",
+      "template": "flat-shop",
+      "scenario": "cm_explicit",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cm_getenv_none",
+      "template": "flat-shop",
+      "scenario": "cm_getenv_none",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cm_fixture_env",
+      "template": "flat-shop",
+      "scenario": "cm_fixture_env",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cm_settings_key",
+      "template": "flat-shop",
+      "scenario": "cm_settings_key",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cd_assertion",
+      "template": "flat-shop",
+      "scenario": "cd_assertion",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cd_zero_division",
+      "template": "flat-shop",
+      "scenario": "cd_zero_division",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cd_name_error",
+      "template": "flat-shop",
+      "scenario": "cd_name_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cd_index_error",
+      "template": "flat-shop",
+      "scenario": "cd_index_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cd_syntax_error",
+      "template": "flat-shop",
+      "scenario": "cd_syntax_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cd_wrong_arguments",
+      "template": "flat-shop",
+      "scenario": "cd_wrong_arguments",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cd_local_kwarg",
+      "template": "flat-shop",
+      "scenario": "cd_local_kwarg",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cd_attribute_typo",
+      "template": "flat-shop",
+      "scenario": "cd_attribute_typo",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cd_dict_key",
+      "template": "flat-shop",
+      "scenario": "cd_dict_key",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cd_value_error",
+      "template": "flat-shop",
+      "scenario": "cd_value_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cd_fixture_bug",
+      "template": "flat-shop",
+      "scenario": "cd_fixture_bug",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--cd_missing_name",
+      "template": "flat-shop",
+      "scenario": "cd_missing_name",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--md_known_import",
+      "template": "src-billing",
+      "scenario": "md_known_import",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--md_known_runtime",
+      "template": "src-billing",
+      "scenario": "md_known_runtime",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--md_declared",
+      "template": "src-billing",
+      "scenario": "md_declared",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--md_declared_alias",
+      "template": "src-billing",
+      "scenario": "md_declared_alias",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--md_unknown_runtime",
+      "template": "src-billing",
+      "scenario": "md_unknown_runtime",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--md_unknown_test",
+      "template": "src-billing",
+      "scenario": "md_unknown_test",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--lm_renamed",
+      "template": "src-billing",
+      "scenario": "lm_renamed",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--lm_src_layout",
+      "template": "src-billing",
+      "scenario": "lm_src_layout",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--lm_shadow_library",
+      "template": "src-billing",
+      "scenario": "lm_shadow_library",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--lm_shadow_stdlib",
+      "template": "src-billing",
+      "scenario": "lm_shadow_stdlib",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--lm_circular",
+      "template": "src-billing",
+      "scenario": "lm_circular",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--lm_relative",
+      "template": "src-billing",
+      "scenario": "lm_relative",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vi_stdlib_module",
+      "template": "src-billing",
+      "scenario": "vi_stdlib_module",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vi_collections_abc",
+      "template": "src-billing",
+      "scenario": "vi_collections_abc",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vi_numpy_alias",
+      "template": "src-billing",
+      "scenario": "vi_numpy_alias",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vi_numpy2",
+      "template": "src-billing",
+      "scenario": "vi_numpy2",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vi_jinja2",
+      "template": "src-billing",
+      "scenario": "vi_jinja2",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vi_library_import",
+      "template": "src-billing",
+      "scenario": "vi_library_import",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vi_library_runtime",
+      "template": "src-billing",
+      "scenario": "vi_library_runtime",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vi_removed_kwarg",
+      "template": "src-billing",
+      "scenario": "vi_removed_kwarg",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vi_unittest_alias",
+      "template": "src-billing",
+      "scenario": "vi_unittest_alias",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vi_asyncio_coroutine",
+      "template": "src-billing",
+      "scenario": "vi_asyncio_coroutine",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vi_unknown_attribute",
+      "template": "src-billing",
+      "scenario": "vi_unknown_attribute",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vi_unknown_import",
+      "template": "src-billing",
+      "scenario": "vi_unknown_import",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vi_unknown_submodule",
+      "template": "src-billing",
+      "scenario": "vi_unknown_submodule",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cm_environ",
+      "template": "src-billing",
+      "scenario": "cm_environ",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cm_config_file",
+      "template": "src-billing",
+      "scenario": "cm_config_file",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cm_explicit",
+      "template": "src-billing",
+      "scenario": "cm_explicit",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cm_getenv_none",
+      "template": "src-billing",
+      "scenario": "cm_getenv_none",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cm_fixture_env",
+      "template": "src-billing",
+      "scenario": "cm_fixture_env",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cm_settings_key",
+      "template": "src-billing",
+      "scenario": "cm_settings_key",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cd_assertion",
+      "template": "src-billing",
+      "scenario": "cd_assertion",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cd_zero_division",
+      "template": "src-billing",
+      "scenario": "cd_zero_division",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cd_name_error",
+      "template": "src-billing",
+      "scenario": "cd_name_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cd_index_error",
+      "template": "src-billing",
+      "scenario": "cd_index_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cd_syntax_error",
+      "template": "src-billing",
+      "scenario": "cd_syntax_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cd_wrong_arguments",
+      "template": "src-billing",
+      "scenario": "cd_wrong_arguments",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cd_local_kwarg",
+      "template": "src-billing",
+      "scenario": "cd_local_kwarg",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cd_attribute_typo",
+      "template": "src-billing",
+      "scenario": "cd_attribute_typo",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cd_dict_key",
+      "template": "src-billing",
+      "scenario": "cd_dict_key",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cd_value_error",
+      "template": "src-billing",
+      "scenario": "cd_value_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cd_fixture_bug",
+      "template": "src-billing",
+      "scenario": "cd_fixture_bug",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--cd_missing_name",
+      "template": "src-billing",
+      "scenario": "cd_missing_name",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--md_known_import",
+      "template": "pkg-inventory",
+      "scenario": "md_known_import",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--md_known_runtime",
+      "template": "pkg-inventory",
+      "scenario": "md_known_runtime",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--md_declared",
+      "template": "pkg-inventory",
+      "scenario": "md_declared",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--md_declared_alias",
+      "template": "pkg-inventory",
+      "scenario": "md_declared_alias",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--md_unknown_runtime",
+      "template": "pkg-inventory",
+      "scenario": "md_unknown_runtime",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--md_unknown_test",
+      "template": "pkg-inventory",
+      "scenario": "md_unknown_test",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--lm_renamed",
+      "template": "pkg-inventory",
+      "scenario": "lm_renamed",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--lm_src_layout",
+      "template": "pkg-inventory",
+      "scenario": "lm_src_layout",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--lm_shadow_library",
+      "template": "pkg-inventory",
+      "scenario": "lm_shadow_library",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--lm_shadow_stdlib",
+      "template": "pkg-inventory",
+      "scenario": "lm_shadow_stdlib",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--lm_circular",
+      "template": "pkg-inventory",
+      "scenario": "lm_circular",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--lm_relative",
+      "template": "pkg-inventory",
+      "scenario": "lm_relative",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vi_stdlib_module",
+      "template": "pkg-inventory",
+      "scenario": "vi_stdlib_module",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vi_collections_abc",
+      "template": "pkg-inventory",
+      "scenario": "vi_collections_abc",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vi_numpy_alias",
+      "template": "pkg-inventory",
+      "scenario": "vi_numpy_alias",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vi_numpy2",
+      "template": "pkg-inventory",
+      "scenario": "vi_numpy2",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vi_jinja2",
+      "template": "pkg-inventory",
+      "scenario": "vi_jinja2",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vi_library_import",
+      "template": "pkg-inventory",
+      "scenario": "vi_library_import",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vi_library_runtime",
+      "template": "pkg-inventory",
+      "scenario": "vi_library_runtime",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vi_removed_kwarg",
+      "template": "pkg-inventory",
+      "scenario": "vi_removed_kwarg",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vi_unittest_alias",
+      "template": "pkg-inventory",
+      "scenario": "vi_unittest_alias",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vi_asyncio_coroutine",
+      "template": "pkg-inventory",
+      "scenario": "vi_asyncio_coroutine",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vi_unknown_attribute",
+      "template": "pkg-inventory",
+      "scenario": "vi_unknown_attribute",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vi_unknown_import",
+      "template": "pkg-inventory",
+      "scenario": "vi_unknown_import",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vi_unknown_submodule",
+      "template": "pkg-inventory",
+      "scenario": "vi_unknown_submodule",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cm_environ",
+      "template": "pkg-inventory",
+      "scenario": "cm_environ",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cm_config_file",
+      "template": "pkg-inventory",
+      "scenario": "cm_config_file",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cm_explicit",
+      "template": "pkg-inventory",
+      "scenario": "cm_explicit",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cm_getenv_none",
+      "template": "pkg-inventory",
+      "scenario": "cm_getenv_none",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cm_fixture_env",
+      "template": "pkg-inventory",
+      "scenario": "cm_fixture_env",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cm_settings_key",
+      "template": "pkg-inventory",
+      "scenario": "cm_settings_key",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cd_assertion",
+      "template": "pkg-inventory",
+      "scenario": "cd_assertion",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cd_zero_division",
+      "template": "pkg-inventory",
+      "scenario": "cd_zero_division",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cd_name_error",
+      "template": "pkg-inventory",
+      "scenario": "cd_name_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cd_index_error",
+      "template": "pkg-inventory",
+      "scenario": "cd_index_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cd_syntax_error",
+      "template": "pkg-inventory",
+      "scenario": "cd_syntax_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cd_wrong_arguments",
+      "template": "pkg-inventory",
+      "scenario": "cd_wrong_arguments",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cd_local_kwarg",
+      "template": "pkg-inventory",
+      "scenario": "cd_local_kwarg",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cd_attribute_typo",
+      "template": "pkg-inventory",
+      "scenario": "cd_attribute_typo",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cd_dict_key",
+      "template": "pkg-inventory",
+      "scenario": "cd_dict_key",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cd_value_error",
+      "template": "pkg-inventory",
+      "scenario": "cd_value_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cd_fixture_bug",
+      "template": "pkg-inventory",
+      "scenario": "cd_fixture_bug",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--cd_missing_name",
+      "template": "pkg-inventory",
+      "scenario": "cd_missing_name",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--md_known_import",
+      "template": "unittest-grades",
+      "scenario": "md_known_import",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--md_known_runtime",
+      "template": "unittest-grades",
+      "scenario": "md_known_runtime",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--md_declared",
+      "template": "unittest-grades",
+      "scenario": "md_declared",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--md_declared_alias",
+      "template": "unittest-grades",
+      "scenario": "md_declared_alias",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--md_unknown_runtime",
+      "template": "unittest-grades",
+      "scenario": "md_unknown_runtime",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--md_unknown_test",
+      "template": "unittest-grades",
+      "scenario": "md_unknown_test",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--lm_renamed",
+      "template": "unittest-grades",
+      "scenario": "lm_renamed",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--lm_src_layout",
+      "template": "unittest-grades",
+      "scenario": "lm_src_layout",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--lm_shadow_library",
+      "template": "unittest-grades",
+      "scenario": "lm_shadow_library",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--lm_shadow_stdlib",
+      "template": "unittest-grades",
+      "scenario": "lm_shadow_stdlib",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--lm_circular",
+      "template": "unittest-grades",
+      "scenario": "lm_circular",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--lm_relative",
+      "template": "unittest-grades",
+      "scenario": "lm_relative",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vi_stdlib_module",
+      "template": "unittest-grades",
+      "scenario": "vi_stdlib_module",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vi_collections_abc",
+      "template": "unittest-grades",
+      "scenario": "vi_collections_abc",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vi_numpy_alias",
+      "template": "unittest-grades",
+      "scenario": "vi_numpy_alias",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vi_numpy2",
+      "template": "unittest-grades",
+      "scenario": "vi_numpy2",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vi_jinja2",
+      "template": "unittest-grades",
+      "scenario": "vi_jinja2",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vi_library_import",
+      "template": "unittest-grades",
+      "scenario": "vi_library_import",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vi_library_runtime",
+      "template": "unittest-grades",
+      "scenario": "vi_library_runtime",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vi_removed_kwarg",
+      "template": "unittest-grades",
+      "scenario": "vi_removed_kwarg",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vi_unittest_alias",
+      "template": "unittest-grades",
+      "scenario": "vi_unittest_alias",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vi_asyncio_coroutine",
+      "template": "unittest-grades",
+      "scenario": "vi_asyncio_coroutine",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vi_unknown_attribute",
+      "template": "unittest-grades",
+      "scenario": "vi_unknown_attribute",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vi_unknown_import",
+      "template": "unittest-grades",
+      "scenario": "vi_unknown_import",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vi_unknown_submodule",
+      "template": "unittest-grades",
+      "scenario": "vi_unknown_submodule",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cm_environ",
+      "template": "unittest-grades",
+      "scenario": "cm_environ",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cm_config_file",
+      "template": "unittest-grades",
+      "scenario": "cm_config_file",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cm_explicit",
+      "template": "unittest-grades",
+      "scenario": "cm_explicit",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cm_getenv_none",
+      "template": "unittest-grades",
+      "scenario": "cm_getenv_none",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cm_fixture_env",
+      "template": "unittest-grades",
+      "scenario": "cm_fixture_env",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cm_settings_key",
+      "template": "unittest-grades",
+      "scenario": "cm_settings_key",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cd_assertion",
+      "template": "unittest-grades",
+      "scenario": "cd_assertion",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cd_zero_division",
+      "template": "unittest-grades",
+      "scenario": "cd_zero_division",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cd_name_error",
+      "template": "unittest-grades",
+      "scenario": "cd_name_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cd_index_error",
+      "template": "unittest-grades",
+      "scenario": "cd_index_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cd_syntax_error",
+      "template": "unittest-grades",
+      "scenario": "cd_syntax_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cd_wrong_arguments",
+      "template": "unittest-grades",
+      "scenario": "cd_wrong_arguments",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cd_local_kwarg",
+      "template": "unittest-grades",
+      "scenario": "cd_local_kwarg",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cd_attribute_typo",
+      "template": "unittest-grades",
+      "scenario": "cd_attribute_typo",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cd_dict_key",
+      "template": "unittest-grades",
+      "scenario": "cd_dict_key",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cd_value_error",
+      "template": "unittest-grades",
+      "scenario": "cd_value_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cd_fixture_bug",
+      "template": "unittest-grades",
+      "scenario": "cd_fixture_bug",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--cd_missing_name",
+      "template": "unittest-grades",
+      "scenario": "cd_missing_name",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--md_known_import",
+      "template": "fixture-orders",
+      "scenario": "md_known_import",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--md_known_runtime",
+      "template": "fixture-orders",
+      "scenario": "md_known_runtime",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--md_declared",
+      "template": "fixture-orders",
+      "scenario": "md_declared",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--md_declared_alias",
+      "template": "fixture-orders",
+      "scenario": "md_declared_alias",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--md_unknown_runtime",
+      "template": "fixture-orders",
+      "scenario": "md_unknown_runtime",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--md_unknown_test",
+      "template": "fixture-orders",
+      "scenario": "md_unknown_test",
+      "label": "missing_dependency",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--lm_renamed",
+      "template": "fixture-orders",
+      "scenario": "lm_renamed",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--lm_src_layout",
+      "template": "fixture-orders",
+      "scenario": "lm_src_layout",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--lm_shadow_library",
+      "template": "fixture-orders",
+      "scenario": "lm_shadow_library",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--lm_shadow_stdlib",
+      "template": "fixture-orders",
+      "scenario": "lm_shadow_stdlib",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--lm_circular",
+      "template": "fixture-orders",
+      "scenario": "lm_circular",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--lm_relative",
+      "template": "fixture-orders",
+      "scenario": "lm_relative",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vi_stdlib_module",
+      "template": "fixture-orders",
+      "scenario": "vi_stdlib_module",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vi_collections_abc",
+      "template": "fixture-orders",
+      "scenario": "vi_collections_abc",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vi_numpy_alias",
+      "template": "fixture-orders",
+      "scenario": "vi_numpy_alias",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vi_numpy2",
+      "template": "fixture-orders",
+      "scenario": "vi_numpy2",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vi_jinja2",
+      "template": "fixture-orders",
+      "scenario": "vi_jinja2",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vi_library_import",
+      "template": "fixture-orders",
+      "scenario": "vi_library_import",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vi_library_runtime",
+      "template": "fixture-orders",
+      "scenario": "vi_library_runtime",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vi_removed_kwarg",
+      "template": "fixture-orders",
+      "scenario": "vi_removed_kwarg",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vi_unittest_alias",
+      "template": "fixture-orders",
+      "scenario": "vi_unittest_alias",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vi_asyncio_coroutine",
+      "template": "fixture-orders",
+      "scenario": "vi_asyncio_coroutine",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vi_unknown_attribute",
+      "template": "fixture-orders",
+      "scenario": "vi_unknown_attribute",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vi_unknown_import",
+      "template": "fixture-orders",
+      "scenario": "vi_unknown_import",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vi_unknown_submodule",
+      "template": "fixture-orders",
+      "scenario": "vi_unknown_submodule",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cm_environ",
+      "template": "fixture-orders",
+      "scenario": "cm_environ",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cm_config_file",
+      "template": "fixture-orders",
+      "scenario": "cm_config_file",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cm_explicit",
+      "template": "fixture-orders",
+      "scenario": "cm_explicit",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cm_getenv_none",
+      "template": "fixture-orders",
+      "scenario": "cm_getenv_none",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cm_fixture_env",
+      "template": "fixture-orders",
+      "scenario": "cm_fixture_env",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cm_settings_key",
+      "template": "fixture-orders",
+      "scenario": "cm_settings_key",
+      "label": "config_missing",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cd_assertion",
+      "template": "fixture-orders",
+      "scenario": "cd_assertion",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cd_zero_division",
+      "template": "fixture-orders",
+      "scenario": "cd_zero_division",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cd_name_error",
+      "template": "fixture-orders",
+      "scenario": "cd_name_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cd_index_error",
+      "template": "fixture-orders",
+      "scenario": "cd_index_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cd_syntax_error",
+      "template": "fixture-orders",
+      "scenario": "cd_syntax_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cd_wrong_arguments",
+      "template": "fixture-orders",
+      "scenario": "cd_wrong_arguments",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cd_local_kwarg",
+      "template": "fixture-orders",
+      "scenario": "cd_local_kwarg",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cd_attribute_typo",
+      "template": "fixture-orders",
+      "scenario": "cd_attribute_typo",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cd_dict_key",
+      "template": "fixture-orders",
+      "scenario": "cd_dict_key",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cd_value_error",
+      "template": "fixture-orders",
+      "scenario": "cd_value_error",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cd_fixture_bug",
+      "template": "fixture-orders",
+      "scenario": "cd_fixture_bug",
+      "label": "code_defect",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--cd_missing_name",
+      "template": "fixture-orders",
+      "scenario": "cd_missing_name",
+      "label": "code_defect",
+      "issues": 1
+    }
+  ],
+  "rejected": [],
+  "limitations": "Synthetic projects with one injected fault each, executed against real installed libraries. They are not a sample of naturally occurring failures.",
+  "library_versions": {
+    "numpy": "2.5.3",
+    "click": "8.5.0",
+    "packaging": "26.3",
+    "scikit-learn": "1.9.0",
+    "pytest": "9.1.1",
+    "pydantic": "2.13.5",
+    "PyYAML": "6.0.3",
+    "Jinja2": "3.1.6",
+    "MarkupSafe": "3.0.3",
+    "scipy": "1.18.1"
+  },
+  "seconds": 104.7
+}

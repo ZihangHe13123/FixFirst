@@ -88,7 +88,12 @@ class Issue(Record):
     scope: str
     environment_id: str
     category: str = "other_unknown"
+    # Root cause: from a diagnosis rule (evidence + knowledge) or, failing that, the model.
+    diagnosis: str | None = None
+    diagnosis_source: Literal["rule", "model"] | None = None
+    diagnosis_rule: str | None = None
     prediction: str | None = None
+    prediction_confidence: float | None = None
     prediction_note: str = ""
     group_score: float = 1
     status: Literal["open", "awaiting_verification", "resolved", "not_observed", "unknown"] = "open"
@@ -103,7 +108,7 @@ class Fact(Record):
     subject: str
     predicate: str
     value: str
-    status: Literal["observed", "derived", "hypothesis"] = "observed"
+    status: Literal["observed", "knowledge", "derived", "hypothesis"] = "observed"
     rule_id: str | None = None
     inputs: list[str] = Field(default_factory=list)
     evidence_refs: list[str] = Field(default_factory=list)
@@ -125,6 +130,8 @@ class Action(Record):
     cost: int = 1
     priority: int = 0
     targets: list[str] = Field(default_factory=list)
+    cause: str | None = None
+    rule_ids: list[str] = Field(default_factory=list)
 
 
 class Session(Record):
@@ -137,6 +144,7 @@ class Session(Record):
     grouping: Literal["exact", "tfidf", "sbert"] = "tfidf"
     threshold: float = Field(default=0.82, ge=0, le=1)
     model_path: str | None = None
+    use_classifier: bool = True
     sbert_model: str | None = None
     runs: list[Run] = Field(default_factory=list)
     events: list[Event] = Field(default_factory=list)

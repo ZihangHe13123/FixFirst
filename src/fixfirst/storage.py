@@ -28,7 +28,7 @@ class Store:
 
     def directory(self, session_id: str) -> Path:
         if not re.fullmatch(r"session-[a-f0-9]{12}", session_id):
-            raise ValueError("无效的排查编号")
+            raise ValueError("Invalid session id")
         return self.root / session_id
 
     def load(self, session_id: str) -> Session:
@@ -61,7 +61,7 @@ class Store:
             try:
                 fcntl.flock(file, fcntl.LOCK_EX | fcntl.LOCK_NB)
             except BlockingIOError:
-                raise ValueError("该排查正在运行，请等待当前命令结束") from None
+                raise ValueError("This session is already running; wait for the current command to finish") from None
             try:
                 yield
             finally:

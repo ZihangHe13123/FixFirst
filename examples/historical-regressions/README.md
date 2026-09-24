@@ -1,9 +1,22 @@
-# 官方历史缺陷的最小复现
+# Minimal reproductions of upstream library defects
 
-先看 `REPORT.md`。每例的 `project/test_regression.py` 是依据上游缺陷编写的最小复现；被测库本身使用未修改的官方 wheel。`01-broken` 与 `02-fixed` 各提供 HTML、session JSON 和图谱 JSON，`setup.json` 保存环境创建与离线安装记录。
+Start with `REPORT.md`. Each case's `project/test_regression.py` is a minimal test written from
+an upstream issue; the library under test is an unmodified official wheel. `01-broken` and
+`02-fixed` each have an HTML report, the session JSON and the graph JSON; `setup.json` records
+how the isolated environment was created and which wheels were installed offline.
 
-`results.json` 记录上游修复提交、观察到的版本、退出码、测试源码 SHA256 以及是否完成失败与恢复。`evaluation.json` 是固定旧 Gini 模型的四例评价，未重新训练。`packaging-full-version/03-model-disagreement.html` 在同一故障记录上展示模型与规则的分歧，不是新增一次运行。
+`results.json` records the upstream fix commits, the versions observed, exit codes, the SHA-256
+of the test source and whether both failure and recovery were observed.
 
-`assets/manifest.json` 列出来自 PyPI 的固定 wheel 下载地址、SHA256、大小和许可证文件。9 份 wheel 包括 Packaging / Click 的故障与修复版本及固定测试依赖；完整保留各自原许可证，**不适用原受控 fixture 的 CC0 声明**。
+These cases show FixFirst's verification semantics on real library versions: the same
+unchanged test fails with the broken release and passes with the fixed one, and only then is
+the issue closed. They are defects *inside* the libraries, which FixFirst's five root-cause
+classes do not model, so they are not part of the diagnosis experiment.
 
-运行根 README 中的 `fixfirst historical --assets ... --output ...` 可离线复算，输出目录必须是新目录。分享副本中的路径已替换，请用复现命令重建自己的环境，不要直接执行脱敏后的历史 argv。
+`assets/manifest.json` lists the pinned PyPI URLs, SHA-256 hashes, sizes and licence files of
+the nine wheels. They keep their original licences; **the CC0 notice of the generated fixtures
+does not apply to them**.
+
+Re-run offline with `fixfirst historical --assets examples/historical-regressions/assets --output <new dir>`.
+Paths in these shared copies are replaced; rebuild your own environment instead of running the
+recorded commands.

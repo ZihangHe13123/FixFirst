@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="fixfirst-token" content="{{ token }}">
+<title>FixFirst</title>
+<style>
+:root{--ink:#142822;--muted:#65746d;--bg:#f3f5f1;--line:#dae2db;--green:#17664a;--amber:#865516}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:#142f26;color:#dce9df;padding:26px 5vw}.brand{font-size:26px;font-weight:750;letter-spacing:-1px}.brand span{background:#b8dda6;color:#193326;border-radius:10px;padding:4px 9px;margin-right:7px;font-size:19px}
+header p{margin:6px 0 0;opacity:.8;font-size:14px}main{padding:34px 5vw 60px;max-width:1200px}h2{font-size:21px;margin:30px 0 14px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.card{background:white;border:1px solid var(--line);border-radius:13px;padding:22px}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px}input,select{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit;background:white}
+button{cursor:pointer;border:1px solid #bdcdbf;background:white;color:#28533c;border-radius:8px;padding:9px 14px;font:inherit;font-size:14px;margin-top:14px}button.primary{background:var(--green);color:white;border-color:var(--green)}button:disabled{opacity:.5;cursor:wait}
+table{border-collapse:collapse;width:100%;background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:14px}td,th{text-align:left;padding:12px 16px;border-bottom:1px solid #e7ece5}th{font-size:12px;color:#526556;background:#ebf0e9}
+a{color:var(--green)}.badge{border-radius:30px;padding:3px 11px;font-size:12px;font-weight:650;background:#e9edf1}.achieved{background:#dceedd;color:#27623b}.blocked{background:#f7e9d3;color:#825216}
+.note{font-size:13px;color:var(--muted)}#status{color:var(--amber);font-size:14px;min-height:22px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}main{padding:24px 16px}header{padding:22px 16px}}
+</style></head><body>
+<header><div class="brand"><span>F</span>FixFirst</div><p>Find the cause of Python test failures from real evidence, then verify every fix. Runs only on this computer.</p></header>
+<main>
+<p id="status" aria-live="polite"></p>
+<div class="grid">
+<section class="card"><h2 style="margin-top:0">Troubleshoot a project</h2>
+<label for="project">Project directory</label><input id="project" placeholder="/path/to/your/project">
+<label for="python">Project's Python interpreter</label><input id="python" value="{{ python }}">
+<label for="goal">Goal</label><select id="goal">{% for key, name in goals.items() %}<option value="{{ key }}">{{ name }}</option>{% endfor %}</select>
+<button class="primary" id="create">Create session</button>
+<p class="note">Checks import your project's code (like running its tests). Only use projects you trust. FixFirst never edits files or installs packages.</p></section>
+<section class="card"><h2 style="margin-top:0">Try a demo</h2>
+<p><b>Playground:</b> a project with four faults and four different causes. Fix them yourself and let FixFirst verify each step (the changes are listed in the project's FIXES.md).</p>
+<button class="primary" data-demo="playground">Open the playground</button>
+<p style="margin-top:18px">Recorded walk-throughs, where FixFirst also applies the fixes:</p>
+<button data-demo="collection">Import error + style findings</button><br>
+<button data-demo="execution">Failing tests + evidence graph</button>
+<p class="note">Demo projects are created under workbench/; your code is not touched.</p></section>
+</div>
+<h2>Sessions</h2>
+{% if sessions %}<table><thead><tr><th>Name</th><th>Goal</th><th>Status</th><th>Session</th></tr></thead><tbody>
+{% for row in sessions %}<tr><td><a href="/sessions/{{ row.session_id }}">{{ row.name }}</a></td><td>{{ goals.get(row.goal, row.goal) }}</td><td><span class="badge {{ row.goal_status }}">{{ row.goal_status }}</span></td><td class="note">{{ row.session_id }}</td></tr>{% endfor %}
+</tbody></table>{% else %}<p class="note">No sessions yet.</p>{% endif %}
+</main>
+<script>
+const token=document.querySelector('meta[name=fixfirst-token]').content,status=document.getElementById('status');
+async function post(url,body){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','X-FixFirst-Token':token},body:JSON.stringify(body)});const data=await r.json();if(!r.ok)throw new Error(data.error||r.statusText);return data}
+async function go(url,body,message){document.querySelectorAll('button').forEach(b=>b.disabled=true);status.textContent=message;try{const data=await post(url,body);location.href='/sessions/'+data.session_id}catch(err){status.textContent='Error: '+err.message;document.querySelectorAll('button').forEach(b=>b.disabled=false)}}
+document.getElementById('create').addEventListener('click',()=>go('/api/sessions',{project:document.getElementById('project').value,python:document.getElementById('python').value,goal:document.getElementById('goal').value},'Creating session…'));
+document.querySelectorAll('button[data-demo]').forEach(b=>b.addEventListener('click',()=>go('/api/demo',{scenario:b.dataset.demo},'Building and running the demo project (about 10 seconds)…')));
+</script></body></html>

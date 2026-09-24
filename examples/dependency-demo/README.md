@@ -1,5 +1,10 @@
-# 项目声明与实际版本不符
+# Declared version does not match the installed one
 
-依次打开 `01-broken.html` 和 `02-fixed.html`。本演示给已计数的 Packaging #788 最小复现添加我们编写的 `packaging>=24.2` 声明。故障时实际版本为 24.1，pip check 通过，声明检查与测试失败；换成官方 24.2 后满足原声明且测试通过。
+Open `01-broken.html`, then `02-fixed.html`. The demo adds an authored declaration,
+`packaging>=24.2`, to the Packaging #788 reproduction. With 24.1 installed, `pip check` passes
+but the declaration check and the test fail; after switching to the official 24.2 wheel the
+original declaration is satisfied and the test passes.
 
-这是一个受控版本不一致场景，不另算第五个自然缺陷。测试与声明保持不变，只调整独立环境中的库版本；执行命令见 `scripts/demo_dependencies.py`。
+This is a controlled version-mismatch scenario, not a fifth natural defect. The test and the
+declaration stay unchanged; only the library version in the isolated environment changes.
+The commands are in `scripts/demo_dependencies.py`.

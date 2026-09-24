@@ -1,73 +1,281 @@
-"""Forward chaining with provenance, then stable goal-sensitive action ordering."""
+"""Hybrid reasoning: observations + domain knowledge + classifier -> rule base -> actions.
 
-import json
+1. evidence.py turns recorded runs into observed facts and feature vectors;
+2. domain.py adds the source-attributed knowledge relevant to those facts;
+3. the decision tree adds suggestions (hypotheses) for pytest failures;
+4. engine.py runs the rule base (knowledge/rules.toml) phase by phase;
+5. plan rules propose remedies, and verification re-runs are added here;
+6. actions are ordered by goal impact, strength of support, kind and cost.
+"""
 
-from packaging.utils import canonicalize_name
+from functools import lru_cache
+from importlib import resources
 
-from .models import Action, Fact, Session, GOAL_CHECKS, PROJECT_SCOPES
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10
+    import tomli as tomllib
+
+from . import domain, engine
+from .classification import MIN_CONFIDENCE, default_model, load_model, suggest
+from .evidence import environment_facts, observations, observed, project_index
+from .models import GOAL_CHECKS, PROJECT_SCOPES, Action, Fact, Session
 from .runner import environment_id
 
-# Conditions and consequences operate on (predicate, value), keeping issue subjects separate.
-RULES = [
-    ("R01", ("kind", "import_failure"), ("needs", "environment_check")),
-    ("R02", ("kind", "dependency_conflict"), ("needs", "dependency_review")),
-    ("R03", ("stage", "collect"), ("affects", "collect_tests")),
-    ("R04", ("stage", "lint"), ("affects", "check_style")),
-    ("R05", ("kind", "explicit_config_missing"), ("needs", "config_review")),
-    ("R06", ("needs", "dependency_review"), ("requires", "verify_environment")),
-    ("R07", ("requires", "verify_environment"), ("needs", "environment_check")),
-    ("R08", ("kind", "install_failure"), ("needs", "install_review")),
-    ("R09", ("kind", "tool_failure"), ("needs", "tool_review")),
-    ("R10", ("kind", "style_issue"), ("needs", "style_review")),
-    ("R11", ("kind", "code_check"), ("needs", "code_review")),
-    ("R12", ("stage", "call"), ("affects", "pass_tests")),
-    ("R13", ("stage", "setup"), ("affects", "pass_tests")),
-    ("R14", ("stage", "teardown"), ("affects", "pass_tests")),
-    ("R15", ("stage", "collect"), ("affects", "pass_tests")),
-    ("R16", ("kind", "test_assertion"), ("needs", "assertion_review")),
-    ("R17", ("kind", "test_runtime_error"), ("needs", "runtime_review")),
-    ("R18", ("kind", "environment_mismatch"), ("needs", "python_review")),
-]
+KIND_ORDER = {"inspect": 0, "manual_fix": 1, "rerun": 2}
+VERIFY = (
+    ("project", "Re-check the project declarations"),
+    ("pip_check", "Re-run the dependency consistency check"),
+    ("pytest", "Re-run test collection"),
+    ("ruff", "Re-run the code check"),
+    ("pytest_run", "Run the full test suite"),
+)
 
 
-def forward_chain(observations: list[Fact], rules=None) -> list[Fact]:
-    rules = RULES if rules is None else rules
-    facts = {(f.subject, f.predicate, f.value): f for f in observations}
-    changed = True
-    while changed:
-        changed = False
-        for rule_id, condition, consequence in rules:
-            for source in list(facts.values()):
-                if (source.predicate, source.value) != condition:
-                    continue
-                key = (source.subject, *consequence)
-                if key in facts:
-                    continue
-                facts[key] = Fact(
-                    fact_id=f"{source.subject}:{consequence[0]}:{consequence[1]}",
-                    subject=source.subject,
-                    predicate=consequence[0],
-                    value=consequence[1],
-                    status="derived",
-                    rule_id=rule_id,
-                    inputs=[source.fact_id],
-                    evidence_refs=source.evidence_refs,
+@lru_cache(maxsize=1)
+def rule_base() -> list[engine.Rule]:
+    text = resources.files("fixfirst").joinpath("knowledge/rules.toml").read_text("utf-8")
+    return engine.load_rules(tomllib.loads(text))
+
+
+def forward_chain(observed_facts: list[Fact], rules=None) -> list[Fact]:
+    """Run every fact-asserting phase of a rule base to a fixpoint."""
+    return engine.run(rule_base() if rules is None else rules, observed_facts).facts
+
+
+def cause_label(value: str) -> str:
+    return domain.cause(value).get("label", value).lower()
+
+
+def classifier(session: Session) -> dict | None:
+    if not session.use_classifier:
+        return None
+    return load_model(session.model_path) if session.model_path else default_model()
+
+
+def base_facts(session: Session, active, knowledge=True) -> tuple[list[Fact], dict]:
+    facts = [
+        observed("session", "goal", session.goal, []),
+        observed("session", "goal_check", GOAL_CHECKS[session.goal], []),
+    ]
+    for issue in active:
+        values = [("kind", issue.kind), ("stage", issue.stage), ("tool", issue.tool)]
+        if issue.component:
+            values.append(("component", issue.component))
+        facts += [observed(issue.issue_id, p, v, issue.evidence_refs) for p, v in values]
+    current = environment_id(session.target_python)
+    latest_env = next((r for r in reversed(session.runs) if r.tool == "environment"), None)
+    if latest_env and latest_env.environment_id == current and latest_env.verified_pass:
+        facts.append(
+            observed("environment", "snapshot", "available", [f"{latest_env.run_id}:stdout:1"])
+        )
+    project_run, _ = project_index(session)
+    if project_run:
+        facts.append(
+            observed("project", "declarations", "available", [f"{project_run.run_id}:stdout:1"])
+        )
+    evidence_facts, details = observations(session, active)
+    facts += evidence_facts
+    mentioned = {f.value for f in evidence_facts if f.predicate in ("module", "api", "attribute", "kwarg")}
+    known = domain.facts_for(mentioned) if knowledge else []
+    facts += known
+    distributions = {"dist:python"} | {f.value for f in known if f.predicate == "removed_from"}
+    facts += environment_facts(session, distributions)
+    return facts, details
+
+
+def diagnose(session: Session, knowledge=True) -> dict:
+    """Rule diagnoses and evidence per open pytest issue, without planning (for experiments)."""
+    current = environment_id(session.target_python)
+    active = [
+        i for i in session.issues
+        if i.status != "resolved" and i.environment_id in (current, "unknown")
+    ]
+    facts, details = base_facts(session, active, knowledge)
+    base = engine.run(rule_base(), facts, phases=("derive", "diagnose"))
+    result = {}
+    for issue_id, evidence in details.items():
+        found = next(
+            (f for f in base.facts if f.subject == issue_id and f.predicate == "diagnosis"), None
+        )
+        result[issue_id] = {
+            "rule": found.value if found else None,
+            "rule_id": found.rule_id if found else None,
+            "evidence": evidence,
+        }
+    return result
+
+
+def apply_classifier(session: Session, active, details) -> list[Fact]:
+    suggestions = suggest(details, classifier(session))
+    facts = []
+    for issue in active:
+        issue.prediction, issue.prediction_confidence = suggestions.get(issue.issue_id, (None, None))
+        if issue.prediction and issue.prediction_confidence >= MIN_CONFIDENCE:
+            facts.append(
+                Fact(
+                    fact_id=f"{issue.issue_id}:model_suggests:{issue.prediction}",
+                    subject=issue.issue_id,
+                    predicate="model_suggests",
+                    value=issue.prediction,
+                    status="hypothesis",
+                    rule_id="decision-tree",
+                    evidence_refs=issue.evidence_refs,
                 )
-                changed = True
-    return list(facts.values())
+            )
+    return facts
+
+
+def summarise_diagnoses(session: Session, active, facts: list[Fact]):
+    for issue in active:
+        issue.diagnosis = issue.diagnosis_source = issue.diagnosis_rule = None
+        issue.prediction_note = ""
+        derived = next(
+            (f for f in facts if f.subject == issue.issue_id and f.predicate == "diagnosis"), None
+        )
+        suspected = next(
+            (f for f in facts if f.subject == issue.issue_id and f.predicate == "suspected"), None
+        )
+        if derived:
+            issue.diagnosis, issue.diagnosis_source = derived.value, "rule"
+            issue.diagnosis_rule = derived.rule_id
+        elif suspected:
+            issue.diagnosis, issue.diagnosis_source = suspected.value, "model"
+            issue.diagnosis_rule = suspected.rule_id
+        if derived and issue.prediction and issue.prediction != derived.value:
+            issue.prediction_note = (
+                f"The classifier suggested {cause_label(issue.prediction)}, but rule "
+                f"{derived.rule_id} concluded {cause_label(derived.value)} from the evidence; "
+                "the rule's conclusion drives the advice."
+            )
+
+
+def evidence_rank(action_kind, issues, reasons: list[Fact]) -> int:
+    if action_kind == "manual_fix" and issues and all(
+        i.status == "awaiting_verification" for i in issues
+    ):
+        return 0
+    if any(f.status == "hypothesis" for f in reasons):
+        return 0
+    if any(f.status == "knowledge" for f in reasons):
+        return 3
+    return 2 if reasons else 1
+
+
+def goal_impact(session: Session, issue_ids, facts_by_key) -> int:
+    affects = any((i, "affects", session.goal) in facts_by_key for i in issue_ids)
+    blocks = any((i, "blocks", session.goal) in facts_by_key for i in issue_ids)
+    return int(affects) + int(blocks)
+
+
+def rule_actions(session: Session, base: engine.FactBase, by_id) -> list[Action]:
+    keys = base.keys
+    filters = {"cause": cause_label}
+    actions = []
+    for proposal in engine.propose(rule_base(), base):
+        template, bindings = proposal.template, proposal.bindings
+        issues = [by_id[i] for i in proposal.issue_ids if i in by_id]
+        if "impact" in template:
+            goals = template.get("impact_goals", list(GOAL_CHECKS))
+            impact = template["impact"] if session.goal in goals else 0
+        else:
+            impact = goal_impact(session, proposal.issue_ids, keys)
+        actions.append(
+            Action(
+                action_id=proposal.action_id,
+                kind=template["kind"],
+                title=engine.render(template["title"], bindings, filters=filters),
+                explanation=engine.render(template["explanation"], bindings, filters=filters),
+                verification=engine.render(template["verification"], bindings, filters=filters),
+                check=template.get("check"),
+                issue_ids=proposal.issue_ids,
+                reason_refs=[f.fact_id for f in proposal.reason_facts],
+                preconditions=template.get("preconditions", []),
+                goal_impact=impact,
+                evidence_rank=evidence_rank(template["kind"], issues, proposal.reason_facts),
+                cost=template.get("cost", 2),
+                cause=engine.resolve(template.get("cause"), bindings) if template.get("cause") else None,
+                rule_ids=proposal.rule_ids,
+            )
+        )
+    return actions
+
+
+def verification_actions(session: Session, active, facts: list[Fact]) -> list[Action]:
+    """Re-run the checks that can confirm or refute changes; scope is tracked per tool."""
+    current = environment_id(session.target_python)
+    goal_tool = GOAL_CHECKS[session.goal]
+    actions = []
+
+    def reasons(issues):
+        ids = {i.issue_id for i in issues}
+        return [f.fact_id for f in facts if f.subject in ids and f.predicate == "affects"]
+
+    for tool, title in VERIFY:
+        issues = [i for i in active if i.tool == tool]
+        if not issues and tool != goal_tool:
+            continue
+        refs = reasons(issues)
+        actions.append(
+            Action(
+                action_id="check-" + tool,
+                kind="rerun",
+                title=title,
+                explanation=(
+                    "Only the issues this check covers are updated; others keep their state. "
+                    "If nothing changed and there is no new evidence, running it again adds nothing."
+                ),
+                verification="Review the new check record and the status changes",
+                check=tool,
+                issue_ids=[i.issue_id for i in issues],
+                reason_refs=refs,
+                cost=3,
+                goal_impact=1 if tool == goal_tool else 0,
+                evidence_rank=2 if refs else 1,
+            )
+        )
+    failed = [
+        i for i in active if i.tool == "pytest_run" and i.targets and i.environment_id == current
+    ]
+    nodes = sorted({node for i in failed for node in i.targets})
+    if nodes and len(nodes) <= 200:
+        refs = reasons(failed)
+        actions.append(
+            Action(
+                action_id="check-failed-tests",
+                kind="rerun",
+                title="Re-run only the related failing tests",
+                explanation=(
+                    "Runs just the failing test nodes already observed and keeps other issues. "
+                    "When they all pass, the full suite still has to confirm the goal."
+                ),
+                verification=(
+                    "Check setup, call and teardown for each node; skipped and xfail do not "
+                    "count as fixed"
+                ),
+                check="pytest_run",
+                issue_ids=[i.issue_id for i in failed],
+                reason_refs=refs,
+                cost=2,
+                goal_impact=int(session.goal == "pass_tests"),
+                evidence_rank=2 if refs else 1,
+                targets=nodes,
+            )
+        )
+    return actions
 
 
 def order_actions(actions, facts):
-    fact_ids = {f.fact_id for f in facts if f.status != "hypothesis"}
+    known = {f.fact_id for f in facts if f.status != "hypothesis"}
     for action in actions:
-        action.blocked_reasons = [p for p in action.preconditions if p not in fact_ids]
+        action.blocked_reasons = [p for p in action.preconditions if p not in known]
     ordered = sorted(
         actions,
         key=lambda a: (
             bool(a.blocked_reasons),
             -a.goal_impact,
             -a.evidence_rank,
-            {"inspect": 0, "manual_fix": 1, "rerun": 2}[a.kind],
+            KIND_ORDER[a.kind],
             a.cost,
             a.action_id,
         ),
@@ -77,343 +285,50 @@ def order_actions(actions, facts):
     return ordered
 
 
-def infer_and_plan(session: Session):
-    current_environment = environment_id(session.target_python)
-    active = [
-        i
-        for i in session.issues
-        if i.status != "resolved" and i.environment_id in (current_environment, "unknown")
-    ]
-    observations = []
-    for issue in active:
-        for predicate, value in (("kind", issue.kind), ("stage", issue.stage)):
-            observations.append(
-                Fact(
-                    fact_id=f"{issue.issue_id}:{predicate}:{value}",
-                    subject=issue.issue_id,
-                    predicate=predicate,
-                    value=value,
-                    evidence_refs=issue.evidence_refs,
-                )
-            )
-    latest_env = next((r for r in reversed(session.runs) if r.tool == "environment"), None)
-    if latest_env and latest_env.environment_id != environment_id(session.target_python):
-        latest_env = None
-    if latest_env and latest_env.verified_pass:
-        observations.append(
-            Fact(
-                fact_id="environment:available",
-                subject="environment",
-                predicate="snapshot",
-                value="available",
-                evidence_refs=[f"{latest_env.run_id}:stdout:1"],
-            )
-        )
-    project_run = next((r for r in reversed(session.runs) if r.tool == "project"), None)
-    project = {}
-    if (
-        project_run
-        and project_run.source == "executed"
-        and project_run.environment_id == current_environment
-    ):
-        try:
-            payload = json.loads(project_run.stdout)
-            if (
-                latest_env
-                and latest_env.verified_pass
-                and payload.get("environment_run_id") == latest_env.run_id
-            ):
-                project = payload
-        except (ValueError, AttributeError):
-            pass
-    import_details = {}
-    for issue in active:
-        if (
-            issue.kind != "import_failure"
-            or issue.environment_id != current_environment
-            or not project
-        ):
-            continue
-        top = issue.component.split(".", 1)[0]
-        distributions = session.environment.get("import_distributions", {}).get(top, [])
-        names = {canonicalize_name(name) for name in distributions}
-        details = []
-        if distributions:
-            details.append(
-                f"安装元数据将导入名 {top} 映射到发行包 {', '.join(distributions)}；包存在仍可能有路径或子模块问题。"
-            )
-        for index, row in enumerate(project.get("declarations", [])):
-            if row["name"] in names or (top and row["name"] == canonicalize_name(top)):
-                value = f"{row['source']}：{row['requirement']}；快照版本 {row['installed']}；{row['status']}"
-                details.append(
-                    value
-                    + ("（同名声明线索，不证明导入名与包名等价）" if not distributions else "")
-                )
-                observations.append(
-                    Fact(
-                        fact_id=f"{issue.issue_id}:declaration:{index}",
-                        subject=issue.issue_id,
-                        predicate="declaration",
-                        value=value,
-                        evidence_refs=[
-                            f"{project_run.run_id}:declaration:{index}",
-                            f"{latest_env.run_id}:stdout:1",
-                        ],
-                    )
-                )
-        local = [r["path"] for r in project.get("local_modules", []) if r["name"] == top]
-        if local:
-            details.append(
-                f"项目内存在同名路径 {', '.join(local)}；先核对项目安装方式、src 布局和导入路径。路径存在不证明可导入。"
-            )
-        if distributions or local:
-            observations.append(
-                Fact(
-                    fact_id=f"{issue.issue_id}:import_context",
-                    subject=issue.issue_id,
-                    predicate="declaration",
-                    value=" ".join(details),
-                    evidence_refs=[
-                        f"{project_run.run_id}:stdout:1",
-                        f"{latest_env.run_id}:stdout:1",
-                    ],
-                )
-            )
-        if details:
-            import_details[issue.issue_id] = " ".join(details)
-    session.facts = forward_chain(observations)
-    actions = []
-    grouped = {}
-    for issue in active:
-        grouped.setdefault(issue.kind, []).append(issue)
-
-    def add(
-        action_id,
-        kind,
-        title,
-        explanation,
-        verification,
-        issues,
-        check=None,
-        cost=1,
-        preconditions=None,
-        impact=None,
-        predicate="needs",
-        targets=None,
-    ):
-        ids = [i.issue_id for i in issues]
-        evidence = [
-            f.fact_id for f in session.facts if f.subject in ids and f.predicate == predicate
-        ]
-        actions.append(
-            Action(
-                action_id=action_id,
-                kind=kind,
-                title=title,
-                explanation=explanation,
-                verification=verification,
-                issue_ids=ids,
-                reason_refs=evidence,
-                check=check,
-                cost=cost,
-                preconditions=preconditions or [],
-                goal_impact=impact
-                if impact is not None
-                else int(any(i.tool == GOAL_CHECKS[session.goal] for i in issues)),
-                evidence_rank=0
-                if kind == "manual_fix"
-                and issues
-                and all(i.status == "awaiting_verification" for i in issues)
-                else 2
-                if evidence
-                else 1,
-                targets=targets or [],
-            )
-        )
-
-    imports = grouped.get("import_failure", [])
-    dependencies = grouped.get("dependency_conflict", [])
-    if imports or dependencies:
-        affected = imports + dependencies
-        if not latest_env or not latest_env.verified_pass:
-            add(
-                "inspect-environment",
-                "inspect",
-                "先核对当前 Python 环境",
-                "导入或依赖检查失败，需要先取得当前解释器和已安装包信息。尚不能断言包未安装或环境选错。",
-                "检查快照中的解释器路径与包信息，再决定是否手动调整",
-                affected,
-                "environment",
-                impact=2 if session.goal in ("collect_tests", "pass_tests") else 0,
-            )
-        elif not project:
-            add(
-                "inspect-project",
-                "inspect",
-                "读取项目依赖声明与当前版本",
-                "当前需要项目声明证据。读取 pyproject.toml、requirements 与 setup.cfg，并刷新解释器快照；不执行安装。",
-                "查看必需依赖、可选组、环境条件及来源，再决定修改",
-                affected,
-                "project",
-                cost=1,
-            )
-        elif imports:
-            add(
-                "review-import",
-                "manual_fix",
-                "核对导入路径与依赖声明",
-                " ".join(import_details.values())
-                or "已取得当前环境与项目声明快照，尚无可靠的导入名映射。核对错误位置、项目安装方式和声明；不能只凭 import 名生成安装命令。",
-                "处理后重新运行测试收集；pip check 通过不代表 import 一定成功",
-                affected,
-                preconditions=["environment:available"],
-                cost=2,
-            )
-            actions[-1].reason_refs += [
-                f.fact_id for f in session.facts if f.predicate == "declaration"
-            ]
-    # Give each concrete declaration conflict its own reviewable instruction.
-    concrete = [i for i in active if i.tool == "project" and project]
-    for issue in concrete:
-        add(
-            "review-" + issue.issue_id,
-            "manual_fix",
-            "核对 Python 版本要求"
-            if issue.kind == "environment_mismatch"
-            else f"核对 {issue.component} 的声明与版本",
-            issue.title + "。依据项目说明调整环境或声明，使用同一解释器重新检查。",
-            "重新运行项目声明检查（同时刷新环境），再验证当前目标",
-            [issue],
-            cost=2,
-            impact=int(session.goal in ("collect_tests", "pass_tests")),
-        )
-    for kind, title, explanation in [
-        (
-            "dependency_conflict",
-            "检查依赖约束冲突",
-            "依据 pip 报告核对项目声明和已安装版本，手动处理；系统不会猜测任意版本号或自动安装。",
-        ),
-        (
-            "explicit_config_missing",
-            "补齐明确缺失的配置",
-            "按错误指出的配置键和项目说明手动设置。报告只记录缺失键，不索取密钥值。",
-        ),
-        (
-            "install_failure",
-            "查看安装失败的具体阶段",
-            "安装失败可能来自网络、构建工具或包约束，需要结合原始日志核对，不能一概认定版本冲突。",
-        ),
-        (
-            "tool_failure",
-            "检查工具是否可用或是否中断",
-            "本次检查没有提供有效结果。核对目标环境、工具及原始输出后，再运行相应检查。",
-        ),
-        (
-            "style_issue",
-            "处理代码风格问题",
-            "按文件位置和规则码手动修改，再运行代码检查。格式消息数量不决定恢复测试收集的优先级。",
-        ),
-        (
-            "code_check",
-            "检查代码诊断",
-            "这是代码检查器报告的诊断，可能涉及未定义名称等问题，不能全部称作格式问题。",
-        ),
-        (
-            "test_assertion",
-            "核对失败断言的预期与实际结果",
-            "查看具体测试节点、断言和原始 traceback，核对业务预期及实现；修改后先验证相关节点，再运行完整测试。",
-        ),
-        (
-            "test_runtime_error",
-            "检查测试执行阶段的异常",
-            "依据 setup / call / teardown 区分 fixture 准备、测试体与清理失败；不能把 fixture 或清理错误当成格式问题。",
-        ),
-        (
-            "other_unknown",
-            "补充信息或人工排查",
-            "当前输入没有足够证据支持自动判断，请从原文核对；业务逻辑修复超出首版范围。",
-        ),
-    ]:
-        issues = [i for i in grouped.get(kind, []) if i not in concrete]
-        if issues:
-            add(
-                "review-" + kind,
-                "manual_fix",
-                title,
-                explanation,
-                "处理后重新运行对应范围的检查",
-                issues,
-                cost=2,
-            )
-    for tool, title in (
-        ("project", "刷新并验证项目依赖声明"),
-        ("pip_check", "重新检查依赖一致性"),
-        ("pytest", "重新验证测试收集"),
-        ("ruff", "重新检查代码"),
-        ("pytest_run", "验证完整测试运行"),
-    ):
-        issues = [i for i in active if i.tool == tool]
-        if issues or tool == GOAL_CHECKS[session.goal]:
-            add(
-                "check-" + tool,
-                "rerun",
-                title,
-                "只更新本次检查覆盖的问题；其他问题保留。若未做改动且没有新证据，无需反复运行同一检查。",
-                "查看新的检查记录和状态变化",
-                issues,
-                tool,
-                cost=3,
-                impact=1 if tool == GOAL_CHECKS[session.goal] else 0,
-                predicate="affects",
-            )
-    test_issues = [
-        i
-        for i in active
-        if i.tool == "pytest_run"
-        and i.targets
-        and i.environment_id == environment_id(session.target_python)
-    ]
-    nodes = sorted({node for i in test_issues for node in i.targets})
-    if nodes and len(nodes) <= 200:
-        add(
-            "check-failed-tests",
-            "rerun",
-            "先验证关联的失败测试",
-            "只运行已观察到的失败节点，保留未覆盖问题。全部选中节点通过后，仍需完整测试验证项目目标。",
-            "查看每个节点的 setup、call、teardown 结果；跳过与 xfail 不算已修复",
-            test_issues,
-            "pytest_run",
-            cost=2,
-            predicate="affects",
-            targets=nodes,
-        )
-    session.actions = order_actions(actions, session.facts)
+def goal_status(session: Session, active) -> str:
+    current = environment_id(session.target_python)
     target = GOAL_CHECKS[session.goal]
     last = next((r for r in reversed(session.runs) if r.tool == target), None)
-    expected_scope = PROJECT_SCOPES[target]
     eligible = bool(
         last
         and last.source == "executed"
-        and last.scope == expected_scope
-        and last.environment_id == environment_id(session.target_python)
+        and last.scope == PROJECT_SCOPES[target]
+        and last.environment_id == current
     )
-    session.goal_status = (
-        "unknown" if not eligible else "achieved" if last.verified_pass else "blocked"
-    )
+    status = "unknown" if not eligible else "achieved" if last.verified_pass else "blocked"
     if any(i.status == "awaiting_verification" and i.tool == target for i in active):
-        session.goal_status = "unknown"
+        status = "unknown"
     if session.goal == "pass_tests":
         if last and last.coverage_complete and last.exit_code == 0 and not last.verified_pass:
-            session.goal_status = "unknown"
-        if session.goal_status == "achieved" and any(
-            i.tool == target and i.environment_id == current_environment for i in active
+            status = "unknown"
+        if status == "achieved" and any(
+            i.tool == target and i.environment_id == current for i in active
         ):
-            session.goal_status = "unknown"
+            status = "unknown"
         if (
             last
             and last.source == "executed"
-            and last.environment_id == environment_id(session.target_python)
+            and last.environment_id == current
             and last.scope == "tests:selected"
             and last.test_summary.get("failed", 0)
         ):
-            session.goal_status = "blocked"
+            status = "blocked"
+    return status
+
+
+def infer_and_plan(session: Session):
+    current = environment_id(session.target_python)
+    active = [
+        i
+        for i in session.issues
+        if i.status != "resolved" and i.environment_id in (current, "unknown")
+    ]
+    facts, details = base_facts(session, active)
+    facts += apply_classifier(session, active, details)
+    base = engine.run(rule_base(), facts)
+    session.facts = base.facts
+    summarise_diagnoses(session, active, base.facts)
+    by_id = {i.issue_id: i for i in active}
+    actions = rule_actions(session, base, by_id) + verification_actions(session, active, base.facts)
+    session.actions = order_actions(actions, base.facts)
+    session.goal_status = goal_status(session, active)

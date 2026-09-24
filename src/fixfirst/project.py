@@ -38,12 +38,12 @@ def read_project(root: Path) -> dict:
     def read(path):
         resolved = path.resolve()
         if not resolved.is_relative_to(root):
-            note("依赖引用超出项目目录，未读取")
+            note("A dependency reference points outside the project and was not read")
             return None
         if resolved in visited:
             return cache.get(resolved)
         if len(visited) >= MAX_FILES:
-            note(f"声明文件超过 {MAX_FILES} 个，已停止继续读取")
+            note(f"More than {MAX_FILES} declaration files; stopped reading")
             return None
         visited.add(resolved)
         relative = str(path.relative_to(root))
@@ -53,11 +53,11 @@ def read_project(root: Path) -> dict:
             with path.open("rb") as stream:
                 raw = stream.read(MAX_BYTES + 1)
             if len(raw) > MAX_BYTES:
-                note(f"{relative} 超过读取上限，未解析")
+                note(f"{relative} exceeds the size limit and was not parsed")
                 return None
             text = raw.decode("utf-8-sig")
         except (OSError, UnicodeError):
-            note(f"{relative} 无法读取为 UTF-8 声明文件")
+            note(f"{relative} could not be read as a UTF-8 declaration file")
             return None
         result["files"].append(
             {"path": relative, "sha256": hashlib.sha256(raw).hexdigest(), "bytes": len(raw)}
@@ -67,15 +67,15 @@ def read_project(root: Path) -> dict:
 
     def add(value, source, group="required", constraint=False):
         if len(result["declarations"]) >= MAX_DECLARATIONS:
-            note("依赖声明超过数量上限，已停止继续解析")
+            note("Too many declarations; stopped parsing")
             return
         if not isinstance(value, str):
-            note(f"{source} 含非字符串声明，未解析")
+            note(f"{source} contains a non-string declaration that was not parsed")
             return
         try:
             req = Requirement(value)
         except InvalidRequirement:
-            note(f"{source} 含不支持的依赖语法，未据此判断安装状态")
+            note(f"{source} uses unsupported requirement syntax; its install state was not judged")
             return
         result["declarations"].append(
             {
@@ -89,7 +89,7 @@ def read_project(root: Path) -> dict:
 
     def declaration_list(items, source):
         if not isinstance(items, list):
-            note(f"{source} 应为声明数组，未解析")
+            note(f"{source} should be an array of declarations; not parsed")
             return []
         return items
 
@@ -117,7 +117,7 @@ def read_project(root: Path) -> dict:
             if include:
                 ref = re.split(r"\s+#", include[2], maxsplit=1)[0].strip().strip("\"'")
                 if "$" in ref or "://" in ref:
-                    note(f"{source} 的动态或远程引用未读取")
+                    note(f"{source}: dynamic or remote reference not read")
                 else:
                     requirements(
                         path.parent / ref,
@@ -126,13 +126,13 @@ def read_project(root: Path) -> dict:
                     )
                 continue
             if value.startswith("-") or "${" in value:
-                note(f"{source} 的 pip 选项、可编辑路径或环境替换未解析")
+                note(f"{source}: pip options, editable paths and variable substitution are not parsed")
                 continue
             value = re.split(r"\s+#", value, maxsplit=1)[0]
             value = re.sub(r"\s+--hash=\S+", "", value)
             add(value, source, group, constraint)
         if logical:
-            note(f"{path.relative_to(root)} 存在未结束的续行")
+            note(f"{path.relative_to(root)} ends with an unfinished line continuation")
 
     pyproject = root / "pyproject.toml"
     if pyproject.exists():
@@ -160,11 +160,11 @@ def read_project(root: Path) -> dict:
                         }
                     )
                 if "dependencies" in project.get("dynamic", []):
-                    note("pyproject.toml 的动态依赖未执行或解析")
+                    note("pyproject.toml declares dynamic dependencies, which are not executed or parsed")
                 if data.get("tool", {}).get("poetry"):
-                    note("Poetry 专用声明未解析；如有标准 project 声明则单独读取")
+                    note("Poetry-specific declarations are not parsed; standard [project] declarations are read separately")
             except (ValueError, TypeError, AttributeError):
-                note("pyproject.toml 内容或声明结构无法完整解析")
+                note("pyproject.toml could not be fully parsed")
     # The base file first: included files inherit its required status. Standalone dev/test files
     # are informative because FixFirst does not know which optional environment the user enabled.
     paths = [
@@ -199,11 +199,11 @@ def read_project(root: Path) -> dict:
                         {"specifier": python, "source": "setup.cfg [options.python_requires]"}
                     )
             except configparser.Error:
-                note("setup.cfg 无法解析")
+                note("setup.cfg could not be parsed")
     if (root / "setup.py").exists():
-        note("setup.py 未执行；只能读取静态声明")
+        note("setup.py is not executed; only static declarations are read")
     if not result["files"]:
-        note("未发现支持的静态依赖声明文件")
+        note("No supported static declaration file was found")
     return result
 
 
@@ -218,7 +218,7 @@ def assess_project(data: dict, environment: dict) -> dict:
     for row in data["declarations"]:
         req = Requirement(row["requirement"])
         versions = sorted(set(installed.get(row["name"], [])))
-        row["installed"] = ", ".join(versions) or "未在快照中找到"
+        row["installed"] = ", ".join(versions) or "not in snapshot"
         row["status"] = "unknown"
         if not environment:
             continue
@@ -260,7 +260,7 @@ def assess_project(data: dict, environment: dict) -> dict:
         except (InvalidVersion, InvalidMarker, KeyError, ValueError):
             row["status"] = "unknown"
     for row in data["requires_python"]:
-        row["installed"] = environment.get("python_version", "未知")
+        row["installed"] = environment.get("python_version", "unknown")
         row["status"] = "unknown"
         try:
             if environment.get("python_version"):
@@ -270,7 +270,7 @@ def assess_project(data: dict, environment: dict) -> dict:
                     else "python_mismatch"
                 )
         except (InvalidSpecifier, InvalidVersion):
-            data["notes"].append(f"{row['source']} 的 Python 约束无法解析")
+            data["notes"].append(f"{row['source']}: Python constraint could not be parsed")
     return data
 
 
@@ -304,11 +304,53 @@ def collect_project(session, env_id: str) -> Run:
                 data["local_modules"].append(
                     {"name": component, "path": str(path.relative_to(session.project_root))}
                 )
+    data["python_files"], data["defined_names"] = index_sources(Path(session.project_root))
     run.stdout = json.dumps(redact_data(data), ensure_ascii=False, indent=2)
     run.exit_code = 0
     run.duration_s = round(time.monotonic() - start, 3)
-    run.notes = ["只读声明快照；可选组未指定启用，直接引用和锁文件来源不据此验证。"]
+    run.notes = [
+        "Read-only snapshot: optional groups are not assumed to be enabled; direct references "
+        "and lock files are not verified from it."
+    ]
     return run
+
+
+SKIP_DIRS = {".git", ".hg", ".venv", "venv", "env", "node_modules", "__pycache__", "build", "dist",
+             ".tox", ".nox", ".mypy_cache", ".pytest_cache", ".ruff_cache", "site-packages"}
+MAX_INDEXED_FILES = 2000
+DEFINITION = re.compile(r"^(?:async\s+)?(?:def|class)\s+([A-Za-z_]\w*)", re.M)
+
+
+def index_sources(root: Path) -> tuple[list[str], list[str]]:
+    """Bounded static index: project .py files and the top-level names they define.
+
+    Used to tell project modules and project classes from libraries; nothing is imported.
+    """
+    root = root.resolve()
+    files, names = [], set()
+    stack = [root]
+    while stack and len(files) < MAX_INDEXED_FILES:
+        directory = stack.pop()
+        try:
+            entries = sorted(directory.iterdir())
+        except OSError:
+            continue
+        for path in entries:
+            if path.is_symlink():
+                continue
+            if path.is_dir():
+                if path.name not in SKIP_DIRS and not path.name.startswith(".") and (
+                    len(path.relative_to(root).parts) < 6
+                ):
+                    stack.append(path)
+            elif path.suffix == ".py" and len(files) < MAX_INDEXED_FILES:
+                files.append(str(path.relative_to(root)))
+                try:
+                    if path.stat().st_size <= MAX_BYTES:
+                        names.update(DEFINITION.findall(path.read_text("utf-8", errors="replace")))
+                except OSError:
+                    continue
+    return sorted(files), sorted(names)
 
 
 def declaration_verified(issue, old_runs, new_runs) -> bool:

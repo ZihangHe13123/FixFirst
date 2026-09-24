@@ -1,44 +1,99 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
-<title>小王的购物车：测试能收集，但运行失败 · FixFirst 排查报告</title>
+
+<title>Wang&#39;s shopping cart: tests collect but fail · FixFirst</title>
 <style>
-:root{--ink:#142822;--muted:#65746d;--bg:#f3f5f1;--line:#dae2db;--green:#17664a;--light:#e5f0e8;--amber:#865516;--red:#a34134}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}aside{width:220px;background:#142f26;color:#dce9df;position:fixed;inset:0 auto 0 0;padding:35px 25px;display:flex;flex-direction:column}.brand{font-size:27px;font-weight:750;letter-spacing:-1px}.brand span{background:#b8dda6;color:#193326;border-radius:10px;padding:5px 9px;margin-right:7px;font-size:20px}.tag{font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:.65;margin-top:14px}nav{margin-top:60px}nav a{display:block;color:#cfddd4;text-decoration:none;padding:11px 0}nav a:hover{color:white}aside footer{margin-top:auto;font-size:12px;color:#9cb2a4}main{margin-left:220px;padding:42px 5vw 70px;max-width:1550px}.eyebrow{font-size:12px;text-transform:uppercase;color:var(--green);letter-spacing:2px;font-weight:700}h1{font-size:34px;line-height:1.2;letter-spacing:-1px;margin:15px 0 12px}h2{font-size:23px;letter-spacing:-.4px;margin:0}h3{font-size:18px;line-height:1.5;margin:8px 0}p{margin:8px 0}.muted{color:var(--muted)}.hero{display:flex;justify-content:space-between;gap:24px;align-items:start}.hero .badge{margin-top:12px}.badge{display:inline-block;border-radius:30px;padding:5px 13px;font-size:12px;font-weight:650;background:#edf0ec;white-space:nowrap}.achieved,.resolved{background:#dceedd;color:#27623b}.blocked,.open{background:#f7e9d3;color:#825216}.unknown,.not_observed{background:#e9edf1;color:#596477}.awaiting_verification{background:#e2eafb;color:#395a8e}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:30px 0}.stat{background:white;border:1px solid var(--line);padding:20px 24px;border-radius:13px}.stat b{font-size:32px;font-weight:600;display:block;line-height:1.1;margin-bottom:9px}.stat span{color:var(--muted);font-size:13px}.pipeline{padding:13px 18px;background:#e7ece5;border-radius:9px;color:#48604d;font-size:13px;margin-bottom:32px}.section-head{display:flex;gap:20px;align-items:center;justify-content:space-between;margin:35px 0 18px}.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.card{background:white;border:1px solid var(--line);border-radius:13px;padding:22px;min-width:0}.card.featured{border:2px solid var(--green);background:#fcfffa}.number{background:#e7eee5;border-radius:7px;padding:3px 9px;color:var(--green);font-size:12px;font-weight:bold}.card .kind{float:right;color:var(--muted);font-size:12px}.card small{display:block;margin:14px 0 5px;font-weight:600;color:#50695b}.command{margin-top:15px;padding:11px;background:#edf2ed;border-radius:7px;display:flex;gap:8px;align-items:center}.command code{overflow-wrap:anywhere;font-size:11px;flex:1}button{cursor:pointer;border:1px solid #bdcdbf;background:white;color:#28533c;border-radius:6px;padding:6px 11px;white-space:nowrap}button:hover{background:#dcebdd}.issue{margin-bottom:12px;padding:18px 22px;background:white;border:1px solid var(--line);border-radius:10px}.issue-top{display:flex;gap:15px;justify-content:space-between;align-items:flex-start}.issue-title{overflow-wrap:anywhere;font-weight:650;max-width:80%}.meta{font-size:12px;color:var(--muted);margin-top:7px}.details{margin-top:12px}summary{cursor:pointer;color:var(--green);font-size:13px;font-weight:550}pre{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;background:#f1f4ef;border:1px solid var(--line);border-radius:8px;padding:14px;font:12px/1.7 ui-monospace,Menlo,monospace;max-height:460px;overflow:auto}code{font-family:ui-monospace,Menlo,monospace}.facts{font-size:13px;border-left:3px solid #b6cbb6;padding:8px 12px;margin:9px 0}.facts code{font-size:11px;overflow-wrap:anywhere}.tablewrap{overflow:auto;background:white;border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;font-size:13px}td,th{text-align:left;padding:14px 17px;border-bottom:1px solid #e7ece5}th{color:#526556;font-size:12px;background:#ebf0e9}td code{font-size:11px}.history{border-left:2px solid #b8ccbd;padding-left:20px;margin-left:8px}.history article{margin:18px 0;padding-bottom:10px}.history time{font-size:12px;color:var(--muted)}input{border:1px solid var(--line);border-radius:8px;padding:10px 14px;font:inherit;width:260px;background:white}.empty{padding:25px;background:#e7f0e5;border-radius:12px}.note{font-size:12px;color:var(--muted);margin-top:13px}.footnote{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}.anchor{scroll-margin-top:25px}.hidden{display:none!important}@media(max-width:1000px){aside{width:180px;padding:30px 18px}main{margin-left:180px;padding:35px 25px}.stats{gap:9px}.stat{padding:18px}.actions{grid-template-columns:1fr}}@media(max-width:700px){aside{position:relative;width:auto;padding:20px 25px}aside nav,aside footer,.tag{display:none}main{margin-left:0;padding:25px 18px}.hero{display:block}h1{font-size:28px}.stats{grid-template-columns:repeat(2,1fr)}.section-head{align-items:start;flex-direction:column}input{width:100%}.issue-title{max-width:70%}}@media print{aside,button,input{display:none}main{margin:0;padding:15px}.actions{display:block}.card{break-inside:avoid;margin-bottom:10px}body{background:white}}
-</style></head><body>
-<aside><div class="brand"><span>F</span>FixFirst</div><div class="tag">Local troubleshooting</div><nav><a href="#overview">01　排查概览</a><a href="#actions">02　下一步行动</a><a href="#issues">03　问题与证据</a><a href="#knowledge">04　依据知识图谱</a><a href="#history">05　检查与历史</a></nav><footer>证据先行 · 每次验证有记录<br>本地报告 / v0.2.0</footer></aside>
-<main><section id="overview" class="anchor"><div class="hero"><div><div class="eyebrow">Troubleshooting workspace</div><h1>小王的购物车：测试能收集，但运行失败</h1><p class="muted">当前目标：通过测试运行　·　排查进行中</p></div><span class="badge achieved">目标已验证达成</span></div>
-<p class="note">session-01a484ffa8b2　·　创建于 2026-09-08T02:05:03+00:00　·　分享版本</p>
-<div class="stats"><div class="stat"><b>0</b><span>仍存在的问题组</span></div><div class="stat"><b>0</b><span>已验证解决</span></div><div class="stat"><b>0</b><span>未检查或待验证</span></div><div class="stat"><b>2</b><span>检查与导入记录</span></div></div>
-<div class="pipeline">导入与检查　→　归并症状　→　依据推荐　→　用户处理　→　重新验证</div>
-<div class="empty">当前目标已通过最近一次对应检查。你可以结束本次排查，或继续处理其他事项。结果只覆盖记录中的检查范围；跳过和预期失败仍单独列出。</div>
+:root{--ink:#142822;--muted:#65746d;--bg:#f3f5f1;--line:#dae2db;--green:#17664a;--light:#e5f0e8;--amber:#865516;--red:#a34134;--blue:#395a8e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+aside{width:220px;background:#142f26;color:#dce9df;position:fixed;inset:0 auto 0 0;padding:35px 25px;display:flex;flex-direction:column}
+.brand{font-size:27px;font-weight:750;letter-spacing:-1px}.brand span{background:#b8dda6;color:#193326;border-radius:10px;padding:5px 9px;margin-right:7px;font-size:20px}
+.tag{font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:.65;margin-top:14px}nav{margin-top:50px}nav a{display:block;color:#cfddd4;text-decoration:none;padding:10px 0}nav a:hover{color:white}
+aside footer{margin-top:auto;font-size:12px;color:#9cb2a4}main{margin-left:220px;padding:42px 5vw 70px;max-width:1550px}
+.eyebrow{font-size:12px;text-transform:uppercase;color:var(--green);letter-spacing:2px;font-weight:700}h1{font-size:34px;line-height:1.2;letter-spacing:-1px;margin:15px 0 12px}
+h2{font-size:23px;letter-spacing:-.4px;margin:0}h3{font-size:18px;line-height:1.45;margin:8px 0}p{margin:8px 0}.muted{color:var(--muted)}
+.hero{display:flex;justify-content:space-between;gap:24px;align-items:start}.badge{display:inline-block;border-radius:30px;padding:4px 12px;font-size:12px;font-weight:650;background:#edf0ec;white-space:nowrap}
+.achieved,.resolved{background:#dceedd;color:#27623b}.blocked,.open{background:#f7e9d3;color:#825216}.unknown,.not_observed{background:#e9edf1;color:#596477}.awaiting_verification{background:#e2eafb;color:var(--blue)}
+.cause{background:#e4efe7;color:var(--green)}.cause.model{background:#fbf0dc;color:var(--amber)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:28px 0}.stat{background:white;border:1px solid var(--line);padding:18px 22px;border-radius:13px}.stat b{font-size:30px;font-weight:600;display:block;line-height:1.1;margin-bottom:8px}.stat span{color:var(--muted);font-size:13px}
+.pipeline{padding:12px 18px;background:#e7ece5;border-radius:9px;color:#48604d;font-size:13px;margin-bottom:28px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:18px 0;padding:14px 16px;background:white;border:1px solid var(--line);border-radius:12px}
+.section-head{display:flex;gap:20px;align-items:center;justify-content:space-between;margin:36px 0 16px}
+.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.card{background:white;border:1px solid var(--line);border-radius:13px;padding:22px;min-width:0}.card.featured{border:2px solid var(--green);background:#fcfffa}
+.number{background:#e7eee5;border-radius:7px;padding:3px 9px;color:var(--green);font-size:12px;font-weight:bold}.card .kind{float:right;color:var(--muted);font-size:12px}.card small{display:block;margin:14px 0 5px;font-weight:600;color:#50695b}
+.command{margin-top:14px;padding:10px;background:#edf2ed;border-radius:7px;display:flex;gap:8px;align-items:center}.command code{overflow-wrap:anywhere;font-size:11px;flex:1}
+button,select{cursor:pointer;border:1px solid #bdcdbf;background:white;color:#28533c;border-radius:7px;padding:7px 12px;font:inherit;font-size:13px;white-space:nowrap}button:hover{background:#dcebdd}button.primary{background:var(--green);color:white;border-color:var(--green)}button.primary:hover{background:#0f5239}button:disabled{opacity:.5;cursor:wait}
+.issue{margin-bottom:12px;padding:18px 22px;background:white;border:1px solid var(--line);border-radius:10px}.issue-top{display:flex;gap:15px;justify-content:space-between;align-items:flex-start}.issue-title{overflow-wrap:anywhere;font-weight:650;max-width:75%}
+.meta{font-size:12px;color:var(--muted);margin-top:6px}.details{margin-top:12px}summary{cursor:pointer;color:var(--green);font-size:13px;font-weight:550}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;background:#f1f4ef;border:1px solid var(--line);border-radius:8px;padding:14px;font:12px/1.7 ui-monospace,Menlo,monospace;max-height:460px;overflow:auto}code{font-family:ui-monospace,Menlo,monospace}
+.facts{font-size:13px;border-left:3px solid #b6cbb6;padding:7px 12px;margin:8px 0}.facts code{font-size:11px;overflow-wrap:anywhere}.facts.knowledge{border-left-color:#7ba7c9}.facts.hypothesis{border-left-color:#e2b36b}
+.diagnosis{margin-top:12px;padding:12px 14px;background:#f5f9f5;border-radius:9px;font-size:13px}.diagnosis.model{background:#fdf7ec}
+.tablewrap{overflow:auto;background:white;border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;font-size:13px}td,th{text-align:left;padding:13px 16px;border-bottom:1px solid #e7ece5}th{color:#526556;font-size:12px;background:#ebf0e9}
+.history{border-left:2px solid #b8ccbd;padding-left:20px;margin-left:8px}.history article{margin:16px 0}.history time{font-size:12px;color:var(--muted)}
+input[type=search],input[type=text]{border:1px solid var(--line);border-radius:8px;padding:9px 13px;font:inherit;width:280px;background:white}
+.empty{padding:22px;background:#e7f0e5;border-radius:12px}.note{font-size:12px;color:var(--muted);margin-top:12px}.footnote{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.anchor{scroll-margin-top:25px}.hidden{display:none!important}#status{font-size:13px;color:var(--amber)}a{color:var(--green)}
+.path{display:flex;gap:8px;overflow:auto;padding:16px 0}.path div{min-width:160px;max-width:240px;padding:12px;border:1px solid #bdcdbf;border-radius:9px;background:#fff;overflow-wrap:anywhere;font-size:13px}.path span{white-space:nowrap;color:var(--muted);align-self:center;font-size:12px}
+@media(max-width:1000px){aside{width:180px;padding:30px 18px}main{margin-left:180px;padding:35px 25px}.actions{grid-template-columns:1fr}}
+@media(max-width:700px){aside{position:relative;width:auto;padding:20px}aside nav,aside footer,.tag{display:none}main{margin-left:0;padding:24px 16px}.hero{display:block}h1{font-size:28px}.stats{grid-template-columns:repeat(2,1fr)}.section-head{align-items:start;flex-direction:column}input[type=search],input[type=text]{width:100%}.issue-title{max-width:65%}}
+@media print{aside,button,input,select,.toolbar{display:none}main{margin:0;padding:15px}.actions{display:block}.card{break-inside:avoid;margin-bottom:10px}body{background:white}}
+</style></head>
+<body data-live="0">
+<aside><div class="brand"><span>F</span>FixFirst</div><div class="tag">Local troubleshooting</div>
+<nav><a href="#overview">01 Overview</a><a href="#actions">02 Next steps</a><a href="#issues">03 Issues &amp; causes</a><a href="#knowledge">05 Evidence graph</a><a href="#history">06 Checks &amp; history</a></nav>
+<footer>Evidence first · every result is re-checked<br>FixFirst 0.4 · shared copy</footer></aside>
+<main>
+<section id="overview" class="anchor">
+<div class="hero"><div><div class="eyebrow">Troubleshooting workspace</div><h1>Wang&#39;s shopping cart: tests collect but fail</h1>
+<p class="muted">Goal: Pass the test suite · in progress</p></div>
+<span class="badge achieved">Goal verified</span></div>
+<p class="note">session-f49455d1f031 · created 2026-09-24T01:56:25+00:00</p>
+
+<div class="stats"><div class="stat"><b>0</b><span>Issue groups still failing</span></div><div class="stat"><b>0</b><span>Verified fixed</span></div><div class="stat"><b>0</b><span>Unchecked or awaiting verification</span></div><div class="stat"><b>2</b><span>Checks and imports</span></div></div>
+<div class="pipeline">Collect evidence → group symptoms → diagnose the cause → plan the next step → you change the code → verify with a real check</div>
+<div class="empty">The goal passed its most recent check. The result covers only the recorded scope; skipped and expected failures are listed separately.</div>
 
 </section>
-<section id="actions" class="anchor"><div class="section-head"><h2>下一步行动</h2><span class="muted">先核对依据，再执行检查</span></div><div class="actions">
-<article class="card "><span class="number">01</span><span class="kind">重新验证</span><h3>验证完整测试运行</h3><p>只更新本次检查覆盖的问题；其他问题保留。若未做改动且没有新证据，无需反复运行同一检查。</p><small>完成后怎样确认</small><p class="muted">查看新的检查记录和状态变化</p>
 
-<p class="note">分享报告仅供阅读</p>
-<details class="details"><summary>推荐依据与关联问题</summary><p class="note">目标对应的验证检查</p></details></article></div><p class="note">报告不会自行执行命令或修改项目。建议排名依据当前目标、证据与成本规则；不代表根因概率或全局最优顺序。</p></section>
-<section id="issues" class="anchor"><div class="section-head"><h2>问题与证据</h2><input id="search" type="search" placeholder="搜索消息、组件或状态" aria-label="搜索问题"></div>
-<div class="empty">当前没有已识别的问题。请结合检查是否完成判断结果。</div></section>
-<section id="knowledge" class="anchor"><div class="section-head"><h2>依据知识图谱</h2><span class="muted">4 个实体 · 2 条显式关系</span></div>
-<p>选择一个目标、行动或问题，沿关系查看它的检查来源。图谱保存证据与规则关系。</p>
-<label for="graph-entity">查询实体</label><select id="graph-entity" style="width:100%;padding:12px;border:1px solid #bdcdbf;border-radius:8px;background:white;font:inherit"><option value="goal:pass_tests">通过测试运行 · goal:pass_tests</option><option value="check-pytest_run">验证完整测试运行 · check-pytest_run</option></select>
-<div id="graph-path" style="display:flex;gap:8px;overflow:auto;padding:16px 0" aria-label="证据关系路径"></div>
-<pre id="graph-answer" aria-live="polite"></pre>
-<p class="note">终端也可问：ask SESSION_ID "为什么推荐这个行动"。完整图谱保存在同名 .graph.json 文件。</p>
-<script type="application/json" id="graph-views">[{"answer": "Goal\uff1a\u901a\u8fc7\u6d4b\u8bd5\u8fd0\u884c\uff08goal:pass_tests\uff09\n\u8bb0\u5f55\u4e2d\u7684\u76ee\u6807\u72b6\u6001\uff1aachieved\n\u56fe\u8c31\u6ca1\u6709\u8be5\u76ee\u6807\u5173\u8054\u7684\u5df2\u77e5\u95ee\u9898\uff1b\u4ecd\u9700\u68c0\u67e5\u5b8c\u6210\u8bc1\u636e\u5224\u65ad\u662f\u5426\u901a\u8fc7\u3002\n\u8bc1\u636e\u8def\u5f84\uff1a\ngoal:pass_tests \u2192 \u6700\u8fd1\u68c0\u67e5\uff1arun-b3849e4e5542\n\u4ee5\u4e0a\u662f\u8bb0\u5f55\u4e0e\u63a8\u7406\u7684\u5173\u8054\uff0c\u4e0d\u8868\u793a\u5df2\u7ecf\u8bc1\u5b9e\u5171\u540c\u6839\u56e0\u3002", "bounded": false, "edges": [{"relation": "evaluated_by", "source": "goal:pass_tests", "target": "run-b3849e4e5542"}, {"relation": "recommends", "source": "goal:pass_tests", "target": "check-pytest_run"}], "entity": "goal:pass_tests", "nodes": [{"attributes": {"status": "achieved"}, "id": "goal:pass_tests", "label": "\u901a\u8fc7\u6d4b\u8bd5\u8fd0\u884c", "type": "Goal"}, {"attributes": {"exit_code": 0, "scope": "tests:project", "source": "executed", "status": "completed", "summary": {"failed": 0, "incomplete": 0, "passed": 3, "selected": 3, "skipped": 0, "xfail_or_xpass": 0}, "targets": [], "tool": "pytest_run", "verified_pass": true}, "id": "run-b3849e4e5542", "label": "pytest_run \u00b7 2026-09-08T02:05:03+00:00", "type": "Run"}, {"attributes": {"explanation": "\u53ea\u66f4\u65b0\u672c\u6b21\u68c0\u67e5\u8986\u76d6\u7684\u95ee\u9898\uff1b\u5176\u4ed6\u95ee\u9898\u4fdd\u7559\u3002\u82e5\u672a\u505a\u6539\u52a8\u4e14\u6ca1\u6709\u65b0\u8bc1\u636e\uff0c\u65e0\u9700\u53cd\u590d\u8fd0\u884c\u540c\u4e00\u68c0\u67e5\u3002", "goal_impact": 1, "priority": 1, "targets": [], "verification": "\u67e5\u770b\u65b0\u7684\u68c0\u67e5\u8bb0\u5f55\u548c\u72b6\u6001\u53d8\u5316"}, "id": "check-pytest_run", "label": "\u9a8c\u8bc1\u5b8c\u6574\u6d4b\u8bd5\u8fd0\u884c", "type": "Action"}], "paths": [[{"relation": "evaluated_by", "source": "goal:pass_tests", "target": "run-b3849e4e5542"}]], "supported": true}, {"answer": "Action\uff1a\u9a8c\u8bc1\u5b8c\u6574\u6d4b\u8bd5\u8fd0\u884c\uff08check-pytest_run\uff09\n\u53ea\u66f4\u65b0\u672c\u6b21\u68c0\u67e5\u8986\u76d6\u7684\u95ee\u9898\uff1b\u5176\u4ed6\u95ee\u9898\u4fdd\u7559\u3002\u82e5\u672a\u505a\u6539\u52a8\u4e14\u6ca1\u6709\u65b0\u8bc1\u636e\uff0c\u65e0\u9700\u53cd\u590d\u8fd0\u884c\u540c\u4e00\u68c0\u67e5\u3002\n\u9a8c\u8bc1\u65b9\u6cd5\uff1a\u67e5\u770b\u65b0\u7684\u68c0\u67e5\u8bb0\u5f55\u548c\u72b6\u6001\u53d8\u5316\n\u8bc1\u636e\u8def\u5f84\uff1a\n\u5c1a\u65e0\u53ef\u8ffd\u6eaf\u5230\u68c0\u67e5\u8bb0\u5f55\u7684\u8bc1\u636e\uff1b\u8fd9\u662f\u5f85\u6267\u884c\u9a8c\u8bc1\u6216\u7f3a\u5c11\u6765\u6e90\u3002\n\u4ee5\u4e0a\u662f\u8bb0\u5f55\u4e0e\u63a8\u7406\u7684\u5173\u8054\uff0c\u4e0d\u8868\u793a\u5df2\u7ecf\u8bc1\u5b9e\u5171\u540c\u6839\u56e0\u3002", "bounded": false, "edges": [], "entity": "check-pytest_run", "nodes": [{"attributes": {"explanation": "\u53ea\u66f4\u65b0\u672c\u6b21\u68c0\u67e5\u8986\u76d6\u7684\u95ee\u9898\uff1b\u5176\u4ed6\u95ee\u9898\u4fdd\u7559\u3002\u82e5\u672a\u505a\u6539\u52a8\u4e14\u6ca1\u6709\u65b0\u8bc1\u636e\uff0c\u65e0\u9700\u53cd\u590d\u8fd0\u884c\u540c\u4e00\u68c0\u67e5\u3002", "goal_impact": 1, "priority": 1, "targets": [], "verification": "\u67e5\u770b\u65b0\u7684\u68c0\u67e5\u8bb0\u5f55\u548c\u72b6\u6001\u53d8\u5316"}, "id": "check-pytest_run", "label": "\u9a8c\u8bc1\u5b8c\u6574\u6d4b\u8bd5\u8fd0\u884c", "type": "Action"}], "paths": [], "supported": true}]</script>
-</section>
-<section id="history" class="anchor"><div class="section-head"><h2>检查与运行历史</h2><span class="muted">tfidf 归并 · 阈值 0.82</span></div><div class="tablewrap"><table><thead><tr><th>来源</th><th>最近运行</th><th>状态</th><th>退出码</th><th>耗时</th></tr></thead><tbody><tr><td>测试收集</td><td>2026-09-08T02:05:03+00:00</td><td>completed / 已验证通过</td><td>0</td><td>0.101 s</td></tr><tr><td>测试执行</td><td>2026-09-08T02:05:03+00:00</td><td>completed / 已验证通过</td><td>0</td><td>0.107 s</td></tr></tbody></table></div>
-<div class="history"><article><time>2026-09-08T02:05:03+00:00</time><p>完成一轮检查或导入</p></article></div>
-<details><summary>查看完整检查记录和原始输出</summary><details class="details"><summary>测试执行 · 2026-09-08T02:05:03+00:00 · completed · run-b3849e4e5542</summary><p class="note">executed / tests:project / 工具版本 unknown / 环境 6c069519e4f32cc8</p><pre>&lt;python&gt; -m pytest -q --color=no -o addopts= -p _fixfirst_probe --rootdir &lt;project&gt;</pre><p class="note">测试收集会执行项目导入和 conftest；与目标项目正常运行一样需信任源码。</p><p class="note">本次执行测试体与 fixture；目标范围以项目配置及记录的测试节点为准。</p><p class="facts">测试节点 3 · 通过 3 · 失败 0 · 跳过 0 · xfail/xpass 0 · 未完成 0</p><p class="meta">stdout</p><pre>...                                                                      [100%]
+<section id="actions" class="anchor"><div class="section-head"><h2>Next steps</h2><span class="muted">Ordered by goal impact, strength of evidence and cost</span></div>
+<div class="actions">
+<article class="card ">
+<span class="number">01</span><span class="kind">Verify</span>
+<h3>Run the full test suite</h3>
+
+<p>Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.</p><small>How to confirm</small><p class="muted">Review the new check record and the status changes</p>
+
+<p class="note">Read-only shared report</p>
+<details class="details"><summary>Why this step</summary>
+
+
+<p class="note">Addresses: the goal check</p></details></article>
+</div><p class="note">FixFirst never edits your project or installs packages. Ranking reflects the goal, the evidence and cost; it is not a probability of cause.</p></section>
+
+<section id="issues" class="anchor"><div class="section-head"><h2>Issues and root causes</h2><input id="search" type="search" placeholder="Search messages, components, causes" aria-label="Search issues"></div>
+<div class="empty">No issues recognised. Check whether the checks actually completed before concluding.</div></section>
+
+
+
+<section id="knowledge" class="anchor"><div class="section-head"><h2>Evidence graph</h2><span class="muted">6 entities · 2 typed relations</span></div>
+<p>Pick a goal, action or issue to follow its relations back to recorded checks, rules and knowledge sources.</p>
+<select id="graph-entity" style="width:100%;padding:11px" aria-label="Entity"><option value="goal:pass_tests">Pass the test suite · goal:pass_tests</option><option value="check-pytest_run">Run the full test suite · check-pytest_run</option></select>
+<div id="graph-path" class="path" aria-label="Evidence path"></div><pre id="graph-answer" aria-live="polite"></pre>
+<p class="note">From a terminal: fixfirst ask SESSION_ID "why is this recommended". The full graph is saved next to this report as .graph.json.</p>
+<script type="application/json" id="graph-views">[{"answer": "Goal: Pass the test suite (goal:pass_tests)\nRecorded goal status: achieved\nNo known issue is linked to this goal; a completed check still decides whether it passes.\nEvidence paths:\ngoal:pass_tests \u2192 last checked by: run-808cae86eb6c\nThese links record evidence and rule inferences; they do not prove a shared root cause.", "bounded": false, "edges": [{"relation": "evaluated_by", "source": "goal:pass_tests", "target": "run-808cae86eb6c"}, {"relation": "recommends", "source": "goal:pass_tests", "target": "check-pytest_run"}], "entity": "goal:pass_tests", "nodes": [{"attributes": {"status": "achieved"}, "id": "goal:pass_tests", "label": "Pass the test suite", "type": "Goal"}, {"attributes": {"exit_code": 0, "scope": "tests:project", "source": "executed", "status": "completed", "summary": {"failed": 0, "incomplete": 0, "passed": 3, "selected": 3, "skipped": 0, "xfail_or_xpass": 0}, "targets": [], "tool": "pytest_run", "verified_pass": true}, "id": "run-808cae86eb6c", "label": "pytest_run \u00b7 2026-09-24T01:56:25+00:00", "type": "Run"}, {"attributes": {"cause": null, "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.", "goal_impact": 1, "priority": 1, "targets": [], "verification": "Review the new check record and the status changes"}, "id": "check-pytest_run", "label": "Run the full test suite", "type": "Action"}], "paths": [[{"relation": "evaluated_by", "source": "goal:pass_tests", "target": "run-808cae86eb6c"}]], "supported": true}, {"answer": "Action: Run the full test suite (check-pytest_run)\nOnly the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.\nHow to verify: Review the new check record and the status changes\nEvidence paths:\nNo path reaches a recorded check yet: verification is pending or the source is missing.\nThese links record evidence and rule inferences; they do not prove a shared root cause.", "bounded": false, "edges": [], "entity": "check-pytest_run", "nodes": [{"attributes": {"cause": null, "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.", "goal_impact": 1, "priority": 1, "targets": [], "verification": "Review the new check record and the status changes"}, "id": "check-pytest_run", "label": "Run the full test suite", "type": "Action"}], "paths": [], "supported": true}]</script></section>
+
+<section id="history" class="anchor"><div class="section-head"><h2>Checks and history</h2><span class="muted">tfidf grouping · threshold 0.82</span></div>
+<div class="tablewrap"><table><thead><tr><th>Check</th><th>Latest run</th><th>Status</th><th>Exit code</th><th>Time</th></tr></thead><tbody><tr><td>Test collection</td><td>2026-09-24T01:56:25+00:00</td><td>completed / verified pass</td><td>0</td><td>0.123 s</td></tr><tr><td>Test run</td><td>2026-09-24T01:56:25+00:00</td><td>completed / verified pass</td><td>0</td><td>0.137 s</td></tr></tbody></table></div>
+<div class="history"><article><time>2026-09-24T01:56:25+00:00</time><p>Checks run or log imported</p></article></div>
+<details><summary>All check records and raw output</summary><details class="details"><summary>Test run · 2026-09-24T01:56:25+00:00 · completed · run-808cae86eb6c</summary><p class="note">executed / tests:project / tool unknown / environment 6c069519e4f32cc8</p><pre>&lt;python&gt; -m pytest -q --color=no -o addopts= -p _fixfirst_probe --rootdir &lt;project&gt;</pre><p class="note">Test collection imports project modules and conftest; only run it on code you trust.</p><p class="note">This run executed test bodies and fixtures; scope follows the project configuration and the recorded nodes.</p><p class="facts">Nodes 3 · passed 3 · failed 0 · skipped 0 · xfail/xpass 0 · incomplete 0</p><p class="meta">stdout</p><pre>...                                                                      [100%]
 =============================== warnings summary ===============================
-../../../.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624
+../../../../.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624
   &lt;home&gt;/Project/课程Projec/FixFirst/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624: PytestConfigWarning: No files were found in testpaths; consider removing or adjusting your testpaths configuration. Searching recursively from the current directory instead.
     self.args, self.args_source = self._decide_args(
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 3 passed, 1 warning in 0.01s
-</pre><p class="meta">stderr</p><pre>(空)</pre><p class="meta">结构化测试事件</p><pre>[
+</pre><p class="meta">stderr</p><pre>(empty)</pre><p class="meta">Structured test events</p><pre>[
   {
     "nodeid": "test_cart.py::test_discount",
     "outcome": "passed",
@@ -114,32 +169,40 @@
     "records_dropped": false,
     "type": "finish"
   }
-]</pre></details><details class="details"><summary>测试收集 · 2026-09-08T02:05:03+00:00 · completed · run-1c1e47f002ac</summary><p class="note">executed / collect:project / 工具版本 unknown / 环境 6c069519e4f32cc8</p><pre>&lt;python&gt; -m pytest --collect-only -q --color=no -o addopts= -p _fixfirst_probe</pre><p class="note">测试收集会执行项目导入和 conftest；与目标项目正常运行一样需信任源码。</p><p class="meta">stdout</p><pre>workbench/execution-demo-final/project/test_cart.py::test_discount
-workbench/execution-demo-final/project/test_cart.py::test_tax
-workbench/execution-demo-final/project/test_cart.py::test_fixture
+]</pre></details><details class="details"><summary>Test collection · 2026-09-24T01:56:25+00:00 · completed · run-f42a649cebf9</summary><p class="note">executed / collect:project / tool unknown / environment 6c069519e4f32cc8</p><pre>&lt;python&gt; -m pytest --collect-only -q --color=no -o addopts= -p _fixfirst_probe</pre><p class="note">Test collection imports project modules and conftest; only run it on code you trust.</p><p class="meta">stdout</p><pre>workbench/regen/execution-demo/project/test_cart.py::test_discount
+workbench/regen/execution-demo/project/test_cart.py::test_tax
+workbench/regen/execution-demo/project/test_cart.py::test_fixture
 
-3 tests collected in 0.00s
-</pre><p class="meta">stderr</p><pre>(空)</pre><p class="meta">结构化测试事件</p><pre>[
+3 tests collected in 0.01s
+</pre><p class="meta">stderr</p><pre>(empty)</pre><p class="meta">Structured test events</p><pre>[
   {
     "collect_only": true,
     "collected": 3,
     "exit_code": 0,
     "nodes": [
-      "workbench/execution-demo-final/project/test_cart.py::test_discount",
-      "workbench/execution-demo-final/project/test_cart.py::test_tax",
-      "workbench/execution-demo-final/project/test_cart.py::test_fixture"
+      "workbench/regen/execution-demo/project/test_cart.py::test_discount",
+      "workbench/regen/execution-demo/project/test_cart.py::test_tax",
+      "workbench/regen/execution-demo/project/test_cart.py::test_fixture"
     ],
     "records_dropped": false,
     "type": "finish"
   }
 ]</pre></details></details>
-<details class="details"><summary>完整规则推理轨迹</summary></details></section>
-<footer class="footnote">本报告反映记录中的检查时点。项目在外部发生改动后需要重新验证。原始文本已进行常见凭据脱敏；分享前仍请检查内容。HTML 可离线阅读，旁边的 JSON 文件可供实验与交接使用。</footer></main>
+<details class="details"><summary>Full reasoning trace (2 facts)</summary><div class="facts observed"><code>session:goal:pass_tests</code><br>observed · input<br><span class="muted">from </span></div><div class="facts observed"><code>session:goal_check:pytest_run</code><br>observed · input<br><span class="muted">from </span></div></details></section>
+<footer class="footnote">This page reflects the checks at the recorded times; re-verify after changing the project. Common credentials are redacted from raw output, but review before sharing. The JSON next to an exported report is the full record.</footer></main>
 <script>
 const graphViews=JSON.parse(document.getElementById('graph-views').textContent);
 const graphSelect=document.getElementById('graph-entity');
-function showGraph(){const view=graphViews.find(v=>v.entity===graphSelect.value);if(!view)return;document.getElementById('graph-answer').textContent=view.answer;const container=document.getElementById('graph-path');container.replaceChildren();const nodes=new Map(view.nodes.map(n=>[n.id,n]));const path=view.paths[0]||[];const ids=[view.entity,...path.map(e=>e.target)];ids.forEach((id,i)=>{if(i){const arrow=document.createElement('span');arrow.textContent='→ '+path[i-1].relation;arrow.style.cssText='white-space:nowrap;color:#65746d;align-self:center';container.append(arrow)}const card=document.createElement('div');card.style.cssText='min-width:170px;max-width:230px;padding:13px;border:1px solid #bdcdbf;border-radius:9px;background:#fff;overflow-wrap:anywhere';const type=document.createElement('small');type.textContent=nodes.get(id)?.type||'Entity';const label=document.createElement('div');label.textContent=nodes.get(id)?.label||id;card.append(type,label);container.append(card)})}
+function showGraph(){const view=graphViews.find(v=>v.entity===graphSelect.value);if(!view)return;document.getElementById('graph-answer').textContent=view.answer;const box=document.getElementById('graph-path');box.replaceChildren();const nodes=new Map(view.nodes.map(n=>[n.id,n]));const path=view.paths[0]||[];[view.entity,...path.map(e=>e.target)].forEach((id,i)=>{if(i){const arrow=document.createElement('span');arrow.textContent='→ '+path[i-1].relation;box.append(arrow)}const card=document.createElement('div');const type=document.createElement('small');type.textContent=nodes.get(id)?.type||'Entity';const label=document.createElement('div');label.textContent=nodes.get(id)?.label||id;card.append(type,label);box.append(card)})}
 graphSelect.addEventListener('change',showGraph);showGraph();
-document.querySelectorAll('.copy').forEach(button=>button.addEventListener('click',async()=>{const value=button.dataset.command;try{await navigator.clipboard.writeText(value);button.textContent='已复制'}catch{const area=document.createElement('textarea');area.value=value;document.body.append(area);area.select();document.execCommand('copy');area.remove();button.textContent='已复制'}}));
-document.getElementById('search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('.issue').forEach(item=>item.classList.toggle('hidden',!item.dataset.search.toLowerCase().includes(q)))});
+document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(b.dataset.command);b.textContent='Copied'}catch{b.textContent='Copy failed'}}));
+document.getElementById('search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('.issue').forEach(i=>i.classList.toggle('hidden',!i.dataset.search.toLowerCase().includes(q)))});
+if(document.body.dataset.live==='1'){
+const token=document.querySelector('meta[name=fixfirst-token]').content,session=document.querySelector('meta[name=fixfirst-session]').content,status=document.getElementById('status');
+async function call(op,body){const r=await fetch(`/api/sessions/${session}/${op}`,{method:'POST',headers:{'Content-Type':'application/json','X-FixFirst-Token':token},body:JSON.stringify(body||{})});const data=await r.json();if(!r.ok)throw new Error(data.error||r.statusText);return data}
+document.querySelectorAll('button[data-op]').forEach(b=>b.addEventListener('click',async()=>{const op=b.dataset.op;let body={};if(op==='run')body={action_id:b.dataset.action};if(op==='mark-fixed')body={issue_ids:b.dataset.issues.split(',')};if(op==='scan')body={goal:document.getElementById('goal').value};if(op==='ask')body={question:document.getElementById('question').value};
+document.querySelectorAll('button').forEach(x=>x.disabled=true);status.textContent=op==='ask'?'':'Working… checks run the real tools and may take a few seconds';
+try{const data=await call(op,body);if(op==='ask'){const out=document.getElementById('ask-answer');out.textContent=data.answer;out.classList.remove('hidden');document.querySelectorAll('button').forEach(x=>x.disabled=false)}else{location.reload()}}catch(err){status.textContent='Error: '+err.message;document.querySelectorAll('button').forEach(x=>x.disabled=false)}}));
+document.getElementById('goal').addEventListener('change',async e=>{status.textContent='Changing goal…';try{await call('goal',{goal:e.target.value});location.reload()}catch(err){status.textContent='Error: '+err.message}});
+}
 </script></body></html>

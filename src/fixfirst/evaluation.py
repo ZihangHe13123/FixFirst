@@ -1,14 +1,355 @@
-"""Offline evaluation with explicit project splits and controlled-data caveats."""
+"""Offline experiments.
 
+Diagnosis datasets (``fixfirst dataset --suite diagnosis``) compare how well each reasoning
+component names the root cause of a failing test:
+
+  naive_v03     parser category only (what FixFirst 0.3 effectively did)
+  rules_no_kg   rule base without the domain knowledge graph (ablation)
+  rules         rule base with the knowledge graph
+  tree          Gini decision tree on evidence features only
+  hybrid_no_kg  rules without knowledge, then the tree (ablation)
+  hybrid        rules with knowledge, then the tree (what the product does)
+
+Two cross-validation protocols train the tree without the held-out group: leave one
+project template out (unseen project structure) and leave one scenario out (unseen fault
+type). The rule base and knowledge graph are fixed and were written by the authors, which
+the report states. Older controlled datasets are evaluated for message grouping only.
+"""
+
+from collections import Counter
+import csv
+from itertools import combinations
 import json
 from pathlib import Path
-from itertools import combinations
+import random
 
-from sklearn.metrics import classification_report, f1_score
-
-from .classification import train_tree, predict_tree, rule_classify
+from .classification import (
+    DIAGNOSES,
+    MIN_CONFIDENCE,
+    naive_diagnosis,
+    predict_tree,
+    train_tree,
+)
+from .diagnosis_cases import load_session
 from .grouping import group_events
-from .models import Session, Issue
+from .models import Session
+from .reasoning import diagnose
+
+METHODS = ("naive_v03", "rules_no_kg", "rules", "tree", "hybrid_no_kg", "hybrid")
+LABELS = {
+    "naive_v03": "Parser category only (v0.3 baseline)",
+    "rules_no_kg": "Rules without knowledge graph",
+    "rules": "Rules + knowledge graph",
+    "tree": "Decision tree only",
+    "hybrid_no_kg": "Rules without KG, then tree",
+    "hybrid": "Rules + KG, then tree (FixFirst)",
+}
+
+
+def load_rows(dataset: Path) -> list[dict]:
+    rows = []
+    with (dataset / "cases.jsonl").open(encoding="utf-8") as stream:
+        for line in stream:
+            case = json.loads(line)
+            session = load_session(dataset, case["session"])
+            with_kg, without_kg = diagnose(session), diagnose(session, knowledge=False)
+            issues = {i.issue_id: i for i in session.issues}
+            for issue_id, item in with_kg.items():
+                issue = issues[issue_id]
+                if issue.tool != "pytest_run" or issue.status != "open":
+                    continue
+                evidence = item["evidence"]
+                rows.append(
+                    {
+                        "case_id": case["case_id"],
+                        "template": case["template"],
+                        "scenario": case["scenario"],
+                        "label": case["label"],
+                        "knowledge_covered": case["knowledge_covered"],
+                        "kind": issue.kind,
+                        "stage": issue.stage,
+                        "exception": evidence["exception"],
+                        "message": evidence["message"][:160],
+                        "features": evidence["features"],
+                        "rules": item["rule"],
+                        "rule_id": item["rule_id"],
+                        "rules_no_kg": without_kg[issue_id]["rule"],
+                    }
+                )
+    return rows
+
+
+def score(truth, predicted) -> dict:
+    from sklearn.metrics import f1_score
+
+    answered = [(t, p) for t, p in zip(truth, predicted) if p]
+    return {
+        "n": len(truth),
+        "accuracy": round(sum(t == p for t, p in zip(truth, predicted)) / len(truth), 4),
+        "macro_f1": round(
+            f1_score(
+                truth,
+                [p or "none" for p in predicted],
+                labels=DIAGNOSES,
+                average="macro",
+                zero_division=0,
+            ),
+            4,
+        ),
+        "coverage": round(len(answered) / len(truth), 4),
+        "precision_when_answered": round(sum(t == p for t, p in answered) / len(answered), 4)
+        if answered
+        else None,
+    }
+
+
+def bootstrap(truth, predicted, cases, samples=2000, seed=7) -> list[float]:
+    """95% percentile interval for accuracy, resampling whole cases."""
+    by_case = {}
+    for index, case in enumerate(cases):
+        by_case.setdefault(case, []).append(index)
+    keys = sorted(by_case)
+    generator = random.Random(seed)
+    values = []
+    for _ in range(samples):
+        chosen = [i for _ in keys for i in by_case[generator.choice(keys)]]
+        values.append(sum(truth[i] == predicted[i] for i in chosen) / len(chosen))
+    values.sort()
+    return [round(values[int(0.025 * samples)], 4), round(values[int(0.975 * samples) - 1], 4)]
+
+
+def cross_validate(rows: list[dict], key: str) -> dict:
+    predictions = {method: [None] * len(rows) for method in METHODS}
+    for group in sorted({r[key] for r in rows}):
+        train = [r for r in rows if r[key] != group]
+        model = train_tree(train)
+        for index, row in enumerate(rows):
+            if row[key] != group:
+                continue
+            label, confidence = predict_tree(row["features"], model)
+            suggestion = label if confidence >= MIN_CONFIDENCE else None
+            predictions["naive_v03"][index] = naive_diagnosis(row["kind"])
+            predictions["rules_no_kg"][index] = row["rules_no_kg"]
+            predictions["rules"][index] = row["rules"]
+            predictions["tree"][index] = label
+            predictions["hybrid_no_kg"][index] = row["rules_no_kg"] or suggestion
+            predictions["hybrid"][index] = row["rules"] or suggestion
+    return predictions
+
+
+def summarise(rows, predictions) -> dict:
+    truth = [r["label"] for r in rows]
+    cases = [r["case_id"] for r in rows]
+    result = {"overall": {}, "knowledge_covered": {}, "knowledge_not_covered": {}}
+    for method in METHODS:
+        overall = score(truth, predictions[method])
+        overall["accuracy_95ci"] = bootstrap(truth, predictions[method], cases)
+        result["overall"][method] = overall
+        for name, flag in (("knowledge_covered", True), ("knowledge_not_covered", False)):
+            index = [i for i, r in enumerate(rows) if r["knowledge_covered"] is flag]
+            result[name][method] = score(
+                [truth[i] for i in index], [predictions[method][i] for i in index]
+            )
+    return result
+
+
+def per_class(rows, predicted) -> dict:
+    from sklearn.metrics import classification_report
+
+    report = classification_report(
+        [r["label"] for r in rows],
+        [p or "none" for p in predicted],
+        labels=DIAGNOSES,
+        output_dict=True,
+        zero_division=0,
+    )
+    return {label: {k: round(v, 4) for k, v in report[label].items()} for label in DIAGNOSES}
+
+
+def confusion(rows, predicted) -> dict:
+    counts = Counter((r["label"], p or "none") for r, p in zip(rows, predicted))
+    columns = [*DIAGNOSES, "none"]
+    return {label: {c: counts[(label, c)] for c in columns} for label in DIAGNOSES}
+
+
+def per_scenario(rows, predictions) -> list[dict]:
+    table = []
+    for scenario in sorted({r["scenario"] for r in rows}):
+        index = [i for i, r in enumerate(rows) if r["scenario"] == scenario]
+        entry = {
+            "scenario": scenario,
+            "label": rows[index[0]]["label"],
+            "knowledge_covered": rows[index[0]]["knowledge_covered"],
+            "n": len(index),
+        }
+        for method in METHODS:
+            entry[method] = round(
+                sum(predictions[method][i] == rows[i]["label"] for i in index) / len(index), 3
+            )
+        table.append(entry)
+    return table
+
+
+def markdown_table(summary: dict) -> list[str]:
+    lines = [
+        "| Method | Accuracy (95% CI) | Macro-F1 | Coverage | Precision when answering |",
+        "|---|---|---|---|---|",
+    ]
+    for method in METHODS:
+        m = summary[method]
+        ci = m.get("accuracy_95ci")
+        accuracy = f"{m['accuracy']:.3f}" + (f" ({ci[0]:.3f}–{ci[1]:.3f})" if ci else "")
+        precision = "–" if m["precision_when_answered"] is None else f"{m['precision_when_answered']:.3f}"
+        lines.append(
+            f"| {LABELS[method]} | {accuracy} | {m['macro_f1']:.3f} | {m['coverage']:.3f} | {precision} |"
+        )
+    return lines
+
+
+def evaluate_diagnosis(dataset: Path, output: Path) -> Path:
+    manifest = json.loads((dataset / "manifest.json").read_text())
+    rows = load_rows(dataset)
+    if len({r["template"] for r in rows}) < 2:
+        raise ValueError("Need at least two templates for cross-validation")
+    protocols = {
+        "leave_one_template_out": cross_validate(rows, "template"),
+        "leave_one_scenario_out": cross_validate(rows, "scenario"),
+    }
+    final = train_tree(rows, output / "decision_tree.json")
+    results = {
+        "origin": manifest["origin"],
+        "cases": len({r["case_id"] for r in rows}),
+        "issues": len(rows),
+        "rejected_cases": len(manifest.get("rejected", [])),
+        "labels": dict(Counter(r["label"] for r in rows)),
+        "library_versions": manifest.get("library_versions", {}),
+        "python": manifest.get("python"),
+        "min_confidence": MIN_CONFIDENCE,
+        "tree_hyperparameters": final["hyperparameters"],
+        "rule_hits": dict(Counter(r["rule_id"] or "none" for r in rows)),
+        "protocols": {},
+    }
+    for name, predictions in protocols.items():
+        results["protocols"][name] = {
+            **summarise(rows, predictions),
+            "hybrid_per_class": per_class(rows, predictions["hybrid"]),
+            "hybrid_confusion": confusion(rows, predictions["hybrid"]),
+            "per_scenario": per_scenario(rows, predictions),
+        }
+    results["final_tree"] = {
+        "nodes": len(final["nodes"]),
+        "leaves": sum(n["left"] == -1 for n in final["nodes"]),
+        "feature_importances": final["feature_importances"],
+    }
+    (output / "metrics.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
+    with (output / "predictions.csv").open("w", newline="", encoding="utf-8") as stream:
+        writer = csv.writer(stream)
+        writer.writerow(["case_id", "template", "scenario", "label", "kind", "exception", "rule_id",
+                         *(f"{p}:{m}" for p in protocols for m in METHODS), "message"])
+        for index, row in enumerate(rows):
+            writer.writerow(
+                [row["case_id"], row["template"], row["scenario"], row["label"], row["kind"],
+                 row["exception"], row["rule_id"] or "",
+                 *(protocols[p][m][index] or "" for p in protocols for m in METHODS),
+                 row["message"]]
+            )
+    (output / "REPORT.md").write_text(report(results), encoding="utf-8")
+    return output / "REPORT.md"
+
+
+def report(results: dict) -> str:
+    loto = results["protocols"]["leave_one_template_out"]
+    loso = results["protocols"]["leave_one_scenario_out"]
+    labels = ", ".join(f"{k} {v}" for k, v in sorted(results["labels"].items()))
+    versions = ", ".join(f"{k} {v}" for k, v in sorted(results["library_versions"].items()))
+    lines = [
+        "# Root-cause diagnosis experiment",
+        "",
+        f"{results['cases']} executed cases ({results['issues']} failing-test issues; "
+        f"{results['rejected_cases']} generated cases rejected because the fault was not observed). "
+        f"Labels: {labels}. Python {results['python']}; {versions}.",
+        "",
+        "Each case is a small project with exactly one injected fault, run for real against "
+        "the installed libraries. Labels come from the scenario definition. The decision tree "
+        "is retrained for every fold without the held-out group; the rule base and knowledge "
+        "graph are fixed and were written by the project team, so their scores on scenarios "
+        "the team designed are optimistic. Scenarios marked *not covered* use removed APIs, "
+        "packages or configuration patterns that the knowledge graph does not list.",
+        "",
+        "## Unseen project structure (leave one template out)",
+        "",
+        *markdown_table(loto["overall"]),
+        "",
+        "## Unseen fault type (leave one scenario out)",
+        "",
+        *markdown_table(loso["overall"]),
+        "",
+        "## Knowledge-graph coverage (leave one scenario out, accuracy)",
+        "",
+        "| Method | Faults the KG covers | Faults the KG does not cover |",
+        "|---|---|---|",
+    ]
+    for method in METHODS:
+        covered = loso["knowledge_covered"][method]
+        missing = loso["knowledge_not_covered"][method]
+        lines.append(
+            f"| {LABELS[method]} | {covered['accuracy']:.3f} (n={covered['n']}) | "
+            f"{missing['accuracy']:.3f} (n={missing['n']}) |"
+        )
+    lines += [
+        "",
+        "## Hybrid per class (leave one template out)",
+        "",
+        "| Cause | Precision | Recall | F1 | Support |",
+        "|---|---|---|---|---|",
+    ]
+    for label, m in loto["hybrid_per_class"].items():
+        lines.append(
+            f"| {label} | {m['precision']:.3f} | {m['recall']:.3f} | {m['f1-score']:.3f} | {int(m['support'])} |"
+        )
+    columns = [*DIAGNOSES, "none"]
+    lines += [
+        "",
+        "## Hybrid confusion matrix (leave one template out; rows = truth)",
+        "",
+        "| Truth \\ predicted | " + " | ".join(columns) + " |",
+        "|---|" + "---|" * len(columns),
+    ]
+    for label, row in loto["hybrid_confusion"].items():
+        lines.append(f"| {label} | " + " | ".join(str(row[c]) for c in columns) + " |")
+    weakest = sorted(loso["per_scenario"], key=lambda e: (e["hybrid"], e["scenario"]))[:8]
+    lines += [
+        "",
+        "## Hardest scenarios for the hybrid (leave one scenario out)",
+        "",
+        "| Scenario | Cause | KG covers | Naive | Rules | Tree | Hybrid |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for e in weakest:
+        lines.append(
+            f"| {e['scenario']} | {e['label']} | {'yes' if e['knowledge_covered'] else 'no'} | "
+            f"{e['naive_v03']:.2f} | {e['rules']:.2f} | {e['tree']:.2f} | {e['hybrid']:.2f} |"
+        )
+    importances = sorted(results["final_tree"]["feature_importances"].items(), key=lambda x: -x[1])
+    lines += [
+        "",
+        "## Final decision tree",
+        "",
+        f"Trained on all {results['issues']} issues ({results['final_tree']['leaves']} leaves, "
+        f"hyperparameters {results['tree_hyperparameters']} fixed in advance). Most important "
+        "features: "
+        + ", ".join(f"{name} {value:.2f}" for name, value in importances[:8])
+        + ". The full tree is in decision_tree.txt; per-issue predictions are in predictions.csv.",
+        "",
+        "## Limitations",
+        "",
+        "- Five templates and one fault per case; real projects have several interacting faults.",
+        "- The knowledge graph lists removals the team looked up; coverage elsewhere is partial by design.",
+        "- A suggestion below the confidence threshold "
+        f"({results['min_confidence']}) is not shown, so the hybrid may answer fewer cases than the tree.",
+        "- No user study yet: these numbers measure diagnosis, not time saved.",
+    ]
+    return "\n".join(lines) + "\n"
 
 
 def pairwise_metrics(groups, truth):
@@ -28,99 +369,58 @@ def pairwise_metrics(groups, truth):
     }
 
 
-def evaluate(dataset: Path, output: Path, sbert_model=None):
-    dataset, output = dataset.resolve(), output.resolve()
-    if output.exists():
-        raise ValueError("评价目录已存在，请使用新的输出目录，保留原始结果")
-    output.mkdir(parents=True)
+def evaluate_grouping(dataset: Path, output: Path, sbert_model=None) -> Path:
+    """Message grouping on the controlled collection/execution datasets."""
     manifest = json.loads((dataset / "manifest.json").read_text())
-    rows = json.loads((dataset / "labeled_issues.json").read_text())
-    projects = sorted({r["project_id"] for r in rows})
-    if len(projects) < 3:
-        raise ValueError("至少需要三个项目才能分离训练、验证和测试")
-    split = {"train": projects[:-2], "validation": projects[-2:-1], "test": projects[-1:]}
-    train = [r for r in rows if r["project_id"] in split["train"]]
-    model = train_tree(train, output / "decision_tree.json")
-    result = {
-        "origin": manifest.get("origin", "controlled_injection"),
-        "split": split,
-        "classification": {},
-        "grouping": {},
-        "limitations": [
-            manifest["limitations"],
-            "分类使用解析后的故障信号，可能仅复现规则，不能据此声称模型带来增益。",
-            "未做真人用户试验或付费 AI 基线。没有测量实际修复耗时或用户收益。",
-        ],
-    }
-    for partition in ("validation", "test"):
-        subset = [r for r in rows if r["project_id"] in split[partition]]
-        truth = [r["label"] for r in subset]
-        issues = [Issue.model_validate(r["issue"]) for r in subset]
-        result["classification"][partition] = {}
-        for name, pred in (
-            ("rule", [rule_classify(i) for i in issues]),
-            ("gini_tree", [predict_tree(i, model) for i in issues]),
-        ):
-            result["classification"][partition][name] = {
-                "examples": len(subset),
-                "macro_f1": f1_score(truth, pred, average="macro", zero_division=0),
-                "report": classification_report(truth, pred, output_dict=True, zero_division=0),
-            }
-    methods = ["exact", "tfidf"] + (["sbert"] if sbert_model else [])
-    for method in methods:
+    result = {"origin": manifest.get("origin"), "grouping": {}, "limitations": manifest["limitations"]}
+    for method in ["exact", "tfidf"] + (["sbert"] if sbert_model else []):
         totals = {"tp": 0, "fp": 0, "fn": 0}
-        case_results = []
         for case in manifest["cases"]:
-            if case["project_id"] not in split["test"]:
-                continue
-            session = Session.model_validate_json(
-                (dataset / case["path"] / "input.json").read_text()
-            )
+            session = Session.model_validate_json((dataset / case["path"] / "input.json").read_text())
             case_truth = json.loads((dataset / case["path"] / "truth.json").read_text())
-            all_groups = []
-            truth = {}
+            groups, truth = [], {}
             for run in session.runs:
                 events = [e for e in session.events if e.run_id == run.run_id]
-                all_groups.extend(group_events(events, run, method, 0.82, sbert_model))
-                # Execution cases label independent defects within the same tool separately.
+                groups.extend(group_events(events, run, method, 0.82, sbert_model))
                 for event in events:
                     truth[event.event_id] = case_truth.get("event_groups", {}).get(
                         event.event_id, event.tool
                     )
-            metrics = pairwise_metrics(all_groups, truth)
+            metrics = pairwise_metrics(groups, truth)
             for key in totals:
                 totals[key] += metrics[key]
-            case_results.append({"case_id": case["case_id"], **metrics, "groups": len(all_groups)})
+        predicted, actual = totals["tp"] + totals["fp"], totals["tp"] + totals["fn"]
         result["grouping"][method] = {
             **totals,
-            "precision": totals["tp"] / (totals["tp"] + totals["fp"])
-            if totals["tp"] + totals["fp"]
-            else None,
-            "recall": totals["tp"] / (totals["tp"] + totals["fn"])
-            if totals["tp"] + totals["fn"]
-            else None,
+            "precision": totals["tp"] / predicted if predicted else None,
+            "recall": totals["tp"] / actual if actual else None,
             "threshold": 0.82,
-            "threshold_tuned": False,
-            "cases": case_results,
         }
-    (output / "metrics.json").write_text(json.dumps(result, ensure_ascii=False, indent=2))
-    test = result["classification"]["test"]
-    text = f"""# FixFirst 受控案例实验记录
-
-数据：{len(manifest["cases"])} 个实际运行并恢复的受控案例。训练项目 {split["train"]}，验证项目 {split["validation"]}，测试项目 {split["test"]}。
-
-| 方法 | 测试 Macro F1 | 样本数 |
-|---|---|---|
-| 规则分类 | {test["rule"]["macro_f1"]:.3f} | {test["rule"]["examples"]} |
-| Gini 决策树 | {test["gini_tree"]["macro_f1"]:.3f} | {test["gini_tree"]["examples"]} |
-
-这些模板高度相近，特征又包含解析到的故障信号。分数反映受控任务，不代表跨真实项目泛化。决策树作为候选输出，不用于覆盖证据或驱动自动修改。
-
-归并指标与逐案例记录见 metrics.json。阈值 0.82 是明确记录的初始值，本轮没有利用测试集调参。{"SBERT 已使用指定本地模型运行。" if sbert_model else "本轮未运行 SBERT，未下载的模型不计作已实现效果。"}
-
-本轮未进行行动调度收益评价。v0.1 的固定检查次数模拟已从新评测移除，它无法反映实际修复。真实用户与通用 AI 助手对比仍需小组另行执行。
-
-继续研究应补充自然故障、误导性相似日志和不同结构的真实项目，再检验模型是否比规则有额外价值。
-"""
-    (output / "REPORT.md").write_text(text)
+    (output / "metrics.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
+    lines = [
+        "# Message grouping experiment",
+        "",
+        f"{len(manifest['cases'])} controlled cases. Pairwise precision/recall of grouping error "
+        "messages that share a cause (threshold 0.82, set before evaluation).",
+        "",
+        "| Method | Precision | Recall | TP | FP | FN |",
+        "|---|---|---|---|---|---|",
+    ]
+    for method, m in result["grouping"].items():
+        p = "–" if m["precision"] is None else f"{m['precision']:.3f}"
+        r = "–" if m["recall"] is None else f"{m['recall']:.3f}"
+        lines.append(f"| {method} | {p} | {r} | {m['tp']} | {m['fp']} | {m['fn']} |")
+    lines += ["", manifest["limitations"]]
+    (output / "REPORT.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return output / "REPORT.md"
+
+
+def evaluate(dataset: Path, output: Path, sbert_model=None) -> Path:
+    dataset, output = dataset.resolve(), output.resolve()
+    if output.exists():
+        raise ValueError("Evaluation directory already exists; use a new output directory")
+    output.mkdir(parents=True)
+    manifest = json.loads((dataset / "manifest.json").read_text())
+    if manifest.get("origin") == "diagnosis_injection":
+        return evaluate_diagnosis(dataset, output)
+    return evaluate_grouping(dataset, output, sbert_model)

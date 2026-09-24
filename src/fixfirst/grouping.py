@@ -52,7 +52,7 @@ def similarity(texts, method, model_path=None):
         return [[float(a == b) for b in texts] for a in texts]
     if method == "sbert":
         if not model_path:
-            raise ValueError("SBERT 需用 --sbert-model 指定已下载的本地模型目录")
+            raise ValueError("SBERT needs --sbert-model pointing to a downloaded local model directory")
         model = load_sbert(model_path)
         vectors = model.encode(texts, normalize_embeddings=True)
         return vectors @ vectors.T
@@ -108,11 +108,11 @@ def group_events(
                         kind=first.kind,
                         component=first.component,
                         title=(
-                            f"断言失败 · {first.location}"
+                            f"Assertion failed · {first.location}"
                             if first.kind == "test_assertion"
                             else f"{first.code or first.stage} · {first.location}"
                             if first.kind == "test_runtime_error"
-                            else first.message[:240]
+                            else re.sub(r" \((?:/|<|[A-Za-z]:\\)[^()]*\)$", "", first.message)[:240]
                         ),
                         event_ids=[item.event_id for item in members],
                         evidence_refs=sorted(

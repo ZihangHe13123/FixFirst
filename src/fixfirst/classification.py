@@ -1,117 +1,143 @@
-"""Rule baseline and a portable JSON Gini tree. Never unpickle external models."""
+"""Root-cause classifier: a Gini decision tree over evidence features, plus baselines.
 
+The tree only sees ``evidence.FEATURE_NAMES`` (exception type, where it was raised, what
+the environment and project index say about the module, textual signals). It never sees
+the parser's issue category or anything derived from a label. Models are portable JSON;
+nothing is unpickled.
+"""
+
+from functools import lru_cache
+from importlib import resources
 import json
 from pathlib import Path
 
-from .models import Issue
+from .evidence import FEATURE_NAMES
 
-LABELS = [
-    "environment_mismatch",
-    "dependency_conflict",
-    "import_failure",
-    "explicit_config_missing",
-    "style_issue",
-    "other_unknown",
-    "test_assertion",
-    "test_runtime_error",
+DIAGNOSES = [
+    "missing_dependency",
+    "local_module",
+    "version_incompatibility",
+    "config_missing",
+    "code_defect",
 ]
-LEGACY_FEATURES = ["import", "dependency", "config", "style", "tool", "collect", "lint", "install"]
-FEATURE_NAMES = LEGACY_FEATURES + ["test_call", "test_setup", "test_teardown", "assertion"]
+SCHEMA_VERSION = 3
+MIN_CONFIDENCE = 0.6
+NAIVE = {
+    "import_failure": "missing_dependency",
+    "dependency_conflict": "version_incompatibility",
+    "environment_mismatch": "version_incompatibility",
+    "explicit_config_missing": "config_missing",
+}
 
 
-def features(issue: Issue) -> list[int]:
-    return [
-        int(issue.kind == "import_failure"),
-        int(issue.kind == "dependency_conflict"),
-        int(issue.kind == "explicit_config_missing"),
-        int(issue.kind == "style_issue"),
-        int(issue.kind == "tool_failure"),
-        int(issue.stage == "collect"),
-        int(issue.stage == "lint"),
-        int(issue.stage == "install"),
-        int(issue.stage == "call"),
-        int(issue.stage == "setup"),
-        int(issue.stage == "teardown"),
-        int(issue.kind == "test_assertion"),
-    ]
+def naive_diagnosis(kind: str) -> str:
+    """Baseline: the parser's category alone decides the cause (FixFirst v0.3 behaviour)."""
+    return NAIVE.get(kind, "code_defect")
 
 
-def rule_classify(issue: Issue) -> str:
-    return issue.kind if issue.kind in LABELS else "other_unknown"
+def validate_model(model: dict) -> dict:
+    if model.get("schema_version") != SCHEMA_VERSION or model.get("task") != "root_cause":
+        raise ValueError(
+            "Unsupported classifier model. Models from FixFirst 0.3 predicted parser "
+            "categories; retrain with `fixfirst evaluate` on a diagnosis dataset."
+        )
+    if model.get("feature_names") != FEATURE_NAMES:
+        raise ValueError("Classifier features do not match this FixFirst version")
+    if any(label not in DIAGNOSES for label in model["classes"]):
+        raise ValueError("Classifier has an unknown label")
+    return model
 
 
-def predict_tree(issue: Issue, model: dict) -> str:
-    names = model.get("feature_names")
-    if not (
-        (model.get("schema_version") == 1 and names == LEGACY_FEATURES)
-        or (model.get("schema_version") == 2 and names == FEATURE_NAMES)
-    ):
-        raise ValueError("分类模型结构与当前特征不匹配")
-    values = features(issue)[: len(names)]
+def load_model(path) -> dict:
+    return validate_model(json.loads(Path(path).read_text(encoding="utf-8")))
+
+
+@lru_cache(maxsize=1)
+def default_model() -> dict | None:
+    resource = resources.files("fixfirst").joinpath("knowledge/diagnosis_tree.json")
+    if not resource.is_file():
+        return None
+    return validate_model(json.loads(resource.read_text("utf-8")))
+
+
+def predict_tree(vector: list[float], model: dict) -> tuple[str, float]:
+    """Walk the exported tree; return the leaf's majority label and its share."""
+    if len(vector) != len(model["feature_names"]):
+        raise ValueError("Feature vector has the wrong length")
     nodes, labels = model["nodes"], model["classes"]
-    at = 0
-    visited = set()
+    at, visited = 0, set()
     while True:
-        if at in visited or at < 0 or at >= len(nodes):
-            raise ValueError("分类模型包含非法节点或循环")
+        if at in visited or not 0 <= at < len(nodes):
+            raise ValueError("Classifier model has an invalid node or a cycle")
         visited.add(at)
         node = nodes[at]
         if node["left"] == -1:
-            label = labels[max(range(len(node["values"])), key=node["values"].__getitem__)]
-            if label not in LABELS:
-                raise ValueError("未知分类标签")
-            return label
+            values = node["values"]
+            total = sum(values) or 1
+            best = max(range(len(values)), key=values.__getitem__)
+            return labels[best], round(values[best] / total, 3)
         feature = node["feature"]
-        if feature < 0 or feature >= len(values):
-            raise ValueError("非法特征索引")
-        at = node["left"] if values[feature] <= node["threshold"] else node["right"]
+        if not 0 <= feature < len(vector):
+            raise ValueError("Classifier model uses an invalid feature index")
+        at = node["left"] if vector[feature] <= node["threshold"] else node["right"]
 
 
-def classify(issues: list[Issue], path: str | None = None):
-    model = json.loads(Path(path).read_text()) if path else None
-    for issue in issues:
-        issue.category = rule_classify(issue)
-        # Prediction is separate; it cannot invent evidence or override the observed category.
-        issue.prediction = predict_tree(issue, model) if model else None
-        issue.prediction_note = (
-            "模型候选与规则证据不同；行动仍依据实际异常，不把候选当作根因。"
-            if issue.prediction and issue.prediction != issue.category
-            else ""
-        )
-
-
-def train_tree(rows: list[dict], output: Path) -> dict:
+def train_tree(rows: list[dict], output: Path | None = None, max_depth=6, min_samples_leaf=2):
+    """Train on rows of {"features": [...], "label": ..., "group": ...}."""
     from sklearn.tree import DecisionTreeClassifier, export_text
 
-    if len(rows) < 2:
-        raise ValueError("训练数据不足")
-    issues = [Issue.model_validate(row["issue"]) for row in rows]
-    labels = [row["label"] for row in rows]
-    if any(label not in LABELS for label in labels):
-        raise ValueError("训练标签不在支持的类别中")
-    clf = DecisionTreeClassifier(criterion="gini", max_depth=4, min_samples_leaf=2, random_state=42)
-    clf.fit([features(issue) for issue in issues], labels)
+    if len(rows) < 2 or len({r["label"] for r in rows}) < 2:
+        raise ValueError("Not enough labelled examples to train")
+    if any(r["label"] not in DIAGNOSES for r in rows):
+        raise ValueError("Training label outside the supported diagnoses")
+    clf = DecisionTreeClassifier(
+        criterion="gini",
+        max_depth=max_depth,
+        min_samples_leaf=min_samples_leaf,
+        random_state=42,
+    )
+    clf.fit([r["features"] for r in rows], [r["label"] for r in rows])
     tree = clf.tree_
     model = {
-        "schema_version": 2,
+        "schema_version": SCHEMA_VERSION,
+        "task": "root_cause",
         "feature_names": FEATURE_NAMES,
-        "classes": list(clf.classes_),
-        "training_projects": sorted({r["project_id"] for r in rows}),
+        "classes": [str(c) for c in clf.classes_],
         "training_examples": len(rows),
-        "nodes": [],
-        "description": "小规模受控案例训练；预测仅作候选，不证明跨真实项目泛化。",
-    }
-    for i in range(tree.node_count):
-        model["nodes"].append(
+        "training_groups": sorted({r.get("group", "") for r in rows}),
+        "hyperparameters": {"max_depth": max_depth, "min_samples_leaf": min_samples_leaf},
+        "description": "Gini decision tree over observed evidence features; suggestions only.",
+        "feature_importances": {
+            name: round(float(value), 4)
+            for name, value in zip(FEATURE_NAMES, clf.feature_importances_)
+            if value > 0
+        },
+        "nodes": [
             {
                 "left": int(tree.children_left[i]),
                 "right": int(tree.children_right[i]),
                 "feature": int(tree.feature[i]),
                 "threshold": float(tree.threshold[i]),
-                "values": tree.value[i][0].tolist(),
+                "values": [float(v) for v in tree.value[i][0]],
             }
+            for i in range(tree.node_count)
+        ],
+    }
+    if output is not None:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(json.dumps(model, indent=2), encoding="utf-8")
+        output.with_suffix(".txt").write_text(
+            export_text(clf, feature_names=FEATURE_NAMES), encoding="utf-8"
         )
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(model, ensure_ascii=False, indent=2))
-    output.with_suffix(".txt").write_text(export_text(clf, feature_names=FEATURE_NAMES))
     return model
+
+
+def suggest(details: dict, model: dict | None) -> dict:
+    """Classifier suggestions per issue id: (label, confidence)."""
+    if not model:
+        return {}
+    return {
+        issue_id: predict_tree(evidence["features"], model)
+        for issue_id, evidence in details.items()
+        if "features" in evidence
+    }

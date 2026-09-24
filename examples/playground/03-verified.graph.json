@@ -1,0 +1,904 @@
+{
+  "schema_version": 2,
+  "session_id": "session-716d3bee95e0",
+  "goal": "goal:pass_tests",
+  "ontology": {
+    "entities": [
+      "Action",
+      "Cause",
+      "Event",
+      "Evidence",
+      "Fact",
+      "Goal",
+      "Issue",
+      "Rule",
+      "Run",
+      "Source"
+    ],
+    "relations": {
+      "recommends": [
+        "Goal",
+        "Action"
+      ],
+      "has_open_issue": [
+        "Goal",
+        "Issue"
+      ],
+      "evaluated_by": [
+        "Goal",
+        "Run"
+      ],
+      "addresses": [
+        "Action",
+        "Issue"
+      ],
+      "justified_by": [
+        "Action",
+        "Fact"
+      ],
+      "proposed_by": [
+        "Action",
+        "Rule"
+      ],
+      "diagnosed_as": [
+        "Issue",
+        "Cause"
+      ],
+      "suspected_as": [
+        "Issue",
+        "Cause"
+      ],
+      "inferred_from": [
+        "Fact",
+        "Fact"
+      ],
+      "derived_by": [
+        "Fact",
+        "Rule"
+      ],
+      "supported_by": [
+        "Fact",
+        "Evidence"
+      ],
+      "documented_in": [
+        "Fact",
+        "Source"
+      ],
+      "has_event": [
+        "Issue",
+        "Event"
+      ],
+      "cites": [
+        "Event",
+        "Evidence"
+      ],
+      "observed_in": [
+        "Evidence",
+        "Run"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "goal:pass_tests",
+      "type": "Goal",
+      "label": "Pass the test suite",
+      "attributes": {
+        "status": "achieved"
+      }
+    },
+    {
+      "id": "run-00b084e8ba10",
+      "type": "Run",
+      "label": "environment · 2026-09-24T01:59:12+00:00",
+      "attributes": {
+        "tool": "environment",
+        "status": "completed",
+        "source": "executed",
+        "scope": "environment",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-cfb9d49b571b",
+      "type": "Run",
+      "label": "project · 2026-09-24T01:59:13+00:00",
+      "attributes": {
+        "tool": "project",
+        "status": "completed",
+        "source": "executed",
+        "scope": "declarations:project",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-890f2274ab0c",
+      "type": "Run",
+      "label": "pytest_run · 2026-09-24T01:59:13+00:00",
+      "attributes": {
+        "tool": "pytest_run",
+        "status": "completed",
+        "source": "executed",
+        "scope": "tests:project",
+        "exit_code": 2,
+        "verified_pass": false,
+        "targets": [],
+        "summary": {
+          "passed": 0,
+          "failed": 0,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 2,
+          "incomplete": 2
+        }
+      }
+    },
+    {
+      "id": "run-352a837cee9f",
+      "type": "Run",
+      "label": "environment · 2026-09-24T01:59:13+00:00",
+      "attributes": {
+        "tool": "environment",
+        "status": "completed",
+        "source": "executed",
+        "scope": "environment",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-7a6e5275b1da",
+      "type": "Run",
+      "label": "pip_check · 2026-09-24T01:59:14+00:00",
+      "attributes": {
+        "tool": "pip_check",
+        "status": "completed",
+        "source": "executed",
+        "scope": "dependencies:environment",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-3d6c31292945",
+      "type": "Run",
+      "label": "pytest_run · 2026-09-24T01:59:14+00:00",
+      "attributes": {
+        "tool": "pytest_run",
+        "status": "completed",
+        "source": "executed",
+        "scope": "tests:project",
+        "exit_code": 1,
+        "verified_pass": false,
+        "targets": [],
+        "summary": {
+          "passed": 2,
+          "failed": 2,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 4,
+          "incomplete": 0
+        }
+      }
+    },
+    {
+      "id": "run-ceddcee911d0",
+      "type": "Run",
+      "label": "ruff · 2026-09-24T01:59:14+00:00",
+      "attributes": {
+        "tool": "ruff",
+        "status": "completed",
+        "source": "executed",
+        "scope": "lint:project",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-c51193a7d78e",
+      "type": "Run",
+      "label": "project · 2026-09-24T01:59:14+00:00",
+      "attributes": {
+        "tool": "project",
+        "status": "completed",
+        "source": "executed",
+        "scope": "declarations:project",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-bd756e106e0a",
+      "type": "Run",
+      "label": "environment · 2026-09-24T01:59:14+00:00",
+      "attributes": {
+        "tool": "environment",
+        "status": "completed",
+        "source": "executed",
+        "scope": "environment",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-ca39ff6eff34",
+      "type": "Run",
+      "label": "pip_check · 2026-09-24T01:59:14+00:00",
+      "attributes": {
+        "tool": "pip_check",
+        "status": "completed",
+        "source": "executed",
+        "scope": "dependencies:environment",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-56c5bfa945ea",
+      "type": "Run",
+      "label": "pytest_run · 2026-09-24T01:59:14+00:00",
+      "attributes": {
+        "tool": "pytest_run",
+        "status": "completed",
+        "source": "executed",
+        "scope": "tests:project",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {
+          "passed": 4,
+          "failed": 0,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 4,
+          "incomplete": 0
+        }
+      }
+    },
+    {
+      "id": "run-7d1386d8601f",
+      "type": "Run",
+      "label": "ruff · 2026-09-24T01:59:15+00:00",
+      "attributes": {
+        "tool": "ruff",
+        "status": "completed",
+        "source": "executed",
+        "scope": "lint:project",
+        "exit_code": 1,
+        "verified_pass": false,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-81984f41bf07",
+      "type": "Run",
+      "label": "project · 2026-09-24T01:59:15+00:00",
+      "attributes": {
+        "tool": "project",
+        "status": "completed",
+        "source": "executed",
+        "scope": "declarations:project",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "evidence:run-3d6c31292945:probe:13",
+      "type": "Evidence",
+      "label": "run-3d6c31292945:probe:13",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-3d6c31292945:probe:14",
+      "type": "Evidence",
+      "label": "run-3d6c31292945:probe:14",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-3d6c31292945:probe:2",
+      "type": "Evidence",
+      "label": "run-3d6c31292945:probe:2",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-3d6c31292945:probe:3",
+      "type": "Evidence",
+      "label": "run-3d6c31292945:probe:3",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-7d1386d8601f:json:0",
+      "type": "Evidence",
+      "label": "run-7d1386d8601f:json:0",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-81984f41bf07:declaration:0",
+      "type": "Evidence",
+      "label": "run-81984f41bf07:declaration:0",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-81984f41bf07:declaration:1",
+      "type": "Evidence",
+      "label": "run-81984f41bf07:declaration:1",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-81984f41bf07:stdout:1",
+      "type": "Evidence",
+      "label": "run-81984f41bf07:stdout:1",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-890f2274ab0c:probe:1",
+      "type": "Evidence",
+      "label": "run-890f2274ab0c:probe:1",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-890f2274ab0c:probe:3",
+      "type": "Evidence",
+      "label": "run-890f2274ab0c:probe:3",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-bd756e106e0a:stdout:1",
+      "type": "Evidence",
+      "label": "run-bd756e106e0a:stdout:1",
+      "attributes": {}
+    },
+    {
+      "id": "event-ec83f763c036",
+      "type": "Event",
+      "label": "ImportError: cannot import name 'Mapping' from 'collections' (<home>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/collections/__init__.py)",
+      "attributes": {
+        "stage": "collect",
+        "location": "test_pricing.py",
+        "kind": "import_failure"
+      }
+    },
+    {
+      "id": "event-a613f24ebe62",
+      "type": "Event",
+      "label": "ModuleNotFoundError: No module named 'helper'",
+      "attributes": {
+        "stage": "collect",
+        "location": "test_reports.py",
+        "kind": "import_failure"
+      }
+    },
+    {
+      "id": "event-a9a601b64101",
+      "type": "Event",
+      "label": "KeyError: 'SHOP_API_TOKEN'",
+      "attributes": {
+        "stage": "call",
+        "location": "test_orders.py::test_checkout",
+        "kind": "test_runtime_error"
+      }
+    },
+    {
+      "id": "event-3c76c580dee5",
+      "type": "Event",
+      "label": "AttributeError: module 'numpy' has no attribute 'float'.\n`np.float` was a deprecated alias for the builtin `float`. To avoid this error in existing code, use `float` by itself. Doing this will not modify any behavior and is safe. If you spe",
+      "attributes": {
+        "stage": "call",
+        "location": "test_stats.py::test_mean",
+        "kind": "test_runtime_error"
+      }
+    },
+    {
+      "id": "event-1d9ce94997e3",
+      "type": "Event",
+      "label": "`numpy` imported but unused",
+      "attributes": {
+        "stage": "lint",
+        "location": "<project>/stats.py",
+        "kind": "code_check"
+      }
+    },
+    {
+      "id": "issue-fafbf8eed79e6d",
+      "type": "Issue",
+      "label": "`numpy` imported but unused",
+      "attributes": {
+        "status": "open",
+        "tool": "ruff",
+        "targets": [],
+        "note": "",
+        "diagnosis": null,
+        "diagnosis_source": null,
+        "prediction": null,
+        "prediction_confidence": null
+      }
+    },
+    {
+      "id": "issue-91b31964ae1617",
+      "type": "Issue",
+      "label": "KeyError · test_orders.py::test_checkout",
+      "attributes": {
+        "status": "resolved",
+        "tool": "pytest_run",
+        "targets": [
+          "test_orders.py::test_checkout"
+        ],
+        "note": "All related test nodes passed in the same environment",
+        "diagnosis": "config_missing",
+        "diagnosis_source": "rule",
+        "prediction": "config_missing",
+        "prediction_confidence": 1.0
+      }
+    },
+    {
+      "id": "issue-624772c417ae3f",
+      "type": "Issue",
+      "label": "AttributeError · test_stats.py::test_mean",
+      "attributes": {
+        "status": "resolved",
+        "tool": "pytest_run",
+        "targets": [
+          "test_stats.py::test_mean"
+        ],
+        "note": "All related test nodes passed in the same environment",
+        "diagnosis": "version_incompatibility",
+        "diagnosis_source": "rule",
+        "prediction": "version_incompatibility",
+        "prediction_confidence": 1.0
+      }
+    },
+    {
+      "id": "issue-b6e397dce720fd",
+      "type": "Issue",
+      "label": "ImportError: cannot import name 'Mapping' from 'collections'",
+      "attributes": {
+        "status": "resolved",
+        "tool": "pytest_run",
+        "targets": [],
+        "note": "Passed for real in the same environment and check scope",
+        "diagnosis": "version_incompatibility",
+        "diagnosis_source": "rule",
+        "prediction": "version_incompatibility",
+        "prediction_confidence": 1.0
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748",
+      "type": "Issue",
+      "label": "ModuleNotFoundError: No module named 'helper'",
+      "attributes": {
+        "status": "resolved",
+        "tool": "pytest_run",
+        "targets": [],
+        "note": "Passed for real in the same environment and check scope",
+        "diagnosis": "local_module",
+        "diagnosis_source": "rule",
+        "prediction": "local_module",
+        "prediction_confidence": 1.0
+      }
+    },
+    {
+      "id": "session:goal:pass_tests",
+      "type": "Fact",
+      "label": "session goal pass_tests",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "session",
+        "predicate": "goal"
+      }
+    },
+    {
+      "id": "session:goal_check:pytest_run",
+      "type": "Fact",
+      "label": "session goal_check pytest_run",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "session",
+        "predicate": "goal_check"
+      }
+    },
+    {
+      "id": "issue-fafbf8eed79e6d:kind:code_check",
+      "type": "Fact",
+      "label": "issue-fafbf8eed79e6d kind code_check",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-fafbf8eed79e6d",
+        "predicate": "kind"
+      }
+    },
+    {
+      "id": "issue-fafbf8eed79e6d:stage:lint",
+      "type": "Fact",
+      "label": "issue-fafbf8eed79e6d stage lint",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-fafbf8eed79e6d",
+        "predicate": "stage"
+      }
+    },
+    {
+      "id": "issue-fafbf8eed79e6d:tool:ruff",
+      "type": "Fact",
+      "label": "issue-fafbf8eed79e6d tool ruff",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-fafbf8eed79e6d",
+        "predicate": "tool"
+      }
+    },
+    {
+      "id": "issue-fafbf8eed79e6d:component:F401",
+      "type": "Fact",
+      "label": "issue-fafbf8eed79e6d component F401",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-fafbf8eed79e6d",
+        "predicate": "component"
+      }
+    },
+    {
+      "id": "environment:snapshot:available",
+      "type": "Fact",
+      "label": "environment snapshot available",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "environment",
+        "predicate": "snapshot"
+      }
+    },
+    {
+      "id": "project:declarations:available",
+      "type": "Fact",
+      "label": "project declarations available",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "project",
+        "predicate": "declarations"
+      }
+    },
+    {
+      "id": "dist:numpy:declared_in:requirements.txt:1",
+      "type": "Fact",
+      "label": "dist:numpy declared_in requirements.txt:1",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "dist:numpy",
+        "predicate": "declared_in"
+      }
+    },
+    {
+      "id": "dist:pytest:declared_in:requirements.txt:2",
+      "type": "Fact",
+      "label": "dist:pytest declared_in requirements.txt:2",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "dist:pytest",
+        "predicate": "declared_in"
+      }
+    },
+    {
+      "id": "dist:python:installed_version:3.12.14",
+      "type": "Fact",
+      "label": "dist:python installed_version 3.12.14",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "dist:python",
+        "predicate": "installed_version"
+      }
+    },
+    {
+      "id": "issue-fafbf8eed79e6d:affects:check_style",
+      "type": "Fact",
+      "label": "issue-fafbf8eed79e6d affects check_style",
+      "attributes": {
+        "rule": "G02",
+        "status": "derived",
+        "subject": "issue-fafbf8eed79e6d",
+        "predicate": "affects"
+      }
+    },
+    {
+      "id": "rule:G02",
+      "type": "Rule",
+      "label": "G02 · Linter findings affect the code-check goal.",
+      "attributes": {
+        "phase": "derive",
+        "source": ""
+      }
+    },
+    {
+      "id": "check-pytest_run",
+      "type": "Action",
+      "label": "Run the full test suite",
+      "attributes": {
+        "priority": 1,
+        "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+        "verification": "Review the new check record and the status changes",
+        "targets": [],
+        "goal_impact": 1,
+        "cause": null
+      }
+    },
+    {
+      "id": "review-code_check",
+      "type": "Action",
+      "label": "Review the code diagnostics",
+      "attributes": {
+        "priority": 2,
+        "explanation": "These linter diagnostics (for example undefined names) can be real bugs, not formatting. Inspect each location.",
+        "verification": "Re-run the code check",
+        "targets": [],
+        "goal_impact": 0,
+        "cause": null
+      }
+    },
+    {
+      "id": "rule:P48",
+      "type": "Rule",
+      "label": "P48 · Non-style linter diagnostics.",
+      "attributes": {
+        "phase": "plan",
+        "source": ""
+      }
+    },
+    {
+      "id": "check-ruff",
+      "type": "Action",
+      "label": "Re-run the code check",
+      "attributes": {
+        "priority": 3,
+        "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+        "verification": "Review the new check record and the status changes",
+        "targets": [],
+        "goal_impact": 0,
+        "cause": null
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "check-ruff",
+      "relation": "addresses",
+      "target": "issue-fafbf8eed79e6d"
+    },
+    {
+      "source": "check-ruff",
+      "relation": "justified_by",
+      "target": "issue-fafbf8eed79e6d:affects:check_style"
+    },
+    {
+      "source": "dist:numpy:declared_in:requirements.txt:1",
+      "relation": "supported_by",
+      "target": "evidence:run-81984f41bf07:declaration:0"
+    },
+    {
+      "source": "dist:pytest:declared_in:requirements.txt:2",
+      "relation": "supported_by",
+      "target": "evidence:run-81984f41bf07:declaration:1"
+    },
+    {
+      "source": "dist:python:installed_version:3.12.14",
+      "relation": "supported_by",
+      "target": "evidence:run-bd756e106e0a:stdout:1"
+    },
+    {
+      "source": "environment:snapshot:available",
+      "relation": "supported_by",
+      "target": "evidence:run-bd756e106e0a:stdout:1"
+    },
+    {
+      "source": "event-1d9ce94997e3",
+      "relation": "cites",
+      "target": "evidence:run-7d1386d8601f:json:0"
+    },
+    {
+      "source": "event-3c76c580dee5",
+      "relation": "cites",
+      "target": "evidence:run-3d6c31292945:probe:13"
+    },
+    {
+      "source": "event-3c76c580dee5",
+      "relation": "cites",
+      "target": "evidence:run-3d6c31292945:probe:14"
+    },
+    {
+      "source": "event-a613f24ebe62",
+      "relation": "cites",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "event-a9a601b64101",
+      "relation": "cites",
+      "target": "evidence:run-3d6c31292945:probe:2"
+    },
+    {
+      "source": "event-a9a601b64101",
+      "relation": "cites",
+      "target": "evidence:run-3d6c31292945:probe:3"
+    },
+    {
+      "source": "event-ec83f763c036",
+      "relation": "cites",
+      "target": "evidence:run-890f2274ab0c:probe:1"
+    },
+    {
+      "source": "evidence:run-3d6c31292945:probe:13",
+      "relation": "observed_in",
+      "target": "run-3d6c31292945"
+    },
+    {
+      "source": "evidence:run-3d6c31292945:probe:14",
+      "relation": "observed_in",
+      "target": "run-3d6c31292945"
+    },
+    {
+      "source": "evidence:run-3d6c31292945:probe:2",
+      "relation": "observed_in",
+      "target": "run-3d6c31292945"
+    },
+    {
+      "source": "evidence:run-3d6c31292945:probe:3",
+      "relation": "observed_in",
+      "target": "run-3d6c31292945"
+    },
+    {
+      "source": "evidence:run-7d1386d8601f:json:0",
+      "relation": "observed_in",
+      "target": "run-7d1386d8601f"
+    },
+    {
+      "source": "evidence:run-81984f41bf07:declaration:0",
+      "relation": "observed_in",
+      "target": "run-81984f41bf07"
+    },
+    {
+      "source": "evidence:run-81984f41bf07:declaration:1",
+      "relation": "observed_in",
+      "target": "run-81984f41bf07"
+    },
+    {
+      "source": "evidence:run-81984f41bf07:stdout:1",
+      "relation": "observed_in",
+      "target": "run-81984f41bf07"
+    },
+    {
+      "source": "evidence:run-890f2274ab0c:probe:1",
+      "relation": "observed_in",
+      "target": "run-890f2274ab0c"
+    },
+    {
+      "source": "evidence:run-890f2274ab0c:probe:3",
+      "relation": "observed_in",
+      "target": "run-890f2274ab0c"
+    },
+    {
+      "source": "evidence:run-bd756e106e0a:stdout:1",
+      "relation": "observed_in",
+      "target": "run-bd756e106e0a"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "evaluated_by",
+      "target": "run-56c5bfa945ea"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "recommends",
+      "target": "check-pytest_run"
+    },
+    {
+      "source": "issue-624772c417ae3f",
+      "relation": "has_event",
+      "target": "event-3c76c580dee5"
+    },
+    {
+      "source": "issue-687ee9a528c748",
+      "relation": "has_event",
+      "target": "event-a613f24ebe62"
+    },
+    {
+      "source": "issue-91b31964ae1617",
+      "relation": "has_event",
+      "target": "event-a9a601b64101"
+    },
+    {
+      "source": "issue-b6e397dce720fd",
+      "relation": "has_event",
+      "target": "event-ec83f763c036"
+    },
+    {
+      "source": "issue-fafbf8eed79e6d",
+      "relation": "has_event",
+      "target": "event-1d9ce94997e3"
+    },
+    {
+      "source": "issue-fafbf8eed79e6d:affects:check_style",
+      "relation": "derived_by",
+      "target": "rule:G02"
+    },
+    {
+      "source": "issue-fafbf8eed79e6d:affects:check_style",
+      "relation": "inferred_from",
+      "target": "issue-fafbf8eed79e6d:stage:lint"
+    },
+    {
+      "source": "issue-fafbf8eed79e6d:affects:check_style",
+      "relation": "supported_by",
+      "target": "evidence:run-7d1386d8601f:json:0"
+    },
+    {
+      "source": "issue-fafbf8eed79e6d:component:F401",
+      "relation": "supported_by",
+      "target": "evidence:run-7d1386d8601f:json:0"
+    },
+    {
+      "source": "issue-fafbf8eed79e6d:kind:code_check",
+      "relation": "supported_by",
+      "target": "evidence:run-7d1386d8601f:json:0"
+    },
+    {
+      "source": "issue-fafbf8eed79e6d:stage:lint",
+      "relation": "supported_by",
+      "target": "evidence:run-7d1386d8601f:json:0"
+    },
+    {
+      "source": "issue-fafbf8eed79e6d:tool:ruff",
+      "relation": "supported_by",
+      "target": "evidence:run-7d1386d8601f:json:0"
+    },
+    {
+      "source": "project:declarations:available",
+      "relation": "supported_by",
+      "target": "evidence:run-81984f41bf07:stdout:1"
+    },
+    {
+      "source": "review-code_check",
+      "relation": "addresses",
+      "target": "issue-fafbf8eed79e6d"
+    },
+    {
+      "source": "review-code_check",
+      "relation": "justified_by",
+      "target": "issue-fafbf8eed79e6d:kind:code_check"
+    },
+    {
+      "source": "review-code_check",
+      "relation": "proposed_by",
+      "target": "rule:P48"
+    }
+  ],
+  "meaning": "Provenance and rule relations; similarity never creates a causal edge."
+}

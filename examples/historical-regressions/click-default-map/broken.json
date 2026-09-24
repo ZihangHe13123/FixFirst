@@ -1,36 +1,37 @@
 {
   "schema_version": 1,
-  "session_id": "session-686941fc5467",
-  "name": "命令帮助展示错误的配置默认值",
+  "session_id": "session-81d3dd189b81",
+  "name": "Command help shows the wrong default from default_map",
   "project_root": "<project>",
   "target_python": "<python>",
-  "created_at": "2026-09-08T02:50:32+00:00",
+  "created_at": "2026-09-24T02:00:07+00:00",
   "goal": "pass_tests",
   "grouping": "tfidf",
   "threshold": 0.82,
   "model_path": null,
+  "use_classifier": true,
   "sbert_model": null,
   "runs": [
     {
       "schema_version": 1,
-      "run_id": "run-4cc380469634",
+      "run_id": "run-0759ff25fe6f",
       "tool": "environment",
-      "started_at": "2026-09-08T02:50:32+00:00",
+      "started_at": "2026-09-24T02:00:07+00:00",
       "argv": [
         "<python>",
         "-c",
-        "\nimport sys, json, os, platform, importlib.metadata as m\nv = sys.implementation.version\nimplementation_version = f'{v.major}.{v.minor}.{v.micro}'\nif v.releaselevel != 'final':\n    implementation_version += {'alpha': 'a', 'beta': 'b', 'candidate': 'rc'}.get(v.releaselevel, v.releaselevel) + str(v.serial)\npackages = []\nfor d in m.distributions():\n    packages.append({'name': d.metadata.get('Name', ''), 'version': d.version,\n                     'requires': d.requires or []})\nprint(json.dumps({'executable': sys.executable, 'prefix': sys.prefix,\n 'python_version': sys.version.split()[0], 'packages': packages,\n 'import_distributions': m.packages_distributions(),\n 'markers': {'implementation_name': sys.implementation.name,\n 'implementation_version': implementation_version, 'os_name': os.name,\n 'platform_machine': platform.machine(), 'platform_release': platform.release(),\n 'platform_system': platform.system(), 'platform_version': platform.version(),\n 'python_full_version': platform.python_version(),\n 'platform_python_implementation': platform.python_implementation(),\n 'python_version': '.'.join(platform.python_version_tuple()[:2]), 'sys_platform': sys.platform}}))\n"
+        "\nimport sys, json, os, platform, importlib.metadata as m\nv = sys.implementation.version\nimplementation_version = f'{v.major}.{v.minor}.{v.micro}'\nif v.releaselevel != 'final':\n    implementation_version += {'alpha': 'a', 'beta': 'b', 'candidate': 'rc'}.get(v.releaselevel, v.releaselevel) + str(v.serial)\npackages = []\nfor d in m.distributions():\n    packages.append({'name': d.metadata.get('Name', ''), 'version': d.version,\n                     'requires': d.requires or []})\nimport sysconfig\npaths = sysconfig.get_paths()\nprint(json.dumps({'executable': sys.executable, 'prefix': sys.prefix,\n 'python_version': sys.version.split()[0], 'packages': packages,\n 'import_distributions': m.packages_distributions(),\n 'stdlib_modules': sorted(getattr(sys, 'stdlib_module_names', ())),\n 'paths': {k: paths.get(k, '') for k in ('stdlib', 'platstdlib', 'purelib', 'platlib')},\n 'markers': {'implementation_name': sys.implementation.name,\n 'implementation_version': implementation_version, 'os_name': os.name,\n 'platform_machine': platform.machine(), 'platform_release': platform.release(),\n 'platform_system': platform.system(), 'platform_version': platform.version(),\n 'python_full_version': platform.python_version(),\n 'platform_python_implementation': platform.python_implementation(),\n 'python_version': '.'.join(platform.python_version_tuple()[:2]), 'sys_platform': sys.platform}}))\n"
       ],
       "cwd": "<project>",
-      "environment_id": "e41177d2f33dcfae",
+      "environment_id": "3d6f74f4e20c23c8",
       "tool_version": "3.12.14",
       "scope": "environment",
       "status": "completed",
       "source": "executed",
       "exit_code": 0,
-      "stdout": "{\"executable\": \"<python>\", \"prefix\": \"<home>/Project/课程Projec/FixFirst/workbench/historical-v03-release/click-default-map/.venv\", \"python_version\": \"3.12.14\", \"packages\": [{\"name\": \"pytest\", \"version\": \"8.3.5\", \"requires\": [\"colorama; sys_platform == \\\"win32\\\"\", \"exceptiongroup>=1.0.0rc8; python_version < \\\"3.11\\\"\", \"iniconfig\", \"packaging\", \"pluggy<2,>=1.5\", \"tomli>=1; python_version < \\\"3.11\\\"\", \"argcomplete; extra == \\\"dev\\\"\", \"attrs>=19.2; extra == \\\"dev\\\"\", \"hypothesis>=3.56; extra == \\\"dev\\\"\", \"mock; extra == \\\"dev\\\"\", \"pygments>=2.7.2; extra == \\\"dev\\\"\", \"requests; extra == \\\"dev\\\"\", \"setuptools; extra == \\\"dev\\\"\", \"xmlschema; extra == \\\"dev\\\"\"]}, {\"name\": \"pip\", \"version\": \"25.0.1\", \"requires\": []}, {\"name\": \"packaging\", \"version\": \"24.2\", \"requires\": []}, {\"name\": \"pluggy\", \"version\": \"1.5.0\", \"requires\": [\"pre-commit ; extra == 'dev'\", \"tox ; extra == 'dev'\", \"pytest ; extra == 'testing'\", \"pytest-benchmark ; extra == 'testing'\"]}, {\"name\": \"iniconfig\", \"version\": \"2.1.0\", \"requires\": []}, {\"name\": \"click\", \"version\": \"8.1.7\", \"requires\": [\"colorama ; platform_system == \\\"Windows\\\"\", \"importlib-metadata ; python_version < \\\"3.8\\\"\"]}], \"import_distributions\": {\"_pytest\": [\"pytest\"], \"py\": [\"pytest\"], \"pytest\": [\"pytest\"], \"pip\": [\"pip\"], \"packaging\": [\"packaging\"], \"pluggy\": [\"pluggy\"], \"iniconfig\": [\"iniconfig\"], \"click\": [\"click\"]}, \"markers\": {\"implementation_name\": \"cpython\", \"implementation_version\": \"3.12.14\", \"os_name\": \"posix\", \"platform_machine\": \"arm64\", \"platform_release\": \"25.6.0\", \"platform_system\": \"Darwin\", \"platform_version\": \"Darwin Kernel Version 25.6.0: Fri Jul 31 19:19:08 PDT 2026; root:xnu-12377.161.14~5/RELEASE_ARM64_T6050\", \"python_full_version\": \"3.12.14\", \"platform_python_implementation\": \"CPython\", \"python_version\": \"3.12\", \"sys_platform\": \"darwin\"}}",
+      "stdout": "{\"executable\": \"<python>\", \"prefix\": \"<home>/Project/课程Projec/FixFirst/workbench/regen/historical/click-default-map/.venv\", \"python_version\": \"3.12.14\", \"packages\": [{\"name\": \"pytest\", \"version\": \"8.3.5\", \"requires\": [\"colorama; sys_platform == \\\"win32\\\"\", \"exceptiongroup>=1.0.0rc8; python_version < \\\"3.11\\\"\", \"iniconfig\", \"packaging\", \"pluggy<2,>=1.5\", \"tomli>=1; python_version < \\\"3.11\\\"\", \"argcomplete; extra == \\\"dev\\\"\", \"attrs>=19.2; extra == \\\"dev\\\"\", \"hypothesis>=3.56; extra == \\\"dev\\\"\", \"mock; extra == \\\"dev\\\"\", \"pygments>=2.7.2; extra == \\\"dev\\\"\", \"requests; extra == \\\"dev\\\"\", \"setuptools; extra == \\\"dev\\\"\", \"xmlschema; extra == \\\"dev\\\"\"]}, {\"name\": \"pip\", \"version\": \"25.0.1\", \"requires\": []}, {\"name\": \"packaging\", \"version\": \"24.2\", \"requires\": []}, {\"name\": \"pluggy\", \"version\": \"1.5.0\", \"requires\": [\"pre-commit ; extra == 'dev'\", \"tox ; extra == 'dev'\", \"pytest ; extra == 'testing'\", \"pytest-benchmark ; extra == 'testing'\"]}, {\"name\": \"iniconfig\", \"version\": \"2.1.0\", \"requires\": []}, {\"name\": \"click\", \"version\": \"8.1.7\", \"requires\": [\"colorama ; platform_system == \\\"Windows\\\"\", \"importlib-metadata ; python_version < \\\"3.8\\\"\"]}], \"import_distributions\": {\"_pytest\": [\"pytest\"], \"py\": [\"pytest\"], \"pytest\": [\"pytest\"], \"pip\": [\"pip\"], \"packaging\": [\"packaging\"], \"pluggy\": [\"pluggy\"], \"iniconfig\": [\"iniconfig\"], \"click\": [\"click\"]}, \"stdlib_modules\": [\"__future__\", \"_abc\", \"_aix_support\", \"_ast\", \"_asyncio\", \"_bisect\", \"_blake2\", \"_bz2\", \"_codecs\", \"_codecs_cn\", \"_codecs_hk\", \"_codecs_iso2022\", \"_codecs_jp\", \"_codecs_kr\", \"_codecs_tw\", \"_collections\", \"_collections_abc\", \"_compat_pickle\", \"_compression\", \"_contextvars\", \"_crypt\", \"_csv\", \"_ctypes\", \"_curses\", \"_curses_panel\", \"_datetime\", \"_dbm\", \"_decimal\", \"_elementtree\", \"_frozen_importlib\", \"_frozen_importlib_external\", \"_functools\", \"_gdbm\", \"_hashlib\", \"_heapq\", \"_imp\", \"_io\", \"_json\", \"_locale\", \"_lsprof\", \"_lzma\", \"_markupbase\", \"_md5\", \"_msi\", \"_multibytecodec\", \"_multiprocessing\", \"_opcode\", \"_operator\", \"_osx_support\", \"_overlapped\", \"_pickle\", \"_posixshmem\", \"_posixsubprocess\", \"_py_abc\", \"_pydatetime\", \"_pydecimal\", \"_pyio\", \"_pylong\", \"_queue\", \"_random\", \"_scproxy\", \"_sha1\", \"_sha2\", \"_sha3\", \"_signal\", \"_sitebuiltins\", \"_socket\", \"_sqlite3\", \"_sre\", \"_ssl\", \"_stat\", \"_statistics\", \"_string\", \"_strptime\", \"_struct\", \"_symtable\", \"_thread\", \"_threading_local\", \"_tkinter\", \"_tokenize\", \"_tracemalloc\", \"_typing\", \"_uuid\", \"_warnings\", \"_weakref\", \"_weakrefset\", \"_winapi\", \"_wmi\", \"_zoneinfo\", \"abc\", \"aifc\", \"antigravity\", \"argparse\", \"array\", \"ast\", \"asyncio\", \"atexit\", \"audioop\", \"base64\", \"bdb\", \"binascii\", \"bisect\", \"builtins\", \"bz2\", \"cProfile\", \"calendar\", \"cgi\", \"cgitb\", \"chunk\", \"cmath\", \"cmd\", \"code\", \"codecs\", \"codeop\", \"collections\", \"colorsys\", \"compileall\", \"concurrent\", \"configparser\", \"contextlib\", \"contextvars\", \"copy\", \"copyreg\", \"crypt\", \"csv\", \"ctypes\", \"curses\", \"dataclasses\", \"datetime\", \"dbm\", \"decimal\", \"difflib\", \"dis\", \"doctest\", \"email\", \"encodings\", \"ensurepip\", \"enum\", \"errno\", \"faulthandler\", \"fcntl\", \"filecmp\", \"fileinput\", \"fnmatch\", \"fractions\", \"ftplib\", \"functools\", \"gc\", \"genericpath\", \"getopt\", \"getpass\", \"gettext\", \"glob\", \"graphlib\", \"grp\", \"gzip\", \"hashlib\", \"heapq\", \"hmac\", \"html\", \"http\", \"idlelib\", \"imaplib\", \"imghdr\", \"importlib\", \"inspect\", \"io\", \"ipaddress\", \"itertools\", \"json\", \"keyword\", \"lib2to3\", \"linecache\", \"locale\", \"logging\", \"lzma\", \"mailbox\", \"mailcap\", \"marshal\", \"math\", \"mimetypes\", \"mmap\", \"modulefinder\", \"msilib\", \"msvcrt\", \"multiprocessing\", \"netrc\", \"nis\", \"nntplib\", \"nt\", \"ntpath\", \"nturl2path\", \"numbers\", \"opcode\", \"operator\", \"optparse\", \"os\", \"ossaudiodev\", \"pathlib\", \"pdb\", \"pickle\", \"pickletools\", \"pipes\", \"pkgutil\", \"platform\", \"plistlib\", \"poplib\", \"posix\", \"posixpath\", \"pprint\", \"profile\", \"pstats\", \"pty\", \"pwd\", \"py_compile\", \"pyclbr\", \"pydoc\", \"pydoc_data\", \"pyexpat\", \"queue\", \"quopri\", \"random\", \"re\", \"readline\", \"reprlib\", \"resource\", \"rlcompleter\", \"runpy\", \"sched\", \"secrets\", \"select\", \"selectors\", \"shelve\", \"shlex\", \"shutil\", \"signal\", \"site\", \"smtplib\", \"sndhdr\", \"socket\", \"socketserver\", \"spwd\", \"sqlite3\", \"sre_compile\", \"sre_constants\", \"sre_parse\", \"ssl\", \"stat\", \"statistics\", \"string\", \"stringprep\", \"struct\", \"subprocess\", \"sunau\", \"symtable\", \"sys\", \"sysconfig\", \"syslog\", \"tabnanny\", \"tarfile\", \"telnetlib\", \"tempfile\", \"termios\", \"textwrap\", \"this\", \"threading\", \"time\", \"timeit\", \"tkinter\", \"token\", \"tokenize\", \"tomllib\", \"trace\", \"traceback\", \"tracemalloc\", \"tty\", \"turtle\", \"turtledemo\", \"types\", \"typing\", \"unicodedata\", \"unittest\", \"urllib\", \"uu\", \"uuid\", \"venv\", \"warnings\", \"wave\", \"weakref\", \"webbrowser\", \"winreg\", \"winsound\", \"wsgiref\", \"xdrlib\", \"xml\", \"xmlrpc\", \"zipapp\", \"zipfile\", \"zipimport\", \"zlib\", \"zoneinfo\"], \"paths\": {\"stdlib\": \"<home>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12\", \"platstdlib\": \"<home>/Project/课程Projec/FixFirst/workbench/regen/historical/click-default-map/.venv/lib/python3.12\", \"purelib\": \"<home>/Project/课程Projec/FixFirst/workbench/regen/historical/click-default-map/.venv/lib/python3.12/site-packages\", \"platlib\": \"<home>/Project/课程Projec/FixFirst/workbench/regen/historical/click-default-map/.venv/lib/python3.12/site-packages\"}, \"markers\": {\"implementation_name\": \"cpython\", \"implementation_version\": \"3.12.14\", \"os_name\": \"posix\", \"platform_machine\": \"arm64\", \"platform_release\": \"25.6.0\", \"platform_system\": \"Darwin\", \"platform_version\": \"Darwin Kernel Version 25.6.0: Fri Jul 31 19:19:08 PDT 2026; root:xnu-12377.161.14~5/RELEASE_ARM64_T6050\", \"python_full_version\": \"3.12.14\", \"platform_python_implementation\": \"CPython\", \"python_version\": \"3.12\", \"sys_platform\": \"darwin\"}}",
       "stderr": "",
-      "duration_s": 0.038,
+      "duration_s": 0.052,
       "truncated": false,
       "verified_pass": true,
       "coverage_complete": true,
@@ -42,9 +43,9 @@
     },
     {
       "schema_version": 1,
-      "run_id": "run-6e99b660027d",
+      "run_id": "run-c1fae3661861",
       "tool": "pip_check",
-      "started_at": "2026-09-08T02:50:32+00:00",
+      "started_at": "2026-09-24T02:00:07+00:00",
       "argv": [
         "<python>",
         "-m",
@@ -52,7 +53,7 @@
         "check"
       ],
       "cwd": "<project>",
-      "environment_id": "e41177d2f33dcfae",
+      "environment_id": "3d6f74f4e20c23c8",
       "tool_version": "25.0.1",
       "scope": "dependencies:environment",
       "status": "completed",
@@ -60,7 +61,7 @@
       "exit_code": 0,
       "stdout": "No broken requirements found.\n",
       "stderr": "",
-      "duration_s": 0.101,
+      "duration_s": 0.126,
       "truncated": false,
       "verified_pass": true,
       "coverage_complete": true,
@@ -72,9 +73,9 @@
     },
     {
       "schema_version": 1,
-      "run_id": "run-ac49460a7375",
+      "run_id": "run-cc2948a72280",
       "tool": "pytest_run",
-      "started_at": "2026-09-08T02:50:33+00:00",
+      "started_at": "2026-09-24T02:00:08+00:00",
       "argv": [
         "<python>",
         "-m",
@@ -89,21 +90,21 @@
         "<project>"
       ],
       "cwd": "<project>",
-      "environment_id": "e41177d2f33dcfae",
+      "environment_id": "3d6f74f4e20c23c8",
       "tool_version": "8.3.5",
       "scope": "tests:project",
       "status": "completed",
       "source": "executed",
       "exit_code": 1,
-      "stdout": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__________________________ test_help_uses_default_map __________________________\n\n    def test_help_uses_default_map():\n        @click.command()\n        @click.option(\"--long/--short\", show_default=True)\n        def command(long):\n            click.echo(long)\n    \n        result = CliRunner().invoke(command, [\"--help\"], default_map={\"long\": True})\n        assert result.exit_code == 0\n>       assert \"[default: long]\" in result.output\nE       AssertionError: assert '[default: long]' in 'Usage: command [OPTIONS]\\n\\nOptions:\\n  --long / --short  [default: short]\\n  --help            Show this message and exit.\\n'\nE        +  where 'Usage: command [OPTIONS]\\n\\nOptions:\\n  --long / --short  [default: short]\\n  --help            Show this message and exit.\\n' = <Result okay>.output\n\ntest_regression.py:13: AssertionError\n=========================== short test summary info ============================\nFAILED test_regression.py::test_help_uses_default_map - AssertionError: asser...\n1 failed in 0.01s\n",
+      "stdout": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__________________________ test_help_uses_default_map __________________________\n\n    def test_help_uses_default_map():\n        @click.command()\n        @click.option(\"--long/--short\", show_default=True)\n        def command(long):\n            click.echo(long)\n    \n        result = CliRunner().invoke(command, [\"--help\"], default_map={\"long\": True})\n        assert result.exit_code == 0\n>       assert \"[default: long]\" in result.output\nE       AssertionError: assert '[default: long]' in 'Usage: command [OPTIONS]\\n\\nOptions:\\n  --long / --short  [default: short]\\n  --help            Show this message and exit.\\n'\nE        +  where 'Usage: command [OPTIONS]\\n\\nOptions:\\n  --long / --short  [default: short]\\n  --help            Show this message and exit.\\n' = <Result okay>.output\n\ntest_regression.py:13: AssertionError\n=========================== short test summary info ============================\nFAILED test_regression.py::test_help_uses_default_map - AssertionError: asser...\n1 failed in 0.02s\n",
       "stderr": "",
-      "duration_s": 0.088,
+      "duration_s": 0.102,
       "truncated": false,
       "verified_pass": false,
       "coverage_complete": true,
       "notes": [
-        "测试收集会执行项目导入和 conftest；与目标项目正常运行一样需信任源码。",
-        "本次执行测试体与 fixture；目标范围以项目配置及记录的测试节点为准。"
+        "Test collection imports project modules and conftest; only run it on code you trust.",
+        "This run executed test bodies and fixtures; scope follows the project configuration and the recorded nodes."
       ],
       "records": [
         {
@@ -167,25 +168,25 @@
     },
     {
       "schema_version": 1,
-      "run_id": "run-9c3ae06324a1",
+      "run_id": "run-0de87220c478",
       "tool": "project",
-      "started_at": "2026-09-08T02:50:33+00:00",
+      "started_at": "2026-09-24T02:00:08+00:00",
       "argv": [],
       "cwd": "<project>",
-      "environment_id": "e41177d2f33dcfae",
+      "environment_id": "3d6f74f4e20c23c8",
       "tool_version": "unknown",
       "scope": "declarations:project",
       "status": "completed",
       "source": "executed",
       "exit_code": 0,
-      "stdout": "{\n  \"files\": [\n    {\n      \"path\": \"requirements.txt\",\n      \"sha256\": \"0198a60e86c2e3e4b86026ec5f3555ceb21bbe138d16150a35615e842cd76da5\",\n      \"bytes\": 9\n    }\n  ],\n  \"declarations\": [\n    {\n      \"name\": \"click\",\n      \"requirement\": \"click>=0\",\n      \"source\": \"requirements.txt:1\",\n      \"group\": \"required\",\n      \"constraint\": false,\n      \"installed\": \"8.1.7\",\n      \"status\": \"satisfied\"\n    }\n  ],\n  \"notes\": [],\n  \"requires_python\": [],\n  \"environment_run_id\": \"run-4cc380469634\",\n  \"local_modules\": [\n    {\n      \"name\": \"test_regression\",\n      \"path\": \"test_regression.py\"\n    }\n  ]\n}",
+      "stdout": "{\n  \"files\": [\n    {\n      \"path\": \"requirements.txt\",\n      \"sha256\": \"0198a60e86c2e3e4b86026ec5f3555ceb21bbe138d16150a35615e842cd76da5\",\n      \"bytes\": 9\n    }\n  ],\n  \"declarations\": [\n    {\n      \"name\": \"click\",\n      \"requirement\": \"click>=0\",\n      \"source\": \"requirements.txt:1\",\n      \"group\": \"required\",\n      \"constraint\": false,\n      \"installed\": \"8.1.7\",\n      \"status\": \"satisfied\"\n    }\n  ],\n  \"notes\": [],\n  \"requires_python\": [],\n  \"environment_run_id\": \"run-0759ff25fe6f\",\n  \"local_modules\": [\n    {\n      \"name\": \"test_regression\",\n      \"path\": \"test_regression.py\"\n    }\n  ],\n  \"python_files\": [\n    \"test_regression.py\"\n  ],\n  \"defined_names\": [\n    \"test_help_uses_default_map\"\n  ]\n}",
       "stderr": "",
       "duration_s": 0.001,
       "truncated": false,
       "verified_pass": true,
       "coverage_complete": true,
       "notes": [
-        "只读声明快照；可选组未指定启用，直接引用和锁文件来源不据此验证。"
+        "Read-only snapshot: optional groups are not assumed to be enabled; direct references and lock files are not verified from it."
       ],
       "records": [],
       "targets": [],
@@ -196,8 +197,8 @@
   "events": [
     {
       "schema_version": 1,
-      "event_id": "event-b9031c4c691b",
-      "run_id": "run-ac49460a7375",
+      "event_id": "event-b0f84bcae8fc",
+      "run_id": "run-cc2948a72280",
       "tool": "pytest_run",
       "stage": "call",
       "kind": "test_assertion",
@@ -209,8 +210,8 @@
       "source_file": "<project>/test_regression.py",
       "source_line": 13,
       "evidence_refs": [
-        "run-ac49460a7375:probe:2",
-        "run-ac49460a7375:probe:3"
+        "run-cc2948a72280:probe:2",
+        "run-cc2948a72280:probe:3"
       ]
     }
   ],
@@ -223,26 +224,30 @@
       "stage": "call",
       "kind": "test_assertion",
       "component": "",
-      "title": "断言失败 · test_regression.py::test_help_uses_default_map",
+      "title": "Assertion failed · test_regression.py::test_help_uses_default_map",
       "event_ids": [
-        "event-b9031c4c691b"
+        "event-b0f84bcae8fc"
       ],
       "evidence_refs": [
-        "run-ac49460a7375:probe:2",
-        "run-ac49460a7375:probe:3"
+        "run-cc2948a72280:probe:2",
+        "run-cc2948a72280:probe:3"
       ],
       "member_keys": [
         "822c649cb31f20"
       ],
       "scope": "tests:project",
-      "environment_id": "e41177d2f33dcfae",
-      "category": "test_assertion",
-      "prediction": null,
+      "environment_id": "3d6f74f4e20c23c8",
+      "category": "other_unknown",
+      "diagnosis": "code_defect",
+      "diagnosis_source": "rule",
+      "diagnosis_rule": "D40",
+      "prediction": "code_defect",
+      "prediction_confidence": 1.0,
       "prediction_note": "",
       "group_score": 1.0,
       "status": "open",
-      "first_seen": "2026-09-08T02:50:33+00:00",
-      "last_seen": "2026-09-08T02:50:33+00:00",
+      "first_seen": "2026-09-24T02:00:08+00:00",
+      "last_seen": "2026-09-24T02:00:08+00:00",
       "note": "",
       "targets": [
         "test_regression.py::test_help_uses_default_map"
@@ -250,6 +255,28 @@
     }
   ],
   "facts": [
+    {
+      "schema_version": 1,
+      "fact_id": "session:goal:pass_tests",
+      "subject": "session",
+      "predicate": "goal",
+      "value": "pass_tests",
+      "status": "observed",
+      "rule_id": null,
+      "inputs": [],
+      "evidence_refs": []
+    },
+    {
+      "schema_version": 1,
+      "fact_id": "session:goal_check:pytest_run",
+      "subject": "session",
+      "predicate": "goal_check",
+      "value": "pytest_run",
+      "status": "observed",
+      "rule_id": null,
+      "inputs": [],
+      "evidence_refs": []
+    },
     {
       "schema_version": 1,
       "fact_id": "issue-df76ba943109d2:kind:test_assertion",
@@ -260,8 +287,8 @@
       "rule_id": null,
       "inputs": [],
       "evidence_refs": [
-        "run-ac49460a7375:probe:2",
-        "run-ac49460a7375:probe:3"
+        "run-cc2948a72280:probe:2",
+        "run-cc2948a72280:probe:3"
       ]
     },
     {
@@ -274,13 +301,27 @@
       "rule_id": null,
       "inputs": [],
       "evidence_refs": [
-        "run-ac49460a7375:probe:2",
-        "run-ac49460a7375:probe:3"
+        "run-cc2948a72280:probe:2",
+        "run-cc2948a72280:probe:3"
       ]
     },
     {
       "schema_version": 1,
-      "fact_id": "environment:available",
+      "fact_id": "issue-df76ba943109d2:tool:pytest_run",
+      "subject": "issue-df76ba943109d2",
+      "predicate": "tool",
+      "value": "pytest_run",
+      "status": "observed",
+      "rule_id": null,
+      "inputs": [],
+      "evidence_refs": [
+        "run-cc2948a72280:probe:2",
+        "run-cc2948a72280:probe:3"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "fact_id": "environment:snapshot:available",
       "subject": "environment",
       "predicate": "snapshot",
       "value": "available",
@@ -288,7 +329,88 @@
       "rule_id": null,
       "inputs": [],
       "evidence_refs": [
-        "run-4cc380469634:stdout:1"
+        "run-0759ff25fe6f:stdout:1"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "fact_id": "project:declarations:available",
+      "subject": "project",
+      "predicate": "declarations",
+      "value": "available",
+      "status": "observed",
+      "rule_id": null,
+      "inputs": [],
+      "evidence_refs": [
+        "run-0de87220c478:stdout:1"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "fact_id": "issue-df76ba943109d2:exception:AssertionError",
+      "subject": "issue-df76ba943109d2",
+      "predicate": "exception",
+      "value": "AssertionError",
+      "status": "observed",
+      "rule_id": null,
+      "inputs": [],
+      "evidence_refs": [
+        "run-cc2948a72280:probe:2",
+        "run-cc2948a72280:probe:3"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "fact_id": "issue-df76ba943109d2:raised_in:test",
+      "subject": "issue-df76ba943109d2",
+      "predicate": "raised_in",
+      "value": "test",
+      "status": "observed",
+      "rule_id": null,
+      "inputs": [],
+      "evidence_refs": [
+        "run-cc2948a72280:probe:2",
+        "run-cc2948a72280:probe:3"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "fact_id": "dist:click:declared_in:requirements.txt:1",
+      "subject": "dist:click",
+      "predicate": "declared_in",
+      "value": "requirements.txt:1",
+      "status": "observed",
+      "rule_id": null,
+      "inputs": [],
+      "evidence_refs": [
+        "run-0de87220c478:declaration:0"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "fact_id": "dist:python:installed_version:3.12.14",
+      "subject": "dist:python",
+      "predicate": "installed_version",
+      "value": "3.12.14",
+      "status": "observed",
+      "rule_id": null,
+      "inputs": [],
+      "evidence_refs": [
+        "run-0759ff25fe6f:stdout:1"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "fact_id": "issue-df76ba943109d2:model_suggests:code_defect",
+      "subject": "issue-df76ba943109d2",
+      "predicate": "model_suggests",
+      "value": "code_defect",
+      "status": "hypothesis",
+      "rule_id": "decision-tree",
+      "inputs": [],
+      "evidence_refs": [
+        "run-cc2948a72280:probe:2",
+        "run-cc2948a72280:probe:3"
       ]
     },
     {
@@ -298,29 +420,29 @@
       "predicate": "affects",
       "value": "pass_tests",
       "status": "derived",
-      "rule_id": "R12",
+      "rule_id": "G03",
       "inputs": [
         "issue-df76ba943109d2:stage:call"
       ],
       "evidence_refs": [
-        "run-ac49460a7375:probe:2",
-        "run-ac49460a7375:probe:3"
+        "run-cc2948a72280:probe:2",
+        "run-cc2948a72280:probe:3"
       ]
     },
     {
       "schema_version": 1,
-      "fact_id": "issue-df76ba943109d2:needs:assertion_review",
+      "fact_id": "issue-df76ba943109d2:diagnosis:code_defect",
       "subject": "issue-df76ba943109d2",
-      "predicate": "needs",
-      "value": "assertion_review",
+      "predicate": "diagnosis",
+      "value": "code_defect",
       "status": "derived",
-      "rule_id": "R16",
+      "rule_id": "D40",
       "inputs": [
-        "issue-df76ba943109d2:kind:test_assertion"
+        "issue-df76ba943109d2:exception:AssertionError"
       ],
       "evidence_refs": [
-        "run-ac49460a7375:probe:2",
-        "run-ac49460a7375:probe:3"
+        "run-cc2948a72280:probe:2",
+        "run-cc2948a72280:probe:3"
       ]
     }
   ],
@@ -329,15 +451,15 @@
       "schema_version": 1,
       "action_id": "review-test_assertion",
       "kind": "manual_fix",
-      "title": "核对失败断言的预期与实际结果",
-      "explanation": "查看具体测试节点、断言和原始 traceback，核对业务预期及实现；修改后先验证相关节点，再运行完整测试。",
-      "verification": "处理后重新运行对应范围的检查",
+      "title": "Compare the failed assertion's expected and actual values",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "verification": "Re-run the related test nodes, then the full suite",
       "check": null,
       "issue_ids": [
         "issue-df76ba943109d2"
       ],
       "reason_refs": [
-        "issue-df76ba943109d2:needs:assertion_review"
+        "issue-df76ba943109d2:kind:test_assertion"
       ],
       "preconditions": [],
       "blocked_reasons": [],
@@ -345,15 +467,19 @@
       "evidence_rank": 2,
       "cost": 2,
       "priority": 1,
-      "targets": []
+      "targets": [],
+      "cause": null,
+      "rule_ids": [
+        "P49"
+      ]
     },
     {
       "schema_version": 1,
       "action_id": "check-failed-tests",
       "kind": "rerun",
-      "title": "先验证关联的失败测试",
-      "explanation": "只运行已观察到的失败节点，保留未覆盖问题。全部选中节点通过后，仍需完整测试验证项目目标。",
-      "verification": "查看每个节点的 setup、call、teardown 结果；跳过与 xfail 不算已修复",
+      "title": "Re-run only the related failing tests",
+      "explanation": "Runs just the failing test nodes already observed and keeps other issues. When they all pass, the full suite still has to confirm the goal.",
+      "verification": "Check setup, call and teardown for each node; skipped and xfail do not count as fixed",
       "check": "pytest_run",
       "issue_ids": [
         "issue-df76ba943109d2"
@@ -369,15 +495,17 @@
       "priority": 2,
       "targets": [
         "test_regression.py::test_help_uses_default_map"
-      ]
+      ],
+      "cause": null,
+      "rule_ids": []
     },
     {
       "schema_version": 1,
       "action_id": "check-pytest_run",
       "kind": "rerun",
-      "title": "验证完整测试运行",
-      "explanation": "只更新本次检查覆盖的问题；其他问题保留。若未做改动且没有新证据，无需反复运行同一检查。",
-      "verification": "查看新的检查记录和状态变化",
+      "title": "Run the full test suite",
+      "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+      "verification": "Review the new check record and the status changes",
       "check": "pytest_run",
       "issue_ids": [
         "issue-df76ba943109d2"
@@ -391,18 +519,20 @@
       "evidence_rank": 2,
       "cost": 3,
       "priority": 3,
-      "targets": []
+      "targets": [],
+      "cause": null,
+      "rule_ids": []
     }
   ],
   "history": [
     {
-      "time": "2026-09-08T02:50:33+00:00",
+      "time": "2026-09-24T02:00:08+00:00",
       "kind": "checks",
       "run_ids": [
-        "run-4cc380469634",
-        "run-6e99b660027d",
-        "run-ac49460a7375",
-        "run-9c3ae06324a1"
+        "run-0759ff25fe6f",
+        "run-c1fae3661861",
+        "run-cc2948a72280",
+        "run-0de87220c478"
       ],
       "changes": [
         {
@@ -416,7 +546,7 @@
   "stopped": false,
   "environment": {
     "executable": "<python>",
-    "prefix": "<home>/Project/课程Projec/FixFirst/workbench/historical-v03-release/click-default-map/.venv",
+    "prefix": "<home>/Project/课程Projec/FixFirst/workbench/regen/historical/click-default-map/.venv",
     "python_version": "3.12.14",
     "packages": [
       {
@@ -499,6 +629,315 @@
         "click"
       ]
     },
+    "stdlib_modules": [
+      "__future__",
+      "_abc",
+      "_aix_support",
+      "_ast",
+      "_asyncio",
+      "_bisect",
+      "_blake2",
+      "_bz2",
+      "_codecs",
+      "_codecs_cn",
+      "_codecs_hk",
+      "_codecs_iso2022",
+      "_codecs_jp",
+      "_codecs_kr",
+      "_codecs_tw",
+      "_collections",
+      "_collections_abc",
+      "_compat_pickle",
+      "_compression",
+      "_contextvars",
+      "_crypt",
+      "_csv",
+      "_ctypes",
+      "_curses",
+      "_curses_panel",
+      "_datetime",
+      "_dbm",
+      "_decimal",
+      "_elementtree",
+      "_frozen_importlib",
+      "_frozen_importlib_external",
+      "_functools",
+      "_gdbm",
+      "_hashlib",
+      "_heapq",
+      "_imp",
+      "_io",
+      "_json",
+      "_locale",
+      "_lsprof",
+      "_lzma",
+      "_markupbase",
+      "_md5",
+      "_msi",
+      "_multibytecodec",
+      "_multiprocessing",
+      "_opcode",
+      "_operator",
+      "_osx_support",
+      "_overlapped",
+      "_pickle",
+      "_posixshmem",
+      "_posixsubprocess",
+      "_py_abc",
+      "_pydatetime",
+      "_pydecimal",
+      "_pyio",
+      "_pylong",
+      "_queue",
+      "_random",
+      "_scproxy",
+      "_sha1",
+      "_sha2",
+      "_sha3",
+      "_signal",
+      "_sitebuiltins",
+      "_socket",
+      "_sqlite3",
+      "_sre",
+      "_ssl",
+      "_stat",
+      "_statistics",
+      "_string",
+      "_strptime",
+      "_struct",
+      "_symtable",
+      "_thread",
+      "_threading_local",
+      "_tkinter",
+      "_tokenize",
+      "_tracemalloc",
+      "_typing",
+      "_uuid",
+      "_warnings",
+      "_weakref",
+      "_weakrefset",
+      "_winapi",
+      "_wmi",
+      "_zoneinfo",
+      "abc",
+      "aifc",
+      "antigravity",
+      "argparse",
+      "array",
+      "ast",
+      "asyncio",
+      "atexit",
+      "audioop",
+      "base64",
+      "bdb",
+      "binascii",
+      "bisect",
+      "builtins",
+      "bz2",
+      "cProfile",
+      "calendar",
+      "cgi",
+      "cgitb",
+      "chunk",
+      "cmath",
+      "cmd",
+      "code",
+      "codecs",
+      "codeop",
+      "collections",
+      "colorsys",
+      "compileall",
+      "concurrent",
+      "configparser",
+      "contextlib",
+      "contextvars",
+      "copy",
+      "copyreg",
+      "crypt",
+      "csv",
+      "ctypes",
+      "curses",
+      "dataclasses",
+      "datetime",
+      "dbm",
+      "decimal",
+      "difflib",
+      "dis",
+      "doctest",
+      "email",
+      "encodings",
+      "ensurepip",
+      "enum",
+      "errno",
+      "faulthandler",
+      "fcntl",
+      "filecmp",
+      "fileinput",
+      "fnmatch",
+      "fractions",
+      "ftplib",
+      "functools",
+      "gc",
+      "genericpath",
+      "getopt",
+      "getpass",
+      "gettext",
+      "glob",
+      "graphlib",
+      "grp",
+      "gzip",
+      "hashlib",
+      "heapq",
+      "hmac",
+      "html",
+      "http",
+      "idlelib",
+      "imaplib",
+      "imghdr",
+      "importlib",
+      "inspect",
+      "io",
+      "ipaddress",
+      "itertools",
+      "json",
+      "keyword",
+      "lib2to3",
+      "linecache",
+      "locale",
+      "logging",
+      "lzma",
+      "mailbox",
+      "mailcap",
+      "marshal",
+      "math",
+      "mimetypes",
+      "mmap",
+      "modulefinder",
+      "msilib",
+      "msvcrt",
+      "multiprocessing",
+      "netrc",
+      "nis",
+      "nntplib",
+      "nt",
+      "ntpath",
+      "nturl2path",
+      "numbers",
+      "opcode",
+      "operator",
+      "optparse",
+      "os",
+      "ossaudiodev",
+      "pathlib",
+      "pdb",
+      "pickle",
+      "pickletools",
+      "pipes",
+      "pkgutil",
+      "platform",
+      "plistlib",
+      "poplib",
+      "posix",
+      "posixpath",
+      "pprint",
+      "profile",
+      "pstats",
+      "pty",
+      "pwd",
+      "py_compile",
+      "pyclbr",
+      "pydoc",
+      "pydoc_data",
+      "pyexpat",
+      "queue",
+      "quopri",
+      "random",
+      "re",
+      "readline",
+      "reprlib",
+      "resource",
+      "rlcompleter",
+      "runpy",
+      "sched",
+      "secrets",
+      "select",
+      "selectors",
+      "shelve",
+      "shlex",
+      "shutil",
+      "signal",
+      "site",
+      "smtplib",
+      "sndhdr",
+      "socket",
+      "socketserver",
+      "spwd",
+      "sqlite3",
+      "sre_compile",
+      "sre_constants",
+      "sre_parse",
+      "ssl",
+      "stat",
+      "statistics",
+      "string",
+      "stringprep",
+      "struct",
+      "subprocess",
+      "sunau",
+      "symtable",
+      "sys",
+      "sysconfig",
+      "syslog",
+      "tabnanny",
+      "tarfile",
+      "telnetlib",
+      "tempfile",
+      "termios",
+      "textwrap",
+      "this",
+      "threading",
+      "time",
+      "timeit",
+      "tkinter",
+      "token",
+      "tokenize",
+      "tomllib",
+      "trace",
+      "traceback",
+      "tracemalloc",
+      "tty",
+      "turtle",
+      "turtledemo",
+      "types",
+      "typing",
+      "unicodedata",
+      "unittest",
+      "urllib",
+      "uu",
+      "uuid",
+      "venv",
+      "warnings",
+      "wave",
+      "weakref",
+      "webbrowser",
+      "winreg",
+      "winsound",
+      "wsgiref",
+      "xdrlib",
+      "xml",
+      "xmlrpc",
+      "zipapp",
+      "zipfile",
+      "zipimport",
+      "zlib",
+      "zoneinfo"
+    ],
+    "paths": {
+      "stdlib": "<home>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12",
+      "platstdlib": "<home>/Project/课程Projec/FixFirst/workbench/regen/historical/click-default-map/.venv/lib/python3.12",
+      "purelib": "<home>/Project/课程Projec/FixFirst/workbench/regen/historical/click-default-map/.venv/lib/python3.12/site-packages",
+      "platlib": "<home>/Project/课程Projec/FixFirst/workbench/regen/historical/click-default-map/.venv/lib/python3.12/site-packages"
+    },
     "markers": {
       "implementation_name": "cpython",
       "implementation_version": "3.12.14",
@@ -512,7 +951,7 @@
       "python_version": "3.12",
       "sys_platform": "darwin"
     },
-    "_run_id": "run-4cc380469634",
-    "_environment_id": "e41177d2f33dcfae"
+    "_run_id": "run-0759ff25fe6f",
+    "_environment_id": "3d6f74f4e20c23c8"
   }
 }

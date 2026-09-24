@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-09-08T02:50:10+00:00",
+  "created_at": "2026-09-24T01:59:57+00:00",
   "python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
   "cases": [
     {
@@ -7,7 +7,7 @@
       "package": "packaging",
       "broken": "24.1",
       "fixed": "24.2",
-      "title": "预发布版本被错误排除",
+      "title": "Pre-release wrongly excluded by a specifier",
       "kind": "test_assertion",
       "source": "https://github.com/pypa/packaging/issues/788",
       "fix": "https://github.com/pypa/packaging/pull/794",
@@ -48,7 +48,7 @@
       "package": "packaging",
       "broken": "24.1",
       "fixed": "24.2",
-      "title": "未打标签的 Python 版本令条件判断异常",
+      "title": "Untagged Python version breaks marker evaluation",
       "kind": "test_runtime_error",
       "source": "https://github.com/pypa/packaging/issues/678",
       "fix": "https://github.com/pypa/packaging/pull/825",
@@ -89,7 +89,7 @@
       "package": "click",
       "broken": "8.1.7",
       "fixed": "8.1.8",
-      "title": "命令帮助漏掉空字符串默认值",
+      "title": "Command help omits an empty-string default",
       "kind": "test_assertion",
       "source": "https://github.com/pallets/click/issues/2500",
       "fix": "https://github.com/pallets/click/pull/2724",
@@ -130,7 +130,7 @@
       "package": "click",
       "broken": "8.1.7",
       "fixed": "8.1.8",
-      "title": "命令帮助展示错误的配置默认值",
+      "title": "Command help shows the wrong default from default_map",
       "kind": "test_assertion",
       "source": "https://github.com/pallets/click/issues/2632",
       "fix": "https://github.com/pallets/click/pull/2730",

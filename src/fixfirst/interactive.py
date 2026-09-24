@@ -6,6 +6,8 @@ import sys
 
 from .storage import Store
 
+GOALS = {"1": "collect_tests", "2": "check_style", "3": "pass_tests"}
+
 
 def menu(store_root):
     from .cli import main
@@ -14,11 +16,19 @@ def menu(store_root):
     prefix = ["--store", str(store.root)]
     while True:
         print(
-            "\nFixFirst · Python 项目排查\n1 体验导入与风格排查\n2 开始排查自己的项目\n3 继续已有排查\n4 体验测试执行与知识图谱\n0 退出"
+            "\nFixFirst · Python troubleshooting\n"
+            "1 Demo: import error and style findings\n"
+            "2 Troubleshoot my own project\n"
+            "3 Continue an existing session\n"
+            "4 Demo: failing tests and the evidence graph\n"
+            "5 Open the web interface\n"
+            "0 Quit"
         )
-        choice = input("选择：").strip()
+        choice = input("Choose: ").strip()
         if choice == "0":
             return 0
+        if choice == "5":
+            return main(prefix + ["serve"])
         if choice in ("1", "4"):
             output = Path("workbench") / ("demo-" + datetime.now().strftime("%Y%m%d-%H%M%S"))
             main(
@@ -34,47 +44,47 @@ def menu(store_root):
             )
             continue
         if choice == "2":
-            project = input("项目目录（输入完整路径）：").strip().strip("'\"")
+            project = input("Project directory (full path): ").strip().strip("'\"")
             python = (
-                input(f"项目 Python 路径（回车用 {sys.executable}）：").strip().strip("'\"")
+                input(f"Project's Python interpreter (Enter for {sys.executable}): ")
+                .strip()
+                .strip("'\"")
                 or sys.executable
             )
-            goal_choice = (
-                input(
-                    "目标：1 测试收集 / 2 代码检查 / 3 测试执行（会运行测试体；回车选 1）："
-                ).strip()
+            goal = (
+                input("Goal: 1 test collection / 2 code check / 3 test run (runs tests; Enter = 1): ")
+                .strip()
                 or "1"
             )
-            goals = {"1": "collect_tests", "2": "check_style", "3": "pass_tests"}
-            if goal_choice not in goals:
-                print("无效目标")
+            if goal not in GOALS:
+                print("Unknown goal")
                 continue
-            if (
-                main(prefix + ["init", project, "--python", python, "--goal", goals[goal_choice]])
-                != 0
-            ):
+            if main(prefix + ["init", project, "--python", python, "--goal", GOALS[goal]]) != 0:
                 continue
         if choice not in ("2", "3"):
             continue
         rows = store.list()
         if not rows:
-            print("还没有排查记录")
+            print("No sessions yet")
             continue
         for i, row in enumerate(rows, 1):
             print(f"{i} {row['name']} · {row['goal_status']} · {row['session_id']}")
         try:
-            index = int(input("选择排查编号：")) - 1
+            index = int(input("Session number: ")) - 1
             if index < 0:
                 continue
             session_id = rows[index]["session_id"]
         except (ValueError, IndexError):
-            print("无效选择")
+            print("Invalid choice")
             continue
         while True:
             print(
-                "\n1 按当前目标运行检查\n2 只检查测试收集\n3 只检查代码\n4 打开报告\n5 导入日志\n6 切换目标\n7 声明已修改\n8 导出分享报告\n9 执行完整测试\n10 重跑关联失败测试\n11 查询推荐依据\n0 返回"
+                "\n1 Run the checks for the current goal\n2 Check test collection only\n"
+                "3 Run the code check only\n4 Open the report\n5 Import a log\n6 Change the goal\n"
+                "7 Record a manual change\n8 Export a shareable report\n9 Run the full test suite\n"
+                "10 Re-run the related failing tests\n11 Ask about the advice\n0 Back"
             )
-            action = input("选择：").strip()
+            action = input("Choose: ").strip()
             if action == "0":
                 break
             commands = {
@@ -86,33 +96,31 @@ def menu(store_root):
                 "10": ["run", session_id, "check-failed-tests"],
             }
             if action in ("1", "2"):
-                print("测试收集会执行项目导入；仅检查你信任的项目。")
+                print("Test collection imports project code; only check projects you trust.")
             if action == "5":
-                tool = input("来源 pip_install / pip_check / pytest / pytest_run / ruff：").strip()
+                tool = input("Source: pip_install / pip_check / pytest / pytest_run / ruff: ").strip()
                 if tool not in ("pip_install", "pip_check", "pytest", "pytest_run", "ruff"):
-                    print("不支持的来源")
+                    print("Unsupported source")
                     continue
-                file = input("日志文件路径：").strip().strip("'\"")
+                file = input("Log file path: ").strip().strip("'\"")
                 command = ["import", session_id, "--tool", tool, "--file", file]
             elif action == "6":
-                goal = input("1 恢复测试收集 / 2 通过代码检查 / 3 通过测试运行：").strip()
-                if goal not in ("1", "2", "3"):
+                goal = input("1 Restore test collection / 2 Pass the code check / 3 Pass the tests: ").strip()
+                if goal not in GOALS:
                     continue
-                command = [
-                    "configure",
-                    session_id,
-                    "--goal",
-                    {"1": "collect_tests", "2": "check_style", "3": "pass_tests"}[goal],
-                ]
+                command = ["configure", session_id, "--goal", GOALS[goal]]
             elif action == "7":
                 main(prefix + ["show", session_id])
-                issue = input("输入 issue 开头的问题编号：").strip()
+                issue = input("Issue id (starts with issue-): ").strip()
                 command = ["mark-fixed", session_id, issue]
             elif action == "8":
-                path = input("输出 HTML 路径：").strip().strip("'\"")
+                path = input("Output HTML path: ").strip().strip("'\"")
                 command = ["export", session_id, "--output", path, "--open"]
             elif action == "11":
-                question = input("问题（如：为什么推荐这个行动 / 当前目标有哪些问题）：").strip()
+                question = input(
+                    "Question (e.g. why is this recommended / what is the root cause / "
+                    "what is not verified / which package provides cv2): "
+                ).strip()
                 command = ["ask", session_id, question]
             else:
                 command = commands.get(action)

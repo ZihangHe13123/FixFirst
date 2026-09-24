@@ -1,0 +1,22 @@
+{
+  "origin": "controlled_injection",
+  "grouping": {
+    "exact": {
+      "tp": 15,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "threshold": 0.82
+    },
+    "tfidf": {
+      "tp": 15,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "threshold": 0.82
+    }
+  },
+  "limitations": "\u4e94\u4e2a\u751f\u6210\u9879\u76ee\u5171\u7528\u76f8\u8fd1\u6a21\u677f\uff0c\u4e0d\u662f\u4e94\u4e2a\u72ec\u7acb\u771f\u5b9e\u5f00\u6e90\u9879\u76ee\uff1b\u53ea\u9a8c\u8bc1\u53d7\u63a7\u6d41\u7a0b\u3002"
+}

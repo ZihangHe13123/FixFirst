@@ -19,6 +19,13 @@ TOOLS = (*DEFAULT_CHECKS, "pytest_run")
 
 
 def redact(text: str) -> str:
+    # pytest prints os.environ in tracebacks of environment lookups; never keep its contents.
+    text = re.sub(r"environ\(\{[^\n]*", "environ({<redacted>})", text)
+    text = re.sub(
+        r"""(?i)(['"][\w.-]*(?:key|token|secret|passw(?:or)?d|credential)[\w.-]*['"]\s*:\s*)(['"])[^'"\n]*\2""",
+        r"\1\2[credential]\2",
+        text,
+    )
     text = re.sub(r"(?i)(https?://)[^\s/@:]+:[^\s/@]+@", r"\1[credential]@", text)
     text = re.sub(r"(?i)\b(authorization\s*:\s*(?:bearer|basic)\s+)\S+", r"\1[credential]", text)
     text = re.sub(
@@ -60,7 +67,7 @@ def execute(
     extra_env: dict | None = None,
 ) -> Run:
     if timeout <= 0 or max_output <= 0:
-        raise ValueError("超时与输出上限必须大于零")
+        raise ValueError("Timeout and output limit must be greater than zero")
     run = Run(tool=tool, argv=argv, cwd=cwd, scope=scope, environment_id=environment_id(python))
     start = time.monotonic()
     env = os.environ.copy()
@@ -155,9 +162,13 @@ packages = []
 for d in m.distributions():
     packages.append({'name': d.metadata.get('Name', ''), 'version': d.version,
                      'requires': d.requires or []})
+import sysconfig
+paths = sysconfig.get_paths()
 print(json.dumps({'executable': sys.executable, 'prefix': sys.prefix,
  'python_version': sys.version.split()[0], 'packages': packages,
  'import_distributions': m.packages_distributions(),
+ 'stdlib_modules': sorted(getattr(sys, 'stdlib_module_names', ())),
+ 'paths': {k: paths.get(k, '') for k in ('stdlib', 'platstdlib', 'purelib', 'platlib')},
  'markers': {'implementation_name': sys.implementation.name,
  'implementation_version': implementation_version, 'os_name': os.name,
  'platform_machine': platform.machine(), 'platform_release': platform.release(),
@@ -170,7 +181,7 @@ print(json.dumps({'executable': sys.executable, 'prefix': sys.prefix,
 
 def validate_targets(session: Session, targets: list[str]):
     if not targets or len(targets) > 200 or len(targets) != len(set(targets)):
-        raise ValueError("一次请选择 1–200 个不同的已观察测试节点")
+        raise ValueError("Choose 1-200 distinct, previously observed test nodes")
     known = {
         r.get("nodeid")
         for run in session.runs
@@ -189,23 +200,23 @@ def validate_targets(session: Session, targets: list[str]):
             or node.startswith("-")
             or "::" not in node
         ):
-            raise ValueError("测试节点格式无效；请从已有执行记录复制完整 node ID")
+            raise ValueError("Invalid test node; copy the full node id from an earlier run")
         path = Path(node.split("::", 1)[0])
         if (
             path.is_absolute()
             or not (root / path).resolve().is_relative_to(root)
             or node not in known
         ):
-            raise ValueError("只允许重跑当前项目、当前解释器已观察到的测试节点")
+            raise ValueError("Only nodes observed in this project with the current interpreter can be re-run")
 
 
 def collect(session: Session, tool: str, timeout: float = 30, targets=None) -> Run:
     if tool not in TOOLS:
-        raise ValueError("不支持的检查工具")
+        raise ValueError("Unsupported check")
     targets = list(targets or [])
     if targets:
         if tool != "pytest_run":
-            raise ValueError("只有 pytest_run 支持指定测试节点")
+            raise ValueError("Only pytest_run accepts test nodes")
         validate_targets(session, targets)
     python, cwd = session.target_python, session.project_root
     if tool == "project":
@@ -274,15 +285,21 @@ def collect(session: Session, tool: str, timeout: float = 30, targets=None) -> R
                         if isinstance(record, dict):
                             run.records.append(record)
                     except ValueError:
-                        run.notes.append("结构化测试事件不完整")
+                        run.notes.append("Structured test events were incomplete")
             run.notes.append(
-                "测试收集会执行项目导入和 conftest；与目标项目正常运行一样需信任源码。"
+                "Test collection imports project modules and conftest; only run it on code you trust."
             )
+    elif tool in ("environment", "pip_check"):
+        # Neither needs the project directory; running there would let a project file such
+        # as random.py shadow the standard library and break the check itself.
+        with tempfile.TemporaryDirectory(prefix="fixfirst-env-") as directory:
+            run = execute(argv, directory, tool, scope, python, timeout)
+        run.cwd = cwd
     else:
         run = execute(argv, cwd, tool, scope, python, timeout)
     run.targets = targets
     if tool == "pytest_run":
-        run.notes.append("本次执行测试体与 fixture；目标范围以项目配置及记录的测试节点为准。")
+        run.notes.append("This run executed test bodies and fixtures; scope follows the project configuration and the recorded nodes.")
     if tool == "environment" and run.status == "completed" and run.exit_code == 0:
         try:
             payload = json.loads(run.stdout)
@@ -293,7 +310,7 @@ def collect(session: Session, tool: str, timeout: float = 30, targets=None) -> R
             session.environment["_environment_id"] = run.environment_id
             run.tool_version = payload["python_version"]
         except (ValueError, KeyError):
-            run.notes.append("环境快照格式无法识别")
+            run.notes.append("Environment snapshot format not recognised")
     package = {"pytest": "pytest", "pytest_run": "pytest", "ruff": "ruff", "pip_check": "pip"}.get(
         tool
     )

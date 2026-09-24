@@ -1,0 +1,455 @@
+{
+  "schema_version": 2,
+  "session_id": "session-c74754a89fe9",
+  "goal": "goal:collect_tests",
+  "ontology": {
+    "entities": [
+      "Action",
+      "Cause",
+      "Event",
+      "Evidence",
+      "Fact",
+      "Goal",
+      "Issue",
+      "Rule",
+      "Run",
+      "Source"
+    ],
+    "relations": {
+      "recommends": [
+        "Goal",
+        "Action"
+      ],
+      "has_open_issue": [
+        "Goal",
+        "Issue"
+      ],
+      "evaluated_by": [
+        "Goal",
+        "Run"
+      ],
+      "addresses": [
+        "Action",
+        "Issue"
+      ],
+      "justified_by": [
+        "Action",
+        "Fact"
+      ],
+      "proposed_by": [
+        "Action",
+        "Rule"
+      ],
+      "diagnosed_as": [
+        "Issue",
+        "Cause"
+      ],
+      "suspected_as": [
+        "Issue",
+        "Cause"
+      ],
+      "inferred_from": [
+        "Fact",
+        "Fact"
+      ],
+      "derived_by": [
+        "Fact",
+        "Rule"
+      ],
+      "supported_by": [
+        "Fact",
+        "Evidence"
+      ],
+      "documented_in": [
+        "Fact",
+        "Source"
+      ],
+      "has_event": [
+        "Issue",
+        "Event"
+      ],
+      "cites": [
+        "Event",
+        "Evidence"
+      ],
+      "observed_in": [
+        "Evidence",
+        "Run"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "goal:collect_tests",
+      "type": "Goal",
+      "label": "Restore test collection",
+      "attributes": {
+        "status": "achieved"
+      }
+    },
+    {
+      "id": "run-502a1b69aa46",
+      "type": "Run",
+      "label": "environment · 2026-09-24T01:56:23+00:00",
+      "attributes": {
+        "tool": "environment",
+        "status": "completed",
+        "source": "executed",
+        "scope": "environment",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-7a1f25bc69ec",
+      "type": "Run",
+      "label": "pip_check · 2026-09-24T01:56:23+00:00",
+      "attributes": {
+        "tool": "pip_check",
+        "status": "completed",
+        "source": "executed",
+        "scope": "dependencies:environment",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-5a94f782e834",
+      "type": "Run",
+      "label": "pytest · 2026-09-24T01:56:24+00:00",
+      "attributes": {
+        "tool": "pytest",
+        "status": "completed",
+        "source": "executed",
+        "scope": "collect:project",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-01ff889ff4a9",
+      "type": "Run",
+      "label": "ruff · 2026-09-24T01:56:24+00:00",
+      "attributes": {
+        "tool": "ruff",
+        "status": "completed",
+        "source": "executed",
+        "scope": "lint:project",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-2cc625801a57",
+      "type": "Run",
+      "label": "environment · 2026-09-24T01:56:24+00:00",
+      "attributes": {
+        "tool": "environment",
+        "status": "completed",
+        "source": "executed",
+        "scope": "environment",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-2d386acda7fe",
+      "type": "Run",
+      "label": "pip_check · 2026-09-24T01:56:24+00:00",
+      "attributes": {
+        "tool": "pip_check",
+        "status": "completed",
+        "source": "executed",
+        "scope": "dependencies:environment",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-fe9c5b68fc32",
+      "type": "Run",
+      "label": "pytest · 2026-09-24T01:56:24+00:00",
+      "attributes": {
+        "tool": "pytest",
+        "status": "completed",
+        "source": "executed",
+        "scope": "collect:project",
+        "exit_code": 2,
+        "verified_pass": false,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-c1099f3bac2b",
+      "type": "Run",
+      "label": "ruff · 2026-09-24T01:56:24+00:00",
+      "attributes": {
+        "tool": "ruff",
+        "status": "completed",
+        "source": "executed",
+        "scope": "lint:project",
+        "exit_code": 1,
+        "verified_pass": false,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-43368bd1a0fb",
+      "type": "Run",
+      "label": "ruff · 2026-09-24T01:56:25+00:00",
+      "attributes": {
+        "tool": "ruff",
+        "status": "completed",
+        "source": "executed",
+        "scope": "lint:project",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-620ecbe0bdfa",
+      "type": "Run",
+      "label": "pytest · 2026-09-24T01:56:25+00:00",
+      "attributes": {
+        "tool": "pytest",
+        "status": "completed",
+        "source": "executed",
+        "scope": "collect:project",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "evidence:run-2cc625801a57:stdout:1",
+      "type": "Evidence",
+      "label": "run-2cc625801a57:stdout:1",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-c1099f3bac2b:json:0",
+      "type": "Evidence",
+      "label": "run-c1099f3bac2b:json:0",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-fe9c5b68fc32:probe:1",
+      "type": "Evidence",
+      "label": "run-fe9c5b68fc32:probe:1",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-fe9c5b68fc32:probe:3",
+      "type": "Evidence",
+      "label": "run-fe9c5b68fc32:probe:3",
+      "attributes": {}
+    },
+    {
+      "id": "event-9f45f2c887e1",
+      "type": "Event",
+      "label": "ModuleNotFoundError: No module named 'helper'",
+      "attributes": {
+        "stage": "collect",
+        "location": "workbench/regen/demo/project/test_alpha.py",
+        "kind": "import_failure"
+      }
+    },
+    {
+      "id": "event-d5aad36112a0",
+      "type": "Event",
+      "label": "ModuleNotFoundError: No module named 'helper'",
+      "attributes": {
+        "stage": "collect",
+        "location": "workbench/regen/demo/project/test_beta.py",
+        "kind": "import_failure"
+      }
+    },
+    {
+      "id": "event-a2d6f91060f4",
+      "type": "Event",
+      "label": "Line too long (194 > 88)",
+      "attributes": {
+        "stage": "lint",
+        "location": "<project>/notes.py",
+        "kind": "style_issue"
+      }
+    },
+    {
+      "id": "issue-634d3f08a5f764",
+      "type": "Issue",
+      "label": "ModuleNotFoundError: No module named 'helper'",
+      "attributes": {
+        "status": "resolved",
+        "tool": "pytest",
+        "targets": [],
+        "note": "Passed for real in the same environment and check scope",
+        "diagnosis": "version_incompatibility",
+        "diagnosis_source": "model",
+        "prediction": "version_incompatibility",
+        "prediction_confidence": 1.0
+      }
+    },
+    {
+      "id": "issue-fb343421aed847",
+      "type": "Issue",
+      "label": "Line too long (194 > 88)",
+      "attributes": {
+        "status": "resolved",
+        "tool": "ruff",
+        "targets": [],
+        "note": "Passed for real in the same environment and check scope",
+        "diagnosis": null,
+        "diagnosis_source": null,
+        "prediction": null,
+        "prediction_confidence": null
+      }
+    },
+    {
+      "id": "session:goal:collect_tests",
+      "type": "Fact",
+      "label": "session goal collect_tests",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "session",
+        "predicate": "goal"
+      }
+    },
+    {
+      "id": "session:goal_check:pytest",
+      "type": "Fact",
+      "label": "session goal_check pytest",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "session",
+        "predicate": "goal_check"
+      }
+    },
+    {
+      "id": "environment:snapshot:available",
+      "type": "Fact",
+      "label": "environment snapshot available",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "environment",
+        "predicate": "snapshot"
+      }
+    },
+    {
+      "id": "dist:python:installed_version:3.12.14",
+      "type": "Fact",
+      "label": "dist:python installed_version 3.12.14",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "dist:python",
+        "predicate": "installed_version"
+      }
+    },
+    {
+      "id": "check-pytest",
+      "type": "Action",
+      "label": "Re-run test collection",
+      "attributes": {
+        "priority": 1,
+        "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+        "verification": "Review the new check record and the status changes",
+        "targets": [],
+        "goal_impact": 1,
+        "cause": null
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "dist:python:installed_version:3.12.14",
+      "relation": "supported_by",
+      "target": "evidence:run-2cc625801a57:stdout:1"
+    },
+    {
+      "source": "environment:snapshot:available",
+      "relation": "supported_by",
+      "target": "evidence:run-2cc625801a57:stdout:1"
+    },
+    {
+      "source": "event-9f45f2c887e1",
+      "relation": "cites",
+      "target": "evidence:run-fe9c5b68fc32:probe:1"
+    },
+    {
+      "source": "event-a2d6f91060f4",
+      "relation": "cites",
+      "target": "evidence:run-c1099f3bac2b:json:0"
+    },
+    {
+      "source": "event-d5aad36112a0",
+      "relation": "cites",
+      "target": "evidence:run-fe9c5b68fc32:probe:3"
+    },
+    {
+      "source": "evidence:run-2cc625801a57:stdout:1",
+      "relation": "observed_in",
+      "target": "run-2cc625801a57"
+    },
+    {
+      "source": "evidence:run-c1099f3bac2b:json:0",
+      "relation": "observed_in",
+      "target": "run-c1099f3bac2b"
+    },
+    {
+      "source": "evidence:run-fe9c5b68fc32:probe:1",
+      "relation": "observed_in",
+      "target": "run-fe9c5b68fc32"
+    },
+    {
+      "source": "evidence:run-fe9c5b68fc32:probe:3",
+      "relation": "observed_in",
+      "target": "run-fe9c5b68fc32"
+    },
+    {
+      "source": "goal:collect_tests",
+      "relation": "evaluated_by",
+      "target": "run-620ecbe0bdfa"
+    },
+    {
+      "source": "goal:collect_tests",
+      "relation": "recommends",
+      "target": "check-pytest"
+    },
+    {
+      "source": "issue-634d3f08a5f764",
+      "relation": "has_event",
+      "target": "event-9f45f2c887e1"
+    },
+    {
+      "source": "issue-634d3f08a5f764",
+      "relation": "has_event",
+      "target": "event-d5aad36112a0"
+    },
+    {
+      "source": "issue-fb343421aed847",
+      "relation": "has_event",
+      "target": "event-a2d6f91060f4"
+    }
+  ],
+  "meaning": "Provenance and rule relations; similarity never creates a causal edge."
+}

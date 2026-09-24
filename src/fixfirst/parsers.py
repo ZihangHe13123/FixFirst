@@ -81,7 +81,7 @@ def exception_event(run, text, location="", stage="collect", line=1, stream="std
         )
     return event(
         run,
-        text[-2000:] or "未知测试失败",
+        text[-2000:] or "Unknown test failure",
         stage=stage,
         kind="test_runtime_error" if stage in ("call", "setup", "teardown") else "other_unknown",
         location=location,
@@ -99,7 +99,7 @@ def parse(run: Run) -> list[Event]:
         return [
             event(
                 run,
-                f"检查未完成：{run.status}。{run.stderr[:500]}",
+                f"Check did not complete: {run.status}. {run.stderr[:500]}",
                 stage="tool",
                 kind="tool_failure",
                 stream="stderr",
@@ -113,7 +113,7 @@ def parse(run: Run) -> list[Event]:
             return [
                 event(
                     run,
-                    f"目标环境中未能启动 {missing_tool.group(1)}：{text.strip()[:500]}",
+                    f"Could not start {missing_tool.group(1)} in the target environment: {text.strip()[:500]}",
                     stage="tool",
                     kind="tool_failure",
                     component=missing_tool.group(1),
@@ -130,7 +130,7 @@ def parse(run: Run) -> list[Event]:
         return (
             []
             if run.verified_pass
-            else [event(run, "环境快照未成功取得", stage="tool", kind="tool_failure")]
+            else [event(run, "The environment snapshot could not be taken", stage="tool", kind="tool_failure")]
         )
     if run.tool == "project":
         try:
@@ -144,11 +144,11 @@ def parse(run: Run) -> list[Event]:
                 requirement = row.get("requirement", "Python " + row.get("specifier", ""))
                 item = event(
                     run,
-                    f"{row['source']} 声明 {requirement}；当前 {row['installed']}。"
+                    f"{row['source']} declares {requirement}; installed: {row['installed']}. "
                     + {
-                        "missing": "必需依赖缺失",
-                        "version_mismatch": "版本不满足声明",
-                        "python_mismatch": "Python 不满足声明",
+                        "missing": "Required dependency missing",
+                        "version_mismatch": "Installed version does not satisfy the declaration",
+                        "python_mismatch": "Python version does not satisfy the declaration",
                     }[state],
                     stage="dependency",
                     kind="environment_mismatch"
@@ -181,7 +181,7 @@ def parse(run: Run) -> list[Event]:
             run.notes.extend(payload.get("notes", []))
             return results
         except (ValueError, KeyError, TypeError):
-            return [event(run, "项目声明快照无法解析", stage="tool", kind="tool_failure")]
+            return [event(run, "The project declaration snapshot could not be parsed", stage="tool", kind="tool_failure")]
     if run.tool == "ruff":
         try:
             rows = json.loads(run.stdout)
@@ -217,7 +217,7 @@ def parse(run: Run) -> list[Event]:
             return [
                 event(
                     run,
-                    "Ruff 输出无法识别或工具失败：" + text[:1000],
+                    "Ruff output was not recognised or the tool failed: " + text[:1000],
                     stage="tool",
                     kind="tool_failure",
                 )
@@ -247,7 +247,7 @@ def parse(run: Run) -> list[Event]:
                         )
                     )
         return results or [
-            event(run, text[:1000] or "依赖检查结果未知", stage="tool", kind="other_unknown")
+            event(run, text[:1000] or "Dependency check result unknown", stage="tool", kind="other_unknown")
         ]
     if run.tool == "pip_install":
         results = []
@@ -278,7 +278,7 @@ def parse(run: Run) -> list[Event]:
         return results or [
             event(
                 run,
-                "安装日志没有可识别的失败；不据此证明安装成功",
+                "No recognisable failure in the installation log; this does not prove installation succeeded",
                 stage="install",
                 kind="other_unknown",
             )
@@ -357,7 +357,7 @@ def parse(run: Run) -> list[Event]:
                 return [
                     event(
                         run,
-                        "测试未提供实际通过的节点；全部跳过或标记为预期失败不等于修复",
+                        "No test actually passed; skipping everything or marking it as expected to fail is not a fix",
                         stage="verification",
                         kind="other_unknown",
                     )
@@ -380,13 +380,13 @@ def parse(run: Run) -> list[Event]:
             if result:
                 return result
         descriptions = {
-            2: "收集错误或中断",
-            3: "pytest 内部错误",
-            4: "pytest 使用错误",
-            5: "没有收集到测试",
+            2: "Collection error or interruption",
+            3: "pytest internal error",
+            4: "pytest usage error",
+            5: "No tests were collected",
         }
         message = descriptions.get(
-            run.exit_code, "缺少可验证的测试完成记录；可能全部跳过或执行未覆盖"
+            run.exit_code, "No verifiable completion record; tests may all have been skipped or not run"
         )
-        return [event(run, message + "；请查看原始输出", stage="tool", kind="tool_failure")]
-    raise ValueError("不支持的来源")
+        return [event(run, message + "; see the original output", stage="tool", kind="tool_failure")]
+    raise ValueError("Unsupported source")

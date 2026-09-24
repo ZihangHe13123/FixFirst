@@ -113,7 +113,7 @@ def test_new_interpreter_invalidates_old_snapshot(tmp_path):
     from fixfirst.reasoning import infer_and_plan
 
     infer_and_plan(session)
-    assert not any(f.fact_id == "environment:available" for f in session.facts)
+    assert not any(f.fact_id == "environment:snapshot:available" for f in session.facts)
 
 
 def test_argv_metacharacters_are_not_shell(tmp_path):
@@ -138,4 +138,4 @@ def test_store_conflicting_writer_is_rejected(tmp_path):
     with store.lock(session.session_id):
         result = cli(store.root, "configure", session.session_id, "--goal", "check_style")
         assert result.returncode == 2
-        assert "正在运行" in result.stderr
+        assert "already running" in result.stderr

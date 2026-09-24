@@ -3,7 +3,7 @@ import sys
 
 import pytest
 
-from fixfirst.classification import predict_tree
+from fixfirst.classification import validate_model
 from fixfirst.knowledge_graph import build_graph, query_graph, RELATIONS
 from fixfirst.models import Run
 from fixfirst.parsers import parse
@@ -216,16 +216,10 @@ def test_cli_execution_targets_and_graph(tmp_path):
     )
 
 
-def test_legacy_model_remains_loadable(tmp_path):
-    write_test_source(tmp_path)
-    session = create_session(tmp_path, sys.executable, goal="pass_tests")
-    scan(session, ["pytest_run"])
-    from pathlib import Path
-
-    model = json.loads(
-        (Path(__file__).parents[1] / "examples/evaluation/decision_tree.json").read_text()
-    )
-    assert predict_tree(session.issues[0], model) in model["classes"]
+def test_category_models_from_v03_are_rejected():
+    # v0.3 trees learned the parser's own category (label leakage); they must be retrained.
+    with pytest.raises(ValueError, match="retrain"):
+        validate_model({"schema_version": 2, "feature_names": [], "classes": [], "nodes": []})
 
 
 def test_old_environment_failure_does_not_override_current_pass(tmp_path):

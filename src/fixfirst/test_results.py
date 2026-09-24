@@ -73,4 +73,4 @@ def summarize_tests(run: Run):
     run.passed_nodes = sorted(passed) if coverage else []
     run.verified_pass = coverage and run.exit_code == 0 and bool(passed) and not failed
     if skipped or xfailed:
-        run.notes.append("跳过、xfail 和非严格 xpass 不提供旧失败已经解决的证据。")
+        run.notes.append("Skipped, xfail and non-strict xpass results do not prove that an earlier failure is fixed.")

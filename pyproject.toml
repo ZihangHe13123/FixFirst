@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fixfirst-local"
-version = "0.3.0"
+version = "0.4.0"
 description = "Evidence-based local Python troubleshooting assistant"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -18,7 +18,7 @@ semantic = ["sentence-transformers>=3,<6"]
 fixfirst = "fixfirst.cli:main"
 
 [tool.setuptools.package-data]
-fixfirst = ["templates/*"]
+fixfirst = ["templates/*", "knowledge/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

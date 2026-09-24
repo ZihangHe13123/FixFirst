@@ -1,0 +1,22 @@
+{
+  "origin": "controlled_execution_injection",
+  "grouping": {
+    "exact": {
+      "tp": 5,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "threshold": 0.82
+    },
+    "tfidf": {
+      "tp": 5,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "threshold": 0.82
+    }
+  },
+  "limitations": "\u8d2d\u7269\u8f66\u6a21\u677f\u7684\u53d7\u63a7\u6267\u884c\u6545\u969c\uff1b\u4e94\u4e2a\u9879\u76ee\u53d8\u4f53\u7ed3\u6784\u76f8\u8fd1\uff0c\u4e0d\u662f\u81ea\u7136\u5f00\u6e90\u6545\u969c\u3002"
+}

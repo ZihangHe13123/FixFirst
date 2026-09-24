@@ -9,9 +9,8 @@ from fixfirst.historical_cases import verify_assets
 from fixfirst.models import Event, Run
 from fixfirst.project import read_project
 from fixfirst.service import create_session, scan
-from fixfirst.classification import classify
+from fixfirst.evidence import FEATURE_NAMES
 from fixfirst.reasoning import infer_and_plan
-from pathlib import Path
 
 
 @pytest.mark.parametrize(
@@ -131,17 +130,63 @@ def test_historical_assets_reject_tampered_files(tmp_path):
         verify_assets(tmp_path)
 
 
-def test_model_disagreement_does_not_drive_wrong_import_action(tmp_path):
+def single_leaf_model(tmp_path, label):
+    path = tmp_path / "model.json"
+    model = {
+        "schema_version": 3,
+        "task": "root_cause",
+        "feature_names": FEATURE_NAMES,
+        "classes": [label],
+        "nodes": [{"left": -1, "right": -1, "feature": -2, "threshold": -2.0, "values": [1.0]}],
+    }
+    path.write_text(json.dumps(model))
+    return str(path)
+
+
+def test_classifier_suggestion_never_overrides_rule_diagnosis(tmp_path):
+    (tmp_path / "test_app.py").write_text("def test_app():\n    assert 1 == 2\n")
+    session = create_session(tmp_path, sys.executable, goal="pass_tests")
+    scan(session, ["pytest_run"])
+    session.model_path = single_leaf_model(tmp_path, "missing_dependency")
+    infer_and_plan(session)
+    issue = session.issues[0]
+    assert issue.prediction == "missing_dependency"
+    assert (issue.diagnosis, issue.diagnosis_source, issue.diagnosis_rule) == (
+        "code_defect",
+        "rule",
+        "D40",
+    )
+    assert "rule D40" in issue.prediction_note
+    assert session.actions[0].action_id == "review-test_assertion"
+    assert not any(a.cause == "missing_dependency" for a in session.actions)
+
+
+def test_classifier_suggestion_fills_gap_as_lower_ranked_hypothesis(tmp_path):
     (tmp_path / "test_app.py").write_text(
         "class InvalidVersion(Exception): pass\ndef test_app():\n    raise InvalidVersion('bad version')\n"
     )
     session = create_session(tmp_path, sys.executable, goal="pass_tests")
     scan(session, ["pytest_run"])
-    model = Path(__file__).parents[1] / "examples/execution-evaluation/decision_tree.json"
-    classify(session.issues, str(model))
+    session.model_path = single_leaf_model(tmp_path, "version_incompatibility")
     infer_and_plan(session)
     issue = session.issues[0]
-    assert issue.prediction == "import_failure" and issue.category == "test_runtime_error"
-    assert "模型候选与规则证据不同" in issue.prediction_note
-    assert any(a.action_id == "review-test_runtime_error" for a in session.actions)
-    assert not any(a.action_id == "review-import" for a in session.actions)
+    assert (issue.diagnosis, issue.diagnosis_source) == ("version_incompatibility", "model")
+    actions = {a.action_id: a for a in session.actions}
+    consider = actions["consider-version_incompatibility"]
+    assert consider.evidence_rank == 0
+    assert all(f.status == "hypothesis" for f in session.facts if f.fact_id in consider.reason_refs)
+    assert actions["review-test_runtime_error"].priority < consider.priority
+    session.use_classifier = False
+    infer_and_plan(session)
+    assert session.issues[0].diagnosis is None
+
+
+def test_a_check_that_could_not_run_gets_no_root_cause(tmp_path):
+    (tmp_path / "test_app.py").write_text("def test_app():\n    assert True\n")
+    session = create_session(tmp_path, sys.executable, goal="pass_tests")
+    session.target_python = str(tmp_path / "missing-python")
+    scan(session, ["pytest_run"])
+    issue = session.issues[0]
+    assert issue.kind == "tool_failure"
+    assert issue.diagnosis is None and issue.prediction is None
+    assert not any(a.action_id.startswith("consider-") for a in session.actions)

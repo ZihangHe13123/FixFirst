@@ -1,16 +1,19 @@
 {
-  "schema_version": 1,
-  "session_id": "session-5c3a0bb025e9",
+  "schema_version": 2,
+  "session_id": "session-61eb469d63d5",
   "goal": "goal:pass_tests",
   "ontology": {
     "entities": [
       "Action",
+      "Cause",
       "Event",
       "Evidence",
       "Fact",
       "Goal",
       "Issue",
-      "Run"
+      "Rule",
+      "Run",
+      "Source"
     ],
     "relations": {
       "recommends": [
@@ -33,13 +36,33 @@
         "Action",
         "Fact"
       ],
+      "proposed_by": [
+        "Action",
+        "Rule"
+      ],
+      "diagnosed_as": [
+        "Issue",
+        "Cause"
+      ],
+      "suspected_as": [
+        "Issue",
+        "Cause"
+      ],
       "inferred_from": [
         "Fact",
         "Fact"
       ],
+      "derived_by": [
+        "Fact",
+        "Rule"
+      ],
       "supported_by": [
         "Fact",
         "Evidence"
+      ],
+      "documented_in": [
+        "Fact",
+        "Source"
       ],
       "has_event": [
         "Issue",
@@ -59,15 +82,15 @@
     {
       "id": "goal:pass_tests",
       "type": "Goal",
-      "label": "通过测试运行",
+      "label": "Pass the test suite",
       "attributes": {
         "status": "achieved"
       }
     },
     {
-      "id": "run-e8ba2fa4c5eb",
+      "id": "run-8b34090f5a55",
       "type": "Run",
-      "label": "environment · 2026-09-08T02:50:11+00:00",
+      "label": "environment · 2026-09-24T01:59:59+00:00",
       "attributes": {
         "tool": "environment",
         "status": "completed",
@@ -80,9 +103,9 @@
       }
     },
     {
-      "id": "run-f124efe169b5",
+      "id": "run-ae6122f45452",
       "type": "Run",
-      "label": "pip_check · 2026-09-08T02:50:11+00:00",
+      "label": "pip_check · 2026-09-24T01:59:59+00:00",
       "attributes": {
         "tool": "pip_check",
         "status": "completed",
@@ -95,9 +118,9 @@
       }
     },
     {
-      "id": "run-c991c5fa12fa",
+      "id": "run-48bd8b13e068",
       "type": "Run",
-      "label": "pytest_run · 2026-09-08T02:50:11+00:00",
+      "label": "pytest_run · 2026-09-24T01:59:59+00:00",
       "attributes": {
         "tool": "pytest_run",
         "status": "completed",
@@ -117,9 +140,9 @@
       }
     },
     {
-      "id": "run-f17fe195bdf7",
+      "id": "run-49cbb325633a",
       "type": "Run",
-      "label": "project · 2026-09-08T02:50:12+00:00",
+      "label": "project · 2026-09-24T01:59:59+00:00",
       "attributes": {
         "tool": "project",
         "status": "completed",
@@ -132,9 +155,9 @@
       }
     },
     {
-      "id": "run-99341e550a03",
+      "id": "run-131908fbcb8e",
       "type": "Run",
-      "label": "environment · 2026-09-08T02:50:26+00:00",
+      "label": "environment · 2026-09-24T02:00:00+00:00",
       "attributes": {
         "tool": "environment",
         "status": "completed",
@@ -147,9 +170,9 @@
       }
     },
     {
-      "id": "run-f485856ad66c",
+      "id": "run-67bf606b4519",
       "type": "Run",
-      "label": "pip_check · 2026-09-08T02:50:26+00:00",
+      "label": "pip_check · 2026-09-24T02:00:00+00:00",
       "attributes": {
         "tool": "pip_check",
         "status": "completed",
@@ -162,9 +185,9 @@
       }
     },
     {
-      "id": "run-74c5b9450523",
+      "id": "run-98e84a55d17f",
       "type": "Run",
-      "label": "pytest_run · 2026-09-08T02:50:26+00:00",
+      "label": "pytest_run · 2026-09-24T02:00:00+00:00",
       "attributes": {
         "tool": "pytest_run",
         "status": "completed",
@@ -184,9 +207,9 @@
       }
     },
     {
-      "id": "run-aad47c27fca1",
+      "id": "run-a465e78dd4c3",
       "type": "Run",
-      "label": "project · 2026-09-08T02:50:26+00:00",
+      "label": "project · 2026-09-24T02:00:00+00:00",
       "attributes": {
         "tool": "project",
         "status": "completed",
@@ -199,25 +222,37 @@
       }
     },
     {
-      "id": "evidence:run-99341e550a03:stdout:1",
+      "id": "evidence:run-131908fbcb8e:stdout:1",
       "type": "Evidence",
-      "label": "run-99341e550a03:stdout:1",
+      "label": "run-131908fbcb8e:stdout:1",
       "attributes": {}
     },
     {
-      "id": "evidence:run-c991c5fa12fa:probe:2",
+      "id": "evidence:run-48bd8b13e068:probe:2",
       "type": "Evidence",
-      "label": "run-c991c5fa12fa:probe:2",
+      "label": "run-48bd8b13e068:probe:2",
       "attributes": {}
     },
     {
-      "id": "evidence:run-c991c5fa12fa:probe:3",
+      "id": "evidence:run-48bd8b13e068:probe:3",
       "type": "Evidence",
-      "label": "run-c991c5fa12fa:probe:3",
+      "label": "run-48bd8b13e068:probe:3",
       "attributes": {}
     },
     {
-      "id": "event-767c6c6c8685",
+      "id": "evidence:run-a465e78dd4c3:declaration:0",
+      "type": "Evidence",
+      "label": "run-a465e78dd4c3:declaration:0",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-a465e78dd4c3:stdout:1",
+      "type": "Evidence",
+      "label": "run-a465e78dd4c3:stdout:1",
+      "attributes": {}
+    },
+    {
+      "id": "event-4747ea6f75db",
       "type": "Event",
       "label": "AssertionError: An earlier prerelease should match the exclusive prerelease bound\nassert False",
       "attributes": {
@@ -229,74 +264,155 @@
     {
       "id": "issue-73804767a03c4f",
       "type": "Issue",
-      "label": "断言失败 · test_regression.py::test_prerelease_is_accepted",
+      "label": "Assertion failed · test_regression.py::test_prerelease_is_accepted",
       "attributes": {
         "status": "resolved",
         "tool": "pytest_run",
         "targets": [
           "test_regression.py::test_prerelease_is_accepted"
         ],
-        "note": "同一环境中的全部关联测试节点已执行通过"
+        "note": "All related test nodes passed in the same environment",
+        "diagnosis": "code_defect",
+        "diagnosis_source": "rule",
+        "prediction": "code_defect",
+        "prediction_confidence": 1.0
       }
     },
     {
-      "id": "environment:available",
+      "id": "session:goal:pass_tests",
       "type": "Fact",
-      "label": "snapshot = available",
+      "label": "session goal pass_tests",
       "attributes": {
         "rule": null,
         "status": "observed",
-        "subject": "environment"
+        "subject": "session",
+        "predicate": "goal"
+      }
+    },
+    {
+      "id": "session:goal_check:pytest_run",
+      "type": "Fact",
+      "label": "session goal_check pytest_run",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "session",
+        "predicate": "goal_check"
+      }
+    },
+    {
+      "id": "environment:snapshot:available",
+      "type": "Fact",
+      "label": "environment snapshot available",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "environment",
+        "predicate": "snapshot"
+      }
+    },
+    {
+      "id": "project:declarations:available",
+      "type": "Fact",
+      "label": "project declarations available",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "project",
+        "predicate": "declarations"
+      }
+    },
+    {
+      "id": "dist:packaging:declared_in:requirements.txt:1",
+      "type": "Fact",
+      "label": "dist:packaging declared_in requirements.txt:1",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "dist:packaging",
+        "predicate": "declared_in"
+      }
+    },
+    {
+      "id": "dist:python:installed_version:3.12.14",
+      "type": "Fact",
+      "label": "dist:python installed_version 3.12.14",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "dist:python",
+        "predicate": "installed_version"
       }
     },
     {
       "id": "check-pytest_run",
       "type": "Action",
-      "label": "验证完整测试运行",
+      "label": "Run the full test suite",
       "attributes": {
         "priority": 1,
-        "explanation": "只更新本次检查覆盖的问题；其他问题保留。若未做改动且没有新证据，无需反复运行同一检查。",
-        "verification": "查看新的检查记录和状态变化",
+        "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+        "verification": "Review the new check record and the status changes",
         "targets": [],
-        "goal_impact": 1
+        "goal_impact": 1,
+        "cause": null
       }
     }
   ],
   "edges": [
     {
-      "source": "environment:available",
+      "source": "dist:packaging:declared_in:requirements.txt:1",
       "relation": "supported_by",
-      "target": "evidence:run-99341e550a03:stdout:1"
+      "target": "evidence:run-a465e78dd4c3:declaration:0"
     },
     {
-      "source": "event-767c6c6c8685",
+      "source": "dist:python:installed_version:3.12.14",
+      "relation": "supported_by",
+      "target": "evidence:run-131908fbcb8e:stdout:1"
+    },
+    {
+      "source": "environment:snapshot:available",
+      "relation": "supported_by",
+      "target": "evidence:run-131908fbcb8e:stdout:1"
+    },
+    {
+      "source": "event-4747ea6f75db",
       "relation": "cites",
-      "target": "evidence:run-c991c5fa12fa:probe:2"
+      "target": "evidence:run-48bd8b13e068:probe:2"
     },
     {
-      "source": "event-767c6c6c8685",
+      "source": "event-4747ea6f75db",
       "relation": "cites",
-      "target": "evidence:run-c991c5fa12fa:probe:3"
+      "target": "evidence:run-48bd8b13e068:probe:3"
     },
     {
-      "source": "evidence:run-99341e550a03:stdout:1",
+      "source": "evidence:run-131908fbcb8e:stdout:1",
       "relation": "observed_in",
-      "target": "run-99341e550a03"
+      "target": "run-131908fbcb8e"
     },
     {
-      "source": "evidence:run-c991c5fa12fa:probe:2",
+      "source": "evidence:run-48bd8b13e068:probe:2",
       "relation": "observed_in",
-      "target": "run-c991c5fa12fa"
+      "target": "run-48bd8b13e068"
     },
     {
-      "source": "evidence:run-c991c5fa12fa:probe:3",
+      "source": "evidence:run-48bd8b13e068:probe:3",
       "relation": "observed_in",
-      "target": "run-c991c5fa12fa"
+      "target": "run-48bd8b13e068"
+    },
+    {
+      "source": "evidence:run-a465e78dd4c3:declaration:0",
+      "relation": "observed_in",
+      "target": "run-a465e78dd4c3"
+    },
+    {
+      "source": "evidence:run-a465e78dd4c3:stdout:1",
+      "relation": "observed_in",
+      "target": "run-a465e78dd4c3"
     },
     {
       "source": "goal:pass_tests",
       "relation": "evaluated_by",
-      "target": "run-74c5b9450523"
+      "target": "run-98e84a55d17f"
     },
     {
       "source": "goal:pass_tests",
@@ -306,8 +422,13 @@
     {
       "source": "issue-73804767a03c4f",
       "relation": "has_event",
-      "target": "event-767c6c6c8685"
+      "target": "event-4747ea6f75db"
+    },
+    {
+      "source": "project:declarations:available",
+      "relation": "supported_by",
+      "target": "evidence:run-a465e78dd4c3:stdout:1"
     }
   ],
-  "meaning": "来源与规则关系；不从文本相似度生成因果边。"
+  "meaning": "Provenance and rule relations; similarity never creates a causal edge."
 }

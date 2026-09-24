@@ -78,22 +78,23 @@ def test_pip_pass_can_miss_project_dependency_and_advice_has_provenance(tmp_path
     assert next(i for i in session.issues if i.issue_id == issue.issue_id).status != "resolved"
     render(session, tmp_path / "store", tmp_path / "report.html", public=True)
     text = (tmp_path / "report.html").read_text()
-    assert "项目依赖声明" in text and "满足声明" in text
+    assert "Project dependency declarations" in text and "Satisfied" in text
     assert str(tmp_path) not in text
 
 
-def test_missing_import_advice_uses_declaration_and_not_stale_snapshot(tmp_path):
+def test_declared_missing_import_is_diagnosed_and_stale_snapshot_is_not_used(tmp_path):
     (tmp_path / "requirements.txt").write_text("missing_demo>=2\n")
     (tmp_path / "test_app.py").write_text("import missing_demo\n")
     session = create_session(tmp_path, sys.executable)
     scan(session, ["pytest", "project"])
-    action = next(a for a in session.actions if a.action_id == "review-import")
+    issue = next(i for i in session.issues if i.tool == "pytest")
+    assert (issue.diagnosis, issue.diagnosis_rule) == ("missing_dependency", "D20")
+    action = next(a for a in session.actions if a.action_id == "install-missing_demo")
     assert "requirements.txt:1" in action.explanation
-    assert "同名声明线索" in action.explanation
-    assert any(f.predicate == "declaration" for f in session.facts)
+    assert any(f.predicate == "declared_in" for f in session.facts)
     scan(session, ["environment"])
     infer_and_plan(session)
-    assert not any(f.predicate == "declaration" for f in session.facts)
+    assert not any(f.predicate == "declared_in" for f in session.facts)
     assert any(a.action_id == "inspect-project" for a in session.actions)
 
 

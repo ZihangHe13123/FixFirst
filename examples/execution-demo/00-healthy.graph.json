@@ -1,16 +1,19 @@
 {
-  "schema_version": 1,
-  "session_id": "session-01a484ffa8b2",
+  "schema_version": 2,
+  "session_id": "session-f49455d1f031",
   "goal": "goal:pass_tests",
   "ontology": {
     "entities": [
       "Action",
+      "Cause",
       "Event",
       "Evidence",
       "Fact",
       "Goal",
       "Issue",
-      "Run"
+      "Rule",
+      "Run",
+      "Source"
     ],
     "relations": {
       "recommends": [
@@ -33,13 +36,33 @@
         "Action",
         "Fact"
       ],
+      "proposed_by": [
+        "Action",
+        "Rule"
+      ],
+      "diagnosed_as": [
+        "Issue",
+        "Cause"
+      ],
+      "suspected_as": [
+        "Issue",
+        "Cause"
+      ],
       "inferred_from": [
         "Fact",
         "Fact"
       ],
+      "derived_by": [
+        "Fact",
+        "Rule"
+      ],
       "supported_by": [
         "Fact",
         "Evidence"
+      ],
+      "documented_in": [
+        "Fact",
+        "Source"
       ],
       "has_event": [
         "Issue",
@@ -59,15 +82,15 @@
     {
       "id": "goal:pass_tests",
       "type": "Goal",
-      "label": "通过测试运行",
+      "label": "Pass the test suite",
       "attributes": {
         "status": "achieved"
       }
     },
     {
-      "id": "run-1c1e47f002ac",
+      "id": "run-f42a649cebf9",
       "type": "Run",
-      "label": "pytest · 2026-09-08T02:05:03+00:00",
+      "label": "pytest · 2026-09-24T01:56:25+00:00",
       "attributes": {
         "tool": "pytest",
         "status": "completed",
@@ -80,9 +103,9 @@
       }
     },
     {
-      "id": "run-b3849e4e5542",
+      "id": "run-808cae86eb6c",
       "type": "Run",
-      "label": "pytest_run · 2026-09-08T02:05:03+00:00",
+      "label": "pytest_run · 2026-09-24T01:56:25+00:00",
       "attributes": {
         "tool": "pytest_run",
         "status": "completed",
@@ -102,15 +125,38 @@
       }
     },
     {
+      "id": "session:goal:pass_tests",
+      "type": "Fact",
+      "label": "session goal pass_tests",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "session",
+        "predicate": "goal"
+      }
+    },
+    {
+      "id": "session:goal_check:pytest_run",
+      "type": "Fact",
+      "label": "session goal_check pytest_run",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "session",
+        "predicate": "goal_check"
+      }
+    },
+    {
       "id": "check-pytest_run",
       "type": "Action",
-      "label": "验证完整测试运行",
+      "label": "Run the full test suite",
       "attributes": {
         "priority": 1,
-        "explanation": "只更新本次检查覆盖的问题；其他问题保留。若未做改动且没有新证据，无需反复运行同一检查。",
-        "verification": "查看新的检查记录和状态变化",
+        "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+        "verification": "Review the new check record and the status changes",
         "targets": [],
-        "goal_impact": 1
+        "goal_impact": 1,
+        "cause": null
       }
     }
   ],
@@ -118,7 +164,7 @@
     {
       "source": "goal:pass_tests",
       "relation": "evaluated_by",
-      "target": "run-b3849e4e5542"
+      "target": "run-808cae86eb6c"
     },
     {
       "source": "goal:pass_tests",
@@ -126,5 +172,5 @@
       "target": "check-pytest_run"
     }
   ],
-  "meaning": "来源与规则关系；不从文本相似度生成因果边。"
+  "meaning": "Provenance and rule relations; similarity never creates a causal edge."
 }

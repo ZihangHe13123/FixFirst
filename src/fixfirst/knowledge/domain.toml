@@ -1,0 +1,431 @@
+# FixFirst domain knowledge base.
+#
+# Curated, source-attributed facts that the rule base queries. Each entry cites the
+# upstream release notes it comes from. Version numbers state the first release in which
+# the name is gone; rules compare them with the version observed in the target interpreter.
+# Coverage is intentionally partial: anything missing here falls back to evidence-only
+# rules and the learned classifier.
+
+[meta]
+title = "FixFirst Python troubleshooting knowledge"
+updated = "2026-09-24"
+
+# --------------------------------------------------------------------------------------
+# Root causes (diagnosis classes)
+# --------------------------------------------------------------------------------------
+
+[causes.missing_dependency]
+label = "Missing third-party dependency"
+description = "The code imports a third-party distribution that is not installed in the selected interpreter."
+remedy = "Install the distribution that provides the import name into the target interpreter, and declare it in the project."
+
+[causes.local_module]
+label = "Local module or path problem"
+description = "A project module cannot be resolved: it was renamed or moved, the src layout is not on the path, a circular import, or a project file shadows a library or standard-library module."
+remedy = "Fix the project's module layout or import path; rename files that shadow other modules."
+
+[causes.version_incompatibility]
+label = "Version incompatibility"
+description = "The installed library or Python version no longer provides an API the code uses (removed module, attribute, function or keyword argument)."
+remedy = "Either update the code to the replacement API or pin the dependency / Python version the code was written for."
+
+[causes.config_missing]
+label = "Missing configuration"
+description = "A required environment variable, settings key or configuration file is not available at run time."
+remedy = "Provide the configuration value (environment variable or config file) described by the project; never commit secrets."
+
+[causes.code_defect]
+label = "Defect in project code or tests"
+description = "The failure comes from project logic: a wrong assertion, a bug in a function, a typo or a syntax error."
+remedy = "Inspect the failing location and the test expectation, fix the code, then re-run the affected tests."
+
+# --------------------------------------------------------------------------------------
+# Exception types and the causes they are commonly associated with (for explanations)
+# --------------------------------------------------------------------------------------
+
+[[exception]]
+type = "ModuleNotFoundError"
+candidates = ["missing_dependency", "local_module", "version_incompatibility"]
+hint = "The import system could not find the module. It may be uninstalled, a moved project module, or a module removed from the standard library."
+
+[[exception]]
+type = "ImportError"
+candidates = ["version_incompatibility", "local_module", "code_defect"]
+hint = "The module was found but a name could not be imported: removed API, circular import, or a misspelt name."
+
+[[exception]]
+type = "AttributeError"
+candidates = ["version_incompatibility", "local_module", "code_defect", "config_missing"]
+hint = "An attribute is missing. Library API removals, shadowed modules, typos and unexpected None values all look like this."
+
+[[exception]]
+type = "KeyError"
+candidates = ["config_missing", "code_defect"]
+hint = "A lookup failed. When the mapping is os.environ, a configuration value is missing; otherwise it is usually a data or logic error."
+
+[[exception]]
+type = "FileNotFoundError"
+candidates = ["config_missing", "code_defect"]
+hint = "A path does not exist. Missing settings files are configuration problems; other paths often indicate a code or data defect."
+
+[[exception]]
+type = "TypeError"
+candidates = ["code_defect", "version_incompatibility"]
+hint = "A call used the wrong arguments. An unexpected keyword for a library call often means the library API changed."
+
+[[exception]]
+type = "AssertionError"
+candidates = ["code_defect"]
+hint = "A test expectation did not hold."
+
+# --------------------------------------------------------------------------------------
+# Import names that differ from the distribution (PyPI project) name
+# Source: the linked PyPI project pages; lists the most frequently confused names.
+# --------------------------------------------------------------------------------------
+
+[import_names]
+yaml = "PyYAML"
+cv2 = "opencv-python"
+sklearn = "scikit-learn"
+skimage = "scikit-image"
+PIL = "Pillow"
+bs4 = "beautifulsoup4"
+dateutil = "python-dateutil"
+dotenv = "python-dotenv"
+jwt = "PyJWT"
+attr = "attrs"
+serial = "pyserial"
+usb = "pyusb"
+Crypto = "pycryptodome"
+docx = "python-docx"
+pptx = "python-pptx"
+fitz = "PyMuPDF"
+OpenSSL = "pyOpenSSL"
+git = "GitPython"
+MySQLdb = "mysqlclient"
+magic = "python-magic"
+zmq = "pyzmq"
+jose = "python-jose"
+multipart = "python-multipart"
+slugify = "python-slugify"
+telegram = "python-telegram-bot"
+gi = "PyGObject"
+wx = "wxPython"
+faiss = "faiss-cpu"
+# Same import and distribution name, listed so that rules can recognise them as third-party.
+requests = "requests"
+numpy = "numpy"
+pandas = "pandas"
+scipy = "scipy"
+flask = "Flask"
+werkzeug = "Werkzeug"
+jinja2 = "Jinja2"
+markupsafe = "MarkupSafe"
+click = "click"
+pydantic = "pydantic"
+packaging = "packaging"
+httpx = "httpx"
+matplotlib = "matplotlib"
+torch = "torch"
+
+# --------------------------------------------------------------------------------------
+# Removed modules, APIs and keyword arguments
+# kind = module | api (module.name) | attribute (distinctive attribute name on any object)
+# | kwarg; "python" is the interpreter itself.
+# --------------------------------------------------------------------------------------
+
+[[removed]]
+kind = "module"
+names = ["imp"]
+distribution = "python"
+version = "3.12"
+replacement = "importlib (for example importlib.util / importlib.reload)"
+source = "python-3.12"
+
+[[removed]]
+kind = "module"
+names = ["distutils"]
+distribution = "python"
+version = "3.12"
+replacement = "setuptools, sysconfig or packaging"
+source = "python-3.12"
+
+[[removed]]
+kind = "module"
+names = ["asyncore", "asynchat"]
+distribution = "python"
+version = "3.12"
+replacement = "asyncio"
+source = "python-3.12"
+
+[[removed]]
+kind = "module"
+names = ["smtpd"]
+distribution = "python"
+version = "3.12"
+replacement = "the aiosmtpd package"
+source = "python-3.12"
+
+[[removed]]
+kind = "module"
+names = ["aifc", "audioop", "cgi", "cgitb", "chunk", "crypt", "imghdr", "mailcap", "msilib", "nis", "nntplib", "ossaudiodev", "pipes", "sndhdr", "spwd", "sunau", "telnetlib", "uu", "xdrlib"]
+distribution = "python"
+version = "3.13"
+replacement = "the alternatives listed in PEP 594"
+source = "pep-594"
+
+[[removed]]
+kind = "module"
+names = ["lib2to3"]
+distribution = "python"
+version = "3.13"
+replacement = "a maintained parser such as LibCST or parso"
+source = "python-3.13"
+
+[[removed]]
+kind = "api"
+module = "collections"
+names = ["Mapping", "MutableMapping", "Sequence", "MutableSequence", "Iterable", "Iterator", "Callable", "Set", "MutableSet", "Hashable", "Sized", "Container", "Generator", "Awaitable", "Coroutine", "AsyncIterable", "AsyncIterator", "KeysView", "ItemsView", "ValuesView", "MappingView", "ByteString", "Collection", "Reversible"]
+distribution = "python"
+version = "3.10"
+replacement = "the same names from collections.abc"
+source = "python-3.10"
+
+[[removed]]
+kind = "api"
+module = "asyncio"
+names = ["coroutine"]
+distribution = "python"
+version = "3.11"
+replacement = "native async def coroutines"
+source = "python-3.11"
+
+[[removed]]
+kind = "attribute"
+names = ["assertEquals", "assertNotEquals", "assertAlmostEquals", "assertNotAlmostEquals", "assert_", "failUnless", "failIf", "failUnlessEqual", "failIfEqual", "failUnlessRaises", "assertRegexpMatches", "assertRaisesRegexp", "assertNotRegexpMatches", "assertDictContainsSubset"]
+distribution = "python"
+version = "3.12"
+replacement = "the current unittest names (assertEqual, assertTrue, assertRegex, ...)"
+source = "python-3.12"
+
+[[removed]]
+kind = "api"
+module = "numpy"
+names = ["float", "int", "object", "str", "complex", "long", "unicode"]
+distribution = "numpy"
+version = "1.24"
+replacement = "the builtin type, or an explicit NumPy scalar such as numpy.float64"
+source = "numpy-1.24"
+
+[[removed]]
+kind = "api"
+module = "numpy"
+names = ["asscalar"]
+distribution = "numpy"
+version = "1.23"
+replacement = "ndarray.item()"
+source = "numpy-1.23"
+
+[[removed]]
+kind = "api"
+module = "numpy"
+names = ["NaN", "Inf", "Infinity", "NINF", "PINF", "NZERO", "PZERO", "infty", "float_", "complex_", "unicode_", "string_", "product", "cumproduct", "sometrue", "alltrue", "asfarray", "round_", "find_common_type"]
+distribution = "numpy"
+version = "2.0"
+replacement = "the names given in the NumPy 2.0 migration guide (for example nan, inf, float64, prod, any, all, round)"
+source = "numpy-2.0"
+
+[[removed]]
+kind = "api"
+module = "sklearn.datasets"
+names = ["load_boston"]
+distribution = "scikit-learn"
+version = "1.2"
+replacement = "another dataset such as fetch_california_housing"
+source = "sklearn-1.2"
+
+[[removed]]
+kind = "api"
+module = "sklearn.metrics"
+names = ["plot_confusion_matrix", "plot_roc_curve", "plot_precision_recall_curve"]
+distribution = "scikit-learn"
+version = "1.2"
+replacement = "ConfusionMatrixDisplay / RocCurveDisplay / PrecisionRecallDisplay"
+source = "sklearn-1.2"
+
+[[removed]]
+kind = "kwarg"
+names = ["OneHotEncoder.sparse"]
+distribution = "scikit-learn"
+version = "1.4"
+replacement = "sparse_output"
+source = "sklearn-1.4"
+
+[[removed]]
+kind = "kwarg"
+names = ["squared"]
+distribution = "scikit-learn"
+version = "1.6"
+replacement = "root_mean_squared_error() instead of mean_squared_error(squared=False)"
+source = "sklearn-1.6"
+
+[[removed]]
+kind = "api"
+module = "scipy.integrate"
+names = ["simps", "trapz", "cumtrapz"]
+distribution = "scipy"
+version = "1.14"
+replacement = "simpson, trapezoid and cumulative_trapezoid"
+source = "scipy-1.14"
+
+[[removed]]
+kind = "api"
+module = "jinja2"
+names = ["Markup", "escape"]
+distribution = "Jinja2"
+version = "3.1"
+replacement = "markupsafe.Markup and markupsafe.escape"
+source = "jinja2-3.1"
+
+[[removed]]
+kind = "api"
+module = "jinja2"
+names = ["contextfunction", "contextfilter", "evalcontextfunction", "evalcontextfilter", "environmentfunction", "environmentfilter"]
+distribution = "Jinja2"
+version = "3.1"
+replacement = "pass_context, pass_eval_context and pass_environment"
+source = "jinja2-3.1"
+
+[[removed]]
+kind = "api"
+module = "markupsafe"
+names = ["soft_unicode"]
+distribution = "MarkupSafe"
+version = "2.1"
+replacement = "soft_str"
+source = "markupsafe-2.1"
+
+[[removed]]
+kind = "api"
+module = "packaging.version"
+names = ["LegacyVersion"]
+distribution = "packaging"
+version = "22.0"
+replacement = "packaging.version.Version (PEP 440 versions only)"
+source = "packaging-22.0"
+
+[[removed]]
+kind = "api"
+module = "packaging.specifiers"
+names = ["LegacySpecifier"]
+distribution = "packaging"
+version = "22.0"
+replacement = "packaging.specifiers.Specifier"
+source = "packaging-22.0"
+
+[[removed]]
+kind = "api"
+module = "pydantic"
+names = ["BaseSettings"]
+distribution = "pydantic"
+version = "2.0"
+replacement = "the pydantic-settings package (from pydantic_settings import BaseSettings)"
+source = "pydantic-2.0"
+
+[[removed]]
+kind = "api"
+module = "werkzeug.urls"
+names = ["url_quote", "url_parse", "url_encode", "url_unquote"]
+distribution = "Werkzeug"
+version = "3.0"
+replacement = "urllib.parse, or pin Werkzeug<3 for frameworks that still import it"
+source = "werkzeug-3.0"
+
+[[removed]]
+kind = "api"
+module = "DataFrame"
+names = ["append"]
+distribution = "pandas"
+version = "2.0"
+replacement = "pandas.concat"
+source = "pandas-2.0"
+
+# --------------------------------------------------------------------------------------
+# Sources
+# --------------------------------------------------------------------------------------
+
+[sources."python-3.10"]
+title = "What's New In Python 3.10 (removed collections ABC aliases)"
+url = "https://docs.python.org/3/whatsnew/3.10.html"
+
+[sources."python-3.11"]
+title = "What's New In Python 3.11 (removed asyncio.coroutine)"
+url = "https://docs.python.org/3/whatsnew/3.11.html"
+
+[sources."python-3.12"]
+title = "What's New In Python 3.12 (removed imp, distutils, asyncore, asynchat, smtpd, unittest aliases)"
+url = "https://docs.python.org/3/whatsnew/3.12.html"
+
+[sources."python-3.13"]
+title = "What's New In Python 3.13 (removed lib2to3 and PEP 594 modules)"
+url = "https://docs.python.org/3/whatsnew/3.13.html"
+
+[sources."pep-594"]
+title = "PEP 594 - Removing dead batteries from the standard library"
+url = "https://peps.python.org/pep-0594/"
+
+[sources."numpy-1.23"]
+title = "NumPy 1.23.0 release notes (expired deprecations)"
+url = "https://numpy.org/doc/stable/release/1.23.0-notes.html"
+
+[sources."numpy-1.24"]
+title = "NumPy 1.24.0 release notes (removed deprecated type aliases)"
+url = "https://numpy.org/doc/stable/release/1.24.0-notes.html"
+
+[sources."numpy-2.0"]
+title = "NumPy 2.0 migration guide (NEP 52 namespace cleanup)"
+url = "https://numpy.org/doc/stable/numpy_2_0_migration_guide.html"
+
+[sources."sklearn-1.2"]
+title = "scikit-learn 1.2 release highlights and changelog"
+url = "https://scikit-learn.org/stable/whats_new/v1.2.html"
+
+[sources."sklearn-1.4"]
+title = "scikit-learn 1.4 changelog (OneHotEncoder sparse removed)"
+url = "https://scikit-learn.org/stable/whats_new/v1.4.html"
+
+[sources."sklearn-1.6"]
+title = "scikit-learn 1.6 changelog (squared parameter removed)"
+url = "https://scikit-learn.org/stable/whats_new/v1.6.html"
+
+[sources."scipy-1.14"]
+title = "SciPy 1.14.0 release notes (removed simps, trapz, cumtrapz)"
+url = "https://docs.scipy.org/doc/scipy/release/1.14.0-notes.html"
+
+[sources."jinja2-3.1"]
+title = "Jinja 3.1.0 changes"
+url = "https://jinja.palletsprojects.com/en/stable/changes/#version-3-1-0"
+
+[sources."markupsafe-2.1"]
+title = "MarkupSafe 2.1.0 changes"
+url = "https://markupsafe.palletsprojects.com/en/stable/changes/#version-2-1-0"
+
+[sources."packaging-22.0"]
+title = "packaging 22.0 changelog (LegacyVersion removed)"
+url = "https://packaging.pypa.io/en/stable/changelog.html"
+
+[sources."pydantic-2.0"]
+title = "Pydantic V2 migration guide (BaseSettings moved to pydantic-settings)"
+url = "https://docs.pydantic.dev/latest/migration/#basesettings-has-moved-to-pydantic-settings"
+
+[sources."werkzeug-3.0"]
+title = "Werkzeug 3.0.0 changes (deprecated urls functions removed)"
+url = "https://werkzeug.palletsprojects.com/en/stable/changes/#version-3-0-0"
+
+[sources."pandas-2.0"]
+title = "What's new in pandas 2.0.0 (DataFrame.append removed)"
+url = "https://pandas.pydata.org/docs/whatsnew/v2.0.0.html"
+
+[sources."pypi"]
+title = "Python Package Index project pages (import name vs distribution name)"
+url = "https://pypi.org/"

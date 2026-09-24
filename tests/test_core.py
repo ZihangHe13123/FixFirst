@@ -3,7 +3,9 @@ import sys
 
 import pytest
 
-from fixfirst.classification import train_tree, predict_tree
+from fixfirst import engine
+from fixfirst.classification import load_model, predict_tree, train_tree
+from fixfirst.evidence import FEATURE_NAMES
 from fixfirst.grouping import complete_link, group_events
 from fixfirst.models import Event, Fact, Run
 from fixfirst.parsers import parse
@@ -197,17 +199,48 @@ def test_complete_link_prevents_chaining():
     assert complete_link(matrix, 0.8) == [[0, 1], [2]]
 
 
+def rule(rule_id, when, then, phase="derive"):
+    return {"id": rule_id, "phase": phase, "when": when, "then": then}
+
+
 def test_rule_chain_and_cycle_terminate():
     fact = Fact(fact_id="f1", subject="x", predicate="a", value="yes")
-    rules = [
-        ("a-b", ("a", "yes"), ("b", "yes")),
-        ("b-c", ("b", "yes"), ("c", "yes")),
-        ("c-a", ("c", "yes"), ("a", "yes")),
-    ]
+    rules = engine.load_rules(
+        {
+            "rule": [
+                rule("a-b", [["?s", "a", "yes"]], [["?s", "b", "yes"]]),
+                rule("b-c", [["?s", "b", "yes"]], [["?s", "c", "yes"]]),
+                rule("c-a", [["?s", "c", "yes"]], [["?s", "a", "yes"]]),
+            ]
+        }
+    )
     facts = forward_chain([fact], rules)
     assert len(facts) == 3
     assert facts[-1].inputs == ["x:b:yes"]
     assert forward_chain([], rules) == []
+
+
+def test_rule_engine_joins_variables_and_rejects_unstratified_negation():
+    facts = [
+        Fact(fact_id="1", subject="i1", predicate="module", value="module:m"),
+        Fact(fact_id="2", subject="module:m", predicate="is_local", value="m.py"),
+        Fact(fact_id="3", subject="i2", predicate="module", value="module:n"),
+    ]
+    when = [["?i", "module", "?m"], ["?m", "is_local", "?p"], ["not", "?m", "provided_by", "?_"]]
+    rules = engine.load_rules({"rule": [rule("r", when, [["?i", "local", "?p"]], "diagnose")]})
+    base = engine.run(rules, facts)
+    assert ("i1", "local", "m.py") in base.keys
+    assert not any(f.subject == "i2" and f.predicate == "local" for f in base.facts)
+    assert base.facts[-1].inputs == ["1", "2"]
+    with pytest.raises(ValueError, match="unstratified"):
+        engine.load_rules(
+            {
+                "rule": [
+                    rule("x", [["?i", "kind", "k"], ["not", "?i", "diagnosis", "?_"]],
+                         [["?i", "diagnosis", "d"]], "diagnose")
+                ]
+            }
+        )
 
 
 def test_no_environment_mismatch_invented(session):
@@ -256,16 +289,17 @@ def test_imported_pass_never_closes_executed(session, tmp_path):
     assert session.issues[0].status != "resolved"
 
 
-def test_gini_model_roundtrip(session, tmp_path):
-    rows = []
-    for component in ["alpha", "beta", "gamma", "delta"]:
-        run = failed_pytest(session, component)
-        issue = group_events(parse(run), run)[0]
-        rows.append(
-            {"project_id": "train-project", "issue": issue.model_dump(), "label": "import_failure"}
-        )
-    model = train_tree(rows, tmp_path / "model.json")
-    assert predict_tree(issue, model) == "import_failure"
+def test_gini_model_roundtrip(tmp_path):
+    local = [0.0] * len(FEATURE_NAMES)
+    local[FEATURE_NAMES.index("module_local")] = 1.0
+    missing = [0.0] * len(FEATURE_NAMES)
+    rows = [{"features": local, "label": "local_module"}] * 2
+    rows += [{"features": missing, "label": "missing_dependency"}] * 2
+    train_tree(rows, tmp_path / "model.json", min_samples_leaf=1)
+    model = load_model(tmp_path / "model.json")
+    assert predict_tree(local, model) == ("local_module", 1.0)
+    assert predict_tree(missing, model)[0] == "missing_dependency"
+    assert "kind" not in " ".join(model["feature_names"])
 
 
 def test_runner_timeout_and_output_bound(tmp_path):
@@ -302,3 +336,10 @@ def test_redact_preserves_ordinary_text():
     result = redact(value)
     assert "version=1.2.3" in result
     assert "hello" not in result and "secret@" not in result and "abc" not in result
+
+
+def test_redact_environment_dumps_and_secret_dict_values():
+    text = "self = environ({'USER': 'alice', 'AWS_SECRET_ACCESS_KEY': 'abc123'})\nkey = 'X'"
+    cleaned = redact(text)
+    assert "alice" not in cleaned and "abc123" not in cleaned and "key = 'X'" in cleaned
+    assert redact("{'api_token': 'hunter2', 'name': 'shop'}") == "{'api_token': '[credential]', 'name': 'shop'}"

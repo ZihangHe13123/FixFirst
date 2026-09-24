@@ -1,7 +1,6 @@
 from pathlib import Path
 import os
 
-from .classification import classify
 from .grouping import group_events, digest, member_key
 from .models import Run, Session, now, GOAL_CHECKS
 from .parsers import parse
@@ -15,19 +14,19 @@ def create_session(
     root = Path(project).expanduser().resolve()
     interpreter = Path(os.path.abspath(os.path.expanduser(python)))
     if not root.is_dir():
-        raise ValueError("项目目录不存在")
+        raise ValueError("Project directory does not exist")
     if not interpreter.is_file() or not os.access(interpreter, os.X_OK):
-        raise ValueError("Python 解释器不存在或不可执行")
+        raise ValueError("Python interpreter does not exist or is not executable")
     if grouping == "sbert" and not sbert_model:
-        raise ValueError("SBERT 需要本地模型路径")
+        raise ValueError("SBERT grouping needs a local model path")
     if model:
         model = str(Path(model).expanduser().resolve())
         if not Path(model).is_file():
-            raise ValueError("分类模型文件不存在")
+            raise ValueError("Classifier model file does not exist")
     if sbert_model:
         sbert_model = str(Path(sbert_model).expanduser().resolve())
         if not Path(sbert_model).is_dir():
-            raise ValueError("语义模型目录不存在")
+            raise ValueError("Semantic model directory does not exist")
     return Session(
         name=name or root.name,
         project_root=str(root),
@@ -48,7 +47,6 @@ def ingest(session: Session, runs: list[Run]):
         fresh.extend(
             group_events(events, run, session.grouping, session.threshold, session.sbert_model)
         )
-    classify(fresh, session.model_path)
     updated_tools = {r.tool for r in runs}
     previous = session.issues
     by_id = {i.issue_id: i for i in previous}
@@ -101,7 +99,7 @@ def ingest(session: Session, runs: list[Run]):
                 set(issue.evidence_refs) | {ref for e in carried for ref in e.evidence_refs}
             )
             issue.member_keys = sorted(set(issue.member_keys) | {member_key(e) for e in carried})
-            issue.note = f"本轮只重新观察部分成员；{len(pending)} 个节点保留先前未验证证据"
+            issue.note = f"Only some members were re-observed; {len(pending)} node(s) keep their earlier unverified evidence"
     fresh_ids = {i.issue_id for i in fresh}
     changes = []
     for issue in fresh:
@@ -135,6 +133,17 @@ def ingest(session: Session, runs: list[Run]):
             from .project import declaration_verified
 
             passed = declaration_verified(old, session.runs, runs)
+        if old.tool == "pytest_run" and old.stage == "collect" and not old.targets:
+            # A complete project run collected every module without collection errors, even
+            # if some tests then failed; that settles earlier collection issues.
+            passed = passed or any(
+                r.tool == old.tool
+                and r.environment_id == old.environment_id
+                and r.source == "executed"
+                and r.scope == "tests:project"
+                and r.coverage_complete
+                for r in runs
+            )
         if old.tool == "pytest_run" and old.targets:
             passed = any(
                 r.tool == old.tool
@@ -147,17 +156,17 @@ def ingest(session: Session, runs: list[Run]):
         if passed:
             copy.status = "resolved"
             copy.note = (
-                "同一环境中的全部关联测试节点已执行通过"
+                "All related test nodes passed in the same environment"
                 if old.targets
-                else "原依赖声明已在同一环境中逐项验证满足"
+                else "Each original declaration was verified as satisfied in the same environment"
                 if old.tool == "project"
-                else "同一环境与检查范围已实际通过"
+                else "Passed for real in the same environment and check scope"
             )
         elif old.status != "resolved":
             copy.status = "not_observed" if old.status != "awaiting_verification" else old.status
-            copy.note = "本轮未覆盖该问题，或检查未成功完成；保留之前证据"
+            copy.note = "Not covered by this round, or the check did not complete; earlier evidence is kept"
             if old.tool in updated_tools and not matching:
-                copy.note = "环境或检查范围不同，不能直接比较"
+                copy.note = "Different environment or check scope; not directly comparable"
         if copy.status != old.status:
             changes.append({"issue_id": old.issue_id, "change": copy.status})
         fresh.append(copy)
@@ -177,7 +186,7 @@ def ingest(session: Session, runs: list[Run]):
 
 def scan(session, checks=None, timeout=30, targets=None):
     if session.stopped:
-        raise ValueError("排查已结束；使用 resume 恢复后再检查")
+        raise ValueError("This session is stopped; use resume before running checks")
     if checks is None:
         checks = [
             "pytest_run" if c == "pytest" and session.goal == "pass_tests" else c
@@ -185,10 +194,10 @@ def scan(session, checks=None, timeout=30, targets=None):
         ]
     if targets:
         if list(checks) != ["pytest_run"]:
-            raise ValueError("--nodes 必须与 --checks pytest_run 单独使用")
+            raise ValueError("--nodes must be used on its own with --checks pytest_run")
         validate_targets(session, targets)
     if len(checks) != len(set(checks)):
-        raise ValueError("同一批检查不能重复")
+        raise ValueError("The same check cannot appear twice in one batch")
     runs = []
     for check in checks:
         # Declaration checks compare installed metadata. Always refresh that metadata as part
@@ -205,7 +214,7 @@ def scan(session, checks=None, timeout=30, targets=None):
 def import_log(session, path, tool, exit_code=None):
     file = Path(path)
     if file.stat().st_size > MAX_OUTPUT:
-        raise ValueError("日志超过 1 MB，请先按一次检查拆分")
+        raise ValueError("Log is larger than 1 MB; split it by check run first")
     text = redact(file.read_text(encoding="utf-8", errors="replace"))
     run = Run(
         tool=tool,
@@ -216,16 +225,16 @@ def import_log(session, path, tool, exit_code=None):
         scope="imported:" + file.name,
         environment_id="unknown",
     )
-    run.notes.append("导入历史日志，环境和完整检查范围尚未核实；不会据此关闭之前的问题。")
+    run.notes.append("Imported log: its environment and full scope are unverified, so it never closes earlier issues.")
     ingest(session, [run])
 
 
 def mark_fixed(session, issue_id):
     issue = next((i for i in session.issues if i.issue_id == issue_id), None)
     if issue is None:
-        raise ValueError("没有这个问题编号")
+        raise ValueError("No issue with this id")
     if issue.status == "resolved":
-        raise ValueError("该问题已验证解决")
+        raise ValueError("This issue is already verified as resolved")
     issue.status = "awaiting_verification"
     session.history.append({"time": now(), "kind": "manual_change", "issue_id": issue_id})
     infer_and_plan(session)

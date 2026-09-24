@@ -62,7 +62,7 @@ def pytest_exception_interact(node, call, report):
         try:
             message = str(call.excinfo.value)[:16000]
         except Exception:
-            message = "异常文本无法转换，请查看完整 traceback"
+            message = "The exception text could not be converted; see the full traceback"
         emit(
             {
                 "type": "exception",

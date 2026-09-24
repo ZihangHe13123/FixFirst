@@ -16,6 +16,18 @@ CHECKS = ["environment", "pip_check", "pytest", "ruff"]
 VARIANTS = ["missing_module", "missing_config", "style", "code_check", "dependency", "mixed"]
 
 
+def require_demo_tools():
+    """Demos use FixFirst's own interpreter as the target, so it needs pytest and Ruff."""
+    import importlib.util
+
+    missing = [name for name in ("pytest", "ruff") if importlib.util.find_spec(name) is None]
+    if missing:
+        raise ValueError(
+            f"Demos need {' and '.join(missing)} in FixFirst's environment: "
+            "pip install 'fixfirst-local[dev]' (scripts/setup.sh does this)"
+        )
+
+
 def write(path, text):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")
@@ -23,7 +35,7 @@ def write(path, text):
 
 def create_project(root: Path, project_id: str):
     if root.exists():
-        raise ValueError(f"案例目录已存在，不覆盖：{root}")
+        raise ValueError(f"Case directory already exists; not overwriting: {root}")
     root.mkdir(parents=True)
     write(root / "helper.py", f"def greet():\n    return '{project_id}'\n")
     write(root / "app.py", "from helper import greet\n\ndef result():\n    return greet()\n")
@@ -91,7 +103,7 @@ def require_pass(session):
             f"{r.tool}: {r.status}/{r.exit_code}\n{r.stdout[-1200:]}\n{r.stderr[-600:]}"
             for r in failures
         )
-        raise ValueError("案例基线/恢复检查未通过：\n" + detail)
+        raise ValueError("Case baseline or restore check did not pass:\n" + detail)
 
 
 def source_fingerprint(root):
@@ -102,7 +114,7 @@ def source_fingerprint(root):
 def build_dataset(output: Path, projects=5):
     output = output.expanduser().resolve()
     if output.exists():
-        raise ValueError("数据目录已存在，请指定新的 --output；保留原始实验")
+        raise ValueError("Dataset directory already exists; choose a new --output to keep earlier experiments")
     output.mkdir(parents=True)
     manifest = {
         "schema_version": 1,
@@ -110,9 +122,8 @@ def build_dataset(output: Path, projects=5):
         "origin": "controlled_injection",
         "license": "CC0-1.0 for generated fixture code",
         "cases": [],
-        "limitations": "五个生成项目共用相近模板，不是五个独立真实开源项目；只验证受控流程。",
+        "limitations": "Five generated projects share one template; they are not independent real projects and only exercise the controlled workflow.",
     }
-    rows = []
     try:
         for p in range(projects):
             project_id = f"fixture-project-{p + 1}"
@@ -155,7 +166,7 @@ def build_dataset(output: Path, projects=5):
                 if not expected.issubset({i.kind for i in observed}):
                     write(case_root / "failed_capture.json", failure.model_dump_json(indent=2))
                     raise ValueError(
-                        f"{case_id} 没有观察到预设故障，实际 {[i.kind for i in observed]}"
+                        f"{case_id}: injected fault not observed; got {[i.kind for i in observed]}"
                     )
                 write(case_root / "input.json", failure.model_dump_json(indent=2))
                 # Labels are generated from the known injected scenario, not the model prediction.
@@ -177,14 +188,6 @@ def build_dataset(output: Path, projects=5):
                         )
                     )
                     labels.append({"issue_id": issue.issue_id, "label": label})
-                    rows.append(
-                        {
-                            "project_id": project_id,
-                            "case_id": case_id,
-                            "label": label,
-                            "issue": issue.model_dump(),
-                        }
-                    )
                 truth = {
                     "case_id": case_id,
                     "variant": variant,
@@ -211,28 +214,28 @@ def build_dataset(output: Path, projects=5):
                         "raw_runs": len(failure.runs) + len(session.runs),
                     }
                 )
-                print(f"  {case_id}: 正常 → 故障 → 恢复 已实际验证", flush=True)
+                print(f"  {case_id}: healthy → fault → restored, all verified by real runs", flush=True)
     finally:
         write(output / "manifest.json", json.dumps(manifest, ensure_ascii=False, indent=2))
-        write(output / "labeled_issues.json", json.dumps(rows, ensure_ascii=False, indent=2))
     return output / "manifest.json"
 
 
 def demo(output: Path, store: Store):
+    require_demo_tools()
     output = output.expanduser().resolve()
     if output.exists():
-        raise ValueError("演示目录已存在，请指定新目录，避免覆盖上次演示")
+        raise ValueError("Demo directory already exists; choose a new one so the previous demo is kept")
     root = output / "project"
-    create_project(root, "FixFirst 演示项目")
-    session = create_session(root, sys.executable, "小王接手的 Python 项目")
+    create_project(root, "FixFirst demo project")
+    session = create_session(root, sys.executable, "Wang's inherited Python project")
     scan(session, CHECKS)
     require_pass(session)
-    render(session, store.root, output / "00-healthy.html")
+    render(session, store.root, output / "00-healthy.html", public=True)
     inject(root, "mixed")
     scan(session, CHECKS)
-    render(session, store.root, output / "01-failure.html")
+    render(session, store.root, output / "01-failure.html", public=True)
     failures = [i for i in session.issues if i.tool == "pytest" and i.status == "open"]
-    assert failures, "必须观察到真实导入失败"
+    assert failures, "A real import failure must be observed"
     (root / "notes.py").write_text("message = 'short example'\n")
     scan(session, ["ruff"])
     assert all(
@@ -240,7 +243,7 @@ def demo(output: Path, store: Store):
         for i in session.issues
         if i.issue_id in {f.issue_id for f in failures}
     )
-    render(session, store.root, output / "02-partial-check.html")
+    render(session, store.root, output / "02-partial-check.html", public=True)
     (root / "helper.py.disabled").rename(root / "helper.py")
     for issue in failures:
         mark_fixed(session, issue.issue_id)
@@ -254,12 +257,12 @@ def demo(output: Path, store: Store):
     with store.lock(session.session_id):
         store.save(session)
         render(session, store.root, store.directory(session.session_id) / "report.html")
-    final = render(session, store.root, output / "03-restored.html")
+    final = render(session, store.root, output / "03-restored.html", public=True)
     # Frozen story pages remain reviewable after later changes to the live session.
     write(
         output / "README.md",
-        "# 真实运行演示\n\n00 正常 → 01 导入失败与风格问题 → 02 只修风格并检查 → 03 恢复模块并验证测试收集。\n\n"
-        "演示脚本只修改它自己创建的项目；产品的 scan/run 不修改用户源码。所有 JSON 是此次实际运行记录。\n\n"
-        f"排查编号：{session.session_id}\n",
+        "# Recorded demo run\n\n00 healthy → 01 import failure and style findings → 02 fix style only and re-check → 03 restore the module and verify collection.\n\n"
+        "The demo only edits the project it created; scan/run never modify user code. Every JSON file is the record of this real run.\n\n"
+        f"Session: {session.session_id}\n",
     )
     return final

@@ -1,0 +1,1447 @@
+{
+  "schema_version": 2,
+  "session_id": "session-716d3bee95e0",
+  "goal": "goal:pass_tests",
+  "ontology": {
+    "entities": [
+      "Action",
+      "Cause",
+      "Event",
+      "Evidence",
+      "Fact",
+      "Goal",
+      "Issue",
+      "Rule",
+      "Run",
+      "Source"
+    ],
+    "relations": {
+      "recommends": [
+        "Goal",
+        "Action"
+      ],
+      "has_open_issue": [
+        "Goal",
+        "Issue"
+      ],
+      "evaluated_by": [
+        "Goal",
+        "Run"
+      ],
+      "addresses": [
+        "Action",
+        "Issue"
+      ],
+      "justified_by": [
+        "Action",
+        "Fact"
+      ],
+      "proposed_by": [
+        "Action",
+        "Rule"
+      ],
+      "diagnosed_as": [
+        "Issue",
+        "Cause"
+      ],
+      "suspected_as": [
+        "Issue",
+        "Cause"
+      ],
+      "inferred_from": [
+        "Fact",
+        "Fact"
+      ],
+      "derived_by": [
+        "Fact",
+        "Rule"
+      ],
+      "supported_by": [
+        "Fact",
+        "Evidence"
+      ],
+      "documented_in": [
+        "Fact",
+        "Source"
+      ],
+      "has_event": [
+        "Issue",
+        "Event"
+      ],
+      "cites": [
+        "Event",
+        "Evidence"
+      ],
+      "observed_in": [
+        "Evidence",
+        "Run"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "goal:pass_tests",
+      "type": "Goal",
+      "label": "Pass the test suite",
+      "attributes": {
+        "status": "blocked"
+      }
+    },
+    {
+      "id": "run-00b084e8ba10",
+      "type": "Run",
+      "label": "environment · 2026-09-24T01:59:12+00:00",
+      "attributes": {
+        "tool": "environment",
+        "status": "completed",
+        "source": "executed",
+        "scope": "environment",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-cfb9d49b571b",
+      "type": "Run",
+      "label": "project · 2026-09-24T01:59:13+00:00",
+      "attributes": {
+        "tool": "project",
+        "status": "completed",
+        "source": "executed",
+        "scope": "declarations:project",
+        "exit_code": 0,
+        "verified_pass": true,
+        "targets": [],
+        "summary": {}
+      }
+    },
+    {
+      "id": "run-890f2274ab0c",
+      "type": "Run",
+      "label": "pytest_run · 2026-09-24T01:59:13+00:00",
+      "attributes": {
+        "tool": "pytest_run",
+        "status": "completed",
+        "source": "executed",
+        "scope": "tests:project",
+        "exit_code": 2,
+        "verified_pass": false,
+        "targets": [],
+        "summary": {
+          "passed": 0,
+          "failed": 0,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 2,
+          "incomplete": 2
+        }
+      }
+    },
+    {
+      "id": "source:python-3.10",
+      "type": "Source",
+      "label": "What's New In Python 3.10 (removed collections ABC aliases)",
+      "attributes": {
+        "url": "https://docs.python.org/3/whatsnew/3.10.html"
+      }
+    },
+    {
+      "id": "evidence:run-00b084e8ba10:stdout:1",
+      "type": "Evidence",
+      "label": "run-00b084e8ba10:stdout:1",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-890f2274ab0c:probe:1",
+      "type": "Evidence",
+      "label": "run-890f2274ab0c:probe:1",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-890f2274ab0c:probe:3",
+      "type": "Evidence",
+      "label": "run-890f2274ab0c:probe:3",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-cfb9d49b571b:declaration:0",
+      "type": "Evidence",
+      "label": "run-cfb9d49b571b:declaration:0",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-cfb9d49b571b:declaration:1",
+      "type": "Evidence",
+      "label": "run-cfb9d49b571b:declaration:1",
+      "attributes": {}
+    },
+    {
+      "id": "evidence:run-cfb9d49b571b:stdout:1",
+      "type": "Evidence",
+      "label": "run-cfb9d49b571b:stdout:1",
+      "attributes": {}
+    },
+    {
+      "id": "event-ec83f763c036",
+      "type": "Event",
+      "label": "ImportError: cannot import name 'Mapping' from 'collections' (<home>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/collections/__init__.py)",
+      "attributes": {
+        "stage": "collect",
+        "location": "test_pricing.py",
+        "kind": "import_failure"
+      }
+    },
+    {
+      "id": "event-a613f24ebe62",
+      "type": "Event",
+      "label": "ModuleNotFoundError: No module named 'helper'",
+      "attributes": {
+        "stage": "collect",
+        "location": "test_reports.py",
+        "kind": "import_failure"
+      }
+    },
+    {
+      "id": "issue-b6e397dce720fd",
+      "type": "Issue",
+      "label": "ImportError: cannot import name 'Mapping' from 'collections'",
+      "attributes": {
+        "status": "open",
+        "tool": "pytest_run",
+        "targets": [],
+        "note": "",
+        "diagnosis": "version_incompatibility",
+        "diagnosis_source": "rule",
+        "prediction": "version_incompatibility",
+        "prediction_confidence": 1.0
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748",
+      "type": "Issue",
+      "label": "ModuleNotFoundError: No module named 'helper'",
+      "attributes": {
+        "status": "open",
+        "tool": "pytest_run",
+        "targets": [],
+        "note": "",
+        "diagnosis": "local_module",
+        "diagnosis_source": "rule",
+        "prediction": "local_module",
+        "prediction_confidence": 1.0
+      }
+    },
+    {
+      "id": "session:goal:pass_tests",
+      "type": "Fact",
+      "label": "session goal pass_tests",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "session",
+        "predicate": "goal"
+      }
+    },
+    {
+      "id": "session:goal_check:pytest_run",
+      "type": "Fact",
+      "label": "session goal_check pytest_run",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "session",
+        "predicate": "goal_check"
+      }
+    },
+    {
+      "id": "issue-b6e397dce720fd:kind:import_failure",
+      "type": "Fact",
+      "label": "issue-b6e397dce720fd kind import_failure",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-b6e397dce720fd",
+        "predicate": "kind"
+      }
+    },
+    {
+      "id": "issue-b6e397dce720fd:stage:collect",
+      "type": "Fact",
+      "label": "issue-b6e397dce720fd stage collect",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-b6e397dce720fd",
+        "predicate": "stage"
+      }
+    },
+    {
+      "id": "issue-b6e397dce720fd:tool:pytest_run",
+      "type": "Fact",
+      "label": "issue-b6e397dce720fd tool pytest_run",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-b6e397dce720fd",
+        "predicate": "tool"
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748:kind:import_failure",
+      "type": "Fact",
+      "label": "issue-687ee9a528c748 kind import_failure",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-687ee9a528c748",
+        "predicate": "kind"
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748:stage:collect",
+      "type": "Fact",
+      "label": "issue-687ee9a528c748 stage collect",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-687ee9a528c748",
+        "predicate": "stage"
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748:tool:pytest_run",
+      "type": "Fact",
+      "label": "issue-687ee9a528c748 tool pytest_run",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-687ee9a528c748",
+        "predicate": "tool"
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748:component:helper",
+      "type": "Fact",
+      "label": "issue-687ee9a528c748 component helper",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-687ee9a528c748",
+        "predicate": "component"
+      }
+    },
+    {
+      "id": "environment:snapshot:available",
+      "type": "Fact",
+      "label": "environment snapshot available",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "environment",
+        "predicate": "snapshot"
+      }
+    },
+    {
+      "id": "project:declarations:available",
+      "type": "Fact",
+      "label": "project declarations available",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "project",
+        "predicate": "declarations"
+      }
+    },
+    {
+      "id": "issue-b6e397dce720fd:exception:ImportError",
+      "type": "Fact",
+      "label": "issue-b6e397dce720fd exception ImportError",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-b6e397dce720fd",
+        "predicate": "exception"
+      }
+    },
+    {
+      "id": "issue-b6e397dce720fd:raised_in:project",
+      "type": "Fact",
+      "label": "issue-b6e397dce720fd raised_in project",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-b6e397dce720fd",
+        "predicate": "raised_in"
+      }
+    },
+    {
+      "id": "issue-b6e397dce720fd:module:module:collections",
+      "type": "Fact",
+      "label": "issue-b6e397dce720fd module module:collections",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-b6e397dce720fd",
+        "predicate": "module"
+      }
+    },
+    {
+      "id": "issue-b6e397dce720fd:api:api:collections.Mapping",
+      "type": "Fact",
+      "label": "issue-b6e397dce720fd api api:collections.Mapping",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-b6e397dce720fd",
+        "predicate": "api"
+      }
+    },
+    {
+      "id": "issue-b6e397dce720fd:signal:cannot_import_name",
+      "type": "Fact",
+      "label": "issue-b6e397dce720fd signal cannot_import_name",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-b6e397dce720fd",
+        "predicate": "signal"
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748:exception:ModuleNotFoundError",
+      "type": "Fact",
+      "label": "issue-687ee9a528c748 exception ModuleNotFoundError",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-687ee9a528c748",
+        "predicate": "exception"
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748:raised_in:project",
+      "type": "Fact",
+      "label": "issue-687ee9a528c748 raised_in project",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-687ee9a528c748",
+        "predicate": "raised_in"
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748:module:module:helper",
+      "type": "Fact",
+      "label": "issue-687ee9a528c748 module module:helper",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-687ee9a528c748",
+        "predicate": "module"
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748:missing_module:module:helper",
+      "type": "Fact",
+      "label": "issue-687ee9a528c748 missing_module module:helper",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-687ee9a528c748",
+        "predicate": "missing_module"
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748:api:api:helper.double",
+      "type": "Fact",
+      "label": "issue-687ee9a528c748 api api:helper.double",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-687ee9a528c748",
+        "predicate": "api"
+      }
+    },
+    {
+      "id": "module:collections:in_stdlib:yes",
+      "type": "Fact",
+      "label": "module:collections in_stdlib yes",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "module:collections",
+        "predicate": "in_stdlib"
+      }
+    },
+    {
+      "id": "module:helper:similar_local:helpers.py",
+      "type": "Fact",
+      "label": "module:helper similar_local helpers.py",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "module:helper",
+        "predicate": "similar_local"
+      }
+    },
+    {
+      "id": "dist:numpy:declared_in:requirements.txt:1",
+      "type": "Fact",
+      "label": "dist:numpy declared_in requirements.txt:1",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "dist:numpy",
+        "predicate": "declared_in"
+      }
+    },
+    {
+      "id": "dist:pytest:declared_in:requirements.txt:2",
+      "type": "Fact",
+      "label": "dist:pytest declared_in requirements.txt:2",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "dist:pytest",
+        "predicate": "declared_in"
+      }
+    },
+    {
+      "id": "kb:api:collections.Mapping:removed_from",
+      "type": "Fact",
+      "label": "api:collections.Mapping removed_from dist:python",
+      "attributes": {
+        "rule": null,
+        "status": "knowledge",
+        "subject": "api:collections.Mapping",
+        "predicate": "removed_from"
+      }
+    },
+    {
+      "id": "kb:api:collections.Mapping:removed_in_version",
+      "type": "Fact",
+      "label": "api:collections.Mapping removed_in_version 3.10",
+      "attributes": {
+        "rule": null,
+        "status": "knowledge",
+        "subject": "api:collections.Mapping",
+        "predicate": "removed_in_version"
+      }
+    },
+    {
+      "id": "kb:api:collections.Mapping:replacement",
+      "type": "Fact",
+      "label": "api:collections.Mapping replacement the same names from collections.abc",
+      "attributes": {
+        "rule": null,
+        "status": "knowledge",
+        "subject": "api:collections.Mapping",
+        "predicate": "replacement"
+      }
+    },
+    {
+      "id": "dist:python:installed_version:3.12.14",
+      "type": "Fact",
+      "label": "dist:python installed_version 3.12.14",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "dist:python",
+        "predicate": "installed_version"
+      }
+    },
+    {
+      "id": "issue-b6e397dce720fd:model_suggests:version_incompatibility",
+      "type": "Fact",
+      "label": "issue-b6e397dce720fd model_suggests version_incompatibility",
+      "attributes": {
+        "rule": "decision-tree",
+        "status": "hypothesis",
+        "subject": "issue-b6e397dce720fd",
+        "predicate": "model_suggests"
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748:model_suggests:local_module",
+      "type": "Fact",
+      "label": "issue-687ee9a528c748 model_suggests local_module",
+      "attributes": {
+        "rule": "decision-tree",
+        "status": "hypothesis",
+        "subject": "issue-687ee9a528c748",
+        "predicate": "model_suggests"
+      }
+    },
+    {
+      "id": "issue-b6e397dce720fd:affects:collect_tests",
+      "type": "Fact",
+      "label": "issue-b6e397dce720fd affects collect_tests",
+      "attributes": {
+        "rule": "G01",
+        "status": "derived",
+        "subject": "issue-b6e397dce720fd",
+        "predicate": "affects"
+      }
+    },
+    {
+      "id": "issue-b6e397dce720fd:affects:pass_tests",
+      "type": "Fact",
+      "label": "issue-b6e397dce720fd affects pass_tests",
+      "attributes": {
+        "rule": "G01",
+        "status": "derived",
+        "subject": "issue-b6e397dce720fd",
+        "predicate": "affects"
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748:affects:collect_tests",
+      "type": "Fact",
+      "label": "issue-687ee9a528c748 affects collect_tests",
+      "attributes": {
+        "rule": "G01",
+        "status": "derived",
+        "subject": "issue-687ee9a528c748",
+        "predicate": "affects"
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748:affects:pass_tests",
+      "type": "Fact",
+      "label": "issue-687ee9a528c748 affects pass_tests",
+      "attributes": {
+        "rule": "G01",
+        "status": "derived",
+        "subject": "issue-687ee9a528c748",
+        "predicate": "affects"
+      }
+    },
+    {
+      "id": "issue-b6e397dce720fd:blocks:pass_tests",
+      "type": "Fact",
+      "label": "issue-b6e397dce720fd blocks pass_tests",
+      "attributes": {
+        "rule": "G05",
+        "status": "derived",
+        "subject": "issue-b6e397dce720fd",
+        "predicate": "blocks"
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748:blocks:pass_tests",
+      "type": "Fact",
+      "label": "issue-687ee9a528c748 blocks pass_tests",
+      "attributes": {
+        "rule": "G05",
+        "status": "derived",
+        "subject": "issue-687ee9a528c748",
+        "predicate": "blocks"
+      }
+    },
+    {
+      "id": "issue-b6e397dce720fd:diagnosis:version_incompatibility",
+      "type": "Fact",
+      "label": "issue-b6e397dce720fd diagnosis version_incompatibility",
+      "attributes": {
+        "rule": "D02",
+        "status": "derived",
+        "subject": "issue-b6e397dce720fd",
+        "predicate": "diagnosis"
+      }
+    },
+    {
+      "id": "issue-b6e397dce720fd:remedy:replace_removed",
+      "type": "Fact",
+      "label": "issue-b6e397dce720fd remedy replace_removed",
+      "attributes": {
+        "rule": "D02",
+        "status": "derived",
+        "subject": "issue-b6e397dce720fd",
+        "predicate": "remedy"
+      }
+    },
+    {
+      "id": "issue-b6e397dce720fd:because:api:collections.Mapping",
+      "type": "Fact",
+      "label": "issue-b6e397dce720fd because api:collections.Mapping",
+      "attributes": {
+        "rule": "D02",
+        "status": "derived",
+        "subject": "issue-b6e397dce720fd",
+        "predicate": "because"
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748:diagnosis:local_module",
+      "type": "Fact",
+      "label": "issue-687ee9a528c748 diagnosis local_module",
+      "attributes": {
+        "rule": "D16",
+        "status": "derived",
+        "subject": "issue-687ee9a528c748",
+        "predicate": "diagnosis"
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748:remedy:fix_renamed_module",
+      "type": "Fact",
+      "label": "issue-687ee9a528c748 remedy fix_renamed_module",
+      "attributes": {
+        "rule": "D16",
+        "status": "derived",
+        "subject": "issue-687ee9a528c748",
+        "predicate": "remedy"
+      }
+    },
+    {
+      "id": "issue-687ee9a528c748:because:helpers.py",
+      "type": "Fact",
+      "label": "issue-687ee9a528c748 because helpers.py",
+      "attributes": {
+        "rule": "D16",
+        "status": "derived",
+        "subject": "issue-687ee9a528c748",
+        "predicate": "because"
+      }
+    },
+    {
+      "id": "rule:G01",
+      "type": "Rule",
+      "label": "G01 · A test collection failure prevents the collection goal.",
+      "attributes": {
+        "phase": "derive",
+        "source": ""
+      }
+    },
+    {
+      "id": "rule:G05",
+      "type": "Rule",
+      "label": "G05 · pytest stops before running any test when collection fails, so collection errors block the test-run goal and must be fixed first.",
+      "attributes": {
+        "phase": "derive",
+        "source": "pytest documentation: collection errors interrupt the session"
+      }
+    },
+    {
+      "id": "rule:D02",
+      "type": "Rule",
+      "label": "D02 · The code uses a module attribute or imported name that the installed version no longer provides.",
+      "attributes": {
+        "phase": "diagnose",
+        "source": "knowledge: removed APIs"
+      }
+    },
+    {
+      "id": "cause:version_incompatibility",
+      "type": "Cause",
+      "label": "Version incompatibility",
+      "attributes": {
+        "description": "The installed library or Python version no longer provides an API the code uses (removed module, attribute, function or keyword argument)."
+      }
+    },
+    {
+      "id": "rule:D16",
+      "type": "Rule",
+      "label": "D16 · No installed, standard or known package has this name, but a similarly named project module exists: it was probably renamed or moved.",
+      "attributes": {
+        "phase": "diagnose",
+        "source": ""
+      }
+    },
+    {
+      "id": "cause:local_module",
+      "type": "Cause",
+      "label": "Local module or path problem",
+      "attributes": {
+        "description": "A project module cannot be resolved: it was renamed or moved, the src layout is not on the path, a circular import, or a project file shadows a library or standard-library module."
+      }
+    },
+    {
+      "id": "update-collections.mapping",
+      "type": "Action",
+      "label": "Replace collections.Mapping: removed in Python 3.10",
+      "attributes": {
+        "priority": 1,
+        "explanation": "The target interpreter has Python 3.12.14, which no longer provides collections.Mapping (removed in 3.10). Change the code to use the same names from collections.abc, or pin Python below 3.10 if the project must keep the old API.",
+        "verification": "Re-run the affected tests with the same interpreter",
+        "targets": [],
+        "goal_impact": 2,
+        "cause": "version_incompatibility"
+      }
+    },
+    {
+      "id": "rule:P10",
+      "type": "Rule",
+      "label": "P10 · Removed API: adapt the code or pin the version that still provides it.",
+      "attributes": {
+        "phase": "plan",
+        "source": ""
+      }
+    },
+    {
+      "id": "fix-import-helper",
+      "type": "Action",
+      "label": "Update imports of helper: the project has helpers.py",
+      "attributes": {
+        "priority": 2,
+        "explanation": "No installed package, standard module or known distribution is called helper, but the project contains helpers.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+        "verification": "Re-run test collection",
+        "targets": [],
+        "goal_impact": 2,
+        "cause": "local_module"
+      }
+    },
+    {
+      "id": "rule:P13",
+      "type": "Rule",
+      "label": "P13 · Renamed or moved module: update the imports.",
+      "attributes": {
+        "phase": "plan",
+        "source": ""
+      }
+    },
+    {
+      "id": "check-pytest_run",
+      "type": "Action",
+      "label": "Run the full test suite",
+      "attributes": {
+        "priority": 3,
+        "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+        "verification": "Review the new check record and the status changes",
+        "targets": [],
+        "goal_impact": 1,
+        "cause": null
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "check-pytest_run",
+      "relation": "addresses",
+      "target": "issue-687ee9a528c748"
+    },
+    {
+      "source": "check-pytest_run",
+      "relation": "addresses",
+      "target": "issue-b6e397dce720fd"
+    },
+    {
+      "source": "check-pytest_run",
+      "relation": "justified_by",
+      "target": "issue-687ee9a528c748:affects:collect_tests"
+    },
+    {
+      "source": "check-pytest_run",
+      "relation": "justified_by",
+      "target": "issue-687ee9a528c748:affects:pass_tests"
+    },
+    {
+      "source": "check-pytest_run",
+      "relation": "justified_by",
+      "target": "issue-b6e397dce720fd:affects:collect_tests"
+    },
+    {
+      "source": "check-pytest_run",
+      "relation": "justified_by",
+      "target": "issue-b6e397dce720fd:affects:pass_tests"
+    },
+    {
+      "source": "dist:numpy:declared_in:requirements.txt:1",
+      "relation": "supported_by",
+      "target": "evidence:run-cfb9d49b571b:declaration:0"
+    },
+    {
+      "source": "dist:pytest:declared_in:requirements.txt:2",
+      "relation": "supported_by",
+      "target": "evidence:run-cfb9d49b571b:declaration:1"
+    },
+    {
+      "source": "dist:python:installed_version:3.12.14",
+      "relation": "supported_by",
+      "target": "evidence:run-00b084e8ba10:stdout:1"
+    },
+    {
+      "source": "environment:snapshot:available",
+      "relation": "supported_by",
+      "target": "evidence:run-00b084e8ba10:stdout:1"
+    },
+    {
+      "source": "event-a613f24ebe62",
+      "relation": "cites",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "event-ec83f763c036",
+      "relation": "cites",
+      "target": "evidence:run-890f2274ab0c:probe:1"
+    },
+    {
+      "source": "evidence:run-00b084e8ba10:stdout:1",
+      "relation": "observed_in",
+      "target": "run-00b084e8ba10"
+    },
+    {
+      "source": "evidence:run-890f2274ab0c:probe:1",
+      "relation": "observed_in",
+      "target": "run-890f2274ab0c"
+    },
+    {
+      "source": "evidence:run-890f2274ab0c:probe:3",
+      "relation": "observed_in",
+      "target": "run-890f2274ab0c"
+    },
+    {
+      "source": "evidence:run-cfb9d49b571b:declaration:0",
+      "relation": "observed_in",
+      "target": "run-cfb9d49b571b"
+    },
+    {
+      "source": "evidence:run-cfb9d49b571b:declaration:1",
+      "relation": "observed_in",
+      "target": "run-cfb9d49b571b"
+    },
+    {
+      "source": "evidence:run-cfb9d49b571b:stdout:1",
+      "relation": "observed_in",
+      "target": "run-cfb9d49b571b"
+    },
+    {
+      "source": "fix-import-helper",
+      "relation": "addresses",
+      "target": "issue-687ee9a528c748"
+    },
+    {
+      "source": "fix-import-helper",
+      "relation": "justified_by",
+      "target": "issue-687ee9a528c748:missing_module:module:helper"
+    },
+    {
+      "source": "fix-import-helper",
+      "relation": "justified_by",
+      "target": "issue-687ee9a528c748:remedy:fix_renamed_module"
+    },
+    {
+      "source": "fix-import-helper",
+      "relation": "justified_by",
+      "target": "module:helper:similar_local:helpers.py"
+    },
+    {
+      "source": "fix-import-helper",
+      "relation": "proposed_by",
+      "target": "rule:P13"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "evaluated_by",
+      "target": "run-890f2274ab0c"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "has_open_issue",
+      "target": "issue-687ee9a528c748"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "has_open_issue",
+      "target": "issue-b6e397dce720fd"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "recommends",
+      "target": "check-pytest_run"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "recommends",
+      "target": "fix-import-helper"
+    },
+    {
+      "source": "goal:pass_tests",
+      "relation": "recommends",
+      "target": "update-collections.mapping"
+    },
+    {
+      "source": "issue-687ee9a528c748",
+      "relation": "diagnosed_as",
+      "target": "cause:local_module"
+    },
+    {
+      "source": "issue-687ee9a528c748",
+      "relation": "has_event",
+      "target": "event-a613f24ebe62"
+    },
+    {
+      "source": "issue-687ee9a528c748:affects:collect_tests",
+      "relation": "derived_by",
+      "target": "rule:G01"
+    },
+    {
+      "source": "issue-687ee9a528c748:affects:collect_tests",
+      "relation": "inferred_from",
+      "target": "issue-687ee9a528c748:stage:collect"
+    },
+    {
+      "source": "issue-687ee9a528c748:affects:collect_tests",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "issue-687ee9a528c748:affects:pass_tests",
+      "relation": "derived_by",
+      "target": "rule:G01"
+    },
+    {
+      "source": "issue-687ee9a528c748:affects:pass_tests",
+      "relation": "inferred_from",
+      "target": "issue-687ee9a528c748:stage:collect"
+    },
+    {
+      "source": "issue-687ee9a528c748:affects:pass_tests",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "issue-687ee9a528c748:api:api:helper.double",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "issue-687ee9a528c748:because:helpers.py",
+      "relation": "derived_by",
+      "target": "rule:D16"
+    },
+    {
+      "source": "issue-687ee9a528c748:because:helpers.py",
+      "relation": "inferred_from",
+      "target": "issue-687ee9a528c748:missing_module:module:helper"
+    },
+    {
+      "source": "issue-687ee9a528c748:because:helpers.py",
+      "relation": "inferred_from",
+      "target": "module:helper:similar_local:helpers.py"
+    },
+    {
+      "source": "issue-687ee9a528c748:because:helpers.py",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "issue-687ee9a528c748:because:helpers.py",
+      "relation": "supported_by",
+      "target": "evidence:run-cfb9d49b571b:stdout:1"
+    },
+    {
+      "source": "issue-687ee9a528c748:blocks:pass_tests",
+      "relation": "derived_by",
+      "target": "rule:G05"
+    },
+    {
+      "source": "issue-687ee9a528c748:blocks:pass_tests",
+      "relation": "inferred_from",
+      "target": "issue-687ee9a528c748:stage:collect"
+    },
+    {
+      "source": "issue-687ee9a528c748:blocks:pass_tests",
+      "relation": "inferred_from",
+      "target": "issue-687ee9a528c748:tool:pytest_run"
+    },
+    {
+      "source": "issue-687ee9a528c748:blocks:pass_tests",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "issue-687ee9a528c748:component:helper",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "issue-687ee9a528c748:diagnosis:local_module",
+      "relation": "derived_by",
+      "target": "rule:D16"
+    },
+    {
+      "source": "issue-687ee9a528c748:diagnosis:local_module",
+      "relation": "inferred_from",
+      "target": "issue-687ee9a528c748:missing_module:module:helper"
+    },
+    {
+      "source": "issue-687ee9a528c748:diagnosis:local_module",
+      "relation": "inferred_from",
+      "target": "module:helper:similar_local:helpers.py"
+    },
+    {
+      "source": "issue-687ee9a528c748:diagnosis:local_module",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "issue-687ee9a528c748:diagnosis:local_module",
+      "relation": "supported_by",
+      "target": "evidence:run-cfb9d49b571b:stdout:1"
+    },
+    {
+      "source": "issue-687ee9a528c748:exception:ModuleNotFoundError",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "issue-687ee9a528c748:kind:import_failure",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "issue-687ee9a528c748:missing_module:module:helper",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "issue-687ee9a528c748:model_suggests:local_module",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "issue-687ee9a528c748:module:module:helper",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "issue-687ee9a528c748:raised_in:project",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "issue-687ee9a528c748:remedy:fix_renamed_module",
+      "relation": "derived_by",
+      "target": "rule:D16"
+    },
+    {
+      "source": "issue-687ee9a528c748:remedy:fix_renamed_module",
+      "relation": "inferred_from",
+      "target": "issue-687ee9a528c748:missing_module:module:helper"
+    },
+    {
+      "source": "issue-687ee9a528c748:remedy:fix_renamed_module",
+      "relation": "inferred_from",
+      "target": "module:helper:similar_local:helpers.py"
+    },
+    {
+      "source": "issue-687ee9a528c748:remedy:fix_renamed_module",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "issue-687ee9a528c748:remedy:fix_renamed_module",
+      "relation": "supported_by",
+      "target": "evidence:run-cfb9d49b571b:stdout:1"
+    },
+    {
+      "source": "issue-687ee9a528c748:stage:collect",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "issue-687ee9a528c748:tool:pytest_run",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:3"
+    },
+    {
+      "source": "issue-b6e397dce720fd",
+      "relation": "diagnosed_as",
+      "target": "cause:version_incompatibility"
+    },
+    {
+      "source": "issue-b6e397dce720fd",
+      "relation": "has_event",
+      "target": "event-ec83f763c036"
+    },
+    {
+      "source": "issue-b6e397dce720fd:affects:collect_tests",
+      "relation": "derived_by",
+      "target": "rule:G01"
+    },
+    {
+      "source": "issue-b6e397dce720fd:affects:collect_tests",
+      "relation": "inferred_from",
+      "target": "issue-b6e397dce720fd:stage:collect"
+    },
+    {
+      "source": "issue-b6e397dce720fd:affects:collect_tests",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:1"
+    },
+    {
+      "source": "issue-b6e397dce720fd:affects:pass_tests",
+      "relation": "derived_by",
+      "target": "rule:G01"
+    },
+    {
+      "source": "issue-b6e397dce720fd:affects:pass_tests",
+      "relation": "inferred_from",
+      "target": "issue-b6e397dce720fd:stage:collect"
+    },
+    {
+      "source": "issue-b6e397dce720fd:affects:pass_tests",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:1"
+    },
+    {
+      "source": "issue-b6e397dce720fd:api:api:collections.Mapping",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:1"
+    },
+    {
+      "source": "issue-b6e397dce720fd:because:api:collections.Mapping",
+      "relation": "derived_by",
+      "target": "rule:D02"
+    },
+    {
+      "source": "issue-b6e397dce720fd:because:api:collections.Mapping",
+      "relation": "documented_in",
+      "target": "source:python-3.10"
+    },
+    {
+      "source": "issue-b6e397dce720fd:because:api:collections.Mapping",
+      "relation": "inferred_from",
+      "target": "dist:python:installed_version:3.12.14"
+    },
+    {
+      "source": "issue-b6e397dce720fd:because:api:collections.Mapping",
+      "relation": "inferred_from",
+      "target": "issue-b6e397dce720fd:api:api:collections.Mapping"
+    },
+    {
+      "source": "issue-b6e397dce720fd:because:api:collections.Mapping",
+      "relation": "inferred_from",
+      "target": "kb:api:collections.Mapping:removed_from"
+    },
+    {
+      "source": "issue-b6e397dce720fd:because:api:collections.Mapping",
+      "relation": "inferred_from",
+      "target": "kb:api:collections.Mapping:removed_in_version"
+    },
+    {
+      "source": "issue-b6e397dce720fd:because:api:collections.Mapping",
+      "relation": "supported_by",
+      "target": "evidence:run-00b084e8ba10:stdout:1"
+    },
+    {
+      "source": "issue-b6e397dce720fd:because:api:collections.Mapping",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:1"
+    },
+    {
+      "source": "issue-b6e397dce720fd:blocks:pass_tests",
+      "relation": "derived_by",
+      "target": "rule:G05"
+    },
+    {
+      "source": "issue-b6e397dce720fd:blocks:pass_tests",
+      "relation": "inferred_from",
+      "target": "issue-b6e397dce720fd:stage:collect"
+    },
+    {
+      "source": "issue-b6e397dce720fd:blocks:pass_tests",
+      "relation": "inferred_from",
+      "target": "issue-b6e397dce720fd:tool:pytest_run"
+    },
+    {
+      "source": "issue-b6e397dce720fd:blocks:pass_tests",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:1"
+    },
+    {
+      "source": "issue-b6e397dce720fd:diagnosis:version_incompatibility",
+      "relation": "derived_by",
+      "target": "rule:D02"
+    },
+    {
+      "source": "issue-b6e397dce720fd:diagnosis:version_incompatibility",
+      "relation": "documented_in",
+      "target": "source:python-3.10"
+    },
+    {
+      "source": "issue-b6e397dce720fd:diagnosis:version_incompatibility",
+      "relation": "inferred_from",
+      "target": "dist:python:installed_version:3.12.14"
+    },
+    {
+      "source": "issue-b6e397dce720fd:diagnosis:version_incompatibility",
+      "relation": "inferred_from",
+      "target": "issue-b6e397dce720fd:api:api:collections.Mapping"
+    },
+    {
+      "source": "issue-b6e397dce720fd:diagnosis:version_incompatibility",
+      "relation": "inferred_from",
+      "target": "kb:api:collections.Mapping:removed_from"
+    },
+    {
+      "source": "issue-b6e397dce720fd:diagnosis:version_incompatibility",
+      "relation": "inferred_from",
+      "target": "kb:api:collections.Mapping:removed_in_version"
+    },
+    {
+      "source": "issue-b6e397dce720fd:diagnosis:version_incompatibility",
+      "relation": "supported_by",
+      "target": "evidence:run-00b084e8ba10:stdout:1"
+    },
+    {
+      "source": "issue-b6e397dce720fd:diagnosis:version_incompatibility",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:1"
+    },
+    {
+      "source": "issue-b6e397dce720fd:exception:ImportError",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:1"
+    },
+    {
+      "source": "issue-b6e397dce720fd:kind:import_failure",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:1"
+    },
+    {
+      "source": "issue-b6e397dce720fd:model_suggests:version_incompatibility",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:1"
+    },
+    {
+      "source": "issue-b6e397dce720fd:module:module:collections",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:1"
+    },
+    {
+      "source": "issue-b6e397dce720fd:raised_in:project",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:1"
+    },
+    {
+      "source": "issue-b6e397dce720fd:remedy:replace_removed",
+      "relation": "derived_by",
+      "target": "rule:D02"
+    },
+    {
+      "source": "issue-b6e397dce720fd:remedy:replace_removed",
+      "relation": "documented_in",
+      "target": "source:python-3.10"
+    },
+    {
+      "source": "issue-b6e397dce720fd:remedy:replace_removed",
+      "relation": "inferred_from",
+      "target": "dist:python:installed_version:3.12.14"
+    },
+    {
+      "source": "issue-b6e397dce720fd:remedy:replace_removed",
+      "relation": "inferred_from",
+      "target": "issue-b6e397dce720fd:api:api:collections.Mapping"
+    },
+    {
+      "source": "issue-b6e397dce720fd:remedy:replace_removed",
+      "relation": "inferred_from",
+      "target": "kb:api:collections.Mapping:removed_from"
+    },
+    {
+      "source": "issue-b6e397dce720fd:remedy:replace_removed",
+      "relation": "inferred_from",
+      "target": "kb:api:collections.Mapping:removed_in_version"
+    },
+    {
+      "source": "issue-b6e397dce720fd:remedy:replace_removed",
+      "relation": "supported_by",
+      "target": "evidence:run-00b084e8ba10:stdout:1"
+    },
+    {
+      "source": "issue-b6e397dce720fd:remedy:replace_removed",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:1"
+    },
+    {
+      "source": "issue-b6e397dce720fd:signal:cannot_import_name",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:1"
+    },
+    {
+      "source": "issue-b6e397dce720fd:stage:collect",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:1"
+    },
+    {
+      "source": "issue-b6e397dce720fd:tool:pytest_run",
+      "relation": "supported_by",
+      "target": "evidence:run-890f2274ab0c:probe:1"
+    },
+    {
+      "source": "kb:api:collections.Mapping:removed_from",
+      "relation": "documented_in",
+      "target": "source:python-3.10"
+    },
+    {
+      "source": "kb:api:collections.Mapping:removed_in_version",
+      "relation": "documented_in",
+      "target": "source:python-3.10"
+    },
+    {
+      "source": "kb:api:collections.Mapping:replacement",
+      "relation": "documented_in",
+      "target": "source:python-3.10"
+    },
+    {
+      "source": "module:collections:in_stdlib:yes",
+      "relation": "supported_by",
+      "target": "evidence:run-00b084e8ba10:stdout:1"
+    },
+    {
+      "source": "module:helper:similar_local:helpers.py",
+      "relation": "supported_by",
+      "target": "evidence:run-cfb9d49b571b:stdout:1"
+    },
+    {
+      "source": "project:declarations:available",
+      "relation": "supported_by",
+      "target": "evidence:run-cfb9d49b571b:stdout:1"
+    },
+    {
+      "source": "update-collections.mapping",
+      "relation": "addresses",
+      "target": "issue-b6e397dce720fd"
+    },
+    {
+      "source": "update-collections.mapping",
+      "relation": "justified_by",
+      "target": "dist:python:installed_version:3.12.14"
+    },
+    {
+      "source": "update-collections.mapping",
+      "relation": "justified_by",
+      "target": "issue-b6e397dce720fd:because:api:collections.Mapping"
+    },
+    {
+      "source": "update-collections.mapping",
+      "relation": "justified_by",
+      "target": "issue-b6e397dce720fd:remedy:replace_removed"
+    },
+    {
+      "source": "update-collections.mapping",
+      "relation": "justified_by",
+      "target": "kb:api:collections.Mapping:removed_from"
+    },
+    {
+      "source": "update-collections.mapping",
+      "relation": "justified_by",
+      "target": "kb:api:collections.Mapping:removed_in_version"
+    },
+    {
+      "source": "update-collections.mapping",
+      "relation": "justified_by",
+      "target": "kb:api:collections.Mapping:replacement"
+    },
+    {
+      "source": "update-collections.mapping",
+      "relation": "proposed_by",
+      "target": "rule:P10"
+    }
+  ],
+  "meaning": "Provenance and rule relations; similarity never creates a causal edge."
+}

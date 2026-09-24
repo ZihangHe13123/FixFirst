@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import sys
 
-from .cases import write, source_fingerprint
+from .cases import require_demo_tools, source_fingerprint, write
 from .models import now
 from .report import render
 from .service import create_session, scan, mark_fixed
@@ -19,7 +19,7 @@ TESTS = "import cart\n\ndef test_discount():\n    assert cart.discount(100) == 9
 
 def create_project(root: Path):
     if root.exists():
-        raise ValueError(f"案例目录已存在，不覆盖：{root}")
+        raise ValueError(f"Case directory already exists; not overwriting: {root}")
     root.mkdir(parents=True)
     write(root / "cart.py", HEALTHY)
     write(root / "conftest.py", FIXTURE)
@@ -59,13 +59,13 @@ def capture(root, name):
 
 def require_healthy(session):
     if session.goal_status != "achieved" or not all(r.verified_pass for r in session.runs[-2:]):
-        raise ValueError("执行案例基线或恢复未通过，请查看原始记录")
+        raise ValueError("Execution case baseline or restore did not pass; see the raw records")
 
 
 def build_dataset(output: Path, projects=5):
     output = output.expanduser().resolve()
     if output.exists():
-        raise ValueError("数据目录已存在，请选择新目录")
+        raise ValueError("Dataset directory already exists; choose a new one")
     output.mkdir(parents=True)
     manifest = {
         "schema_version": 1,
@@ -73,9 +73,8 @@ def build_dataset(output: Path, projects=5):
         "origin": "controlled_execution_injection",
         "license": "CC0-1.0 for generated fixture code",
         "cases": [],
-        "limitations": "购物车模板的受控执行故障；五个项目变体结构相近，不是自然开源故障。",
+        "limitations": "Controlled execution faults in a shopping-cart template; the five variants are structurally similar and not naturally occurring failures.",
     }
-    rows = []
     try:
         for p in range(1, projects + 1):
             project_id = f"execution-project-{p}"
@@ -103,7 +102,7 @@ def build_dataset(output: Path, projects=5):
                 if session.goal_status != "blocked" or {i.kind for i in session.issues} != {
                     expected
                 }:
-                    raise ValueError(f"{case_id} 未捕获预设失败")
+                    raise ValueError(f"{case_id}: injected failure not captured")
                 # Group truth comes from the injected faults: imports share one missing module;
                 # independent discount/tax defects have different node-level groups.
                 event_groups = {
@@ -120,15 +119,6 @@ def build_dataset(output: Path, projects=5):
                     "repair": "Restore owned cart.py and conftest.py from HEALTHY/FIXTURE",
                 }
                 write(directory / "truth.json", json.dumps(truth, ensure_ascii=False, indent=2))
-                rows += [
-                    {
-                        "project_id": project_id,
-                        "case_id": case_id,
-                        "label": expected,
-                        "issue": i.model_dump(),
-                    }
-                    for i in session.issues
-                ]
                 write(root / "cart.py", HEALTHY)
                 write(root / "conftest.py", FIXTURE)
                 scan(session, ["pytest", "pytest_run"])
@@ -147,33 +137,33 @@ def build_dataset(output: Path, projects=5):
                         "raw_runs": len(baseline.runs) + len(session.runs),
                     }
                 )
-                print(f"  {case_id}: 收集成功 → 执行失败 → 修复验证通过", flush=True)
+                print(f"  {case_id}: collected → failing → fix verified", flush=True)
     finally:
         write(output / "manifest.json", json.dumps(manifest, ensure_ascii=False, indent=2))
-        write(output / "labeled_issues.json", json.dumps(rows, ensure_ascii=False, indent=2))
     return output / "manifest.json"
 
 
 def demo(output: Path, store):
+    require_demo_tools()
     output = output.expanduser().resolve()
     if output.exists():
-        raise ValueError("演示目录已存在，请选择新的输出目录")
+        raise ValueError("Demo directory already exists; choose a new output directory")
     root = output / "project"
     create_project(root)
-    session = capture(root, "小王的购物车：测试能收集，但运行失败")
+    session = capture(root, "Wang's shopping cart: tests collect but fail")
     require_healthy(session)
-    render(session, store.root, output / "00-healthy.html")
+    render(session, store.root, output / "00-healthy.html", public=True)
     set_variant(root, "mixed")
     scan(session, ["pytest", "pytest_run"])
     assert len(session.issues) == 2 and session.goal_status == "blocked"
-    render(session, store.root, output / "01-two-failures.html")
+    render(session, store.root, output / "01-two-failures.html", public=True)
     write(root / "cart.py", HEALTHY.replace("total * 0.1", "total * 0.2"))
     issue = next(i for i in session.issues if "test_cart.py::test_discount" in i.targets)
     mark_fixed(session, issue.issue_id)
     scan(session, ["pytest_run"], targets=["test_cart.py::test_discount"])
     assert sum(i.status == "resolved" for i in session.issues) == 1
     assert session.goal_status == "unknown"
-    render(session, store.root, output / "02-selected-pass.html")
+    render(session, store.root, output / "02-selected-pass.html", public=True)
     write(
         root / "test_cart.py",
         "import pytest\n"
@@ -183,12 +173,12 @@ def demo(output: Path, store):
     )
     scan(session, ["pytest_run"])
     assert session.goal_status == "unknown"
-    render(session, store.root, output / "03-skipped-is-not-fixed.html")
+    render(session, store.root, output / "03-skipped-is-not-fixed.html", public=True)
     write(root / "cart.py", HEALTHY)
     write(root / "test_cart.py", TESTS)
     scan(session, ["pytest_run"])
     assert session.goal_status == "achieved" and all(i.status == "resolved" for i in session.issues)
-    final = render(session, store.root, output / "04-restored.html")
+    final = render(session, store.root, output / "04-restored.html", public=True)
     with store.lock(session.session_id):
         store.save(session)
         render(session, store.root, store.directory(session.session_id) / "report.html")

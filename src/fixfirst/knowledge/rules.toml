@@ -1,0 +1,735 @@
+# FixFirst rule base.
+#
+# Patterns are [subject, predicate, value]; "?x" binds a variable, "?_" matches anything.
+# ["not", s, p, v] succeeds when no fact matches (negation as failure, stratified by phase).
+# ["test", op, a, b] compares bound values: version_gte, version_lt, in, not_in, eq, ne.
+#
+# Phases run in order:
+#   derive    goal relevance and helper facts from observations
+#   diagnose  root causes from observations + domain knowledge (knowledge/domain.toml)
+#   fallback  classifier suggestions for issues no diagnosis rule explains
+#   plan      next actions; verification re-runs are added by reasoning.py
+#
+# Base facts come from evidence.py (observations), domain.py (knowledge) and reasoning.py
+# (session goal, snapshot availability, classifier suggestions).
+
+# ======================================================================================
+# derive: which goal an issue affects
+# ======================================================================================
+
+[[rule]]
+id = "G01"
+phase = "derive"
+description = "A test collection failure prevents the collection goal."
+when = [["?i", "stage", "collect"]]
+then = [["?i", "affects", "collect_tests"], ["?i", "affects", "pass_tests"]]
+
+[[rule]]
+id = "G02"
+phase = "derive"
+description = "Linter findings affect the code-check goal."
+when = [["?i", "stage", "lint"]]
+then = [["?i", "affects", "check_style"]]
+
+[[rule]]
+id = "G03"
+phase = "derive"
+description = "Failures while running tests (setup, call or teardown) affect the test-run goal."
+when = [["?i", "stage", "?s"], ["test", "in", "?s", "setup,call,teardown"]]
+then = [["?i", "affects", "pass_tests"]]
+
+[[rule]]
+id = "G04"
+phase = "derive"
+description = "Unsatisfied project declarations can prevent tests from importing or running."
+when = [["?i", "tool", "project"]]
+then = [["?i", "affects", "collect_tests"], ["?i", "affects", "pass_tests"]]
+
+[[rule]]
+id = "G05"
+phase = "derive"
+description = "pytest stops before running any test when collection fails, so collection errors block the test-run goal and must be fixed first."
+source = "pytest documentation: collection errors interrupt the session"
+when = [["?i", "stage", "collect"], ["?i", "tool", "?t"], ["test", "in", "?t", "pytest,pytest_run"]]
+then = [["?i", "blocks", "pass_tests"]]
+
+[[rule]]
+id = "G06"
+phase = "derive"
+description = "The object or callable named in the error is defined in the project itself."
+when = [["?i", "owner", "?c"], ["?c", "defined_locally", "yes"]]
+then = [["?i", "owner_is_local", "yes"]]
+
+# ======================================================================================
+# diagnose: version incompatibility (knowledge of removed names)
+# ======================================================================================
+
+[[rule]]
+id = "D01"
+phase = "diagnose"
+description = "The missing module was removed from the standard library in or before the target Python version."
+source = "knowledge: removed standard-library modules"
+when = [
+  ["?i", "missing_module", "?m"],
+  ["?m", "removed_from", "?d"], ["?m", "removed_in_version", "?v"],
+  ["?d", "installed_version", "?iv"], ["test", "version_gte", "?iv", "?v"],
+]
+then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "replace_removed"], ["?i", "because", "?m"]]
+
+[[rule]]
+id = "D02"
+phase = "diagnose"
+description = "The code uses a module attribute or imported name that the installed version no longer provides."
+source = "knowledge: removed APIs"
+when = [
+  ["?i", "api", "?x"],
+  ["?x", "removed_from", "?d"], ["?x", "removed_in_version", "?v"],
+  ["?d", "installed_version", "?iv"], ["test", "version_gte", "?iv", "?v"],
+]
+then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "replace_removed"], ["?i", "because", "?x"]]
+
+[[rule]]
+id = "D03"
+phase = "diagnose"
+description = "The code calls a method name that the installed Python version removed (for example unittest aliases)."
+source = "knowledge: removed attributes"
+when = [
+  ["?i", "attribute", "?x"],
+  ["?x", "removed_from", "?d"], ["?x", "removed_in_version", "?v"],
+  ["?d", "installed_version", "?iv"], ["test", "version_gte", "?iv", "?v"],
+]
+then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "replace_removed"], ["?i", "because", "?x"]]
+
+[[rule]]
+id = "D04"
+phase = "diagnose"
+description = "A library call passes a keyword argument that the installed library version removed."
+source = "knowledge: removed keyword arguments"
+when = [
+  ["?i", "kwarg", "?x"],
+  ["not", "?i", "owner_is_local", "yes"],
+  ["?x", "removed_from", "?d"], ["?x", "removed_in_version", "?v"],
+  ["?d", "installed_version", "?iv"], ["test", "version_gte", "?iv", "?v"],
+]
+then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "replace_removed"], ["?i", "because", "?x"]]
+
+# ======================================================================================
+# diagnose: local module problems
+# ======================================================================================
+
+[[rule]]
+id = "D10"
+phase = "diagnose"
+description = "A project file has the same name as an installed library, and the library's attributes are missing: the project file shadows the library."
+when = [
+  ["?i", "module", "?m"], ["?m", "is_local", "?p"], ["?m", "provided_by", "?d"],
+  ["?i", "signal", "?s"], ["test", "in", "?s", "no_attribute,cannot_import_name,partially_initialized"],
+]
+then = [["?i", "diagnosis", "local_module"], ["?i", "remedy", "rename_shadow"], ["?i", "because", "?m"]]
+
+[[rule]]
+id = "D11"
+phase = "diagnose"
+description = "A project file has the same name as a standard-library module and hides it."
+when = [
+  ["?i", "module", "?m"], ["?m", "is_local", "?p"], ["?m", "in_stdlib", "yes"],
+  ["?i", "signal", "?s"], ["test", "in", "?s", "no_attribute,cannot_import_name,partially_initialized"],
+]
+then = [["?i", "diagnosis", "local_module"], ["?i", "remedy", "rename_shadow"], ["?i", "because", "?m"]]
+
+[[rule]]
+id = "D12"
+phase = "diagnose"
+description = "A project file is named like a known third-party package and lacks that package's attributes."
+source = "knowledge: import names"
+when = [
+  ["?i", "module", "?m"], ["?m", "is_local", "?p"], ["?m", "import_name_of", "?d"],
+  ["?i", "signal", "no_attribute"],
+]
+then = [["?i", "diagnosis", "local_module"], ["?i", "remedy", "rename_shadow"], ["?i", "because", "?m"]]
+
+[[rule]]
+id = "D13"
+phase = "diagnose"
+description = "The module exists in the project tree but cannot be found: the package layout or import path is wrong (for example an uninstalled src layout)."
+when = [["?i", "missing_module", "?m"], ["?m", "is_local", "?p"], ["not", "?m", "provided_by", "?_"]]
+then = [["?i", "diagnosis", "local_module"], ["?i", "remedy", "fix_import_path"], ["?i", "because", "?m"]]
+
+[[rule]]
+id = "D14"
+phase = "diagnose"
+description = "Two project modules import each other before either finishes loading (circular import)."
+when = [
+  ["?i", "signal", "partially_initialized"], ["?i", "module", "?m"], ["?m", "is_local", "?p"],
+  ["not", "?m", "provided_by", "?_"], ["not", "?m", "in_stdlib", "yes"],
+]
+then = [["?i", "diagnosis", "local_module"], ["?i", "remedy", "break_cycle"], ["?i", "because", "?m"]]
+
+[[rule]]
+id = "D15"
+phase = "diagnose"
+description = "A relative import is used in a module that is not imported as part of a package."
+when = [["?i", "signal", "relative_import"]]
+then = [["?i", "diagnosis", "local_module"], ["?i", "remedy", "fix_relative_import"]]
+
+[[rule]]
+id = "D16"
+phase = "diagnose"
+description = "No installed, standard or known package has this name, but a similarly named project module exists: it was probably renamed or moved."
+when = [
+  ["?i", "missing_module", "?m"], ["?m", "similar_local", "?p"],
+  ["not", "?m", "provided_by", "?_"], ["not", "?m", "in_stdlib", "yes"], ["not", "?m", "is_local", "?_"],
+  ["not", "?m", "import_name_of", "?_"], ["not", "?m", "declared_in", "?_"], ["not", "?m", "removed_from", "?_"],
+]
+then = [["?i", "diagnosis", "local_module"], ["?i", "remedy", "fix_renamed_module"], ["?i", "because", "?p"]]
+
+# ======================================================================================
+# diagnose: missing dependencies
+# ======================================================================================
+
+[[rule]]
+id = "D20"
+phase = "diagnose"
+description = "The project declares this dependency but the target interpreter does not provide it."
+when = [
+  ["?i", "missing_module", "?m"], ["?m", "declared_in", "?src"],
+  ["not", "?m", "provided_by", "?_"], ["not", "?m", "is_local", "?_"],
+]
+then = [["?i", "diagnosis", "missing_dependency"], ["?i", "remedy", "install_declared"], ["?i", "because", "?m"]]
+
+[[rule]]
+id = "D21"
+phase = "diagnose"
+description = "The import name belongs to a known PyPI distribution that is not installed in the target interpreter."
+source = "knowledge: import names"
+when = [
+  ["?i", "missing_module", "?m"], ["?m", "import_name_of", "?d"],
+  ["not", "?m", "provided_by", "?_"], ["not", "?m", "is_local", "?_"], ["not", "?m", "in_stdlib", "yes"],
+  ["not", "?m", "declared_in", "?_"],
+]
+then = [["?i", "diagnosis", "missing_dependency"], ["?i", "remedy", "install_known"], ["?i", "because", "?m"]]
+
+[[rule]]
+id = "D22"
+phase = "diagnose"
+description = "The distribution for this import name is declared by the project but is not installed."
+source = "knowledge: import names"
+when = [
+  ["?i", "missing_module", "?m"], ["?m", "import_name_of", "?d"],
+  ["?d", "declared_in", "?src"], ["not", "?m", "provided_by", "?_"], ["not", "?m", "is_local", "?_"],
+]
+then = [["?i", "diagnosis", "missing_dependency"], ["?i", "remedy", "install_known"], ["?i", "because", "?m"]]
+
+# ======================================================================================
+# diagnose: configuration
+# ======================================================================================
+
+[[rule]]
+id = "D30"
+phase = "diagnose"
+description = "The failing lookup is os.environ[...]: a required environment variable is not set."
+when = [["?i", "exception", "KeyError"], ["?i", "signal", "environ_lookup"], ["?i", "config_key", "?k"]]
+then = [["?i", "diagnosis", "config_missing"], ["?i", "remedy", "provide_env"], ["?i", "because", "?k"]]
+
+[[rule]]
+id = "D31"
+phase = "diagnose"
+description = "The project reports a named configuration value as missing."
+when = [["?i", "kind", "explicit_config_missing"], ["?i", "config_key", "?k"]]
+then = [["?i", "diagnosis", "config_missing"], ["?i", "remedy", "provide_env"], ["?i", "because", "?k"]]
+
+[[rule]]
+id = "D32"
+phase = "diagnose"
+description = "A configuration-like file (settings, .env, .yaml, .json, .ini, .toml) does not exist."
+when = [["?i", "exception", "FileNotFoundError"], ["?i", "signal", "config_file"], ["?i", "missing_file", "?f"]]
+then = [["?i", "diagnosis", "config_missing"], ["?i", "remedy", "provide_config_file"], ["?i", "because", "?f"]]
+
+[[rule]]
+id = "D33"
+phase = "diagnose"
+description = "os.getenv returned None and the code then used the value: the environment variable is not set."
+when = [["?i", "signal", "nonetype"], ["?i", "signal", "getenv"], ["?i", "config_key", "?k"]]
+then = [["?i", "diagnosis", "config_missing"], ["?i", "remedy", "provide_env"], ["?i", "because", "?k"]]
+
+# ======================================================================================
+# diagnose: defects in project code
+# ======================================================================================
+
+[[rule]]
+id = "D40"
+phase = "diagnose"
+description = "A test assertion failed: the observed behaviour differs from the test's expectation."
+when = [["?i", "exception", "AssertionError"]]
+then = [["?i", "diagnosis", "code_defect"]]
+
+[[rule]]
+id = "D41"
+phase = "diagnose"
+description = "A programming error raised inside project or test code."
+when = [
+  ["?i", "exception", "?e"],
+  ["test", "in", "?e", "ZeroDivisionError,NameError,SyntaxError,IndentationError,IndexError,UnboundLocalError,RecursionError"],
+  ["?i", "raised_in", "?r"], ["test", "in", "?r", "project,test"],
+]
+then = [["?i", "diagnosis", "code_defect"]]
+
+[[rule]]
+id = "D42"
+phase = "diagnose"
+description = "The imported name does not exist in a project module that loaded correctly."
+when = [
+  ["?i", "signal", "cannot_import_name"], ["?i", "module", "?m"], ["?m", "is_local", "?p"],
+  ["not", "?i", "signal", "partially_initialized"], ["not", "?m", "provided_by", "?_"], ["not", "?m", "in_stdlib", "yes"],
+]
+then = [["?i", "diagnosis", "code_defect"], ["?i", "remedy", "check_name"], ["?i", "because", "?m"]]
+
+[[rule]]
+id = "D43"
+phase = "diagnose"
+description = "The missing attribute or unexpected argument belongs to a class or function defined in the project."
+when = [
+  ["?i", "exception", "?e"], ["test", "in", "?e", "AttributeError,TypeError"],
+  ["?i", "owner_is_local", "yes"],
+]
+then = [["?i", "diagnosis", "code_defect"]]
+
+# ======================================================================================
+# fallback: classifier suggestion when no rule explains the failure
+# ======================================================================================
+
+[[rule]]
+id = "F01"
+phase = "fallback"
+status = "hypothesis"
+description = "No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+when = [["?i", "model_suggests", "?c"], ["not", "?i", "diagnosis", "?_"]]
+then = [["?i", "suspected", "?c"]]
+
+# ======================================================================================
+# plan: gather missing evidence first
+# ======================================================================================
+
+[[rule]]
+id = "P01"
+phase = "plan"
+description = "Import or dependency failures need an environment snapshot before any cause can be named."
+when = [
+  ["?i", "kind", "?k"], ["test", "in", "?k", "import_failure,dependency_conflict"],
+  ["not", "environment", "snapshot", "available"],
+]
+[rule.action]
+id = "inspect-environment"
+kind = "inspect"
+check = "environment"
+issue = "?i"
+cost = 1
+impact = 2
+impact_goals = ["collect_tests", "pass_tests"]
+title = "Record the current Python environment first"
+explanation = "Import or dependency checks failed. FixFirst needs the interpreter and its installed packages before it can tell a missing package from a local module or a removed API. Nothing is installed or changed."
+verification = "Review the snapshot: interpreter path, Python version and installed packages"
+
+[[rule]]
+id = "P02"
+phase = "plan"
+description = "Errors about missing attributes or arguments are checked against installed versions, which needs a snapshot."
+when = [
+  ["?i", "signal", "?s"], ["test", "in", "?s", "no_attribute,unexpected_kwarg,cannot_import_name"],
+  ["not", "?i", "diagnosis", "?_"], ["not", "environment", "snapshot", "available"],
+]
+[rule.action]
+id = "inspect-environment"
+kind = "inspect"
+check = "environment"
+issue = "?i"
+cost = 1
+title = "Record the current Python environment first"
+explanation = "The error names a missing attribute, import or argument. Comparing it with the installed library versions needs an environment snapshot. Nothing is installed or changed."
+verification = "Review the snapshot: interpreter path, Python version and installed packages"
+
+[[rule]]
+id = "P03"
+phase = "plan"
+description = "Module-level errors need the project's declarations and file layout before a cause can be named."
+when = [
+  ["?i", "kind", "?k"], ["test", "in", "?k", "import_failure,dependency_conflict"],
+  ["environment", "snapshot", "available"], ["not", "project", "declarations", "available"],
+]
+[rule.action]
+id = "inspect-project"
+kind = "inspect"
+check = "project"
+issue = "?i"
+cost = 1
+title = "Read the project's dependency declarations and layout"
+explanation = "Read pyproject.toml, requirements files and setup.cfg, and index the project's modules, so FixFirst can tell a declared-but-missing package from a local module. Nothing is installed."
+verification = "Review the declared dependencies, local modules and their sources"
+
+# ======================================================================================
+# plan: remedies for diagnosed causes
+# ======================================================================================
+
+[[rule]]
+id = "P10"
+phase = "plan"
+description = "Removed API: adapt the code or pin the version that still provides it."
+when = [
+  ["?i", "remedy", "replace_removed"], ["?i", "because", "?x"],
+  ["?x", "removed_from", "?d"], ["?x", "removed_in_version", "?v"], ["?x", "replacement", "?r"],
+  ["?d", "installed_version", "?iv"],
+]
+[rule.action]
+id = "update-{?x}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 2
+title = "Replace {?x}: removed in {?d} {?v}"
+explanation = "The target interpreter has {?d} {?iv}, which no longer provides {?x} (removed in {?v}). Change the code to use {?r}, or pin {?d} below {?v} if the project must keep the old API."
+verification = "Re-run the affected tests with the same interpreter"
+
+[[rule]]
+id = "P11"
+phase = "plan"
+description = "Shadowing: rename the project file."
+when = [["?i", "remedy", "rename_shadow"], ["?i", "because", "?m"], ["?m", "is_local", "?p"]]
+[rule.action]
+id = "rename-{?p}"
+kind = "manual_fix"
+cause = "local_module"
+issue = "?i"
+cost = 2
+title = "Rename {?p}: it hides the real {?m} module"
+explanation = "Python imports the project file {?p} instead of the library or standard module {?m}, so its functions appear to be missing. Rename the file, delete stale __pycache__ entries and update imports that meant the project file."
+verification = "Re-run the affected tests; the import must resolve to the library"
+
+[[rule]]
+id = "P12"
+phase = "plan"
+description = "Local module not on the import path."
+when = [["?i", "remedy", "fix_import_path"], ["?i", "because", "?m"], ["?m", "is_local", "?p"]]
+[rule.action]
+id = "fix-path-{?m}"
+kind = "manual_fix"
+cause = "local_module"
+issue = "?i"
+cost = 2
+title = "Make the project module {?m} importable"
+explanation = "{?p} exists in the project but the test run cannot import {?m}. For a src layout, install the project in editable mode (pip install -e .) or set pytest's pythonpath; otherwise check the package's location and __init__.py."
+verification = "Re-run test collection"
+
+[[rule]]
+id = "P13"
+phase = "plan"
+description = "Renamed or moved module: update the imports."
+when = [["?i", "remedy", "fix_renamed_module"], ["?i", "missing_module", "?m"], ["?m", "similar_local", "?p"]]
+[rule.action]
+id = "fix-import-{?m}"
+kind = "manual_fix"
+cause = "local_module"
+issue = "?i"
+cost = 2
+title = "Update imports of {?m}: the project has {?p}"
+explanation = "No installed package, standard module or known distribution is called {?m}, but the project contains {?p}. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it."
+verification = "Re-run test collection"
+
+[[rule]]
+id = "P14"
+phase = "plan"
+description = "Circular import between project modules."
+when = [["?i", "remedy", "break_cycle"], ["?i", "because", "?m"]]
+[rule.action]
+id = "break-cycle-{?m}"
+kind = "manual_fix"
+cause = "local_module"
+issue = "?i"
+cost = 3
+title = "Break the circular import involving {?m}"
+explanation = "{?m} was imported while it was still initialising. Move the shared code into a third module, import inside the function that needs it, or import the module rather than names from it."
+verification = "Re-run test collection"
+
+[[rule]]
+id = "P15"
+phase = "plan"
+description = "Relative import outside a package."
+when = [["?i", "remedy", "fix_relative_import"]]
+[rule.action]
+id = "fix-relative-imports"
+kind = "manual_fix"
+cause = "local_module"
+issue = "?i"
+cost = 2
+title = "Fix relative imports outside a package"
+explanation = "A module used a relative import (from . import ...) but was not imported as part of a package. Use absolute imports, or make the directory a package that pytest imports with its package name."
+verification = "Re-run test collection"
+
+[[rule]]
+id = "P16"
+phase = "plan"
+description = "Declared dependency missing from the interpreter."
+when = [["?i", "remedy", "install_declared"], ["?i", "missing_module", "?m"], ["?m", "declared_in", "?src"]]
+[rule.action]
+id = "install-{?m}"
+kind = "manual_fix"
+cause = "missing_dependency"
+issue = "?i"
+cost = 2
+title = "Install the declared dependency that provides {?m}"
+explanation = "{?src} declares it, but the target interpreter cannot import {?m}. Install the project's dependencies into this interpreter (for example python -m pip install -r requirements.txt, or pip install -e .). FixFirst does not install anything itself."
+verification = "Re-run the project declaration check and test collection"
+
+[[rule]]
+id = "P17"
+phase = "plan"
+description = "Known distribution not installed."
+when = [["?i", "remedy", "install_known"], ["?i", "missing_module", "?m"], ["?m", "import_name_of", "?d"]]
+[rule.action]
+id = "install-{?d}"
+kind = "manual_fix"
+cause = "missing_dependency"
+issue = "?i"
+cost = 2
+title = "Install {?d}, which provides the import {?m}"
+explanation = "The import {?m} comes from the PyPI distribution {?d}, which is not installed in the target interpreter. Install it there (python -m pip install {?d}) and declare it in the project's dependencies."
+verification = "Re-run the project declaration check and test collection"
+
+[[rule]]
+id = "P18"
+phase = "plan"
+description = "Environment variable or named setting missing."
+when = [["?i", "remedy", "provide_env"], ["?i", "because", "?k"]]
+[rule.action]
+id = "configure-{?k}"
+kind = "manual_fix"
+cause = "config_missing"
+issue = "?i"
+cost = 1
+title = "Provide the configuration value {?k}"
+explanation = "The code needs {?k} at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values."
+verification = "Re-run the affected tests in an environment where the value is set"
+
+[[rule]]
+id = "P19"
+phase = "plan"
+description = "Configuration file missing."
+when = [["?i", "remedy", "provide_config_file"], ["?i", "because", "?f"]]
+[rule.action]
+id = "config-file-{?f}"
+kind = "manual_fix"
+cause = "config_missing"
+issue = "?i"
+cost = 1
+title = "Create or point to the configuration file {?f}"
+explanation = "The code opens {?f}, which does not exist relative to the working directory. Create it from the project's example or template, or fix the path the code uses."
+verification = "Re-run the affected tests"
+
+[[rule]]
+id = "P20"
+phase = "plan"
+description = "Imported name missing from a project module."
+when = [["?i", "remedy", "check_name"], ["?i", "because", "?m"], ["?i", "api", "?x"]]
+[rule.action]
+id = "check-name-{?x}"
+kind = "manual_fix"
+cause = "code_defect"
+issue = "?i"
+cost = 2
+title = "Fix the import of {?x}: the name is not defined in {?m}"
+explanation = "The project module {?m} loaded, but it defines no {?x}. Correct the name in the import or add the missing definition."
+verification = "Re-run test collection"
+
+# ======================================================================================
+# plan: classifier suggestion (never replaces evidence-based advice)
+# ======================================================================================
+
+[[rule]]
+id = "P30"
+phase = "plan"
+description = "Show the classifier's suggestion as something to check, ranked after evidence-based actions."
+when = [["?i", "suspected", "?c"]]
+[rule.action]
+id = "consider-{?c}"
+kind = "inspect"
+cause = "?c"
+issue = "?i"
+cost = 2
+title = "Check whether this is a {?c|cause} problem"
+explanation = "No rule explains this failure from the recorded evidence. The decision tree trained on labelled cases suggests {?c|cause}. Treat it as a lead to check, not a conclusion."
+verification = "Confirm or rule out the suggestion using the original traceback"
+
+# ======================================================================================
+# plan: generic advice when no specific remedy is known
+# ======================================================================================
+
+[[rule]]
+id = "P40"
+phase = "plan"
+description = "Import failure without an identified cause."
+when = [
+  ["?i", "kind", "import_failure"], ["not", "?i", "remedy", "?_"],
+  ["environment", "snapshot", "available"], ["project", "declarations", "available"],
+]
+[rule.action]
+id = "review-import"
+kind = "manual_fix"
+issue = "?i"
+cost = 2
+preconditions = ["environment:snapshot:available"]
+title = "Check the import path and dependency declarations"
+explanation = "The import failed and the recorded evidence does not identify one cause. Compare the failing import with the project layout, the declarations and the installed packages. Do not install a package based on the import name alone."
+verification = "Re-run test collection; pip check passing does not prove the import works"
+
+[[rule]]
+id = "P41"
+phase = "plan"
+description = "Declared requirement not satisfied by the installed version."
+when = [["?i", "tool", "project"], ["?i", "kind", "dependency_conflict"], ["?i", "component", "?c"], ["project", "declarations", "available"]]
+[rule.action]
+id = "review-{?i}"
+kind = "manual_fix"
+issue = "?i"
+cost = 2
+title = "Check the declaration and installed version of {?c}"
+explanation = "The project declares a requirement for {?c} that the target interpreter does not satisfy. Adjust the environment or the declaration according to the project's documentation, then re-check with the same interpreter."
+verification = "Re-run the project declaration check (it refreshes the environment), then verify the goal"
+
+[[rule]]
+id = "P42"
+phase = "plan"
+description = "Python version outside the declared range."
+when = [["?i", "tool", "project"], ["?i", "kind", "environment_mismatch"], ["project", "declarations", "available"]]
+[rule.action]
+id = "review-{?i}"
+kind = "manual_fix"
+issue = "?i"
+cost = 2
+title = "Check the Python version requirement"
+explanation = "The target interpreter's Python version is outside the range the project declares. Use an interpreter that satisfies requires-python, or confirm the declaration is outdated."
+verification = "Re-run the project declaration check, then verify the goal"
+
+[[rule]]
+id = "P43"
+phase = "plan"
+description = "Dependency conflict reported by pip."
+when = [["?i", "kind", "dependency_conflict"], ["?i", "tool", "?t"], ["test", "ne", "?t", "project"]]
+[rule.action]
+id = "review-dependency_conflict"
+kind = "manual_fix"
+issue = "?i"
+cost = 2
+title = "Resolve the dependency constraint conflict"
+explanation = "Compare pip's report with the project's declarations and the installed versions, then adjust them by hand. FixFirst does not guess version numbers or install anything."
+verification = "Re-run the dependency consistency check"
+
+[[rule]]
+id = "P44"
+phase = "plan"
+description = "Named configuration reported missing without a specific remedy."
+when = [["?i", "kind", "explicit_config_missing"], ["not", "?i", "remedy", "?_"]]
+[rule.action]
+id = "review-explicit_config_missing"
+kind = "manual_fix"
+issue = "?i"
+cost = 2
+title = "Provide the configuration the error names"
+explanation = "Set the configuration key named in the error, following the project's documentation. The report records only the key, never its value."
+verification = "Re-run the checks for the affected scope"
+
+[[rule]]
+id = "P45"
+phase = "plan"
+description = "Installation log failure."
+when = [["?i", "kind", "install_failure"]]
+[rule.action]
+id = "review-install_failure"
+kind = "manual_fix"
+issue = "?i"
+cost = 2
+title = "Find the stage where installation failed"
+explanation = "Installation failures can come from the network, build tools or package constraints. Read the original log around the first error before changing versions."
+verification = "Repeat the installation and import the log again"
+
+[[rule]]
+id = "P46"
+phase = "plan"
+description = "A check did not produce a usable result."
+when = [["?i", "kind", "tool_failure"]]
+[rule.action]
+id = "review-tool_failure"
+kind = "manual_fix"
+issue = "?i"
+cost = 2
+title = "Check that the tool is available and ran to completion"
+explanation = "This check produced no valid result. Confirm the tool is installed in the target interpreter and read its original output before running it again."
+verification = "Run the same check again"
+
+[[rule]]
+id = "P47"
+phase = "plan"
+description = "Style findings from the linter."
+when = [["?i", "kind", "style_issue"]]
+[rule.action]
+id = "review-style_issue"
+kind = "manual_fix"
+issue = "?i"
+cost = 2
+title = "Fix the code style findings"
+explanation = "Edit the reported files and lines by rule code, then re-run the code check. The number of style messages does not change the priority of restoring test collection."
+verification = "Re-run the code check"
+
+[[rule]]
+id = "P48"
+phase = "plan"
+description = "Non-style linter diagnostics."
+when = [["?i", "kind", "code_check"]]
+[rule.action]
+id = "review-code_check"
+kind = "manual_fix"
+issue = "?i"
+cost = 2
+title = "Review the code diagnostics"
+explanation = "These linter diagnostics (for example undefined names) can be real bugs, not formatting. Inspect each location."
+verification = "Re-run the code check"
+
+[[rule]]
+id = "P49"
+phase = "plan"
+description = "Failed assertion in a test."
+when = [["?i", "kind", "test_assertion"], ["not", "?i", "remedy", "?_"]]
+[rule.action]
+id = "review-test_assertion"
+kind = "manual_fix"
+issue = "?i"
+cost = 2
+title = "Compare the failed assertion's expected and actual values"
+explanation = "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite."
+verification = "Re-run the related test nodes, then the full suite"
+
+[[rule]]
+id = "P50"
+phase = "plan"
+description = "Exception while running a test, without a specific remedy."
+when = [["?i", "kind", "test_runtime_error"], ["not", "?i", "remedy", "?_"]]
+[rule.action]
+id = "review-test_runtime_error"
+kind = "manual_fix"
+issue = "?i"
+cost = 2
+title = "Inspect the exception raised while running the test"
+explanation = "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised."
+verification = "Re-run the related test nodes, then the full suite"
+
+[[rule]]
+id = "P51"
+phase = "plan"
+description = "Failure the parsers could not categorise."
+when = [["?i", "kind", "other_unknown"], ["not", "?i", "remedy", "?_"]]
+[rule.action]
+id = "review-other_unknown"
+kind = "manual_fix"
+issue = "?i"
+cost = 2
+title = "Read the original output and investigate by hand"
+explanation = "The recorded evidence does not support an automatic judgement. Read the original output; business-logic repair is outside FixFirst's scope."
+verification = "Re-run the checks for the affected scope"

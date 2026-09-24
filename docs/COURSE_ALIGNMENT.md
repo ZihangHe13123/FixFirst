@@ -1,32 +1,50 @@
-# 课程要求与当前差距
+# Course alignment
 
-核对日期：2026-09-08。依据本目录上一级的 `IRS practice module & exam briefing v2.17.pdf` 第 6、9、10、13、14 页，以及 `IRS practice module project proposal & final presentation guidelines v016.pdf`。
+Checked against the NUS-ISS IRS practice-module briefing (v2.16 and v2.17) and the proposal
+/ final presentation guidelines (v015 and v016). Where the two versions differ, FixFirst
+follows the union of their requirements.
 
-## 硬要求
+## Technique groups (at least three of four)
 
-课程要求开发、集成并展示四个技术组中的至少三个。团队最多 5 人，预估每人 10 个工作日。**三种算法不自动等于三个技术组。**
+| Technique group | FixFirst implementation | Where | Evidence it works |
+|---|---|---|---|
+| **Decision automation** (business rules, knowledge-based reasoning) | Production-rule engine: pattern matching with variables, negation as failure stratified by phase, version tests, provenance on every derived fact. 56 rules in four phases (derive → diagnose → fallback → plan) produce root causes and next actions; actions carry preconditions and are ordered by goal impact, evidence strength and cost. | `engine.py`, `knowledge/rules.toml`, `reasoning.py` | Rules + knowledge graph answer 79% of the diagnosis cases with 100% precision; the rule base is validated for stratified negation when loaded; tests cover chaining, cycles, joins and rejected negation. |
+| **Knowledge discovery and data mining** | Gini decision tree over 44 evidence features (no parser category, no label-derived value) trained on 215 real-execution cases; TF-IDF character n-grams + cosine similarity with structural blocking and complete-link grouping for repeated messages; optional Sentence-BERT. | `evidence.py`, `classification.py`, `grouping.py`, `diagnosis_cases.py`, `evaluation.py` | Cross-validated against baselines and ablations (see `examples/diagnosis-evaluation/REPORT.md`): the tree lifts accuracy on faults the knowledge base does not cover from 69% (rules alone) to about 90%. |
+| **Cognitive techniques and tools** (knowledge base components: knowledge graph; human-oriented interface) | Domain knowledge graph: 5 causes, exception → candidate causes, import name → distribution, 117 removed modules/APIs/arguments with versions, replacements and 19 cited sources, queried by the rules. Session evidence graph: 10 entity types and 15 typed relations linking goal, actions, issues, causes, facts, rules, runs and sources; breadth-first queries answer questions in English or Chinese. | `domain.py`, `knowledge/domain.toml`, `knowledge_graph.py`, `web.py` | Removing the knowledge graph drops accuracy on the faults it covers from 100% to 7% (rules) and from 100% to 64% (hybrid). Queries are tested for supported and refused questions. |
+| Business resource optimization (informed search, evolutionary computing) | Not implemented. Action ordering is a documented heuristic sort, not A*. | – | Possible extension: A* over action sequences with preconditions and effects. |
 
-| 技术组 | FixFirst 对应实现 | 当前证据 / 差距 |
+The rule-based diagnosis, the learned classifier and the knowledge graph each handle a part
+of the problem the others cannot: rules are precise but only where knowledge exists; the tree
+generalises to unlisted removals but makes more mistakes; the graph supplies both the facts
+the rules need and the explanations users see.
+
+## Mapping to the modular courses
+
+The group report appendix asks to map functions to the knowledge of MR, RS and CGS. The team
+should check the module names below against the course outlines before submitting.
+
+| System function | Knowledge / technique | Module |
 |---|---|---|
-| Decision automation：规则 / 知识推理 | 带来源的前向推理、行动前置条件、目标排序 | v0.1 已运行 |
-| Business resource optimization：informed search / evolutionary computing | 当前未采用 | 现有启发式评分不能冒称 A* 或进化计算 |
-| Knowledge discovery / data mining | TF-IDF / SBERT 问题归并、Gini 决策树分类 | v0.1 已运行；都归入此组，不能拆成两组 |
-| Cognitive techniques / tools：知识图谱、框架等知识库组件 | 证据知识图谱：问题、事件、检查、事实、行动、目标及证据位置的实体和显式关系；关系查询与依据追溯 | v0.2 已集成 `knowledge_graph.py`、`ask` / `graph` 命令和 HTML 图谱；实际执行案例与查询回归通过 |
+| Rule base with forward chaining, variables and stratified negation | Knowledge representation, rule-based reasoning, inference engines | MR |
+| Provenance (every conclusion keeps its rule, inputs and evidence) | Explanation facilities of knowledge-based systems | MR |
+| Decision tree (Gini) on evidence features, cross-validation, ablation | Supervised learning, model evaluation | MR / RS |
+| Goal-directed action ordering with preconditions and blocking relations | Decision making under goals and constraints | RS |
+| TF-IDF + cosine similarity, complete-link grouping | Text mining, similarity, clustering | CGS |
+| Domain knowledge graph and session evidence graph with graph queries | Knowledge graphs, graph traversal | CGS |
+| Question answering over the graph (English/Chinese intents) | Natural-language interface to a knowledge base | CGS |
+| Local web interface with explanations and verification controls | Human-centred cognitive system design | CGS |
 
-v0.1 的“三类技术”表述描述了算法数量，不能据此证明已满足三技术组要求。后续以 Decision automation + Knowledge discovery + 知识图谱三个组组织演示和报告。最终课程归类仍需在 proposal 中让教师明确审阅。
+## Deliverables (final submission, due 25 Oct 2026)
 
-## 交付要求
-
-最终要求包括可运行系统、组报告（业务/市场/文献、设计、实现、实验、发现与讨论）、proposal 附录、功能对 MR/RS/CGS 的映射、安装和用户指南；另有两个各 5 分钟的视频（产品价值与演示；系统设计与技术说明），以及每人的反思和互评。课件第 13 页明确视频演讲不得由 AI 生成。
-
-提交流程包括课程 GitHub 模板、成员信息、视频、仓库 ZIP、组报告及 Canvas 分组提交；这些均不因软件能运行就自动完成。当前未填写个人身份、未提交 Canvas、未生成真人演讲。
-
-课件第 14 页记载 proposal 截止 2026-09-13 23:59，最终交付截止 2026-10-25 23:59；本次未在线核对 Canvas 是否有调整。
-
-## 优化优先级
-
-v0.2 已实现知识图谱、测试执行和选择性验证。v0.3 增加静态依赖声明推理，以及两个第三方库四个官方历史缺陷的实际复现。规则在这四例中 4/4 正确，旧 Gini 模型 3/4 正确；不能用小样本或相似模板证明模型增益。
-
-1. 扩充不同结构的自然故障和困难归并样本，保留新的未见项目；重点分析已观察到的模型阶段偏差。
-2. 组织真人试用，记录任务成功率、错误关闭率、操作数与耗时；验证当前建议顺序是否有帮助。
-3. 根据最终系统更新课程报告、演示素材、分工与提交流程。给队友的具体工作见 `V0.3_队友讨论与验收.md`。
+| Deliverable | Status |
+|---|---|
+| Runnable intelligent reasoning system | Yes: `fixfirst serve`, CLI, terminal menu |
+| User interface, results interpretation and visualisation | Yes: web interface, HTML reports, evidence-graph view |
+| Experiments with quantitative evaluation | Diagnosis (215 cases, two cross-validation protocols, baselines, ablations); grouping (60 controlled cases); upstream regression replays |
+| Installation and user guide | README; to be expanded into the report appendix |
+| Business case / market research / literature review | In the proposal; needs updating for the final report |
+| Two 5-minute videos (promotion incl. pricing; system design) | To do. AI-generated presentation speech is not allowed |
+| Group report, proposal appendix, course mapping appendix | To do (this file is the draft of the mapping appendix) |
+| Individual reflection and peer review | To do, one page per member |
+| GitHub repository from the IRS-PM template, zip, member-github.txt | To do |
+| User study (proposal: 6–8 participants) | To do |

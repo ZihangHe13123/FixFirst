@@ -6,32 +6,46 @@ import sys
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
+from . import domain
+from .knowledge_graph import build_graph, query_graph
 from .models import Session
 from .runner import redact
 from .storage import atomic_write
-from .knowledge_graph import build_graph, query_graph
 
 GOALS = {
-    "collect_tests": "恢复测试收集",
-    "check_style": "通过代码检查",
-    "pass_tests": "通过测试运行",
+    "collect_tests": "Restore test collection",
+    "check_style": "Pass the code check",
+    "pass_tests": "Pass the test suite",
 }
 STATES = {
-    "open": "仍存在",
-    "resolved": "已验证解决",
-    "not_observed": "本次未检查",
-    "awaiting_verification": "待验证",
-    "unknown": "信息不足",
+    "open": "Still failing",
+    "resolved": "Verified fixed",
+    "not_observed": "Not checked this round",
+    "awaiting_verification": "Awaiting verification",
+    "unknown": "Not enough information",
 }
 TOOL_NAMES = {
-    "environment": "环境快照",
-    "project": "项目依赖声明",
-    "pip_check": "依赖一致性",
-    "pip_install": "安装日志",
-    "pytest": "测试收集",
-    "pytest_run": "测试执行",
-    "ruff": "代码检查",
+    "environment": "Environment snapshot",
+    "project": "Project declarations",
+    "pip_check": "Dependency consistency",
+    "pip_install": "Installation log",
+    "pytest": "Test collection",
+    "pytest_run": "Test run",
+    "ruff": "Code check",
 }
+DEPENDENCY_STATES = {
+    "satisfied": "Satisfied",
+    "missing": "Required dependency missing",
+    "version_mismatch": "Version does not match",
+    "python_mismatch": "Python version does not match",
+    "inactive_marker": "Environment marker not active",
+    "optional": "Optional group, not assumed enabled",
+    "constraint_only": "Constraint file, not an install list",
+    "direct_reference": "Direct reference, not verified",
+    "ambiguous_install": "Several versions found; check",
+    "unknown": "Not enough evidence",
+}
+ENV = Environment(loader=PackageLoader("fixfirst", "templates"), autoescape=select_autoescape(["html"]))
 
 
 def public_data(session: Session):
@@ -56,14 +70,14 @@ def public_data(session: Session):
     return data
 
 
-def render(session: Session, store_root: Path, output: Path, public=False):
-    env = Environment(
-        loader=PackageLoader("fixfirst", "templates"), autoescape=select_autoescape(["html"])
-    )
+def html(session: Session, store_root: Path, public=False, live: dict | None = None) -> tuple[str, dict, dict]:
+    """Render the report page; ``live`` enables the local web interface's controls."""
+    from .reasoning import rule_base
+
     data = public_data(session) if public else session.model_dump()
     graph = build_graph(Session.model_validate(data))
     views = [
-        query_graph(graph, "依据", n["id"])
+        query_graph(graph, "why", n["id"])
         for n in graph["nodes"]
         if n["type"] in ("Goal", "Action", "Issue")
     ]
@@ -72,9 +86,7 @@ def render(session: Session, store_root: Path, output: Path, public=False):
     commands = {}
     for action in session.actions:
         if action.check and not action.blocked_reasons and not public:
-            commands[action.action_id] = (
-                f"{command_prefix} run {session.session_id} {action.action_id}"
-            )
+            commands[action.action_id] = f"{command_prefix} run {session.session_id} {action.action_id}"
     latest = {}
     for run in data["runs"]:
         latest[run["tool"]] = run
@@ -86,31 +98,36 @@ def render(session: Session, store_root: Path, output: Path, public=False):
                 project = {}
         except ValueError:
             pass
-    text = env.get_template("report.html").render(
+    rules = {r.rule_id: {"description": r.description, "phase": r.phase} for r in rule_base()}
+    sources = {}
+    for fact in session.facts:
+        for ref in fact.evidence_refs:
+            if domain.source(ref):
+                sources[ref] = domain.source(ref)
+    text = ENV.get_template("report.html").render(
         session=data,
         goal_name=GOALS[session.goal],
+        goals=GOALS,
         states=STATES,
         tools=TOOL_NAMES,
         counts=counts,
         commands=commands,
         latest=latest,
         public=public,
+        live=live,
         graph=graph,
         graph_views=views,
         project=project,
-        dependency_states={
-            "satisfied": "满足声明",
-            "missing": "必需依赖缺失",
-            "version_mismatch": "版本不符",
-            "python_mismatch": "Python 版本不符",
-            "inactive_marker": "环境条件未生效",
-            "optional": "可选组，未判断启用",
-            "constraint_only": "约束文件，非安装清单",
-            "direct_reference": "直接来源，未验证",
-            "ambiguous_install": "发现多个版本，需核对",
-            "unknown": "证据不足",
-        },
+        rules=rules,
+        sources=sources,
+        causes=domain.load()["causes"],
+        dependency_states=DEPENDENCY_STATES,
     )
+    return text, data, graph
+
+
+def render(session: Session, store_root: Path, output: Path, public=False):
+    text, data, graph = html(session, store_root, public)
     atomic_write(output, text)
     atomic_write(output.with_suffix(".json"), json.dumps(data, ensure_ascii=False, indent=2))
     atomic_write(output.with_suffix(".graph.json"), json.dumps(graph, ensure_ascii=False, indent=2))
