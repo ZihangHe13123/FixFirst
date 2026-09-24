@@ -1,0 +1,16 @@
+# Python 3.12.13
+cloudpickle==3.1.2
+coverage==7.16.1
+iniconfig==2.3.0
+joblib==1.6.0
+narwhals==2.26.0
+numpy==2.5.3
+packaging==26.3
+pip==26.2.1
+pluggy==1.6.0
+pygments==2.21.0
+pytest==9.1.1
+pytest-cov==7.1.0
+scikit-learn==1.9.1
+scipy==1.18.1
+threadpoolctl==3.7.0

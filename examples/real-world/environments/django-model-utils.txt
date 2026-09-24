@@ -1,0 +1,17 @@
+# Python 3.11.15
+asgiref==3.12.1
+django==5.2.17
+freezegun==1.5.5
+iniconfig==2.3.0
+packaging==26.3
+pip==26.2.1
+pluggy==1.6.0
+psycopg2-binary==2.9.13
+pygments==2.21.0
+pytest==9.1.1
+pytest-django==4.14.0
+python-dateutil==2.9.0.post0
+setuptools==84.0.0
+six==1.17.0
+sqlparse==0.6.0
+wheel==0.48.0

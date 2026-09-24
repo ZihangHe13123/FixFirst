@@ -1,0 +1,142 @@
+# Held-out real-world projects for the generalisation check (docs/GENERALISATION.md).
+#
+# Chosen on 24 September 2026, before FixFirst was run on any of them, to cover different
+# domains, project layouts, ways of declaring dependencies and Python versions. None was used
+# while developing FixFirst (humanize and Flask 1.1.4 were, so they are not in this set).
+#
+# Each project is installed the way its own files tell a user to, but with today's releases
+# wherever the project does not pin a version: that is what a newcomer following the README
+# gets. `python` is the interpreter version (installed with uv) or "system" for the macOS
+# system Python; `pip = false` creates the environment without pip, as `uv venv` does.
+# `install` lines are arguments to `pip install`, run in the project folder.
+
+[[project]]
+id = "flask-sqlalchemy"
+repo = "pallets-eco/flask-sqlalchemy"
+ref = "2.5.1"
+domain = "Web: Flask extension (ORM)"
+layout = "flat package, setup.py"
+python = "3.12"
+install = ["-e .", "pytest blinker mock"]
+scenario = "Project and the test tools from tox.ini; Flask and SQLAlchemy are not capped, so today's releases are installed."
+
+[[project]]
+id = "django-model-utils"
+repo = "jazzband/django-model-utils"
+ref = "4.0.0"
+domain = "Web: Django app"
+layout = "flat package, setup.py, requirements-test.txt"
+python = "3.11"
+install = ["-e .", "pytest pytest-django psycopg2-binary freezegun"]
+scenario = "Project and the packages named in requirements-test.txt and tox.ini, without the old pins (pytest 4.5 and psycopg2-binary 2.8 do not install on Python 3.11). No PostgreSQL server is running."
+
+[[project]]
+id = "requests"
+repo = "psf/requests"
+ref = "v2.25.1"
+domain = "HTTP client"
+layout = "flat package, setup.py, requirements-dev.txt"
+python = "3.12"
+install = ["-e .", "-r requirements-dev.txt"]
+scenario = "Exactly the documented development setup: the project, then requirements-dev.txt with its pins."
+
+[[project]]
+id = "seaborn"
+repo = "mwaskom/seaborn"
+ref = "v0.11.2"
+domain = "Data visualisation"
+layout = "flat package, setup.py, requirements.txt"
+python = "3.12"
+install = ["-e .", "-r requirements.txt", "-r ci/utils.txt"]
+scenario = "The project, its unpinned requirements.txt (today's NumPy, pandas, SciPy and Matplotlib) and the test tools in ci/utils.txt."
+
+[[project]]
+id = "imbalanced-learn"
+repo = "scikit-learn-contrib/imbalanced-learn"
+ref = "0.8.1"
+domain = "Machine learning (scikit-learn extension)"
+layout = "flat package, setup.py extras"
+python = "3.12"
+install = ["-e .[tests]"]
+scenario = "The project with its [tests] extra; scikit-learn is only bounded from below."
+
+[[project]]
+id = "typer"
+repo = "fastapi/typer"
+ref = "0.3.2"
+domain = "Command-line tools"
+layout = "flat package, pyproject.toml (flit)"
+python = "3.10"
+install = [".", "pytest"]
+scenario = "The project and pytest, but not the [test] extra that lists the other test dependencies. Installed normally: its flit_core<3 build backend cannot make an editable install."
+
+[[project]]
+id = "aiostream"
+repo = "vxgmichel/aiostream"
+ref = "v0.4.5"
+domain = "Async programming"
+layout = "flat package, setup.py tests_require"
+python = "3.12"
+install = ["-e .", "pytest pytest-asyncio pytest-cov"]
+scenario = "The project and the packages in tests_require, at today's versions."
+
+[[project]]
+id = "jmespath"
+repo = "jmespath/jmespath.py"
+ref = "0.10.0"
+domain = "Data query language"
+layout = "flat package, setup.py, requirements.txt"
+python = "3.12"
+install = ["-e .", "pytest nose hypothesis"]
+scenario = "The project and the test tools named in requirements.txt (nose, hypothesis) plus pytest, without the 2013-era pins that no longer install."
+
+[[project]]
+id = "parsel"
+repo = "scrapy/parsel"
+ref = "v1.6.0"
+domain = "Web scraping (HTML/XML selectors)"
+layout = "flat package, setup.py, tests/requirements.txt"
+python = "3.12"
+install = ["-e .", "-r tests/requirements.txt"]
+scenario = "The project and tests/requirements.txt (pytest, pytest-cov, sybil) at today's versions. Installing the project fails: its setup.py imports pkg_resources, which today's setuptools no longer ships; the test tools install."
+
+[[project]]
+id = "records"
+repo = "kennethreitz/records"
+ref = "v0.5.3"
+domain = "Databases (SQL for humans)"
+layout = "single module, setup.py, Pipfile"
+python = "3.12"
+install = ["-e .", "pytest"]
+scenario = "The project and pytest; SQLAlchemy and tablib are unpinned in setup.py, so today's releases are installed."
+
+[[project]]
+id = "cachetools"
+repo = "tkem/cachetools"
+ref = "v5.5.0"
+domain = "Utilities (caching)"
+layout = "src layout, setup.cfg"
+python = "system"
+install = ["pytest pytest-cov"]
+scenario = "The macOS system Python 3.9 with the tox.ini test tools, but the project itself not installed."
+
+[[project]]
+id = "more-itertools"
+repo = "more-itertools/more-itertools"
+ref = "v10.7.0"
+domain = "Utilities (iterators)"
+layout = "flat package, pyproject.toml (flit)"
+python = "3.14"
+pip = false
+install = ["-e .", "pytest"]
+scenario = "A healthy project on the newest Python, in an environment created by uv without pip."
+
+[[project]]
+id = "attrs"
+repo = "python-attrs/attrs"
+ref = "25.3.0"
+domain = "Utilities (classes)"
+layout = "src layout, pyproject.toml (hatch)"
+python = "3.13"
+install = ["-e .[tests]"]
+scenario = "A healthy project with its [tests] extra, as its contributing guide describes."

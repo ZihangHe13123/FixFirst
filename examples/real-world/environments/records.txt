@@ -1,0 +1,14 @@
+# Python 3.12.13
+docopt==0.6.2
+et-xmlfile==2.0.0
+iniconfig==2.3.0
+jdcal==1.4.1
+openpyxl==2.4.11
+packaging==26.3
+pip==26.2.1
+pluggy==1.6.0
+pygments==2.21.0
+pytest==9.1.1
+sqlalchemy==2.0.54
+tablib==3.10.0
+typing-extensions==4.16.0
