@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "session_id": "session-716d3bee95e0",
+  "session_id": "session-b6ac3b39b22d",
   "goal": "goal:pass_tests",
   "ontology": {
     "entities": [
@@ -88,9 +88,9 @@
       }
     },
     {
-      "id": "run-00b084e8ba10",
+      "id": "run-e983031d0e57",
       "type": "Run",
-      "label": "environment · 2026-09-24T01:59:12+00:00",
+      "label": "environment · 2026-09-24T08:27:47+00:00",
       "attributes": {
         "tool": "environment",
         "status": "completed",
@@ -103,9 +103,9 @@
       }
     },
     {
-      "id": "run-cfb9d49b571b",
+      "id": "run-ad6250436c1d",
       "type": "Run",
-      "label": "project · 2026-09-24T01:59:13+00:00",
+      "label": "project · 2026-09-24T08:27:48+00:00",
       "attributes": {
         "tool": "project",
         "status": "completed",
@@ -118,9 +118,9 @@
       }
     },
     {
-      "id": "run-890f2274ab0c",
+      "id": "run-c055c9dc968c",
       "type": "Run",
-      "label": "pytest_run · 2026-09-24T01:59:13+00:00",
+      "label": "pytest_run · 2026-09-24T08:27:48+00:00",
       "attributes": {
         "tool": "pytest_run",
         "status": "completed",
@@ -140,9 +140,9 @@
       }
     },
     {
-      "id": "run-352a837cee9f",
+      "id": "run-1c50d2d3102f",
       "type": "Run",
-      "label": "environment · 2026-09-24T01:59:13+00:00",
+      "label": "environment · 2026-09-24T08:27:49+00:00",
       "attributes": {
         "tool": "environment",
         "status": "completed",
@@ -155,9 +155,9 @@
       }
     },
     {
-      "id": "run-7a6e5275b1da",
+      "id": "run-e501bc6c522a",
       "type": "Run",
-      "label": "pip_check · 2026-09-24T01:59:14+00:00",
+      "label": "pip_check · 2026-09-24T08:27:49+00:00",
       "attributes": {
         "tool": "pip_check",
         "status": "completed",
@@ -170,9 +170,9 @@
       }
     },
     {
-      "id": "run-3d6c31292945",
+      "id": "run-b8ca3f4ee2e5",
       "type": "Run",
-      "label": "pytest_run · 2026-09-24T01:59:14+00:00",
+      "label": "pytest_run · 2026-09-24T08:27:49+00:00",
       "attributes": {
         "tool": "pytest_run",
         "status": "completed",
@@ -192,9 +192,9 @@
       }
     },
     {
-      "id": "run-ceddcee911d0",
+      "id": "run-c9732580ba20",
       "type": "Run",
-      "label": "ruff · 2026-09-24T01:59:14+00:00",
+      "label": "ruff · 2026-09-24T08:27:49+00:00",
       "attributes": {
         "tool": "ruff",
         "status": "completed",
@@ -207,9 +207,9 @@
       }
     },
     {
-      "id": "run-c51193a7d78e",
+      "id": "run-ee8aaf5ade89",
       "type": "Run",
-      "label": "project · 2026-09-24T01:59:14+00:00",
+      "label": "project · 2026-09-24T08:27:49+00:00",
       "attributes": {
         "tool": "project",
         "status": "completed",
@@ -238,67 +238,67 @@
       }
     },
     {
-      "id": "evidence:run-352a837cee9f:stdout:1",
+      "id": "evidence:run-1c50d2d3102f:stdout:1",
       "type": "Evidence",
-      "label": "run-352a837cee9f:stdout:1",
+      "label": "run-1c50d2d3102f:stdout:1",
       "attributes": {}
     },
     {
-      "id": "evidence:run-3d6c31292945:probe:13",
+      "id": "evidence:run-b8ca3f4ee2e5:probe:13",
       "type": "Evidence",
-      "label": "run-3d6c31292945:probe:13",
+      "label": "run-b8ca3f4ee2e5:probe:13",
       "attributes": {}
     },
     {
-      "id": "evidence:run-3d6c31292945:probe:14",
+      "id": "evidence:run-b8ca3f4ee2e5:probe:14",
       "type": "Evidence",
-      "label": "run-3d6c31292945:probe:14",
+      "label": "run-b8ca3f4ee2e5:probe:14",
       "attributes": {}
     },
     {
-      "id": "evidence:run-3d6c31292945:probe:2",
+      "id": "evidence:run-b8ca3f4ee2e5:probe:2",
       "type": "Evidence",
-      "label": "run-3d6c31292945:probe:2",
+      "label": "run-b8ca3f4ee2e5:probe:2",
       "attributes": {}
     },
     {
-      "id": "evidence:run-3d6c31292945:probe:3",
+      "id": "evidence:run-b8ca3f4ee2e5:probe:3",
       "type": "Evidence",
-      "label": "run-3d6c31292945:probe:3",
+      "label": "run-b8ca3f4ee2e5:probe:3",
       "attributes": {}
     },
     {
-      "id": "evidence:run-890f2274ab0c:probe:1",
+      "id": "evidence:run-c055c9dc968c:probe:1",
       "type": "Evidence",
-      "label": "run-890f2274ab0c:probe:1",
+      "label": "run-c055c9dc968c:probe:1",
       "attributes": {}
     },
     {
-      "id": "evidence:run-890f2274ab0c:probe:3",
+      "id": "evidence:run-c055c9dc968c:probe:3",
       "type": "Evidence",
-      "label": "run-890f2274ab0c:probe:3",
+      "label": "run-c055c9dc968c:probe:3",
       "attributes": {}
     },
     {
-      "id": "evidence:run-c51193a7d78e:declaration:0",
+      "id": "evidence:run-ee8aaf5ade89:declaration:0",
       "type": "Evidence",
-      "label": "run-c51193a7d78e:declaration:0",
+      "label": "run-ee8aaf5ade89:declaration:0",
       "attributes": {}
     },
     {
-      "id": "evidence:run-c51193a7d78e:declaration:1",
+      "id": "evidence:run-ee8aaf5ade89:declaration:1",
       "type": "Evidence",
-      "label": "run-c51193a7d78e:declaration:1",
+      "label": "run-ee8aaf5ade89:declaration:1",
       "attributes": {}
     },
     {
-      "id": "evidence:run-c51193a7d78e:stdout:1",
+      "id": "evidence:run-ee8aaf5ade89:stdout:1",
       "type": "Evidence",
-      "label": "run-c51193a7d78e:stdout:1",
+      "label": "run-ee8aaf5ade89:stdout:1",
       "attributes": {}
     },
     {
-      "id": "event-ec83f763c036",
+      "id": "event-04f648a652f0",
       "type": "Event",
       "label": "ImportError: cannot import name 'Mapping' from 'collections' (<home>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/collections/__init__.py)",
       "attributes": {
@@ -308,7 +308,7 @@
       }
     },
     {
-      "id": "event-a613f24ebe62",
+      "id": "event-eb27637cf50a",
       "type": "Event",
       "label": "ModuleNotFoundError: No module named 'helper'",
       "attributes": {
@@ -318,7 +318,7 @@
       }
     },
     {
-      "id": "event-a9a601b64101",
+      "id": "event-591e42bf406e",
       "type": "Event",
       "label": "KeyError: 'SHOP_API_TOKEN'",
       "attributes": {
@@ -328,7 +328,7 @@
       }
     },
     {
-      "id": "event-3c76c580dee5",
+      "id": "event-1c5e85dbff2f",
       "type": "Event",
       "label": "AttributeError: module 'numpy' has no attribute 'float'.\n`np.float` was a deprecated alias for the builtin `float`. To avoid this error in existing code, use `float` by itself. Doing this will not modify any behavior and is safe. If you spe",
       "attributes": {
@@ -633,6 +633,17 @@
       }
     },
     {
+      "id": "issue-624772c417ae3f:raised_by_library:dist:numpy",
+      "type": "Fact",
+      "label": "issue-624772c417ae3f raised_by_library dist:numpy",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-624772c417ae3f",
+        "predicate": "raised_by_library"
+      }
+    },
+    {
       "id": "module:numpy:provided_by:dist:numpy",
       "type": "Fact",
       "label": "module:numpy provided_by dist:numpy",
@@ -652,6 +663,17 @@
         "status": "observed",
         "subject": "module:numpy",
         "predicate": "declared_in"
+      }
+    },
+    {
+      "id": "project:ruff_config:none",
+      "type": "Fact",
+      "label": "project ruff_config none",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "project",
+        "predicate": "ruff_config"
       }
     },
     {
@@ -732,6 +754,17 @@
       }
     },
     {
+      "id": "dist:numpy:previous_series_below:2",
+      "type": "Fact",
+      "label": "dist:numpy previous_series_below 2",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "dist:numpy",
+        "predicate": "previous_series_below"
+      }
+    },
+    {
       "id": "dist:python:installed_version:3.12.14",
       "type": "Fact",
       "label": "dist:python installed_version 3.12.14",
@@ -740,6 +773,17 @@
         "status": "observed",
         "subject": "dist:python",
         "predicate": "installed_version"
+      }
+    },
+    {
+      "id": "dist:python:previous_series_below:3",
+      "type": "Fact",
+      "label": "dist:python previous_series_below 3",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "dist:python",
+        "predicate": "previous_series_below"
       }
     },
     {
@@ -1033,112 +1077,122 @@
     {
       "source": "dist:numpy:declared_in:requirements.txt:1",
       "relation": "supported_by",
-      "target": "evidence:run-c51193a7d78e:declaration:0"
+      "target": "evidence:run-ee8aaf5ade89:declaration:0"
     },
     {
       "source": "dist:numpy:installed_version:2.5.3",
       "relation": "supported_by",
-      "target": "evidence:run-352a837cee9f:stdout:1"
+      "target": "evidence:run-1c50d2d3102f:stdout:1"
+    },
+    {
+      "source": "dist:numpy:previous_series_below:2",
+      "relation": "supported_by",
+      "target": "evidence:run-1c50d2d3102f:stdout:1"
     },
     {
       "source": "dist:pytest:declared_in:requirements.txt:2",
       "relation": "supported_by",
-      "target": "evidence:run-c51193a7d78e:declaration:1"
+      "target": "evidence:run-ee8aaf5ade89:declaration:1"
     },
     {
       "source": "dist:python:installed_version:3.12.14",
       "relation": "supported_by",
-      "target": "evidence:run-352a837cee9f:stdout:1"
+      "target": "evidence:run-1c50d2d3102f:stdout:1"
+    },
+    {
+      "source": "dist:python:previous_series_below:3",
+      "relation": "supported_by",
+      "target": "evidence:run-1c50d2d3102f:stdout:1"
     },
     {
       "source": "environment:snapshot:available",
       "relation": "supported_by",
-      "target": "evidence:run-352a837cee9f:stdout:1"
+      "target": "evidence:run-1c50d2d3102f:stdout:1"
     },
     {
-      "source": "event-3c76c580dee5",
+      "source": "event-04f648a652f0",
       "relation": "cites",
-      "target": "evidence:run-3d6c31292945:probe:13"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
-      "source": "event-3c76c580dee5",
+      "source": "event-1c5e85dbff2f",
       "relation": "cites",
-      "target": "evidence:run-3d6c31292945:probe:14"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:13"
     },
     {
-      "source": "event-a613f24ebe62",
+      "source": "event-1c5e85dbff2f",
       "relation": "cites",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:14"
     },
     {
-      "source": "event-a9a601b64101",
+      "source": "event-591e42bf406e",
       "relation": "cites",
-      "target": "evidence:run-3d6c31292945:probe:2"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:2"
     },
     {
-      "source": "event-a9a601b64101",
+      "source": "event-591e42bf406e",
       "relation": "cites",
-      "target": "evidence:run-3d6c31292945:probe:3"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:3"
     },
     {
-      "source": "event-ec83f763c036",
+      "source": "event-eb27637cf50a",
       "relation": "cites",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
-      "source": "evidence:run-352a837cee9f:stdout:1",
+      "source": "evidence:run-1c50d2d3102f:stdout:1",
       "relation": "observed_in",
-      "target": "run-352a837cee9f"
+      "target": "run-1c50d2d3102f"
     },
     {
-      "source": "evidence:run-3d6c31292945:probe:13",
+      "source": "evidence:run-b8ca3f4ee2e5:probe:13",
       "relation": "observed_in",
-      "target": "run-3d6c31292945"
+      "target": "run-b8ca3f4ee2e5"
     },
     {
-      "source": "evidence:run-3d6c31292945:probe:14",
+      "source": "evidence:run-b8ca3f4ee2e5:probe:14",
       "relation": "observed_in",
-      "target": "run-3d6c31292945"
+      "target": "run-b8ca3f4ee2e5"
     },
     {
-      "source": "evidence:run-3d6c31292945:probe:2",
+      "source": "evidence:run-b8ca3f4ee2e5:probe:2",
       "relation": "observed_in",
-      "target": "run-3d6c31292945"
+      "target": "run-b8ca3f4ee2e5"
     },
     {
-      "source": "evidence:run-3d6c31292945:probe:3",
+      "source": "evidence:run-b8ca3f4ee2e5:probe:3",
       "relation": "observed_in",
-      "target": "run-3d6c31292945"
+      "target": "run-b8ca3f4ee2e5"
     },
     {
-      "source": "evidence:run-890f2274ab0c:probe:1",
+      "source": "evidence:run-c055c9dc968c:probe:1",
       "relation": "observed_in",
-      "target": "run-890f2274ab0c"
+      "target": "run-c055c9dc968c"
     },
     {
-      "source": "evidence:run-890f2274ab0c:probe:3",
+      "source": "evidence:run-c055c9dc968c:probe:3",
       "relation": "observed_in",
-      "target": "run-890f2274ab0c"
+      "target": "run-c055c9dc968c"
     },
     {
-      "source": "evidence:run-c51193a7d78e:declaration:0",
+      "source": "evidence:run-ee8aaf5ade89:declaration:0",
       "relation": "observed_in",
-      "target": "run-c51193a7d78e"
+      "target": "run-ee8aaf5ade89"
     },
     {
-      "source": "evidence:run-c51193a7d78e:declaration:1",
+      "source": "evidence:run-ee8aaf5ade89:declaration:1",
       "relation": "observed_in",
-      "target": "run-c51193a7d78e"
+      "target": "run-ee8aaf5ade89"
     },
     {
-      "source": "evidence:run-c51193a7d78e:stdout:1",
+      "source": "evidence:run-ee8aaf5ade89:stdout:1",
       "relation": "observed_in",
-      "target": "run-c51193a7d78e"
+      "target": "run-ee8aaf5ade89"
     },
     {
       "source": "goal:pass_tests",
       "relation": "evaluated_by",
-      "target": "run-3d6c31292945"
+      "target": "run-b8ca3f4ee2e5"
     },
     {
       "source": "goal:pass_tests",
@@ -1178,7 +1232,7 @@
     {
       "source": "issue-624772c417ae3f",
       "relation": "has_event",
-      "target": "event-3c76c580dee5"
+      "target": "event-1c5e85dbff2f"
     },
     {
       "source": "issue-624772c417ae3f:affects:pass_tests",
@@ -1193,22 +1247,22 @@
     {
       "source": "issue-624772c417ae3f:affects:pass_tests",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:13"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:13"
     },
     {
       "source": "issue-624772c417ae3f:affects:pass_tests",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:14"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:14"
     },
     {
       "source": "issue-624772c417ae3f:api:api:numpy.float",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:13"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:13"
     },
     {
       "source": "issue-624772c417ae3f:api:api:numpy.float",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:14"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:14"
     },
     {
       "source": "issue-624772c417ae3f:because:api:numpy.float",
@@ -1243,17 +1297,17 @@
     {
       "source": "issue-624772c417ae3f:because:api:numpy.float",
       "relation": "supported_by",
-      "target": "evidence:run-352a837cee9f:stdout:1"
+      "target": "evidence:run-1c50d2d3102f:stdout:1"
     },
     {
       "source": "issue-624772c417ae3f:because:api:numpy.float",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:13"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:13"
     },
     {
       "source": "issue-624772c417ae3f:because:api:numpy.float",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:14"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:14"
     },
     {
       "source": "issue-624772c417ae3f:diagnosis:version_incompatibility",
@@ -1288,67 +1342,77 @@
     {
       "source": "issue-624772c417ae3f:diagnosis:version_incompatibility",
       "relation": "supported_by",
-      "target": "evidence:run-352a837cee9f:stdout:1"
+      "target": "evidence:run-1c50d2d3102f:stdout:1"
     },
     {
       "source": "issue-624772c417ae3f:diagnosis:version_incompatibility",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:13"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:13"
     },
     {
       "source": "issue-624772c417ae3f:diagnosis:version_incompatibility",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:14"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:14"
     },
     {
       "source": "issue-624772c417ae3f:exception:AttributeError",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:13"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:13"
     },
     {
       "source": "issue-624772c417ae3f:exception:AttributeError",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:14"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:14"
     },
     {
       "source": "issue-624772c417ae3f:kind:test_runtime_error",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:13"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:13"
     },
     {
       "source": "issue-624772c417ae3f:kind:test_runtime_error",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:14"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:14"
     },
     {
       "source": "issue-624772c417ae3f:model_suggests:version_incompatibility",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:13"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:13"
     },
     {
       "source": "issue-624772c417ae3f:model_suggests:version_incompatibility",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:14"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:14"
     },
     {
       "source": "issue-624772c417ae3f:module:module:numpy",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:13"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:13"
     },
     {
       "source": "issue-624772c417ae3f:module:module:numpy",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:14"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:14"
+    },
+    {
+      "source": "issue-624772c417ae3f:raised_by_library:dist:numpy",
+      "relation": "supported_by",
+      "target": "evidence:run-b8ca3f4ee2e5:probe:13"
+    },
+    {
+      "source": "issue-624772c417ae3f:raised_by_library:dist:numpy",
+      "relation": "supported_by",
+      "target": "evidence:run-b8ca3f4ee2e5:probe:14"
     },
     {
       "source": "issue-624772c417ae3f:raised_in:third_party",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:13"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:13"
     },
     {
       "source": "issue-624772c417ae3f:raised_in:third_party",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:14"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:14"
     },
     {
       "source": "issue-624772c417ae3f:remedy:replace_removed",
@@ -1383,62 +1447,62 @@
     {
       "source": "issue-624772c417ae3f:remedy:replace_removed",
       "relation": "supported_by",
-      "target": "evidence:run-352a837cee9f:stdout:1"
+      "target": "evidence:run-1c50d2d3102f:stdout:1"
     },
     {
       "source": "issue-624772c417ae3f:remedy:replace_removed",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:13"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:13"
     },
     {
       "source": "issue-624772c417ae3f:remedy:replace_removed",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:14"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:14"
     },
     {
       "source": "issue-624772c417ae3f:signal:no_attribute",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:13"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:13"
     },
     {
       "source": "issue-624772c417ae3f:signal:no_attribute",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:14"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:14"
     },
     {
       "source": "issue-624772c417ae3f:signal:removed_hint",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:13"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:13"
     },
     {
       "source": "issue-624772c417ae3f:signal:removed_hint",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:14"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:14"
     },
     {
       "source": "issue-624772c417ae3f:stage:call",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:13"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:13"
     },
     {
       "source": "issue-624772c417ae3f:stage:call",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:14"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:14"
     },
     {
       "source": "issue-624772c417ae3f:tool:pytest_run",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:13"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:13"
     },
     {
       "source": "issue-624772c417ae3f:tool:pytest_run",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:14"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:14"
     },
     {
       "source": "issue-687ee9a528c748",
       "relation": "has_event",
-      "target": "event-a613f24ebe62"
+      "target": "event-eb27637cf50a"
     },
     {
       "source": "issue-91b31964ae1617",
@@ -1448,7 +1512,7 @@
     {
       "source": "issue-91b31964ae1617",
       "relation": "has_event",
-      "target": "event-a9a601b64101"
+      "target": "event-591e42bf406e"
     },
     {
       "source": "issue-91b31964ae1617:affects:pass_tests",
@@ -1463,12 +1527,12 @@
     {
       "source": "issue-91b31964ae1617:affects:pass_tests",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:2"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:2"
     },
     {
       "source": "issue-91b31964ae1617:affects:pass_tests",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:3"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:3"
     },
     {
       "source": "issue-91b31964ae1617:because:config:SHOP_API_TOKEN",
@@ -1493,22 +1557,22 @@
     {
       "source": "issue-91b31964ae1617:because:config:SHOP_API_TOKEN",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:2"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:2"
     },
     {
       "source": "issue-91b31964ae1617:because:config:SHOP_API_TOKEN",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:3"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:3"
     },
     {
       "source": "issue-91b31964ae1617:config_key:config:SHOP_API_TOKEN",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:2"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:2"
     },
     {
       "source": "issue-91b31964ae1617:config_key:config:SHOP_API_TOKEN",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:3"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:3"
     },
     {
       "source": "issue-91b31964ae1617:diagnosis:config_missing",
@@ -1533,52 +1597,52 @@
     {
       "source": "issue-91b31964ae1617:diagnosis:config_missing",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:2"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:2"
     },
     {
       "source": "issue-91b31964ae1617:diagnosis:config_missing",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:3"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:3"
     },
     {
       "source": "issue-91b31964ae1617:exception:KeyError",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:2"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:2"
     },
     {
       "source": "issue-91b31964ae1617:exception:KeyError",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:3"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:3"
     },
     {
       "source": "issue-91b31964ae1617:kind:test_runtime_error",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:2"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:2"
     },
     {
       "source": "issue-91b31964ae1617:kind:test_runtime_error",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:3"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:3"
     },
     {
       "source": "issue-91b31964ae1617:model_suggests:config_missing",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:2"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:2"
     },
     {
       "source": "issue-91b31964ae1617:model_suggests:config_missing",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:3"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:3"
     },
     {
       "source": "issue-91b31964ae1617:raised_in:stdlib",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:2"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:2"
     },
     {
       "source": "issue-91b31964ae1617:raised_in:stdlib",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:3"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:3"
     },
     {
       "source": "issue-91b31964ae1617:remedy:provide_env",
@@ -1603,57 +1667,57 @@
     {
       "source": "issue-91b31964ae1617:remedy:provide_env",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:2"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:2"
     },
     {
       "source": "issue-91b31964ae1617:remedy:provide_env",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:3"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:3"
     },
     {
       "source": "issue-91b31964ae1617:signal:config_context",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:2"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:2"
     },
     {
       "source": "issue-91b31964ae1617:signal:config_context",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:3"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:3"
     },
     {
       "source": "issue-91b31964ae1617:signal:environ_lookup",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:2"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:2"
     },
     {
       "source": "issue-91b31964ae1617:signal:environ_lookup",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:3"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:3"
     },
     {
       "source": "issue-91b31964ae1617:stage:call",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:2"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:2"
     },
     {
       "source": "issue-91b31964ae1617:stage:call",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:3"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:3"
     },
     {
       "source": "issue-91b31964ae1617:tool:pytest_run",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:2"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:2"
     },
     {
       "source": "issue-91b31964ae1617:tool:pytest_run",
       "relation": "supported_by",
-      "target": "evidence:run-3d6c31292945:probe:3"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:3"
     },
     {
       "source": "issue-b6e397dce720fd",
       "relation": "has_event",
-      "target": "event-ec83f763c036"
+      "target": "event-04f648a652f0"
     },
     {
       "source": "kb:api:numpy.float:removed_from",
@@ -1678,17 +1742,22 @@
     {
       "source": "module:numpy:declared_in:requirements.txt:1",
       "relation": "supported_by",
-      "target": "evidence:run-c51193a7d78e:stdout:1"
+      "target": "evidence:run-ee8aaf5ade89:stdout:1"
     },
     {
       "source": "module:numpy:provided_by:dist:numpy",
       "relation": "supported_by",
-      "target": "evidence:run-352a837cee9f:stdout:1"
+      "target": "evidence:run-1c50d2d3102f:stdout:1"
     },
     {
       "source": "project:declarations:available",
       "relation": "supported_by",
-      "target": "evidence:run-c51193a7d78e:stdout:1"
+      "target": "evidence:run-ee8aaf5ade89:stdout:1"
+    },
+    {
+      "source": "project:ruff_config:none",
+      "relation": "supported_by",
+      "target": "evidence:run-ee8aaf5ade89:stdout:1"
     },
     {
       "source": "update-numpy.float",

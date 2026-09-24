@@ -12,3 +12,4 @@ build/
 output/
 .DS_Store
 examples/real-world/results-latest.json
+.astra/

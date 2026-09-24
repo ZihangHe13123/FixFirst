@@ -1,7 +1,7 @@
 # FixFirst architecture
 
 FixFirst turns the output of real checks into a diagnosed, ranked and verifiable plan. This
-page describes the code as of v0.4. `models.py` holds the shared Pydantic records.
+page describes the code as of v0.5. `models.py` holds the shared Pydantic records.
 
 ```
  project + interpreter + goal

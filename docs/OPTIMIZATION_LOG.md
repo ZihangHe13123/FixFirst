@@ -40,7 +40,7 @@
 - `examples/execution-demo/03-skipped-is-not-fixed.html`：跳过不能替代修复证据。
 - `examples/execution-demo/04-restored.html`：完整执行恢复。
 - `examples/execution-evaluation/REPORT.md`：真实测量与限制。
-- `docs/knowledge-graph-preview.png`：图谱交互界面截图。
+- `docs/history/knowledge-graph-preview.png`：图谱交互界面截图（v0.2 界面）。
 
 完整本机运行记录位于 `workbench/execution-dataset`、`workbench/execution-evaluation`、`workbench/execution-demo-final`、`workbench/v02-wheel-acceptance`。分享副本在 `examples/`；下载模型仍在 `workbench/models/minilm`，不放进源码 ZIP。
 
@@ -80,7 +80,7 @@
 | 安装 | 新环境安装 0.3.0 wheel；从 /tmp 启动离线复现四例及声明演示；show / ask / graph / 菜单退出通过 |
 | 界面 | Chromium 的声明表、图谱选择与来源路径、模型分歧；1440×1080 / 390×844 无页面横向溢出 |
 
-原始运行证据：`workbench/historical-v03-release`、`workbench/dependency-v03-release`、`workbench/v03-wheel-acceptance`。分享记录：`examples/historical-regressions`、`examples/dependency-demo`。队友说明：`docs/V0.3_队友讨论与验收.md`。
+原始运行证据：`workbench/historical-v03-release`、`workbench/dependency-v03-release`、`workbench/v03-wheel-acceptance`。分享记录：`examples/historical-regressions`、`examples/dependency-demo`。队友说明：`docs/history/V0.3_队友讨论与验收.md`。
 
 下一步仍以不同结构的真实项目、困难归并、模型训练覆盖和真人对照试用为主。当前没有测量实际用户调试耗时，也没有完成课程提交。
 
@@ -101,3 +101,20 @@
 ### 本轮验收
 
 101 项测试通过，ruff 通过；诊断数据集 215/215 复现；四个上游回归和依赖演示离线复现成功；示例产物检查过没有本机路径。在 Web 界面上完整走通了练习场流程。仅在 macOS Apple Silicon、Python 3.12 上实机验收。
+
+## 2026-09-24：v0.5
+
+上一轮分类：**扩展与纠正**。v0.4 的指标全部来自合成数据；拿真实开源项目检验后，暴露出大量合成数据里没有的问题。
+
+### 改进了什么
+
+- **界面**：纯工具界面；必须修与可选（不影响运行）分开，顶部只统计必须修的问题；安装建议附可复制命令；首页和目标选择加了说明。
+- **Windows**：进程树终止、文件锁、路径与编码、启动脚本。
+- **真实项目发现的诊断缺口**（humanize、Flask 1.1.4）：conftest 失败、pip check 与缺失名称的联系、库内部使用的已移除名称、缺 pytest 插件、测试计数的警告被环境打乱、Ruff 结果按风险分级。
+- **留出检查**：13 个没用过的项目（9 个领域、Python 3.9–3.14），先标注后运行。第 1 轮 2/13 正确；FixFirst 自身的兼容性问题（Python 3.9、pytest 9 子测试、未激活环境）、不读 setup.py 和 flit、建议 pip 安装 Python 等都是普遍原因，修复后第 2 轮 9/13。
+- **版本搜索**（`versions.py`）：在临时环境中按版本系列试装（倍增步长后二分，最多 12 次，只装 wheel），给出仍提供某名称的最新版本；**锁文件**给出项目测过的版本。第 3 轮 12/13（后两轮不算留出）。
+- **修复的 bug**：只运行单项检查时，其他工具的问题被误标为“待重新检查”；一个缺失名称被算成多个问题；headline 按步骤而不是按问题计数。
+
+### 本轮验收
+
+132 项测试通过，ruff 通过；诊断数据集评估与 v0.4 逐项一致（metrics、predictions、决策树相同）。13 个留出项目三轮结果和两次标注更正见 `docs/GENERALISATION.md` 与 `examples/real-world/LABELS.md`。Windows 实机测试待完成。

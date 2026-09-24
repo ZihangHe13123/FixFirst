@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "session_id": "session-c74754a89fe9",
+  "session_id": "session-f4ae82d64edb",
   "goal": "goal:collect_tests",
   "ontology": {
     "entities": [
@@ -88,9 +88,9 @@
       }
     },
     {
-      "id": "run-502a1b69aa46",
+      "id": "run-c99e53da651d",
       "type": "Run",
-      "label": "environment · 2026-09-24T01:56:23+00:00",
+      "label": "environment · 2026-09-24T08:27:50+00:00",
       "attributes": {
         "tool": "environment",
         "status": "completed",
@@ -103,9 +103,9 @@
       }
     },
     {
-      "id": "run-7a1f25bc69ec",
+      "id": "run-1cbabe992788",
       "type": "Run",
-      "label": "pip_check · 2026-09-24T01:56:23+00:00",
+      "label": "pip_check · 2026-09-24T08:27:50+00:00",
       "attributes": {
         "tool": "pip_check",
         "status": "completed",
@@ -118,9 +118,9 @@
       }
     },
     {
-      "id": "run-5a94f782e834",
+      "id": "run-a076ff107691",
       "type": "Run",
-      "label": "pytest · 2026-09-24T01:56:24+00:00",
+      "label": "pytest · 2026-09-24T08:27:51+00:00",
       "attributes": {
         "tool": "pytest",
         "status": "completed",
@@ -133,9 +133,9 @@
       }
     },
     {
-      "id": "run-01ff889ff4a9",
+      "id": "run-7b1706fa5b17",
       "type": "Run",
-      "label": "ruff · 2026-09-24T01:56:24+00:00",
+      "label": "ruff · 2026-09-24T08:27:51+00:00",
       "attributes": {
         "tool": "ruff",
         "status": "completed",
@@ -148,9 +148,9 @@
       }
     },
     {
-      "id": "run-2cc625801a57",
+      "id": "run-38845e8bed30",
       "type": "Run",
-      "label": "environment · 2026-09-24T01:56:24+00:00",
+      "label": "environment · 2026-09-24T08:27:51+00:00",
       "attributes": {
         "tool": "environment",
         "status": "completed",
@@ -163,9 +163,9 @@
       }
     },
     {
-      "id": "run-2d386acda7fe",
+      "id": "run-ffd4e8b607b2",
       "type": "Run",
-      "label": "pip_check · 2026-09-24T01:56:24+00:00",
+      "label": "pip_check · 2026-09-24T08:27:51+00:00",
       "attributes": {
         "tool": "pip_check",
         "status": "completed",
@@ -178,9 +178,9 @@
       }
     },
     {
-      "id": "run-fe9c5b68fc32",
+      "id": "run-a1e376a3132c",
       "type": "Run",
-      "label": "pytest · 2026-09-24T01:56:24+00:00",
+      "label": "pytest · 2026-09-24T08:27:51+00:00",
       "attributes": {
         "tool": "pytest",
         "status": "completed",
@@ -193,9 +193,9 @@
       }
     },
     {
-      "id": "run-c1099f3bac2b",
+      "id": "run-d8f88b3021c9",
       "type": "Run",
-      "label": "ruff · 2026-09-24T01:56:24+00:00",
+      "label": "ruff · 2026-09-24T08:27:51+00:00",
       "attributes": {
         "tool": "ruff",
         "status": "completed",
@@ -208,31 +208,31 @@
       }
     },
     {
-      "id": "evidence:run-2cc625801a57:stdout:1",
+      "id": "evidence:run-38845e8bed30:stdout:1",
       "type": "Evidence",
-      "label": "run-2cc625801a57:stdout:1",
+      "label": "run-38845e8bed30:stdout:1",
       "attributes": {}
     },
     {
-      "id": "evidence:run-c1099f3bac2b:json:0",
+      "id": "evidence:run-a1e376a3132c:probe:1",
       "type": "Evidence",
-      "label": "run-c1099f3bac2b:json:0",
+      "label": "run-a1e376a3132c:probe:1",
       "attributes": {}
     },
     {
-      "id": "evidence:run-fe9c5b68fc32:probe:1",
+      "id": "evidence:run-a1e376a3132c:probe:3",
       "type": "Evidence",
-      "label": "run-fe9c5b68fc32:probe:1",
+      "label": "run-a1e376a3132c:probe:3",
       "attributes": {}
     },
     {
-      "id": "evidence:run-fe9c5b68fc32:probe:3",
+      "id": "evidence:run-d8f88b3021c9:json:0",
       "type": "Evidence",
-      "label": "run-fe9c5b68fc32:probe:3",
+      "label": "run-d8f88b3021c9:json:0",
       "attributes": {}
     },
     {
-      "id": "event-9f45f2c887e1",
+      "id": "event-1ddd20f0cb8b",
       "type": "Event",
       "label": "ModuleNotFoundError: No module named 'helper'",
       "attributes": {
@@ -242,7 +242,7 @@
       }
     },
     {
-      "id": "event-d5aad36112a0",
+      "id": "event-3ce2b9958dee",
       "type": "Event",
       "label": "ModuleNotFoundError: No module named 'helper'",
       "attributes": {
@@ -252,7 +252,7 @@
       }
     },
     {
-      "id": "event-a2d6f91060f4",
+      "id": "event-f853446ef5f4",
       "type": "Event",
       "label": "Line too long (194 > 88)",
       "attributes": {
@@ -468,6 +468,17 @@
       }
     },
     {
+      "id": "issue-fb343421aed847:lint_rule:lint:E501",
+      "type": "Fact",
+      "label": "issue-fb343421aed847 lint_rule lint:E501",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-fb343421aed847",
+        "predicate": "lint_rule"
+      }
+    },
+    {
       "id": "dist:python:installed_version:3.12.14",
       "type": "Fact",
       "label": "dist:python installed_version 3.12.14",
@@ -476,6 +487,17 @@
         "status": "observed",
         "subject": "dist:python",
         "predicate": "installed_version"
+      }
+    },
+    {
+      "id": "dist:python:previous_series_below:3",
+      "type": "Fact",
+      "label": "dist:python previous_series_below 3",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "dist:python",
+        "predicate": "previous_series_below"
       }
     },
     {
@@ -534,6 +556,28 @@
       }
     },
     {
+      "id": "issue-fb343421aed847:lint_finding:cleanup",
+      "type": "Fact",
+      "label": "issue-fb343421aed847 lint_finding cleanup",
+      "attributes": {
+        "rule": "D48",
+        "status": "derived",
+        "subject": "issue-fb343421aed847",
+        "predicate": "lint_finding"
+      }
+    },
+    {
+      "id": "issue-fb343421aed847:affects_running:no",
+      "type": "Fact",
+      "label": "issue-fb343421aed847 affects_running no",
+      "attributes": {
+        "rule": "D48",
+        "status": "derived",
+        "subject": "issue-fb343421aed847",
+        "predicate": "affects_running"
+      }
+    },
+    {
       "id": "issue-634d3f08a5f764:suspected:version_incompatibility",
       "type": "Fact",
       "label": "issue-634d3f08a5f764 suspected version_incompatibility",
@@ -569,6 +613,15 @@
       "attributes": {
         "phase": "derive",
         "source": "pytest documentation: collection errors interrupt the session"
+      }
+    },
+    {
+      "id": "rule:D48",
+      "type": "Rule",
+      "label": "D48 · A code-check finding about style, layout or outdated syntax: it does not change how the code runs.",
+      "attributes": {
+        "phase": "diagnose",
+        "source": ""
       }
     },
     {
@@ -646,12 +699,12 @@
       }
     },
     {
-      "id": "review-style_issue",
+      "id": "cleanup-code",
       "type": "Action",
-      "label": "Fix the code style findings",
+      "label": "Clean up the code-check suggestions",
       "attributes": {
         "priority": 4,
-        "explanation": "Edit the reported files and lines by rule code, then re-run the code check. The number of style messages does not change the priority of restoring test collection.",
+        "explanation": "Ruff suggests style, layout and syntax changes. None of them changes how the code runs. ruff check --fix applies many of them automatically; review the changes before you commit them.",
         "verification": "Re-run the code check",
         "targets": [],
         "goal_impact": 0,
@@ -659,9 +712,9 @@
       }
     },
     {
-      "id": "rule:P47",
+      "id": "rule:P54",
       "type": "Rule",
-      "label": "P47 · Style findings from the linter.",
+      "label": "P54 · Clean-up findings before the project's settings are known.",
       "attributes": {
         "phase": "plan",
         "source": ""
@@ -708,6 +761,21 @@
       "target": "issue-fb343421aed847:affects:check_style"
     },
     {
+      "source": "cleanup-code",
+      "relation": "addresses",
+      "target": "issue-fb343421aed847"
+    },
+    {
+      "source": "cleanup-code",
+      "relation": "justified_by",
+      "target": "issue-fb343421aed847:lint_finding:cleanup"
+    },
+    {
+      "source": "cleanup-code",
+      "relation": "proposed_by",
+      "target": "rule:P54"
+    },
+    {
       "source": "consider-version_incompatibility",
       "relation": "addresses",
       "target": "issue-634d3f08a5f764"
@@ -725,52 +793,57 @@
     {
       "source": "dist:python:installed_version:3.12.14",
       "relation": "supported_by",
-      "target": "evidence:run-2cc625801a57:stdout:1"
+      "target": "evidence:run-38845e8bed30:stdout:1"
+    },
+    {
+      "source": "dist:python:previous_series_below:3",
+      "relation": "supported_by",
+      "target": "evidence:run-38845e8bed30:stdout:1"
     },
     {
       "source": "environment:snapshot:available",
       "relation": "supported_by",
-      "target": "evidence:run-2cc625801a57:stdout:1"
+      "target": "evidence:run-38845e8bed30:stdout:1"
     },
     {
-      "source": "event-9f45f2c887e1",
+      "source": "event-1ddd20f0cb8b",
       "relation": "cites",
-      "target": "evidence:run-fe9c5b68fc32:probe:1"
+      "target": "evidence:run-a1e376a3132c:probe:1"
     },
     {
-      "source": "event-a2d6f91060f4",
+      "source": "event-3ce2b9958dee",
       "relation": "cites",
-      "target": "evidence:run-c1099f3bac2b:json:0"
+      "target": "evidence:run-a1e376a3132c:probe:3"
     },
     {
-      "source": "event-d5aad36112a0",
+      "source": "event-f853446ef5f4",
       "relation": "cites",
-      "target": "evidence:run-fe9c5b68fc32:probe:3"
+      "target": "evidence:run-d8f88b3021c9:json:0"
     },
     {
-      "source": "evidence:run-2cc625801a57:stdout:1",
+      "source": "evidence:run-38845e8bed30:stdout:1",
       "relation": "observed_in",
-      "target": "run-2cc625801a57"
+      "target": "run-38845e8bed30"
     },
     {
-      "source": "evidence:run-c1099f3bac2b:json:0",
+      "source": "evidence:run-a1e376a3132c:probe:1",
       "relation": "observed_in",
-      "target": "run-c1099f3bac2b"
+      "target": "run-a1e376a3132c"
     },
     {
-      "source": "evidence:run-fe9c5b68fc32:probe:1",
+      "source": "evidence:run-a1e376a3132c:probe:3",
       "relation": "observed_in",
-      "target": "run-fe9c5b68fc32"
+      "target": "run-a1e376a3132c"
     },
     {
-      "source": "evidence:run-fe9c5b68fc32:probe:3",
+      "source": "evidence:run-d8f88b3021c9:json:0",
       "relation": "observed_in",
-      "target": "run-fe9c5b68fc32"
+      "target": "run-d8f88b3021c9"
     },
     {
       "source": "goal:collect_tests",
       "relation": "evaluated_by",
-      "target": "run-fe9c5b68fc32"
+      "target": "run-a1e376a3132c"
     },
     {
       "source": "goal:collect_tests",
@@ -815,12 +888,12 @@
     {
       "source": "issue-634d3f08a5f764",
       "relation": "has_event",
-      "target": "event-9f45f2c887e1"
+      "target": "event-1ddd20f0cb8b"
     },
     {
       "source": "issue-634d3f08a5f764",
       "relation": "has_event",
-      "target": "event-d5aad36112a0"
+      "target": "event-3ce2b9958dee"
     },
     {
       "source": "issue-634d3f08a5f764",
@@ -840,12 +913,12 @@
     {
       "source": "issue-634d3f08a5f764:affects:collect_tests",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:1"
+      "target": "evidence:run-a1e376a3132c:probe:1"
     },
     {
       "source": "issue-634d3f08a5f764:affects:collect_tests",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:3"
+      "target": "evidence:run-a1e376a3132c:probe:3"
     },
     {
       "source": "issue-634d3f08a5f764:affects:pass_tests",
@@ -860,22 +933,22 @@
     {
       "source": "issue-634d3f08a5f764:affects:pass_tests",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:1"
+      "target": "evidence:run-a1e376a3132c:probe:1"
     },
     {
       "source": "issue-634d3f08a5f764:affects:pass_tests",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:3"
+      "target": "evidence:run-a1e376a3132c:probe:3"
     },
     {
       "source": "issue-634d3f08a5f764:api:api:helper.greet",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:1"
+      "target": "evidence:run-a1e376a3132c:probe:1"
     },
     {
       "source": "issue-634d3f08a5f764:api:api:helper.greet",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:3"
+      "target": "evidence:run-a1e376a3132c:probe:3"
     },
     {
       "source": "issue-634d3f08a5f764:blocks:pass_tests",
@@ -895,92 +968,92 @@
     {
       "source": "issue-634d3f08a5f764:blocks:pass_tests",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:1"
+      "target": "evidence:run-a1e376a3132c:probe:1"
     },
     {
       "source": "issue-634d3f08a5f764:blocks:pass_tests",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:3"
+      "target": "evidence:run-a1e376a3132c:probe:3"
     },
     {
       "source": "issue-634d3f08a5f764:component:helper",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:1"
+      "target": "evidence:run-a1e376a3132c:probe:1"
     },
     {
       "source": "issue-634d3f08a5f764:component:helper",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:3"
+      "target": "evidence:run-a1e376a3132c:probe:3"
     },
     {
       "source": "issue-634d3f08a5f764:exception:ModuleNotFoundError",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:1"
+      "target": "evidence:run-a1e376a3132c:probe:1"
     },
     {
       "source": "issue-634d3f08a5f764:exception:ModuleNotFoundError",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:3"
+      "target": "evidence:run-a1e376a3132c:probe:3"
     },
     {
       "source": "issue-634d3f08a5f764:kind:import_failure",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:1"
+      "target": "evidence:run-a1e376a3132c:probe:1"
     },
     {
       "source": "issue-634d3f08a5f764:kind:import_failure",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:3"
+      "target": "evidence:run-a1e376a3132c:probe:3"
     },
     {
       "source": "issue-634d3f08a5f764:missing_module:module:helper",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:1"
+      "target": "evidence:run-a1e376a3132c:probe:1"
     },
     {
       "source": "issue-634d3f08a5f764:missing_module:module:helper",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:3"
+      "target": "evidence:run-a1e376a3132c:probe:3"
     },
     {
       "source": "issue-634d3f08a5f764:model_suggests:version_incompatibility",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:1"
+      "target": "evidence:run-a1e376a3132c:probe:1"
     },
     {
       "source": "issue-634d3f08a5f764:model_suggests:version_incompatibility",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:3"
+      "target": "evidence:run-a1e376a3132c:probe:3"
     },
     {
       "source": "issue-634d3f08a5f764:module:module:helper",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:1"
+      "target": "evidence:run-a1e376a3132c:probe:1"
     },
     {
       "source": "issue-634d3f08a5f764:module:module:helper",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:3"
+      "target": "evidence:run-a1e376a3132c:probe:3"
     },
     {
       "source": "issue-634d3f08a5f764:raised_in:project",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:1"
+      "target": "evidence:run-a1e376a3132c:probe:1"
     },
     {
       "source": "issue-634d3f08a5f764:raised_in:project",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:3"
+      "target": "evidence:run-a1e376a3132c:probe:3"
     },
     {
       "source": "issue-634d3f08a5f764:stage:collect",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:1"
+      "target": "evidence:run-a1e376a3132c:probe:1"
     },
     {
       "source": "issue-634d3f08a5f764:stage:collect",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:3"
+      "target": "evidence:run-a1e376a3132c:probe:3"
     },
     {
       "source": "issue-634d3f08a5f764:suspected:version_incompatibility",
@@ -995,27 +1068,27 @@
     {
       "source": "issue-634d3f08a5f764:suspected:version_incompatibility",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:1"
+      "target": "evidence:run-a1e376a3132c:probe:1"
     },
     {
       "source": "issue-634d3f08a5f764:suspected:version_incompatibility",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:3"
+      "target": "evidence:run-a1e376a3132c:probe:3"
     },
     {
       "source": "issue-634d3f08a5f764:tool:pytest",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:1"
+      "target": "evidence:run-a1e376a3132c:probe:1"
     },
     {
       "source": "issue-634d3f08a5f764:tool:pytest",
       "relation": "supported_by",
-      "target": "evidence:run-fe9c5b68fc32:probe:3"
+      "target": "evidence:run-a1e376a3132c:probe:3"
     },
     {
       "source": "issue-fb343421aed847",
       "relation": "has_event",
-      "target": "event-a2d6f91060f4"
+      "target": "event-f853446ef5f4"
     },
     {
       "source": "issue-fb343421aed847:affects:check_style",
@@ -1030,42 +1103,62 @@
     {
       "source": "issue-fb343421aed847:affects:check_style",
       "relation": "supported_by",
-      "target": "evidence:run-c1099f3bac2b:json:0"
+      "target": "evidence:run-d8f88b3021c9:json:0"
+    },
+    {
+      "source": "issue-fb343421aed847:affects_running:no",
+      "relation": "derived_by",
+      "target": "rule:D48"
+    },
+    {
+      "source": "issue-fb343421aed847:affects_running:no",
+      "relation": "inferred_from",
+      "target": "issue-fb343421aed847:lint_rule:lint:E501"
+    },
+    {
+      "source": "issue-fb343421aed847:affects_running:no",
+      "relation": "supported_by",
+      "target": "evidence:run-d8f88b3021c9:json:0"
     },
     {
       "source": "issue-fb343421aed847:component:E501",
       "relation": "supported_by",
-      "target": "evidence:run-c1099f3bac2b:json:0"
+      "target": "evidence:run-d8f88b3021c9:json:0"
     },
     {
       "source": "issue-fb343421aed847:kind:style_issue",
       "relation": "supported_by",
-      "target": "evidence:run-c1099f3bac2b:json:0"
+      "target": "evidence:run-d8f88b3021c9:json:0"
+    },
+    {
+      "source": "issue-fb343421aed847:lint_finding:cleanup",
+      "relation": "derived_by",
+      "target": "rule:D48"
+    },
+    {
+      "source": "issue-fb343421aed847:lint_finding:cleanup",
+      "relation": "inferred_from",
+      "target": "issue-fb343421aed847:lint_rule:lint:E501"
+    },
+    {
+      "source": "issue-fb343421aed847:lint_finding:cleanup",
+      "relation": "supported_by",
+      "target": "evidence:run-d8f88b3021c9:json:0"
+    },
+    {
+      "source": "issue-fb343421aed847:lint_rule:lint:E501",
+      "relation": "supported_by",
+      "target": "evidence:run-d8f88b3021c9:json:0"
     },
     {
       "source": "issue-fb343421aed847:stage:lint",
       "relation": "supported_by",
-      "target": "evidence:run-c1099f3bac2b:json:0"
+      "target": "evidence:run-d8f88b3021c9:json:0"
     },
     {
       "source": "issue-fb343421aed847:tool:ruff",
       "relation": "supported_by",
-      "target": "evidence:run-c1099f3bac2b:json:0"
-    },
-    {
-      "source": "review-style_issue",
-      "relation": "addresses",
-      "target": "issue-fb343421aed847"
-    },
-    {
-      "source": "review-style_issue",
-      "relation": "justified_by",
-      "target": "issue-fb343421aed847:kind:style_issue"
-    },
-    {
-      "source": "review-style_issue",
-      "relation": "proposed_by",
-      "target": "rule:P47"
+      "target": "evidence:run-d8f88b3021c9:json:0"
     }
   ],
   "meaning": "Provenance and rule relations; similarity never creates a causal edge."

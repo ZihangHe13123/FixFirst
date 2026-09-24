@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "session_id": "session-f49455d1f031",
+  "session_id": "session-e8a1e8cb325a",
   "name": "Wang's shopping cart: tests collect but fail",
   "project_root": "<project>",
   "target_python": "<python>",
-  "created_at": "2026-09-24T01:56:25+00:00",
+  "created_at": "2026-09-24T08:27:52+00:00",
   "goal": "pass_tests",
   "grouping": "tfidf",
   "threshold": 0.82,
@@ -14,9 +14,9 @@
   "runs": [
     {
       "schema_version": 1,
-      "run_id": "run-f42a649cebf9",
+      "run_id": "run-93dacbe8f9d9",
       "tool": "pytest",
-      "started_at": "2026-09-24T01:56:25+00:00",
+      "started_at": "2026-09-24T08:27:52+00:00",
       "argv": [
         "<python>",
         "-m",
@@ -38,7 +38,7 @@
       "exit_code": 0,
       "stdout": "workbench/regen/execution-demo/project/test_cart.py::test_discount\nworkbench/regen/execution-demo/project/test_cart.py::test_tax\nworkbench/regen/execution-demo/project/test_cart.py::test_fixture\n\n3 tests collected in 0.01s\n",
       "stderr": "",
-      "duration_s": 0.123,
+      "duration_s": 0.139,
       "truncated": false,
       "verified_pass": true,
       "coverage_complete": true,
@@ -65,9 +65,9 @@
     },
     {
       "schema_version": 1,
-      "run_id": "run-808cae86eb6c",
+      "run_id": "run-35a89c64010a",
       "tool": "pytest_run",
-      "started_at": "2026-09-24T01:56:25+00:00",
+      "started_at": "2026-09-24T08:27:52+00:00",
       "argv": [
         "<python>",
         "-m",
@@ -90,7 +90,7 @@
       "exit_code": 0,
       "stdout": "...                                                                      [100%]\n=============================== warnings summary ===============================\n../../../../.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624\n  <home>/Project/课程Projec/FixFirst/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624: PytestConfigWarning: No files were found in testpaths; consider removing or adjusting your testpaths configuration. Searching recursively from the current directory instead.\n    self.args, self.args_source = self._decide_args(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n3 passed, 1 warning in 0.01s\n",
       "stderr": "",
-      "duration_s": 0.137,
+      "duration_s": 0.136,
       "truncated": false,
       "verified_pass": true,
       "coverage_complete": true,
@@ -192,9 +192,9 @@
     },
     {
       "schema_version": 1,
-      "run_id": "run-ef60c4284bad",
+      "run_id": "run-01f479d75ef3",
       "tool": "pytest",
-      "started_at": "2026-09-24T01:56:25+00:00",
+      "started_at": "2026-09-24T08:27:53+00:00",
       "argv": [
         "<python>",
         "-m",
@@ -216,7 +216,7 @@
       "exit_code": 0,
       "stdout": "workbench/regen/execution-demo/project/test_cart.py::test_discount\nworkbench/regen/execution-demo/project/test_cart.py::test_tax\nworkbench/regen/execution-demo/project/test_cart.py::test_fixture\n\n3 tests collected in 0.01s\n",
       "stderr": "",
-      "duration_s": 0.127,
+      "duration_s": 0.124,
       "truncated": false,
       "verified_pass": true,
       "coverage_complete": true,
@@ -243,9 +243,9 @@
     },
     {
       "schema_version": 1,
-      "run_id": "run-ad4cb378d894",
+      "run_id": "run-519e3fcf0844",
       "tool": "pytest_run",
-      "started_at": "2026-09-24T01:56:25+00:00",
+      "started_at": "2026-09-24T08:27:53+00:00",
       "argv": [
         "<python>",
         "-m",
@@ -266,9 +266,9 @@
       "status": "completed",
       "source": "executed",
       "exit_code": 1,
-      "stdout": "FF.                                                                      [100%]\n=================================== FAILURES ===================================\n________________________________ test_discount _________________________________\n\n    def test_discount():\n>       assert cart.discount(100) == 90\nE       assert 70.0 == 90\nE        +  where 70.0 = <function discount at 0x106f23060>(100)\nE        +    where <function discount at 0x106f23060> = cart.discount\n\ntest_cart.py:4: AssertionError\n___________________________________ test_tax ___________________________________\n\n    def test_tax():\n>       assert cart.tax(100) == 10\nE       assert 20.0 == 10\nE        +  where 20.0 = <function tax at 0x106f23880>(100)\nE        +    where <function tax at 0x106f23880> = cart.tax\n\ntest_cart.py:7: AssertionError\n=============================== warnings summary ===============================\n../../../../.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624\n  <home>/Project/课程Projec/FixFirst/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624: PytestConfigWarning: No files were found in testpaths; consider removing or adjusting your testpaths configuration. Searching recursively from the current directory instead.\n    self.args, self.args_source = self._decide_args(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_cart.py::test_discount - assert 70.0 == 90\nFAILED test_cart.py::test_tax - assert 20.0 == 10\n2 failed, 1 passed, 1 warning in 0.02s\n",
+      "stdout": "FF.                                                                      [100%]\n=================================== FAILURES ===================================\n________________________________ test_discount _________________________________\n\n    def test_discount():\n>       assert cart.discount(100) == 90\nE       assert 70.0 == 90\nE        +  where 70.0 = <function discount at 0x102a8b100>(100)\nE        +    where <function discount at 0x102a8b100> = cart.discount\n\ntest_cart.py:4: AssertionError\n___________________________________ test_tax ___________________________________\n\n    def test_tax():\n>       assert cart.tax(100) == 10\nE       assert 20.0 == 10\nE        +  where 20.0 = <function tax at 0x102a8b9c0>(100)\nE        +    where <function tax at 0x102a8b9c0> = cart.tax\n\ntest_cart.py:7: AssertionError\n=============================== warnings summary ===============================\n../../../../.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624\n  <home>/Project/课程Projec/FixFirst/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624: PytestConfigWarning: No files were found in testpaths; consider removing or adjusting your testpaths configuration. Searching recursively from the current directory instead.\n    self.args, self.args_source = self._decide_args(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_cart.py::test_discount - assert 70.0 == 90\nFAILED test_cart.py::test_tax - assert 20.0 == 10\n2 failed, 1 passed, 1 warning in 0.02s\n",
       "stderr": "",
-      "duration_s": 0.13,
+      "duration_s": 0.149,
       "truncated": false,
       "verified_pass": false,
       "coverage_complete": true,
@@ -295,17 +295,18 @@
           "type": "failure",
           "stage": "call",
           "nodeid": "test_cart.py::test_discount",
-          "message": "def test_discount():\n>       assert cart.discount(100) == 90\nE       assert 70.0 == 90\nE        +  where 70.0 = <function discount at 0x106f23060>(100)\nE        +    where <function discount at 0x106f23060> = cart.discount\n\ntest_cart.py:4: AssertionError"
+          "message": "def test_discount():\n>       assert cart.discount(100) == 90\nE       assert 70.0 == 90\nE        +  where 70.0 = <function discount at 0x102a8b100>(100)\nE        +    where <function discount at 0x102a8b100> = cart.discount\n\ntest_cart.py:4: AssertionError"
         },
         {
           "type": "exception",
           "nodeid": "test_cart.py::test_discount",
           "stage": "call",
           "exception_type": "AssertionError",
-          "exception_message": "assert 70.0 == 90\n +  where 70.0 = <function discount at 0x106f23060>(100)\n +    where <function discount at 0x106f23060> = cart.discount",
+          "exception_message": "assert 70.0 == 90\n +  where 70.0 = <function discount at 0x102a8b100>(100)\n +    where <function discount at 0x102a8b100> = cart.discount",
           "exception_module": "builtins",
           "source_file": "<project>/test_cart.py",
-          "source_line": 4
+          "source_line": 4,
+          "warnings": []
         },
         {
           "type": "outcome",
@@ -332,17 +333,18 @@
           "type": "failure",
           "stage": "call",
           "nodeid": "test_cart.py::test_tax",
-          "message": "def test_tax():\n>       assert cart.tax(100) == 10\nE       assert 20.0 == 10\nE        +  where 20.0 = <function tax at 0x106f23880>(100)\nE        +    where <function tax at 0x106f23880> = cart.tax\n\ntest_cart.py:7: AssertionError"
+          "message": "def test_tax():\n>       assert cart.tax(100) == 10\nE       assert 20.0 == 10\nE        +  where 20.0 = <function tax at 0x102a8b9c0>(100)\nE        +    where <function tax at 0x102a8b9c0> = cart.tax\n\ntest_cart.py:7: AssertionError"
         },
         {
           "type": "exception",
           "nodeid": "test_cart.py::test_tax",
           "stage": "call",
           "exception_type": "AssertionError",
-          "exception_message": "assert 20.0 == 10\n +  where 20.0 = <function tax at 0x106f23880>(100)\n +    where <function tax at 0x106f23880> = cart.tax",
+          "exception_message": "assert 20.0 == 10\n +  where 20.0 = <function tax at 0x102a8b9c0>(100)\n +    where <function tax at 0x102a8b9c0> = cart.tax",
           "exception_module": "builtins",
           "source_file": "<project>/test_cart.py",
-          "source_line": 7
+          "source_line": 7,
+          "warnings": []
         },
         {
           "type": "outcome",
@@ -402,12 +404,12 @@
   "events": [
     {
       "schema_version": 1,
-      "event_id": "event-3b119b1c3ed0",
-      "run_id": "run-ad4cb378d894",
+      "event_id": "event-ac5eeae1944c",
+      "run_id": "run-519e3fcf0844",
       "tool": "pytest_run",
       "stage": "call",
       "kind": "test_assertion",
-      "message": "AssertionError: assert 70.0 == 90\n +  where 70.0 = <function discount at 0x106f23060>(100)\n +    where <function discount at 0x106f23060> = cart.discount",
+      "message": "AssertionError: assert 70.0 == 90\n +  where 70.0 = <function discount at 0x102a8b100>(100)\n +    where <function discount at 0x102a8b100> = cart.discount",
       "component": "",
       "location": "test_cart.py::test_discount",
       "line": 1,
@@ -415,18 +417,18 @@
       "source_file": "<project>/test_cart.py",
       "source_line": 4,
       "evidence_refs": [
-        "run-ad4cb378d894:probe:2",
-        "run-ad4cb378d894:probe:3"
+        "run-519e3fcf0844:probe:2",
+        "run-519e3fcf0844:probe:3"
       ]
     },
     {
       "schema_version": 1,
-      "event_id": "event-ef70dca38d42",
-      "run_id": "run-ad4cb378d894",
+      "event_id": "event-fd91befccfdc",
+      "run_id": "run-519e3fcf0844",
       "tool": "pytest_run",
       "stage": "call",
       "kind": "test_assertion",
-      "message": "AssertionError: assert 20.0 == 10\n +  where 20.0 = <function tax at 0x106f23880>(100)\n +    where <function tax at 0x106f23880> = cart.tax",
+      "message": "AssertionError: assert 20.0 == 10\n +  where 20.0 = <function tax at 0x102a8b9c0>(100)\n +    where <function tax at 0x102a8b9c0> = cart.tax",
       "component": "",
       "location": "test_cart.py::test_tax",
       "line": 1,
@@ -434,30 +436,30 @@
       "source_file": "<project>/test_cart.py",
       "source_line": 7,
       "evidence_refs": [
-        "run-ad4cb378d894:probe:7",
-        "run-ad4cb378d894:probe:8"
+        "run-519e3fcf0844:probe:7",
+        "run-519e3fcf0844:probe:8"
       ]
     }
   ],
   "issues": [
     {
       "schema_version": 1,
-      "issue_id": "issue-6ad5df87274488",
-      "fingerprint": "6ad5df87274488",
+      "issue_id": "issue-40992836ffcb78",
+      "fingerprint": "40992836ffcb78",
       "tool": "pytest_run",
       "stage": "call",
       "kind": "test_assertion",
       "component": "",
       "title": "Assertion failed · test_cart.py::test_tax",
       "event_ids": [
-        "event-ef70dca38d42"
+        "event-fd91befccfdc"
       ],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:7",
-        "run-ad4cb378d894:probe:8"
+        "run-519e3fcf0844:probe:7",
+        "run-519e3fcf0844:probe:8"
       ],
       "member_keys": [
-        "e99941ea92fdf6"
+        "4cf29d7ae4b439"
       ],
       "scope": "tests:project",
       "environment_id": "6c069519e4f32cc8",
@@ -470,8 +472,8 @@
       "prediction_note": "",
       "group_score": 1.0,
       "status": "open",
-      "first_seen": "2026-09-24T01:56:26+00:00",
-      "last_seen": "2026-09-24T01:56:26+00:00",
+      "first_seen": "2026-09-24T08:27:53+00:00",
+      "last_seen": "2026-09-24T08:27:53+00:00",
       "note": "",
       "targets": [
         "test_cart.py::test_tax"
@@ -479,22 +481,22 @@
     },
     {
       "schema_version": 1,
-      "issue_id": "issue-bf126622151c40",
-      "fingerprint": "bf126622151c40",
+      "issue_id": "issue-afa54b6def7667",
+      "fingerprint": "afa54b6def7667",
       "tool": "pytest_run",
       "stage": "call",
       "kind": "test_assertion",
       "component": "",
       "title": "Assertion failed · test_cart.py::test_discount",
       "event_ids": [
-        "event-3b119b1c3ed0"
+        "event-ac5eeae1944c"
       ],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:2",
-        "run-ad4cb378d894:probe:3"
+        "run-519e3fcf0844:probe:2",
+        "run-519e3fcf0844:probe:3"
       ],
       "member_keys": [
-        "0cdf1a2aa79020"
+        "211ec85b6c36aa"
       ],
       "scope": "tests:project",
       "environment_id": "6c069519e4f32cc8",
@@ -507,8 +509,8 @@
       "prediction_note": "",
       "group_score": 1.0,
       "status": "open",
-      "first_seen": "2026-09-24T01:56:26+00:00",
-      "last_seen": "2026-09-24T01:56:26+00:00",
+      "first_seen": "2026-09-24T08:27:53+00:00",
+      "last_seen": "2026-09-24T08:27:53+00:00",
       "note": "",
       "targets": [
         "test_cart.py::test_discount"
@@ -540,234 +542,234 @@
     },
     {
       "schema_version": 1,
-      "fact_id": "issue-6ad5df87274488:kind:test_assertion",
-      "subject": "issue-6ad5df87274488",
+      "fact_id": "issue-40992836ffcb78:kind:test_assertion",
+      "subject": "issue-40992836ffcb78",
       "predicate": "kind",
       "value": "test_assertion",
       "status": "observed",
       "rule_id": null,
       "inputs": [],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:7",
-        "run-ad4cb378d894:probe:8"
+        "run-519e3fcf0844:probe:7",
+        "run-519e3fcf0844:probe:8"
       ]
     },
     {
       "schema_version": 1,
-      "fact_id": "issue-6ad5df87274488:stage:call",
-      "subject": "issue-6ad5df87274488",
+      "fact_id": "issue-40992836ffcb78:stage:call",
+      "subject": "issue-40992836ffcb78",
       "predicate": "stage",
       "value": "call",
       "status": "observed",
       "rule_id": null,
       "inputs": [],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:7",
-        "run-ad4cb378d894:probe:8"
+        "run-519e3fcf0844:probe:7",
+        "run-519e3fcf0844:probe:8"
       ]
     },
     {
       "schema_version": 1,
-      "fact_id": "issue-6ad5df87274488:tool:pytest_run",
-      "subject": "issue-6ad5df87274488",
+      "fact_id": "issue-40992836ffcb78:tool:pytest_run",
+      "subject": "issue-40992836ffcb78",
       "predicate": "tool",
       "value": "pytest_run",
       "status": "observed",
       "rule_id": null,
       "inputs": [],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:7",
-        "run-ad4cb378d894:probe:8"
+        "run-519e3fcf0844:probe:7",
+        "run-519e3fcf0844:probe:8"
       ]
     },
     {
       "schema_version": 1,
-      "fact_id": "issue-bf126622151c40:kind:test_assertion",
-      "subject": "issue-bf126622151c40",
+      "fact_id": "issue-afa54b6def7667:kind:test_assertion",
+      "subject": "issue-afa54b6def7667",
       "predicate": "kind",
       "value": "test_assertion",
       "status": "observed",
       "rule_id": null,
       "inputs": [],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:2",
-        "run-ad4cb378d894:probe:3"
+        "run-519e3fcf0844:probe:2",
+        "run-519e3fcf0844:probe:3"
       ]
     },
     {
       "schema_version": 1,
-      "fact_id": "issue-bf126622151c40:stage:call",
-      "subject": "issue-bf126622151c40",
+      "fact_id": "issue-afa54b6def7667:stage:call",
+      "subject": "issue-afa54b6def7667",
       "predicate": "stage",
       "value": "call",
       "status": "observed",
       "rule_id": null,
       "inputs": [],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:2",
-        "run-ad4cb378d894:probe:3"
+        "run-519e3fcf0844:probe:2",
+        "run-519e3fcf0844:probe:3"
       ]
     },
     {
       "schema_version": 1,
-      "fact_id": "issue-bf126622151c40:tool:pytest_run",
-      "subject": "issue-bf126622151c40",
+      "fact_id": "issue-afa54b6def7667:tool:pytest_run",
+      "subject": "issue-afa54b6def7667",
       "predicate": "tool",
       "value": "pytest_run",
       "status": "observed",
       "rule_id": null,
       "inputs": [],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:2",
-        "run-ad4cb378d894:probe:3"
+        "run-519e3fcf0844:probe:2",
+        "run-519e3fcf0844:probe:3"
       ]
     },
     {
       "schema_version": 1,
-      "fact_id": "issue-6ad5df87274488:exception:AssertionError",
-      "subject": "issue-6ad5df87274488",
+      "fact_id": "issue-40992836ffcb78:exception:AssertionError",
+      "subject": "issue-40992836ffcb78",
       "predicate": "exception",
       "value": "AssertionError",
       "status": "observed",
       "rule_id": null,
       "inputs": [],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:7",
-        "run-ad4cb378d894:probe:8"
+        "run-519e3fcf0844:probe:7",
+        "run-519e3fcf0844:probe:8"
       ]
     },
     {
       "schema_version": 1,
-      "fact_id": "issue-6ad5df87274488:raised_in:test",
-      "subject": "issue-6ad5df87274488",
+      "fact_id": "issue-40992836ffcb78:raised_in:test",
+      "subject": "issue-40992836ffcb78",
       "predicate": "raised_in",
       "value": "test",
       "status": "observed",
       "rule_id": null,
       "inputs": [],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:7",
-        "run-ad4cb378d894:probe:8"
+        "run-519e3fcf0844:probe:7",
+        "run-519e3fcf0844:probe:8"
       ]
     },
     {
       "schema_version": 1,
-      "fact_id": "issue-bf126622151c40:exception:AssertionError",
-      "subject": "issue-bf126622151c40",
+      "fact_id": "issue-afa54b6def7667:exception:AssertionError",
+      "subject": "issue-afa54b6def7667",
       "predicate": "exception",
       "value": "AssertionError",
       "status": "observed",
       "rule_id": null,
       "inputs": [],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:2",
-        "run-ad4cb378d894:probe:3"
+        "run-519e3fcf0844:probe:2",
+        "run-519e3fcf0844:probe:3"
       ]
     },
     {
       "schema_version": 1,
-      "fact_id": "issue-bf126622151c40:raised_in:test",
-      "subject": "issue-bf126622151c40",
+      "fact_id": "issue-afa54b6def7667:raised_in:test",
+      "subject": "issue-afa54b6def7667",
       "predicate": "raised_in",
       "value": "test",
       "status": "observed",
       "rule_id": null,
       "inputs": [],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:2",
-        "run-ad4cb378d894:probe:3"
+        "run-519e3fcf0844:probe:2",
+        "run-519e3fcf0844:probe:3"
       ]
     },
     {
       "schema_version": 1,
-      "fact_id": "issue-6ad5df87274488:model_suggests:code_defect",
-      "subject": "issue-6ad5df87274488",
+      "fact_id": "issue-40992836ffcb78:model_suggests:code_defect",
+      "subject": "issue-40992836ffcb78",
       "predicate": "model_suggests",
       "value": "code_defect",
       "status": "hypothesis",
       "rule_id": "decision-tree",
       "inputs": [],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:7",
-        "run-ad4cb378d894:probe:8"
+        "run-519e3fcf0844:probe:7",
+        "run-519e3fcf0844:probe:8"
       ]
     },
     {
       "schema_version": 1,
-      "fact_id": "issue-bf126622151c40:model_suggests:code_defect",
-      "subject": "issue-bf126622151c40",
+      "fact_id": "issue-afa54b6def7667:model_suggests:code_defect",
+      "subject": "issue-afa54b6def7667",
       "predicate": "model_suggests",
       "value": "code_defect",
       "status": "hypothesis",
       "rule_id": "decision-tree",
       "inputs": [],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:2",
-        "run-ad4cb378d894:probe:3"
+        "run-519e3fcf0844:probe:2",
+        "run-519e3fcf0844:probe:3"
       ]
     },
     {
       "schema_version": 1,
-      "fact_id": "issue-6ad5df87274488:affects:pass_tests",
-      "subject": "issue-6ad5df87274488",
+      "fact_id": "issue-40992836ffcb78:affects:pass_tests",
+      "subject": "issue-40992836ffcb78",
       "predicate": "affects",
       "value": "pass_tests",
       "status": "derived",
       "rule_id": "G03",
       "inputs": [
-        "issue-6ad5df87274488:stage:call"
+        "issue-40992836ffcb78:stage:call"
       ],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:7",
-        "run-ad4cb378d894:probe:8"
+        "run-519e3fcf0844:probe:7",
+        "run-519e3fcf0844:probe:8"
       ]
     },
     {
       "schema_version": 1,
-      "fact_id": "issue-bf126622151c40:affects:pass_tests",
-      "subject": "issue-bf126622151c40",
+      "fact_id": "issue-afa54b6def7667:affects:pass_tests",
+      "subject": "issue-afa54b6def7667",
       "predicate": "affects",
       "value": "pass_tests",
       "status": "derived",
       "rule_id": "G03",
       "inputs": [
-        "issue-bf126622151c40:stage:call"
+        "issue-afa54b6def7667:stage:call"
       ],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:2",
-        "run-ad4cb378d894:probe:3"
+        "run-519e3fcf0844:probe:2",
+        "run-519e3fcf0844:probe:3"
       ]
     },
     {
       "schema_version": 1,
-      "fact_id": "issue-6ad5df87274488:diagnosis:code_defect",
-      "subject": "issue-6ad5df87274488",
+      "fact_id": "issue-40992836ffcb78:diagnosis:code_defect",
+      "subject": "issue-40992836ffcb78",
       "predicate": "diagnosis",
       "value": "code_defect",
       "status": "derived",
       "rule_id": "D40",
       "inputs": [
-        "issue-6ad5df87274488:exception:AssertionError"
+        "issue-40992836ffcb78:exception:AssertionError"
       ],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:7",
-        "run-ad4cb378d894:probe:8"
+        "run-519e3fcf0844:probe:7",
+        "run-519e3fcf0844:probe:8"
       ]
     },
     {
       "schema_version": 1,
-      "fact_id": "issue-bf126622151c40:diagnosis:code_defect",
-      "subject": "issue-bf126622151c40",
+      "fact_id": "issue-afa54b6def7667:diagnosis:code_defect",
+      "subject": "issue-afa54b6def7667",
       "predicate": "diagnosis",
       "value": "code_defect",
       "status": "derived",
       "rule_id": "D40",
       "inputs": [
-        "issue-bf126622151c40:exception:AssertionError"
+        "issue-afa54b6def7667:exception:AssertionError"
       ],
       "evidence_refs": [
-        "run-ad4cb378d894:probe:2",
-        "run-ad4cb378d894:probe:3"
+        "run-519e3fcf0844:probe:2",
+        "run-519e3fcf0844:probe:3"
       ]
     }
   ],
@@ -781,12 +783,12 @@
       "verification": "Re-run the related test nodes, then the full suite",
       "check": null,
       "issue_ids": [
-        "issue-6ad5df87274488",
-        "issue-bf126622151c40"
+        "issue-40992836ffcb78",
+        "issue-afa54b6def7667"
       ],
       "reason_refs": [
-        "issue-6ad5df87274488:kind:test_assertion",
-        "issue-bf126622151c40:kind:test_assertion"
+        "issue-40992836ffcb78:kind:test_assertion",
+        "issue-afa54b6def7667:kind:test_assertion"
       ],
       "preconditions": [],
       "blocked_reasons": [],
@@ -798,7 +800,8 @@
       "cause": null,
       "rule_ids": [
         "P49"
-      ]
+      ],
+      "command": []
     },
     {
       "schema_version": 1,
@@ -809,12 +812,12 @@
       "verification": "Check setup, call and teardown for each node; skipped and xfail do not count as fixed",
       "check": "pytest_run",
       "issue_ids": [
-        "issue-6ad5df87274488",
-        "issue-bf126622151c40"
+        "issue-40992836ffcb78",
+        "issue-afa54b6def7667"
       ],
       "reason_refs": [
-        "issue-6ad5df87274488:affects:pass_tests",
-        "issue-bf126622151c40:affects:pass_tests"
+        "issue-40992836ffcb78:affects:pass_tests",
+        "issue-afa54b6def7667:affects:pass_tests"
       ],
       "preconditions": [],
       "blocked_reasons": [],
@@ -827,7 +830,8 @@
         "test_cart.py::test_tax"
       ],
       "cause": null,
-      "rule_ids": []
+      "rule_ids": [],
+      "command": []
     },
     {
       "schema_version": 1,
@@ -838,12 +842,12 @@
       "verification": "Review the new check record and the status changes",
       "check": "pytest_run",
       "issue_ids": [
-        "issue-6ad5df87274488",
-        "issue-bf126622151c40"
+        "issue-40992836ffcb78",
+        "issue-afa54b6def7667"
       ],
       "reason_refs": [
-        "issue-6ad5df87274488:affects:pass_tests",
-        "issue-bf126622151c40:affects:pass_tests"
+        "issue-40992836ffcb78:affects:pass_tests",
+        "issue-afa54b6def7667:affects:pass_tests"
       ],
       "preconditions": [],
       "blocked_reasons": [],
@@ -853,33 +857,34 @@
       "priority": 3,
       "targets": [],
       "cause": null,
-      "rule_ids": []
+      "rule_ids": [],
+      "command": []
     }
   ],
   "history": [
     {
-      "time": "2026-09-24T01:56:25+00:00",
+      "time": "2026-09-24T08:27:53+00:00",
       "kind": "checks",
       "run_ids": [
-        "run-f42a649cebf9",
-        "run-808cae86eb6c"
+        "run-93dacbe8f9d9",
+        "run-35a89c64010a"
       ],
       "changes": []
     },
     {
-      "time": "2026-09-24T01:56:26+00:00",
+      "time": "2026-09-24T08:27:53+00:00",
       "kind": "checks",
       "run_ids": [
-        "run-ef60c4284bad",
-        "run-ad4cb378d894"
+        "run-01f479d75ef3",
+        "run-519e3fcf0844"
       ],
       "changes": [
         {
-          "issue_id": "issue-6ad5df87274488",
+          "issue_id": "issue-40992836ffcb78",
           "change": "new"
         },
         {
-          "issue_id": "issue-bf126622151c40",
+          "issue_id": "issue-afa54b6def7667",
           "change": "new"
         }
       ]

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "session_id": "session-c74754a89fe9",
+  "session_id": "session-f4ae82d64edb",
   "goal": "goal:collect_tests",
   "ontology": {
     "entities": [
@@ -88,9 +88,9 @@
       }
     },
     {
-      "id": "run-502a1b69aa46",
+      "id": "run-c99e53da651d",
       "type": "Run",
-      "label": "environment · 2026-09-24T01:56:23+00:00",
+      "label": "environment · 2026-09-24T08:27:50+00:00",
       "attributes": {
         "tool": "environment",
         "status": "completed",
@@ -103,9 +103,9 @@
       }
     },
     {
-      "id": "run-7a1f25bc69ec",
+      "id": "run-1cbabe992788",
       "type": "Run",
-      "label": "pip_check · 2026-09-24T01:56:23+00:00",
+      "label": "pip_check · 2026-09-24T08:27:50+00:00",
       "attributes": {
         "tool": "pip_check",
         "status": "completed",
@@ -118,9 +118,9 @@
       }
     },
     {
-      "id": "run-5a94f782e834",
+      "id": "run-a076ff107691",
       "type": "Run",
-      "label": "pytest · 2026-09-24T01:56:24+00:00",
+      "label": "pytest · 2026-09-24T08:27:51+00:00",
       "attributes": {
         "tool": "pytest",
         "status": "completed",
@@ -133,9 +133,9 @@
       }
     },
     {
-      "id": "run-01ff889ff4a9",
+      "id": "run-7b1706fa5b17",
       "type": "Run",
-      "label": "ruff · 2026-09-24T01:56:24+00:00",
+      "label": "ruff · 2026-09-24T08:27:51+00:00",
       "attributes": {
         "tool": "ruff",
         "status": "completed",
@@ -148,9 +148,9 @@
       }
     },
     {
-      "id": "evidence:run-502a1b69aa46:stdout:1",
+      "id": "evidence:run-c99e53da651d:stdout:1",
       "type": "Evidence",
-      "label": "run-502a1b69aa46:stdout:1",
+      "label": "run-c99e53da651d:stdout:1",
       "attributes": {}
     },
     {
@@ -198,6 +198,17 @@
       }
     },
     {
+      "id": "dist:python:previous_series_below:3",
+      "type": "Fact",
+      "label": "dist:python previous_series_below 3",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "dist:python",
+        "predicate": "previous_series_below"
+      }
+    },
+    {
       "id": "check-pytest",
       "type": "Action",
       "label": "Re-run test collection",
@@ -215,22 +226,27 @@
     {
       "source": "dist:python:installed_version:3.12.14",
       "relation": "supported_by",
-      "target": "evidence:run-502a1b69aa46:stdout:1"
+      "target": "evidence:run-c99e53da651d:stdout:1"
+    },
+    {
+      "source": "dist:python:previous_series_below:3",
+      "relation": "supported_by",
+      "target": "evidence:run-c99e53da651d:stdout:1"
     },
     {
       "source": "environment:snapshot:available",
       "relation": "supported_by",
-      "target": "evidence:run-502a1b69aa46:stdout:1"
+      "target": "evidence:run-c99e53da651d:stdout:1"
     },
     {
-      "source": "evidence:run-502a1b69aa46:stdout:1",
+      "source": "evidence:run-c99e53da651d:stdout:1",
       "relation": "observed_in",
-      "target": "run-502a1b69aa46"
+      "target": "run-c99e53da651d"
     },
     {
       "source": "goal:collect_tests",
       "relation": "evaluated_by",
-      "target": "run-5a94f782e834"
+      "target": "run-a076ff107691"
     },
     {
       "source": "goal:collect_tests",

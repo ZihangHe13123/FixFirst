@@ -1,12 +1,14 @@
 # Recorded runs, datasets and experiments
 
 Everything here was produced by real executions on macOS (Apple Silicon), Python 3.12. Personal
-paths are replaced. HTML reports are static and never run anything. Each report has its session
+paths are replaced. `playground/`, `demo/` and `execution-demo/` were re-recorded with version
+0.5; `dependency-demo/` and `historical-regressions/` were recorded with 0.3, and replaying them
+with 0.5 gives the same results. HTML reports are static and never run anything. Each report has its session
 JSON and evidence-graph JSON next to it.
 
 | Folder | What it is | Start with |
 |---|---|---|
-| `playground/` | Four faults, four root causes, fixed step by step; the best overview of v0.4 | `01-first-scan.html` |
+| `playground/` | Four faults, four root causes, fixed step by step; the best overview of the product | `01-first-scan.html` |
 | `diagnosis-evaluation/` | The root-cause experiment: baselines, rules with/without the knowledge graph, decision tree, hybrid; two cross-validation protocols | `REPORT.md` |
 | `diagnosis-dataset/` | 215 executed single-fault cases (5 templates × 43 scenarios) with labels; `environment.json` is the shared interpreter snapshot | `manifest.json` |
 | `demo/` | Import error + style finding: fixing style alone does not close the import issue | `01-failure.html` |

@@ -6,9 +6,9 @@ FixFirst runs your project's own checks (environment snapshot, dependency declar
 `pip check`, pytest collection and runs, Ruff), groups repeated errors, diagnoses the root
 cause of each failure, ranks what to do next for your goal, and closes an issue only when a
 completed check of the same scope proves it fixed. It runs locally, never edits your code and
-never installs packages.
+never installs anything into your environment (it gives you the command instead).
 
-NUS-ISS Intelligent Reasoning Systems practice module, Group 24 · version 0.4.0
+NUS-ISS Intelligent Reasoning Systems practice module, Group 24 · version 0.5.0
 
 ## Quick start
 
@@ -31,9 +31,13 @@ The browser opens the local interface:
 1. Choose your project folder (type it or press *Browse…*). FixFirst finds the project's own
    `.venv` and tells you if pytest is missing there.
 2. Pick a goal (*Make my tests pass* by default) and press **Check my project**.
-3. Follow the numbered steps. Each says which file and line to change, why, and how to confirm.
-   After changing your code, press **Check again**; a step only counts as fixed when a real
-   check passes.
+3. Follow the numbered steps under **Must fix**. Each says which file and line to change, why,
+   and how to confirm; install steps come with a command to copy. After changing your code,
+   press **Check again**; a step only counts as fixed when a real check passes.
+4. Steps under **Optional** do not change how your code runs (for example style suggestions,
+   or a test that only counts warnings); they are not counted as problems.
+5. When a library no longer provides a name your code uses, **Find it** tries older releases
+   in a throwaway environment and tells you exactly which version to install.
 
 No project at hand? Press *Open a sample project* on the start page: four faults, four causes,
 with the changes listed in its `FIXES.md`. You can also double-click `start-fixfirst.command`
@@ -56,8 +60,9 @@ real check before calling anything fixed.
 | Technique | What it does | Code |
 |---|---|---|
 | Knowledge-based rules | A production system with variables, stratified negation and provenance. 99 rules in five phases derive goal relevance, diagnose causes, add likely causes from general heuristics, fall back to the classifier, and propose actions. | `engine.py`, `knowledge/rules.toml` |
-| Knowledge graph | A curated domain graph (5 causes, 118 removed modules, APIs, arguments and usages with the release that removed them, 10 deprecations that emit warnings, 44 pytest fixtures mapped to their plugins, which Ruff rules indicate likely bugs, import-name → distribution mappings, 20 cited sources) that the rules query, and a per-session evidence graph (10 entity types, 15 relations) for explanations and questions. | `domain.py`, `knowledge/domain.toml`, `knowledge_graph.py` |
+| Knowledge graph | A curated domain graph (5 causes, 119 removed modules, APIs, arguments, usages and fixtures with the release that removed them, 10 deprecations that emit warnings, 44 pytest fixtures mapped to their plugins, unmaintained packages, which Ruff rules indicate likely bugs, import-name → distribution mappings, 23 cited sources) that the rules query, and a per-session evidence graph (10 entity types, 15 relations) for explanations and questions. | `domain.py`, `knowledge/domain.toml`, `knowledge_graph.py` |
 | Data mining | A Gini decision tree over 44 evidence features suggests a cause when no rule applies; TF-IDF + cosine similarity with complete-link grouping merges repeated messages. | `evidence.py`, `classification.py`, `grouping.py` |
+| Search | On request, a bounded search over a library's release series (doubling steps, then bisection, at most 12 real install-and-import trials) finds the newest release that still provides a missing name. | `versions.py` |
 
 Every recommendation traces back through the rule that proposed it, the facts it used and the
 check record or release note those facts came from. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
@@ -83,11 +88,14 @@ scenarios are optimistic; the remaining errors (a data-dict `KeyError`, a buggy 
 removed library submodule) are listed in the report. Full tables, confusion matrix and
 per-scenario results: [examples/diagnosis-evaluation/REPORT.md](examples/diagnosis-evaluation/REPORT.md).
 
-On real open-source projects ([docs/REAL_PROJECTS.md](docs/REAL_PROJECTS.md)): FixFirst confirmed
-a healthy humanize, named the missing test dependency of a stripped-down humanize, and led
-Flask 1.1.4 on today's libraries from "no test can run" to 524 passing tests in five rounds of
-its own advice; the two remaining failures are outside what its evidence can explain. No user
-study has been run yet.
+**Real projects.** On 13 open-source projects it had never seen (9 domains, Python 3.9–3.14,
+ground truth written before the first run; [docs/GENERALISATION.md](docs/GENERALISATION.md)),
+FixFirst's first step was right for 2 of 13 at first and named the cause in 6. Every failure had
+a general cause (its own Python 3.9 support, pytest 9 subtests, unread `setup.py`, advice that
+asked pip to install Python, ...). After fixing those causes, adding the release search and
+reading lock files, it is right for 12 of 13 on the same projects; that figure is not held out.
+Earlier walk-throughs ([docs/REAL_PROJECTS.md](docs/REAL_PROJECTS.md)) led Flask 1.1.4 on
+today's libraries from "no test can run" to 525 passing tests. No user study has been run yet.
 
 ## Command line
 
@@ -99,6 +107,7 @@ fixfirst scan SESSION_ID --checks pytest_run --nodes 'tests/test_a.py::test_x'
 fixfirst show SESSION_ID                       # issues, causes, next steps
 fixfirst ask SESSION_ID "what is the root cause"
 fixfirst ask SESSION_ID "which package provides cv2"
+fixfirst run SESSION_ID ACTION_ID              # run a step's check, e.g. a release search
 fixfirst mark-fixed SESSION_ID ISSUE_ID        # then re-run the check to verify
 fixfirst report SESSION_ID --open
 fixfirst export SESSION_ID --output shared.html   # redacted copy for sharing
@@ -118,13 +127,20 @@ fixfirst evaluate workbench/diagnosis --output workbench/diagnosis-eval
 fixfirst evaluate examples/diagnosis-dataset --output workbench/re-eval   # no execution
 python scripts/record_playground.py --output workbench/playground
 fixfirst historical --assets examples/historical-regressions/assets --output workbench/replay
+python scripts/setup_real_world.py ../test-projects/generalisation   # the 13 held-out projects
+python scripts/run_real_world.py ../test-projects/generalisation --search
 ```
 
 ## Scope and safety
 
-- Supported: small Python projects on macOS, Linux and Windows; pytest, Ruff, pip; static
-  `pyproject.toml`, `requirements*.txt` and `setup.cfg` declarations. Windows support is new
-  and is being validated on real machines.
+- Supported: small Python projects on macOS, Linux and Windows; target interpreters Python
+  3.9–3.14, tested (venv, uv or conda); pytest, Ruff, pip. Declarations are read statically from
+  `pyproject.toml` (PEP 621, dependency groups, flit), `requirements*.txt`, `setup.cfg` and
+  literal lists in `setup.py` (never executed); lock files give the versions a project was
+  tested with. Windows support is new and is being validated on real machines.
+- Checks run as if the project's virtual environment were activated. The release search runs
+  only when asked, installs prebuilt wheels only (no build scripts) into a throwaway
+  environment and needs internet access.
 - Checks run with timeouts, output limits and no shell. The environment snapshot runs outside
   the project so project files cannot shadow the standard library during the check.
 - Output is redacted before it is stored: credentials in URLs, token/password assignments,
@@ -141,9 +157,10 @@ fixfirst historical --assets examples/historical-regressions/assets --output wor
 |---|---|
 | `src/fixfirst/` | the package (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)) |
 | `src/fixfirst/knowledge/` | rule base, domain knowledge, bundled decision tree |
-| `tests/` | 108 tests, most running real subprocesses |
-| `examples/` | recorded runs, datasets and experiment reports ([overview](examples/README.md)) |
-| `docs/` | architecture, course alignment, team notes |
+| `tests/` | 132 tests, most running real subprocesses |
+| `examples/` | recorded runs, datasets, experiment reports and the real-world check ([overview](examples/README.md)) |
+| `docs/` | architecture, generalisation check, real-project case studies, course alignment, team notes (`队友说明.md`), optimisation log; `docs/history/` keeps earlier versions' records |
+| `scripts/` | setup (macOS/Linux/Windows), real-project set-up and batch runs, demo recording |
 
 ```bash
 .venv/bin/ruff check src tests scripts
@@ -155,12 +172,16 @@ fixfirst historical --assets examples/historical-regressions/assets --output wor
 - The diagnosis dataset is synthetic: one injected fault per case in five templates. It
   measures diagnosis, not time saved; a user study is still to be done.
 - The knowledge graph covers selected releases of selected libraries; anything else falls back
-  to evidence rules and the classifier.
+  to evidence rules, heuristics, the release search and the classifier.
+- Behaviour changes that raise no "name is missing" error (a library returning different
+  results) are only recognised through a lock file; otherwise they look like code defects.
+- The only held-out real-world measurement is round 1 of the generalisation check (2 of 13);
+  the improved version needs a new set of projects chosen by someone else.
 - Defects inside third-party libraries (see `examples/historical-regressions/`) are outside
   the five root-cause classes.
 
 ## AI assistance
 
 Parts of the code and documentation were written with AI coding assistants (OpenAI Codex for
-v0.1–v0.3, Anthropic Claude for v0.4). The team is responsible for reviewing, understanding and
+v0.1–v0.3, Anthropic Claude for v0.4–v0.5). The team is responsible for reviewing, understanding and
 presenting the work.

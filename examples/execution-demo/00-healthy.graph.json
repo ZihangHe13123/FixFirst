@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "session_id": "session-f49455d1f031",
+  "session_id": "session-e8a1e8cb325a",
   "goal": "goal:pass_tests",
   "ontology": {
     "entities": [
@@ -88,9 +88,9 @@
       }
     },
     {
-      "id": "run-f42a649cebf9",
+      "id": "run-93dacbe8f9d9",
       "type": "Run",
-      "label": "pytest · 2026-09-24T01:56:25+00:00",
+      "label": "pytest · 2026-09-24T08:27:52+00:00",
       "attributes": {
         "tool": "pytest",
         "status": "completed",
@@ -103,9 +103,9 @@
       }
     },
     {
-      "id": "run-808cae86eb6c",
+      "id": "run-35a89c64010a",
       "type": "Run",
-      "label": "pytest_run · 2026-09-24T01:56:25+00:00",
+      "label": "pytest_run · 2026-09-24T08:27:52+00:00",
       "attributes": {
         "tool": "pytest_run",
         "status": "completed",
@@ -164,7 +164,7 @@
     {
       "source": "goal:pass_tests",
       "relation": "evaluated_by",
-      "target": "run-808cae86eb6c"
+      "target": "run-35a89c64010a"
     },
     {
       "source": "goal:pass_tests",

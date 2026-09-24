@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "session_id": "session-f49455d1f031",
+  "session_id": "session-e8a1e8cb325a",
   "goal": "goal:pass_tests",
   "ontology": {
     "entities": [
@@ -88,9 +88,9 @@
       }
     },
     {
-      "id": "run-f42a649cebf9",
+      "id": "run-93dacbe8f9d9",
       "type": "Run",
-      "label": "pytest · 2026-09-24T01:56:25+00:00",
+      "label": "pytest · 2026-09-24T08:27:52+00:00",
       "attributes": {
         "tool": "pytest",
         "status": "completed",
@@ -103,9 +103,9 @@
       }
     },
     {
-      "id": "run-808cae86eb6c",
+      "id": "run-35a89c64010a",
       "type": "Run",
-      "label": "pytest_run · 2026-09-24T01:56:25+00:00",
+      "label": "pytest_run · 2026-09-24T08:27:52+00:00",
       "attributes": {
         "tool": "pytest_run",
         "status": "completed",
@@ -125,9 +125,9 @@
       }
     },
     {
-      "id": "run-ef60c4284bad",
+      "id": "run-01f479d75ef3",
       "type": "Run",
-      "label": "pytest · 2026-09-24T01:56:25+00:00",
+      "label": "pytest · 2026-09-24T08:27:53+00:00",
       "attributes": {
         "tool": "pytest",
         "status": "completed",
@@ -140,9 +140,9 @@
       }
     },
     {
-      "id": "run-ad4cb378d894",
+      "id": "run-519e3fcf0844",
       "type": "Run",
-      "label": "pytest_run · 2026-09-24T01:56:25+00:00",
+      "label": "pytest_run · 2026-09-24T08:27:53+00:00",
       "attributes": {
         "tool": "pytest_run",
         "status": "completed",
@@ -162,9 +162,9 @@
       }
     },
     {
-      "id": "run-e931ed34a564",
+      "id": "run-c93a5fb914a8",
       "type": "Run",
-      "label": "pytest_run · 2026-09-24T01:56:26+00:00",
+      "label": "pytest_run · 2026-09-24T08:27:53+00:00",
       "attributes": {
         "tool": "pytest_run",
         "status": "completed",
@@ -186,33 +186,33 @@
       }
     },
     {
-      "id": "evidence:run-ad4cb378d894:probe:2",
+      "id": "evidence:run-519e3fcf0844:probe:2",
       "type": "Evidence",
-      "label": "run-ad4cb378d894:probe:2",
+      "label": "run-519e3fcf0844:probe:2",
       "attributes": {}
     },
     {
-      "id": "evidence:run-ad4cb378d894:probe:3",
+      "id": "evidence:run-519e3fcf0844:probe:3",
       "type": "Evidence",
-      "label": "run-ad4cb378d894:probe:3",
+      "label": "run-519e3fcf0844:probe:3",
       "attributes": {}
     },
     {
-      "id": "evidence:run-ad4cb378d894:probe:7",
+      "id": "evidence:run-519e3fcf0844:probe:7",
       "type": "Evidence",
-      "label": "run-ad4cb378d894:probe:7",
+      "label": "run-519e3fcf0844:probe:7",
       "attributes": {}
     },
     {
-      "id": "evidence:run-ad4cb378d894:probe:8",
+      "id": "evidence:run-519e3fcf0844:probe:8",
       "type": "Evidence",
-      "label": "run-ad4cb378d894:probe:8",
+      "label": "run-519e3fcf0844:probe:8",
       "attributes": {}
     },
     {
-      "id": "event-3b119b1c3ed0",
+      "id": "event-ac5eeae1944c",
       "type": "Event",
-      "label": "AssertionError: assert 70.0 == 90\n +  where 70.0 = <function discount at 0x106f23060>(100)\n +    where <function discount at 0x106f23060> = cart.discount",
+      "label": "AssertionError: assert 70.0 == 90\n +  where 70.0 = <function discount at 0x102a8b100>(100)\n +    where <function discount at 0x102a8b100> = cart.discount",
       "attributes": {
         "stage": "call",
         "location": "test_cart.py::test_discount",
@@ -220,9 +220,9 @@
       }
     },
     {
-      "id": "event-ef70dca38d42",
+      "id": "event-fd91befccfdc",
       "type": "Event",
-      "label": "AssertionError: assert 20.0 == 10\n +  where 20.0 = <function tax at 0x106f23880>(100)\n +    where <function tax at 0x106f23880> = cart.tax",
+      "label": "AssertionError: assert 20.0 == 10\n +  where 20.0 = <function tax at 0x102a8b9c0>(100)\n +    where <function tax at 0x102a8b9c0> = cart.tax",
       "attributes": {
         "stage": "call",
         "location": "test_cart.py::test_tax",
@@ -230,7 +230,7 @@
       }
     },
     {
-      "id": "issue-6ad5df87274488",
+      "id": "issue-40992836ffcb78",
       "type": "Issue",
       "label": "Assertion failed · test_cart.py::test_tax",
       "attributes": {
@@ -247,7 +247,7 @@
       }
     },
     {
-      "id": "issue-bf126622151c40",
+      "id": "issue-afa54b6def7667",
       "type": "Issue",
       "label": "Assertion failed · test_cart.py::test_discount",
       "attributes": {
@@ -286,90 +286,90 @@
       }
     },
     {
-      "id": "issue-6ad5df87274488:kind:test_assertion",
+      "id": "issue-40992836ffcb78:kind:test_assertion",
       "type": "Fact",
-      "label": "issue-6ad5df87274488 kind test_assertion",
+      "label": "issue-40992836ffcb78 kind test_assertion",
       "attributes": {
         "rule": null,
         "status": "observed",
-        "subject": "issue-6ad5df87274488",
+        "subject": "issue-40992836ffcb78",
         "predicate": "kind"
       }
     },
     {
-      "id": "issue-6ad5df87274488:stage:call",
+      "id": "issue-40992836ffcb78:stage:call",
       "type": "Fact",
-      "label": "issue-6ad5df87274488 stage call",
+      "label": "issue-40992836ffcb78 stage call",
       "attributes": {
         "rule": null,
         "status": "observed",
-        "subject": "issue-6ad5df87274488",
+        "subject": "issue-40992836ffcb78",
         "predicate": "stage"
       }
     },
     {
-      "id": "issue-6ad5df87274488:tool:pytest_run",
+      "id": "issue-40992836ffcb78:tool:pytest_run",
       "type": "Fact",
-      "label": "issue-6ad5df87274488 tool pytest_run",
+      "label": "issue-40992836ffcb78 tool pytest_run",
       "attributes": {
         "rule": null,
         "status": "observed",
-        "subject": "issue-6ad5df87274488",
+        "subject": "issue-40992836ffcb78",
         "predicate": "tool"
       }
     },
     {
-      "id": "issue-6ad5df87274488:exception:AssertionError",
+      "id": "issue-40992836ffcb78:exception:AssertionError",
       "type": "Fact",
-      "label": "issue-6ad5df87274488 exception AssertionError",
+      "label": "issue-40992836ffcb78 exception AssertionError",
       "attributes": {
         "rule": null,
         "status": "observed",
-        "subject": "issue-6ad5df87274488",
+        "subject": "issue-40992836ffcb78",
         "predicate": "exception"
       }
     },
     {
-      "id": "issue-6ad5df87274488:raised_in:test",
+      "id": "issue-40992836ffcb78:raised_in:test",
       "type": "Fact",
-      "label": "issue-6ad5df87274488 raised_in test",
+      "label": "issue-40992836ffcb78 raised_in test",
       "attributes": {
         "rule": null,
         "status": "observed",
-        "subject": "issue-6ad5df87274488",
+        "subject": "issue-40992836ffcb78",
         "predicate": "raised_in"
       }
     },
     {
-      "id": "issue-6ad5df87274488:model_suggests:code_defect",
+      "id": "issue-40992836ffcb78:model_suggests:code_defect",
       "type": "Fact",
-      "label": "issue-6ad5df87274488 model_suggests code_defect",
+      "label": "issue-40992836ffcb78 model_suggests code_defect",
       "attributes": {
         "rule": "decision-tree",
         "status": "hypothesis",
-        "subject": "issue-6ad5df87274488",
+        "subject": "issue-40992836ffcb78",
         "predicate": "model_suggests"
       }
     },
     {
-      "id": "issue-6ad5df87274488:affects:pass_tests",
+      "id": "issue-40992836ffcb78:affects:pass_tests",
       "type": "Fact",
-      "label": "issue-6ad5df87274488 affects pass_tests",
+      "label": "issue-40992836ffcb78 affects pass_tests",
       "attributes": {
         "rule": "G03",
         "status": "derived",
-        "subject": "issue-6ad5df87274488",
+        "subject": "issue-40992836ffcb78",
         "predicate": "affects"
       }
     },
     {
-      "id": "issue-6ad5df87274488:diagnosis:code_defect",
+      "id": "issue-40992836ffcb78:diagnosis:code_defect",
       "type": "Fact",
-      "label": "issue-6ad5df87274488 diagnosis code_defect",
+      "label": "issue-40992836ffcb78 diagnosis code_defect",
       "attributes": {
         "rule": "D40",
         "status": "derived",
-        "subject": "issue-6ad5df87274488",
+        "subject": "issue-40992836ffcb78",
         "predicate": "diagnosis"
       }
     },
@@ -454,72 +454,72 @@
     {
       "source": "check-failed-tests",
       "relation": "addresses",
-      "target": "issue-6ad5df87274488"
+      "target": "issue-40992836ffcb78"
     },
     {
       "source": "check-failed-tests",
       "relation": "justified_by",
-      "target": "issue-6ad5df87274488:affects:pass_tests"
+      "target": "issue-40992836ffcb78:affects:pass_tests"
     },
     {
       "source": "check-pytest_run",
       "relation": "addresses",
-      "target": "issue-6ad5df87274488"
+      "target": "issue-40992836ffcb78"
     },
     {
       "source": "check-pytest_run",
       "relation": "justified_by",
-      "target": "issue-6ad5df87274488:affects:pass_tests"
+      "target": "issue-40992836ffcb78:affects:pass_tests"
     },
     {
-      "source": "event-3b119b1c3ed0",
+      "source": "event-ac5eeae1944c",
       "relation": "cites",
-      "target": "evidence:run-ad4cb378d894:probe:2"
+      "target": "evidence:run-519e3fcf0844:probe:2"
     },
     {
-      "source": "event-3b119b1c3ed0",
+      "source": "event-ac5eeae1944c",
       "relation": "cites",
-      "target": "evidence:run-ad4cb378d894:probe:3"
+      "target": "evidence:run-519e3fcf0844:probe:3"
     },
     {
-      "source": "event-ef70dca38d42",
+      "source": "event-fd91befccfdc",
       "relation": "cites",
-      "target": "evidence:run-ad4cb378d894:probe:7"
+      "target": "evidence:run-519e3fcf0844:probe:7"
     },
     {
-      "source": "event-ef70dca38d42",
+      "source": "event-fd91befccfdc",
       "relation": "cites",
-      "target": "evidence:run-ad4cb378d894:probe:8"
+      "target": "evidence:run-519e3fcf0844:probe:8"
     },
     {
-      "source": "evidence:run-ad4cb378d894:probe:2",
+      "source": "evidence:run-519e3fcf0844:probe:2",
       "relation": "observed_in",
-      "target": "run-ad4cb378d894"
+      "target": "run-519e3fcf0844"
     },
     {
-      "source": "evidence:run-ad4cb378d894:probe:3",
+      "source": "evidence:run-519e3fcf0844:probe:3",
       "relation": "observed_in",
-      "target": "run-ad4cb378d894"
+      "target": "run-519e3fcf0844"
     },
     {
-      "source": "evidence:run-ad4cb378d894:probe:7",
+      "source": "evidence:run-519e3fcf0844:probe:7",
       "relation": "observed_in",
-      "target": "run-ad4cb378d894"
+      "target": "run-519e3fcf0844"
     },
     {
-      "source": "evidence:run-ad4cb378d894:probe:8",
+      "source": "evidence:run-519e3fcf0844:probe:8",
       "relation": "observed_in",
-      "target": "run-ad4cb378d894"
+      "target": "run-519e3fcf0844"
     },
     {
       "source": "goal:pass_tests",
       "relation": "evaluated_by",
-      "target": "run-e931ed34a564"
+      "target": "run-c93a5fb914a8"
     },
     {
       "source": "goal:pass_tests",
       "relation": "has_open_issue",
-      "target": "issue-6ad5df87274488"
+      "target": "issue-40992836ffcb78"
     },
     {
       "source": "goal:pass_tests",
@@ -537,129 +537,129 @@
       "target": "review-test_assertion"
     },
     {
-      "source": "issue-6ad5df87274488",
+      "source": "issue-40992836ffcb78",
       "relation": "diagnosed_as",
       "target": "cause:code_defect"
     },
     {
-      "source": "issue-6ad5df87274488",
+      "source": "issue-40992836ffcb78",
       "relation": "has_event",
-      "target": "event-ef70dca38d42"
+      "target": "event-fd91befccfdc"
     },
     {
-      "source": "issue-6ad5df87274488:affects:pass_tests",
+      "source": "issue-40992836ffcb78:affects:pass_tests",
       "relation": "derived_by",
       "target": "rule:G03"
     },
     {
-      "source": "issue-6ad5df87274488:affects:pass_tests",
+      "source": "issue-40992836ffcb78:affects:pass_tests",
       "relation": "inferred_from",
-      "target": "issue-6ad5df87274488:stage:call"
+      "target": "issue-40992836ffcb78:stage:call"
     },
     {
-      "source": "issue-6ad5df87274488:affects:pass_tests",
+      "source": "issue-40992836ffcb78:affects:pass_tests",
       "relation": "supported_by",
-      "target": "evidence:run-ad4cb378d894:probe:7"
+      "target": "evidence:run-519e3fcf0844:probe:7"
     },
     {
-      "source": "issue-6ad5df87274488:affects:pass_tests",
+      "source": "issue-40992836ffcb78:affects:pass_tests",
       "relation": "supported_by",
-      "target": "evidence:run-ad4cb378d894:probe:8"
+      "target": "evidence:run-519e3fcf0844:probe:8"
     },
     {
-      "source": "issue-6ad5df87274488:diagnosis:code_defect",
+      "source": "issue-40992836ffcb78:diagnosis:code_defect",
       "relation": "derived_by",
       "target": "rule:D40"
     },
     {
-      "source": "issue-6ad5df87274488:diagnosis:code_defect",
+      "source": "issue-40992836ffcb78:diagnosis:code_defect",
       "relation": "inferred_from",
-      "target": "issue-6ad5df87274488:exception:AssertionError"
+      "target": "issue-40992836ffcb78:exception:AssertionError"
     },
     {
-      "source": "issue-6ad5df87274488:diagnosis:code_defect",
+      "source": "issue-40992836ffcb78:diagnosis:code_defect",
       "relation": "supported_by",
-      "target": "evidence:run-ad4cb378d894:probe:7"
+      "target": "evidence:run-519e3fcf0844:probe:7"
     },
     {
-      "source": "issue-6ad5df87274488:diagnosis:code_defect",
+      "source": "issue-40992836ffcb78:diagnosis:code_defect",
       "relation": "supported_by",
-      "target": "evidence:run-ad4cb378d894:probe:8"
+      "target": "evidence:run-519e3fcf0844:probe:8"
     },
     {
-      "source": "issue-6ad5df87274488:exception:AssertionError",
+      "source": "issue-40992836ffcb78:exception:AssertionError",
       "relation": "supported_by",
-      "target": "evidence:run-ad4cb378d894:probe:7"
+      "target": "evidence:run-519e3fcf0844:probe:7"
     },
     {
-      "source": "issue-6ad5df87274488:exception:AssertionError",
+      "source": "issue-40992836ffcb78:exception:AssertionError",
       "relation": "supported_by",
-      "target": "evidence:run-ad4cb378d894:probe:8"
+      "target": "evidence:run-519e3fcf0844:probe:8"
     },
     {
-      "source": "issue-6ad5df87274488:kind:test_assertion",
+      "source": "issue-40992836ffcb78:kind:test_assertion",
       "relation": "supported_by",
-      "target": "evidence:run-ad4cb378d894:probe:7"
+      "target": "evidence:run-519e3fcf0844:probe:7"
     },
     {
-      "source": "issue-6ad5df87274488:kind:test_assertion",
+      "source": "issue-40992836ffcb78:kind:test_assertion",
       "relation": "supported_by",
-      "target": "evidence:run-ad4cb378d894:probe:8"
+      "target": "evidence:run-519e3fcf0844:probe:8"
     },
     {
-      "source": "issue-6ad5df87274488:model_suggests:code_defect",
+      "source": "issue-40992836ffcb78:model_suggests:code_defect",
       "relation": "supported_by",
-      "target": "evidence:run-ad4cb378d894:probe:7"
+      "target": "evidence:run-519e3fcf0844:probe:7"
     },
     {
-      "source": "issue-6ad5df87274488:model_suggests:code_defect",
+      "source": "issue-40992836ffcb78:model_suggests:code_defect",
       "relation": "supported_by",
-      "target": "evidence:run-ad4cb378d894:probe:8"
+      "target": "evidence:run-519e3fcf0844:probe:8"
     },
     {
-      "source": "issue-6ad5df87274488:raised_in:test",
+      "source": "issue-40992836ffcb78:raised_in:test",
       "relation": "supported_by",
-      "target": "evidence:run-ad4cb378d894:probe:7"
+      "target": "evidence:run-519e3fcf0844:probe:7"
     },
     {
-      "source": "issue-6ad5df87274488:raised_in:test",
+      "source": "issue-40992836ffcb78:raised_in:test",
       "relation": "supported_by",
-      "target": "evidence:run-ad4cb378d894:probe:8"
+      "target": "evidence:run-519e3fcf0844:probe:8"
     },
     {
-      "source": "issue-6ad5df87274488:stage:call",
+      "source": "issue-40992836ffcb78:stage:call",
       "relation": "supported_by",
-      "target": "evidence:run-ad4cb378d894:probe:7"
+      "target": "evidence:run-519e3fcf0844:probe:7"
     },
     {
-      "source": "issue-6ad5df87274488:stage:call",
+      "source": "issue-40992836ffcb78:stage:call",
       "relation": "supported_by",
-      "target": "evidence:run-ad4cb378d894:probe:8"
+      "target": "evidence:run-519e3fcf0844:probe:8"
     },
     {
-      "source": "issue-6ad5df87274488:tool:pytest_run",
+      "source": "issue-40992836ffcb78:tool:pytest_run",
       "relation": "supported_by",
-      "target": "evidence:run-ad4cb378d894:probe:7"
+      "target": "evidence:run-519e3fcf0844:probe:7"
     },
     {
-      "source": "issue-6ad5df87274488:tool:pytest_run",
+      "source": "issue-40992836ffcb78:tool:pytest_run",
       "relation": "supported_by",
-      "target": "evidence:run-ad4cb378d894:probe:8"
+      "target": "evidence:run-519e3fcf0844:probe:8"
     },
     {
-      "source": "issue-bf126622151c40",
+      "source": "issue-afa54b6def7667",
       "relation": "has_event",
-      "target": "event-3b119b1c3ed0"
+      "target": "event-ac5eeae1944c"
     },
     {
       "source": "review-test_assertion",
       "relation": "addresses",
-      "target": "issue-6ad5df87274488"
+      "target": "issue-40992836ffcb78"
     },
     {
       "source": "review-test_assertion",
       "relation": "justified_by",
-      "target": "issue-6ad5df87274488:kind:test_assertion"
+      "target": "issue-40992836ffcb78:kind:test_assertion"
     },
     {
       "source": "review-test_assertion",

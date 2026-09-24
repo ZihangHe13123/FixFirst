@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "session_id": "session-716d3bee95e0",
+  "session_id": "session-b6ac3b39b22d",
   "goal": "goal:pass_tests",
   "ontology": {
     "entities": [
@@ -88,9 +88,9 @@
       }
     },
     {
-      "id": "run-00b084e8ba10",
+      "id": "run-e983031d0e57",
       "type": "Run",
-      "label": "environment · 2026-09-24T01:59:12+00:00",
+      "label": "environment · 2026-09-24T08:27:47+00:00",
       "attributes": {
         "tool": "environment",
         "status": "completed",
@@ -103,9 +103,9 @@
       }
     },
     {
-      "id": "run-cfb9d49b571b",
+      "id": "run-ad6250436c1d",
       "type": "Run",
-      "label": "project · 2026-09-24T01:59:13+00:00",
+      "label": "project · 2026-09-24T08:27:48+00:00",
       "attributes": {
         "tool": "project",
         "status": "completed",
@@ -118,9 +118,9 @@
       }
     },
     {
-      "id": "run-890f2274ab0c",
+      "id": "run-c055c9dc968c",
       "type": "Run",
-      "label": "pytest_run · 2026-09-24T01:59:13+00:00",
+      "label": "pytest_run · 2026-09-24T08:27:48+00:00",
       "attributes": {
         "tool": "pytest_run",
         "status": "completed",
@@ -140,9 +140,9 @@
       }
     },
     {
-      "id": "run-352a837cee9f",
+      "id": "run-1c50d2d3102f",
       "type": "Run",
-      "label": "environment · 2026-09-24T01:59:13+00:00",
+      "label": "environment · 2026-09-24T08:27:49+00:00",
       "attributes": {
         "tool": "environment",
         "status": "completed",
@@ -155,9 +155,9 @@
       }
     },
     {
-      "id": "run-7a6e5275b1da",
+      "id": "run-e501bc6c522a",
       "type": "Run",
-      "label": "pip_check · 2026-09-24T01:59:14+00:00",
+      "label": "pip_check · 2026-09-24T08:27:49+00:00",
       "attributes": {
         "tool": "pip_check",
         "status": "completed",
@@ -170,9 +170,9 @@
       }
     },
     {
-      "id": "run-3d6c31292945",
+      "id": "run-b8ca3f4ee2e5",
       "type": "Run",
-      "label": "pytest_run · 2026-09-24T01:59:14+00:00",
+      "label": "pytest_run · 2026-09-24T08:27:49+00:00",
       "attributes": {
         "tool": "pytest_run",
         "status": "completed",
@@ -192,9 +192,9 @@
       }
     },
     {
-      "id": "run-ceddcee911d0",
+      "id": "run-c9732580ba20",
       "type": "Run",
-      "label": "ruff · 2026-09-24T01:59:14+00:00",
+      "label": "ruff · 2026-09-24T08:27:49+00:00",
       "attributes": {
         "tool": "ruff",
         "status": "completed",
@@ -207,9 +207,9 @@
       }
     },
     {
-      "id": "run-c51193a7d78e",
+      "id": "run-ee8aaf5ade89",
       "type": "Run",
-      "label": "project · 2026-09-24T01:59:14+00:00",
+      "label": "project · 2026-09-24T08:27:49+00:00",
       "attributes": {
         "tool": "project",
         "status": "completed",
@@ -222,9 +222,9 @@
       }
     },
     {
-      "id": "run-bd756e106e0a",
+      "id": "run-6c2103e4df8f",
       "type": "Run",
-      "label": "environment · 2026-09-24T01:59:14+00:00",
+      "label": "environment · 2026-09-24T08:27:49+00:00",
       "attributes": {
         "tool": "environment",
         "status": "completed",
@@ -237,9 +237,9 @@
       }
     },
     {
-      "id": "run-ca39ff6eff34",
+      "id": "run-98e44a2e8495",
       "type": "Run",
-      "label": "pip_check · 2026-09-24T01:59:14+00:00",
+      "label": "pip_check · 2026-09-24T08:27:50+00:00",
       "attributes": {
         "tool": "pip_check",
         "status": "completed",
@@ -252,9 +252,9 @@
       }
     },
     {
-      "id": "run-56c5bfa945ea",
+      "id": "run-9575bc149c31",
       "type": "Run",
-      "label": "pytest_run · 2026-09-24T01:59:14+00:00",
+      "label": "pytest_run · 2026-09-24T08:27:50+00:00",
       "attributes": {
         "tool": "pytest_run",
         "status": "completed",
@@ -274,9 +274,9 @@
       }
     },
     {
-      "id": "run-7d1386d8601f",
+      "id": "run-11722a61229f",
       "type": "Run",
-      "label": "ruff · 2026-09-24T01:59:15+00:00",
+      "label": "ruff · 2026-09-24T08:27:50+00:00",
       "attributes": {
         "tool": "ruff",
         "status": "completed",
@@ -289,9 +289,9 @@
       }
     },
     {
-      "id": "run-81984f41bf07",
+      "id": "run-53fb14b8357e",
       "type": "Run",
-      "label": "project · 2026-09-24T01:59:15+00:00",
+      "label": "project · 2026-09-24T08:27:50+00:00",
       "attributes": {
         "tool": "project",
         "status": "completed",
@@ -304,73 +304,73 @@
       }
     },
     {
-      "id": "evidence:run-3d6c31292945:probe:13",
+      "id": "evidence:run-11722a61229f:json:0",
       "type": "Evidence",
-      "label": "run-3d6c31292945:probe:13",
+      "label": "run-11722a61229f:json:0",
       "attributes": {}
     },
     {
-      "id": "evidence:run-3d6c31292945:probe:14",
+      "id": "evidence:run-53fb14b8357e:declaration:0",
       "type": "Evidence",
-      "label": "run-3d6c31292945:probe:14",
+      "label": "run-53fb14b8357e:declaration:0",
       "attributes": {}
     },
     {
-      "id": "evidence:run-3d6c31292945:probe:2",
+      "id": "evidence:run-53fb14b8357e:declaration:1",
       "type": "Evidence",
-      "label": "run-3d6c31292945:probe:2",
+      "label": "run-53fb14b8357e:declaration:1",
       "attributes": {}
     },
     {
-      "id": "evidence:run-3d6c31292945:probe:3",
+      "id": "evidence:run-53fb14b8357e:stdout:1",
       "type": "Evidence",
-      "label": "run-3d6c31292945:probe:3",
+      "label": "run-53fb14b8357e:stdout:1",
       "attributes": {}
     },
     {
-      "id": "evidence:run-7d1386d8601f:json:0",
+      "id": "evidence:run-6c2103e4df8f:stdout:1",
       "type": "Evidence",
-      "label": "run-7d1386d8601f:json:0",
+      "label": "run-6c2103e4df8f:stdout:1",
       "attributes": {}
     },
     {
-      "id": "evidence:run-81984f41bf07:declaration:0",
+      "id": "evidence:run-b8ca3f4ee2e5:probe:13",
       "type": "Evidence",
-      "label": "run-81984f41bf07:declaration:0",
+      "label": "run-b8ca3f4ee2e5:probe:13",
       "attributes": {}
     },
     {
-      "id": "evidence:run-81984f41bf07:declaration:1",
+      "id": "evidence:run-b8ca3f4ee2e5:probe:14",
       "type": "Evidence",
-      "label": "run-81984f41bf07:declaration:1",
+      "label": "run-b8ca3f4ee2e5:probe:14",
       "attributes": {}
     },
     {
-      "id": "evidence:run-81984f41bf07:stdout:1",
+      "id": "evidence:run-b8ca3f4ee2e5:probe:2",
       "type": "Evidence",
-      "label": "run-81984f41bf07:stdout:1",
+      "label": "run-b8ca3f4ee2e5:probe:2",
       "attributes": {}
     },
     {
-      "id": "evidence:run-890f2274ab0c:probe:1",
+      "id": "evidence:run-b8ca3f4ee2e5:probe:3",
       "type": "Evidence",
-      "label": "run-890f2274ab0c:probe:1",
+      "label": "run-b8ca3f4ee2e5:probe:3",
       "attributes": {}
     },
     {
-      "id": "evidence:run-890f2274ab0c:probe:3",
+      "id": "evidence:run-c055c9dc968c:probe:1",
       "type": "Evidence",
-      "label": "run-890f2274ab0c:probe:3",
+      "label": "run-c055c9dc968c:probe:1",
       "attributes": {}
     },
     {
-      "id": "evidence:run-bd756e106e0a:stdout:1",
+      "id": "evidence:run-c055c9dc968c:probe:3",
       "type": "Evidence",
-      "label": "run-bd756e106e0a:stdout:1",
+      "label": "run-c055c9dc968c:probe:3",
       "attributes": {}
     },
     {
-      "id": "event-ec83f763c036",
+      "id": "event-04f648a652f0",
       "type": "Event",
       "label": "ImportError: cannot import name 'Mapping' from 'collections' (<home>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/collections/__init__.py)",
       "attributes": {
@@ -380,7 +380,7 @@
       }
     },
     {
-      "id": "event-a613f24ebe62",
+      "id": "event-eb27637cf50a",
       "type": "Event",
       "label": "ModuleNotFoundError: No module named 'helper'",
       "attributes": {
@@ -390,7 +390,7 @@
       }
     },
     {
-      "id": "event-a9a601b64101",
+      "id": "event-591e42bf406e",
       "type": "Event",
       "label": "KeyError: 'SHOP_API_TOKEN'",
       "attributes": {
@@ -400,7 +400,7 @@
       }
     },
     {
-      "id": "event-3c76c580dee5",
+      "id": "event-1c5e85dbff2f",
       "type": "Event",
       "label": "AttributeError: module 'numpy' has no attribute 'float'.\n`np.float` was a deprecated alias for the builtin `float`. To avoid this error in existing code, use `float` by itself. Doing this will not modify any behavior and is safe. If you spe",
       "attributes": {
@@ -410,7 +410,7 @@
       }
     },
     {
-      "id": "event-1d9ce94997e3",
+      "id": "event-f5dc1bb66629",
       "type": "Event",
       "label": "`numpy` imported but unused",
       "attributes": {
@@ -420,7 +420,7 @@
       }
     },
     {
-      "id": "issue-fafbf8eed79e6d",
+      "id": "issue-3a1e31a6a6a8f1",
       "type": "Issue",
       "label": "`numpy` imported but unused",
       "attributes": {
@@ -521,46 +521,46 @@
       }
     },
     {
-      "id": "issue-fafbf8eed79e6d:kind:code_check",
+      "id": "issue-3a1e31a6a6a8f1:kind:code_check",
       "type": "Fact",
-      "label": "issue-fafbf8eed79e6d kind code_check",
+      "label": "issue-3a1e31a6a6a8f1 kind code_check",
       "attributes": {
         "rule": null,
         "status": "observed",
-        "subject": "issue-fafbf8eed79e6d",
+        "subject": "issue-3a1e31a6a6a8f1",
         "predicate": "kind"
       }
     },
     {
-      "id": "issue-fafbf8eed79e6d:stage:lint",
+      "id": "issue-3a1e31a6a6a8f1:stage:lint",
       "type": "Fact",
-      "label": "issue-fafbf8eed79e6d stage lint",
+      "label": "issue-3a1e31a6a6a8f1 stage lint",
       "attributes": {
         "rule": null,
         "status": "observed",
-        "subject": "issue-fafbf8eed79e6d",
+        "subject": "issue-3a1e31a6a6a8f1",
         "predicate": "stage"
       }
     },
     {
-      "id": "issue-fafbf8eed79e6d:tool:ruff",
+      "id": "issue-3a1e31a6a6a8f1:tool:ruff",
       "type": "Fact",
-      "label": "issue-fafbf8eed79e6d tool ruff",
+      "label": "issue-3a1e31a6a6a8f1 tool ruff",
       "attributes": {
         "rule": null,
         "status": "observed",
-        "subject": "issue-fafbf8eed79e6d",
+        "subject": "issue-3a1e31a6a6a8f1",
         "predicate": "tool"
       }
     },
     {
-      "id": "issue-fafbf8eed79e6d:component:F401",
+      "id": "issue-3a1e31a6a6a8f1:component:F401",
       "type": "Fact",
-      "label": "issue-fafbf8eed79e6d component F401",
+      "label": "issue-3a1e31a6a6a8f1 component F401",
       "attributes": {
         "rule": null,
         "status": "observed",
-        "subject": "issue-fafbf8eed79e6d",
+        "subject": "issue-3a1e31a6a6a8f1",
         "predicate": "component"
       }
     },
@@ -584,6 +584,28 @@
         "status": "observed",
         "subject": "project",
         "predicate": "declarations"
+      }
+    },
+    {
+      "id": "issue-3a1e31a6a6a8f1:lint_rule:lint:F401",
+      "type": "Fact",
+      "label": "issue-3a1e31a6a6a8f1 lint_rule lint:F401",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "issue-3a1e31a6a6a8f1",
+        "predicate": "lint_rule"
+      }
+    },
+    {
+      "id": "project:ruff_config:none",
+      "type": "Fact",
+      "label": "project ruff_config none",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "project",
+        "predicate": "ruff_config"
       }
     },
     {
@@ -620,14 +642,47 @@
       }
     },
     {
-      "id": "issue-fafbf8eed79e6d:affects:check_style",
+      "id": "dist:python:previous_series_below:3",
       "type": "Fact",
-      "label": "issue-fafbf8eed79e6d affects check_style",
+      "label": "dist:python previous_series_below 3",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "dist:python",
+        "predicate": "previous_series_below"
+      }
+    },
+    {
+      "id": "issue-3a1e31a6a6a8f1:affects:check_style",
+      "type": "Fact",
+      "label": "issue-3a1e31a6a6a8f1 affects check_style",
       "attributes": {
         "rule": "G02",
         "status": "derived",
-        "subject": "issue-fafbf8eed79e6d",
+        "subject": "issue-3a1e31a6a6a8f1",
         "predicate": "affects"
+      }
+    },
+    {
+      "id": "issue-3a1e31a6a6a8f1:lint_finding:cleanup",
+      "type": "Fact",
+      "label": "issue-3a1e31a6a6a8f1 lint_finding cleanup",
+      "attributes": {
+        "rule": "D48",
+        "status": "derived",
+        "subject": "issue-3a1e31a6a6a8f1",
+        "predicate": "lint_finding"
+      }
+    },
+    {
+      "id": "issue-3a1e31a6a6a8f1:affects_running:no",
+      "type": "Fact",
+      "label": "issue-3a1e31a6a6a8f1 affects_running no",
+      "attributes": {
+        "rule": "D48",
+        "status": "derived",
+        "subject": "issue-3a1e31a6a6a8f1",
+        "predicate": "affects_running"
       }
     },
     {
@@ -636,6 +691,15 @@
       "label": "G02 · Linter findings affect the code-check goal.",
       "attributes": {
         "phase": "derive",
+        "source": ""
+      }
+    },
+    {
+      "id": "rule:D48",
+      "type": "Rule",
+      "label": "D48 · A code-check finding about style, layout or outdated syntax: it does not change how the code runs.",
+      "attributes": {
+        "phase": "diagnose",
         "source": ""
       }
     },
@@ -653,12 +717,12 @@
       }
     },
     {
-      "id": "review-code_check",
+      "id": "cleanup-code",
       "type": "Action",
-      "label": "Review the code diagnostics",
+      "label": "Clean up the code-check suggestions",
       "attributes": {
         "priority": 2,
-        "explanation": "These linter diagnostics (for example undefined names) can be real bugs, not formatting. Inspect each location.",
+        "explanation": "The project has no Ruff settings, so Ruff used its own default rules. These are style, layout and syntax suggestions; none of them changes how the code runs. ruff check --fix applies many of them automatically; review the changes before you commit them.",
         "verification": "Re-run the code check",
         "targets": [],
         "goal_impact": 0,
@@ -666,9 +730,9 @@
       }
     },
     {
-      "id": "rule:P48",
+      "id": "rule:P53",
       "type": "Rule",
-      "label": "P48 · Non-style linter diagnostics.",
+      "label": "P53 · Clean-up findings when the project has no linter settings.",
       "attributes": {
         "phase": "plan",
         "source": ""
@@ -692,127 +756,152 @@
     {
       "source": "check-ruff",
       "relation": "addresses",
-      "target": "issue-fafbf8eed79e6d"
+      "target": "issue-3a1e31a6a6a8f1"
     },
     {
       "source": "check-ruff",
       "relation": "justified_by",
-      "target": "issue-fafbf8eed79e6d:affects:check_style"
+      "target": "issue-3a1e31a6a6a8f1:affects:check_style"
+    },
+    {
+      "source": "cleanup-code",
+      "relation": "addresses",
+      "target": "issue-3a1e31a6a6a8f1"
+    },
+    {
+      "source": "cleanup-code",
+      "relation": "justified_by",
+      "target": "issue-3a1e31a6a6a8f1:lint_finding:cleanup"
+    },
+    {
+      "source": "cleanup-code",
+      "relation": "justified_by",
+      "target": "project:ruff_config:none"
+    },
+    {
+      "source": "cleanup-code",
+      "relation": "proposed_by",
+      "target": "rule:P53"
     },
     {
       "source": "dist:numpy:declared_in:requirements.txt:1",
       "relation": "supported_by",
-      "target": "evidence:run-81984f41bf07:declaration:0"
+      "target": "evidence:run-53fb14b8357e:declaration:0"
     },
     {
       "source": "dist:pytest:declared_in:requirements.txt:2",
       "relation": "supported_by",
-      "target": "evidence:run-81984f41bf07:declaration:1"
+      "target": "evidence:run-53fb14b8357e:declaration:1"
     },
     {
       "source": "dist:python:installed_version:3.12.14",
       "relation": "supported_by",
-      "target": "evidence:run-bd756e106e0a:stdout:1"
+      "target": "evidence:run-6c2103e4df8f:stdout:1"
+    },
+    {
+      "source": "dist:python:previous_series_below:3",
+      "relation": "supported_by",
+      "target": "evidence:run-6c2103e4df8f:stdout:1"
     },
     {
       "source": "environment:snapshot:available",
       "relation": "supported_by",
-      "target": "evidence:run-bd756e106e0a:stdout:1"
+      "target": "evidence:run-6c2103e4df8f:stdout:1"
     },
     {
-      "source": "event-1d9ce94997e3",
+      "source": "event-04f648a652f0",
       "relation": "cites",
-      "target": "evidence:run-7d1386d8601f:json:0"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
-      "source": "event-3c76c580dee5",
+      "source": "event-1c5e85dbff2f",
       "relation": "cites",
-      "target": "evidence:run-3d6c31292945:probe:13"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:13"
     },
     {
-      "source": "event-3c76c580dee5",
+      "source": "event-1c5e85dbff2f",
       "relation": "cites",
-      "target": "evidence:run-3d6c31292945:probe:14"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:14"
     },
     {
-      "source": "event-a613f24ebe62",
+      "source": "event-591e42bf406e",
       "relation": "cites",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:2"
     },
     {
-      "source": "event-a9a601b64101",
+      "source": "event-591e42bf406e",
       "relation": "cites",
-      "target": "evidence:run-3d6c31292945:probe:2"
+      "target": "evidence:run-b8ca3f4ee2e5:probe:3"
     },
     {
-      "source": "event-a9a601b64101",
+      "source": "event-eb27637cf50a",
       "relation": "cites",
-      "target": "evidence:run-3d6c31292945:probe:3"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
-      "source": "event-ec83f763c036",
+      "source": "event-f5dc1bb66629",
       "relation": "cites",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-11722a61229f:json:0"
     },
     {
-      "source": "evidence:run-3d6c31292945:probe:13",
+      "source": "evidence:run-11722a61229f:json:0",
       "relation": "observed_in",
-      "target": "run-3d6c31292945"
+      "target": "run-11722a61229f"
     },
     {
-      "source": "evidence:run-3d6c31292945:probe:14",
+      "source": "evidence:run-53fb14b8357e:declaration:0",
       "relation": "observed_in",
-      "target": "run-3d6c31292945"
+      "target": "run-53fb14b8357e"
     },
     {
-      "source": "evidence:run-3d6c31292945:probe:2",
+      "source": "evidence:run-53fb14b8357e:declaration:1",
       "relation": "observed_in",
-      "target": "run-3d6c31292945"
+      "target": "run-53fb14b8357e"
     },
     {
-      "source": "evidence:run-3d6c31292945:probe:3",
+      "source": "evidence:run-53fb14b8357e:stdout:1",
       "relation": "observed_in",
-      "target": "run-3d6c31292945"
+      "target": "run-53fb14b8357e"
     },
     {
-      "source": "evidence:run-7d1386d8601f:json:0",
+      "source": "evidence:run-6c2103e4df8f:stdout:1",
       "relation": "observed_in",
-      "target": "run-7d1386d8601f"
+      "target": "run-6c2103e4df8f"
     },
     {
-      "source": "evidence:run-81984f41bf07:declaration:0",
+      "source": "evidence:run-b8ca3f4ee2e5:probe:13",
       "relation": "observed_in",
-      "target": "run-81984f41bf07"
+      "target": "run-b8ca3f4ee2e5"
     },
     {
-      "source": "evidence:run-81984f41bf07:declaration:1",
+      "source": "evidence:run-b8ca3f4ee2e5:probe:14",
       "relation": "observed_in",
-      "target": "run-81984f41bf07"
+      "target": "run-b8ca3f4ee2e5"
     },
     {
-      "source": "evidence:run-81984f41bf07:stdout:1",
+      "source": "evidence:run-b8ca3f4ee2e5:probe:2",
       "relation": "observed_in",
-      "target": "run-81984f41bf07"
+      "target": "run-b8ca3f4ee2e5"
     },
     {
-      "source": "evidence:run-890f2274ab0c:probe:1",
+      "source": "evidence:run-b8ca3f4ee2e5:probe:3",
       "relation": "observed_in",
-      "target": "run-890f2274ab0c"
+      "target": "run-b8ca3f4ee2e5"
     },
     {
-      "source": "evidence:run-890f2274ab0c:probe:3",
+      "source": "evidence:run-c055c9dc968c:probe:1",
       "relation": "observed_in",
-      "target": "run-890f2274ab0c"
+      "target": "run-c055c9dc968c"
     },
     {
-      "source": "evidence:run-bd756e106e0a:stdout:1",
+      "source": "evidence:run-c055c9dc968c:probe:3",
       "relation": "observed_in",
-      "target": "run-bd756e106e0a"
+      "target": "run-c055c9dc968c"
     },
     {
       "source": "goal:pass_tests",
       "relation": "evaluated_by",
-      "target": "run-56c5bfa945ea"
+      "target": "run-9575bc149c31"
     },
     {
       "source": "goal:pass_tests",
@@ -820,84 +909,109 @@
       "target": "check-pytest_run"
     },
     {
-      "source": "issue-624772c417ae3f",
+      "source": "issue-3a1e31a6a6a8f1",
       "relation": "has_event",
-      "target": "event-3c76c580dee5"
+      "target": "event-f5dc1bb66629"
     },
     {
-      "source": "issue-687ee9a528c748",
-      "relation": "has_event",
-      "target": "event-a613f24ebe62"
-    },
-    {
-      "source": "issue-91b31964ae1617",
-      "relation": "has_event",
-      "target": "event-a9a601b64101"
-    },
-    {
-      "source": "issue-b6e397dce720fd",
-      "relation": "has_event",
-      "target": "event-ec83f763c036"
-    },
-    {
-      "source": "issue-fafbf8eed79e6d",
-      "relation": "has_event",
-      "target": "event-1d9ce94997e3"
-    },
-    {
-      "source": "issue-fafbf8eed79e6d:affects:check_style",
+      "source": "issue-3a1e31a6a6a8f1:affects:check_style",
       "relation": "derived_by",
       "target": "rule:G02"
     },
     {
-      "source": "issue-fafbf8eed79e6d:affects:check_style",
+      "source": "issue-3a1e31a6a6a8f1:affects:check_style",
       "relation": "inferred_from",
-      "target": "issue-fafbf8eed79e6d:stage:lint"
+      "target": "issue-3a1e31a6a6a8f1:stage:lint"
     },
     {
-      "source": "issue-fafbf8eed79e6d:affects:check_style",
+      "source": "issue-3a1e31a6a6a8f1:affects:check_style",
       "relation": "supported_by",
-      "target": "evidence:run-7d1386d8601f:json:0"
+      "target": "evidence:run-11722a61229f:json:0"
     },
     {
-      "source": "issue-fafbf8eed79e6d:component:F401",
-      "relation": "supported_by",
-      "target": "evidence:run-7d1386d8601f:json:0"
+      "source": "issue-3a1e31a6a6a8f1:affects_running:no",
+      "relation": "derived_by",
+      "target": "rule:D48"
     },
     {
-      "source": "issue-fafbf8eed79e6d:kind:code_check",
-      "relation": "supported_by",
-      "target": "evidence:run-7d1386d8601f:json:0"
+      "source": "issue-3a1e31a6a6a8f1:affects_running:no",
+      "relation": "inferred_from",
+      "target": "issue-3a1e31a6a6a8f1:lint_rule:lint:F401"
     },
     {
-      "source": "issue-fafbf8eed79e6d:stage:lint",
+      "source": "issue-3a1e31a6a6a8f1:affects_running:no",
       "relation": "supported_by",
-      "target": "evidence:run-7d1386d8601f:json:0"
+      "target": "evidence:run-11722a61229f:json:0"
     },
     {
-      "source": "issue-fafbf8eed79e6d:tool:ruff",
+      "source": "issue-3a1e31a6a6a8f1:component:F401",
       "relation": "supported_by",
-      "target": "evidence:run-7d1386d8601f:json:0"
+      "target": "evidence:run-11722a61229f:json:0"
+    },
+    {
+      "source": "issue-3a1e31a6a6a8f1:kind:code_check",
+      "relation": "supported_by",
+      "target": "evidence:run-11722a61229f:json:0"
+    },
+    {
+      "source": "issue-3a1e31a6a6a8f1:lint_finding:cleanup",
+      "relation": "derived_by",
+      "target": "rule:D48"
+    },
+    {
+      "source": "issue-3a1e31a6a6a8f1:lint_finding:cleanup",
+      "relation": "inferred_from",
+      "target": "issue-3a1e31a6a6a8f1:lint_rule:lint:F401"
+    },
+    {
+      "source": "issue-3a1e31a6a6a8f1:lint_finding:cleanup",
+      "relation": "supported_by",
+      "target": "evidence:run-11722a61229f:json:0"
+    },
+    {
+      "source": "issue-3a1e31a6a6a8f1:lint_rule:lint:F401",
+      "relation": "supported_by",
+      "target": "evidence:run-11722a61229f:json:0"
+    },
+    {
+      "source": "issue-3a1e31a6a6a8f1:stage:lint",
+      "relation": "supported_by",
+      "target": "evidence:run-11722a61229f:json:0"
+    },
+    {
+      "source": "issue-3a1e31a6a6a8f1:tool:ruff",
+      "relation": "supported_by",
+      "target": "evidence:run-11722a61229f:json:0"
+    },
+    {
+      "source": "issue-624772c417ae3f",
+      "relation": "has_event",
+      "target": "event-1c5e85dbff2f"
+    },
+    {
+      "source": "issue-687ee9a528c748",
+      "relation": "has_event",
+      "target": "event-eb27637cf50a"
+    },
+    {
+      "source": "issue-91b31964ae1617",
+      "relation": "has_event",
+      "target": "event-591e42bf406e"
+    },
+    {
+      "source": "issue-b6e397dce720fd",
+      "relation": "has_event",
+      "target": "event-04f648a652f0"
     },
     {
       "source": "project:declarations:available",
       "relation": "supported_by",
-      "target": "evidence:run-81984f41bf07:stdout:1"
+      "target": "evidence:run-53fb14b8357e:stdout:1"
     },
     {
-      "source": "review-code_check",
-      "relation": "addresses",
-      "target": "issue-fafbf8eed79e6d"
-    },
-    {
-      "source": "review-code_check",
-      "relation": "justified_by",
-      "target": "issue-fafbf8eed79e6d:kind:code_check"
-    },
-    {
-      "source": "review-code_check",
-      "relation": "proposed_by",
-      "target": "rule:P48"
+      "source": "project:ruff_config:none",
+      "relation": "supported_by",
+      "target": "evidence:run-53fb14b8357e:stdout:1"
     }
   ],
   "meaning": "Provenance and rule relations; similarity never creates a causal edge."

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "session_id": "session-716d3bee95e0",
+  "session_id": "session-b6ac3b39b22d",
   "goal": "goal:pass_tests",
   "ontology": {
     "entities": [
@@ -88,9 +88,9 @@
       }
     },
     {
-      "id": "run-00b084e8ba10",
+      "id": "run-e983031d0e57",
       "type": "Run",
-      "label": "environment · 2026-09-24T01:59:12+00:00",
+      "label": "environment · 2026-09-24T08:27:47+00:00",
       "attributes": {
         "tool": "environment",
         "status": "completed",
@@ -103,9 +103,9 @@
       }
     },
     {
-      "id": "run-cfb9d49b571b",
+      "id": "run-ad6250436c1d",
       "type": "Run",
-      "label": "project · 2026-09-24T01:59:13+00:00",
+      "label": "project · 2026-09-24T08:27:48+00:00",
       "attributes": {
         "tool": "project",
         "status": "completed",
@@ -118,9 +118,9 @@
       }
     },
     {
-      "id": "run-890f2274ab0c",
+      "id": "run-c055c9dc968c",
       "type": "Run",
-      "label": "pytest_run · 2026-09-24T01:59:13+00:00",
+      "label": "pytest_run · 2026-09-24T08:27:48+00:00",
       "attributes": {
         "tool": "pytest_run",
         "status": "completed",
@@ -148,43 +148,43 @@
       }
     },
     {
-      "id": "evidence:run-00b084e8ba10:stdout:1",
+      "id": "evidence:run-ad6250436c1d:declaration:0",
       "type": "Evidence",
-      "label": "run-00b084e8ba10:stdout:1",
+      "label": "run-ad6250436c1d:declaration:0",
       "attributes": {}
     },
     {
-      "id": "evidence:run-890f2274ab0c:probe:1",
+      "id": "evidence:run-ad6250436c1d:declaration:1",
       "type": "Evidence",
-      "label": "run-890f2274ab0c:probe:1",
+      "label": "run-ad6250436c1d:declaration:1",
       "attributes": {}
     },
     {
-      "id": "evidence:run-890f2274ab0c:probe:3",
+      "id": "evidence:run-ad6250436c1d:stdout:1",
       "type": "Evidence",
-      "label": "run-890f2274ab0c:probe:3",
+      "label": "run-ad6250436c1d:stdout:1",
       "attributes": {}
     },
     {
-      "id": "evidence:run-cfb9d49b571b:declaration:0",
+      "id": "evidence:run-c055c9dc968c:probe:1",
       "type": "Evidence",
-      "label": "run-cfb9d49b571b:declaration:0",
+      "label": "run-c055c9dc968c:probe:1",
       "attributes": {}
     },
     {
-      "id": "evidence:run-cfb9d49b571b:declaration:1",
+      "id": "evidence:run-c055c9dc968c:probe:3",
       "type": "Evidence",
-      "label": "run-cfb9d49b571b:declaration:1",
+      "label": "run-c055c9dc968c:probe:3",
       "attributes": {}
     },
     {
-      "id": "evidence:run-cfb9d49b571b:stdout:1",
+      "id": "evidence:run-e983031d0e57:stdout:1",
       "type": "Evidence",
-      "label": "run-cfb9d49b571b:stdout:1",
+      "label": "run-e983031d0e57:stdout:1",
       "attributes": {}
     },
     {
-      "id": "event-ec83f763c036",
+      "id": "event-04f648a652f0",
       "type": "Event",
       "label": "ImportError: cannot import name 'Mapping' from 'collections' (<home>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/collections/__init__.py)",
       "attributes": {
@@ -194,7 +194,7 @@
       }
     },
     {
-      "id": "event-a613f24ebe62",
+      "id": "event-eb27637cf50a",
       "type": "Event",
       "label": "ModuleNotFoundError: No module named 'helper'",
       "attributes": {
@@ -487,6 +487,17 @@
       }
     },
     {
+      "id": "project:ruff_config:none",
+      "type": "Fact",
+      "label": "project ruff_config none",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "project",
+        "predicate": "ruff_config"
+      }
+    },
+    {
       "id": "dist:numpy:declared_in:requirements.txt:1",
       "type": "Fact",
       "label": "dist:numpy declared_in requirements.txt:1",
@@ -550,6 +561,17 @@
         "status": "observed",
         "subject": "dist:python",
         "predicate": "installed_version"
+      }
+    },
+    {
+      "id": "dist:python:previous_series_below:3",
+      "type": "Fact",
+      "label": "dist:python previous_series_below 3",
+      "attributes": {
+        "rule": null,
+        "status": "observed",
+        "subject": "dist:python",
+        "predicate": "previous_series_below"
       }
     },
     {
@@ -850,62 +872,67 @@
     {
       "source": "dist:numpy:declared_in:requirements.txt:1",
       "relation": "supported_by",
-      "target": "evidence:run-cfb9d49b571b:declaration:0"
+      "target": "evidence:run-ad6250436c1d:declaration:0"
     },
     {
       "source": "dist:pytest:declared_in:requirements.txt:2",
       "relation": "supported_by",
-      "target": "evidence:run-cfb9d49b571b:declaration:1"
+      "target": "evidence:run-ad6250436c1d:declaration:1"
     },
     {
       "source": "dist:python:installed_version:3.12.14",
       "relation": "supported_by",
-      "target": "evidence:run-00b084e8ba10:stdout:1"
+      "target": "evidence:run-e983031d0e57:stdout:1"
+    },
+    {
+      "source": "dist:python:previous_series_below:3",
+      "relation": "supported_by",
+      "target": "evidence:run-e983031d0e57:stdout:1"
     },
     {
       "source": "environment:snapshot:available",
       "relation": "supported_by",
-      "target": "evidence:run-00b084e8ba10:stdout:1"
+      "target": "evidence:run-e983031d0e57:stdout:1"
     },
     {
-      "source": "event-a613f24ebe62",
+      "source": "event-04f648a652f0",
       "relation": "cites",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
-      "source": "event-ec83f763c036",
+      "source": "event-eb27637cf50a",
       "relation": "cites",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
-      "source": "evidence:run-00b084e8ba10:stdout:1",
+      "source": "evidence:run-ad6250436c1d:declaration:0",
       "relation": "observed_in",
-      "target": "run-00b084e8ba10"
+      "target": "run-ad6250436c1d"
     },
     {
-      "source": "evidence:run-890f2274ab0c:probe:1",
+      "source": "evidence:run-ad6250436c1d:declaration:1",
       "relation": "observed_in",
-      "target": "run-890f2274ab0c"
+      "target": "run-ad6250436c1d"
     },
     {
-      "source": "evidence:run-890f2274ab0c:probe:3",
+      "source": "evidence:run-ad6250436c1d:stdout:1",
       "relation": "observed_in",
-      "target": "run-890f2274ab0c"
+      "target": "run-ad6250436c1d"
     },
     {
-      "source": "evidence:run-cfb9d49b571b:declaration:0",
+      "source": "evidence:run-c055c9dc968c:probe:1",
       "relation": "observed_in",
-      "target": "run-cfb9d49b571b"
+      "target": "run-c055c9dc968c"
     },
     {
-      "source": "evidence:run-cfb9d49b571b:declaration:1",
+      "source": "evidence:run-c055c9dc968c:probe:3",
       "relation": "observed_in",
-      "target": "run-cfb9d49b571b"
+      "target": "run-c055c9dc968c"
     },
     {
-      "source": "evidence:run-cfb9d49b571b:stdout:1",
+      "source": "evidence:run-e983031d0e57:stdout:1",
       "relation": "observed_in",
-      "target": "run-cfb9d49b571b"
+      "target": "run-e983031d0e57"
     },
     {
       "source": "fix-import-helper",
@@ -935,7 +962,7 @@
     {
       "source": "goal:pass_tests",
       "relation": "evaluated_by",
-      "target": "run-890f2274ab0c"
+      "target": "run-c055c9dc968c"
     },
     {
       "source": "goal:pass_tests",
@@ -970,7 +997,7 @@
     {
       "source": "issue-687ee9a528c748",
       "relation": "has_event",
-      "target": "event-a613f24ebe62"
+      "target": "event-eb27637cf50a"
     },
     {
       "source": "issue-687ee9a528c748:affects:collect_tests",
@@ -985,7 +1012,7 @@
     {
       "source": "issue-687ee9a528c748:affects:collect_tests",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
       "source": "issue-687ee9a528c748:affects:pass_tests",
@@ -1000,12 +1027,12 @@
     {
       "source": "issue-687ee9a528c748:affects:pass_tests",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
       "source": "issue-687ee9a528c748:api:api:helper.double",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
       "source": "issue-687ee9a528c748:because:helpers.py",
@@ -1025,12 +1052,12 @@
     {
       "source": "issue-687ee9a528c748:because:helpers.py",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-ad6250436c1d:stdout:1"
     },
     {
       "source": "issue-687ee9a528c748:because:helpers.py",
       "relation": "supported_by",
-      "target": "evidence:run-cfb9d49b571b:stdout:1"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
       "source": "issue-687ee9a528c748:blocks:pass_tests",
@@ -1050,12 +1077,12 @@
     {
       "source": "issue-687ee9a528c748:blocks:pass_tests",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
       "source": "issue-687ee9a528c748:component:helper",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
       "source": "issue-687ee9a528c748:diagnosis:local_module",
@@ -1075,42 +1102,42 @@
     {
       "source": "issue-687ee9a528c748:diagnosis:local_module",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-ad6250436c1d:stdout:1"
     },
     {
       "source": "issue-687ee9a528c748:diagnosis:local_module",
       "relation": "supported_by",
-      "target": "evidence:run-cfb9d49b571b:stdout:1"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
       "source": "issue-687ee9a528c748:exception:ModuleNotFoundError",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
       "source": "issue-687ee9a528c748:kind:import_failure",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
       "source": "issue-687ee9a528c748:missing_module:module:helper",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
       "source": "issue-687ee9a528c748:model_suggests:local_module",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
       "source": "issue-687ee9a528c748:module:module:helper",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
       "source": "issue-687ee9a528c748:raised_in:project",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
       "source": "issue-687ee9a528c748:remedy:fix_renamed_module",
@@ -1130,22 +1157,22 @@
     {
       "source": "issue-687ee9a528c748:remedy:fix_renamed_module",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-ad6250436c1d:stdout:1"
     },
     {
       "source": "issue-687ee9a528c748:remedy:fix_renamed_module",
       "relation": "supported_by",
-      "target": "evidence:run-cfb9d49b571b:stdout:1"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
       "source": "issue-687ee9a528c748:stage:collect",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
       "source": "issue-687ee9a528c748:tool:pytest_run",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:3"
+      "target": "evidence:run-c055c9dc968c:probe:3"
     },
     {
       "source": "issue-b6e397dce720fd",
@@ -1155,7 +1182,7 @@
     {
       "source": "issue-b6e397dce720fd",
       "relation": "has_event",
-      "target": "event-ec83f763c036"
+      "target": "event-04f648a652f0"
     },
     {
       "source": "issue-b6e397dce720fd:affects:collect_tests",
@@ -1170,7 +1197,7 @@
     {
       "source": "issue-b6e397dce720fd:affects:collect_tests",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
       "source": "issue-b6e397dce720fd:affects:pass_tests",
@@ -1185,12 +1212,12 @@
     {
       "source": "issue-b6e397dce720fd:affects:pass_tests",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
       "source": "issue-b6e397dce720fd:api:api:collections.Mapping",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
       "source": "issue-b6e397dce720fd:because:api:collections.Mapping",
@@ -1225,12 +1252,12 @@
     {
       "source": "issue-b6e397dce720fd:because:api:collections.Mapping",
       "relation": "supported_by",
-      "target": "evidence:run-00b084e8ba10:stdout:1"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
       "source": "issue-b6e397dce720fd:because:api:collections.Mapping",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-e983031d0e57:stdout:1"
     },
     {
       "source": "issue-b6e397dce720fd:blocks:pass_tests",
@@ -1250,7 +1277,7 @@
     {
       "source": "issue-b6e397dce720fd:blocks:pass_tests",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
       "source": "issue-b6e397dce720fd:diagnosis:version_incompatibility",
@@ -1285,37 +1312,37 @@
     {
       "source": "issue-b6e397dce720fd:diagnosis:version_incompatibility",
       "relation": "supported_by",
-      "target": "evidence:run-00b084e8ba10:stdout:1"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
       "source": "issue-b6e397dce720fd:diagnosis:version_incompatibility",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-e983031d0e57:stdout:1"
     },
     {
       "source": "issue-b6e397dce720fd:exception:ImportError",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
       "source": "issue-b6e397dce720fd:kind:import_failure",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
       "source": "issue-b6e397dce720fd:model_suggests:version_incompatibility",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
       "source": "issue-b6e397dce720fd:module:module:collections",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
       "source": "issue-b6e397dce720fd:raised_in:project",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
       "source": "issue-b6e397dce720fd:remedy:replace_removed",
@@ -1350,27 +1377,27 @@
     {
       "source": "issue-b6e397dce720fd:remedy:replace_removed",
       "relation": "supported_by",
-      "target": "evidence:run-00b084e8ba10:stdout:1"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
       "source": "issue-b6e397dce720fd:remedy:replace_removed",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-e983031d0e57:stdout:1"
     },
     {
       "source": "issue-b6e397dce720fd:signal:cannot_import_name",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
       "source": "issue-b6e397dce720fd:stage:collect",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
       "source": "issue-b6e397dce720fd:tool:pytest_run",
       "relation": "supported_by",
-      "target": "evidence:run-890f2274ab0c:probe:1"
+      "target": "evidence:run-c055c9dc968c:probe:1"
     },
     {
       "source": "kb:api:collections.Mapping:removed_from",
@@ -1390,17 +1417,22 @@
     {
       "source": "module:collections:in_stdlib:yes",
       "relation": "supported_by",
-      "target": "evidence:run-00b084e8ba10:stdout:1"
+      "target": "evidence:run-e983031d0e57:stdout:1"
     },
     {
       "source": "module:helper:similar_local:helpers.py",
       "relation": "supported_by",
-      "target": "evidence:run-cfb9d49b571b:stdout:1"
+      "target": "evidence:run-ad6250436c1d:stdout:1"
     },
     {
       "source": "project:declarations:available",
       "relation": "supported_by",
-      "target": "evidence:run-cfb9d49b571b:stdout:1"
+      "target": "evidence:run-ad6250436c1d:stdout:1"
+    },
+    {
+      "source": "project:ruff_config:none",
+      "relation": "supported_by",
+      "target": "evidence:run-ad6250436c1d:stdout:1"
     },
     {
       "source": "update-collections.mapping",
