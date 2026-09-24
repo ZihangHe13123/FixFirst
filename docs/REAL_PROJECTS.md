@@ -28,12 +28,12 @@ Each round: run the checks, do the first step FixFirst gives, check again.
 | 3 | Install the itsdangerous version that flask 1.1.4 requires (<2.0) | Name missing from a library whose version breaks another package's requirement, from pip check alone, no knowledge entry needed (D06 + P07) | Next import error |
 | 4 | Install the werkzeug version that flask 1.1.4 requires (<2.0) | Same rule, via pip check (D06 + P07) | Tests now import, one test module fails to load |
 | 5 | Check whether pytest 9.1.1 still provides `_pytest.monkeypatch.notset` (likely version incompatibility, not confirmed) | A name missing from an installed library usually means a version change (heuristic H01) | Installing pytest<8 lets the suite run: **524 passed, 2 failed, 14 skipped** |
+| 6 | Compare the failed assertion's expected and actual values, `tests/test_basic.py:1980` | Assertion failure (D40) | Not fixed: the test expects 1 warning and gets 4 because newer Python emits extra deprecation warnings. FixFirst calls it a code defect; the cause is really the environment. |
+| 7 | Inspect the exception raised while running the test, `tests/conftest.py:187` (classifier: likely a code defect) | No rule matched | Not fixed: the test runs `setup.py bdist_egg`, which needs setuptools; Python 3.12 virtual environments no longer include it. The subprocess's error text is not in the traceback, so FixFirst had no evidence to name it. |
 
 After this walk-through the round-5 step gained a concrete command: FixFirst now suggests the
 previous release series (`pytest<9`, which installs 8.4.2 and still provides `notset`) and steps
 back further if the name is still missing. The table records what was run at the time.
-| 6 | Compare the failed assertion's expected and actual values, `tests/test_basic.py:1980` | Assertion failure (D40) | Not fixed: the test expects 1 warning and gets 4 because newer Python emits extra deprecation warnings. FixFirst calls it a code defect; the cause is really the environment. |
-| 7 | Inspect the exception raised while running the test, `tests/conftest.py:187` (classifier: likely a code defect) | No rule matched | Not fixed: the test runs `setup.py bdist_egg`, which needs setuptools; Python 3.12 virtual environments no longer include it. The subprocess's error text is not in the traceback, so FixFirst had no evidence to name it. |
 
 Every step was verified by a real check before FixFirst marked it fixed: after round 4 the
 workspace showed four fixed issues and the previously unreachable ones as "waiting to be
@@ -70,5 +70,6 @@ was fixed and is covered by a test:
   defects: the evidence FixFirst reads does not distinguish them.
 - Errors inside subprocesses that a test starts are opaque unless their output reaches the
   traceback.
-- FixFirst proposes version constraints (for example `werkzeug<2.0`) from pip check and its
-  knowledge base; choosing a version when neither says anything is left to the user.
+- FixFirst takes version constraints (for example `werkzeug<2.0`) from pip check and its
+  knowledge base. When neither says anything it steps back one release series at a time, which
+  can take several rounds and may downgrade further than needed.
