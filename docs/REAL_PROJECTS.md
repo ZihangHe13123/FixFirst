@@ -48,7 +48,15 @@ Two additions now explain every remaining failure but one:
 |---|---|---|
 | 4 tests, `TypeError ... not <class 'NoneType'>` | Replace pytest.warns(None): removed in pytest 8.0 (or pin pytest below 8.0), citing the pytest deprecation notes | D07: a *removed usage* in the knowledge base, recognised by its error message |
 | `test_egg_installed_paths` | Likely: install setuptools, with the command; the test runs `setup.py bdist_egg` and Python 3.12 virtual environments no longer include setuptools | H03 (heuristic). Verified separately: the same command fails without setuptools and succeeds with it |
-| `test_max_cookie_size` (4 warnings instead of 1) | Code defect (assertion) | Unchanged: the evidence does not show that the extra warnings come from newer libraries |
+| `test_max_cookie_size` (4 warnings instead of 1) | Code defect (assertion) | Unchanged: the evidence does not show where the extra warnings come from |
+
+Doing both (pytest<8 and installing setuptools, as a user following the steps) gives the final
+result: **525 passed, 1 failed, 14 skipped, 1 xfail**. Running the last test with
+`-W error::DeprecationWarning` shows its cause: Flask 1.1.4 calls `pkgutil.get_loader`, which
+Python 3.12 deprecates, so every app it creates emits deprecation warnings, and this test counts
+warnings exactly. The real cause is a Python version newer than Flask 1.1.4 supports (fix: an
+older Python, or upgrade Flask), not a defect in the test. FixFirst only sees `assert 4 == 1`
+and cannot tell, so it falls back to the generic advice for a failed assertion.
 
 Every step was verified by a real check before FixFirst marked it fixed: after round 4 the
 workspace showed four fixed issues and the previously unreachable ones as "waiting to be
