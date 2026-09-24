@@ -397,3 +397,16 @@ def test_windows_paths_are_classified_like_posix_paths():
     assert classify_path("C:\\Python312\\Lib\\json\\decoder.py", root, env) == "stdlib"
     assert classify_path("C:\\shop\\.venv\\Lib\\site-packages\\numpy\\x.py", root, env) == "third_party"
     assert classify_path("D:\\elsewhere\\x.py", root, env) == "unknown"
+
+
+def test_complete_ruff_run_closes_only_the_findings_it_no_longer_reports(session):
+    first = ruff_run(session, "E501")
+    rows = json.loads(first.stdout) + [
+        {"code": "F401", "message": "unused import", "filename": "b.py", "location": {"row": 1}}
+    ]
+    first.stdout, first.exit_code = json.dumps(rows), 1
+    ingest(session, [first])
+    assert len(session.issues) == 2
+    ingest(session, [ruff_run(session, "E501")])
+    status = {i.component: i.status for i in session.issues}
+    assert status == {"E501": "open", "F401": "resolved"}

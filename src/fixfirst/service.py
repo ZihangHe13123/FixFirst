@@ -5,7 +5,15 @@ from .grouping import group_events, digest, member_key
 from .models import Run, Session, now, GOAL_CHECKS
 from .parsers import parse
 from .reasoning import infer_and_plan
-from .runner import collect, environment_id, redact, MAX_OUTPUT, DEFAULT_CHECKS, validate_targets
+from .runner import (
+    DEFAULT_CHECKS,
+    DEFAULT_TIMEOUT,
+    MAX_OUTPUT,
+    collect,
+    environment_id,
+    redact,
+    validate_targets,
+)
 
 
 def create_session(
@@ -129,6 +137,10 @@ def ingest(session: Session, runs: list[Run]):
         passed = any(
             r.verified_pass and r.coverage_complete and r.source == "executed" for r in matching
         )
+        if old.tool in ("ruff", "pip_check"):
+            # Both list every finding in a complete run, so one they no longer report is fixed
+            # even while other findings remain.
+            passed = any(r.coverage_complete and r.source == "executed" for r in matching)
         if old.tool == "project":
             from .project import declaration_verified
 
@@ -184,7 +196,7 @@ def ingest(session: Session, runs: list[Run]):
         session.goal_status = "unknown"
 
 
-def scan(session, checks=None, timeout=30, targets=None):
+def scan(session, checks=None, timeout=DEFAULT_TIMEOUT, targets=None):
     if session.stopped:
         raise ValueError("This session is stopped; use resume before running checks")
     if checks is None:

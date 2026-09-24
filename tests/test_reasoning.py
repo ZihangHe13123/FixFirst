@@ -9,6 +9,7 @@ from fixfirst.evidence import classify_path, executed_lines
 from fixfirst.knowledge_graph import build_graph, query_graph
 from fixfirst.reasoning import rule_base
 from fixfirst.service import create_session, scan
+from fixfirst.workspace import build_view
 
 SCENARIOS = {s.scenario_id: s for s in cases.SCENARIOS}
 FLAT = cases.TEMPLATES[0]
@@ -59,10 +60,18 @@ def test_knowledge_backed_advice_cites_its_source(tmp_path):
     assert answer["supported"] and "Version incompatibility" in answer["answer"] and "D01" in answer["answer"]
 
 
-def test_unlisted_removal_is_not_claimed_by_rules(tmp_path):
+def test_unlisted_removal_is_only_a_likely_cause(tmp_path):
+    # numpy.msort is not in the knowledge base: no rule may confirm the cause, but the
+    # heuristic phase marks a version change as likely and says so.
     session, issue = run_scenario(tmp_path, "vi_unknown_attribute")
-    assert issue.diagnosis is None
-    assert not any(a.cause == "version_incompatibility" for a in session.actions)
+    assert (issue.diagnosis, issue.diagnosis_source, issue.diagnosis_rule) == (
+        "version_incompatibility",
+        "heuristic",
+        "H02",
+    )
+    step = build_view(session)["steps"][0]
+    assert step["title"].startswith("Check whether numpy") and "msort" in step["title"]
+    assert step["cause"] is None and step["possible"] == "Version incompatibility"
 
 
 def test_environment_snapshot_survives_a_project_file_that_shadows_the_stdlib(tmp_path):
@@ -99,6 +108,7 @@ def test_evidence_helpers_handle_portable_and_pytest_paths():
     assert classify_path("<project>/app.py", "<project>", env) == "project"
     assert classify_path("/venv/lib/python3.12/site-packages/numpy/__init__.py", "/project", env) == "third_party"
     assert classify_path("<frozen os>", "/project", env) == "stdlib"
+    assert classify_path("../../.cache/python/lib/python3.12/subprocess.py", "/p", env) == "stdlib"
     traceback = "app.py:2: in <module>\n    from pydantic import BaseSettings\n>       raise ImportError(msg)"
     assert executed_lines(traceback) == ["from pydantic import BaseSettings", "raise ImportError(msg)"]
 

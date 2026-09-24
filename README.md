@@ -55,7 +55,7 @@ real check before calling anything fixed.
 
 | Technique | What it does | Code |
 |---|---|---|
-| Knowledge-based rules | A production system with variables, stratified negation and provenance. 56 rules in four phases derive goal relevance, diagnose causes, fall back to the classifier, and propose actions. | `engine.py`, `knowledge/rules.toml` |
+| Knowledge-based rules | A production system with variables, stratified negation and provenance. 67 rules in five phases derive goal relevance, diagnose causes, add likely causes from general heuristics, fall back to the classifier, and propose actions. | `engine.py`, `knowledge/rules.toml` |
 | Knowledge graph | A curated domain graph (5 causes, 117 removed modules/APIs/arguments with the release that removed them, import-name → distribution mappings, 19 cited sources) that the rules query, and a per-session evidence graph (10 entity types, 15 relations) for explanations and questions. | `domain.py`, `knowledge/domain.toml`, `knowledge_graph.py` |
 | Data mining | A Gini decision tree over 44 evidence features suggests a cause when no rule applies; TF-IDF + cosine similarity with complete-link grouping merges repeated messages. | `evidence.py`, `classification.py`, `grouping.py` |
 
@@ -72,8 +72,9 @@ the scenario definition). Accuracy of naming the root cause, with 95% bootstrap 
 | Parser category only (FixFirst 0.3 behaviour) | 0.419 (0.353–0.484) | 0.419 (0.353–0.484) |
 | Rules without the knowledge graph | 0.488 | 0.488 |
 | Rules + knowledge graph (answers 79% of cases, precision 1.00) | 0.791 (0.740–0.842) | 0.791 (0.740–0.842) |
+| Rules + knowledge graph + heuristics (answers 83%, precision 1.00) | 0.828 (0.777–0.879) | 0.828 (0.777–0.879) |
 | Decision tree only | 0.609 (0.539–0.674) | 0.958 (0.930–0.981) |
-| **Rules + knowledge graph, then tree** | **0.930 (0.898–0.963)** | **1.000** |
+| **Rules + knowledge graph + heuristics, then tree** | **0.930 (0.898–0.963)** | **1.000** |
 
 On faults the knowledge graph does not list, the hybrid reaches 0.897 against 0.690 for rules
 alone; removing the knowledge graph drops accuracy on the faults it covers from 1.000 to
@@ -81,7 +82,12 @@ alone; removing the knowledge graph drops accuracy on the faults it covers from 
 scenarios are optimistic; the remaining errors (a data-dict `KeyError`, a buggy fixture, a
 removed library submodule) are listed in the report. Full tables, confusion matrix and
 per-scenario results: [examples/diagnosis-evaluation/REPORT.md](examples/diagnosis-evaluation/REPORT.md).
-No user study has been run yet.
+
+On real open-source projects ([docs/REAL_PROJECTS.md](docs/REAL_PROJECTS.md)): FixFirst confirmed
+a healthy humanize, named the missing test dependency of a stripped-down humanize, and led
+Flask 1.1.4 on today's libraries from "no test can run" to 524 passing tests in five rounds of
+its own advice; the two remaining failures are outside what its evidence can explain. No user
+study has been run yet.
 
 ## Command line
 
@@ -135,7 +141,7 @@ fixfirst historical --assets examples/historical-regressions/assets --output wor
 |---|---|
 | `src/fixfirst/` | the package (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)) |
 | `src/fixfirst/knowledge/` | rule base, domain knowledge, bundled decision tree |
-| `tests/` | 104 tests, most running real subprocesses |
+| `tests/` | 105 tests, most running real subprocesses |
 | `examples/` | recorded runs, datasets and experiment reports ([overview](examples/README.md)) |
 | `docs/` | architecture, course alignment, team notes |
 

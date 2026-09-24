@@ -87,6 +87,17 @@
             0.8419
           ]
         },
+        "rules_heur": {
+          "n": 215,
+          "accuracy": 0.8279,
+          "macro_f1": 0.9019,
+          "coverage": 0.8279,
+          "precision_when_answered": 1.0,
+          "accuracy_95ci": [
+            0.7767,
+            0.8791
+          ]
+        },
         "tree": {
           "n": 215,
           "accuracy": 0.9581,
@@ -143,6 +154,13 @@
           "coverage": 1.0,
           "precision_when_answered": 1.0
         },
+        "rules_heur": {
+          "n": 70,
+          "accuracy": 1.0,
+          "macro_f1": 0.6,
+          "coverage": 1.0,
+          "precision_when_answered": 1.0
+        },
         "tree": {
           "n": 70,
           "accuracy": 0.8714,
@@ -185,6 +203,13 @@
           "accuracy": 0.6897,
           "macro_f1": 0.6532,
           "coverage": 0.6897,
+          "precision_when_answered": 1.0
+        },
+        "rules_heur": {
+          "n": 145,
+          "accuracy": 0.7448,
+          "macro_f1": 0.7924,
+          "coverage": 0.7448,
           "precision_when_answered": 1.0
         },
         "tree": {
@@ -292,6 +317,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -304,6 +330,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -316,6 +343,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 0.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -328,6 +356,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 0.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -340,6 +369,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -352,6 +382,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -364,6 +395,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -376,6 +408,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -388,6 +421,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -400,6 +434,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 0.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -412,6 +447,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -424,6 +460,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -436,6 +473,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -448,6 +486,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -460,6 +499,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -472,6 +512,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -484,6 +525,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -496,6 +538,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 0.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -508,6 +551,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -520,6 +564,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -532,6 +577,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -544,6 +590,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -556,6 +603,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -568,6 +616,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -580,6 +629,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -592,6 +642,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -604,6 +655,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -616,6 +668,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -628,6 +681,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 0.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -640,6 +694,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 0.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -652,6 +707,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -664,6 +720,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -676,6 +733,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -688,6 +746,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -700,6 +759,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -712,6 +772,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -724,6 +785,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -736,6 +798,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 0.4,
           "hybrid_no_kg": 0.4,
           "hybrid": 1.0
@@ -748,6 +811,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 0.0,
           "hybrid_no_kg": 0.0,
           "hybrid": 1.0
@@ -760,6 +824,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 0.8,
           "hybrid_no_kg": 0.0,
           "hybrid": 1.0
@@ -772,6 +837,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 0.6,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -784,6 +850,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -796,6 +863,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 0.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -835,6 +903,17 @@
           "accuracy_95ci": [
             0.7395,
             0.8419
+          ]
+        },
+        "rules_heur": {
+          "n": 215,
+          "accuracy": 0.8279,
+          "macro_f1": 0.9019,
+          "coverage": 0.8279,
+          "precision_when_answered": 1.0,
+          "accuracy_95ci": [
+            0.7767,
+            0.8791
           ]
         },
         "tree": {
@@ -893,6 +972,13 @@
           "coverage": 1.0,
           "precision_when_answered": 1.0
         },
+        "rules_heur": {
+          "n": 70,
+          "accuracy": 1.0,
+          "macro_f1": 0.6,
+          "coverage": 1.0,
+          "precision_when_answered": 1.0
+        },
         "tree": {
           "n": 70,
           "accuracy": 0.5714,
@@ -935,6 +1021,13 @@
           "accuracy": 0.6897,
           "macro_f1": 0.6532,
           "coverage": 0.6897,
+          "precision_when_answered": 1.0
+        },
+        "rules_heur": {
+          "n": 145,
+          "accuracy": 0.7448,
+          "macro_f1": 0.7924,
+          "coverage": 0.7448,
           "precision_when_answered": 1.0
         },
         "tree": {
@@ -1042,6 +1135,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1054,6 +1148,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1066,6 +1161,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 0.0,
           "tree": 0.0,
           "hybrid_no_kg": 0.0,
           "hybrid": 0.0
@@ -1078,6 +1174,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 0.0,
           "tree": 0.0,
           "hybrid_no_kg": 0.0,
           "hybrid": 0.0
@@ -1090,6 +1187,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1102,6 +1200,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1114,6 +1213,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 0.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1126,6 +1226,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1138,6 +1239,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1150,6 +1252,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 0.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1162,6 +1265,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1174,6 +1278,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1186,6 +1291,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 0.2,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1198,6 +1304,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1210,6 +1317,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1222,6 +1330,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 0.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1234,6 +1343,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 0.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1246,6 +1356,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 0.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1258,6 +1369,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 0.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1270,6 +1382,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 0.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1282,6 +1395,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 0.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1294,6 +1408,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 0.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1306,6 +1421,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1318,6 +1434,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 0.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1330,6 +1447,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 1.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1342,6 +1460,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1354,6 +1473,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1366,6 +1486,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1378,6 +1499,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 0.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1390,6 +1512,7 @@
           "naive_v03": 1.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 0.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1402,6 +1525,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 0.0,
           "hybrid_no_kg": 0.0,
           "hybrid": 1.0
@@ -1414,6 +1538,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 0.0,
           "hybrid_no_kg": 0.0,
           "hybrid": 1.0
@@ -1426,6 +1551,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1438,6 +1564,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1450,6 +1577,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1462,6 +1590,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1474,6 +1603,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1486,6 +1616,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 0.0,
           "hybrid_no_kg": 0.0,
           "hybrid": 1.0
@@ -1498,6 +1629,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 0.0,
           "hybrid_no_kg": 0.0,
           "hybrid": 1.0
@@ -1510,6 +1642,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 1.0,
+          "rules_heur": 1.0,
           "tree": 0.0,
           "hybrid_no_kg": 0.0,
           "hybrid": 1.0
@@ -1522,6 +1655,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 0.6,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1534,6 +1668,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 1.0,
           "tree": 1.0,
           "hybrid_no_kg": 1.0,
           "hybrid": 1.0
@@ -1546,6 +1681,7 @@
           "naive_v03": 0.0,
           "rules_no_kg": 0.0,
           "rules": 0.0,
+          "rules_heur": 0.0,
           "tree": 0.0,
           "hybrid_no_kg": 0.0,
           "hybrid": 0.0

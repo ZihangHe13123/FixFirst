@@ -54,6 +54,27 @@ when = [["?i", "stage", "collect"], ["?i", "tool", "?t"], ["test", "in", "?t", "
 then = [["?i", "blocks", "pass_tests"]]
 
 [[rule]]
+id = "G07"
+phase = "derive"
+description = "Any failure reported by pytest, whatever its stage, stands between the project and a passing test suite."
+when = [["?i", "tool", "?t"], ["test", "in", "?t", "pytest,pytest_run"]]
+then = [["?i", "affects", "pass_tests"]]
+
+[[rule]]
+id = "G08"
+phase = "derive"
+description = "A failure in the collection-only run stops the tests from loading."
+when = [["?i", "tool", "pytest"]]
+then = [["?i", "affects", "collect_tests"]]
+
+[[rule]]
+id = "G09"
+phase = "derive"
+description = "Anything the code checker reports, including being unable to run, affects the code-check goal."
+when = [["?i", "tool", "ruff"]]
+then = [["?i", "affects", "check_style"]]
+
+[[rule]]
 id = "G06"
 phase = "derive"
 description = "The object or callable named in the error is defined in the project itself."
@@ -112,6 +133,27 @@ when = [
   ["?d", "installed_version", "?iv"], ["test", "version_gte", "?iv", "?v"],
 ]
 then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "replace_removed"], ["?i", "because", "?x"]]
+
+[[rule]]
+id = "D06"
+phase = "diagnose"
+description = "A name cannot be imported from an installed library whose version does not satisfy what another installed package requires (pip check)."
+source = "pip check"
+when = [
+  ["?i", "signal", "cannot_import_name"], ["?i", "module", "?m"], ["?m", "provided_by", "?d"],
+  ["?d", "required_spec", "?spec"],
+]
+then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "align_required"], ["?i", "because", "?d"]]
+
+[[rule]]
+id = "D05"
+phase = "diagnose"
+description = "The removed name is used by another installed library, not by the project's own code."
+when = [
+  ["?i", "remedy", "replace_removed"], ["?i", "because", "?x"], ["?x", "removed_from", "?d"],
+  ["?i", "raised_by_library", "?lib"], ["test", "ne", "?lib", "?d"],
+]
+then = [["?i", "used_by_library", "?lib"]]
 
 # ======================================================================================
 # diagnose: local module problems
@@ -295,7 +337,34 @@ when = [
 then = [["?i", "diagnosis", "code_defect"]]
 
 # ======================================================================================
-# fallback: classifier suggestion when no rule explains the failure
+# heuristic: likely causes from general experience, when no rule is certain
+# ======================================================================================
+
+[[rule]]
+id = "H01"
+phase = "heuristic"
+status = "hypothesis"
+description = "A name cannot be imported from an installed third-party library. Libraries rename and remove names between versions, so a version difference is the likely cause (a misspelt name is the alternative)."
+when = [
+  ["?i", "signal", "cannot_import_name"], ["?i", "module", "?m"], ["?m", "provided_by", "?d"],
+  ["not", "?m", "is_local", "?_"], ["not", "?i", "diagnosis", "?_"],
+]
+then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
+
+[[rule]]
+id = "H02"
+phase = "heuristic"
+status = "hypothesis"
+description = "A module of an installed third-party library lacks an attribute the code uses and no project file shadows it: the installed version probably removed or renamed it."
+when = [
+  ["?i", "exception", "AttributeError"], ["?i", "signal", "no_attribute"], ["?i", "module", "?m"],
+  ["?m", "provided_by", "?d"], ["not", "?m", "is_local", "?_"], ["not", "?m", "in_stdlib", "yes"],
+  ["not", "?i", "diagnosis", "?_"],
+]
+then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
+
+# ======================================================================================
+# fallback: classifier suggestion when neither rules nor heuristics explain the failure
 # ======================================================================================
 
 [[rule]]
@@ -303,7 +372,7 @@ id = "F01"
 phase = "fallback"
 status = "hypothesis"
 description = "No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
-when = [["?i", "model_suggests", "?c"], ["not", "?i", "diagnosis", "?_"]]
+when = [["?i", "model_suggests", "?c"], ["not", "?i", "diagnosis", "?_"], ["not", "?i", "likely", "?_"]]
 then = [["?i", "suspected", "?c"]]
 
 # ======================================================================================
@@ -371,13 +440,72 @@ verification = "Review the declared dependencies, local modules and their source
 # ======================================================================================
 
 [[rule]]
+id = "P09"
+phase = "plan"
+description = "The removed API belongs to a library that an installed package requires at an older version: restore the version it requires instead of editing code."
+source = "pip check"
+when = [
+  ["?i", "remedy", "replace_removed"], ["?i", "because", "?x"],
+  ["?x", "removed_from", "?d"], ["?x", "removed_in_version", "?v"],
+  ["?d", "installed_version", "?iv"], ["?d", "required_spec", "?spec"], ["?d", "required_by", "?who"],
+]
+[rule.action]
+id = "align-{?d}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 1
+title = "Install the {?d} version that {?who} requires ({?spec})"
+explanation = "{?who} requires {?d}{?spec}, but this environment has {?d} {?iv}, which removed {?x} in {?v}. Reinstall the versions your packages declare (for example python -m pip install \"{?d}{?spec}\"), or upgrade {?who} to a release that supports the newer {?d}. Editing library code is not the fix."
+verification = "Re-run the dependency check and the tests with the same interpreter"
+
+[[rule]]
+id = "P08"
+phase = "plan"
+description = "An installed library still uses a name its dependency removed: pin the dependency or upgrade the library."
+when = [
+  ["?i", "used_by_library", "?lib"], ["?i", "because", "?x"],
+  ["?x", "removed_from", "?d"], ["?x", "removed_in_version", "?v"], ["?d", "installed_version", "?iv"],
+  ["not", "?d", "required_spec", "?_"],
+]
+[rule.action]
+id = "pin-{?d}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 1
+title = "Install {?d} below {?v}: the installed {?lib} still uses {?x}"
+explanation = "The installed {?lib} (not your code) uses {?x}, which {?d} removed in {?v}; this environment has {?d} {?iv}. Install an older {?d} (for example python -m pip install \"{?d}<{?v}\") or upgrade {?lib} to a release that supports the newer {?d}."
+verification = "Re-run the tests with the same interpreter"
+
+[[rule]]
+id = "P07"
+phase = "plan"
+description = "An import fails from a library whose installed version conflicts with a requirement: install the required version."
+source = "pip check"
+when = [
+  ["?i", "remedy", "align_required"], ["?i", "because", "?d"],
+  ["?d", "required_spec", "?spec"], ["?d", "required_by", "?who"], ["?d", "installed_version", "?iv"],
+]
+[rule.action]
+id = "align-{?d}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 1
+title = "Install the {?d} version that {?who} requires ({?spec})"
+explanation = "{?who} requires {?d}{?spec}, but this environment has {?d} {?iv}, and the import fails inside that newer {?d}. Reinstall the versions your packages declare (for example python -m pip install \"{?d}{?spec}\"), or upgrade {?who} to a release that supports the newer {?d}."
+verification = "Re-run the dependency check and the tests with the same interpreter"
+
+[[rule]]
 id = "P10"
 phase = "plan"
 description = "Removed API: adapt the code or pin the version that still provides it."
 when = [
   ["?i", "remedy", "replace_removed"], ["?i", "because", "?x"],
   ["?x", "removed_from", "?d"], ["?x", "removed_in_version", "?v"], ["?x", "replacement", "?r"],
-  ["?d", "installed_version", "?iv"],
+  ["?d", "installed_version", "?iv"], ["not", "?d", "required_spec", "?_"],
+  ["not", "?i", "used_by_library", "?_"],
 ]
 [rule.action]
 id = "update-{?x}"
@@ -540,6 +668,28 @@ explanation = "The project module {?m} loaded, but it defines no {?x}. Correct t
 verification = "Re-run test collection"
 
 # ======================================================================================
+# plan: likely causes (ranked after confirmed remedies)
+# ======================================================================================
+
+[[rule]]
+id = "P31"
+phase = "plan"
+description = "Likely API change in an installed library: check its changelog, then pin or update."
+when = [
+  ["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"], ["?i", "api", "?x"],
+  ["?d", "installed_version", "?iv"],
+]
+[rule.action]
+id = "check-api-{?x}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 2
+title = "Check whether {?d} {?iv} still provides {?x}"
+explanation = "{?x} is not available in the installed {?d} {?iv}. Libraries rename or remove names between versions, so a version difference is the most likely cause; a misspelt name is the other possibility. Check {?d}'s changelog: if the name was removed, install an older {?d} or update the code to the new name."
+verification = "Re-run the tests with the same interpreter"
+
+# ======================================================================================
 # plan: classifier suggestion (never replaces evidence-based advice)
 # ======================================================================================
 
@@ -567,7 +717,7 @@ id = "P40"
 phase = "plan"
 description = "Import failure without an identified cause."
 when = [
-  ["?i", "kind", "import_failure"], ["not", "?i", "remedy", "?_"],
+  ["?i", "kind", "import_failure"], ["not", "?i", "remedy", "?_"], ["not", "?i", "likely", "?_"],
   ["environment", "snapshot", "available"], ["project", "declarations", "available"],
 ]
 [rule.action]
@@ -696,7 +846,7 @@ verification = "Re-run the code check"
 id = "P49"
 phase = "plan"
 description = "Failed assertion in a test."
-when = [["?i", "kind", "test_assertion"], ["not", "?i", "remedy", "?_"]]
+when = [["?i", "kind", "test_assertion"], ["not", "?i", "remedy", "?_"], ["not", "?i", "likely", "?_"]]
 [rule.action]
 id = "review-test_assertion"
 kind = "manual_fix"
@@ -710,7 +860,7 @@ verification = "Re-run the related test nodes, then the full suite"
 id = "P50"
 phase = "plan"
 description = "Exception while running a test, without a specific remedy."
-when = [["?i", "kind", "test_runtime_error"], ["not", "?i", "remedy", "?_"]]
+when = [["?i", "kind", "test_runtime_error"], ["not", "?i", "remedy", "?_"], ["not", "?i", "likely", "?_"]]
 [rule.action]
 id = "review-test_runtime_error"
 kind = "manual_fix"
@@ -724,7 +874,7 @@ verification = "Re-run the related test nodes, then the full suite"
 id = "P51"
 phase = "plan"
 description = "Failure the parsers could not categorise."
-when = [["?i", "kind", "other_unknown"], ["not", "?i", "remedy", "?_"]]
+when = [["?i", "kind", "other_unknown"], ["not", "?i", "remedy", "?_"], ["not", "?i", "likely", "?_"]]
 [rule.action]
 id = "review-other_unknown"
 kind = "manual_fix"

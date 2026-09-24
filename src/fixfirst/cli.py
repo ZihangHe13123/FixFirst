@@ -9,7 +9,7 @@ import webbrowser
 from .models import now
 from .reasoning import infer_and_plan
 from .report import render, GOALS, STATES
-from .runner import TOOLS
+from .runner import DEFAULT_TIMEOUT, TOOLS
 from .service import create_session, scan, import_log, mark_fixed
 from .storage import Store
 
@@ -56,7 +56,9 @@ def parser():
         command = sub.add_parser(name, help=help_text)
         command.add_argument("session")
         if name in ("scan", "run"):
-            command.add_argument("--timeout", type=float, default=30)
+            command.add_argument(
+                "--timeout", type=float, default=DEFAULT_TIMEOUT, help="seconds per check (default 600)"
+            )
         if name == "scan":
             command.add_argument("--checks", nargs="+", choices=TOOLS)
             command.add_argument(

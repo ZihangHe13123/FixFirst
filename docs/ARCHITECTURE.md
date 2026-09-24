@@ -19,7 +19,7 @@ page describes the code as of v0.4. `models.py` holds the shared Pydantic record
             │                        (knowledge/domain.toml, every entry cites a source)
             ├──── classification.py  decision-tree suggestion (hypothesis) per issue
             ▼
- engine.py + knowledge/rules.toml    forward chaining: derive → diagnose → fallback → plan
+ engine.py + knowledge/rules.toml    forward chaining: derive → diagnose → heuristic → fallback → plan
             │
             ▼
  reasoning.py                        actions (rule remedies + verification re-runs),
@@ -35,7 +35,7 @@ page describes the code as of v0.4. `models.py` holds the shared Pydantic record
 ## One troubleshooting round
 
 1. **Collect.** `runner.collect` runs one allowlisted check with the selected interpreter.
-   Arguments go straight to the subprocess (no shell); each check has a 30 s timeout and a
+   Arguments go straight to the subprocess (no shell); each check has a 10-minute timeout and a
    1 MB output cap; process groups are killed on timeout. The environment snapshot and `pip
    check` run in a temporary directory so that a project file such as `random.py` cannot
    shadow the standard library during the check. Output is redacted (credentials, URL
@@ -60,8 +60,11 @@ page describes the code as of v0.4. `models.py` holds the shared Pydantic record
    ≥ 0.6 becomes a *hypothesis* fact.
 6. **Reason.** `engine.run` applies the rule base phase by phase to a fixpoint:
    - `derive`: goal relevance (`affects`, `blocks`) and helper facts;
-   - `diagnose`: root causes from evidence + knowledge (rules D01–D43);
-   - `fallback`: the tree's suggestion, only when no diagnosis rule matched (F01);
+   - `diagnose`: root causes from evidence + knowledge (rules D01–D43), including pip check
+     conflicts linked to missing names (D06);
+   - `heuristic`: likely causes from general experience when no rule is certain, worded as
+     unconfirmed (H01, H02);
+   - `fallback`: the tree's suggestion, only when neither matched (F01);
    - `plan`: actions (P01–P51), merged by action id across issues.
    Negation is stratified: a rule may only negate predicates concluded in an earlier phase,
    which `engine.validate` checks when the rule base loads.
@@ -69,8 +72,10 @@ page describes the code as of v0.4. `models.py` holds the shared Pydantic record
    blocks), strength of support (knowledge-backed 3, evidence 2, generic 1, hypothesis or
    awaiting verification 0), kind (gather evidence → fix → verify) and cost.
 8. **Verify.** After the user changes the project, the next check updates only issues it
-   covers. Imported logs, partial runs, skipped/xfail tests, deleted tests, relaxed
-   declarations or a different interpreter never close an issue.
+   covers. A complete pip check or Ruff run closes the findings it no longer reports; a
+   complete test run closes earlier collection errors. Imported logs, partial runs,
+   skipped/xfail tests, deleted tests, relaxed declarations or a different interpreter never
+   close an issue.
 
 ## Rule base
 

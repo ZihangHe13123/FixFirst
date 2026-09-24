@@ -10,6 +10,7 @@ import json
 from pathlib import PurePosixPath
 import re
 
+from packaging.requirements import InvalidRequirement, Requirement
 from packaging.utils import canonicalize_name
 
 from .models import Fact, Issue, Run, Session
@@ -24,6 +25,9 @@ OBJECT_ATTR = re.compile(r"'(\w+)' object has no attribute '(\w+)'")
 KWARG = re.compile(r"(?:([\w.]+)\(\) )?got an unexpected keyword argument '(\w+)'")
 POSITIONAL = re.compile(r"([\w.]+)\(\) (?:takes|missing) \d+ (?:positional|required)")
 MISSING_FILE = re.compile(r"No such file or directory: '([^']+)'")
+PIP_CONFLICT = re.compile(
+    r"^(?P<who>\S+) (?P<version>\S+) has requirement (?P<requirement>.+), but you have \S+ \S+?\.?$"
+)
 EXPLICIT_CONFIG = re.compile(
     r"(?:Missing (?:required )?(?:configuration|environment variable|config)|"
     r"(?:configuration|environment variable) (?:missing|not set))[:\s]+['\"]?([A-Z][A-Z0-9_]+)",
@@ -111,8 +115,8 @@ def classify_path(path: str, project_root: str, environment: dict) -> str:
         relative = path[len(root) + 1 :]
     elif path.startswith("<"):
         return "stdlib" if path.startswith("<frozen") else "unknown"
-    elif not path.startswith("/") and not windows:
-        relative = path
+    elif not path.startswith(("/", "../")) and not windows:
+        relative = path  # pytest prints project files relative to the rootdir
     if relative is not None:
         name = PurePosixPath(relative).name
         parts = PurePosixPath(relative).parts
@@ -153,6 +157,17 @@ def executed_lines(traceback: str) -> list[str]:
     return executed
 
 
+def output_context(session: Session, event) -> str:
+    """For events parsed from plain output, the lines leading up to the error line."""
+    run = next((r for r in session.runs if r.run_id == event.run_id), None)
+    for ref in event.evidence_refs:
+        _, stream, line = (ref.split(":") + ["", ""])[:3]
+        if run and stream in ("stdout", "stderr") and line.isdigit():
+            lines = getattr(run, stream).splitlines()
+            return "\n".join(lines[max(0, int(line) - 40) : int(line)])
+    return event.message
+
+
 def records_for(session: Session, issue: Issue) -> list[dict]:
     """Probe records cited by the issue's events (failure longrepr and exception details)."""
     runs = {r.run_id: r for r in session.runs}
@@ -175,7 +190,7 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
     failure_record = next((r for r in records if r.get("type") == "failure"), {})
     traceback = str(failure_record.get("message") or "")
     if not traceback:
-        traceback = "\n".join(e.message for e in events)
+        traceback = "\n".join(output_context(session, e) for e in events)
     exception = str(exception_record.get("exception_type") or "")
     message = str(exception_record.get("exception_message") or "")
     if exception in ("", "CollectError"):
@@ -199,6 +214,13 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
         last = frames[-1]
     raised_in = classify_path(last, session.project_root, environment)
     kinds = [classify_path(f, session.project_root, environment) for f in frames]
+    # The installed library whose code raised (for example jinja2 importing a removed name).
+    library = ""
+    for path, kind in zip(frames, kinds):
+        if kind == "third_party":
+            inside = re.split(r"(?:site|dist)-packages[\\/]", path.replace("\\", "/"), maxsplit=1)
+            if len(inside) == 2:
+                library = re.split(r"[/.]", inside[1], maxsplit=1)[0]
     # The last frame in the user's own code is where they should look.
     root = session.project_root.replace("\\", "/").rstrip("/") + "/"
     where = ""
@@ -214,6 +236,7 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
         "stage": issue.stage,
         "raised_in": raised_in,
         "where": where,
+        "library": library,
         "third_party_frame_ratio": round(kinds.count("third_party") / len(kinds), 3) if kinds else 0.0,
         "missing_module": None,
         "modules": [],
@@ -463,6 +486,13 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
             facts.append(observed(subject, "missing_file", "file:" + path, refs))
         for signal in evidence["signals"]:
             facts.append(observed(subject, "signal", signal, refs))
+        if evidence["library"]:
+            names = environment.get("import_distributions", {}).get(evidence["library"]) or [
+                evidence["library"]
+            ]
+            facts.append(
+                observed(subject, "raised_by_library", "dist:" + canonicalize_name(names[0]), refs)
+            )
         details[subject] = evidence
     contexts = {}
     for module in sorted(modules):
@@ -482,6 +512,22 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
                 facts.append(observed(subject, "similar_local", path, project_ref))
             for source in context["declared"]:
                 facts.append(observed(subject, "declared_in", source, project_ref))
+    # pip check: "flask 1.1.4 has requirement Jinja2<3.0,>=2.10.1, but you have jinja2 3.1.6."
+    for issue in issues:
+        if issue.tool != "pip_check" or issue.kind != "dependency_conflict":
+            continue
+        for event in (e for e in session.events if e.event_id in issue.event_ids):
+            found = PIP_CONFLICT.match(event.message.strip())
+            if not found:
+                continue
+            try:
+                requirement = Requirement(found["requirement"])
+            except InvalidRequirement:
+                continue
+            dist = "dist:" + canonicalize_name(requirement.name)
+            refs = event.evidence_refs
+            facts.append(observed(dist, "required_spec", str(requirement.specifier), refs))
+            facts.append(observed(dist, "required_by", f"{found['who']} {found['version']}", refs))
     for index, row in enumerate(project.get("declarations", [])):
         if row.get("group") == "required" and not row.get("constraint"):
             facts.append(

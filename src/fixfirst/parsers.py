@@ -246,6 +246,13 @@ def parse(run: Run) -> list[Event]:
                             stream=stream,
                         )
                     )
+        # pip lists every broken requirement it finds. When each line was understood, the run
+        # is a complete account: a conflict it no longer reports is gone.
+        listed = [line for line in run.stdout.splitlines() if line.strip()]
+        understood = [r for r in results if r.evidence_refs[0].split(":")[1] == "stdout"]
+        run.coverage_complete = bool(
+            results and run.exit_code == 1 and len(understood) == len(listed)
+        )
         return results or [
             event(run, text[:1000] or "Dependency check result unknown", stage="tool", kind="other_unknown")
         ]
@@ -364,19 +371,27 @@ def parse(run: Run) -> list[Event]:
                 ]
         else:
             # Text imports retain context but cannot prove collection coverage.
+            # An executed run without probe records never reached collection (for example a
+            # conftest that fails to import), so whatever failed blocks every test.
+            stage = (
+                "collect"
+                if run.source == "executed"
+                or re.search(r"while loading conftest|ERROR collecting|while importing test module", text)
+                else "unknown"
+            )
             result = []
             location = ""
             for stream in ("stdout", "stderr"):
                 for line, value in enumerate(getattr(run, stream).splitlines(), 1):
                     context = re.search(
-                        r"(?:ERROR collecting|ERROR|FAILED)\s+([^\s]+\.py[^\s]*)", value
+                        r"(?:ERROR collecting|ERROR|FAILED)\s+([^\s]+\.py[^\s]*)"
+                        r"|while loading conftest '([^']+)'",
+                        value,
                     )
                     if context:
-                        location = context.group(1)
+                        location = context.group(1) or context.group(2)
                     if IMPORT.search(value) or CONFIG.search(value) or EXCEPTION.search(value):
-                        result.append(
-                            exception_event(run, value, location, "unknown", line, stream)
-                        )
+                        result.append(exception_event(run, value, location, stage, line, stream))
             if result:
                 return result
         descriptions = {

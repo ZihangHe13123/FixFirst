@@ -52,6 +52,7 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
       <div class="tags">
         {% if loop.first %}<span class="tag first">Start here</span>{% endif %}
         {% if step.suspected %}<span class="tag maybe">Possible cause · not confirmed</span>{% elif step.cause %}<span class="tag cause">{{ step.cause }}</span>{% endif %}
+        {% if step.possible %}<span class="tag maybe" title="The decision tree's guess from similar cases; no rule confirmed it">Likely: {{ step.possible }} · not confirmed</span>{% endif %}
       </div>
       <h3>{{ step.title }}</h3>
       {% if step.where %}<div class="where">{% for place in step.where[:4] %}<code>{{ place }}</code>{% endfor %}{% if step.where|length > 4 %}<span class="muted small">and {{ step.where|length - 4 }} more</span>{% endif %}</div>{% endif %}
@@ -73,6 +74,12 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
 {% if view.other %}
 <details class="fixed other"><summary>Other findings that do not block this goal ({{ view.other|length }})</summary>
 <ul>{% for step in view.other %}<li><b>{{ step.title }}</b>{% if step.where %} <span class="muted small">· {{ step.where[:3]|join(', ') }}</span>{% endif %}<br><span class="small">{{ step.explanation }}</span></li>{% endfor %}</ul></details>
+{% endif %}
+
+{% if view.pending %}
+<details class="fixed other"><summary>Waiting to be re-checked ({{ view.pending|length }})</summary>
+<p class="small muted">The latest check stopped before it reached these, usually because an earlier error blocked it. They are re-checked automatically once the steps above are fixed.</p>
+<ul>{% for title in view.pending %}<li>{{ title }}</li>{% endfor %}</ul></details>
 {% endif %}
 
 {% if view.fixed %}

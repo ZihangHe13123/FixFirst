@@ -90,7 +90,7 @@ class Issue(Record):
     category: str = "other_unknown"
     # Root cause: from a diagnosis rule (evidence + knowledge) or, failing that, the model.
     diagnosis: str | None = None
-    diagnosis_source: Literal["rule", "model"] | None = None
+    diagnosis_source: Literal["rule", "heuristic", "model"] | None = None
     diagnosis_rule: str | None = None
     prediction: str | None = None
     prediction_confidence: float | None = None

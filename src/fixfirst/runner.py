@@ -14,6 +14,8 @@ import time
 from .models import Run, Session
 
 MAX_OUTPUT = 1_000_000
+# Real test suites can take minutes; a check that runs longer is stopped and reported.
+DEFAULT_TIMEOUT = 600
 DEFAULT_CHECKS = ("environment", "pip_check", "pytest", "ruff", "project")
 TOOLS = (*DEFAULT_CHECKS, "pytest_run")
 
@@ -254,7 +256,7 @@ def validate_targets(session: Session, targets: list[str]):
             raise ValueError("Only nodes observed in this project with the current interpreter can be re-run")
 
 
-def collect(session: Session, tool: str, timeout: float = 30, targets=None) -> Run:
+def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targets=None) -> Run:
     if tool not in TOOLS:
         raise ValueError("Unsupported check")
     targets = list(targets or [])

@@ -83,6 +83,8 @@ def test_start_checks_the_project_and_shows_the_next_step(server, tmp_path):
     (project / "test_app.py").write_text("def test_app():\n    assert 1 == 1\n")
     assert api(server, f"/api/sessions/{session}/scan", {})[0] == 200
     page = request(server, "GET", f"/sessions/{session}")[1]
-    assert "All tests pass" in page and "Fixed and verified (1)" in page
+    # The failing test is fixed, and Ruff's finding about `1 == 2` no longer appears in a
+    # complete Ruff run, so both are verified (Ruff now reports `1 == 1` instead).
+    assert "All tests pass" in page and "Fixed and verified (2)" in page
     status, error = api(server, f"/api/sessions/{session}/run", {"action_id": "nope"})
     assert status == 400 and "not a runnable check" in error["error"]

@@ -44,8 +44,12 @@ def build_view(session: Session) -> dict:
     for action in session.actions:
         if action.kind == "rerun":
             continue  # "Check again" covers every verification re-run
-        related = [issues[i] for i in action.issue_ids if i in issues and issues[i].status != "resolved"]
-        if action.kind == "manual_fix" and not related:
+        # Issues the latest run could not reach are re-checked later, not worked on now.
+        related = [
+            issues[i] for i in action.issue_ids
+            if i in issues and issues[i].status in ("open", "awaiting_verification")
+        ]
+        if action.issue_ids and not related:
             continue
         where, errors, rules = [], [], []
         for issue in related:
@@ -67,13 +71,22 @@ def build_view(session: Session) -> dict:
                 if cited and cited not in sources:
                     sources.append(cited)
         suspected = action.action_id.startswith("consider-")
+        # A heuristic (not a rule) produced this cause: say "likely", not certain.
+        hedged = not suspected and any(
+            i.diagnosis_source == "heuristic" and i.diagnosis == action.cause for i in related
+        )
         (steps if action.goal_impact > 0 else other).append(
             {
                 "id": action.action_id,
+                "issue_ids": [i.issue_id for i in related],
+                "possible": cause_name(action.cause) if hedged else None,
                 "title": action.title,
                 "explanation": action.explanation,
                 "confirm": action.verification,
-                "cause": cause_name(action.cause or next((i.diagnosis for i in related if i.diagnosis), None)),
+                # Only a rule's conclusion is shown as the cause; guesses are marked as such.
+                "cause": None if hedged else cause_name(action.cause or next(
+                    (i.diagnosis for i in related if i.diagnosis and i.diagnosis_source == "rule"), None
+                )),
                 "suspected": suspected,
                 "gather": action.kind == "inspect" and not suspected,
                 "where": where,
@@ -82,14 +95,19 @@ def build_view(session: Session) -> dict:
                 "sources": sources,
             }
         )
+    steps, other = _fold_suggestions(steps), _fold_suggestions(other)
     fixed = [
         {"title": i.title, "cause": cause_name(i.diagnosis), "note": i.note}
         for i in session.issues
         if i.status == "resolved"
     ]
+    pending = [i.title for i in session.issues if i.status in ("not_observed", "unknown")]
     # Only problems that stand between the user and the chosen goal count in the headline.
     blocking = {f.subject for f in session.facts if f.predicate == "affects" and f.value == session.goal}
-    open_issues = [i for i in session.issues if i.status != "resolved" and i.issue_id in blocking]
+    open_issues = [
+        i for i in session.issues
+        if i.status in ("open", "awaiting_verification") and i.issue_id in blocking
+    ]
     return {
         "project": session.name or Path(session.project_root).name,
         "project_root": session.project_root,
@@ -100,9 +118,25 @@ def build_view(session: Session) -> dict:
         "steps": steps,
         "other": other,
         "fixed": fixed,
+        "pending": pending,
         "checked": bool(session.runs),
         "last_checked": session.runs[-1].started_at if session.runs else None,
     }
+
+
+def _fold_suggestions(steps: list[dict]) -> list[dict]:
+    """Show a classifier suggestion as a hint on the step for the same issue, not as a step."""
+    kept = []
+    for step in steps:
+        if step["suspected"]:
+            hosts = [s for s in steps if not s["suspected"] and set(step["issue_ids"]) <= set(s["issue_ids"])]
+            if hosts:
+                for host in hosts:
+                    if host["cause"] != step["cause"]:
+                        host["possible"] = step["cause"]
+                continue
+        kept.append(step)
+    return kept
 
 
 def _relative(location: str, root: str) -> str:
@@ -132,7 +166,8 @@ def _status(session: Session, steps, open_issues) -> dict:
         if summary.get("passed"):
             detail += f": {summary['passed']} test{'s' if summary['passed'] != 1 else ''} passed"
         return {"kind": "done", "headline": GOAL_DONE[session.goal], "detail": detail + "."}
-    count = len(open_issues)
+    # Steps merge issues that share a remedy, so count what the user will actually work through.
+    count = len(steps) if steps else len(open_issues)
     fixed = sum(i.status == "resolved" for i in session.issues)
     progress = f"{fixed} fixed so far. " if fixed else ""
     if count:
@@ -142,10 +177,16 @@ def _status(session: Session, steps, open_issues) -> dict:
             "detail": progress + "Start with step 1. After changing your code, press Check "
             "again: a step only counts as fixed when a real check passes.",
         }
+    others = sum(i.status != "resolved" for i in session.issues)
     return {
         "kind": "unknown",
-        "headline": "Nothing to fix was found, but the goal is not confirmed",
-        "detail": "Press Check again to run the full check for this goal.",
+        "headline": "The goal is not confirmed yet",
+        "detail": (
+            f"None of the {others} finding{'s' if others != 1 else ''} below is known to block "
+            "this goal. Press Check again to run the full check."
+            if others
+            else "Press Check again to run the full check for this goal."
+        ),
     }
 
 

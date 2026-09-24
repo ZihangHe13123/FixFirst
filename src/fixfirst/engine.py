@@ -14,7 +14,7 @@ from packaging.version import InvalidVersion, Version
 
 from .models import Fact
 
-PHASES = ("derive", "diagnose", "fallback", "plan")
+PHASES = ("derive", "diagnose", "heuristic", "fallback", "plan")
 MAX_FACTS = 20_000
 TESTS = ("version_gte", "version_lt", "in", "not_in", "eq", "ne")
 

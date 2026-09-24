@@ -5,10 +5,11 @@ component names the root cause of a failing test:
 
   naive_v03     parser category only (what FixFirst 0.3 effectively did)
   rules_no_kg   rule base without the domain knowledge graph (ablation)
-  rules         rule base with the knowledge graph
+  rules         rule base with the knowledge graph (confirmed diagnoses only)
+  rules_heur    rules, then the heuristic phase (likely causes, rules H01/H02)
   tree          Gini decision tree on evidence features only
-  hybrid_no_kg  rules without knowledge, then the tree (ablation)
-  hybrid        rules with knowledge, then the tree (what the product does)
+  hybrid_no_kg  rules and heuristics without knowledge, then the tree (ablation)
+  hybrid        rules, heuristics, then the tree (what the product does)
 
 Two cross-validation protocols train the tree without the held-out group: leave one
 project template out (unseen project structure) and leave one scenario out (unseen fault
@@ -35,14 +36,15 @@ from .grouping import group_events
 from .models import Session
 from .reasoning import diagnose
 
-METHODS = ("naive_v03", "rules_no_kg", "rules", "tree", "hybrid_no_kg", "hybrid")
+METHODS = ("naive_v03", "rules_no_kg", "rules", "rules_heur", "tree", "hybrid_no_kg", "hybrid")
 LABELS = {
     "naive_v03": "Parser category only (v0.3 baseline)",
     "rules_no_kg": "Rules without knowledge graph",
     "rules": "Rules + knowledge graph",
+    "rules_heur": "Rules + KG + heuristics",
     "tree": "Decision tree only",
-    "hybrid_no_kg": "Rules without KG, then tree",
-    "hybrid": "Rules + KG, then tree (FixFirst)",
+    "hybrid_no_kg": "Rules + heuristics without KG, then tree",
+    "hybrid": "Rules + KG + heuristics, then tree (FixFirst)",
 }
 
 
@@ -73,7 +75,9 @@ def load_rows(dataset: Path) -> list[dict]:
                         "features": evidence["features"],
                         "rules": item["rule"],
                         "rule_id": item["rule_id"],
+                        "likely": item["likely"],
                         "rules_no_kg": without_kg[issue_id]["rule"],
+                        "likely_no_kg": without_kg[issue_id]["likely"],
                     }
                 )
     return rows
@@ -131,9 +135,10 @@ def cross_validate(rows: list[dict], key: str) -> dict:
             predictions["naive_v03"][index] = naive_diagnosis(row["kind"])
             predictions["rules_no_kg"][index] = row["rules_no_kg"]
             predictions["rules"][index] = row["rules"]
+            predictions["rules_heur"][index] = row["rules"] or row["likely"]
             predictions["tree"][index] = label
-            predictions["hybrid_no_kg"][index] = row["rules_no_kg"] or suggestion
-            predictions["hybrid"][index] = row["rules"] or suggestion
+            predictions["hybrid_no_kg"][index] = row["rules_no_kg"] or row["likely_no_kg"] or suggestion
+            predictions["hybrid"][index] = row["rules"] or row["likely"] or suggestion
     return predictions
 
 
@@ -274,7 +279,10 @@ def report(results: dict) -> str:
         "is retrained for every fold without the held-out group; the rule base and knowledge "
         "graph are fixed and were written by the project team, so their scores on scenarios "
         "the team designed are optimistic. Scenarios marked *not covered* use removed APIs, "
-        "packages or configuration patterns that the knowledge graph does not list.",
+        "packages or configuration patterns that the knowledge graph does not list. The "
+        "heuristic rules H01/H02 (a name missing from an installed library suggests a version "
+        "change) were added after testing on real projects (docs/REAL_PROJECTS.md); rows "
+        "without heuristics are kept for comparison.",
         "",
         "## Unseen project structure (leave one template out)",
         "",
@@ -322,13 +330,13 @@ def report(results: dict) -> str:
         "",
         "## Hardest scenarios for the hybrid (leave one scenario out)",
         "",
-        "| Scenario | Cause | KG covers | Naive | Rules | Tree | Hybrid |",
-        "|---|---|---|---|---|---|---|",
+        "| Scenario | Cause | KG covers | Naive | Rules | Rules + heuristics | Tree | Hybrid |",
+        "|---|---|---|---|---|---|---|---|",
     ]
     for e in weakest:
         lines.append(
             f"| {e['scenario']} | {e['label']} | {'yes' if e['knowledge_covered'] else 'no'} | "
-            f"{e['naive_v03']:.2f} | {e['rules']:.2f} | {e['tree']:.2f} | {e['hybrid']:.2f} |"
+            f"{e['naive_v03']:.2f} | {e['rules']:.2f} | {e['rules_heur']:.2f} | {e['tree']:.2f} | {e['hybrid']:.2f} |"
         )
     importances = sorted(results["final_tree"]["feature_importances"].items(), key=lambda x: -x[1])
     lines += [

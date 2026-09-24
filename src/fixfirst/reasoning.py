@@ -79,7 +79,12 @@ def base_facts(session: Session, active, knowledge=True) -> tuple[list[Fact], di
     mentioned = {f.value for f in evidence_facts if f.predicate in ("module", "api", "attribute", "kwarg")}
     known = domain.facts_for(mentioned) if knowledge else []
     facts += known
-    distributions = {"dist:python"} | {f.value for f in known if f.predicate == "removed_from"}
+    distributions = (
+        {"dist:python"}
+        | {f.value for f in known if f.predicate == "removed_from"}
+        | {f.subject for f in evidence_facts if f.predicate == "required_spec"}
+        | {f.value for f in evidence_facts if f.predicate == "provided_by"}
+    )
     facts += environment_facts(session, distributions)
     return facts, details
 
@@ -92,15 +97,19 @@ def diagnose(session: Session, knowledge=True) -> dict:
         if i.status != "resolved" and i.environment_id in (current, "unknown")
     ]
     facts, details = base_facts(session, active, knowledge)
-    base = engine.run(rule_base(), facts, phases=("derive", "diagnose"))
+    base = engine.run(rule_base(), facts, phases=("derive", "diagnose", "heuristic"))
     result = {}
     for issue_id, evidence in details.items():
         found = next(
             (f for f in base.facts if f.subject == issue_id and f.predicate == "diagnosis"), None
         )
+        likely = next(
+            (f for f in base.facts if f.subject == issue_id and f.predicate == "likely"), None
+        )
         result[issue_id] = {
             "rule": found.value if found else None,
             "rule_id": found.rule_id if found else None,
+            "likely": likely.value if likely else None,
             "evidence": evidence,
         }
     return result
@@ -136,9 +145,15 @@ def summarise_diagnoses(session: Session, active, facts: list[Fact]):
         suspected = next(
             (f for f in facts if f.subject == issue.issue_id and f.predicate == "suspected"), None
         )
+        likely = next(
+            (f for f in facts if f.subject == issue.issue_id and f.predicate == "likely"), None
+        )
         if derived:
             issue.diagnosis, issue.diagnosis_source = derived.value, "rule"
             issue.diagnosis_rule = derived.rule_id
+        elif likely:
+            issue.diagnosis, issue.diagnosis_source = likely.value, "heuristic"
+            issue.diagnosis_rule = likely.rule_id
         elif suspected:
             issue.diagnosis, issue.diagnosis_source = suspected.value, "model"
             issue.diagnosis_rule = suspected.rule_id
