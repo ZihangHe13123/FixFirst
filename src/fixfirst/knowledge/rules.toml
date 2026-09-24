@@ -682,7 +682,7 @@ phase = "plan"
 description = "Likely API change in an installed library: check its changelog, then pin or update."
 when = [
   ["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"], ["?i", "api", "?x"],
-  ["?d", "installed_version", "?iv"],
+  ["?d", "installed_version", "?iv"], ["?d", "previous_series_below", "?b"],
 ]
 [rule.action]
 id = "check-api-{?x}"
@@ -690,8 +690,9 @@ kind = "manual_fix"
 cause = "version_incompatibility"
 issue = "?i"
 cost = 2
-title = "Check whether {?d} {?iv} still provides {?x}"
-explanation = "{?x} is not available in the installed {?d} {?iv}. Libraries rename or remove names between versions, so a version difference is the most likely cause; a misspelt name is the other possibility. Check {?d}'s changelog: if the name was removed, install an older {?d} or update the code to the new name."
+title = "Try an older {?d}: {?d} {?iv} no longer provides {?x}"
+explanation = "{?x} is not available in the installed {?d} {?iv}. Libraries rename or remove names between versions, so a version difference is the most likely cause; a misspelt name is the other possibility. The command tries the previous release series of {?d}; if the name is still missing, FixFirst suggests going back further. If {?d}'s changelog shows the name was renamed, updating the code is the lasting fix."
+pip_install = "{?d}<{?b}"
 verification = "Re-run the tests with the same interpreter"
 
 # ======================================================================================

@@ -70,8 +70,10 @@ def test_unlisted_removal_is_only_a_likely_cause(tmp_path):
         "H02",
     )
     step = build_view(session)["steps"][0]
-    assert step["title"].startswith("Check whether numpy") and "msort" in step["title"]
+    assert step["title"].startswith("Try an older numpy") and "msort" in step["title"]
     assert step["cause"] is None and step["possible"] == "Version incompatibility"
+    # numpy.msort was removed in 2.0, so stepping back one series is the right first try.
+    assert step["command"].endswith("-m pip install 'numpy<2'")
 
 
 def test_environment_snapshot_survives_a_project_file_that_shadows_the_stdlib(tmp_path):

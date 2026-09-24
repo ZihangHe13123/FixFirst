@@ -12,6 +12,7 @@ import re
 
 from packaging.requirements import InvalidRequirement, Requirement
 from packaging.utils import canonicalize_name
+from packaging.version import InvalidVersion, Version
 
 from .models import Fact, Issue, Run, Session
 from .runner import environment_id
@@ -557,4 +558,12 @@ def environment_facts(session: Session, distributions: set[str]) -> list[Fact]:
             version = installed.get(dist.split(":", 1)[1])
         if version:
             facts.append(observed(dist, "installed_version", version, ref))
+            try:
+                parsed = Version(version)
+            except InvalidVersion:
+                continue
+            # Upper bound for "the release series before this one": 9.1.1 -> <9, 0.4.2 -> <0.4.
+            bound = str(parsed.major) if parsed.major else f"0.{parsed.minor}"
+            if bound not in ("0", "0.0"):
+                facts.append(observed(dist, "previous_series_below", bound, ref))
     return facts
