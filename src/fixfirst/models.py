@@ -20,7 +20,9 @@ class Record(BaseModel):
     schema_version: int = 1
 
 
-Tool = Literal["environment", "project", "pip_check", "pip_install", "pytest", "pytest_run", "ruff"]
+Tool = Literal[
+    "environment", "project", "pip_check", "pip_install", "pytest", "pytest_run", "ruff", "version_search"
+]
 Goal = Literal["collect_tests", "check_style", "pass_tests"]
 GOAL_CHECKS = {"collect_tests": "pytest", "check_style": "ruff", "pass_tests": "pytest_run"}
 PROJECT_SCOPES = {

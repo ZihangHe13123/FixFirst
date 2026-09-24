@@ -1,0 +1,1850 @@
+[
+  {
+    "id": "flask-sqlalchemy",
+    "session_id": "session-d7ce87bde58c",
+    "python": "3.12.13",
+    "seconds": 1.9,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {},
+    "steps": [
+      {
+        "title": "Install flask below 2.4: 2.3.3 is the newest release that still provides flask._app_ctx_stack",
+        "cause": "Version incompatibility",
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "flask_sqlalchemy/__init__.py:14"
+        ],
+        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/flask-sqlalchemy/.venv/bin/python' -m pip install 'flask<2.4'",
+        "rules": [
+          "D09"
+        ],
+        "issues": 1
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": {
+      "offered": {
+        "title": "Find the newest flask that still provides flask._app_ctx_stack",
+        "cause": null,
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "flask_sqlalchemy/__init__.py:14"
+        ],
+        "command": null,
+        "rules": [
+          "H01"
+        ],
+        "issues": 1
+      },
+      "result": {
+        "dist": "flask",
+        "api": "flask._app_ctx_stack",
+        "installed": "3.1.3",
+        "python": "3.12.13",
+        "checked": [
+          {
+            "version": "3.0.3",
+            "result": "missing"
+          },
+          {
+            "version": "2.3.3",
+            "result": "provides"
+          }
+        ],
+        "provides": "2.3.3",
+        "below": "2.4",
+        "first_without": "3.0",
+        "status": "found"
+      }
+    },
+    "issues": [
+      {
+        "title": "ImportError: cannot import name '_app_ctx_stack' from 'flask'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D09"
+      },
+      {
+        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/flask-sqlalchemy/.venv/bin/python: No module named ",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "django-model-utils",
+    "session_id": "session-dd4000d71878",
+    "python": "3.11.15",
+    "seconds": 3.5,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {},
+    "steps": [
+      {
+        "title": "Install django below 3.3: 3.2.25 is the newest release that still provides django.utils.translation.ugettext_lazy",
+        "cause": "Version incompatibility",
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "model_utils/models.py:4"
+        ],
+        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/django-model-utils/.venv/bin/python' -m pip install 'django<3.3'",
+        "rules": [
+          "D09"
+        ],
+        "issues": 1
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check the declaration and installed version of sphinx",
+      "Check the declaration and installed version of twine",
+      "Check the declaration and installed version of tox",
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": {
+      "offered": {
+        "title": "Find the newest django that still provides django.utils.translation.ugettext_lazy",
+        "cause": null,
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "model_utils/models.py:4"
+        ],
+        "command": null,
+        "rules": [
+          "H01"
+        ],
+        "issues": 1
+      },
+      "result": {
+        "dist": "django",
+        "api": "django.utils.translation.ugettext_lazy",
+        "installed": "5.2.17",
+        "python": "3.11.15",
+        "checked": [
+          {
+            "version": "5.1.15",
+            "result": "missing"
+          },
+          {
+            "version": "5.0.14",
+            "result": "missing"
+          },
+          {
+            "version": "4.1.13",
+            "result": "missing"
+          },
+          {
+            "version": "3.0.14",
+            "result": "provides"
+          },
+          {
+            "version": "3.2.25",
+            "result": "provides"
+          },
+          {
+            "version": "4.0.10",
+            "result": "missing"
+          }
+        ],
+        "provides": "3.2.25",
+        "below": "3.3",
+        "first_without": "4.0",
+        "status": "found"
+      }
+    },
+    "issues": [
+      {
+        "title": "ImportError: cannot import name 'ugettext_lazy' from 'django.utils.translation'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D09"
+      },
+      {
+        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/django-model-utils/.venv/bin/python: No module name",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "requirements.txt:4 declares sphinx; installed: not in snapshot. Required dependency missing",
+        "tool": "project",
+        "kind": "dependency_conflict",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "requirements.txt:3 declares tox; installed: not in snapshot. Required dependency missing",
+        "tool": "project",
+        "kind": "dependency_conflict",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "requirements.txt:5 declares twine; installed: not in snapshot. Required dependency missing",
+        "tool": "project",
+        "kind": "dependency_conflict",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "requests",
+    "session_id": "session-cbb96e8eaf6c",
+    "python": "3.12.13",
+    "seconds": 0.3,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {},
+    "steps": [
+      {
+        "title": "Upgrade pytest: pytest 3.10.1 still uses imp, which Python 3.12 removed",
+        "cause": "Version incompatibility",
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [],
+        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/requests/.venv/bin/python' -m pip install 'pytest>3.10.1'",
+        "rules": [
+          "D01"
+        ],
+        "issues": 1
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "ModuleNotFoundError: No module named 'imp'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D01"
+      },
+      {
+        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/requests/.venv/bin/python: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "seaborn",
+    "session_id": "session-d6189ca1c2d4",
+    "python": "3.12.13",
+    "seconds": 0.5,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "xfail_or_xpass": 0,
+      "selected": 0,
+      "incomplete": 0
+    },
+    "steps": [
+      {
+        "title": "Replace distutils: removed in Python 3.12",
+        "cause": "Version incompatibility",
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "seaborn/rcmod.py:4"
+        ],
+        "command": null,
+        "rules": [
+          "D01"
+        ],
+        "issues": 1
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "ConftestImportFailure: ModuleNotFoundError: No module named 'distutils' (from /Users/zhihang/Project/课程Projec/test-projects/generalisation/seaborn/seaborn/conft",
+        "tool": "pytest_run",
+        "kind": "other_unknown",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D01"
+      },
+      {
+        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/seaborn/.venv/bin/python: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "imbalanced-learn",
+    "session_id": "session-f6d1c0e940b3",
+    "python": "3.12.13",
+    "seconds": 42.0,
+    "headline": "3 problems to fix",
+    "status": "todo",
+    "tests": {
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "xfail_or_xpass": 0,
+      "selected": 348,
+      "incomplete": 348
+    },
+    "steps": [
+      {
+        "title": "Install scikit-learn below 1.5: 1.4.2 is the newest release that still provides sklearn.utils._print_elapsed_time",
+        "cause": "Version incompatibility",
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "imblearn/pipeline.py:17"
+        ],
+        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/imbalanced-learn/.venv/bin/python' -m pip install 'scikit-learn<1.5'",
+        "rules": [
+          "D09"
+        ],
+        "issues": 13
+      },
+      {
+        "title": "Find the newest scikit-learn that still provides sklearn.utils._testing.assert_no_warnings",
+        "cause": null,
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "imblearn/metrics/tests/test_classification.py:20"
+        ],
+        "command": null,
+        "rules": [
+          "H01"
+        ],
+        "issues": 1
+      },
+      {
+        "title": "Find the newest scikit-learn that still provides sklearn.utils.estimator_checks._maybe_mark_xfail",
+        "cause": null,
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "imblearn/utils/estimator_checks.py:28"
+        ],
+        "command": null,
+        "rules": [
+          "H01"
+        ],
+        "issues": 1
+      },
+      {
+        "title": "Try an older scikit-learn: scikit-learn 1.9.1 no longer provides sklearn.utils._testing.assert_no_warnings",
+        "cause": null,
+        "possible": "Version incompatibility",
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "imblearn/metrics/tests/test_classification.py:20"
+        ],
+        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/imbalanced-learn/.venv/bin/python' -m pip install 'scikit-learn<1'",
+        "rules": [
+          "H01"
+        ],
+        "issues": 1
+      },
+      {
+        "title": "Try an older scikit-learn: scikit-learn 1.9.1 no longer provides sklearn.utils.estimator_checks._maybe_mark_xfail",
+        "cause": null,
+        "possible": "Version incompatibility",
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "imblearn/utils/estimator_checks.py:28"
+        ],
+        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/imbalanced-learn/.venv/bin/python' -m pip install 'scikit-learn<1'",
+        "rules": [
+          "H01"
+        ],
+        "issues": 1
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": {
+      "offered": {
+        "title": "Find the newest scikit-learn that still provides sklearn.utils._print_elapsed_time",
+        "cause": null,
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "imblearn/pipeline.py:17"
+        ],
+        "command": null,
+        "rules": [
+          "H01"
+        ],
+        "issues": 13
+      },
+      "result": {
+        "dist": "scikit-learn",
+        "api": "sklearn.utils._print_elapsed_time",
+        "installed": "1.9.1",
+        "python": "3.12.13",
+        "checked": [
+          {
+            "version": "1.8.0",
+            "result": "missing"
+          },
+          {
+            "version": "1.7.2",
+            "result": "missing"
+          },
+          {
+            "version": "1.5.2",
+            "result": "missing"
+          },
+          {
+            "version": "1.3.2",
+            "result": "provides"
+          },
+          {
+            "version": "1.4.2",
+            "result": "provides"
+          }
+        ],
+        "provides": "1.4.2",
+        "below": "1.5",
+        "first_without": "1.5",
+        "status": "found"
+      }
+    },
+    "issues": [
+      {
+        "title": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D09"
+      },
+      {
+        "title": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D09"
+      },
+      {
+        "title": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D09"
+      },
+      {
+        "title": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D09"
+      },
+      {
+        "title": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D09"
+      },
+      {
+        "title": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D09"
+      },
+      {
+        "title": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D09"
+      },
+      {
+        "title": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D09"
+      },
+      {
+        "title": "ImportError: cannot import name 'assert_no_warnings' from 'sklearn.utils._testing'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H01"
+      },
+      {
+        "title": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D09"
+      },
+      {
+        "title": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D09"
+      },
+      {
+        "title": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D09"
+      },
+      {
+        "title": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D09"
+      },
+      {
+        "title": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D09"
+      },
+      {
+        "title": "ImportError: cannot import name '_maybe_mark_xfail' from 'sklearn.utils.estimator_checks'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H01"
+      },
+      {
+        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/imbalanced-learn/.venv/bin/python: No module named ",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "typer",
+    "session_id": "session-d9b7566eb005",
+    "python": "3.10.20",
+    "seconds": 0.6,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "xfail_or_xpass": 0,
+      "selected": 475,
+      "incomplete": 475
+    },
+    "steps": [
+      {
+        "title": "Install the declared dependency that provides shellingham",
+        "cause": "Missing third-party dependency",
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "tests/test_completion/test_completion_install.py:6"
+        ],
+        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/typer/.venv/bin/python' -m pip install shellingham",
+        "rules": [
+          "D20"
+        ],
+        "issues": 1
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "ModuleNotFoundError: No module named 'shellingham'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "missing_dependency",
+        "source": "rule",
+        "rule": "D20"
+      },
+      {
+        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/typer/.venv/bin/python: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "aiostream",
+    "session_id": "session-b9ec627f95cd",
+    "python": "3.12.13",
+    "seconds": 250.1,
+    "headline": "3 problems to fix",
+    "status": "todo",
+    "tests": {
+      "passed": 28,
+      "failed": 67,
+      "skipped": 0,
+      "xfail_or_xpass": 0,
+      "selected": 95,
+      "incomplete": 0
+    },
+    "steps": [
+      {
+        "title": "Replace event_loop: removed in pytest-asyncio 1.0",
+        "cause": "Version incompatibility",
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "tests/test_task_group.py:34"
+        ],
+        "command": null,
+        "rules": [
+          "D25"
+        ],
+        "issues": 1
+      },
+      {
+        "title": "Compare the failed assertion's expected and actual values",
+        "cause": "Defect in project code or tests",
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "tests/test_advanced.py:17",
+          "tests/test_advanced.py:66",
+          "tests/test_advanced.py:94"
+        ],
+        "command": null,
+        "rules": [
+          "D40"
+        ],
+        "issues": 23
+      },
+      {
+        "title": "Inspect the exception raised while running the test",
+        "cause": null,
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "aiostream/test_utils.py:28"
+        ],
+        "command": null,
+        "rules": [],
+        "issues": 43
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "Assertion failed · tests/test_advanced.py::test_concatmap[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_advanced.py::test_concatmap[await]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_advanced.py::test_flatmap[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_advanced.py::test_flatmap[await]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_advanced.py::test_switchmap[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_advanced.py::test_switchmap[await]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_aiter.py::test_simple_aitercontext",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_combine.py::test_map[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_combine.py::test_map[await]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_combine.py::test_merge[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_combine.py::test_merge[await]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_combine.py::test_ziplatest[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_combine.py::test_ziplatest[await]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_create.py::test_range[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_create.py::test_range[await]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_time.py::test_timeout[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_time.py::test_timeout[await]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_transform.py::test_starmap[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_transform.py::test_starmap[await]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_create.py::test_async_iterable[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_create.py::test_async_iterable[await]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_create.py::test_never[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_create.py::test_never[await]",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "AttributeError · tests/test_aggregate.py::test_aggregate[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "AttributeError · tests/test_aggregate.py::test_aggregate[await]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "AttributeError · tests/test_aggregate.py::test_list[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "AttributeError · tests/test_aggregate.py::test_list[await]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "AttributeError · tests/test_aggregate.py::test_reduce[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "AttributeError · tests/test_aggregate.py::test_reduce[await]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "AttributeError · tests/test_combine.py::test_chain[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "AttributeError · tests/test_combine.py::test_chain[await]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "AttributeError · tests/test_combine.py::test_zip[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "AttributeError · tests/test_combine.py::test_zip[await]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "AttributeError · tests/test_core.py::test_streamcontext",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "AttributeError · tests/test_misc.py::test_action[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "AttributeError · tests/test_misc.py::test_action[await]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "AttributeError · tests/test_misc.py::test_print[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "AttributeError · tests/test_misc.py::test_print[await]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "AttributeError · tests/test_select.py::test_dropwhile[aiter]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "AttributeError · tests/test_select.py::test_dropwhile[await]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "jmespath",
+    "session_id": "session-e1e37d21c459",
+    "python": "3.12.13",
+    "seconds": 0.5,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "xfail_or_xpass": 0,
+      "selected": 72,
+      "incomplete": 72
+    },
+    "steps": [
+      {
+        "title": "Stop using nose: its last release, 1.3.7, uses imp, which Python 3.12 removed",
+        "cause": "Version incompatibility",
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "extra/test_hypothesis.py:9"
+        ],
+        "command": null,
+        "rules": [
+          "D01"
+        ],
+        "issues": 1
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check the declaration and installed version of wheel",
+      "Check the declaration and installed version of tox",
+      "Check the declaration and installed version of py",
+      "Check the declaration and installed version of hypothesis",
+      "Check the declaration and installed version of nose",
+      "Check the declaration and installed version of coverage",
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "ModuleNotFoundError: No module named 'imp'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "rule",
+        "rule": "D01"
+      },
+      {
+        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/jmespath/.venv/bin/python: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "requirements.txt:6 declares coverage==3.7.1; python_version != \"3.8\"; installed: not in snapshot. Required dependency missing",
+        "tool": "project",
+        "kind": "dependency_conflict",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "requirements.txt:7 declares hypothesis==3.1.0; python_version != \"3.8\"; installed: 6.168.1. Installed version does not satisfy the declaration",
+        "tool": "project",
+        "kind": "dependency_conflict",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "requirements.txt:1 declares nose==1.2.1; installed: 1.3.7. Installed version does not satisfy the declaration",
+        "tool": "project",
+        "kind": "dependency_conflict",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "requirements.txt:2 declares py==1.4.12; installed: not in snapshot. Required dependency missing",
+        "tool": "project",
+        "kind": "dependency_conflict",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "requirements.txt:3 declares tox==1.4.2; installed: not in snapshot. Required dependency missing",
+        "tool": "project",
+        "kind": "dependency_conflict",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "requirements.txt:4 declares wheel==0.24.0; installed: not in snapshot. Required dependency missing",
+        "tool": "project",
+        "kind": "dependency_conflict",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "parsel",
+    "session_id": "session-61336632bca6",
+    "python": "3.12.13",
+    "seconds": 0.4,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "xfail_or_xpass": 0,
+      "selected": 0,
+      "incomplete": 0
+    },
+    "steps": [
+      {
+        "title": "Install the declared dependency that provides six",
+        "cause": "Missing third-party dependency",
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "tests/test_selector.py:4",
+          "parsel/selector.py:7"
+        ],
+        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/parsel/.venv/bin/python' -m pip install six",
+        "rules": [
+          "D20"
+        ],
+        "issues": 2
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check the declaration and installed version of six",
+      "Check the declaration and installed version of cssselect",
+      "Check the declaration and installed version of w3lib",
+      "Check the declaration and installed version of lxml",
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "ModuleNotFoundError: No module named 'six'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "missing_dependency",
+        "source": "rule",
+        "rule": "D20"
+      },
+      {
+        "title": "ConftestImportFailure: ModuleNotFoundError: No module named 'six' (from /Users/zhihang/Project/课程Projec/test-projects/generalisation/parsel/docs/conftest.py)",
+        "tool": "pytest_run",
+        "kind": "other_unknown",
+        "diagnosis": "missing_dependency",
+        "source": "rule",
+        "rule": "D20"
+      },
+      {
+        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/parsel/.venv/bin/python: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "setup.py install_requires declares cssselect>=0.9; installed: not in snapshot. Required dependency missing",
+        "tool": "project",
+        "kind": "dependency_conflict",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "setup.py install_requires declares lxml; installed: not in snapshot. Required dependency missing",
+        "tool": "project",
+        "kind": "dependency_conflict",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "setup.py install_requires declares six>=1.6.0; installed: not in snapshot. Required dependency missing",
+        "tool": "project",
+        "kind": "dependency_conflict",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "setup.py install_requires declares w3lib>=1.19.0; installed: not in snapshot. Required dependency missing",
+        "tool": "project",
+        "kind": "dependency_conflict",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "records",
+    "session_id": "session-d0a8821fed4c",
+    "python": "3.12.13",
+    "seconds": 1.0,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {
+      "passed": 23,
+      "failed": 16,
+      "skipped": 0,
+      "xfail_or_xpass": 0,
+      "selected": 39,
+      "incomplete": 0
+    },
+    "steps": [
+      {
+        "title": "Try sqlalchemy below 1.3: the project was tested with sqlalchemy 1.2.6, this environment has 2.0.54",
+        "cause": null,
+        "possible": "Version incompatibility",
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "records.py:365"
+        ],
+        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/records/.venv/bin/python' -m pip install 'sqlalchemy<1.3'",
+        "rules": [
+          "H06"
+        ],
+        "issues": 16
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "ResourceClosedError · tests/test_69.py::test_issue69[sqlite_file]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H06"
+      },
+      {
+        "title": "ResourceClosedError · tests/test_69.py::test_issue69[sqlite_memory]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H06"
+      },
+      {
+        "title": "ResourceClosedError · tests/test_105.py::test_issue105[sqlite_file]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H06"
+      },
+      {
+        "title": "ResourceClosedError · tests/test_105.py::test_issue105[sqlite_memory]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H06"
+      },
+      {
+        "title": "ResourceClosedError · tests/test_transactions.py::test_failing_transaction[sqlite_file]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H06"
+      },
+      {
+        "title": "ResourceClosedError · tests/test_transactions.py::test_failing_transaction[sqlite_memory]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H06"
+      },
+      {
+        "title": "ResourceClosedError · tests/test_transactions.py::test_failing_transaction_self_managed[sqlite_file]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H06"
+      },
+      {
+        "title": "ResourceClosedError · tests/test_transactions.py::test_failing_transaction_self_managed[sqlite_memory]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H06"
+      },
+      {
+        "title": "ResourceClosedError · tests/test_transactions.py::test_passing_transaction[sqlite_file]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H06"
+      },
+      {
+        "title": "ResourceClosedError · tests/test_transactions.py::test_passing_transaction[sqlite_memory]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H06"
+      },
+      {
+        "title": "ResourceClosedError · tests/test_transactions.py::test_passing_transaction_self_managed[sqlite_file]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H06"
+      },
+      {
+        "title": "ResourceClosedError · tests/test_transactions.py::test_passing_transaction_self_managed[sqlite_memory]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H06"
+      },
+      {
+        "title": "ResourceClosedError · tests/test_transactions.py::test_plain_conn[sqlite_file]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H06"
+      },
+      {
+        "title": "ResourceClosedError · tests/test_transactions.py::test_plain_conn[sqlite_memory]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H06"
+      },
+      {
+        "title": "ResourceClosedError · tests/test_transactions.py::test_plain_db[sqlite_file]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H06"
+      },
+      {
+        "title": "ResourceClosedError · tests/test_transactions.py::test_plain_db[sqlite_memory]",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "version_incompatibility",
+        "source": "heuristic",
+        "rule": "H06"
+      },
+      {
+        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/records/.venv/bin/python: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "cachetools",
+    "session_id": "session-08470a265363",
+    "python": "3.9.6",
+    "seconds": 0.6,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "xfail_or_xpass": 0,
+      "selected": 0,
+      "incomplete": 0
+    },
+    "steps": [
+      {
+        "title": "Make the project module cachetools importable",
+        "cause": "Local module or path problem",
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "tests/test_cache.py:3"
+        ],
+        "command": null,
+        "rules": [
+          "D13"
+        ],
+        "issues": 1
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "ModuleNotFoundError: No module named 'cachetools'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "local_module",
+        "source": "rule",
+        "rule": "D13"
+      },
+      {
+        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/cachetools/.venv/bin/python: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "more-itertools",
+    "session_id": "session-a3e4de5c6e31",
+    "python": "3.14.6",
+    "seconds": 4.0,
+    "headline": "All tests pass",
+    "status": "done",
+    "tests": {
+      "passed": 670,
+      "failed": 0,
+      "skipped": 1,
+      "xfail_or_xpass": 0,
+      "selected": 671,
+      "incomplete": 0
+    },
+    "steps": [],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "Could not start pip in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/more-itertools/.venv/bin/python: No module named pip",
+        "tool": "pip_check",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/more-itertools/.venv/bin/python: No module named ru",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "attrs",
+    "session_id": "session-dd55c12ed717",
+    "python": "3.13.14",
+    "seconds": 12.1,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {
+      "passed": 1394,
+      "failed": 33,
+      "skipped": 4,
+      "xfail_or_xpass": 1,
+      "selected": 0,
+      "incomplete": 0
+    },
+    "steps": [
+      {
+        "title": "Inspect the exception raised while running the test",
+        "cause": null,
+        "possible": "Defect in project code or tests",
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "tests/test_mypy.yml::testAttrsAnnotated",
+          "tests/test_mypy.yml::testAttrsAutoAttribs",
+          "tests/test_mypy.yml::testAttrsCmpTrue"
+        ],
+        "command": null,
+        "rules": [
+          "F01"
+        ],
+        "issues": 33
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsAnnotated",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsAutoAttribs",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsCmpTrue",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsCmpWithSubclasses",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsComplexSuperclass",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsDataClass",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsEqFalse",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsForwardReference",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsForwardReferenceInClass",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsGeneric",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsGenericClassmethod",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsGenericInheritance",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsImporting",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsInheritance",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsInheritanceNoAnnotation",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsInheritanceOverride",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsKwOnlyAttrib",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsMultiAssign",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsNestedInClasses",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsNextGenDetect",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsOrderFalse",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsOtherMethods",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsOtherOverloads",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsPython2Annotations",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsRepeatedName",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsSeriousNames",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsTypeAlias",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsTypeEquals",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsUnionForward",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsUsingConverter",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testAttrsUsingConverterAndSubclass",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testFields",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "TypecheckAssertionError · tests/test_mypy.yml::testThreeArgConverterTypes",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/attrs/.venv/bin/python: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  }
+]

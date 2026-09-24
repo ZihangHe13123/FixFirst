@@ -17,7 +17,8 @@ MAX_OUTPUT = 1_000_000
 # Real test suites can take minutes; a check that runs longer is stopped and reported.
 DEFAULT_TIMEOUT = 600
 DEFAULT_CHECKS = ("environment", "pip_check", "pytest", "ruff", "project")
-TOOLS = (*DEFAULT_CHECKS, "pytest_run")
+TOOLS = (*DEFAULT_CHECKS, "pytest_run", "version_search")
+SEARCH_TARGET = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$")
 
 
 def redact(text: str) -> str:
@@ -264,6 +265,36 @@ print(json.dumps({'executable': sys.executable, 'prefix': sys.prefix,
 """
 
 
+def search_releases(session: Session, targets: list[str]) -> Run:
+    """Try older releases of a library in a throwaway environment (versions.py)."""
+    from packaging.utils import canonicalize_name
+
+    from .versions import search
+
+    if len(targets) != 2 or not all(isinstance(t, str) and SEARCH_TARGET.match(t) for t in targets):
+        raise ValueError("A release search needs a distribution name and a dotted name")
+    dist, api = targets
+    python = session.target_python
+    run = Run(tool="version_search", argv=["version-search", dist, api], cwd=session.project_root,
+              scope=f"versions:{canonicalize_name(dist)}:{api}", environment_id=environment_id(python))
+    run.targets = targets
+    environment = session.environment if session.environment.get("_environment_id") == run.environment_id else {}
+    installed = next(
+        (p.get("version") for p in environment.get("packages", [])
+         if canonicalize_name(p.get("name", "")) == canonicalize_name(dist)),
+        None,
+    )
+    start = time.monotonic()
+    if not installed or not environment.get("python_version"):
+        run.status, run.stderr = "launch_failed", "Take an environment snapshot first (press Check again)."
+        return run
+    result = search(python, environment["python_version"], environment.get("markers", {}), dist, installed, api)
+    run.stdout = json.dumps(result)
+    run.exit_code = 0
+    run.duration_s = round(time.monotonic() - start, 3)
+    return run
+
+
 def validate_targets(session: Session, targets: list[str]):
     if not targets or len(targets) > 200 or len(targets) != len(set(targets)):
         raise ValueError("Choose 1-200 distinct, previously observed test nodes")
@@ -299,6 +330,8 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
     if tool not in TOOLS:
         raise ValueError("Unsupported check")
     targets = list(targets or [])
+    if tool == "version_search":
+        return search_releases(session, targets)
     if targets:
         if tool != "pytest_run":
             raise ValueError("Only pytest_run accepts test nodes")

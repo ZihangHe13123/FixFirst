@@ -74,7 +74,7 @@ page describes the code as of v0.4. `models.py` holds the shared Pydantic record
    - `fallback`: the tree's suggestion, only when neither matched (F01);
    - `plan`: actions (P01–P51), merged by action id across issues.
 
-   91 rules in total: 9 derive, 33 diagnose, 4 heuristic, 1 fallback, 44 plan.
+   99 rules in total: 10 derive, 34 diagnose, 6 heuristic, 1 fallback, 48 plan.
 
    The web page shows steps for issues concluded `affects_running = no` as optional and
    leaves them out of the problem count.
@@ -88,6 +88,24 @@ page describes the code as of v0.4. `models.py` holds the shared Pydantic record
    complete test run closes earlier collection errors. Imported logs, partial runs,
    skipped/xfail tests, deleted tests, relaxed declarations or a different interpreter never
    close an issue.
+
+## Finding a release that works
+
+When a name is missing from an installed library, a rule can only say that an older release
+probably has it. `versions.py` finds out which, when the user asks ("Find it"): it reads the
+release list from PyPI, keeps the newest release of each series with a prebuilt wheel for the
+target Python and machine, and checks them in a throwaway environment built from the same
+interpreter (step back 1, 2, 4, 8 series, then bisect; at most 12 trials). Only wheels are
+installed, and the user's environment is not changed. The result is a Run like any other
+check; its facts (`provided_until_release`, `install_below`, or `not_in_older_releases`) let
+rule D09 confirm the cause and P57 name the bound, or H05 point at a misspelt name.
+
+Lock files (`Pipfile.lock`, `poetry.lock`, `uv.lock`) are read as the versions the project
+was tested with; heuristic H06 uses them when a failure is raised inside a library that is now
+a major version newer.
+
+A round of checks only changes the status of issues from the tools it ran: running the release
+search or an environment snapshot leaves test failures as they were.
 
 ## Rule base
 

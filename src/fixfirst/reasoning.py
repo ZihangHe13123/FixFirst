@@ -223,6 +223,7 @@ def rule_actions(session: Session, base: engine.FactBase, by_id) -> list[Action]
                 command=[session.target_python, "-m", "pip", "install",
                          engine.render(template["pip_install"], bindings)]
                 if template.get("pip_install") else [],
+                targets=[engine.render(t, bindings) for t in template.get("targets", [])],
             )
         )
     return actions

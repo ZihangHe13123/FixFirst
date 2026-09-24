@@ -107,7 +107,9 @@ def build_view(session: Session) -> dict:
                     (i.diagnosis for i in related if i.diagnosis and i.diagnosis_source == "rule"), None
                 )),
                 "suspected": suspected,
-                "gather": action.kind == "inspect" and not suspected,
+                "gather": action.kind == "inspect" and not suspected and action.check != "version_search",
+                # A release search downloads packages, so it runs only when the user asks.
+                "search": action.check == "version_search",
                 "where": where,
                 "errors": list(dict.fromkeys(errors)),
                 "rules": list(dict.fromkeys(rules)),
@@ -249,8 +251,9 @@ def _status(session: Session, steps, open_issues, optional_issues=()) -> dict:
         if summary.get("passed"):
             detail += f": {summary['passed']} test{'s' if summary['passed'] != 1 else ''} passed"
         return {"kind": "done", "headline": GOAL_DONE[session.goal], "detail": detail + "."}
-    # Steps merge issues that share a remedy, so count what the user will actually work through.
-    count = len(steps) if steps else len(open_issues)
+    # Count problems, not steps: steps merge issues that share a remedy, and one problem can
+    # have a step that gathers evidence as well as one that fixes it.
+    count = len({tuple(sorted(s["issue_ids"])) for s in steps}) if steps else len(open_issues)
     fixed = sum(i.status == "resolved" for i in session.issues)
     progress = f"{fixed} fixed so far. " if fixed else ""
     waiting = len(optional_issues)

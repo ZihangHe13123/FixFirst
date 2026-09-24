@@ -142,3 +142,45 @@ Without the two knowledge entries added after round 1 it would be 7 correct.
   have offline (Django needs two rounds; scikit-learn's previous series does not install on
   Python 3.12), and behaviour changes that raise no removed-name error (SQLAlchemy 2.0 results,
   mypy's changed messages) still look like code defects.
+
+## Round 3: trying releases and reading lock files (not held out)
+
+Two additions target the partial and generic results of round 2, both general:
+
+- **Release search** (`versions.py`, rules D09, P57–P59). When a name is missing from an
+  installed library, the first step now offers to *find* the newest release that still has
+  it, instead of guessing one release series back. On "Find it", FixFirst reads the release
+  list from PyPI, keeps the newest release of each series that has a prebuilt wheel for the
+  target Python and machine, and checks them in a throwaway environment built from the same
+  interpreter: stepping back 1, 2, 4, 8 series, then bisecting. Only wheels are installed (no
+  build scripts run) and the user's environment is never changed. It runs only when asked,
+  because it downloads packages. If no older release has the name, FixFirst says the name is
+  probably misspelt instead (H05). The search is a bounded search over an ordered space: at
+  most 12 trials, each a real install and import.
+- **Tested versions** (rule H06, P61). `Pipfile.lock`, `poetry.lock` and `uv.lock` record
+  versions the project worked with. When a failure is raised inside a library that is now a
+  major version newer than the locked one, FixFirst suggests returning to the locked release
+  series (hedged: a likely cause, not a confirmed one).
+
+Checking FixFirst's suggestion for records showed that the original label was wrong
+(SQLAlchemy < 2 still fails; the change came in 1.4). The corrected label is in LABELS.md;
+round 1 and 2 scores for records are unaffected. Round 3 ran with `--search`, following a
+first "Find it" step as a user would. Raw results: examples/real-world/results-round3.json.
+
+| Project | First step (after "Find it" where offered) | Round 2 → 3 |
+|---|---|---|
+| flask-sqlalchemy | Install flask below 2.4: 2.3.3 is the newest release that still provides flask._app_ctx_stack (2 trials, 2 s) | Correct (hedged) → **Correct** |
+| django-model-utils | Install django below 3.3: 3.2.25 is the newest release that still provides django.utils.translation.ugettext_lazy (6 trials, 4 s) | Partial → **Correct** |
+| imbalanced-learn | Install scikit-learn below 1.5: 1.4.2 is the newest release that still provides sklearn.utils._print_elapsed_time (5 trials, 42 s) | Partial → **Correct** |
+| records | Try sqlalchemy below 1.3: the project was tested with sqlalchemy 1.2.6 (Pipfile.lock), this environment has 2.0.54 | Generic → **Correct** (hedged) |
+| attrs | Inspect the exception raised while running the test | Generic → Generic |
+| other 8 | unchanged from round 2 | Correct |
+
+**Round 3: 12 correct (11 confirmed, 1 hedged), 0 partial, 1 generic, 0 wrong.** Checked by
+hand: `scikit-learn<1.5` installs 1.4.2 on Python 3.12, which has both missing names;
+`sqlalchemy<1.3` installs 1.2.19 and 33 of records' tests pass (the rest fail with SQLite
+locking errors, a later layer).
+
+The same caveat as round 2 applies, more strongly: these projects shaped the fixes, so the
+held-out number is still round 1's. Two of the corrections to labels were found while checking
+FixFirst's output; both are documented with the evidence that settled them.

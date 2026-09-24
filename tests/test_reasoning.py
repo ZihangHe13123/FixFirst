@@ -70,11 +70,13 @@ def test_unlisted_removal_is_only_a_likely_cause(tmp_path):
         "heuristic",
         "H02",
     )
-    step = build_view(session)["steps"][0]
-    assert step["title"].startswith("Try an older numpy") and "msort" in step["title"]
-    assert step["cause"] is None and step["possible"] == "Version incompatibility"
+    search, guess = build_view(session)["steps"][:2]
+    # First offer to find the exact release by trying them; the series guess is the fallback.
+    assert search["title"] == "Find the newest numpy that still provides numpy.msort" and search["search"]
+    assert guess["title"].startswith("Try an older numpy") and "msort" in guess["title"]
+    assert guess["cause"] is None and guess["possible"] == "Version incompatibility"
     # numpy.msort was removed in 2.0, so stepping back one series is the right first try.
-    assert step["command"].endswith("-m pip install 'numpy<2'")
+    assert guess["command"].endswith("-m pip install 'numpy<2'")
 
 
 def test_environment_snapshot_survives_a_project_file_that_shadows_the_stdlib(tmp_path):
@@ -445,3 +447,26 @@ def test_a_fixture_removed_by_a_plugin_release_is_a_version_problem():
     base = engine.run(rule_base(), facts)
     assert ("issue-1", "diagnosis", "version_incompatibility") in base.keys
     assert ("issue-1", "remedy", "share_fixture") not in base.keys
+
+
+def test_a_failure_inside_a_library_newer_than_the_lock_file_suggests_the_tested_series():
+    from fixfirst import engine
+    from fixfirst.models import Fact
+
+    def fact(s, p, v):
+        return Fact(fact_id=f"{s}:{p}:{v}", subject=s, predicate=p, value=v)
+
+    facts = [
+        fact("issue-1", "raised_by_library", "dist:sqlalchemy"),
+        fact("dist:sqlalchemy", "installed_version", "2.0.54"),
+        fact("dist:sqlalchemy", "tested_version", "1.2.6"),
+        fact("dist:sqlalchemy", "tested_in", "Pipfile.lock"),
+        fact("dist:sqlalchemy", "tested_series_below", "1.3"),
+    ]
+    base = engine.run(rule_base(), facts)
+    assert ("issue-1", "likely", "version_incompatibility") in base.keys
+    action = next(p for p in engine.propose(rule_base(), base) if p.action_id == "tested-sqlalchemy")
+    assert engine.render(action.template["pip_install"], action.bindings) == "sqlalchemy<1.3"
+    # A patch or minor difference alone is not suspicious.
+    facts[1] = fact("dist:sqlalchemy", "installed_version", "1.4.54")
+    assert ("issue-1", "likely", "version_incompatibility") not in engine.run(rule_base(), facts).keys

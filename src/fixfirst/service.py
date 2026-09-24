@@ -174,7 +174,9 @@ def ingest(session: Session, runs: list[Run]):
                 if old.tool == "project"
                 else "Passed for real in the same environment and check scope"
             )
-        elif old.status != "resolved":
+        elif old.status != "resolved" and old.tool in updated_tools:
+            # Only a check of the same tool can fail to observe an issue; a round that ran
+            # other checks (a release search, an environment snapshot) leaves it as it was.
             copy.status = "not_observed" if old.status != "awaiting_verification" else old.status
             copy.note = "Not covered by this round, or the check did not complete; earlier evidence is kept"
             if old.tool in updated_tools and not matching:
@@ -205,9 +207,10 @@ def scan(session, checks=None, timeout=DEFAULT_TIMEOUT, targets=None):
             for c in DEFAULT_CHECKS
         ]
     if targets:
-        if list(checks) != ["pytest_run"]:
+        if list(checks) not in (["pytest_run"], ["version_search"]):
             raise ValueError("--nodes must be used on its own with --checks pytest_run")
-        validate_targets(session, targets)
+        if checks == ["pytest_run"]:
+            validate_targets(session, targets)
     if len(checks) != len(set(checks)):
         raise ValueError("The same check cannot appear twice in one batch")
     runs = []

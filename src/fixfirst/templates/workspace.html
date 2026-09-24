@@ -69,6 +69,7 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
       {% if step.command %}<div class="cmd"><code>{{ step.command }}</code><button type="button" class="copy" data-copy="{{ step.command }}">Copy</button></div>
       <p class="muted small">Run it in a terminal. It uses this project's own Python, so the package goes where FixFirst checks. Then press <b>Check again</b>.<br>pip may print a red <code>ERROR</code> listing other version conflicts. If its last line says <i>Successfully installed</i>, the step worked: the conflicts it lists are the next steps, and FixFirst takes them one at a time.</p>{% endif %}
       {% if step.gather %}<p class="muted small">Press <b>Check again</b> and FixFirst collects this for you.</p>{% endif %}
+      {% if step.search %}<p><button type="button" class="search" data-action="{{ step.id }}">Find it</button> <span class="muted small">Needs internet; your environment is not changed.</span></p>{% endif %}
       <details><summary>Details</summary>
         {% if step.errors %}<h4>Error</h4>{% for error in step.errors[:3] %}<pre>{{ error }}</pre>{% endfor %}{% endif %}
         {% if step.warnings %}<h4>Warning the test recorded</h4>{% for warning in step.warnings[:3] %}<pre>{{ warning }}</pre>{% endfor %}{% endif %}
@@ -126,6 +127,9 @@ document.getElementById('check').onclick=async()=>{
   busy('Checking your project…','Running the environment, dependency and test checks. Large test suites take longer.');
   try{await post(`/api/sessions/${SESSION}/scan`,{});location.reload()}catch(err){showError(err.message)}};
 document.querySelectorAll('.copy').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent='Copied'}catch{b.textContent='Select and copy'}setTimeout(()=>b.textContent='Copy',2000)});
+document.querySelectorAll('.search').forEach(b=>b.onclick=async()=>{
+  busy('Trying older releases…','FixFirst installs them one by one into a temporary environment. This can take a few minutes.');
+  try{await post(`/api/sessions/${SESSION}/run`,{action_id:b.dataset.action});location.reload()}catch(err){showError(err.message)}});
 document.getElementById('goal').onchange=async e=>{
   busy('Changing the goal…','');
   try{await post(`/api/sessions/${SESSION}/goal`,{goal:e.target.value});location.reload()}catch(err){showError(err.message)}};

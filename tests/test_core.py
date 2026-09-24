@@ -67,7 +67,8 @@ def ruff_run(session, code=None):
 def test_partial_rerun_never_resolves_pytest(session):
     ingest(session, [failed_pytest(session), ruff_run(session, "E501")])
     ingest(session, [ruff_run(session)])
-    assert next(i for i in session.issues if i.tool == "pytest").status == "not_observed"
+    # A Ruff-only round says nothing about the pytest issue: it stays open, never resolved.
+    assert next(i for i in session.issues if i.tool == "pytest").status == "open"
     assert next(i for i in session.issues if i.tool == "ruff").status == "resolved"
     assert session.goal_status == "blocked"
 

@@ -664,6 +664,40 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
         facts.append(observed("project", "ruff_config", lint.get("ruff") or "none", project_ref))
         if lint.get("other"):
             facts.append(observed("project", "other_linter", lint["other"], project_ref))
+    # Versions the project was locked to, for the libraries that raised a failure.
+    raising = {f.value for f in facts if f.predicate == "raised_by_library"}
+    for index, row in enumerate(project.get("tested_versions", [])):
+        dist = "dist:" + row["name"]
+        if dist not in raising:
+            continue
+        try:
+            tested = Version(row["version"])
+        except InvalidVersion:
+            continue
+        ref = [f"{project_run.run_id}:stdout:1"]
+        facts.append(observed(dist, "tested_version", row["version"], ref))
+        facts.append(observed(dist, "tested_in", row["source"], ref))
+        # Stay in the release series the project was tested with: behaviour changes also land
+        # in minor releases (SQLAlchemy 1.4 already changed result objects).
+        facts.append(observed(dist, "tested_series_below", f"{tested.major}.{tested.minor + 1}", ref))
+    # Release searches (versions.py): which releases still provide a name.
+    searches = {}
+    for run in session.runs:
+        if run.tool == "version_search" and run.verified_pass and run.environment_id == environment_id(session.target_python):
+            try:
+                data = json.loads(run.stdout)
+            except ValueError:
+                continue
+            searches[data.get("api", "")] = (run, data)
+    for api, (run, data) in searches.items():
+        name, ref = "api:" + api, [f"{run.run_id}:stdout:1"]
+        facts.append(observed(name, "release_search", "dist:" + canonicalize_name(data["dist"]), ref))
+        if data.get("provides"):
+            facts.append(observed(name, "provided_until_release", data["provides"], ref))
+        if data.get("below"):
+            facts.append(observed(name, "install_below", data["below"], ref))
+        if data.get("status") == "not_found":
+            facts.append(observed(name, "not_in_older_releases", str(len(data.get("checked", []))), ref))
     for index, row in enumerate(project.get("declarations", [])):
         if not row.get("constraint"):
             facts.append(

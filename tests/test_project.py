@@ -131,3 +131,17 @@ def test_setup_py_and_flit_declarations_are_read_without_running_them(tmp_path):
         ("click", "pyproject.toml [tool.flit.metadata.requires]", "required"),
         ("shellingham", "pyproject.toml [tool.flit.metadata.requires-extra.test]", "test"),
     }
+
+
+def test_lock_files_record_the_versions_a_project_was_tested_with(tmp_path):
+    from fixfirst.project import tested_versions
+
+    (tmp_path / "Pipfile.lock").write_text(
+        '{"default": {"SQLAlchemy": {"version": "==1.2.6"}}, "develop": {"pytest": {"version": "==3.5.0"}}}'
+    )
+    (tmp_path / "poetry.lock").write_text('[[package]]\nname = "Tablib"\nversion = "0.12.1"\n')
+    assert tested_versions(tmp_path) == [
+        {"name": "sqlalchemy", "version": "1.2.6", "source": "Pipfile.lock"},
+        {"name": "pytest", "version": "3.5.0", "source": "Pipfile.lock"},
+        {"name": "tablib", "version": "0.12.1", "source": "poetry.lock"},
+    ]

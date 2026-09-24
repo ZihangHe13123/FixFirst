@@ -16,7 +16,7 @@ from .models import Fact
 
 PHASES = ("derive", "diagnose", "heuristic", "fallback", "plan")
 MAX_FACTS = 20_000
-TESTS = ("version_gte", "version_lt", "in", "not_in", "eq", "ne")
+TESTS = ("version_gte", "version_lt", "major_gt", "in", "not_in", "eq", "ne")
 
 
 def is_var(term) -> bool:
@@ -146,10 +146,12 @@ def version(value):
 
 
 def check(op, left, right) -> bool:
-    if op in ("version_gte", "version_lt"):
+    if op in ("version_gte", "version_lt", "major_gt"):
         a, b = version(left), version(right)
         if a is None or b is None:
             return False
+        if op == "major_gt":
+            return a.major > b.major
         return a >= b if op == "version_gte" else a < b
     options = {item.strip() for item in right.split(",")}
     return {

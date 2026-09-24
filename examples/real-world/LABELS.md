@@ -57,3 +57,14 @@ FixFirst). With the environment's `bin` folder on `PATH`, 53 of the 85 pass and 
 | Project | What plain pytest shows | Root cause | Correct first step (also acceptable) |
 |---|---|---|---|
 | attrs 25.3.0 (Py 3.13) | 85 failed in `tests/test_mypy.yml`: `mypy executable is not found` | Environment not activated: the tests run the `mypy` command, which is only on `PATH` when the environment is activated | Run the tests with the environment activated (its `bin` folder on `PATH`). Later layer: 32 tests need an older mypy. *Wrong*: code defect in attrs; installing mypy (it is installed) |
+
+**records (corrected on 24 September 2026, after rounds 1 and 2).** Checking FixFirst's
+round-3 suggestion showed that the original label's step, SQLAlchemy < 2, does not help: with
+1.4.54 the same 16 tests fail. The result behaviour changed in 1.4. With 1.3.24 or 1.2.19 (the
+lock file's series), 33 tests pass and the `ResourceClosedError` failures are gone; 12 remain
+with SQLite "database is locked" errors, a later layer. The round 1 and 2 scores for records
+(Generic) are unaffected. Corrected label:
+
+| Project | What plain pytest shows | Root cause | Correct first step (also acceptable) |
+|---|---|---|---|
+| records 0.5.3 (Py 3.12) | 2 failed, 14 errors: `ResourceClosedError` when iterating the result of `CREATE TABLE` | Version incompatibility: SQLAlchemy 1.4 changed result objects; records 0.5.3 was locked to 1.2.6 (Pipfile.lock) | Install SQLAlchemy < 1.4 (1.2 or 1.3 series). *Partial*: SQLAlchemy < 2 (1.4 still fails) |

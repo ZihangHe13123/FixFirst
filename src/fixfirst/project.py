@@ -375,6 +375,7 @@ def collect_project(session, env_id: str) -> Run:
                 )
     data["python_files"], data["defined_names"] = index_sources(Path(session.project_root))
     data["lint_config"] = lint_settings(Path(session.project_root))
+    data["tested_versions"] = tested_versions(Path(session.project_root))
     run.stdout = json.dumps(redact_data(data), ensure_ascii=False, indent=2)
     run.exit_code = 0
     run.duration_s = round(time.monotonic() - start, 3)
@@ -383,6 +384,45 @@ def collect_project(session, env_id: str) -> Run:
         "and lock files are not verified from it."
     ]
     return run
+
+
+def tested_versions(root: Path) -> list[dict]:
+    """Versions the project was last locked to (Pipfile.lock, poetry.lock, uv.lock).
+
+    A lock file records a set of versions the project worked with; when a failure is raised
+    inside a library that is now a major version newer, that difference is a likely cause.
+    """
+    found = []
+
+    def text(name):
+        path = root / name
+        try:
+            return path.read_text("utf-8", errors="replace") if path.is_file() and path.stat().st_size < 4_000_000 else None
+        except OSError:
+            return None
+
+    pipfile = text("Pipfile.lock")
+    if pipfile:
+        try:
+            data = json.loads(pipfile)
+            for section in ("default", "develop"):
+                for name, row in (data.get(section) or {}).items():
+                    version = str((row or {}).get("version", "")).lstrip("=")
+                    if version:
+                        found.append({"name": canonicalize_name(name), "version": version, "source": "Pipfile.lock"})
+        except (ValueError, AttributeError):
+            pass
+    for name in ("poetry.lock", "uv.lock"):
+        content = text(name)
+        if not content:
+            continue
+        try:
+            for row in tomllib.loads(content).get("package", []):
+                if row.get("name") and row.get("version"):
+                    found.append({"name": canonicalize_name(row["name"]), "version": str(row["version"]), "source": name})
+        except (tomllib.TOMLDecodeError, AttributeError):
+            continue
+    return found[:5000]
 
 
 def lint_settings(root: Path) -> dict:

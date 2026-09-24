@@ -119,6 +119,30 @@ def parse(run: Run) -> list[Event]:
                     component=missing_tool.group(1),
                 )
             ]
+    if run.tool == "version_search":
+        try:
+            data = json.loads(run.stdout)
+        except ValueError:
+            data = {}
+        run.verified_pass = data.get("status") in ("found", "not_found", "partial")
+        run.coverage_complete = run.verified_pass
+        if run.verified_pass:
+            return []
+        reason = {
+            "offline": "PyPI could not be reached",
+            "no_candidates": "no older release has a wheel for this Python",
+            "not_judged": "the older releases tried could not be installed or imported here",
+        }
+        return [
+            event(
+                run,
+                f"Release search for {data.get('dist', '?')} did not finish: "
+                + reason.get(data.get("status"), "the output was not recognised"),
+                stage="tool",
+                kind="tool_failure",
+                component="version_search",
+            )
+        ]
     if run.tool == "environment":
         try:
             payload = json.loads(run.stdout)

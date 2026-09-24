@@ -76,6 +76,13 @@ when = [["?i", "owner", "?c"], ["?c", "defined_locally", "yes"]]
 then = [["?i", "owner_is_local", "yes"]]
 
 [[rule]]
+id = "G11"
+phase = "derive"
+description = "A release search found no older release of the library that provides the name."
+when = [["?i", "api", "?x"], ["?x", "not_in_older_releases", "?_"]]
+then = [["?i", "no_older_release_has", "?x"]]
+
+[[rule]]
 id = "G10"
 phase = "derive"
 description = "The failed assertion is about the warnings the test recorded, and some of them are deprecation warnings raised outside the test's own code."
@@ -157,6 +164,14 @@ when = [
   ["?d", "required_spec", "?spec"],
 ]
 then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "align_required"], ["?i", "because", "?d"]]
+
+[[rule]]
+id = "D09"
+phase = "diagnose"
+description = "Trying releases in a temporary environment showed that an older release still provides the missing name."
+source = "release search (versions.py)"
+when = [["?i", "api", "?x"], ["?x", "release_search", "?d"], ["?x", "provided_until_release", "?v"]]
+then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "use_release"], ["?i", "because", "?x"]]
 
 [[rule]]
 id = "D05"
@@ -440,7 +455,7 @@ status = "hypothesis"
 description = "A name cannot be imported from an installed third-party library. Libraries rename and remove names between versions, so a version difference is the likely cause (a misspelt name is the alternative)."
 when = [
   ["?i", "signal", "cannot_import_name"], ["?i", "module", "?m"], ["?m", "provided_by", "?d"],
-  ["not", "?m", "is_local", "?_"], ["not", "?i", "diagnosis", "?_"],
+  ["not", "?m", "is_local", "?_"], ["not", "?i", "diagnosis", "?_"], ["not", "?i", "no_older_release_has", "?_"],
 ]
 then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
 
@@ -452,9 +467,28 @@ description = "A module of an installed third-party library lacks an attribute t
 when = [
   ["?i", "exception", "AttributeError"], ["?i", "signal", "no_attribute"], ["?i", "module", "?m"],
   ["?m", "provided_by", "?d"], ["not", "?m", "is_local", "?_"], ["not", "?m", "in_stdlib", "yes"],
-  ["not", "?i", "diagnosis", "?_"],
+  ["not", "?i", "diagnosis", "?_"], ["not", "?i", "no_older_release_has", "?_"],
 ]
 then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
+
+[[rule]]
+id = "H06"
+phase = "heuristic"
+status = "hypothesis"
+description = "The failure is raised inside a library that is a major version newer than the one the project's lock file records: behaviour changed between those versions."
+when = [
+  ["?i", "raised_by_library", "?d"], ["?d", "tested_version", "?tv"], ["?d", "installed_version", "?iv"],
+  ["test", "major_gt", "?iv", "?tv"], ["not", "?i", "diagnosis", "?_"],
+]
+then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
+
+[[rule]]
+id = "H05"
+phase = "heuristic"
+status = "hypothesis"
+description = "No older release of the library provides the name either: a misspelt or never-existing name is more likely than a version change."
+when = [["?i", "no_older_release_has", "?x"], ["not", "?i", "diagnosis", "?_"]]
+then = [["?i", "likely", "code_defect"], ["?i", "likely_because", "?x"]]
 
 [[rule]]
 id = "H03"
@@ -829,6 +863,79 @@ verification = "Re-run test collection"
 # ======================================================================================
 # plan: likely causes (ranked after confirmed remedies)
 # ======================================================================================
+
+[[rule]]
+id = "P58"
+phase = "plan"
+description = "Before guessing a version bound, try releases in a temporary environment to find the newest one that still has the name."
+when = [
+  ["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"], ["?i", "api", "?x"],
+  ["?d", "installed_version", "?iv"], ["not", "?x", "release_search", "?_"],
+]
+[rule.action]
+id = "find-release-{?x}"
+kind = "inspect"
+check = "version_search"
+targets = ["{?d}", "{?x}"]
+issue = "?i"
+cost = 1
+title = "Find the newest {?d} that still provides {?x}"
+explanation = "{?d} {?iv} no longer provides {?x}. FixFirst can try older {?d} releases in a temporary environment with this Python and tell you exactly which one to install. It downloads prebuilt packages from PyPI, runs no build scripts and does not change your environment; it takes up to a few minutes."
+verification = "The search result appears as the next step"
+
+[[rule]]
+id = "P57"
+phase = "plan"
+description = "A release search found the newest release that provides the name: install below the next series."
+when = [
+  ["?i", "remedy", "use_release"], ["?i", "because", "?x"], ["?x", "release_search", "?d"],
+  ["?x", "provided_until_release", "?v"], ["?x", "install_below", "?m"],
+]
+[rule.action]
+id = "use-release-{?x}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 1
+title = "Install {?d} below {?m}: {?v} is the newest release that still provides {?x}"
+explanation = "FixFirst tried {?d} releases in a temporary environment with this Python, the newest of each release series: {?v} provides {?x}, newer series do not. Install {?d} below {?m} (the command picks {?v}), or change the code that imports it for the lasting fix."
+pip_install = "{?d}<{?m}"
+verification = "Re-run the tests with the same interpreter"
+
+[[rule]]
+id = "P59"
+phase = "plan"
+description = "No older release has the name: check the spelling and the library's documentation."
+when = [["?i", "likely", "code_defect"], ["?i", "likely_because", "?x"], ["?i", "no_older_release_has", "?x"]]
+[rule.action]
+id = "check-name-{?x}"
+kind = "manual_fix"
+cause = "code_defect"
+issue = "?i"
+cost = 2
+title = "Check the name {?x}: no older release provides it either"
+explanation = "FixFirst tried older releases in a temporary environment and none of them provides {?x}, so an older version will not help. Check the spelling and the library's documentation; the name may belong to a newer release or to another package."
+verification = "Re-run the tests with the same interpreter"
+
+[[rule]]
+id = "P61"
+phase = "plan"
+description = "Go back to the major version of the library that the project's lock file records."
+when = [
+  ["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"],
+  ["?d", "tested_version", "?tv"], ["?d", "tested_in", "?src"], ["?d", "tested_series_below", "?b"],
+  ["?d", "installed_version", "?iv"], ["test", "major_gt", "?iv", "?tv"],
+]
+[rule.action]
+id = "tested-{?d}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 1
+title = "Try {?d} below {?b}: the project was tested with {?d} {?tv}, this environment has {?iv}"
+explanation = "The failure is raised inside {?d}, and {?src} records that the project worked with {?d} {?tv}; the installed {?iv} is a newer major version, which usually changes behaviour. Install {?d} below {?b} to return to the release series the project was tested with, or update the project for the new version."
+pip_install = "{?d}<{?b}"
+verification = "Re-run the tests with the same interpreter"
 
 [[rule]]
 id = "P31"
