@@ -92,17 +92,26 @@ FEATURE_NAMES = [
 ]
 
 
+WINDOWS_ABSOLUTE = re.compile(r"^[A-Za-z]:/")
+
+
 def classify_path(path: str, project_root: str, environment: dict) -> str:
+    """Where a traceback frame lives. Accepts POSIX and Windows paths."""
     if not path:
         return "unknown"
+    path = path.replace("\\", "/")
+    root = (project_root or "").replace("\\", "/").rstrip("/")
     if "site-packages" in path or "dist-packages" in path:
         return "third_party"
+    windows = bool(WINDOWS_ABSOLUTE.match(path))
     relative = None
-    if project_root and path.startswith(project_root.rstrip("/") + "/"):
-        relative = path[len(project_root.rstrip("/")) + 1 :]
+    if root and (path.lower() if windows else path).startswith(
+        (root.lower() if windows else root) + "/"
+    ):
+        relative = path[len(root) + 1 :]
     elif path.startswith("<"):
         return "stdlib" if path.startswith("<frozen") else "unknown"
-    elif not path.startswith("/"):
+    elif not path.startswith("/") and not windows:
         relative = path
     if relative is not None:
         name = PurePosixPath(relative).name
@@ -114,8 +123,10 @@ def classify_path(path: str, project_root: str, environment: dict) -> str:
             or "tests" in parts
         )
         return "test" if test else "project"
-    stdlib = environment.get("paths", {}).get("stdlib")
-    if (stdlib and path.startswith(stdlib)) or re.search(r"/lib/python3\.\d+/", path):
+    stdlib = environment.get("paths", {}).get("stdlib", "").replace("\\", "/")
+    if (stdlib and path.lower().startswith(stdlib.lower())) or re.search(
+        r"/lib/python3\.\d+/", path
+    ):
         return "stdlib"
     return "unknown"
 

@@ -32,14 +32,16 @@ def run_scenario(tmp_path, scenario_id, template=FLAT, index=0):
         ("vi_numpy_alias", "version_incompatibility", "D02", "update-numpy.float"),
         ("vi_numpy2", "version_incompatibility", "D02", "update-numpy.nan"),
         ("cm_environ", "config_missing", "D30", "configure-shop_api_token"),
-        ("lm_shadow_library", "local_module", "D10", "rename-yaml.py"),
+        ("lm_shadow_library", "local_module", "D10", "rename-jinja2.py"),
         ("lm_renamed", "local_module", "D16", "fix-import-helper"),
         ("md_known_import", "missing_dependency", "D21", "install-requests"),
         ("cd_local_kwarg", "code_defect", "D43", "review-test_runtime_error"),
     ],
 )
 def test_rules_and_knowledge_diagnose_real_failures(tmp_path, scenario, cause, rule, action):
-    session, issue = run_scenario(tmp_path, scenario)
+    # Variant 2 of the shadowing scenario uses Jinja2, a FixFirst dependency, so the shadowed
+    # library is installed on every machine that runs these tests.
+    session, issue = run_scenario(tmp_path, scenario, index=2 if scenario == "lm_shadow_library" else 0)
     assert (issue.diagnosis, issue.diagnosis_source, issue.diagnosis_rule) == (cause, "rule", rule)
     assert session.actions[0].action_id == action
     assert session.actions[0].cause == (None if cause == "code_defect" else cause)

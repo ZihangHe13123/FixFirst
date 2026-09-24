@@ -159,7 +159,7 @@ class Project:
         text = path.read_text(encoding="utf-8")
         if marker not in text:
             raise ValueError(f"{rel} has no {marker}")
-        path.write_text(text.replace(marker, code.rstrip("\n") + "\n" + marker, 1), "utf-8")
+        path.write_text(text.replace(marker, code.rstrip("\n") + "\n" + marker, 1), encoding="utf-8")
 
     def imports(self, code):
         self.inject(self.t.service, IMPORTS, code)
@@ -220,7 +220,7 @@ def _(p):
 def _(p):
     name = p.pick(["tabulate", "simplejson", "ujson", "cachetools", "wrapt"])
     path = p.root / "requirements.txt"
-    path.write_text(path.read_text() + f"{name}>=0.1\n")
+    path.write_text(path.read_text(encoding="utf-8") + f"{name}>=0.1\n")
     p.imports(f"import {name}")
 
 
@@ -231,7 +231,7 @@ def _(p):
          ("dotenv", "python-dotenv"), ("attr", "attrs")]
     )
     path = p.root / "requirements.txt"
-    path.write_text(path.read_text() + f"{dist}>=0.1\n")
+    path.write_text(path.read_text(encoding="utf-8") + f"{dist}>=0.1\n")
     p.imports(f"import {module}")
 
 
@@ -256,7 +256,7 @@ def _(p):
 @s("lm_src_layout", "local_module", False, "Package moved under src/ without putting src on the path")
 def _(p):
     if p.t.path_dir == "src":
-        (p.root / "pytest.ini").write_text("[pytest]\ntestpaths = tests\n")
+        (p.root / "pytest.ini").write_text("[pytest]\ntestpaths = tests\n", encoding="utf-8")
         return
     (p.root / "src").mkdir()
     top = {p.t.service.split("/")[0], p.t.helper.split("/")[0]}
@@ -465,7 +465,7 @@ def _(p):
 @s("cd_syntax_error", "code_defect", False, "Syntax error in a project module")
 def _(p):
     path = p.root / p.t.service
-    path.write_text(path.read_text() + "\n\ndef broken(:\n    pass\n")
+    path.write_text(path.read_text(encoding="utf-8") + "\n\ndef broken(:\n    pass\n")
 
 
 @s("cd_wrong_arguments", "code_defect", False, "Project function called with too many arguments")
@@ -518,7 +518,9 @@ def portable(session: Session, project: Path) -> dict:
         (environment_id(session.target_python), environment_id(PORTABLE_PYTHON)),
     ]
     for private, public in replacements:
-        text = text.replace(private, public)
+        # Also match the JSON-escaped form: Windows paths contain backslashes.
+        escaped = json.dumps(private, ensure_ascii=False)[1:-1]
+        text = text.replace(escaped, json.dumps(public)[1:-1]).replace(private, public)
     data = json.loads(text)
     for run in data["runs"]:
         if run["tool"] == "environment":
@@ -608,7 +610,7 @@ def build_dataset(output: Path, python: str | None = None, templates=TEMPLATES, 
                 shared = output / "environment.json"
                 if not shared.exists():
                     write(shared, json.dumps(environment, ensure_ascii=False, indent=1))
-                elif json.loads(shared.read_text()) != environment:
+                elif json.loads(shared.read_text(encoding="utf-8")) != environment:
                     raise ValueError("The interpreter's environment changed during generation")
                 row = {
                     "case_id": case_id,

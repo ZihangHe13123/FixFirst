@@ -132,7 +132,7 @@ def main(argv=None):
 
             report = replay(Path(args.output), Path(args.assets))
             print(report)
-            complete = json.loads(report.with_name("results.json").read_text())["all_reproduced"]
+            complete = json.loads(report.with_name("results.json").read_text(encoding="utf-8"))["all_reproduced"]
             return 0 if complete else 2
         if args.command == "interactive":
             from .interactive import menu

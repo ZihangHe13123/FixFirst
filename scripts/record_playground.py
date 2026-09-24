@@ -20,7 +20,7 @@ render(session, store.root, output / "01-first-scan.html", public=True)
 
 def edit(name, old, new):
     path = project / name
-    path.write_text(path.read_text().replace(old, new))
+    path.write_text(path.read_text(encoding="utf-8").replace(old, new))
 
 
 edit("pricing.py", "from collections import Mapping", "from collections.abc import Mapping")

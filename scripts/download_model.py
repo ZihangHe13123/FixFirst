@@ -19,5 +19,5 @@ snapshot_download(
     local_dir=root,
     allow_patterns=["*.json", "*.txt", "*.safetensors", "1_Pooling/*"],
 )
-(root / "fixfirst_model_source.json").write_text(json.dumps({"repo": repo, "revision": revision}))
+(root / "fixfirst_model_source.json").write_text(json.dumps({"repo": repo, "revision": revision}), encoding="utf-8")
 print(root)

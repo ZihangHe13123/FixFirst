@@ -207,7 +207,7 @@ def markdown_table(summary: dict) -> list[str]:
 
 
 def evaluate_diagnosis(dataset: Path, output: Path) -> Path:
-    manifest = json.loads((dataset / "manifest.json").read_text())
+    manifest = json.loads((dataset / "manifest.json").read_text(encoding="utf-8"))
     rows = load_rows(dataset)
     if len({r["template"] for r in rows}) < 2:
         raise ValueError("Need at least two templates for cross-validation")
@@ -371,13 +371,13 @@ def pairwise_metrics(groups, truth):
 
 def evaluate_grouping(dataset: Path, output: Path, sbert_model=None) -> Path:
     """Message grouping on the controlled collection/execution datasets."""
-    manifest = json.loads((dataset / "manifest.json").read_text())
+    manifest = json.loads((dataset / "manifest.json").read_text(encoding="utf-8"))
     result = {"origin": manifest.get("origin"), "grouping": {}, "limitations": manifest["limitations"]}
     for method in ["exact", "tfidf"] + (["sbert"] if sbert_model else []):
         totals = {"tp": 0, "fp": 0, "fn": 0}
         for case in manifest["cases"]:
-            session = Session.model_validate_json((dataset / case["path"] / "input.json").read_text())
-            case_truth = json.loads((dataset / case["path"] / "truth.json").read_text())
+            session = Session.model_validate_json((dataset / case["path"] / "input.json").read_text(encoding="utf-8"))
+            case_truth = json.loads((dataset / case["path"] / "truth.json").read_text(encoding="utf-8"))
             groups, truth = [], {}
             for run in session.runs:
                 events = [e for e in session.events if e.run_id == run.run_id]
@@ -420,7 +420,7 @@ def evaluate(dataset: Path, output: Path, sbert_model=None) -> Path:
     if output.exists():
         raise ValueError("Evaluation directory already exists; use a new output directory")
     output.mkdir(parents=True)
-    manifest = json.loads((dataset / "manifest.json").read_text())
+    manifest = json.loads((dataset / "manifest.json").read_text(encoding="utf-8"))
     if manifest.get("origin") == "diagnosis_injection":
         return evaluate_diagnosis(dataset, output)
     return evaluate_grouping(dataset, output, sbert_model)

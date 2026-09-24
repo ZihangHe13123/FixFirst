@@ -46,7 +46,7 @@ def read_project(root: Path) -> dict:
             note(f"More than {MAX_FILES} declaration files; stopped reading")
             return None
         visited.add(resolved)
-        relative = str(path.relative_to(root))
+        relative = path.relative_to(root).as_posix()
         try:
             if not path.is_file():
                 raise OSError("not a regular file")
@@ -112,7 +112,7 @@ def read_project(root: Path) -> dict:
             value, logical = logical, ""
             if not value or value.startswith("#"):
                 continue
-            source = f"{path.relative_to(root)}:{start}"
+            source = f"{path.relative_to(root).as_posix()}:{start}"
             include = re.fullmatch(r"(-r|-c|--requirement|--constraint)(?:\s*=?\s*)(.+)", value)
             if include:
                 ref = re.split(r"\s+#", include[2], maxsplit=1)[0].strip().strip("\"'")
@@ -132,7 +132,7 @@ def read_project(root: Path) -> dict:
             value = re.sub(r"\s+--hash=\S+", "", value)
             add(value, source, group, constraint)
         if logical:
-            note(f"{path.relative_to(root)} ends with an unfinished line continuation")
+            note(f"{path.relative_to(root).as_posix()} ends with an unfinished line continuation")
 
     pyproject = root / "pyproject.toml"
     if pyproject.exists():
@@ -302,7 +302,7 @@ def collect_project(session, env_id: str) -> Run:
                 Path(session.project_root).resolve()
             ):
                 data["local_modules"].append(
-                    {"name": component, "path": str(path.relative_to(session.project_root))}
+                    {"name": component, "path": path.relative_to(session.project_root).as_posix()}
                 )
     data["python_files"], data["defined_names"] = index_sources(Path(session.project_root))
     run.stdout = json.dumps(redact_data(data), ensure_ascii=False, indent=2)
@@ -344,7 +344,7 @@ def index_sources(root: Path) -> tuple[list[str], list[str]]:
                 ):
                     stack.append(path)
             elif path.suffix == ".py" and len(files) < MAX_INDEXED_FILES:
-                files.append(str(path.relative_to(root)))
+                files.append(path.relative_to(root).as_posix())
                 try:
                     if path.stat().st_size <= MAX_BYTES:
                         names.update(DEFINITION.findall(path.read_text("utf-8", errors="replace")))

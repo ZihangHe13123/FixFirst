@@ -1,7 +1,9 @@
 import json
+import os
 from pathlib import Path
 import re
 import shlex
+import subprocess
 import sys
 
 from jinja2 import Environment, PackageLoader, select_autoescape
@@ -82,7 +84,8 @@ def html(session: Session, store_root: Path, public=False, live: dict | None = N
         if n["type"] in ("Goal", "Action", "Issue")
     ]
     counts = {state: sum(i.status == state for i in session.issues) for state in STATES}
-    command_prefix = shlex.join([sys.executable, "-m", "fixfirst", "--store", str(store_root)])
+    quote = subprocess.list2cmdline if os.name == "nt" else shlex.join
+    command_prefix = quote([sys.executable, "-m", "fixfirst", "--store", str(store_root)])
     commands = {}
     for action in session.actions:
         if action.check and not action.blocked_reasons and not public:

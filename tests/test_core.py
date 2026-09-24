@@ -343,3 +343,57 @@ def test_redact_environment_dumps_and_secret_dict_values():
     cleaned = redact(text)
     assert "alice" not in cleaned and "abc123" not in cleaned and "key = 'X'" in cleaned
     assert redact("{'api_token': 'hunter2', 'name': 'shop'}") == "{'api_token': '[credential]', 'name': 'shop'}"
+
+
+def process_alive(pid: int) -> bool:
+    import os
+    import subprocess
+
+    if os.name == "nt":
+        found = subprocess.run(
+            ["tasklist", "/FI", f"PID eq {pid}", "/NH"], capture_output=True, text=True
+        )
+        return str(pid) in found.stdout
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
+
+
+def test_timeout_stops_the_whole_process_tree(tmp_path):
+    import time
+
+    pid_file = tmp_path / "grandchild.pid"
+    script = (
+        "import subprocess, sys, time\n"
+        "child = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'])\n"
+        f"open({str(pid_file)!r}, 'w').write(str(child.pid))\n"
+        "print('started', flush=True)\n"
+        "time.sleep(60)\n"
+    )
+    began = time.monotonic()
+    run = execute([sys.executable, "-c", script], str(tmp_path), "pytest", "test", sys.executable,
+                  timeout=3)
+    assert run.status == "timeout" and "started" in run.stdout
+    assert time.monotonic() - began < 15
+    pid = int(pid_file.read_text())
+    deadline = time.monotonic() + 5
+    while process_alive(pid) and time.monotonic() < deadline:
+        time.sleep(0.1)
+    assert not process_alive(pid)
+
+
+def test_windows_paths_are_classified_like_posix_paths():
+    from fixfirst.evidence import classify_path
+
+    env = {"paths": {"stdlib": "C:\\Python312\\Lib"}}
+    root = "C:\\Users\\wang\\shop"
+    assert classify_path("C:\\Users\\wang\\shop\\app.py", root, env) == "project"
+    assert classify_path("c:\\users\\wang\\shop\\tests\\test_app.py", root, env) == "test"
+    assert classify_path("tests\\test_app.py", root, env) == "test"
+    assert classify_path("C:\\Python312\\Lib\\json\\decoder.py", root, env) == "stdlib"
+    assert classify_path("C:\\shop\\.venv\\Lib\\site-packages\\numpy\\x.py", root, env) == "third_party"
+    assert classify_path("D:\\elsewhere\\x.py", root, env) == "unknown"

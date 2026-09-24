@@ -12,17 +12,24 @@ NUS-ISS Intelligent Reasoning Systems practice module, Group 24 · version 0.4.0
 
 ## Quick start
 
-Python 3.10+ on macOS or Linux.
+Python 3.10+ on macOS, Linux or Windows 10/11.
 
 ```bash
 bash scripts/setup.sh python3.12
 .venv/bin/fixfirst serve
 ```
 
+On Windows (PowerShell, in the project folder):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\setup.ps1
+.venv\Scripts\fixfirst serve
+```
+
 The browser opens the local interface. Choose **Open the playground** to get a small project
 with four faults and four different causes; fix them in any editor (`FIXES.md` lists the
-changes) and press *Run the checks* after each step. On macOS you can also double-click
-`start-fixfirst.command`.
+changes) and press *Run the checks* after each step. You can also double-click
+`start-fixfirst.command` (macOS) or `start-fixfirst.bat` (Windows).
 
 To troubleshoot your own project, enter its directory and the interpreter it uses (for
 example `/path/to/project/.venv/bin/python`). Checks import the project's code, as its tests
@@ -103,8 +110,9 @@ fixfirst historical --assets examples/historical-regressions/assets --output wor
 
 ## Scope and safety
 
-- Supported: small Python projects on macOS/Linux; pytest, Ruff, pip; static
-  `pyproject.toml`, `requirements*.txt` and `setup.cfg` declarations. Windows is not supported.
+- Supported: small Python projects on macOS, Linux and Windows; pytest, Ruff, pip; static
+  `pyproject.toml`, `requirements*.txt` and `setup.cfg` declarations. Windows support is new
+  and is being validated on real machines.
 - Checks run with timeouts, output limits and no shell. The environment snapshot runs outside
   the project so project files cannot shadow the standard library during the check.
 - Output is redacted before it is stored: credentials in URLs, token/password assignments,
@@ -121,7 +129,7 @@ fixfirst historical --assets examples/historical-regressions/assets --output wor
 |---|---|
 | `src/fixfirst/` | the package (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)) |
 | `src/fixfirst/knowledge/` | rule base, domain knowledge, bundled decision tree |
-| `tests/` | 101 tests, most running real subprocesses |
+| `tests/` | 103 tests, most running real subprocesses |
 | `examples/` | recorded runs, datasets and experiment reports ([overview](examples/README.md)) |
 | `docs/` | architecture, course alignment, team notes |
 

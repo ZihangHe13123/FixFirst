@@ -9,6 +9,7 @@ import venv
 
 from .models import now
 from .report import render
+from .runner import venv_python, venv_site_packages
 from .service import create_session, scan, mark_fixed
 from .storage import Store
 
@@ -59,7 +60,7 @@ def inject(root: Path, variant: str):
     if variant in ("missing_module", "mixed"):
         (root / "helper.py").rename(root / "helper.py.disabled")
     if variant == "missing_config":
-        original = (root / "app.py").read_text()
+        original = (root / "app.py").read_text(encoding="utf-8")
         write(root / "app.py.original", original)
         write(
             root / "app.py",
@@ -73,7 +74,7 @@ def inject(root: Path, variant: str):
     if variant == "code_check":
         write(root / "notes.py", "def example():\n    return undefined_example_name\n")
     if variant == "dependency":
-        site = next((root.parent / "runtime" / "lib").glob("python*/site-packages"))
+        site = venv_site_packages(root.parent / "runtime")
         write(
             site / "fixfirst_fixture_dependency-1.0.dist-info" / "METADATA",
             "Metadata-Version: 2.1\nName: fixfirst-fixture-dependency\nVersion: 1.0\nRequires-Dist: packaging<0\n",
@@ -86,11 +87,11 @@ def repair_fixture(root: Path, variant: str):
         (root / "helper.py.disabled").rename(root / "helper.py")
     if variant == "missing_config":
         (root / "settings.json.disabled").rename(root / "settings.json")
-        (root / "app.py").write_text((root / "app.py.original").read_text())
+        (root / "app.py").write_text((root / "app.py.original").read_text("utf-8"), encoding="utf-8")
     if variant in ("style", "mixed", "code_check"):
         (root / "notes.py").unlink()
     if variant == "dependency":
-        site = next((root.parent / "runtime" / "lib").glob("python*/site-packages"))
+        site = venv_site_packages(root.parent / "runtime")
         metadata = site / "fixfirst_fixture_dependency-1.0.dist-info" / "METADATA"
         metadata.unlink()
         metadata.parent.rmdir()
@@ -107,7 +108,7 @@ def require_pass(session):
 
 
 def source_fingerprint(root):
-    value = "".join(p.name + p.read_text() for p in sorted(root.glob("*.py")))
+    value = "".join(p.name + p.read_text(encoding="utf-8") for p in sorted(root.glob("*.py")))
     return hashlib.sha256(value.encode()).hexdigest()
 
 
@@ -136,11 +137,11 @@ def build_dataset(output: Path, projects=5):
                 if variant == "dependency":
                     runtime = case_root / "runtime"
                     venv.EnvBuilder(with_pip=True).create(runtime)
-                    site = next((runtime / "lib").glob("python*/site-packages"))
+                    site = venv_site_packages(runtime)
                     # Read tool dependencies from the app env, but inject the fixture metadata
                     # only into this disposable environment's own site-packages.
                     write(site / "fixfirst_tools.pth", sysconfig.get_path("purelib") + "\n")
-                    python = str(runtime / "bin" / "python")
+                    python = str(venv_python(runtime))
                 session = create_session(
                     root,
                     python,
@@ -236,7 +237,7 @@ def demo(output: Path, store: Store):
     render(session, store.root, output / "01-failure.html", public=True)
     failures = [i for i in session.issues if i.tool == "pytest" and i.status == "open"]
     assert failures, "A real import failure must be observed"
-    (root / "notes.py").write_text("message = 'short example'\n")
+    (root / "notes.py").write_text("message = 'short example'\n", encoding="utf-8")
     scan(session, ["ruff"])
     assert all(
         i.status != "resolved"

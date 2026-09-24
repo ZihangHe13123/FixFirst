@@ -5,10 +5,10 @@ import json
 import os
 from pathlib import Path
 import re
-import selectors
 import signal
 import subprocess
 import tempfile
+import threading
 import time
 
 from .models import Run, Session
@@ -40,9 +40,21 @@ def redact(text: str) -> str:
     return text
 
 
+def venv_python(root: Path) -> Path:
+    """Interpreter inside a virtual environment created with the venv module."""
+    return root / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+
+
+def venv_site_packages(root: Path) -> Path:
+    if os.name == "nt":
+        return root / "Lib" / "site-packages"
+    return next((root / "lib").glob("python*/site-packages"))
+
+
 def environment_id(python: str) -> str:
     # Do not resolve symlinks: distinct venv interpreters may point at the same binary.
-    return hashlib.sha256(os.path.abspath(python).encode()).hexdigest()[:16]
+    # normcase makes C:\\Venv and c:\\venv the same interpreter on Windows (no-op elsewhere).
+    return hashlib.sha256(os.path.normcase(os.path.abspath(python)).encode()).hexdigest()[:16]
 
 
 def redact_data(value):
@@ -54,6 +66,23 @@ def redact_data(value):
     if isinstance(value, dict):
         return {key: redact_data(item) for key, item in value.items()}
     return value
+
+
+def kill_tree(proc: subprocess.Popen) -> None:
+    """Stop a check and everything it started."""
+    if os.name == "nt":
+        subprocess.run(
+            ["taskkill", "/T", "/F", "/PID", str(proc.pid)],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        if proc.poll() is None:
+            proc.kill()
+        return
+    try:
+        os.killpg(proc.pid, signal.SIGKILL)
+    except (ProcessLookupError, PermissionError):
+        pass
 
 
 def execute(
@@ -71,11 +100,27 @@ def execute(
     run = Run(tool=tool, argv=argv, cwd=cwd, scope=scope, environment_id=environment_id(python))
     start = time.monotonic()
     env = os.environ.copy()
-    env.update({"NO_COLOR": "1", "PYTHONUNBUFFERED": "1", "PIP_DISABLE_PIP_VERSION_CHECK": "1"})
+    env.update(
+        {
+            "NO_COLOR": "1",
+            "PYTHONUNBUFFERED": "1",
+            "PIP_DISABLE_PIP_VERSION_CHECK": "1",
+            # Decode child output the same way on every platform (Windows defaults to the
+            # console code page otherwise).
+            "PYTHONIOENCODING": "utf-8",
+        }
+    )
     env.pop("RUFF_OUTPUT_FILE", None)
     env.pop("PYTEST_ADDOPTS", None)
     if extra_env:
         env.update(extra_env)
+    # A new process group/session lets a timeout stop the whole tree, and keeps a Ctrl+C in
+    # the terminal from reaching the check directly.
+    group = (
+        {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP}
+        if os.name == "nt"
+        else {"start_new_session": True}
+    )
     try:
         proc = subprocess.Popen(
             argv,
@@ -84,59 +129,58 @@ def execute(
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             stdin=subprocess.DEVNULL,
-            start_new_session=True,
+            **group,
         )
     except OSError as exc:
         run.status = "launch_failed"
         run.stderr = redact(str(exc))
         return run
     buffers = {"stdout": bytearray(), "stderr": bytearray()}
-    total = 0
+    total = [0]
+    lock = threading.Lock()
+    overflow = threading.Event()
 
-    def kill():
+    def pump(name, pipe):
+        # Pipes cannot be polled with select() on Windows, so each stream gets a reader.
         try:
-            os.killpg(proc.pid, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
-
-    try:
-        with selectors.DefaultSelector() as selector:
-            for name in buffers:
-                pipe = getattr(proc, name)
-                os.set_blocking(pipe.fileno(), False)
-                selector.register(pipe, selectors.EVENT_READ, name)
-            while selector.get_map():
-                if time.monotonic() - start > timeout:
-                    run.status = "timeout"
-                    kill()
-                    break
-                for key, _ in selector.select(timeout=0.05):
-                    chunk = os.read(key.fd, 8192)
-                    if not chunk:
-                        selector.unregister(key.fileobj)
-                        continue
-                    remaining = max_output - total
-                    buffers[key.data].extend(chunk[:remaining])
-                    total += min(len(chunk), remaining)
+            while True:
+                chunk = pipe.read1(8192)
+                if not chunk:
+                    return
+                with lock:
+                    remaining = max_output - total[0]
+                    buffers[name].extend(chunk[:remaining])
+                    total[0] += min(len(chunk), remaining)
                     if len(chunk) > remaining:
-                        run.status, run.truncated = "output_limit", True
-                        kill()
-                        break
-                if run.truncated:
-                    break
-            if proc.poll() is None:
-                try:
-                    proc.wait(timeout=max(0.01, timeout - (time.monotonic() - start)))
-                except subprocess.TimeoutExpired:
-                    run.status = "timeout"
-                    kill()
+                        overflow.set()
+                        return
+        except (OSError, ValueError):
+            return
+
+    readers = [
+        threading.Thread(target=pump, args=(name, getattr(proc, name)), daemon=True)
+        for name in buffers
+    ]
+    for reader in readers:
+        reader.start()
+    try:
+        # Finished only when the process exited and both streams reached end of file.
+        while proc.poll() is None or any(r.is_alive() for r in readers):
+            if overflow.is_set():
+                run.status, run.truncated = "output_limit", True
+                break
+            if time.monotonic() - start > timeout:
+                run.status = "timeout"
+                break
+            time.sleep(0.01)
     except KeyboardInterrupt:
         run.status = "cancelled"
-        kill()
     finally:
-        if proc.poll() is None:
-            kill()
+        if run.status != "completed" or proc.poll() is None:
+            kill_tree(proc)
         proc.wait()
+        for reader in readers:
+            reader.join(timeout=2)
         proc.stdout.close()
         proc.stderr.close()
     run.exit_code = proc.returncode
@@ -267,9 +311,9 @@ def collect(session: Session, tool: str, timeout: float = 30, targets=None) -> R
         "pytest_run": "tests:selected" if targets else "tests:project",
     }[tool]
     if tool in ("pytest", "pytest_run"):
-        with tempfile.TemporaryDirectory(prefix="fixfirst-probe-") as directory:
+        with tempfile.TemporaryDirectory(prefix="fixfirst-probe-", ignore_cleanup_errors=True) as directory:
             probe = Path(directory) / "_fixfirst_probe.py"
-            probe.write_text(Path(__file__).with_name("probe.py").read_text())
+            probe.write_text(Path(__file__).with_name("probe.py").read_text(encoding="utf-8"))
             records_file = Path(directory) / "events.jsonl"
             extra = {
                 "PYTHONPATH": directory + os.pathsep + os.environ.get("PYTHONPATH", ""),
@@ -292,7 +336,7 @@ def collect(session: Session, tool: str, timeout: float = 30, targets=None) -> R
     elif tool in ("environment", "pip_check"):
         # Neither needs the project directory; running there would let a project file such
         # as random.py shadow the standard library and break the check itself.
-        with tempfile.TemporaryDirectory(prefix="fixfirst-env-") as directory:
+        with tempfile.TemporaryDirectory(prefix="fixfirst-env-", ignore_cleanup_errors=True) as directory:
             run = execute(argv, directory, tool, scope, python, timeout)
         run.cwd = cwd
     else:

@@ -7,7 +7,7 @@ import sys
 
 from .models import now
 from .report import public_data, render
-from .runner import execute
+from .runner import execute, venv_python
 from .service import create_session, scan
 from .storage import Store, atomic_write
 
@@ -106,7 +106,7 @@ def test_help_uses_default_map():
 
 def verify_assets(directory: Path) -> dict:
     directory = directory.resolve()
-    manifest = json.loads((directory / "manifest.json").read_text())
+    manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
     files = {}
     for row in manifest["assets"]:
         path = (directory / row["filename"]).resolve()
@@ -147,14 +147,14 @@ def replay(output: Path, assets: Path, cases=None) -> Path:
         test = project / "test_regression.py"
         test.write_text(case["test"], encoding="utf-8")
         (project / "requirements.txt").write_text(
-            case.get("requirement", case["package"] + ">=0") + "\n"
+            case.get("requirement", case["package"] + ">=0") + "\n", encoding="utf-8"
         )
-        (project / "pytest.ini").write_text("[pytest]\ntestpaths = .\n")
+        (project / "pytest.ini").write_text("[pytest]\ntestpaths = .\n", encoding="utf-8")
         result["test_sha256"] = hashlib.sha256(test.read_bytes()).hexdigest()
         result["reproducer_origin"] = (
             "Locally authored minimal test based on the linked upstream defect; not the entire upstream suite"
         )
-        python = str(directory / ".venv" / "bin" / "python")
+        python = str(venv_python(directory / ".venv"))
         commands = []
 
         def command(argv, label):

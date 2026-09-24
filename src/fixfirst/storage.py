@@ -44,7 +44,7 @@ class Store:
         rows = []
         for path in sorted(self.root.glob("session-*/session.json")):
             try:
-                data = json.loads(path.read_text())
+                data = json.loads(path.read_text(encoding="utf-8"))
                 rows.append({k: data[k] for k in ("session_id", "name", "goal", "goal_status")})
             except (ValueError, KeyError, OSError):
                 continue
@@ -54,15 +54,39 @@ class Store:
     def lock(self, session_id: str):
         directory = self.directory(session_id)
         directory.mkdir(parents=True, exist_ok=True)
-        # Advisory lock file remains harmless after a crash; kernel releases the lock.
-        with (directory / ".lock").open("a") as file:
-            import fcntl
-
+        # Advisory lock file remains harmless after a crash; the OS releases the lock.
+        with (directory / ".lock").open("a+") as file:
             try:
-                fcntl.flock(file, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            except BlockingIOError:
-                raise ValueError("This session is already running; wait for the current command to finish") from None
+                acquire(file)
+            except OSError:
+                raise ValueError(
+                    "This session is already running; wait for the current command to finish"
+                ) from None
             try:
                 yield
             finally:
-                fcntl.flock(file, fcntl.LOCK_UN)
+                release(file)
+
+
+def acquire(file):
+    if os.name == "nt":
+        import msvcrt
+
+        file.seek(0)
+        msvcrt.locking(file.fileno(), msvcrt.LK_NBLCK, 1)
+    else:
+        import fcntl
+
+        fcntl.flock(file, fcntl.LOCK_EX | fcntl.LOCK_NB)
+
+
+def release(file):
+    if os.name == "nt":
+        import msvcrt
+
+        file.seek(0)
+        msvcrt.locking(file.fileno(), msvcrt.LK_UNLCK, 1)
+    else:
+        import fcntl
+
+        fcntl.flock(file, fcntl.LOCK_UN)
