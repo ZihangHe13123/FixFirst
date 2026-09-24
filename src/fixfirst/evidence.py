@@ -38,6 +38,13 @@ EXCEPTION_LINE = re.compile(r"^E\s+([A-Za-z_][\w.]*(?:Error|Exception|Exit|Warni
 FRAME = re.compile(r"^(\S.*?\.py|<[^>]+>):(\d+):? (?:in \S+|\w+(?:Error|Exception))?\s*$", re.M)
 IMPORT_STATEMENT = re.compile(r"^(?:from ([\w.]+) import ([\w, ()]+)|import ([\w.]+))")
 NUMPY_REMOVED = re.compile(r"`(?:np|numpy)\.(\w+)` was removed")
+FIXTURE_MISSING = re.compile(r"fixture '(\w+)' not found")
+# pytest reports a missing fixture at the requesting test: "file /p/tests/test_x.py, line 24".
+REQUEST_LOCATION = re.compile(r"^file (.+\.py), line (\d+)$", re.M)
+DEPRECATED_NAME = re.compile(
+    r"^(Attribute )?['\"`]?([A-Za-z_][\w.]*?)(?:\(\))?['\"`]? (?:is|are|has been|was) deprecated"
+)
+DEPRECATION_CATEGORIES = ("DeprecationWarning", "PendingDeprecationWarning", "FutureWarning")
 CALL_WITH_KWARG = r"([A-Za-z_][\w.]*)\([^()]*\b{}\s*="
 CONFIG_SUFFIXES = (".json", ".yaml", ".yml", ".ini", ".toml", ".cfg", ".conf", ".env")
 CONFIG_WORDS = re.compile(
@@ -158,6 +165,68 @@ def executed_lines(traceback: str) -> list[str]:
     return executed
 
 
+def shown_path(path: str, project_root: str) -> str:
+    """A path as the user should see it: relative inside the project, package-relative
+    inside site-packages."""
+    path = path.replace("\\", "/")
+    # Checked first: a virtual environment often lives inside the project folder.
+    inside = re.split(r"(?:site|dist)-packages/", path, maxsplit=1)
+    if len(inside) == 2:
+        return inside[1]
+    root = project_root.replace("\\", "/").rstrip("/") + "/"
+    if path.startswith(root):
+        return path[len(root):]
+    stdlib = re.search(r"/lib/python3\.\d+/(.+)$", path)
+    return stdlib[1] if stdlib else path
+
+
+def describe_warning(record: dict, project_root: str, environment: dict) -> dict:
+    """Where a recorded warning came from and whether the environment, not the test, added it.
+
+    A deprecation warning counts as coming from the environment when it is raised inside an
+    installed library or the standard library, or when it names a standard-library or
+    Python-version deprecation. Deprecations a project raises for its own API do not count.
+    """
+    from .domain import deprecation
+
+    category = str(record.get("category", ""))
+    message = str(record.get("message", ""))
+    filename = str(record.get("filename", ""))
+    kind = classify_path(filename, project_root, environment)
+    match = DEPRECATED_NAME.match(message)
+    if match:
+        entity = ("attribute:" if match[1] else "api:") + match[2]
+    else:
+        entity = "warning:" + category
+    top = match[2].split(".")[0] if match and not match[1] else ""
+    if kind == "third_party":
+        package = re.split(r"[/.]", shown_path(filename, project_root), maxsplit=1)[0]
+        names = environment.get("import_distributions", {}).get(package) or [package]
+        emitted_by = "dist:" + canonicalize_name(names[0])
+    elif kind == "stdlib":
+        emitted_by = "dist:python"
+    elif kind in ("project", "test"):
+        emitted_by = "project"
+    else:
+        emitted_by = "unknown"
+    external = category in DEPRECATION_CATEGORIES and (
+        kind in ("third_party", "stdlib")
+        or bool(re.search(r"\bPython 3\.\d+", message))
+        or top in environment.get("stdlib_modules", [])
+        or deprecation(entity) is not None
+    )
+    line = record.get("lineno")
+    return {
+        "category": category,
+        "message": message[:300],
+        "origin": shown_path(filename, project_root) + (f":{line}" if line else ""),
+        "origin_kind": kind,
+        "emitted_by": emitted_by,
+        "entity": entity,
+        "external": external,
+    }
+
+
 def domain_usages(message: str) -> list[str]:
     from .domain import usages_in
 
@@ -236,6 +305,27 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
             shown = path.replace("\\", "/")
             where = f"{shown[len(root):] if shown.startswith(root) else shown}:{line}"
 
+    if not where:
+        # Fixture errors cite the requesting test instead of a traceback frame.
+        for path, line in REQUEST_LOCATION.findall(traceback):
+            if classify_path(path, session.project_root, environment) in ("project", "test"):
+                where = f"{shown_path(path, session.project_root)}:{line}"
+    warnings = [
+        describe_warning(w, session.project_root, environment)
+        for w in exception_record.get("warnings") or []
+        if isinstance(w, dict)
+    ]
+    recorders = {w.get("recorder") for w in exception_record.get("warnings") or [] if isinstance(w, dict)}
+    # The failed assertion is about the recorder (len(recwarn) == 1, not record, ...).
+    warning_assertion = exception == "AssertionError" and bool(warnings) and (
+        re.search(r"Warnings(?:Recorder|Checker)\(", text) is not None
+        or any(
+            re.search(rf"\b{re.escape(str(name))}\b", line)
+            for name in recorders if name
+            for line in executed_lines(traceback)
+        )
+    )
+
     evidence = {
         "issue_id": issue.issue_id,
         "exception": exception,
@@ -253,6 +343,9 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
         "owners": [],
         "config_keys": [],
         "missing_files": [],
+        "fixtures": FIXTURE_MISSING.findall(text)[:5],
+        "warnings": warnings,
+        "warning_assertion": warning_assertion,
         "signals": [],
     }
 
@@ -500,6 +593,11 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
             installed = {canonicalize_name(p.get("name", "")) for p in environment.get("packages", [])}
             if environment.get("_run_id") and "setuptools" not in installed:
                 facts.append(observed("dist:setuptools", "not_installed", "yes", env_ref))
+        for fixture in dict.fromkeys(evidence["fixtures"]):
+            facts.append(observed(subject, "missing_fixture", "fixture:" + fixture, refs))
+            if fixture in project.get("defined_names", []):
+                facts.append(observed("fixture:" + fixture, "defined_locally", "yes", project_ref))
+        facts += warning_facts(subject, evidence, refs)
         if evidence["library"]:
             names = environment.get("import_distributions", {}).get(evidence["library"]) or [
                 evidence["library"]
@@ -543,7 +641,7 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
             facts.append(observed(dist, "required_spec", str(requirement.specifier), refs))
             facts.append(observed(dist, "required_by", f"{found['who']} {found['version']}", refs))
     for index, row in enumerate(project.get("declarations", [])):
-        if row.get("group") == "required" and not row.get("constraint"):
+        if not row.get("constraint"):
             facts.append(
                 observed("dist:" + row["name"], "declared_in", row["source"],
                          [f"{project_run.run_id}:declaration:{index}"])
@@ -552,6 +650,35 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
         evidence = details[issue.issue_id]
         evidence["features"] = features(evidence, contexts, project)
     return facts, details
+
+
+def warning_facts(subject: str, evidence: dict, refs) -> list[Fact]:
+    """Facts about the warnings a failing test recorded.
+
+    Only the most telling extra warning is named: one raised outside the project (which the
+    project cannot change) is preferred, then a named deprecation over an unnamed one.
+    """
+    warnings = evidence["warnings"]
+    if not warnings:
+        return []
+    facts = [observed(subject, "recorded_warning_count", str(len(warnings)), refs)]
+    if evidence["warning_assertion"]:
+        facts.append(observed(subject, "asserts_on", "recorded_warnings", refs))
+    external = [w for w in warnings if w["external"]]
+    if external:
+        primary = min(
+            external,
+            key=lambda w: (w["origin_kind"] in ("project", "test"), w["entity"].startswith("warning:")),
+        )
+        name = primary["entity"]
+        facts += [
+            observed(subject, "extra_warning_count", str(len(external)), refs),
+            observed(subject, "extra_warning", name, refs),
+            observed(name, "emitted_at", primary["origin"], refs),
+            observed(name, "emitted_by", primary["emitted_by"], refs),
+            observed(name, "warning_text", primary["message"], refs),
+        ]
+    return facts
 
 
 def environment_facts(session: Session, distributions: set[str]) -> list[Fact]:

@@ -47,7 +47,8 @@ page describes the code as of v0.4. `models.py` holds the shared Pydantic record
 3. **Build evidence.** `evidence.issue_evidence` reads the pytest probe records cited by an
    issue: the real exception type (even when pytest wraps it in `CollectError`), the
    innermost frame, the source lines that actually ran, module/API/argument names, config
-   keys and missing files. `evidence.observations` adds what the environment snapshot and the
+   keys, missing files, missing fixtures, and the warnings a `recwarn` / `pytest.warns`
+   recorder held when the test failed (with where each was raised). `evidence.observations` adds what the environment snapshot and the
    project index say about each module (installed? standard library? local file? declared?
    similar local file?). Nothing is taken from the parser's category or from labels.
 4. **Add knowledge.** `domain.facts_for` looks up only the names that appear in the
@@ -60,12 +61,15 @@ page describes the code as of v0.4. `models.py` holds the shared Pydantic record
    ≥ 0.6 becomes a *hypothesis* fact.
 6. **Reason.** `engine.run` applies the rule base phase by phase to a fixpoint:
    - `derive`: goal relevance (`affects`, `blocks`) and helper facts;
-   - `diagnose`: root causes from evidence + knowledge (rules D01–D43), including pip check
-     conflicts linked to missing names (D06);
+   - `diagnose`: root causes from evidence + knowledge (rules D01–D45), including pip check
+     conflicts linked to missing names (D06), missing pytest plugins (D23) and deprecation
+     warnings that break a test's warning count (D44, D45);
    - `heuristic`: likely causes from general experience when no rule is certain, worded as
-     unconfirmed (H01, H02);
+     unconfirmed (H01–H04);
    - `fallback`: the tree's suggestion, only when neither matched (F01);
    - `plan`: actions (P01–P51), merged by action id across issues.
+
+   83 rules in total: 10 derive, 29 diagnose, 4 heuristic, 1 fallback, 39 plan.
    Negation is stratified: a rule may only negate predicates concluded in an earlier phase,
    which `engine.validate` checks when the rule base loads.
 7. **Order.** `reasoning.order_actions` sorts by: blocked preconditions, goal impact (affects +
@@ -101,9 +105,11 @@ cited document.
 ## Knowledge base
 
 `knowledge/domain.toml` lists five causes, candidate causes per exception type, import names
-that differ from their PyPI distribution, and 117 removed names and 1 removed usage (matched by its error message) from Python 3.10–3.13, NumPy,
-SciPy, scikit-learn, Jinja2, MarkupSafe, packaging, pydantic, Werkzeug and pandas. Each entry
-cites its release notes. `fixfirst knowledge --output kg.json` exports it with the rules.
+that differ from their PyPI distribution, 117 removed names and 1 removed usage (matched by its
+error message) from Python 3.10–3.13, NumPy, SciPy, scikit-learn, Jinja2, MarkupSafe,
+packaging, pydantic, Werkzeug and pandas, 10 names that Python 3.11/3.12 started warning about,
+and 44 pytest fixtures with the 21 plugins that provide them. Each entry cites its release notes
+or the plugin's PyPI page. `fixfirst knowledge --output kg.json` exports it with the rules.
 
 ## Evidence graph
 

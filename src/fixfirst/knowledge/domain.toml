@@ -75,8 +75,13 @@ hint = "A call used the wrong arguments. An unexpected keyword for a library cal
 
 [[exception]]
 type = "AssertionError"
-candidates = ["code_defect"]
-hint = "A test expectation did not hold."
+candidates = ["code_defect", "version_incompatibility"]
+hint = "A test expectation did not hold. When the test counts recorded warnings, a newer Python or library that adds deprecation warnings also looks like this."
+
+[[exception]]
+type = "FixtureLookupError"
+candidates = ["missing_dependency", "code_defect"]
+hint = "pytest could not find a fixture the test asks for: the pytest plugin that provides it is not installed, or the fixture is defined where this test cannot see it."
 
 # --------------------------------------------------------------------------------------
 # Import names that differ from the distribution (PyPI project) name
@@ -362,6 +367,136 @@ replacement = "pytest.warns(SomeWarning), or the recwarn fixture / warnings.catc
 source = "pytest-deprecations"
 
 # --------------------------------------------------------------------------------------
+# Deprecated, still present: from `version` on, using the name emits a DeprecationWarning.
+# A test that counts the warnings it records then sees more than it expects.
+# --------------------------------------------------------------------------------------
+
+[[deprecated]]
+module = "ast"
+names = ["Num", "Str", "Bytes", "NameConstant", "Ellipsis"]
+distribution = "Python"
+version = "3.12"
+removal = "3.14"
+replacement = "ast.Constant"
+source = "python-3.12"
+
+[[deprecated]]
+module = "pkgutil"
+names = ["find_loader", "get_loader"]
+distribution = "Python"
+version = "3.12"
+removal = "3.14"
+replacement = "importlib.util.find_spec()"
+source = "python-3.12"
+
+[[deprecated]]
+module = "datetime.datetime"
+names = ["utcnow", "utcfromtimestamp"]
+distribution = "Python"
+version = "3.12"
+replacement = "timezone-aware datetime.datetime.now(datetime.UTC) / datetime.datetime.fromtimestamp(ts, datetime.UTC)"
+source = "python-3.12"
+
+[[deprecated]]
+module = "locale"
+names = ["getdefaultlocale"]
+distribution = "Python"
+version = "3.11"
+removal = "3.15"
+replacement = "locale.setlocale(), locale.getlocale() and locale.getencoding()"
+source = "python-3.11"
+
+# --------------------------------------------------------------------------------------
+# pytest fixtures that plugins provide. "fixture 'x' not found" usually means the plugin is
+# not installed in the interpreter that runs the tests. Source: each plugin's PyPI page.
+# Fixture names that several unrelated plugins define (client, app, snapshot) are left out.
+# --------------------------------------------------------------------------------------
+
+[[fixture]]
+names = ["benchmark"]
+distribution = "pytest-benchmark"
+
+[[fixture]]
+names = ["mocker", "class_mocker", "module_mocker", "package_mocker", "session_mocker"]
+distribution = "pytest-mock"
+
+[[fixture]]
+names = ["httpx_mock"]
+distribution = "pytest-httpx"
+
+[[fixture]]
+names = ["respx_mock"]
+distribution = "respx"
+
+[[fixture]]
+names = ["requests_mock"]
+distribution = "requests-mock"
+
+[[fixture]]
+names = ["httpserver"]
+distribution = "pytest-httpserver"
+
+[[fixture]]
+names = ["httpbin"]
+distribution = "pytest-httpbin"
+
+[[fixture]]
+names = ["freezer"]
+distribution = "pytest-freezer"
+
+[[fixture]]
+names = ["time_machine"]
+distribution = "time-machine"
+
+[[fixture]]
+names = ["faker"]
+distribution = "Faker"
+
+[[fixture]]
+names = ["fs"]
+distribution = "pyfakefs"
+
+[[fixture]]
+names = ["datadir", "shared_datadir", "original_datadir"]
+distribution = "pytest-datadir"
+
+[[fixture]]
+names = ["data_regression", "file_regression", "num_regression", "dataframe_regression", "image_regression"]
+distribution = "pytest-regressions"
+
+[[fixture]]
+names = ["cov", "no_cover"]
+distribution = "pytest-cov"
+
+[[fixture]]
+names = ["qtbot", "qapp"]
+distribution = "pytest-qt"
+
+[[fixture]]
+names = ["aiohttp_client", "aiohttp_server", "aiohttp_raw_server"]
+distribution = "pytest-aiohttp"
+
+[[fixture]]
+names = ["db", "transactional_db", "django_db_blocker", "rf", "admin_client", "admin_user", "django_user_model", "django_assert_num_queries"]
+distribution = "pytest-django"
+
+[[fixture]]
+names = ["page", "browser_context_args"]
+distribution = "pytest-playwright"
+
+[[fixture]]
+names = ["selenium"]
+distribution = "pytest-selenium"
+
+[[fixture]]
+names = ["xprocess"]
+distribution = "pytest-xprocess"
+
+[[fixture]]
+names = ["docker_services", "docker_ip"]
+distribution = "pytest-docker"
+
+# --------------------------------------------------------------------------------------
 # Sources
 # --------------------------------------------------------------------------------------
 
@@ -370,11 +505,11 @@ title = "What's New In Python 3.10 (removed collections ABC aliases)"
 url = "https://docs.python.org/3/whatsnew/3.10.html"
 
 [sources."python-3.11"]
-title = "What's New In Python 3.11 (removed asyncio.coroutine)"
+title = "What's New In Python 3.11 (removed asyncio.coroutine; deprecated locale.getdefaultlocale)"
 url = "https://docs.python.org/3/whatsnew/3.11.html"
 
 [sources."python-3.12"]
-title = "What's New In Python 3.12 (removed imp, distutils, asyncore, asynchat, smtpd, unittest aliases)"
+title = "What's New In Python 3.12 (removed imp, distutils, asyncore, asynchat, smtpd, unittest aliases; new deprecation warnings for ast.Str, pkgutil.get_loader, datetime.utcnow)"
 url = "https://docs.python.org/3/whatsnew/3.12.html"
 
 [sources."python-3.13"]

@@ -73,8 +73,39 @@ def pytest_exception_interact(node, call, report):
                 "exception_module": call.excinfo.type.__module__,
                 "source_file": str(entry.path) if entry else "",
                 "source_line": entry.lineno + 1 if entry else None,
+                "warnings": recorded_warnings(call.excinfo.traceback),
             }
         )
+
+
+def recorded_warnings(traceback, limit=20):
+    """Warnings held by recwarn / pytest.warns recorders in the failing frames.
+
+    A test that counts warnings fails when the environment adds some; the recorder shows
+    which ones they were and where they came from.
+    """
+    found, seen = [], set()
+    try:
+        for entry in traceback:
+            for name, value in list(entry.frame.f_locals.items()):
+                if id(value) in seen or not any(
+                    c.__name__ == "WarningsRecorder" for c in type(value).__mro__
+                ):
+                    continue
+                seen.add(id(value))
+                for item in list(getattr(value, "list", []))[: limit - len(found)]:
+                    found.append(
+                        {
+                            "recorder": name,
+                            "category": getattr(item.category, "__name__", str(item.category)),
+                            "message": str(item.message)[:500],
+                            "filename": str(item.filename),
+                            "lineno": item.lineno,
+                        }
+                    )
+    except Exception:
+        pass
+    return found
 
 
 def pytest_sessionfinish(session, exitstatus):

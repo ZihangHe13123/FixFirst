@@ -81,6 +81,13 @@ description = "The object or callable named in the error is defined in the proje
 when = [["?i", "owner", "?c"], ["?c", "defined_locally", "yes"]]
 then = [["?i", "owner_is_local", "yes"]]
 
+[[rule]]
+id = "G10"
+phase = "derive"
+description = "The failed assertion is about the warnings the test recorded, and some of them are deprecation warnings raised outside the test's own code."
+when = [["?i", "asserts_on", "recorded_warnings"], ["?i", "extra_warning", "?x"]]
+then = [["?i", "warning_noise", "?x"]]
+
 # ======================================================================================
 # diagnose: version incompatibility (knowledge of removed names)
 # ======================================================================================
@@ -274,6 +281,25 @@ when = [
 ]
 then = [["?i", "diagnosis", "missing_dependency"], ["?i", "remedy", "install_known"], ["?i", "because", "?m"]]
 
+[[rule]]
+id = "D23"
+phase = "diagnose"
+description = "The test asks for a fixture that a pytest plugin provides, and that plugin is not installed in the target interpreter."
+source = "knowledge: pytest plugin fixtures"
+when = [
+  ["?i", "missing_fixture", "?f"], ["?f", "provided_by_plugin", "?d"],
+  ["environment", "snapshot", "available"], ["not", "?d", "installed_version", "?_"],
+  ["not", "?f", "defined_locally", "?_"],
+]
+then = [["?i", "diagnosis", "missing_dependency"], ["?i", "remedy", "install_plugin"], ["?i", "because", "?d"]]
+
+[[rule]]
+id = "D24"
+phase = "diagnose"
+description = "The missing fixture is defined in the project, but not where this test can see it."
+when = [["?i", "missing_fixture", "?f"], ["?f", "defined_locally", "yes"]]
+then = [["?i", "diagnosis", "code_defect"], ["?i", "remedy", "share_fixture"], ["?i", "because", "?f"]]
+
 # ======================================================================================
 # diagnose: configuration
 # ======================================================================================
@@ -314,8 +340,28 @@ then = [["?i", "diagnosis", "config_missing"], ["?i", "remedy", "provide_env"], 
 id = "D40"
 phase = "diagnose"
 description = "A test assertion failed: the observed behaviour differs from the test's expectation."
-when = [["?i", "exception", "AssertionError"]]
+when = [["?i", "exception", "AssertionError"], ["not", "?i", "warning_noise", "?_"]]
 then = [["?i", "diagnosis", "code_defect"]]
+
+[[rule]]
+id = "D44"
+phase = "diagnose"
+description = "A test that counts recorded warnings fails because the project's own code uses something the installed Python or library now warns about."
+when = [
+  ["?i", "exception", "AssertionError"], ["?i", "warning_noise", "?x"],
+  ["?x", "emitted_by", "?e"], ["test", "eq", "?e", "project"],
+]
+then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "replace_deprecated"], ["?i", "because", "?x"]]
+
+[[rule]]
+id = "D45"
+phase = "diagnose"
+description = "A test that counts recorded warnings fails because an installed library or Python itself adds deprecation warnings the test does not expect."
+when = [
+  ["?i", "exception", "AssertionError"], ["?i", "warning_noise", "?x"],
+  ["?x", "emitted_by", "?e"], ["test", "ne", "?e", "project"],
+]
+then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "count_checked_warnings"], ["?i", "because", "?x"]]
 
 [[rule]]
 id = "D41"
@@ -383,6 +429,18 @@ description = "The failing step runs a setup.py command and the environment has 
 source = "What's New In Python 3.12: venv no longer pre-installs setuptools"
 when = [["?i", "runs", "setup.py"], ["dist:setuptools", "not_installed", "yes"], ["not", "?i", "diagnosis", "?_"]]
 then = [["?i", "likely", "missing_dependency"], ["?i", "likely_because", "dist:setuptools"]]
+
+[[rule]]
+id = "H04"
+phase = "heuristic"
+status = "hypothesis"
+description = "The missing fixture is defined nowhere in the project and FixFirst does not know its plugin; a pytest plugin that is not installed is the usual reason."
+when = [
+  ["?i", "missing_fixture", "?f"], ["project", "declarations", "available"],
+  ["not", "?f", "defined_locally", "?_"], ["not", "?f", "provided_by_plugin", "?_"],
+  ["not", "?i", "diagnosis", "?_"],
+]
+then = [["?i", "likely", "missing_dependency"], ["?i", "likely_because", "?f"]]
 
 # ======================================================================================
 # fallback: classifier suggestion when neither rules nor heuristics explain the failure
@@ -720,7 +778,7 @@ verification = "Re-run the tests with the same interpreter"
 id = "P32"
 phase = "plan"
 description = "A build tool the failing step needs is not installed."
-when = [["?i", "likely", "missing_dependency"], ["?i", "likely_because", "?d"]]
+when = [["?i", "likely", "missing_dependency"], ["?i", "likely_because", "?d"], ["?i", "runs", "setup.py"]]
 [rule.action]
 id = "install-{?d}"
 kind = "manual_fix"
@@ -731,6 +789,134 @@ title = "Install {?d}: the failing step needs it and this environment has none"
 explanation = "The failing step runs a setup.py command, which needs {?d}, and the environment snapshot shows {?d} is not installed. Since Python 3.12, new virtual environments no longer include it."
 verification = "Re-run the tests with the same interpreter"
 pip_install = "{?d}"
+
+[[rule]]
+id = "P21"
+phase = "plan"
+description = "A declared pytest plugin is not installed: install it."
+when = [
+  ["?i", "remedy", "install_plugin"], ["?i", "missing_fixture", "?f"], ["?f", "provided_by_plugin", "?d"],
+  ["?d", "declared_in", "?src"],
+]
+[rule.action]
+id = "install-{?d}"
+kind = "manual_fix"
+cause = "missing_dependency"
+issue = "?i"
+cost = 1
+title = "Install {?d}: the tests use its {?f} fixture"
+explanation = "pytest cannot find the {?f} fixture because the plugin that provides it, {?d}, is not installed in the target interpreter. {?src} declares it; installing everything declared there at once avoids fixing one missing package per round."
+pip_install = "{?d}"
+verification = "Re-run the tests with the same interpreter"
+
+[[rule]]
+id = "P22"
+phase = "plan"
+description = "An undeclared pytest plugin is not installed: install and declare it."
+when = [
+  ["?i", "remedy", "install_plugin"], ["?i", "missing_fixture", "?f"], ["?f", "provided_by_plugin", "?d"],
+  ["not", "?d", "declared_in", "?_"],
+]
+[rule.action]
+id = "install-{?d}"
+kind = "manual_fix"
+cause = "missing_dependency"
+issue = "?i"
+cost = 1
+title = "Install {?d}: the tests use its {?f} fixture"
+explanation = "pytest cannot find the {?f} fixture because the plugin that provides it, {?d}, is not installed in the target interpreter. Install it there and add it to the project's test dependencies."
+pip_install = "{?d}"
+verification = "Re-run the tests with the same interpreter"
+
+[[rule]]
+id = "P23"
+phase = "plan"
+description = "A project fixture is not visible to the test that needs it."
+when = [["?i", "remedy", "share_fixture"], ["?i", "because", "?f"]]
+[rule.action]
+id = "share-{?f}"
+kind = "manual_fix"
+cause = "code_defect"
+issue = "?i"
+cost = 2
+title = "Make the {?f} fixture visible to the test"
+explanation = "The project defines a function named {?f}, but pytest did not find a fixture by that name for this test. A test only sees fixtures from its own module and from the conftest.py files in its folder and the folders above it. Move the fixture into such a conftest.py, and check that it has the @pytest.fixture decorator."
+verification = "Re-run the tests with the same interpreter"
+
+[[rule]]
+id = "P24"
+phase = "plan"
+description = "An unknown fixture is missing: find the plugin among the project's test dependencies."
+when = [["?i", "likely", "missing_dependency"], ["?i", "likely_because", "?f"], ["?i", "missing_fixture", "?f"]]
+[rule.action]
+id = "find-plugin-{?f}"
+kind = "manual_fix"
+cause = "missing_dependency"
+issue = "?i"
+cost = 2
+title = "Install the pytest plugin that provides the {?f} fixture"
+explanation = "No file in the project defines a fixture called {?f}, so it most likely comes from a pytest plugin that is not installed in the target interpreter. Look for the plugin in the project's test dependencies (a [tests] or [dev] extra, or a requirements-dev file) and install them into this interpreter."
+verification = "Re-run the tests with the same interpreter"
+
+[[rule]]
+id = "P33"
+phase = "plan"
+description = "Deprecation warnings from the environment break a warning count: count only the expected warnings, or use the Python or library version that does not warn."
+source = "knowledge: deprecations"
+when = [
+  ["?i", "remedy", "count_checked_warnings"], ["?i", "because", "?x"],
+  ["?x", "emitted_by", "?e"], ["?x", "emitted_at", "?loc"], ["?x", "warning_text", "?w"],
+  ["?i", "recorded_warning_count", "?n"], ["?i", "extra_warning_count", "?k"],
+  ["?x", "deprecated_in", "?d"], ["?x", "deprecated_in_version", "?v"], ["?d", "installed_version", "?iv"],
+]
+[rule.action]
+id = "count-expected-warnings-{?x}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 2
+title = "Count only the warnings the test checks: {?e} also triggers {?x} deprecation warnings"
+explanation = "The test counts every warning recorded while it runs, and deprecation warnings from outside your code make up {?k} of the {?n} it recorded; one comes from {?loc}: \"{?w}\". {?d} warns about {?x} since {?v}, and this environment has {?d} {?iv}, so the count no longer matches. Make the assertion count only the warning it is about (for example pytest.warns(UserWarning, match=...), or filter the recorded warnings by category), or run the tests with {?d} older than {?v}."
+verification = "Re-run the tests with the same interpreter"
+
+[[rule]]
+id = "P35"
+phase = "plan"
+description = "Deprecation warnings from the environment break a warning count (not in the knowledge base): count only the expected warnings."
+when = [
+  ["?i", "remedy", "count_checked_warnings"], ["?i", "because", "?x"],
+  ["?x", "emitted_by", "?e"], ["?x", "emitted_at", "?loc"], ["?x", "warning_text", "?w"],
+  ["?i", "recorded_warning_count", "?n"], ["?i", "extra_warning_count", "?k"],
+  ["not", "?x", "deprecated_in_version", "?_"],
+]
+[rule.action]
+id = "count-expected-warnings-{?x}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 2
+title = "Count only the warnings the test checks: {?e} also triggers {?x} deprecation warnings"
+explanation = "The test counts every warning recorded while it runs, and deprecation warnings from outside your code make up {?k} of the {?n} it recorded; one comes from {?loc}: \"{?w}\". New releases of Python and of libraries add warnings like this, so the count no longer matches. Make the assertion count only the warning it is about (for example pytest.warns(UserWarning, match=...), or filter the recorded warnings by category), or use the Python and library versions the tests were written for."
+verification = "Re-run the tests with the same interpreter"
+
+[[rule]]
+id = "P34"
+phase = "plan"
+description = "The project's own call to a deprecated API adds warnings that break a warning count: replace the call."
+when = [
+  ["?i", "remedy", "replace_deprecated"], ["?i", "because", "?x"],
+  ["?x", "emitted_at", "?loc"], ["?x", "warning_text", "?w"],
+  ["?i", "recorded_warning_count", "?n"], ["?i", "extra_warning_count", "?k"],
+]
+[rule.action]
+id = "replace-deprecated-{?x}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 2
+title = "Replace {?x} at {?loc}: its deprecation warnings break the test's warning count"
+explanation = "Your code at {?loc} uses {?x}, and the installed version warns: \"{?w}\". The test counts every warning recorded while it runs, and deprecation warnings like this one make up {?k} of the {?n} it recorded, so it fails. Change the code as the warning says. Making the test count only the warning it checks would also work, but keeps the deprecated call."
+verification = "Re-run the tests with the same interpreter"
 
 # ======================================================================================
 # plan: classifier suggestion (never replaces evidence-based advice)

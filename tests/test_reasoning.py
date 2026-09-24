@@ -163,3 +163,109 @@ def test_setup_py_without_setuptools_suggests_installing_it():
     assert ("issue-1", "likely", "missing_dependency") in base.keys
     action = next(p for p in engine.propose(rule_base(), base) if p.action_id == "install-setuptools")
     assert action.template["pip_install"] == "{?d}"
+
+
+def scan_project(root):
+    session = create_session(root, sys.executable, goal="pass_tests")
+    session.use_classifier = False
+    scan(session, cases.CHECKS)
+    return session, [i for i in session.issues if i.status == "open" and i.tool == "pytest_run"]
+
+
+def test_missing_plugin_fixture_names_the_declared_plugin(tmp_path):
+    (tmp_path / "pyproject.toml").write_text(
+        '[project]\nname = "demo"\nversion = "0.1"\n\n'
+        '[project.optional-dependencies]\ntests = ["pytest-httpx"]\n'
+    )
+    (tmp_path / "test_http.py").write_text("def test_get(httpx_mock):\n    pass\n")
+    session, issues = scan_project(tmp_path)
+    assert [(i.diagnosis, i.diagnosis_rule) for i in issues] == [("missing_dependency", "D23")]
+    step = build_view(session)["steps"][0]
+    assert step["title"] == "Install pytest-httpx: the tests use its httpx_mock fixture"
+    assert step["command"].endswith("-m pip install pytest-httpx")
+    assert step["where"] == ["test_http.py:1"]
+    assert "[project.optional-dependencies.tests]" in step["explanation"]
+    assert step["sources"] == [{"title": "pytest-httpx on PyPI", "url": "https://pypi.org/project/pytest-httpx/"}]
+
+
+def test_fixture_defined_out_of_reach_is_a_project_problem(tmp_path):
+    (tmp_path / "helpers.py").write_text(
+        "import pytest\n\n@pytest.fixture\ndef shop_client():\n    return object()\n"
+    )
+    (tmp_path / "test_shop.py").write_text("def test_list(shop_client):\n    pass\n")
+    (tmp_path / "test_other.py").write_text("def test_other(unheard_of_fixture):\n    pass\n")
+    session, issues = scan_project(tmp_path)
+    found = {i.title.split("::")[-1]: (i.diagnosis, i.diagnosis_source, i.diagnosis_rule) for i in issues}
+    assert found["test_list"] == ("code_defect", "rule", "D24")
+    # Unknown to the knowledge base and not defined anywhere: only a likely plugin.
+    assert found["test_other"] == ("missing_dependency", "heuristic", "H04")
+    titles = [s["title"] for s in build_view(session)["steps"]]
+    assert "Make the shop_client fixture visible to the test" in titles
+    assert "Install the pytest plugin that provides the unheard_of_fixture fixture" in titles
+
+
+def test_library_deprecation_warnings_that_break_a_warning_count(tmp_path):
+    library = tmp_path / "vendor" / "site-packages" / "oldlib"
+    library.mkdir(parents=True)
+    (library / "__init__.py").write_text(
+        "import warnings\n\ndef build():\n"
+        "    warnings.warn('oldlib.tree is deprecated and will be removed in Python 3.99; "
+        "use oldlib.graph instead', DeprecationWarning)\n"
+    )
+    (tmp_path / "test_count.py").write_text(
+        "import pathlib, sys, warnings\n"
+        "sys.path.insert(0, str(pathlib.Path(__file__).parent / 'vendor' / 'site-packages'))\n"
+        "import oldlib\n\n"
+        "def test_one_warning(recwarn):\n"
+        "    oldlib.build()\n"
+        "    warnings.warn('cookie is too large', UserWarning)\n"
+        "    assert len(recwarn) == 1\n\n"
+        "def test_plain_assertion():\n"
+        "    assert 1 + 1 == 3\n"
+    )
+    session, issues = scan_project(tmp_path)
+    found = {i.title.split("::")[-1]: (i.diagnosis, i.diagnosis_rule) for i in issues}
+    assert found == {
+        "test_one_warning": ("version_incompatibility", "D45"),
+        "test_plain_assertion": ("code_defect", "D40"),
+    }
+    step = next(s for s in build_view(session)["steps"] if s["id"].startswith("count-expected-warnings"))
+    assert step["title"] == (
+        "Count only the warnings the test checks: oldlib also triggers oldlib.tree deprecation warnings"
+    )
+    assert "make up 1 of the 2 it recorded" in step["explanation"]
+    assert "one comes from oldlib/__init__.py:4" in step["explanation"]
+    assert step["where"] == ["test_count.py:8"]
+
+
+def test_deprecation_knowledge_and_project_origin_choose_the_fix():
+    from fixfirst import domain, engine
+    from fixfirst.models import Fact
+
+    def fact(s, p, v):
+        return Fact(fact_id=f"{s}:{p}:{v}", subject=s, predicate=p, value=v)
+
+    def plan(emitted_by, origin):
+        facts = [
+            fact("issue-1", "exception", "AssertionError"),
+            fact("issue-1", "asserts_on", "recorded_warnings"),
+            fact("issue-1", "recorded_warning_count", "4"),
+            fact("issue-1", "extra_warning_count", "3"),
+            fact("issue-1", "extra_warning", "api:ast.Str"),
+            fact("api:ast.Str", "emitted_by", emitted_by),
+            fact("api:ast.Str", "emitted_at", origin),
+            fact("api:ast.Str", "warning_text", "ast.Str is deprecated"),
+            fact("dist:python", "installed_version", "3.12.4"),
+            *domain.facts_for({"api:ast.Str"}),
+        ]
+        base = engine.run(rule_base(), facts)
+        return base, engine.propose(rule_base(), base)
+
+    base, proposals = plan("dist:werkzeug", "werkzeug/routing.py:957")
+    assert ("issue-1", "diagnosis", "code_defect") not in base.keys
+    action = next(p for p in proposals if p.action_id == "count-expected-warnings-ast.str")
+    assert action.rule_ids == ["P33"]
+    text = engine.render(action.template["explanation"], action.bindings)
+    assert "Python warns about ast.Str since 3.12" in text and "Python older than 3.12" in text
+    _, proposals = plan("project", "src/app.py:12")
+    assert [p.action_id for p in proposals if p.rule_ids == ["P34"]] == ["replace-deprecated-ast.str"]
