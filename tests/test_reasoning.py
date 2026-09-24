@@ -135,3 +135,31 @@ def test_install_advice_comes_with_a_command_for_the_project_interpreter(tmp_pat
     assert action.command == [session.target_python, "-m", "pip", "install", "requests"]
     step = build_view(session)["steps"][0]
     assert step["command"].endswith("-m pip install requests")
+
+
+def test_removed_usage_is_recognised_by_its_error_message(tmp_path):
+    # pytest.warns(None) was removed in pytest 8; the error never names `warns`.
+    (tmp_path / "test_old.py").write_text(
+        "import pytest\n\ndef test_old_style():\n    with pytest.warns(None):\n        pass\n"
+    )
+    session = create_session(tmp_path, sys.executable, goal="pass_tests")
+    session.use_classifier = False
+    scan(session, cases.CHECKS)
+    issue = next(i for i in session.issues if i.status == "open" and i.tool == "pytest_run")
+    assert (issue.diagnosis, issue.diagnosis_rule) == ("version_incompatibility", "D07")
+    assert session.actions[0].title == "Replace pytest.warns(None): removed in pytest 8.0"
+
+
+def test_setup_py_without_setuptools_suggests_installing_it():
+    from fixfirst import engine
+    from fixfirst.models import Fact
+    from fixfirst.reasoning import rule_base
+
+    facts = [
+        Fact(fact_id="a", subject="issue-1", predicate="runs", value="setup.py"),
+        Fact(fact_id="b", subject="dist:setuptools", predicate="not_installed", value="yes"),
+    ]
+    base = engine.run(rule_base(), facts)
+    assert ("issue-1", "likely", "missing_dependency") in base.keys
+    action = next(p for p in engine.propose(rule_base(), base) if p.action_id == "install-setuptools")
+    assert action.template["pip_install"] == "{?d}"

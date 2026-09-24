@@ -55,8 +55,8 @@ real check before calling anything fixed.
 
 | Technique | What it does | Code |
 |---|---|---|
-| Knowledge-based rules | A production system with variables, stratified negation and provenance. 67 rules in five phases derive goal relevance, diagnose causes, add likely causes from general heuristics, fall back to the classifier, and propose actions. | `engine.py`, `knowledge/rules.toml` |
-| Knowledge graph | A curated domain graph (5 causes, 117 removed modules/APIs/arguments with the release that removed them, import-name → distribution mappings, 19 cited sources) that the rules query, and a per-session evidence graph (10 entity types, 15 relations) for explanations and questions. | `domain.py`, `knowledge/domain.toml`, `knowledge_graph.py` |
+| Knowledge-based rules | A production system with variables, stratified negation and provenance. 70 rules in five phases derive goal relevance, diagnose causes, add likely causes from general heuristics, fall back to the classifier, and propose actions. | `engine.py`, `knowledge/rules.toml` |
+| Knowledge graph | A curated domain graph (5 causes, 118 removed modules, APIs, arguments and usages with the release that removed them, import-name → distribution mappings, 20 cited sources) that the rules query, and a per-session evidence graph (10 entity types, 15 relations) for explanations and questions. | `domain.py`, `knowledge/domain.toml`, `knowledge_graph.py` |
 | Data mining | A Gini decision tree over 44 evidence features suggests a cause when no rule applies; TF-IDF + cosine similarity with complete-link grouping merges repeated messages. | `evidence.py`, `classification.py`, `grouping.py` |
 
 Every recommendation traces back through the rule that proposed it, the facts it used and the
@@ -141,7 +141,7 @@ fixfirst historical --assets examples/historical-regressions/assets --output wor
 |---|---|
 | `src/fixfirst/` | the package (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)) |
 | `src/fixfirst/knowledge/` | rule base, domain knowledge, bundled decision tree |
-| `tests/` | 106 tests, most running real subprocesses |
+| `tests/` | 108 tests, most running real subprocesses |
 | `examples/` | recorded runs, datasets and experiment reports ([overview](examples/README.md)) |
 | `docs/` | architecture, course alignment, team notes |
 

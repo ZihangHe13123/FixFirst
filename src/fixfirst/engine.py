@@ -227,7 +227,7 @@ def display(value: str) -> str:
     """Readable form of a typed constant such as ``api:numpy.float``."""
     if value == "dist:python":
         return "Python"
-    return re.sub(r"^(module|api|kwarg|dist|config|file|callable):", "", value)
+    return re.sub(r"^(module|api|kwarg|dist|config|file|callable|usage|attribute):", "", value)
 
 
 def slug(value: str) -> str:

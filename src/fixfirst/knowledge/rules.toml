@@ -122,6 +122,18 @@ when = [
 then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "replace_removed"], ["?i", "because", "?x"]]
 
 [[rule]]
+id = "D07"
+phase = "diagnose"
+description = "The error message is the known signature of a usage that the installed version no longer accepts."
+source = "knowledge: removed usages"
+when = [
+  ["?i", "usage", "?x"],
+  ["?x", "removed_from", "?d"], ["?x", "removed_in_version", "?v"],
+  ["?d", "installed_version", "?iv"], ["test", "version_gte", "?iv", "?v"],
+]
+then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "replace_removed"], ["?i", "because", "?x"]]
+
+[[rule]]
 id = "D04"
 phase = "diagnose"
 description = "A library call passes a keyword argument that the installed library version removed."
@@ -362,6 +374,15 @@ when = [
   ["not", "?i", "diagnosis", "?_"],
 ]
 then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
+
+[[rule]]
+id = "H03"
+phase = "heuristic"
+status = "hypothesis"
+description = "The failing step runs a setup.py command and the environment has no setuptools; since Python 3.12, new virtual environments no longer include it."
+source = "What's New In Python 3.12: venv no longer pre-installs setuptools"
+when = [["?i", "runs", "setup.py"], ["dist:setuptools", "not_installed", "yes"], ["not", "?i", "diagnosis", "?_"]]
+then = [["?i", "likely", "missing_dependency"], ["?i", "likely_because", "dist:setuptools"]]
 
 # ======================================================================================
 # fallback: classifier suggestion when neither rules nor heuristics explain the failure
@@ -694,6 +715,22 @@ title = "Try an older {?d}: {?d} {?iv} no longer provides {?x}"
 explanation = "{?x} is not available in the installed {?d} {?iv}. Libraries rename or remove names between versions, so a version difference is the most likely cause; a misspelt name is the other possibility. The command tries the previous release series of {?d}; if the name is still missing, FixFirst suggests going back further. If {?d}'s changelog shows the name was renamed, updating the code is the lasting fix."
 pip_install = "{?d}<{?b}"
 verification = "Re-run the tests with the same interpreter"
+
+[[rule]]
+id = "P32"
+phase = "plan"
+description = "A build tool the failing step needs is not installed."
+when = [["?i", "likely", "missing_dependency"], ["?i", "likely_because", "?d"]]
+[rule.action]
+id = "install-{?d}"
+kind = "manual_fix"
+cause = "missing_dependency"
+issue = "?i"
+cost = 1
+title = "Install {?d}: the failing step needs it and this environment has none"
+explanation = "The failing step runs a setup.py command, which needs {?d}, and the environment snapshot shows {?d} is not installed. Since Python 3.12, new virtual environments no longer include it."
+verification = "Re-run the tests with the same interpreter"
+pip_install = "{?d}"
 
 # ======================================================================================
 # plan: classifier suggestion (never replaces evidence-based advice)

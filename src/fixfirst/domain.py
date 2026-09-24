@@ -16,7 +16,7 @@ from packaging.utils import canonicalize_name
 
 from .models import Fact
 
-KINDS = {"module": "module", "api": "api", "attribute": "attribute", "kwarg": "kwarg"}
+KINDS = {"module", "api", "attribute", "kwarg", "usage"}
 
 
 def dist_id(name: str) -> str:
@@ -71,6 +71,14 @@ def facts_for(entities) -> list[Fact]:
             if distribution:
                 result.append(knowledge(entity, "import_name_of", dist_id(distribution), "pypi"))
     return result
+
+
+def usages_in(text: str) -> list[str]:
+    """Knowledge entries for removed usages whose error message appears in the text."""
+    return [
+        key for key, entry in load()["removed_index"].items()
+        if entry["kind"] == "usage" and entry["pattern"] in text
+    ]
 
 
 def source(ref: str) -> dict | None:

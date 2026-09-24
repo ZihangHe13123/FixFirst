@@ -35,6 +35,21 @@ After this walk-through the round-5 step gained a concrete command: FixFirst now
 previous release series (`pytest<9`, which installs 8.4.2 and still provides `notset`) and steps
 back further if the name is still missing. The table records what was run at the time.
 
+### Round 5 again, with the suggested `pytest<9`
+
+Following the new round-5 command installs pytest 8.4.2. The suite runs (520 passed) but four
+more tests fail with `TypeError: exceptions must be derived from Warning, not <class
+'NoneType'>`: Flask 1.1.4's tests call `pytest.warns(None)`, which pytest 8.0 removed. The first
+version of FixFirst missed this: no rule applied, and the decision tree, trained on generated
+cases, suggested *missing configuration*, which was wrong (shown as unconfirmed, but misleading).
+Two additions now explain every remaining failure but one:
+
+| Failure | FixFirst now says | Rule |
+|---|---|---|
+| 4 tests, `TypeError ... not <class 'NoneType'>` | Replace pytest.warns(None): removed in pytest 8.0 (or pin pytest below 8.0), citing the pytest deprecation notes | D07: a *removed usage* in the knowledge base, recognised by its error message |
+| `test_egg_installed_paths` | Likely: install setuptools, with the command; the test runs `setup.py bdist_egg` and Python 3.12 virtual environments no longer include setuptools | H03 (heuristic). Verified separately: the same command fails without setuptools and succeeds with it |
+| `test_max_cookie_size` (4 warnings instead of 1) | Code defect (assertion) | Unchanged: the evidence does not show that the extra warnings come from newer libraries |
+
 Every step was verified by a real check before FixFirst marked it fixed: after round 4 the
 workspace showed four fixed issues and the previously unreachable ones as "waiting to be
 re-checked", not as new problems.
@@ -63,6 +78,14 @@ was fixed and is covered by a test:
 7. **Paths outside the project** (`../.cache/python/lib/...`) are no longer shown as project
    files, and the default check timeout is 10 minutes instead of 30 seconds, so real test
    suites finish.
+8. **Install advice is a copyable command** that uses the project's own interpreter, because
+   `pip install` in a user's terminal often targets a different Python.
+9. **Removed usages** that the error message does not name (`pytest.warns(None)`) are matched by
+   their message signature, and a missing setuptools behind a failing `setup.py` step is
+   suggested (H03).
+10. **The decision tree generalised poorly** to an error type absent from its training data
+    (a `TypeError` raised inside pytest): it confidently suggested the wrong cause. Its advice
+    stays labelled as unconfirmed and is ranked after rule-based steps.
 
 ## Limits seen on real projects
 

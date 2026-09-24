@@ -76,7 +76,9 @@ def base_facts(session: Session, active, knowledge=True) -> tuple[list[Fact], di
         )
     evidence_facts, details = observations(session, active)
     facts += evidence_facts
-    mentioned = {f.value for f in evidence_facts if f.predicate in ("module", "api", "attribute", "kwarg")}
+    mentioned = {
+        f.value for f in evidence_facts if f.predicate in ("module", "api", "attribute", "kwarg", "usage")
+    }
     known = domain.facts_for(mentioned) if knowledge else []
     facts += known
     distributions = (

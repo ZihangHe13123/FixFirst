@@ -131,7 +131,7 @@ torch = "torch"
 # --------------------------------------------------------------------------------------
 # Removed modules, APIs and keyword arguments
 # kind = module | api (module.name) | attribute (distinctive attribute name on any object)
-# | kwarg; "python" is the interpreter itself.
+# | kwarg | usage (matched by its error message); "python" is the interpreter itself.
 # --------------------------------------------------------------------------------------
 
 [[removed]]
@@ -350,6 +350,17 @@ version = "2.0"
 replacement = "pandas.concat"
 source = "pandas-2.0"
 
+# kind = usage: a way of calling an API that a release stopped accepting. The error does not
+# name the API, so the entry carries the distinctive message it produces instead.
+[[removed]]
+kind = "usage"
+names = ["pytest.warns(None)"]
+pattern = "exceptions must be derived from Warning, not <class 'NoneType'>"
+distribution = "pytest"
+version = "8.0"
+replacement = "pytest.warns(SomeWarning), or the recwarn fixture / warnings.catch_warnings() to record warnings without expecting one"
+source = "pytest-deprecations"
+
 # --------------------------------------------------------------------------------------
 # Sources
 # --------------------------------------------------------------------------------------
@@ -425,6 +436,10 @@ url = "https://werkzeug.palletsprojects.com/en/stable/changes/#version-3-0-0"
 [sources."pandas-2.0"]
 title = "What's new in pandas 2.0.0 (DataFrame.append removed)"
 url = "https://pandas.pydata.org/docs/whatsnew/v2.0.0.html"
+
+[sources."pytest-deprecations"]
+title = "pytest: Deprecations and Removals (using pytest.warns(None), removed in 8.0)"
+url = "https://docs.pytest.org/en/stable/deprecations.html#using-pytest-warns-none"
 
 [sources."pypi"]
 title = "Python Package Index project pages (import name vs distribution name)"

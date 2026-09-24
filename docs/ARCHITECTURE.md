@@ -101,7 +101,7 @@ cited document.
 ## Knowledge base
 
 `knowledge/domain.toml` lists five causes, candidate causes per exception type, import names
-that differ from their PyPI distribution, and 117 removed names from Python 3.10–3.13, NumPy,
+that differ from their PyPI distribution, and 117 removed names and 1 removed usage (matched by its error message) from Python 3.10–3.13, NumPy,
 SciPy, scikit-learn, Jinja2, MarkupSafe, packaging, pydantic, Werkzeug and pandas. Each entry
 cites its release notes. `fixfirst knowledge --output kg.json` exports it with the rules.
 

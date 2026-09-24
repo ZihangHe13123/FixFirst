@@ -158,6 +158,12 @@ def executed_lines(traceback: str) -> list[str]:
     return executed
 
 
+def domain_usages(message: str) -> list[str]:
+    from .domain import usages_in
+
+    return usages_in(message)
+
+
 def output_context(session: Session, event) -> str:
     """For events parsed from plain output, the lines leading up to the error line."""
     run = next((r for r in session.runs if r.run_id == event.run_id), None)
@@ -487,6 +493,13 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
             facts.append(observed(subject, "missing_file", "file:" + path, refs))
         for signal in evidence["signals"]:
             facts.append(observed(subject, "signal", signal, refs))
+        for usage in domain_usages(evidence["message"]):
+            facts.append(observed(subject, "usage", usage, refs))
+        if re.search(r"setup\.py'?,? '?(?:bdist|sdist|build|install|develop|egg_info)", evidence["message"]):
+            facts.append(observed(subject, "runs", "setup.py", refs))
+            installed = {canonicalize_name(p.get("name", "")) for p in environment.get("packages", [])}
+            if environment.get("_run_id") and "setuptools" not in installed:
+                facts.append(observed("dist:setuptools", "not_installed", "yes", env_ref))
         if evidence["library"]:
             names = environment.get("import_distributions", {}).get(evidence["library"]) or [
                 evidence["library"]
