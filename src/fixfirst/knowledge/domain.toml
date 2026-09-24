@@ -497,6 +497,94 @@ names = ["docker_services", "docker_ip"]
 distribution = "pytest-docker"
 
 # --------------------------------------------------------------------------------------
+# Lint rules. `likely_bug` lists Ruff rule codes (or prefixes) that usually mean the code
+# fails or does the wrong thing when it runs; every other finding is clean-up (style,
+# formatting, outdated syntax) that does not change how the code runs. F811 (a name defined
+# twice) is left out on purpose: tests often re-import names deliberately.
+# `categories` gives each rule prefix a plain name; the longest matching prefix wins.
+# Source: the Ruff rule reference.
+# --------------------------------------------------------------------------------------
+
+[lint]
+source = "ruff-rules"
+likely_bug = [
+  "invalid-syntax", "E9",            # syntax errors, files that cannot be read
+  "F501", "F502", "F503", "F505", "F506", "F507", "F508", "F509",   # %-format calls that raise
+  "F521", "F524", "F525",            # str.format() calls that raise (unused arguments do not)
+  "F601", "F602",                    # dictionary keys repeated with different values
+  "F63",                             # assert on a tuple, `is` with a literal, `if` on a tuple
+  "F7",                              # break/continue/return/yield in the wrong place
+  "F82",                             # undefined names
+  "F901",                            # raise NotImplemented
+  "PLE",                             # pylint errors
+  "B006", "B012", "B015", "B023",    # mutable defaults, return in finally, comparison without assert, loop variable in closure
+]
+
+[lint.categories]
+"invalid-syntax" = "Syntax errors"
+E = "Code layout"
+E501 = "Lines too long"
+E9 = "Syntax errors"
+W = "Whitespace and layout"
+F = "Suspicious code (pyflakes)"
+F401 = "Unused imports"
+F403 = "Star imports"
+F405 = "Names from star imports"
+F541 = "f-strings without placeholders"
+F811 = "Names defined twice"
+F841 = "Unused variables"
+F82 = "Undefined names"
+I = "Import order"
+UP = "Outdated syntax that newer Python can write more simply"
+SIM = "Code that could be simpler"
+C4 = "Comprehensions that could be simpler"
+C90 = "Functions that are too complex"
+B = "Bug-prone patterns (bugbear)"
+RUF = "Ruff's own checks"
+S = "Security checks"
+D = "Docstrings"
+N = "Naming"
+Q = "Quotes"
+COM = "Trailing commas"
+PLC = "Pylint conventions"
+PLR = "Pylint refactoring hints"
+PLW = "Pylint warnings"
+PLE = "Pylint errors"
+TRY = "Exception handling style"
+BLE = "Catching every exception"
+EM = "Exception messages"
+DTZ = "Dates without a time zone"
+PT = "pytest style"
+PTH = "os.path where pathlib would do"
+RET = "Return statements"
+ARG = "Unused arguments"
+ERA = "Commented-out code"
+T20 = "print statements"
+PERF = "Performance"
+FURB = "Modernisation"
+A = "Names that shadow built-ins"
+ANN = "Type annotations"
+FBT = "Boolean arguments"
+PIE = "Unnecessary code"
+ISC = "Implicit string concatenation"
+G = "Logging format"
+TID = "Import style"
+TC = "Type-checking imports"
+PGH = "Blanket noqa and type: ignore"
+YTT = "sys.version checks"
+FA = "Future annotations"
+PYI = "Type stubs"
+SLF = "Private member access"
+RSE = "raise statements"
+FLY = "String joins that could be f-strings"
+INP = "Missing __init__.py"
+EXE = "Executable files"
+ASYNC = "async code"
+PD = "pandas usage"
+NPY = "NumPy usage"
+DJ = "Django usage"
+
+# --------------------------------------------------------------------------------------
 # Sources
 # --------------------------------------------------------------------------------------
 
@@ -579,3 +667,7 @@ url = "https://docs.pytest.org/en/stable/deprecations.html#using-pytest-warns-no
 [sources."pypi"]
 title = "Python Package Index project pages (import name vs distribution name)"
 url = "https://pypi.org/"
+
+[sources."ruff-rules"]
+title = "Ruff: rules reference"
+url = "https://docs.astral.sh/ruff/rules/"

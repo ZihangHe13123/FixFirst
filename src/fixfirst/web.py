@@ -47,7 +47,8 @@ class App:
     def workspace(self, session_id: str) -> str:
         session = self.store.load(session_id)
         return ENV.get_template("workspace.html").render(
-            view=build_view(session), goals=GOALS, session_id=session_id, token=self.token
+            view=build_view(session), goals={key: name for key, name, _ in GOAL_CHOICES},
+            session_id=session_id, token=self.token,
         )
 
     def details(self, session_id: str) -> str:

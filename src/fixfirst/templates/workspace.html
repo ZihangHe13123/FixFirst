@@ -5,6 +5,7 @@
 {% block style %}
 .context{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;color:var(--muted);font-size:14px;margin-bottom:16px}
 .context .path{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;direction:rtl;text-align:left}.context label{display:flex;align-items:center;gap:8px;flex:none}.context select{width:auto;padding:6px 10px;font-size:14px}
+.goal-note{flex-basis:100%;text-align:right;font-size:13px}
 .status{border-radius:16px;padding:26px 28px;display:flex;gap:22px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--line);background:#fff}
 .status.todo{background:var(--amber-soft);border-color:#efd9b0}.status.advisory{background:var(--blue-soft);border-color:#c9d8ec}.status.done{background:var(--green-soft);border-color:#bfdcc8}.status.unknown,.status.new{background:#fff}
 .status h1{margin:0 0 6px}.status p{margin:0;color:#4a5a50;max-width:540px}.status .icon{font-size:28px;margin-right:4px}
@@ -23,6 +24,7 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
 .fixed:not(.other) li::before{content:"✓ ";color:var(--green);font-weight:700}
 .more{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);display:flex;gap:18px;flex-wrap:wrap;font-size:14px}
 .hint{margin:22px 0 0;font-size:14px;color:var(--muted)}
+.breakdown{border-collapse:collapse;margin:8px 0 10px;font-size:15px}.breakdown td{padding:3px 10px 3px 0;vertical-align:top}.breakdown td.n{text-align:right;font-weight:700;color:var(--ink);min-width:3ch}
 .section-note{margin:-6px 0 12px;color:var(--muted);font-size:14px}
 .step.optional{border-style:dashed;background:#fbfcfb}.step.optional .num{background:#eef1ee;color:var(--muted);font-size:15px}
 .tag.optional{background:#eef1ee;color:#55665c}
@@ -34,6 +36,7 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
 <div class="context">
   <span class="path mono" title="{{ view.project_root }}">&#8206;{{ view.project_root }}</span>
   <label>Goal <select id="goal" aria-label="Goal">{% for key, name in goals.items() %}<option value="{{ key }}" {{ 'selected' if key == view.goal }}>{{ name }}</option>{% endfor %}</select></label>
+  <span class="goal-note">{{ view.goal_note }}</span>
 </div>
 
 <section class="status {{ view.status.kind }}">
@@ -59,7 +62,8 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
         {% if step.possible %}<span class="tag maybe" title="The decision tree's guess from similar cases; no rule confirmed it">Likely: {{ step.possible }} · not confirmed</span>{% endif %}
       </div>
       <h3>{{ step.title }}</h3>
-      {% if step.where %}<div class="where">{% for place in step.where[:4] %}<code>{{ place }}</code>{% endfor %}{% if step.where|length > 4 %}<span class="muted small">and {{ step.where|length - 4 }} more</span>{% endif %}</div>{% endif %}
+      {% if step.breakdown %}<table class="breakdown"><tbody>{% for row in step.breakdown[:8] %}<tr><td class="n">{{ row.count }}</td><td>{{ row.name }} <span class="muted small mono">{{ row.codes[:4]|join(', ') }}{% if row.codes|length > 4 %}, …{% endif %}</span></td></tr>{% endfor %}{% if step.breakdown|length > 8 %}<tr><td class="n">{{ step.breakdown[8:]|sum(attribute='count') }}</td><td>Other kinds</td></tr>{% endif %}</tbody></table>
+      {% elif step.where %}<div class="where">{% for place in step.where[:4] %}<code>{{ place }}</code>{% endfor %}{% if step.where|length > 4 %}<span class="muted small">and {{ step.where|length - 4 }} more</span>{% endif %}</div>{% endif %}
       {% if step.impact %}<p class="impact"><b>Impact:</b> {{ step.impact }}{% if step.risk %}<br><b>Later:</b> {{ step.risk }}{% endif %}</p>{% endif %}
       <p>{{ step.explanation }}</p>
       {% if step.command %}<div class="cmd"><code>{{ step.command }}</code><button type="button" class="copy" data-copy="{{ step.command }}">Copy</button></div>
@@ -87,7 +91,7 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
 {% endif %}
 {% if view.optional %}
 <h2>Optional</h2>
-<p class="section-note">These do not change how your code runs. Fix them if you want every test to pass.</p>
+<p class="section-note">These do not change how your code runs. Fix them if you want {{ 'the code check' if view.goal == 'check_style' else 'every test' }} to pass.</p>
 <ol class="steps">
 {% for step in view.optional %}{{ card(step, "–", False) }}{% endfor %}
 </ol>

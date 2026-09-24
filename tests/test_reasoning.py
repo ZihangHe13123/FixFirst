@@ -311,3 +311,49 @@ def test_deprecation_knowledge_and_project_origin_choose_the_fix():
     assert ("issue-1", "breaks_in_future", "api:ast.Str") in base.keys
     _, proposals = plan("project", "src/app.py:12")
     assert [p.action_id for p in proposals if p.rule_ids == ["P34"]] == ["replace-deprecated-ast.str"]
+
+
+def test_lint_knowledge_separates_possible_bugs_from_clean_up():
+    from fixfirst import domain
+
+    assert [c for c in ("F821", "E999", "F632", "B006", "PLE0101", "F524") if domain.likely_bug(c)] == [
+        "F821", "E999", "F632", "B006", "PLE0101", "F524",
+    ]
+    # Unused imports, unused .format() arguments and modernisation never break running code.
+    assert not any(domain.likely_bug(c) for c in ("F401", "F522", "F541", "F811", "UP031", "I001", "E501"))
+    assert domain.lint_category("UP031") == "Outdated syntax that newer Python can write more simply"
+    assert domain.lint_category("SIM118") == "Code that could be simpler"  # longest prefix, not S
+    assert domain.lint_category("PLR0913") == "Pylint refactoring hints"
+
+
+def test_project_lint_settings_are_detected(tmp_path):
+    from fixfirst.project import lint_settings
+
+    assert lint_settings(tmp_path) == {"ruff": None, "other": None}
+    (tmp_path / "setup.cfg").write_text("[flake8]\nmax-line-length = 100\n")
+    assert lint_settings(tmp_path) == {"ruff": None, "other": "setup.cfg [flake8]"}
+    (tmp_path / "pyproject.toml").write_text("[tool.ruff]\nline-length = 100\n")
+    assert lint_settings(tmp_path)["ruff"] == "pyproject.toml [tool.ruff]"
+
+
+def test_code_check_goal_counts_only_findings_that_may_be_bugs(tmp_path):
+    (tmp_path / "setup.cfg").write_text("[flake8]\nmax-line-length = 100\n")
+    (tmp_path / "app.py").write_text("import os\nimport sys\n\n\ndef total():\n    return subtotal + 1\n")
+    session = create_session(tmp_path, sys.executable, goal="check_style")
+    scan(session, ["environment", "project", "ruff"])
+    view = build_view(session)
+    assert [s["id"] for s in view["steps"]] == ["review-code_check"]  # F821 undefined name
+    assert view["steps"][0]["where"] == ["app.py:6"]
+    assert view["status"]["headline"] == "1 problem to fix"
+    assert "Ruff also has 2 clean-up suggestions below (optional)" in view["status"]["detail"]
+    cleanup = view["optional"][0]
+    assert cleanup["id"] == "cleanup-code" and cleanup["optional"]
+    assert "configures its linter in setup.cfg [flake8], not Ruff" in cleanup["explanation"]
+    assert cleanup["breakdown"] == [{"name": "Unused imports", "count": 2, "codes": ["F401"]}]
+
+    (tmp_path / "app.py").write_text("import os\nimport sys\n\n\ndef total():\n    return 1\n")
+    scan(session, ["ruff"])
+    view = build_view(session)
+    assert view["steps"] == [] and view["status"]["kind"] == "advisory"
+    assert view["status"]["headline"] == "No problems that affect your code"
+    assert "Ruff still has 2 clean-up suggestions" in view["status"]["detail"]

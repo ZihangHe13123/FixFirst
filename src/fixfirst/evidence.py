@@ -640,6 +640,15 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
             refs = event.evidence_refs
             facts.append(observed(dist, "required_spec", str(requirement.specifier), refs))
             facts.append(observed(dist, "required_by", f"{found['who']} {found['version']}", refs))
+    # Ruff findings: the rule code, with the knowledge base, decides whether it may be a bug.
+    for issue in issues:
+        if issue.tool == "ruff" and issue.kind in ("style_issue", "code_check") and issue.component:
+            facts.append(observed(issue.issue_id, "lint_rule", "lint:" + issue.component, issue.evidence_refs))
+    if project_run and "lint_config" in project:
+        lint = project["lint_config"] or {}
+        facts.append(observed("project", "ruff_config", lint.get("ruff") or "none", project_ref))
+        if lint.get("other"):
+            facts.append(observed("project", "other_linter", lint["other"], project_ref))
     for index, row in enumerate(project.get("declarations", [])):
         if not row.get("constraint"):
             facts.append(

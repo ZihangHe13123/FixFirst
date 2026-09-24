@@ -121,6 +121,15 @@ was fixed and is covered by a test:
     far: a warning count broken by the environment's deprecation warnings) are shown as
     optional and left out of the problem count; knowledge of a scheduled removal adds when they
     will start to matter.
+14. **Code-check findings sorted by risk.** With the code-check goal, Flask 1.1.4 showed "2
+    problems to fix" and called 433 findings "possibly real bugs". None was: 271 were outdated
+    syntax that Python 2 support required, 51 import order, 48 unused imports. Flask lints with
+    flake8 (`setup.cfg [flake8]`), which Ruff does not read, so Ruff applied its own default
+    rules. Now only rules that usually mean a bug (undefined names, syntax errors, format
+    strings that raise, a few bugbear rules) are must-fix (D47); the rest is one optional
+    clean-up step counted by kind (D48), and the page says when Ruff used its defaults because
+    the project configures another linter. Flask's code check now reads "No problems that
+    affect your code" with 492 optional suggestions.
 
 ## Limits seen on real projects
 

@@ -49,6 +49,9 @@ def load() -> dict:
             deprecated[key] = {**entry, "name": name, "id": key}
     data["deprecated_index"] = deprecated
     # Fixtures are cited by the plugin's PyPI page unless the entry names another source.
+    lint = data.setdefault("lint", {"likely_bug": [], "categories": {}})
+    if lint.get("likely_bug") and lint.get("source") not in data["sources"]:
+        raise ValueError("invalid lint source")
     data["fixture_index"] = {
         "fixture:" + name: entry for entry in data.get("fixture", []) for name in entry["names"]
     }
@@ -95,6 +98,8 @@ def facts_for(entities) -> list[Fact]:
                 knowledge(entity, "provided_by_plugin", dist_id(entry["distribution"]),
                           entry.get("source", "pypi:" + canonicalize_name(entry["distribution"])))
             )
+        if entity.startswith("lint:") and likely_bug(entity[len("lint:"):]):
+            result.append(knowledge(entity, "indicates", "possible_bug", kb["lint"]["source"]))
         if entity.startswith("module:"):
             distribution = kb["import_names"].get(entity.split(":", 1)[1])
             if distribution:
@@ -130,6 +135,22 @@ def provider(module: str) -> str | None:
 
 def removal(entity: str) -> dict | None:
     return load()["removed_index"].get(entity)
+
+
+def likely_bug(code: str) -> bool:
+    """Whether a lint rule usually means the code fails or misbehaves when it runs."""
+    return any(code == p or (code.startswith(p) and code[len(p):len(p) + 1].isdigit()) or
+               (code.startswith(p) and p[-1].isdigit())
+               for p in load()["lint"]["likely_bug"])
+
+
+def lint_category(code: str) -> str:
+    """Plain name of a lint rule's family, by the longest matching prefix."""
+    categories = load()["lint"]["categories"]
+    matches = [p for p in categories if code == p or (
+        code.startswith(p) and (p[-1].isdigit() or code[len(p):len(p) + 1].isdigit())
+    )]
+    return categories[max(matches, key=len)] if matches else "Other checks"
 
 
 def deprecation(entity: str) -> dict | None:

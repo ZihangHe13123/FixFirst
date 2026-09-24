@@ -65,13 +65,17 @@ page describes the code as of v0.4. `models.py` holds the shared Pydantic record
      conflicts linked to missing names (D06), missing pytest plugins (D23) and deprecation
      warnings that break a test's warning count (D44, D45). D44/D45 also conclude that the
      failure does not affect how the code runs, and D46 that a scheduled removal will break
-     the code later;
+     the code later. D47/D48 sort Ruff findings into possible bugs and clean-up (style,
+     layout, outdated syntax), using the knowledge base's list of bug-indicating rules;
    - `heuristic`: likely causes from general experience when no rule is certain, worded as
      unconfirmed (H01–H04);
    - `fallback`: the tree's suggestion, only when neither matched (F01);
    - `plan`: actions (P01–P51), merged by action id across issues.
 
-   84 rules in total: 10 derive, 30 diagnose, 4 heuristic, 1 fallback, 39 plan.
+   89 rules in total: 10 derive, 32 diagnose, 4 heuristic, 1 fallback, 42 plan.
+
+   The web page shows steps for issues concluded `affects_running = no` as optional and
+   leaves them out of the problem count.
    Negation is stratified: a rule may only negate predicates concluded in an earlier phase,
    which `engine.validate` checks when the rule base loads.
 7. **Order.** `reasoning.order_actions` sorts by: blocked preconditions, goal impact (affects +
@@ -110,8 +114,10 @@ cited document.
 that differ from their PyPI distribution, 117 removed names and 1 removed usage (matched by its
 error message) from Python 3.10–3.13, NumPy, SciPy, scikit-learn, Jinja2, MarkupSafe,
 packaging, pydantic, Werkzeug and pandas, 10 names that Python 3.11/3.12 started warning about,
-and 44 pytest fixtures with the 21 plugins that provide them. Each entry cites its release notes
-or the plugin's PyPI page. `fixfirst knowledge --output kg.json` exports it with the rules.
+44 pytest fixtures with the 21 plugins that provide them, the Ruff rules that usually mean
+a bug (undefined names, syntax errors, format strings that raise, ...) and plain names for
+Ruff's rule families. Each entry cites its release notes, the plugin's PyPI page or the Ruff
+rule reference. `fixfirst knowledge --output kg.json` exports it with the rules.
 
 ## Evidence graph
 

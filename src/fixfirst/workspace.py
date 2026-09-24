@@ -22,9 +22,10 @@ GOAL_DONE = {
     "pass_tests": "All tests pass",
 }
 GOAL_CHOICES = [
-    ("pass_tests", "Make my tests pass", "Runs your tests and explains every failure."),
+    ("pass_tests", "Make my tests pass", "Runs your tests to see whether the code works, and explains every failure."),
     ("collect_tests", "Just get the tests to load", "Stops before running test code; for import and setup errors."),
-    ("check_style", "Clean up code-check warnings", "Runs Ruff with your project's settings."),
+    ("check_style", "Clean up code-check warnings",
+     "Reads your code without running it (Ruff): likely bugs must be fixed, style suggestions are optional."),
 ]
 ENV_DIRS = (".venv", "venv", "env", ".env")
 PROJECT_MARKERS = ("pyproject.toml", "setup.cfg", "setup.py", "requirements.txt", "pytest.ini", "tox.ini")
@@ -46,6 +47,11 @@ def build_view(session: Session) -> dict:
     # Failures the rules judged not to change how the code runs (for example a test that
     # only counts warnings) are optional: they never count as problems in the headline.
     optional_ids = {i for (i, p), values in known.items() if p == "affects_running" and "no" in values}
+    # Rules behind the lint classification and the future-risk note, shown under Details.
+    explained: dict[str, list[str]] = {}
+    for fact in session.facts:
+        if fact.predicate in ("lint_finding", "breaks_in_future") and fact.rule_id:
+            explained.setdefault(fact.subject, []).append(fact.rule_id)
     steps, optional, other = [], [], []
     for action in session.actions:
         if action.kind == "rerun":
@@ -70,10 +76,7 @@ def build_view(session: Session) -> dict:
             errors.append(issue.title)
             if issue.diagnosis_rule and issue.diagnosis_rule in rule_text:
                 rules.append(f"{issue.diagnosis_rule}: {rule_text[issue.diagnosis_rule]}")
-            rules += [
-                f"{f.rule_id}: {rule_text[f.rule_id]}" for f in session.facts
-                if f.subject == issue.issue_id and f.predicate == "breaks_in_future" and f.rule_id in rule_text
-            ]
+            rules += [f"{r}: {rule_text[r]}" for r in explained.get(issue.issue_id, []) if r in rule_text]
         sources = []
         for fact_id in action.reason_refs:
             for ref in getattr(facts.get(fact_id), "evidence_refs", []):
@@ -86,7 +89,9 @@ def build_view(session: Session) -> dict:
             i.diagnosis_source == "heuristic" and i.diagnosis == action.cause for i in related
         )
         is_optional = bool(related) and all(i.issue_id in optional_ids for i in related)
-        impact = _impact(related, known) if is_optional else {}
+        lint = [i for i in related if i.tool == "ruff"]
+        impact = _impact(related, known) if is_optional and not lint else {}
+        breakdown = _breakdown(lint, events) if is_optional and lint else []
         target = other if action.goal_impact <= 0 else optional if is_optional else steps
         target.append(
             {
@@ -111,6 +116,7 @@ def build_view(session: Session) -> dict:
                 "impact": impact.get("now"),
                 "risk": impact.get("later"),
                 "warnings": impact.get("warnings", []),
+                "breakdown": breakdown,
             }
         )
     steps, optional, other = _fold_suggestions(steps), _fold_suggestions(optional), _fold_suggestions(other)
@@ -134,6 +140,7 @@ def build_view(session: Session) -> dict:
         "python": session.target_python,
         "goal": session.goal,
         "goal_name": GOALS[session.goal],
+        "goal_note": next(note for key, _, note in GOAL_CHOICES if key == session.goal),
         "status": _status(session, steps, must, optional_issues),
         "steps": steps,
         "optional": optional,
@@ -143,6 +150,22 @@ def build_view(session: Session) -> dict:
         "checked": bool(session.runs),
         "last_checked": session.runs[-1].started_at if session.runs else None,
     }
+
+
+def _breakdown(issues, events: dict) -> list[dict]:
+    """Code-check findings counted by plain-language family, largest first."""
+    counts: dict[str, dict] = {}
+    for issue in issues:
+        for event_id in issue.event_ids:
+            event = events.get(event_id)
+            if not event:
+                continue
+            name = domain.lint_category(event.code or issue.component or "")
+            row = counts.setdefault(name, {"name": name, "count": 0, "codes": []})
+            row["count"] += 1
+            if event.code and event.code not in row["codes"]:
+                row["codes"].append(event.code)
+    return sorted(counts.values(), key=lambda r: (-r["count"], r["name"]))
 
 
 def _impact(issues, known: dict) -> dict:
@@ -231,17 +254,37 @@ def _status(session: Session, steps, open_issues, optional_issues=()) -> dict:
     fixed = sum(i.status == "resolved" for i in session.issues)
     progress = f"{fixed} fixed so far. " if fixed else ""
     waiting = len(optional_issues)
+    lint = session.goal == "check_style"
+    if lint:
+        # Code-check issues group findings by rule and file; count the findings themselves.
+        waiting = sum(len(i.event_ids) or 1 for i in optional_issues)
     if count:
-        extra = (
-            f" {waiting} more failing test{'s' if waiting != 1 else ''} below "
-            f"{'do' if waiting != 1 else 'does'} not affect how your code runs (optional)."
-            if waiting else ""
-        )
+        if not waiting:
+            extra = ""
+        elif lint:
+            extra = (
+                f" Ruff also has {waiting} clean-up suggestion{'s' if waiting != 1 else ''} "
+                "below (optional): they do not change how your code runs."
+            )
+        else:
+            extra = (
+                f" {waiting} more failing test{'s' if waiting != 1 else ''} below "
+                f"{'do' if waiting != 1 else 'does'} not affect how your code runs (optional)."
+            )
         return {
             "kind": "todo",
             "headline": f"{count} problem{'s' if count != 1 else ''} to fix",
             "detail": progress + "Start with step 1. After changing your code, press Check "
             "again: a step only counts as fixed when a real check passes." + extra,
+        }
+    if waiting and lint:
+        return {
+            "kind": "advisory",
+            "headline": "No problems that affect your code",
+            "detail": progress
+            + f"Ruff still has {waiting} clean-up suggestion{'s' if waiting != 1 else ''} about "
+            "style, layout and syntax. They do not change how your code runs; fix them only if "
+            "you want the code check to pass.",
         }
     if waiting:
         several = waiting != 1

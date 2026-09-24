@@ -370,6 +370,21 @@ then = [
 ]
 
 [[rule]]
+id = "D47"
+phase = "diagnose"
+description = "A code-check finding whose rule usually means the code fails or does the wrong thing when it runs."
+source = "knowledge: lint rules"
+when = [["?i", "lint_rule", "?r"], ["?r", "indicates", "possible_bug"]]
+then = [["?i", "lint_finding", "possible_bug"]]
+
+[[rule]]
+id = "D48"
+phase = "diagnose"
+description = "A code-check finding about style, layout or outdated syntax: it does not change how the code runs."
+when = [["?i", "lint_rule", "?r"], ["not", "?r", "indicates", "possible_bug"]]
+then = [["?i", "lint_finding", "cleanup"], ["?i", "affects_running", "no"]]
+
+[[rule]]
 id = "D46"
 phase = "diagnose"
 description = "The deprecated name the warnings are about is scheduled for removal: the code that uses it will stop working in that release."
@@ -1060,29 +1075,71 @@ verification = "Run the same check again"
 [[rule]]
 id = "P47"
 phase = "plan"
-description = "Style findings from the linter."
-when = [["?i", "kind", "style_issue"]]
+description = "Clean-up findings checked against the project's own Ruff settings."
+when = [["?i", "lint_finding", "cleanup"], ["project", "ruff_config", "?c"], ["test", "ne", "?c", "none"]]
 [rule.action]
-id = "review-style_issue"
+id = "cleanup-code"
 kind = "manual_fix"
 issue = "?i"
 cost = 2
-title = "Fix the code style findings"
-explanation = "Edit the reported files and lines by rule code, then re-run the code check. The number of style messages does not change the priority of restoring test collection."
+title = "Clean up the code-check suggestions"
+explanation = "Ruff checked the code against the project's settings in {?c} and suggests style, layout and syntax changes. None of them changes how the code runs. ruff check --fix applies many of them automatically; review the changes before you commit them."
+verification = "Re-run the code check"
+
+[[rule]]
+id = "P52"
+phase = "plan"
+description = "Clean-up findings when the project configures another linter, not Ruff."
+when = [["?i", "lint_finding", "cleanup"], ["project", "ruff_config", "none"], ["project", "other_linter", "?l"]]
+[rule.action]
+id = "cleanup-code"
+kind = "manual_fix"
+issue = "?i"
+cost = 2
+title = "Clean up the code-check suggestions"
+explanation = "This project configures its linter in {?l}, not Ruff, so Ruff used its own default rules. Many of these suggestions are rules the project never adopted, and none of them changes how the code runs. Fix the ones you agree with, or add Ruff settings that match the project's style."
+verification = "Re-run the code check"
+
+[[rule]]
+id = "P53"
+phase = "plan"
+description = "Clean-up findings when the project has no linter settings."
+when = [["?i", "lint_finding", "cleanup"], ["project", "ruff_config", "none"], ["not", "project", "other_linter", "?_"]]
+[rule.action]
+id = "cleanup-code"
+kind = "manual_fix"
+issue = "?i"
+cost = 2
+title = "Clean up the code-check suggestions"
+explanation = "The project has no Ruff settings, so Ruff used its own default rules. These are style, layout and syntax suggestions; none of them changes how the code runs. ruff check --fix applies many of them automatically; review the changes before you commit them."
+verification = "Re-run the code check"
+
+[[rule]]
+id = "P54"
+phase = "plan"
+description = "Clean-up findings before the project's settings are known."
+when = [["?i", "lint_finding", "cleanup"], ["not", "project", "ruff_config", "?_"]]
+[rule.action]
+id = "cleanup-code"
+kind = "manual_fix"
+issue = "?i"
+cost = 2
+title = "Clean up the code-check suggestions"
+explanation = "Ruff suggests style, layout and syntax changes. None of them changes how the code runs. ruff check --fix applies many of them automatically; review the changes before you commit them."
 verification = "Re-run the code check"
 
 [[rule]]
 id = "P48"
 phase = "plan"
-description = "Non-style linter diagnostics."
-when = [["?i", "kind", "code_check"]]
+description = "Code-check findings that may be bugs."
+when = [["?i", "lint_finding", "possible_bug"]]
 [rule.action]
 id = "review-code_check"
 kind = "manual_fix"
 issue = "?i"
 cost = 2
-title = "Review the code diagnostics"
-explanation = "These linter diagnostics (for example undefined names) can be real bugs, not formatting. Inspect each location."
+title = "Check the code-check findings that may be bugs"
+explanation = "These Ruff rules usually point at code that fails or does the wrong thing when it runs, such as an undefined name or a syntax error. Look at each location; Details lists the message for each."
 verification = "Re-run the code check"
 
 [[rule]]

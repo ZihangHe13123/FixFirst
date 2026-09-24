@@ -78,7 +78,9 @@ def base_facts(session: Session, active, knowledge=True) -> tuple[list[Fact], di
     facts += evidence_facts
     mentioned = {
         f.value for f in evidence_facts
-        if f.predicate in ("module", "api", "attribute", "kwarg", "usage", "missing_fixture", "extra_warning")
+        if f.predicate in (
+            "module", "api", "attribute", "kwarg", "usage", "missing_fixture", "extra_warning", "lint_rule"
+        )
     }
     known = domain.facts_for(mentioned) if knowledge else []
     facts += known

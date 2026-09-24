@@ -305,6 +305,7 @@ def collect_project(session, env_id: str) -> Run:
                     {"name": component, "path": path.relative_to(session.project_root).as_posix()}
                 )
     data["python_files"], data["defined_names"] = index_sources(Path(session.project_root))
+    data["lint_config"] = lint_settings(Path(session.project_root))
     run.stdout = json.dumps(redact_data(data), ensure_ascii=False, indent=2)
     run.exit_code = 0
     run.duration_s = round(time.monotonic() - start, 3)
@@ -313,6 +314,48 @@ def collect_project(session, env_id: str) -> Run:
         "and lock files are not verified from it."
     ]
     return run
+
+
+def lint_settings(root: Path) -> dict:
+    """Where the project configures Ruff, and which other linter it configures instead.
+
+    Without Ruff settings, Ruff applies its own default rules, which a project that lints
+    with flake8 or pylint never adopted.
+    """
+
+    def text(name):
+        path = root / name
+        try:
+            return path.read_text("utf-8", errors="replace")[:MAX_BYTES] if path.is_file() else None
+        except OSError:
+            return None
+
+    ruff = next((name for name in ("ruff.toml", ".ruff.toml") if (root / name).is_file()), None)
+    pyproject = text("pyproject.toml")
+    tools = {}
+    if pyproject:
+        try:
+            tools = tomllib.loads(pyproject).get("tool", {})
+        except tomllib.TOMLDecodeError:
+            tools = {}
+    if not ruff and isinstance(tools, dict) and "ruff" in tools:
+        ruff = "pyproject.toml [tool.ruff]"
+    other = next((name for name in (".flake8", ".pylintrc", "pylintrc") if (root / name).is_file()), None)
+    for name in ("setup.cfg", "tox.ini"):
+        content = text(name)
+        if other or not content:
+            continue
+        parser = configparser.ConfigParser(interpolation=None, strict=False)
+        try:
+            parser.read_string(content)
+        except configparser.Error:
+            continue
+        found = next((s for s in ("flake8", "pylint", "pylint.main") if parser.has_section(s)), None)
+        if found:
+            other = f"{name} [{found}]"
+    if not other and isinstance(tools, dict) and "pylint" in tools:
+        other = "pyproject.toml [tool.pylint]"
+    return {"ruff": ruff, "other": other}
 
 
 SKIP_DIRS = {".git", ".hg", ".venv", "venv", "env", "node_modules", "__pycache__", "build", "dist",
