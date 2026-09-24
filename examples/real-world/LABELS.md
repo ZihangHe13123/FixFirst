@@ -43,3 +43,17 @@ not scored in the first run.
 Prediction before the run, from what FixFirst's rules and heuristics cover: seaborn,
 cachetools, typer, parsel and flask-sqlalchemy should get a useful first step; aiostream,
 records and attrs fall outside what its evidence can show.
+
+## Corrections
+
+**attrs (corrected on 24 September 2026, before FixFirst's result for attrs existed).** While
+checking this label in a separate copy, the failure message turned out to be
+`AssertionError: mypy executable is not found`, not a message mismatch: the mypy tests start
+the `mypy` command, and running `.venv/bin/python -m pytest` without activating the
+environment leaves `.venv/bin` off `PATH` (the baseline ran the tests that way, and so does
+FixFirst). With the environment's `bin` folder on `PATH`, 53 of the 85 pass and 32 still fail
+(with mypy 1.20.2), the version problem the original label described. Corrected label:
+
+| Project | What plain pytest shows | Root cause | Correct first step (also acceptable) |
+|---|---|---|---|
+| attrs 25.3.0 (Py 3.13) | 85 failed in `tests/test_mypy.yml`: `mypy executable is not found` | Environment not activated: the tests run the `mypy` command, which is only on `PATH` when the environment is activated | Run the tests with the environment activated (its `bin` folder on `PATH`). Later layer: 32 tests need an older mypy. *Wrong*: code defect in attrs; installing mypy (it is installed) |
