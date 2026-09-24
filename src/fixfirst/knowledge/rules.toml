@@ -78,7 +78,7 @@ then = [["?i", "owner_is_local", "yes"]]
 [[rule]]
 id = "G11"
 phase = "derive"
-description = "A release search found no older release of the library that provides the name."
+description = "The search checked every candidate with a compatible wheel; none provided the name."
 when = [["?i", "api", "?x"], ["?x", "not_in_older_releases", "?_"]]
 then = [["?i", "no_older_release_has", "?x"]]
 
@@ -486,7 +486,7 @@ then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?
 id = "H05"
 phase = "heuristic"
 status = "hypothesis"
-description = "No older release of the library provides the name either: a misspelt or never-existing name is more likely than a version change."
+description = "None of the older compatible releases checked provides the name: check whether it is misspelt or belongs to another release or package."
 when = [["?i", "no_older_release_has", "?x"], ["not", "?i", "diagnosis", "?_"]]
 then = [["?i", "likely", "code_defect"], ["?i", "likely_because", "?x"]]
 
@@ -867,7 +867,7 @@ verification = "Re-run test collection"
 [[rule]]
 id = "P58"
 phase = "plan"
-description = "Before guessing a version bound, try releases in a temporary environment to find the newest one that still has the name."
+description = "Try older releases in a temporary environment to find a verified version that provides the name."
 when = [
   ["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"], ["?i", "api", "?x"],
   ["?d", "installed_version", "?iv"], ["not", "?x", "release_search", "?_"],
@@ -879,17 +879,17 @@ check = "version_search"
 targets = ["{?d}", "{?x}"]
 issue = "?i"
 cost = 1
-title = "Find the newest {?d} that still provides {?x}"
+title = "Find an older {?d} that provides {?x}"
 explanation = "{?d} {?iv} no longer provides {?x}. FixFirst can try older {?d} releases in a temporary environment with this Python and tell you exactly which one to install. It downloads prebuilt packages from PyPI, runs no build scripts and does not change your environment; it takes up to a few minutes."
 verification = "The search result appears as the next step"
 
 [[rule]]
 id = "P57"
 phase = "plan"
-description = "A release search found the newest release that provides the name: install below the next series."
+description = "A release search verified a release that provides the name: install that exact version."
 when = [
   ["?i", "remedy", "use_release"], ["?i", "because", "?x"], ["?x", "release_search", "?d"],
-  ["?x", "provided_until_release", "?v"], ["?x", "install_below", "?m"],
+  ["?x", "provided_until_release", "?v"],
 ]
 [rule.action]
 id = "use-release-{?x}"
@@ -897,15 +897,15 @@ kind = "manual_fix"
 cause = "version_incompatibility"
 issue = "?i"
 cost = 1
-title = "Install {?d} below {?m}: {?v} is the newest release that still provides {?x}"
-explanation = "FixFirst tried {?d} releases in a temporary environment with this Python, the newest of each release series: {?v} provides {?x}, newer series do not. Install {?d} below {?m} (the command picks {?v}), or change the code that imports it for the lasting fix."
-pip_install = "{?d}<{?m}"
+title = "Install {?d} {?v}: this release was verified to provide {?x}"
+explanation = "FixFirst installed {?d} {?v} in a temporary environment with this Python and confirmed that it provides {?x}. The command pins that exact version. Re-run the project's tests to check the full environment, or update the code that imports the name. The bounded search may not have checked every newer release."
+pip_install = "{?d}=={?v}"
 verification = "Re-run the tests with the same interpreter"
 
 [[rule]]
 id = "P59"
 phase = "plan"
-description = "No older release has the name: check the spelling and the library's documentation."
+description = "None of the compatible releases checked provides the name: check the spelling and documentation."
 when = [["?i", "likely", "code_defect"], ["?i", "likely_because", "?x"], ["?i", "no_older_release_has", "?x"]]
 [rule.action]
 id = "check-name-{?x}"
@@ -913,8 +913,8 @@ kind = "manual_fix"
 cause = "code_defect"
 issue = "?i"
 cost = 2
-title = "Check the name {?x}: no older release provides it either"
-explanation = "FixFirst tried older releases in a temporary environment and none of them provides {?x}, so an older version will not help. Check the spelling and the library's documentation; the name may belong to a newer release or to another package."
+title = "Check the name {?x}: the older releases checked did not provide it"
+explanation = "None of the older releases checked in a temporary environment provided {?x}. Check the spelling and the library's documentation; the name may belong to a newer release, another package, or a release without a compatible wheel for this Python."
 verification = "Re-run the tests with the same interpreter"
 
 [[rule]]

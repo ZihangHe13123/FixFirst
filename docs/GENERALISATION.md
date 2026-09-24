@@ -184,3 +184,13 @@ locking errors, a later layer).
 The same caveat as round 2 applies, more strongly: these projects shaped the fixes, so the
 held-out number is still round 1's. Two of the corrections to labels were found while checking
 FixFirst's output; both are documented with the evidence that settled them.
+
+### Review correction after round 3 (2026-09-24)
+
+The release-search description and commands above record the version used in round 3.
+A subsequent code review found that it skipped earlier patches in the installed series and
+could mistake an incomplete search for proof that no older release provided the name. The
+current search includes those patches, keeps unchecked or failed searches inconclusive, and
+pins a successfully tried release with `==`. It does not promise the newest working release.
+See [ARCHITECTURE.md](ARCHITECTURE.md#finding-a-release-that-works). The correction has offline
+regression coverage; the real-project searches and scores above have not been rerun.

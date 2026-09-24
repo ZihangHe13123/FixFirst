@@ -131,6 +131,22 @@ def test_malformed_ruff_retained(value):
     run = Run(tool="ruff", exit_code=0, stdout=value)
     assert parse(run)[0].kind == "tool_failure"
     assert not run.verified_pass
+    assert not run.coverage_complete
+
+
+def test_failed_ruff_output_cannot_verify_an_earlier_finding(session):
+    session.goal = "check_style"
+    ingest(session, [ruff_run(session, "F821")])
+    issue_id = session.issues[0].issue_id
+    failed = ruff_run(session)
+    failed.exit_code = 1  # Empty findings contradict the nonzero exit code.
+
+    ingest(session, [failed])
+
+    assert not failed.coverage_complete and not failed.verified_pass
+    assert next(i for i in session.issues if i.issue_id == issue_id).status == "not_observed"
+    assert any(i.kind == "tool_failure" and i.status == "open" for i in session.issues)
+    assert session.goal_status != "achieved"
 
 
 def test_missing_tool_not_project_import_error():

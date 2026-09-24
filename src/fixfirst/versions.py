@@ -1,13 +1,13 @@
-"""Find the newest release of a library that still provides a name, by trying releases.
+"""Find an older release of a library that provides a name, by trying releases.
 
 Rules can only say "an older release probably still has it"; which one depends on release
 history FixFirst does not keep. This module finds out: it reads the release list from PyPI,
-keeps the newest release of each release series (1.4.x, 1.5.x, ...) that has a prebuilt wheel
-for the target Python and machine, and checks series in a throwaway environment: stepping back
-1, 2, 4, 8 series from the installed one, then bisecting. Removals are usually a few series
-back, so the search rarely depends on very old releases, which often no longer import next to
-today's dependencies. Only wheels are installed (no build scripts run) and the project's own
-environment is never touched.
+keeps releases with a prebuilt wheel for the target Python and machine, including earlier
+patches of the installed series. It first searches those patches and older series heads by
+doubling steps and bisection. If that finds nothing, the remaining budget checks skipped
+patches. At most 12 releases are tried in a throwaway environment. A result recommends the
+exact verified version; a bounded search need not find the newest working release. Only
+wheels are installed (no build scripts run) and the project's environment is never touched.
 """
 
 import json
@@ -76,10 +76,10 @@ def series(version: Version) -> str:
 
 
 def candidates(data: dict, installed: str, python_version: str, markers: dict) -> list[str]:
-    """The newest usable release of each series older than the installed one, newest first."""
+    """Every usable release older than the installed version, including earlier patches."""
     python = Version(python_version)
-    ceiling = Version(series(Version(installed)))
-    found = []
+    ceiling = Version(installed)
+    found = set()
     for text, files in (data.get("releases") or {}).items():
         try:
             version = Version(text)
@@ -97,14 +97,9 @@ def candidates(data: dict, installed: str, python_version: str, markers: dict) -
             except InvalidSpecifier:
                 pass
             if wheel_fits(item.get("filename", ""), python, markers):
-                found.append(version)
+                found.add(version)
                 break
-    newest = {}
-    for version in found:
-        key = series(version)
-        if key not in newest or version > newest[key]:
-            newest[key] = version
-    return [str(v) for v in sorted(newest.values(), reverse=True)]
+    return [str(v) for v in sorted(found, reverse=True)]
 
 
 class Sandbox:
@@ -148,24 +143,55 @@ class Sandbox:
 
 def search(python: str, python_version: str, markers: dict, dist: str, installed: str, api: str,
            fetch=fetch_json, sandbox=Sandbox) -> dict:
-    """The newest release of `dist` that still provides `api` (module.name), by trying releases."""
+    """Find a verified release of `dist` providing `api` (module.name) within a trial budget."""
     module, _, name = api.rpartition(".")
     result = {"dist": dist, "api": api, "installed": installed, "python": python_version,
-              "checked": [], "provides": None, "below": None, "first_without": None, "status": "not_found"}
+              "checked": [], "provides": None, "below": None, "first_without": None, "status": "not_judged"}
     try:
-        versions = candidates(fetch(PYPI.format(dist)), installed, python_version, markers)
+        available = candidates(fetch(PYPI.format(dist)), installed, python_version, markers)
     except (OSError, ValueError) as error:
         return {**result, "status": "offline", "error": str(error)[:300]}
-    if not versions or not module:
+    if not available or not module:
         return {**result, "status": "no_candidates"}
+    # Include every patch before the installed release, then the newest of each older
+    # series. The remaining patches stay available for a fallback if this search fails.
+    current_series = series(Version(installed))
+    versions, seen = [], set()
+    for release in available:
+        family = series(Version(release))
+        if family == current_series or family not in seen:
+            versions.append(release)
+        seen.add(family)
     box = sandbox(python)
     try:
-        def check(index):
-            outcome = box.provides(dist, versions[index], module, name)
-            result["checked"].append({"version": versions[index], "result": outcome})
-            return outcome
+        outcomes = {}
 
-        # Step back 1, 2, 4, 8, ... series until one has the name, never past the oldest. A
+        def check_release(release):
+            if release not in outcomes:
+                outcome = box.provides(dist, release, module, name)
+                outcomes[release] = outcome
+                result["checked"].append({"version": release, "result": outcome})
+            return outcomes[release]
+
+        def check(index):
+            return check_release(versions[index])
+
+        def found_result(release):
+            provided = Version(release)
+            newer = [v for v in available if Version(v) > provided]
+            same_series = [v for v in [*newer, installed] if series(Version(v)) == series(provided)]
+            # Keep the legacy range metadata, but never let it include a newer patch in
+            # the same series. Installation advice pins the exact release we tried.
+            below = min(same_series, key=Version) if same_series else f"{provided.major}.{provided.minor + 1}"
+            without = next((v for v in reversed(newer) if outcomes.get(v) == "missing"), installed)
+            result.update(
+                provides=release, below=below,
+                first_without=without if series(Version(without)) == series(provided) else series(Version(without)),
+                status="found" if all(outcomes.get(v) == "missing" for v in newer) else "partial",
+            )
+            return result
+
+        # Step back 1, 2, 4, 8, ... candidates until one has the name, never past the oldest. A
         # release that cannot be judged (does not install or import) is dropped and the next
         # older one takes its place.
         missing, index, step, found = -1, 0, 1, None
@@ -177,12 +203,18 @@ def search(python: str, python_version: str, markers: dict, dist: str, installed
             if outcome == "missing":
                 missing = index
                 if index == len(versions) - 1:
-                    return result  # even the oldest usable series lacks it
+                    break  # Other patches may still have a name introduced and later removed.
                 index, step = min(index + step, len(versions) - 1), step * 2
             else:
                 versions.pop(index)
         if found is None:
-            result["status"] = "not_judged"
+            for release in available:
+                if len(result["checked"]) >= MAX_PROBES:
+                    break
+                if release not in outcomes and check_release(release) == "provides":
+                    return found_result(release)
+            if len(outcomes) == len(available) and all(v == "missing" for v in outcomes.values()):
+                result["status"] = "not_found"
             return result
         # Bisect between the newest series known to lack the name and the one that has it.
         low, high = missing, found
@@ -196,12 +228,6 @@ def search(python: str, python_version: str, markers: dict, dist: str, installed
             else:
                 versions.pop(middle)
                 high -= 1
-        provides = Version(versions[high])
-        # Installing below the next series always picks the verified release (or a newer patch
-        # of it), even if a series in between could not be judged here.
-        result.update(provides=versions[high], below=f"{provides.major}.{provides.minor + 1}",
-                      first_without=series(Version(versions[low])) if low >= 0 else series(Version(installed)),
-                      status="found" if high - low == 1 else "partial")
-        return result
+        return found_result(versions[high])
     finally:
         box.close()

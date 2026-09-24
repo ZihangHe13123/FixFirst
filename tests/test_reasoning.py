@@ -72,11 +72,40 @@ def test_unlisted_removal_is_only_a_likely_cause(tmp_path):
     )
     search, guess = build_view(session)["steps"][:2]
     # First offer to find the exact release by trying them; the series guess is the fallback.
-    assert search["title"] == "Find the newest numpy that still provides numpy.msort" and search["search"]
+    assert search["title"] == "Find an older numpy that provides numpy.msort" and search["search"]
     assert guess["title"].startswith("Try an older numpy") and "msort" in guess["title"]
     assert guess["cause"] is None and guess["possible"] == "Version incompatibility"
     # numpy.msort was removed in 2.0, so stepping back one series is the right first try.
     assert guess["command"].endswith("-m pip install 'numpy<2'")
+
+
+@pytest.mark.parametrize("legacy_bound", [None, "1.6"])
+def test_release_search_advice_pins_the_verified_patch(tmp_path, legacy_bound):
+    from fixfirst.models import Run
+    from fixfirst.runner import environment_id
+    from fixfirst.service import ingest
+
+    session = create_session(tmp_path, sys.executable, goal="pass_tests")
+    env_id = environment_id(session.target_python)
+    failure = Run(
+        tool="pytest_run", scope="tests:project", environment_id=env_id, exit_code=2,
+        stderr="ImportError: cannot import name 'helper' from 'demo.utils'",
+    )
+    ingest(session, [failure])
+    issue_id = session.issues[0].issue_id
+    ingest(session, [Run(
+        tool="version_search", scope="versions:demo:demo.utils.helper", environment_id=env_id,
+        exit_code=0, stdout=json.dumps({
+            "dist": "demo", "api": "demo.utils.helper", "installed": "1.5.1",
+            "provides": "1.5.0", "below": legacy_bound, "status": "partial",
+            "checked": [{"version": "1.5.0", "result": "provides"}],
+        }),
+    )])
+
+    action = next(a for a in session.actions if a.action_id == "use-release-demo.utils.helper")
+    assert action.command == [session.target_python, "-m", "pip", "install", "demo==1.5.0"]
+    assert "newest" not in action.title
+    assert next(i for i in session.issues if i.issue_id == issue_id).status == "open"
 
 
 def test_environment_snapshot_survives_a_project_file_that_shadows_the_stdlib(tmp_path):

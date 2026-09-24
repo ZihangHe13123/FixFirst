@@ -12,4 +12,4 @@ product as it was then; the current documents are one level up.
 | `*-preview.png` | screenshots of the v0.1–v0.3 report interface |
 | `environment-*-v0.1.*` | the interpreter snapshot the v0.1 examples were recorded with |
 
-Versions are tagged in git: `v0.3.0`, `v0.4.0`, `v0.5.0`.
+Versions are tagged in git: `v0.3.0`, `v0.4.0`, `v0.5.0`, `v0.6.0`.

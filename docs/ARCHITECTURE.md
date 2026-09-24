@@ -1,7 +1,7 @@
 # FixFirst architecture
 
 FixFirst turns the output of real checks into a diagnosed, ranked and verifiable plan. This
-page describes the code as of v0.5. `models.py` holds the shared Pydantic records.
+page describes the code as of v0.6. `models.py` holds the shared Pydantic records.
 
 ```
  project + interpreter + goal
@@ -84,21 +84,31 @@ page describes the code as of v0.5. `models.py` holds the shared Pydantic record
    blocks), strength of support (knowledge-backed 3, evidence 2, generic 1, hypothesis or
    awaiting verification 0), kind (gather evidence → fix → verify) and cost.
 8. **Verify.** After the user changes the project, the next check updates only issues it
-   covers. A complete pip check or Ruff run closes the findings it no longer reports; a
+   covers. A complete pip check or Ruff run with valid output closes the findings it no longer reports; a
    complete test run closes earlier collection errors. Imported logs, partial runs,
    skipped/xfail tests, deleted tests, relaxed declarations or a different interpreter never
-   close an issue.
+   close an issue. Empty Ruff findings with a nonzero exit code are a tool failure and cannot
+   verify that an earlier finding was fixed.
 
 ## Finding a release that works
 
 When a name is missing from an installed library, a rule can only say that an older release
 probably has it. `versions.py` finds out which, when the user asks ("Find it"): it reads the
-release list from PyPI, keeps the newest release of each series with a prebuilt wheel for the
-target Python and machine, and checks them in a throwaway environment built from the same
-interpreter (step back 1, 2, 4, 8 series, then bisect; at most 12 trials). Only wheels are
-installed, and the user's environment is not changed. The result is a Run like any other
-check; its facts (`provided_until_release`, `install_below`, or `not_in_older_releases`) let
-rule D09 confirm the cause and P57 name the bound, or H05 point at a misspelt name.
+release list from PyPI and keeps stable older releases with a prebuilt wheel for the target
+Python and machine, including earlier patches of the installed series. It first checks those
+patches and the newest of each older series by doubling steps and bisection. If that finds
+nothing, it tries skipped patches with the remaining budget. All trials use a throwaway
+environment built from the same interpreter; at most 12 releases are tried. Only wheels are
+installed, and the user's environment is not changed.
+
+The result is a Run like any other check. A verified release (`provided_until_release`) lets
+rule D09 confirm the cause and P57 suggest installing that exact version with `==`; the
+legacy `install_below` metadata is not used for this command. Finding a usable release does
+not guarantee it is the newest: the result is `partial` if any newer candidate was not
+confirmed missing. Only checking every candidate successfully and finding the name absent
+produces `not_found` / `not_in_older_releases`, which lets H05 suggest checking the name.
+Exhausting the budget or failing to install/import a candidate without finding a working
+release gives `not_judged`, not a claim that no older release provides the name.
 
 Lock files (`Pipfile.lock`, `poetry.lock`, `uv.lock`) are read as the versions the project
 was tested with; heuristic H06 uses them when a failure is raised inside a library that is now

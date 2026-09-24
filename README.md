@@ -8,7 +8,7 @@ cause of each failure, ranks what to do next for your goal, and closes an issue 
 completed check of the same scope proves it fixed. It runs locally, never edits your code and
 never installs anything into your environment (it gives you the command instead).
 
-NUS-ISS Intelligent Reasoning Systems practice module, Group 24 · version 0.5.0
+NUS-ISS Intelligent Reasoning Systems practice module, Group 24 · version 0.6.0
 
 ## Quick start
 
@@ -62,7 +62,7 @@ real check before calling anything fixed.
 | Knowledge-based rules | A production system with variables, stratified negation and provenance. 99 rules in five phases derive goal relevance, diagnose causes, add likely causes from general heuristics, fall back to the classifier, and propose actions. | `engine.py`, `knowledge/rules.toml` |
 | Knowledge graph | A curated domain graph (5 causes, 119 removed modules, APIs, arguments, usages and fixtures with the release that removed them, 10 deprecations that emit warnings, 44 pytest fixtures mapped to their plugins, unmaintained packages, which Ruff rules indicate likely bugs, import-name → distribution mappings, 23 cited sources) that the rules query, and a per-session evidence graph (10 entity types, 15 relations) for explanations and questions. | `domain.py`, `knowledge/domain.toml`, `knowledge_graph.py` |
 | Data mining | A Gini decision tree over 44 evidence features suggests a cause when no rule applies; TF-IDF + cosine similarity with complete-link grouping merges repeated messages. | `evidence.py`, `classification.py`, `grouping.py` |
-| Search | On request, a bounded search over a library's release series (doubling steps, then bisection, at most 12 real install-and-import trials) finds the newest release that still provides a missing name. | `versions.py` |
+| Search | On request, a bounded search includes earlier patches and older release series (doubling steps, bisection, then a fallback over skipped patches if needed; at most 12 real install-and-import trials). When it finds a release providing a missing name, the installation command pins that verified version. | `versions.py` |
 
 Every recommendation traces back through the rule that proposed it, the facts it used and the
 check record or release note those facts came from. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
@@ -157,7 +157,7 @@ python scripts/run_real_world.py ../test-projects/generalisation --search
 |---|---|
 | `src/fixfirst/` | the package (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)) |
 | `src/fixfirst/knowledge/` | rule base, domain knowledge, bundled decision tree |
-| `tests/` | 132 tests, most running real subprocesses |
+| `tests/` | 141 tests, most running real subprocesses |
 | `examples/` | recorded runs, datasets, experiment reports and the real-world check ([overview](examples/README.md)) |
 | `docs/` | architecture, generalisation check, real-project case studies, course alignment, team notes (`队友说明.md`), optimisation log; `docs/history/` keeps earlier versions' records |
 | `scripts/` | setup (macOS/Linux/Windows), real-project set-up and batch runs, demo recording |
@@ -173,6 +173,10 @@ python scripts/run_real_world.py ../test-projects/generalisation --search
   measures diagnosis, not time saved; a user study is still to be done.
 - The knowledge graph covers selected releases of selected libraries; anything else falls back
   to evidence rules, heuristics, the release search and the classifier.
+- Release search considers stable older releases with compatible wheels and stops after 12
+  trials. It may miss a working release or leave newer releases unchecked. An unfinished or
+  failed trial does not prove that no older version works; a verified import still needs the
+  project's tests to confirm the full environment.
 - Behaviour changes that raise no "name is missing" error (a library returning different
   results) are only recognised through a lock file; otherwise they look like code defects.
 - The only held-out real-world measurement is round 1 of the generalisation check (2 of 13);
@@ -183,5 +187,5 @@ python scripts/run_real_world.py ../test-projects/generalisation --search
 ## AI assistance
 
 Parts of the code and documentation were written with AI coding assistants (OpenAI Codex for
-v0.1–v0.3, Anthropic Claude for v0.4–v0.5). The team is responsible for reviewing, understanding and
+v0.1–v0.3 and the v0.6 fixes, Anthropic Claude for v0.4–v0.5). The team is responsible for reviewing, understanding and
 presenting the work.

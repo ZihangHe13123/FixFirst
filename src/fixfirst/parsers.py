@@ -131,7 +131,7 @@ def parse(run: Run) -> list[Event]:
         reason = {
             "offline": "PyPI could not be reached",
             "no_candidates": "no older release has a wheel for this Python",
-            "not_judged": "the older releases tried could not be installed or imported here",
+            "not_judged": "the search budget ended or some older releases could not be installed or imported here",
         }
         return [
             event(
@@ -232,10 +232,10 @@ def parse(run: Run) -> list[Event]:
                     )
                 )
                 events[-1].evidence_refs = [f"{run.run_id}:json:{index}"]
-            run.coverage_complete = True
-            run.verified_pass = run.exit_code == 0 and not events
             if not events and run.exit_code != 0:
                 raise ValueError()
+            run.coverage_complete = True
+            run.verified_pass = run.exit_code == 0 and not events
             return events
         except (ValueError, KeyError, TypeError, AttributeError):
             return [
