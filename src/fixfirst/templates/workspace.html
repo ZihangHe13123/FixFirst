@@ -60,7 +60,7 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
       {% if step.where %}<div class="where">{% for place in step.where[:4] %}<code>{{ place }}</code>{% endfor %}{% if step.where|length > 4 %}<span class="muted small">and {{ step.where|length - 4 }} more</span>{% endif %}</div>{% endif %}
       <p>{{ step.explanation }}</p>
       {% if step.command %}<div class="cmd"><code>{{ step.command }}</code><button type="button" class="copy" data-copy="{{ step.command }}">Copy</button></div>
-      <p class="muted small">Run it in a terminal. It uses this project's own Python, so the package goes where FixFirst checks. Then press <b>Check again</b>.</p>{% endif %}
+      <p class="muted small">Run it in a terminal. It uses this project's own Python, so the package goes where FixFirst checks. Then press <b>Check again</b>.<br>pip may print a red <code>ERROR</code> listing other version conflicts. If its last line says <i>Successfully installed</i>, the step worked: the conflicts it lists are the next steps, and FixFirst takes them one at a time.</p>{% endif %}
       {% if step.gather %}<p class="muted small">Press <b>Check again</b> and FixFirst collects this for you.</p>{% endif %}
       <details><summary>Details</summary>
         {% if step.errors %}<h4>Error</h4>{% for error in step.errors[:3] %}<pre>{{ error }}</pre>{% endfor %}{% endif %}
