@@ -1,0 +1,76 @@
+{
+  "source": "https://github.com/soarsmu/BugsInPy/tree/11c5f1eea954a42132cfd06bf257766a7963e0fd",
+  "bugs": 501,
+  "projects": 17,
+  "python_versions": {
+    "3.6": 31,
+    "3.7": 150,
+    "3.8": 320
+  },
+  "tiers": {
+    "1: nothing to compile": 70,
+    "2: small C extensions to compile": 53,
+    "3: large native stack to compile": 378
+  },
+  "tier_by_project": {
+    "ansible": {
+      "tier 3, Docker, Python 3.6": 18
+    },
+    "black": {
+      "tier 3, uv, Python 3.8": 23
+    },
+    "cookiecutter": {
+      "tier 1, Docker, Python 3.6": 4
+    },
+    "fastapi": {
+      "tier 2, uv, Python 3.8": 16
+    },
+    "httpie": {
+      "tier 2, Docker, Python 3.7": 5
+    },
+    "keras": {
+      "tier 3, Docker, Python 3.7": 45
+    },
+    "luigi": {
+      "tier 3, uv, Python 3.8": 33
+    },
+    "matplotlib": {
+      "tier 3, uv, Python 3.8": 30
+    },
+    "pandas": {
+      "tier 3, uv, Python 3.8": 169
+    },
+    "PySnooper": {
+      "tier 1, uv, Python 3.8": 3
+    },
+    "sanic": {
+      "tier 3, uv, Python 3.8": 5
+    },
+    "scrapy": {
+      "tier 3, uv, Python 3.8": 40
+    },
+    "spacy": {
+      "tier 3, Docker, Python 3.7": 9,
+      "tier 3, uv, Python 3.8": 1
+    },
+    "thefuck": {
+      "tier 2, Docker, Python 3.7": 32
+    },
+    "tornado": {
+      "tier 1, Docker, Python 3.7": 16
+    },
+    "tqdm": {
+      "tier 1, Docker, Python 3.6": 9
+    },
+    "youtube-dl": {
+      "tier 1, Docker, Python 3.7": 38,
+      "tier 3, Docker, Python 3.7": 5
+    }
+  },
+  "runtimes": {
+    "Docker, Python 3.6": 31,
+    "Docker, Python 3.7": 150,
+    "uv, Python 3.8": 320
+  },
+  "note": "Tiers count the pinned packages without an Apple Silicon wheel. The pinned lists are whole environment freezes, so a single test may need fewer. No bug has been reproduced by this script."
+}

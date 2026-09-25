@@ -16,6 +16,7 @@ JSON and evidence-graph JSON next to it.
 | `dependency-demo/` | `pip check` passes but the project's declaration is not met | `01-broken.html` |
 | `historical-regressions/` | Four upstream library defects replayed offline with official wheels | `REPORT.md` |
 | `grouping-evaluation/` | Message grouping (exact vs TF-IDF) on the controlled datasets | `collection/REPORT.md` |
+| `public-data/` | What PyDFix and BugsInPy contain and the parts FixFirst can use: 22 distinct PyDFix import errors, an index of 501 BugsInPy bugs | `README.md` |
 | `dataset/`, `execution-dataset/` | The v0.1/v0.2 controlled datasets (used for grouping only) | `manifest.json` |
 
 ## Reproduce

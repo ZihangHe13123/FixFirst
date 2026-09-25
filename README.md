@@ -39,9 +39,10 @@ The browser opens the local interface:
 5. When a library no longer provides a name your code uses, **Find it** tries older releases
    in a throwaway environment and tells you exactly which version to install.
 
-No project at hand? Press *Open a sample project* on the start page: four faults, four causes,
-with the changes listed in its `FIXES.md`. You can also double-click `start-fixfirst.command`
-(macOS) or `start-fixfirst.bat` (Windows). Checks import the project's code, as its tests would;
+No project at hand? Press *Open a sample project* on the start page: four faults across three
+root-cause categories, with the changes listed in its `FIXES.md`. You can also double-click
+`start-fixfirst.command` (macOS) or `start-fixfirst.bat` (Windows). Checks import the project's
+code, as its tests would;
 only use projects you trust. The evidence graph, rules and raw output are one click away under
 *Technical details*.
 
@@ -55,17 +56,76 @@ file called `yaml.py` hides the library; a `KeyError` inside `os.environ` is a m
 setting, not a bug. FixFirst makes that distinction explicit, shows why, and insists on a
 real check before calling anything fixed.
 
-## How it reasons
+## How it works
 
-| Technique | What it does | Code |
-|---|---|---|
-| Knowledge-based rules | A production system with variables, stratified negation and provenance. 99 rules in five phases derive goal relevance, diagnose causes, add likely causes from general heuristics, fall back to the classifier, and propose actions. | `engine.py`, `knowledge/rules.toml` |
-| Knowledge graph | A curated domain graph (5 causes, 119 removed modules, APIs, arguments, usages and fixtures with the release that removed them, 10 deprecations that emit warnings, 44 pytest fixtures mapped to their plugins, unmaintained packages, which Ruff rules indicate likely bugs, import-name → distribution mappings, 23 cited sources) that the rules query, and a per-session evidence graph (10 entity types, 15 relations) for explanations and questions. | `domain.py`, `knowledge/domain.toml`, `knowledge_graph.py` |
-| Data mining | A Gini decision tree over 44 evidence features suggests a cause when no rule applies; TF-IDF + cosine similarity with complete-link grouping merges repeated messages. | `evidence.py`, `classification.py`, `grouping.py` |
-| Search | On request, a bounded search includes earlier patches and older release series (doubling steps, bisection, then a fallback over skipped patches if needed; at most 12 real install-and-import trials). When it finds a release providing a missing name, the installation command pins that verified version. | `versions.py` |
+One troubleshooting round is a loop. Each check updates the plan, and nothing is called fixed
+until a real check shows it.
 
-Every recommendation traces back through the rule that proposed it, the facts it used and the
-check record or release note those facts came from. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+```
+ your project + its Python interpreter + a goal (e.g. "make my tests pass")
+      │
+  1  Check       run the project's own checks: environment snapshot, declared dependencies,
+      │          pip check, pytest (collect and run), Ruff
+  2  Group       put repeated messages together (same tool, stage and place; text similarity)
+      │
+  3  Evidence    what actually happened: the real exception, where it was raised, and whether
+      │          each module is installed, in the standard library, a local file or declared
+  4  Knowledge   look up only the names in the evidence: what was removed, in which release,
+      │          what replaces it, which package provides it (from official documentation)
+  5  Reason      99 rules, forward chaining in five phases:
+      │          derive → diagnose → heuristic → fallback (decision tree) → plan
+  6  Plan        order the actions: blocked or not, effect on the goal, strength of evidence,
+      │          kind of action, cost
+      │
+  7  Verify      you change the code, FixFirst runs the check again; an issue closes only when a
+                 completed check of the same scope and interpreter passes → back to 1
+```
+
+### The parts, and how each is built
+
+| Part (course technique) | What it does | How it is built | Code |
+|---|---|---|---|
+| **Rules** (decision automation) | Turn evidence and knowledge into root causes and next actions. A production system with variables, stratified negation and provenance; it concludes only when its conditions hold. | Written by the team: 99 rules in five phases, improved on development projects | `engine.py`, `knowledge/rules.toml`, `reasoning.py` |
+| **Domain knowledge graph** (knowledge representation) | Supplies the facts the rules need: 119 removed modules, APIs, arguments, usages and fixtures with the release that removed them and their replacements, 10 deprecations, 44 pytest fixtures mapped to their plugins, import name → package, unmaintained packages, Ruff rules that indicate likely bugs | Curated from official documentation and release notes (23 sources); every entry cites its source. Not learned from data | `domain.py`, `knowledge/domain.toml` |
+| **Evidence graph** (knowledge representation) | Records, for each session, the goal, issues, facts, causes, rules, actions, runs and sources (10 entity types, 15 relations); answers "why" and "what is left" questions by graph traversal | Built automatically during every check | `knowledge_graph.py` |
+| **Decision tree** (data mining) | Suggests a likely cause when no rule or heuristic applies, shown as unconfirmed | Gini tree trained on 215 generated, executed cases, over 44 evidence features (no labels, no parser category) | `evidence.py`, `classification.py` |
+| **Message grouping** (data mining) | TF-IDF character n-grams and cosine similarity, complete-link, inside blocks of the same tool, stage and place | One threshold (0.82), fixed before evaluation. So far no measurable gain over exact text matching, because each failing test forms its own block; being revised | `grouping.py` |
+| **Release search** (search) | On request, tries older releases (at most 12 install-and-import trials, in a throwaway environment) and pins a version verified to provide a missing name | Runs at the time of use; nothing is trained | `versions.py` |
+
+The rules are precise but only where knowledge exists, the knowledge graph supplies the facts
+and the explanations, and the decision tree covers faults the knowledge graph does not list.
+
+### One decision, step by step
+
+From the sample project (*Open a sample project* on the start page):
+
+```
+evidence    pricing.py:1  `from collections import Mapping` fails; the interpreter is Python 3.12
+knowledge   collections.Mapping was removed in Python 3.10; import it from collections.abc
+            (source: Python documentation)
+rule D02    a name the code uses + the release that removed it + the installed version
+            → root cause: version incompatibility
+action      "Replace collections.Mapping: removed in Python 3.10" (use collections.abc);
+            confirm by re-running the affected tests with the same interpreter
+verify      the issue closes only after a completed run covering it passes on that interpreter
+```
+
+Every recommendation traces back like this through the rule that proposed it, the facts it used
+and the check record or release note those facts came from. The web page shows the trace under
+*Details*; [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) describes the code.
+
+### How we improve it
+
+Much like training a model, with the data kept apart:
+
+1. **Development projects**: run FixFirst, compare with labels, and fix the *general* cause of
+   each mistake (missing evidence, missing knowledge, a wrong rule, wrong advice), never a
+   single project. Each fix gets a test.
+2. **Regression check**: the 215 generated cases and the unit tests must not get worse.
+3. **Held-out test**: freeze a version, label a fresh set of projects before running, run once
+   and report the result as it is ([docs/GENERALISATION.md](docs/GENERALISATION.md)).
+
+Where the data comes from: [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md).
 
 ## Results
 
@@ -81,8 +141,9 @@ the scenario definition). Accuracy of naming the root cause, with 95% bootstrap 
 | Decision tree only | 0.609 (0.539–0.674) | 0.958 (0.930–0.981) |
 | **Rules + knowledge graph + heuristics, then tree** | **0.930 (0.898–0.963)** | **1.000** |
 
-On faults the knowledge graph does not list, the hybrid reaches 0.897 against 0.690 for rules
-alone; removing the knowledge graph drops accuracy on the faults it covers from 1.000 to
+On the 145 faults the knowledge graph does not list, adding the decision-tree fallback raises
+accuracy from 0.745 to 0.897 with rules, knowledge and heuristics otherwise unchanged;
+removing the knowledge graph drops accuracy on the faults it covers from 1.000 to
 0.643. The rules and knowledge were written by the team, so their scores on team-designed
 scenarios are optimistic; the remaining errors (a data-dict `KeyError`, a buggy fixture, a
 removed library submodule) are listed in the report. Full tables, confusion matrix and
@@ -129,6 +190,7 @@ python scripts/record_playground.py --output workbench/playground
 fixfirst historical --assets examples/historical-regressions/assets --output workbench/replay
 python scripts/setup_real_world.py ../test-projects/generalisation   # the 13 held-out projects
 python scripts/run_real_world.py ../test-projects/generalisation --search
+python scripts/collect_public_data.py    # PyDFix and BugsInPy subsets, see docs/DATA_SOURCES.md
 ```
 
 ## Scope and safety
@@ -159,7 +221,7 @@ python scripts/run_real_world.py ../test-projects/generalisation --search
 | `src/fixfirst/knowledge/` | rule base, domain knowledge, bundled decision tree |
 | `tests/` | 141 tests, most running real subprocesses |
 | `examples/` | recorded runs, datasets, experiment reports and the real-world check ([overview](examples/README.md)) |
-| `docs/` | architecture, generalisation check, real-project case studies, course alignment, team notes (`队友说明.md`), optimisation log; `docs/history/` keeps earlier versions' records |
+| `docs/` | architecture, data sources, generalisation check, real-project case studies, course alignment, team notes (`队友说明.md`), optimisation log; `docs/history/` keeps earlier versions' records |
 | `scripts/` | setup (macOS/Linux/Windows), real-project set-up and batch runs, demo recording |
 
 ```bash

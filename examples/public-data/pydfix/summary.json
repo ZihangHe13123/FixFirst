@@ -1,0 +1,77 @@
+{
+  "source": "https://github.com/ucd-plse/PyDFix/tree/b276d79e7aff1993280e80bad97a8b8a08e6661f",
+  "tables": {
+    "bugsinpy": {
+      "file": "bugsinpy_artifacts_dependency_broken_orig.csv",
+      "rows": 506,
+      "repositories": 7,
+      "largest_repositories": {
+        "pandas": 338,
+        "scrapy": 80,
+        "black": 46
+      },
+      "rows_by_kind": {
+        "empty_error_line": {
+          "rows": 190,
+          "repositories": 4
+        },
+        "build_or_setup_py_failure": {
+          "rows": 158,
+          "repositories": 1
+        },
+        "import_error_in_scope": {
+          "rows": 126,
+          "repositories": 2
+        },
+        "pip_install_command_failed": {
+          "rows": 32,
+          "repositories": 1
+        }
+      },
+      "distinct_in_scope_cases": 5
+    },
+    "bugswarm": {
+      "file": "bugswarm_artifacts_dependency_broken_orig.csv",
+      "rows": 1421,
+      "repositories": 33,
+      "largest_repositories": {
+        "numpy-numpy": 276,
+        "python-mypy": 196,
+        "scikit-learn-scikit-learn": 192
+      },
+      "rows_by_kind": {
+        "build_or_setup_py_failure": {
+          "rows": 648,
+          "repositories": 15
+        },
+        "python_version_requirement": {
+          "rows": 347,
+          "repositories": 6
+        },
+        "import_error_in_scope": {
+          "rows": 328,
+          "repositories": 8
+        },
+        "type_or_attribute_error": {
+          "rows": 38,
+          "repositories": 3
+        },
+        "pip_install_command_failed": {
+          "rows": 28,
+          "repositories": 3
+        },
+        "empty_error_line": {
+          "rows": 27,
+          "repositories": 7
+        },
+        "other": {
+          "rows": 5,
+          "repositories": 2
+        }
+      },
+      "distinct_in_scope_cases": 17
+    }
+  },
+  "total_rows": 1927,
+  "distinct_in_scope_cases": 22
+}

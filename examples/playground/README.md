@@ -1,6 +1,6 @@
 # Playground walk-through
 
-A small project with four faults and four different root causes, fixed step by step. Open
+A small project with four faults across three root-cause categories, fixed step by step. Open
 the reports in order:
 
 1. `01-first-scan.html`: pytest stops at collection. FixFirst ranks the two collection errors

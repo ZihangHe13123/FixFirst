@@ -1,6 +1,6 @@
 """A broken project to fix by hand, for live demonstrations.
 
-Four independent faults with four different root causes. Two break test collection, so
+Four independent faults across three root-cause categories. Two break test collection, so
 pytest stops before running anything; FixFirst ranks them first because they block the
 goal. Once they are fixed, the next scan reveals the two run-time faults they were hiding.
 Nothing here repairs the project: the presenter makes each change and FixFirst verifies it.
