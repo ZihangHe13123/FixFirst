@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import re
 import tempfile
+import time
 
 from .models import Session
 
@@ -16,10 +17,21 @@ def atomic_write(path: Path, text: str) -> None:
             file.write(text)
             file.flush()
             os.fsync(file.fileno())
-        os.replace(name, path)
+        retry(os.replace, name, path)
     finally:
         if os.path.exists(name):
             os.unlink(name)
+
+
+def retry(function, *args, **kwargs):
+    """Bound retries for transient Windows sharing conflicts, including virus scanners."""
+    for attempt in range(20):
+        try:
+            return function(*args, **kwargs)
+        except PermissionError:
+            if os.name != "nt" or attempt == 19:
+                raise
+            time.sleep(0.05)
 
 
 class Store:
@@ -33,7 +45,7 @@ class Store:
 
     def load(self, session_id: str) -> Session:
         path = self.directory(session_id) / "session.json"
-        return Session.model_validate_json(path.read_text(encoding="utf-8"))
+        return Session.model_validate_json(retry(path.read_text, encoding="utf-8"))
 
     def save(self, session: Session) -> None:
         atomic_write(
@@ -44,7 +56,7 @@ class Store:
         rows = []
         for path in sorted(self.root.glob("session-*/session.json")):
             try:
-                data = json.loads(path.read_text(encoding="utf-8"))
+                data = json.loads(retry(path.read_text, encoding="utf-8"))
                 rows.append(
                     {k: data.get(k) for k in ("session_id", "name", "goal", "goal_status", "created_at")}
                 )

@@ -8,7 +8,10 @@ cause of each failure, ranks what to do next for your goal, and closes an issue 
 completed check of the same scope proves it fixed. It runs locally, never edits your code and
 never installs anything into your environment (it gives you the command instead).
 
-NUS-ISS Intelligent Reasoning Systems practice module, Group 24 · version 0.6.0
+NUS-ISS Intelligent Reasoning Systems practice module, Group 24 · version 0.6.1
+
+Windows group testing: see [组员测试说明](docs/WINDOWS_TEAM_TEST.md). What was tested on
+each platform, and what is still open: [docs/WINDOWS_ADAPTATION.md](docs/WINDOWS_ADAPTATION.md).
 
 ## Quick start
 
@@ -25,6 +28,17 @@ On Windows (PowerShell, in the project folder):
 powershell -ExecutionPolicy Bypass -File scripts\setup.ps1
 .venv\Scripts\fixfirst serve
 ```
+
+After setup, double-click `start-fixfirst.bat` to open the app. Windows commands
+shown by FixFirst are for **PowerShell**, including paths containing spaces or
+Chinese characters. Select the Python belonging to the project you are checking;
+it can be a venv or a Windows Conda environment.
+
+Setup reuses an existing compatible `.venv`. To change its Python version, pass
+`-Python C:\Path\to\python.exe -Recreate`; the previous environment is moved to a
+`.venv-backup-*` folder before rebuilding. No global packages or system code-page
+settings are changed. PowerShell 5.1 UTF-16 redirected logs and requirements are
+supported. See [Windows adaptation and validation](docs/WINDOWS_ADAPTATION.md).
 
 The browser opens the local interface:
 
@@ -219,7 +233,7 @@ python scripts/collect_public_data.py    # PyDFix and BugsInPy subsets, see docs
 |---|---|
 | `src/fixfirst/` | the package (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)) |
 | `src/fixfirst/knowledge/` | rule base, domain knowledge, bundled decision tree |
-| `tests/` | 141 tests, most running real subprocesses |
+| `tests/` | 217 tests, most running real subprocesses; Windows runs all of them, macOS and Linux skip one PowerShell-only test |
 | `examples/` | recorded runs, datasets, experiment reports and the real-world check ([overview](examples/README.md)) |
 | `docs/` | architecture, data sources, generalisation check, real-project case studies, course alignment, team notes (`队友说明.md`), optimisation log; `docs/history/` keeps earlier versions' records |
 | `scripts/` | setup (macOS/Linux/Windows), real-project set-up and batch runs, demo recording |

@@ -1,10 +1,13 @@
 """Bounded, static dependency declarations checked against the target interpreter snapshot."""
 
 import ast
+import codecs
 import configparser
 import hashlib
 from itertools import islice
 import json
+import locale
+import os
 from pathlib import Path
 import re
 import time
@@ -36,7 +39,7 @@ def read_project(root: Path) -> dict:
         if message not in result["notes"]:
             result["notes"].append(message)
 
-    def read(path):
+    def read(path, pip_file=False):
         resolved = path.resolve()
         if not resolved.is_relative_to(root):
             note("A dependency reference points outside the project and was not read")
@@ -47,7 +50,8 @@ def read_project(root: Path) -> dict:
             note(f"More than {MAX_FILES} declaration files; stopped reading")
             return None
         visited.add(resolved)
-        relative = path.relative_to(root).as_posix()
+        # An absolute include can name a project file via a junction, symlink, 8.3 name or '..'.
+        relative = (path if path.is_relative_to(root) else resolved).relative_to(root).as_posix()
         try:
             if not path.is_file():
                 raise OSError("not a regular file")
@@ -56,7 +60,13 @@ def read_project(root: Path) -> dict:
             if len(raw) > MAX_BYTES:
                 note(f"{relative} exceeds the size limit and was not parsed")
                 return None
-            text = raw.decode("utf-8-sig")
+            try:
+                text = raw.decode("utf-8-sig")
+            except UnicodeDecodeError:
+                if not pip_file:
+                    raise
+                utf16 = raw.startswith((codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE))
+                text = raw.decode("utf-16" if utf16 else locale.getpreferredencoding(False))
         except (OSError, UnicodeError):
             note(f"{relative} could not be read as a UTF-8 declaration file")
             return None
@@ -99,9 +109,10 @@ def read_project(root: Path) -> dict:
         if context in contexts:
             return
         contexts.add(context)
-        text = read(path)
+        text = read(path, pip_file=True)
         if text is None:
             return
+        shown = (path if path.is_relative_to(root) else path.resolve()).relative_to(root).as_posix()
         logical, start = "", 1
         for line, raw in enumerate(text.splitlines(), 1):
             value = raw.strip()
@@ -113,7 +124,7 @@ def read_project(root: Path) -> dict:
             value, logical = logical, ""
             if not value or value.startswith("#"):
                 continue
-            source = f"{path.relative_to(root).as_posix()}:{start}"
+            source = f"{shown}:{start}"
             include = re.fullmatch(r"(-r|-c|--requirement|--constraint)(?:\s*=?\s*)(.+)", value)
             if include:
                 ref = re.split(r"\s+#", include[2], maxsplit=1)[0].strip().strip("\"'")
@@ -133,7 +144,7 @@ def read_project(root: Path) -> dict:
             value = re.sub(r"\s+--hash=\S+", "", value)
             add(value, source, group, constraint)
         if logical:
-            note(f"{path.relative_to(root).as_posix()} ends with an unfinished line continuation")
+            note(f"{shown} ends with an unfinished line continuation")
 
     pyproject = root / "pyproject.toml"
     if pyproject.exists():
@@ -189,7 +200,7 @@ def read_project(root: Path) -> dict:
     ]
     for path in paths:
         if path.exists():
-            requirements(path, "required" if path.name == "requirements.txt" else path.stem)
+            requirements(path, "required" if os.path.normcase(path.name) == "requirements.txt" else path.stem)
     setup = root / "setup.cfg"
     if setup.exists():
         text = read(setup)

@@ -293,7 +293,7 @@ def test_export_redacts_and_html_escapes(tmp_path, session):
     assert "secret123" not in json.dumps(data)
     assert "/Users/alice" not in json.dumps(data)
     path = render(session, tmp_path, tmp_path / "report.html", public=True)
-    html = path.read_text()
+    html = path.read_text(encoding="utf-8")
     assert "<script>alert('x')</script>" not in html
     assert "&lt;script&gt;" in html
 

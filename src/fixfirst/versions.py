@@ -21,6 +21,8 @@ import urllib.request
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import InvalidVersion, Version
 
+from .processes import ManagedProcess
+
 PYPI = "https://pypi.org/pypi/{}/json"
 MAX_PROBES = 12
 CHECK = (
@@ -119,7 +121,9 @@ class Sandbox:
     def _run(self, argv) -> int:
         env = {k: v for k, v in os.environ.items() if k not in ("PYTHONPATH", "PYTHONHOME", "VIRTUAL_ENV")}
         try:
-            done = subprocess.run(argv, cwd=self.folder, env=env, capture_output=True, timeout=self.timeout)
+            with ManagedProcess(argv, cwd=self.folder, env=env, stdin=subprocess.DEVNULL,
+                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) as done:
+                done.wait(timeout=self.timeout)
         except (OSError, subprocess.TimeoutExpired):
             return -1
         return done.returncode

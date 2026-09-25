@@ -14,6 +14,7 @@ import tempfile
 from . import domain, engine
 from .evidence import issue_evidence
 from .models import Session
+from .processes import ManagedProcess
 from .report import GOALS, TOOL_NAMES, shell
 
 GOAL_DONE = {
@@ -321,10 +322,10 @@ def _probe(python: str) -> dict:
     )
     try:
         with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as directory:
-            done = subprocess.run(
-                [python, "-c", code], cwd=directory, capture_output=True, text=True, timeout=15
-            )
-        version, pytest, ruff = done.stdout.split()[:3]
+            with ManagedProcess([python, "-c", code], cwd=directory, stdin=subprocess.DEVNULL,
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as done:
+                stdout, _ = done.communicate(timeout=15)
+        version, pytest, ruff = stdout.split()[:3]
         return {"path": python, "version": version, "pytest": pytest == "True", "ruff": ruff == "True"}
     except (OSError, ValueError, subprocess.SubprocessError):
         return {"path": python, "version": None, "pytest": False, "ruff": False}
@@ -344,7 +345,7 @@ def inspect_folder(path: str, python: str | None = None) -> dict:
     )
     candidates = []
     for name in ENV_DIRS:
-        for relative in ("bin/python", "Scripts/python.exe"):
+        for relative in ("bin/python", "Scripts/python.exe", "python.exe"):
             candidate = root / name / relative
             if candidate.is_file():
                 candidates.append((str(candidate), f"the project's {name} environment"))
@@ -363,7 +364,8 @@ def inspect_folder(path: str, python: str | None = None) -> dict:
     elif not interpreter["pytest"]:
         warnings.append(
             "pytest is not installed in this Python, so tests cannot run. Install it in your "
-            "project's environment (python -m pip install pytest) or choose another interpreter."
+            f"project's environment ({shell([chosen, '-m', 'pip', 'install', 'pytest'])}) "
+            "or choose another interpreter."
         )
     return {
         "ok": interpreter["version"] is not None,
@@ -396,4 +398,13 @@ def browse(path: str | None) -> dict:
             continue
         entries.append({"name": child.name, "path": str(child), "project": project})
     parent = str(root.parent) if root.parent != root else None
+    if os.name == "nt" and parent is None:
+        import ctypes
+
+        mask = ctypes.windll.kernel32.GetLogicalDrives()
+        entries += [
+            {"name": f"{letter}:\\", "path": f"{letter}:\\", "project": False}
+            for bit, letter in enumerate("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+            if mask >> bit & 1 and f"{letter}:\\" != str(root)
+        ]
     return {"path": str(root), "parent": parent, "entries": entries}

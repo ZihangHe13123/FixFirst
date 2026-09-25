@@ -5,13 +5,13 @@ import json
 import os
 from pathlib import Path
 import re
-import signal
 import subprocess
 import tempfile
 import threading
 import time
 
 from .models import Run, Session
+from .processes import ManagedProcess, ProcessCancelled
 
 MAX_OUTPUT = 1_000_000
 # Real test suites can take minutes; a check that runs longer is stopped and reported.
@@ -57,6 +57,11 @@ def activation_env(python: str) -> dict:
     """
     folder = Path(python).parent
     root = folder.parent
+    if os.name == "nt" and (folder / "conda-meta").is_dir():
+        folders = [folder, folder / "Library/mingw-w64/bin", folder / "Library/usr/bin",
+                   folder / "Library/bin", folder / "Scripts", folder / "bin"]
+        return {"CONDA_PREFIX": str(folder),
+                "PATH": os.pathsep.join(map(str, folders)) + os.pathsep + os.environ.get("PATH", "")}
     if not ((root / "pyvenv.cfg").is_file() or (root / "conda-meta").is_dir()):
         return {}
     return {"VIRTUAL_ENV": str(root), "PATH": str(folder) + os.pathsep + os.environ.get("PATH", "")}
@@ -85,21 +90,9 @@ def redact_data(value):
     return value
 
 
-def kill_tree(proc: subprocess.Popen) -> None:
+def kill_tree(proc: ManagedProcess) -> None:
     """Stop a check and everything it started."""
-    if os.name == "nt":
-        subprocess.run(
-            ["taskkill", "/T", "/F", "/PID", str(proc.pid)],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        if proc.poll() is None:
-            proc.kill()
-        return
-    try:
-        os.killpg(proc.pid, signal.SIGKILL)
-    except (ProcessLookupError, PermissionError):
-        pass
+    proc.kill_tree()
 
 
 def execute(
@@ -135,23 +128,17 @@ def execute(
         env.update(extra_env)
     # A new process group/session lets a timeout stop the whole tree, and keeps a Ctrl+C in
     # the terminal from reaching the check directly.
-    group = (
-        {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP}
-        if os.name == "nt"
-        else {"start_new_session": True}
-    )
     try:
-        proc = subprocess.Popen(
+        proc = ManagedProcess(
             argv,
             cwd=cwd,
             env=env,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             stdin=subprocess.DEVNULL,
-            **group,
         )
     except OSError as exc:
-        run.status = "launch_failed"
+        run.status = "cancelled" if isinstance(exc, ProcessCancelled) else "launch_failed"
         run.stderr = redact(str(exc))
         return run
     buffers = {"stdout": bytearray(), "stderr": bytearray()}
@@ -185,6 +172,12 @@ def execute(
     try:
         # Finished only when the process exited and both streams reached end of file.
         while proc.poll() is None or any(r.is_alive() for r in readers):
+            if proc.scope.cancelled:
+                run.status = "cancelled"
+                break
+            if proc.poll() is not None:
+                # A completed parent must not leave descendants holding our pipes open.
+                kill_tree(proc)
             if overflow.is_set():
                 run.status, run.truncated = "output_limit", True
                 break
@@ -195,9 +188,7 @@ def execute(
     except KeyboardInterrupt:
         run.status = "cancelled"
     finally:
-        if run.status != "completed" or proc.poll() is None:
-            kill_tree(proc)
-        proc.wait()
+        proc.close()
         for reader in readers:
             reader.join(timeout=2)
         proc.stdout.close()
@@ -387,12 +378,15 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
     if tool in ("pytest", "pytest_run"):
         with tempfile.TemporaryDirectory(prefix="fixfirst-probe-", ignore_cleanup_errors=True) as directory:
             probe = Path(directory) / "_fixfirst_probe.py"
-            probe.write_text(Path(__file__).with_name("probe.py").read_text(encoding="utf-8"))
+            probe.write_text(Path(__file__).with_name("probe.py").read_text(encoding="utf-8"), encoding="utf-8")
             records_file = Path(directory) / "events.jsonl"
             extra = {
-                "PYTHONPATH": directory + os.pathsep + os.environ.get("PYTHONPATH", ""),
+                "PYTHONPATH": os.pathsep.join([directory, *[
+                    part or cwd for part in os.environ.get("PYTHONPATH", "").split(os.pathsep)
+                ]]),
                 "FIXFIRST_PROBE": str(records_file),
                 "PYTHONDONTWRITEBYTECODE": "1",
+                "FIXFIRST_USER_IOENCODING": os.environ.get("PYTHONIOENCODING", ""),
             }
             run = execute(argv, cwd, tool, scope, python, timeout, extra_env=extra)
             if records_file.exists():

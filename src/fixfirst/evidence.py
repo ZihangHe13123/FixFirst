@@ -8,6 +8,7 @@ from the parser's issue category, so the learned classifier cannot simply echo t
 import difflib
 import json
 from pathlib import PurePosixPath
+import posixpath
 import re
 
 from packaging.requirements import InvalidRequirement, Requirement
@@ -25,7 +26,7 @@ MODULE_ATTR = re.compile(r"module '([\w.]+)' has no attribute '(\w+)'")
 OBJECT_ATTR = re.compile(r"'(\w+)' object has no attribute '(\w+)'")
 KWARG = re.compile(r"(?:([\w.]+)\(\) )?got an unexpected keyword argument '(\w+)'")
 POSITIONAL = re.compile(r"([\w.]+)\(\) (?:takes|missing) \d+ (?:positional|required)")
-MISSING_FILE = re.compile(r"No such file or directory: '([^']+)'")
+MISSING_FILE = re.compile(r"(?:No such file or directory|\[WinError [23]\][^\r\n:]*): '([^']+)'")
 PIP_CONFLICT = re.compile(
     r"^(?P<who>\S+) (?P<version>\S+) has requirement (?P<requirement>.+), but you have \S+ \S+?\.?$"
 )
@@ -117,6 +118,10 @@ def classify_path(path: str, project_root: str, environment: dict) -> str:
     root = (project_root or "").replace("\\", "/").rstrip("/")
     if "site-packages" in path or "dist-packages" in path:
         return "third_party"
+    if root and path.startswith("../"):
+        resolved = posixpath.normpath(root + "/" + path)
+        if resolved.startswith("/") or WINDOWS_ABSOLUTE.match(resolved):
+            path = resolved
     windows = bool(WINDOWS_ABSOLUTE.match(path))
     relative = None
     if root and (path.lower() if windows else path).startswith(
@@ -421,7 +426,7 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
         if re.fullmatch(r"[A-Za-z_]\w*", key):
             add("config_keys", key)
     for path in MISSING_FILE.findall(text):
-        add("missing_files", path)
+        add("missing_files", path.replace("\\\\", "\\"))
 
     signals = {
         "no_attribute": "has no attribute" in message,

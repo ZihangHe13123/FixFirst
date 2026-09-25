@@ -1,3 +1,5 @@
+import codecs
+import locale
 from pathlib import Path
 import os
 
@@ -21,6 +23,8 @@ def create_session(
 ):
     root = Path(project).expanduser().resolve()
     interpreter = Path(os.path.abspath(os.path.expanduser(python)))
+    if os.name == "nt" and not interpreter.suffix and interpreter.with_suffix(".exe").is_file():
+        interpreter = interpreter.with_suffix(".exe")
     if not root.is_dir():
         raise ValueError("Project directory does not exist")
     if not interpreter.is_file() or not os.access(interpreter, os.X_OK):
@@ -230,7 +234,16 @@ def import_log(session, path, tool, exit_code=None):
     file = Path(path)
     if file.stat().st_size > MAX_OUTPUT:
         raise ValueError("Log is larger than 1 MB; split it by check run first")
-    text = redact(file.read_text(encoding="utf-8", errors="replace"))
+    raw = file.read_bytes()
+    # PowerShell 5.1 saves `pytest > log` as UTF-16; under cmd.exe it is in the ANSI code page.
+    if raw.startswith((codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE)):
+        text = raw.decode("utf-16", errors="replace")
+    else:
+        try:
+            text = raw.decode("utf-8-sig")
+        except UnicodeDecodeError:
+            text = raw.decode(locale.getpreferredencoding(False), errors="replace")
+    text = redact(text.replace("\r\n", "\n").replace("\r", "\n"))
     run = Run(
         tool=tool,
         source="imported",

@@ -12,6 +12,7 @@ from datetime import datetime
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
+import os
 from pathlib import Path
 import re
 import secrets
@@ -20,8 +21,9 @@ import webbrowser
 
 from .knowledge_graph import build_graph, query_graph
 from .models import Session, now
+from .processes import ProcessScope
 from .reasoning import infer_and_plan
-from .report import ENV, GOALS, html, public_data
+from .report import ENV, GOALS, html, public_data, public_question
 from .service import create_session, mark_fixed, scan
 from .storage import Store
 from .workspace import GOAL_CHOICES, browse, build_view, inspect_folder
@@ -37,6 +39,7 @@ class App:
         self.workbench = workbench
         self.token = secrets.token_urlsafe(24)
         self.port = 0
+        self.processes = ProcessScope()
 
     def index(self) -> str:
         rows = sorted(self.store.list(), key=lambda r: r.get("created_at") or "", reverse=True)
@@ -88,7 +91,8 @@ class App:
         if op == "ask":
             session = self.store.load(session_id)
             graph = build_graph(Session.model_validate(public_data(session)))
-            return query_graph(graph, str(body.get("question", ""))[:500])
+            question = public_question(session, str(body.get("question", ""))[:500])
+            return query_graph(graph, question)
         with self.store.lock(session_id):
             session = self.store.load(session_id)
             if op == "scan":
@@ -135,6 +139,10 @@ class App:
 def handler_for(app: App):
     class Handler(BaseHTTPRequestHandler):
         server_version = "FixFirst"
+
+        def handle(self):
+            with app.processes.activate():
+                super().handle()
 
         def log_message(self, format, *args):
             return
@@ -201,8 +209,18 @@ def handler_for(app: App):
 
 
 def make_server(store_root: Path, port=0, workbench: Path | None = None):
+    if not isinstance(port, int) or not 0 <= port <= 65535:
+        raise ValueError("Port must be between 0 and 65535")
     app = App(Path(store_root), Path(workbench or "workbench").resolve())
-    server = ThreadingHTTPServer(("127.0.0.1", port), handler_for(app))
+
+    class Server(ThreadingHTTPServer):
+        allow_reuse_address = os.name != "nt"
+
+        def server_close(self):
+            app.processes.cancel()
+            super().server_close()
+
+    server = Server(("127.0.0.1", port), handler_for(app))
     app.port = server.server_address[1]
     return server, app
 
@@ -210,7 +228,7 @@ def make_server(store_root: Path, port=0, workbench: Path | None = None):
 def serve(store_root: Path, port=0, open_browser=True) -> int:
     server, app = make_server(store_root, port)
     url = f"http://127.0.0.1:{app.port}/"
-    print(f"FixFirst is running at {url} (Ctrl+C to stop). Only this computer can reach it.")
+    print(f"FixFirst is running at {url} (Ctrl+C to stop). Only this computer can reach it.", flush=True)
     if open_browser:
         webbrowser.open(url)
     try:

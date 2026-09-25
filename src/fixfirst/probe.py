@@ -5,6 +5,15 @@ import os
 
 _dropped = False
 
+# Pytest's streams already use UTF-8. Its tests' children must inherit the user's
+# encoding policy, not FixFirst's transport setting.
+if "FIXFIRST_USER_IOENCODING" in os.environ:
+    _encoding = os.environ.pop("FIXFIRST_USER_IOENCODING")
+    if _encoding:
+        os.environ["PYTHONIOENCODING"] = _encoding
+    else:
+        os.environ.pop("PYTHONIOENCODING", None)
+
 
 def emit(data, final=False):
     global _dropped

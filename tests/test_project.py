@@ -77,7 +77,7 @@ def test_pip_pass_can_miss_project_dependency_and_advice_has_provenance(tmp_path
     scan(session, ["project"])
     assert next(i for i in session.issues if i.issue_id == issue.issue_id).status != "resolved"
     render(session, tmp_path / "store", tmp_path / "report.html", public=True)
-    text = (tmp_path / "report.html").read_text()
+    text = (tmp_path / "report.html").read_text(encoding="utf-8")
     assert "Project dependency declarations" in text and "Satisfied" in text
     assert str(tmp_path) not in text
 

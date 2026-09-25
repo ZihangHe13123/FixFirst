@@ -8,7 +8,7 @@ import webbrowser
 
 from .models import now
 from .reasoning import infer_and_plan
-from .report import render, GOALS, STATES
+from .report import render, GOALS, STATES, shell
 from .runner import DEFAULT_TIMEOUT, TOOLS
 from .service import create_session, scan, import_log, mark_fixed
 from .storage import Store
@@ -126,6 +126,9 @@ def show(session):
 
 
 def main(argv=None):
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(errors="backslashreplace")
     args = parser().parse_args(argv)
     store = Store(args.store)
     try:
@@ -171,7 +174,8 @@ def main(argv=None):
                 path = render(session, store.root, store.directory(session.session_id) / "report.html")
                 show(session)
                 print(f"\nFix the project in {Path(args.output) / 'project'} (see FIXES.md), then run:")
-                print(f"  fixfirst --store {str(store.root)!r} scan {session.session_id}")
+                print("  " + shell([sys.executable, "-m", "fixfirst", "--store", str(store.root),
+                                    "scan", session.session_id]))
                 print(f"Report: {path}  ·  or use `fixfirst serve` for the web interface")
                 if args.open:
                     webbrowser.open(path.as_uri())
@@ -194,7 +198,7 @@ def main(argv=None):
                 print(cases.build_dataset(Path(args.output)))
             return 0
         if args.command == "list":
-            print(json.dumps(store.list(), ensure_ascii=False, indent=2))
+            print(json.dumps(store.list(), ensure_ascii=True, indent=2))
             return 0
         if args.command == "init":
             session = create_session(
@@ -214,8 +218,29 @@ def main(argv=None):
                     session, store.root, store.directory(session.session_id) / "report.html"
                 )
             print(session.session_id)
-            print(f"Next: fixfirst --store {str(store.root)!r} scan {session.session_id}")
+            print("Next: " + shell([sys.executable, "-m", "fixfirst", "--store", str(store.root),
+                                    "scan", session.session_id]))
             print(f"Report: {path}")
+            return 0
+        if args.command == "delete":
+            directory = store.directory(args.session)
+            with store.lock(args.session):
+                store.load(args.session)
+                if not args.yes:
+                    raise ValueError(
+                        "Add --yes to delete; your project and exported copies are not touched"
+                    )
+                # Windows cannot delete the open lock file. Remove the records while holding the
+                # lock, session.json last: a failure leaves a loadable session, and once it is
+                # gone no command can load or save the session.
+                for entry in sorted(directory.iterdir(), key=lambda p: p.name == "session.json"):
+                    if entry.is_dir() and not entry.is_symlink():
+                        shutil.rmtree(entry)
+                    elif entry.name != ".lock":
+                        entry.unlink()
+            # Only the empty lock file is left; a command that opened it meanwhile keeps it.
+            shutil.rmtree(directory, ignore_errors=True)
+            print("Session records deleted")
             return 0
         with store.lock(args.session):
             session = store.load(args.session)
@@ -247,17 +272,9 @@ def main(argv=None):
             elif args.command in ("stop", "resume"):
                 session.stopped = args.command == "stop"
                 session.history.append({"time": now(), "kind": args.command})
-            elif args.command == "delete":
-                if not args.yes:
-                    raise ValueError(
-                        "Add --yes to delete; your project and exported copies are not touched"
-                    )
-                shutil.rmtree(store.directory(args.session))
-                print("Session records deleted")
-                return 0
             elif args.command == "show":
                 if args.json:
-                    print(session.model_dump_json(indent=2))
+                    print(json.dumps(session.model_dump(mode="json"), ensure_ascii=True, indent=2))
                 else:
                     show(session)
                 return 0
@@ -272,7 +289,7 @@ def main(argv=None):
                 return 0
             elif args.command in ("graph", "ask"):
                 from .knowledge_graph import build_graph, query_graph
-                from .report import public_data
+                from .report import public_data, public_entity, public_question
                 from .models import Session
 
                 graph = build_graph(Session.model_validate(public_data(session)))
@@ -285,9 +302,10 @@ def main(argv=None):
                     )
                     print(f"Evidence graph exported: {args.output}")
                 else:
-                    answer = query_graph(graph, args.question, args.entity)
+                    answer = query_graph(graph, public_question(session, args.question),
+                                         public_entity(session, args.entity))
                     print(
-                        json.dumps(answer, ensure_ascii=False, indent=2)
+                        json.dumps(answer, ensure_ascii=True, indent=2)
                         if args.json
                         else answer["answer"]
                     )
