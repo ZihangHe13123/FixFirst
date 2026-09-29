@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | 负责 | B（AI 协助）。招募和现场实验由 C 负责（[C2](C2-user-study-sessions.md)） |
-| 截止 | 方案文件 10/5（一）；分析 10/21（三） |
+| 截止 | 方案文件 10/5（一）；分析脚本 10/1（四）前用虚构数据写好并验证；正式分析 10/21（三） |
 | 预计用时 | 约 4 小时 |
-| 要先完成 | 方案无；分析要等 C2 交数据 |
-| 交付 | 主仓库 `docs/user-study/` 下：`PROTOCOL.md`、`CONSENT.md`、`QUESTIONNAIRE.md`（10/5）；`analysis.py`、`RESULTS.md`（10/21） |
+| 要先完成 | 方案和分析脚本都没有前置；正式分析要等 C2 交数据 |
+| 交付 | 主仓库 `docs/user-study/` 下：`PROTOCOL.md`、`CONSENT.md`、`QUESTIONNAIRE.md`（10/5）；`analysis.py` 和虚构数据的样例（本批）；`RESULTS.md`（10/21） |
 | 对应计划 | 后续计划 §4 P0 第 9 项 |
 
 ## 为什么要做
@@ -161,7 +161,7 @@ without = [mean_time(p, "baseline") for p in people]
 print("Wilcoxon signed-rank:", wilcoxon(with_ff, without))
 ```
 
-**这个脚本最好在试用之后就写好**，用试用数据先跑通；C 交正式数据时，只要运行一条命令。
+上面只是最初的思路。**脚本在看到任何数据之前就写好**：先用一份标明是虚构的样例数据和能手算的预期值验证，样例结果标为 DEMO，不当成研究结果。原因解释说得对不对由人评分，脚本只读评分。试用数据（`PILOT…`）只用来检查脚本能读 C 的表，不进正式统计；C 交正式数据以后，运行一条命令得到 `RESULTS.md` 要用的数字。
 
 `RESULTS.md` 写这几部分，报告（[B11](B11-report.md)）的用户研究一节由它改写：
 
@@ -177,8 +177,9 @@ print("Wilcoxon signed-rank:", wilcoxon(with_ff, without))
 ## 步骤
 
 1. 10/5 前：写好 `PROTOCOL.md`、`CONSENT.md`、`QUESTIONNAIRE.md` 并合并，在 C2 的 Issue 里告诉 C；发邮件问老师是否需要额外审批。
-2. 试用（10/11–10/12）以后：按 C 的反馈修改方案，写进 PROTOCOL.md 的 "Changes after the pilot" 一节；用试用数据把 `analysis.py` 跑通。
-3. C 交正式数据以后：运行 `analysis.py`，写 `RESULTS.md`，10/21 前合并。
+2. 现在（10/1 前）：写好 `analysis.py`，用虚构数据和能手算的预期值验证，单独开 PR。
+3. 试用（10/11–10/12）以后：按 C 的反馈修改方案，写进 PROTOCOL.md 的 "Changes after the pilot" 一节；用试用数据检查脚本能读 C 的表。如果改成每种条件一题，要在分析配置里写明，不能让脚本悄悄换算法。
+4. C 交正式数据以后：由人给原因解释评分，运行 `analysis.py`，写 `RESULTS.md`，10/21 前合并。
 
 ## 完成标准
 
