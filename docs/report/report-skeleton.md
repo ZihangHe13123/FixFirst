@@ -7,7 +7,10 @@ date: "Skeleton v0.1, 29 September 2026 (final version due 25 October 2026)"
 
 <!-- Skeleton conventions: [PLACEHOLDER: ...] marks text still to write; [PENDING: task, source]
 marks a number that comes from an experiment not yet run. Every number in the final report must
-cite the repository file it comes from (see docs/report/SOURCES.md). -->
+cite the repository file it comes from (see docs/report/SOURCES.md). The report uses English file
+names only, so that a PDF export shows every reference whatever fonts the exporting machine has:
+"technical guide §n" is section n of the team's Chinese study guide, whose path is in
+docs/report/SOURCES.md. -->
 
 # Executive Summary
 
@@ -74,10 +77,10 @@ the architecture figure (source: README "How it works"; docs/ARCHITECTURE.md).]
 
 | Course technique group | FixFirst component | Where to read more |
 |---|---|---|
-| Decision automation (rules, knowledge-based reasoning) | Forward-chaining production system, [PENDING: rule count at the freeze] rules in five phases | docs/ARCHITECTURE.md |
-| Knowledge representation / cognitive techniques | Domain knowledge graph (removed APIs, sources) and per-session evidence graph | docs/技术原理详解.md §5 |
-| Knowledge discovery and data mining | Gini decision tree over 44 evidence features; TF-IDF message grouping | docs/技术原理详解.md §4, §8 |
-| Resource optimisation (partial) | Bounded release search ("Find it") | docs/技术原理详解.md §9.3 |
+| Decision automation (rules, knowledge-based reasoning) | Forward-chaining production system, [PENDING: rule count at the freeze] rules in five phases | docs/ARCHITECTURE.md, "Rule base" |
+| Knowledge representation / cognitive techniques | Domain knowledge graph (removed APIs, sources) and per-session evidence graph | docs/ARCHITECTURE.md, "Knowledge base" and "Evidence graph" |
+| Knowledge discovery and data mining | Gini decision tree over 44 evidence features; TF-IDF message grouping | docs/ARCHITECTURE.md, "One troubleshooting round", steps 2 and 5 |
+| Resource optimisation (partial) | Bounded release search ("Find it") | docs/ARCHITECTURE.md, "Finding a release that works" |
 
 ## Evidence and features
 
@@ -86,7 +89,8 @@ categories are excluded.]
 
 ## Knowledge graph
 
-[PLACEHOLDER: contents with counts (docs/技术原理详解.md §5.1), how it is queried, sources.]
+[PLACEHOLDER: contents with counts (docs/ARCHITECTURE.md, "Knowledge base"; technical guide §5.1),
+how it is queried, sources.]
 
 ## Rule engine
 
@@ -120,8 +124,8 @@ statement's summary.]
 |---|---|---|---|---|
 | Official documentation and release notes | Knowledge | [PENDING: counts at the freeze] | Knowledge graph | Knowledge |
 | Generated fault projects | Executed, labelled | [PENDING: 44 scenarios × 5 templates, regenerated at the freeze (B5)] | Diagnosis evaluation, training the tree | Training and development |
-| Hard cases | Executed, labelled | 30 | Behaviour changes, two-layer faults | Evaluation only |
-| Multi-fault cases | Executed, labelled | 5 | Next-step ordering (B17) | Evaluation only |
+| Hard cases | Executed, labelled | 30 | Behaviour changes, two-layer faults; rules H07 and H08 were written after seeing them | Development: never used to train the tree, and not held-out evidence even when re-run after the freeze |
+| Multi-fault cases | Executed, labelled | 5 | Next-step ordering (B17) | Evaluation of ordering; built by the team before the freeze, so not held out |
 | Pilot real projects | Real | 13 | Development (round 1 was held out) | Development |
 | New real projects | Real, labels before the run | [PENDING: A1, C1] | Held-out test | Test |
 | BugsInPy | Real defects | [PENDING: B12 phase 2; 27 reproduced in phase 1] | Verification | Test |
@@ -147,7 +151,8 @@ scorers' agreement [PENDING: A2].]
 | Local LLM, one shot (per model) | [PENDING: B3 formal run] | | |
 
 [PLACEHOLDER: ablations (without the knowledge graph, without the tree); hard cases reported
-separately; which results are development results.]
+separately as development results (H07 and H08 were written after seeing them); which other
+results are development results. Only the new real projects are held out.]
 
 ## Next-step ordering
 
@@ -188,7 +193,7 @@ completion claims; cause explanations; SUS; threats to validity.]
 
 ## Limitations
 
-[PLACEHOLDER: start from docs/技术原理详解.md §11 and the problems found after the freeze.]
+[PLACEHOLDER: start from technical guide §11 and the problems found after the freeze.]
 
 ## Deviations from the proposal
 
