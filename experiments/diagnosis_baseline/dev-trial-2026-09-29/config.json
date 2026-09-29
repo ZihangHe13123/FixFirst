@@ -1,0 +1,33 @@
+{
+  "purpose": "development trial: checks the pipeline, not a result",
+  "date": "2026-09-29T19:28:45+08:00",
+  "dataset": "examples/diagnosis-dataset",
+  "cases_sha256": "24b5392de44c4359621bd9f5f1600070d30491e1e42d74d7602482f3c9c50173",
+  "cases": [
+    "pkg-inventory--md_declared",
+    "pkg-inventory--md_unknown_runtime",
+    "src-billing--lm_src_layout",
+    "flat-shop--lm_shadow_library",
+    "unittest-grades--vi_removed_kwarg",
+    "flat-shop--vi_numpy2",
+    "pkg-inventory--cm_environ",
+    "flat-shop--cm_environ",
+    "src-billing--cd_dict_key",
+    "flat-shop--cd_zero_division"
+  ],
+  "models": [
+    "Qwen3.6-35B-A3B-6bit",
+    "gemma-4-26B-A4B-it-qat-4bit"
+  ],
+  "decoding": {
+    "temperature": 0,
+    "top_p": 1,
+    "max_tokens": 1024
+  },
+  "thinking": "disabled through chat_template_kwargs; any <think> block is removed before parsing",
+  "seed": 20260929,
+  "system_prompt_sha256": "5856984de6a74bd18e84f6e67db57dc19eaf4861ccf7d94030dcc7b32e0ef01a",
+  "system_prompt": "You diagnose why a Python project's tests fail. You get the output of the project's own checks: the pytest run, the installed packages, and the project's files and declared dependencies. Name the root cause of the failing tests as exactly one of these classes:\n- missing_dependency: The code imports a third-party distribution that is not installed in the selected interpreter.\n- local_module: A project module cannot be resolved: it was renamed or moved, the src layout is not on the path, a circular import, or a project file shadows a library or standard-library module.\n- version_incompatibility: The installed library or Python version no longer provides an API the code uses (removed module, attribute, function or keyword argument).\n- config_missing: A required environment variable, settings key or configuration file is not available at run time.\n- code_defect: The failure comes from project logic: a wrong assertion, a bug in a function, a typo or a syntax error.\nAlso give the first thing the user should do. Answer with one JSON object and nothing else:\n{\"root_cause\": \"<one class name from the list>\", \"first_step\": \"<one sentence>\"}",
+  "fixfirst_commit": "3c0153dacc65050fcd4a31eae4ffe060f6572948",
+  "endpoint": "http://127.0.0.1:8123/v1"
+}
