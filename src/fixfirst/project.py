@@ -32,12 +32,19 @@ MAX_DECLARATIONS = 2000
 
 def read_project(root: Path) -> dict:
     root = root.resolve()
-    result = {"files": [], "declarations": [], "notes": [], "requires_python": []}
+    result = {"files": [], "declarations": [], "notes": [], "requires_python": [], "own_names": []}
     visited, cache, contexts = set(), {}, set()
 
     def note(message):
         if message not in result["notes"]:
             result["notes"].append(message)
+
+    def own(name):
+        # The distribution this project builds: installed (often editable) it is the project itself.
+        if isinstance(name, str) and name.strip():
+            canonical = canonicalize_name(name.strip())
+            if canonical not in result["own_names"]:
+                result["own_names"].append(canonical)
 
     def read(path, pip_file=False):
         resolved = path.resolve()
@@ -153,6 +160,8 @@ def read_project(root: Path) -> dict:
             try:
                 data = tomllib.loads(text)
                 project = data.get("project", {})
+                own(project.get("name"))
+                own((data.get("tool", {}).get("poetry") or {}).get("name"))
                 for item in declaration_list(
                     project.get("dependencies", []), "project.dependencies"
                 ):
@@ -176,6 +185,7 @@ def read_project(root: Path) -> dict:
                 # flit before PEP 621 kept its metadata in [tool.flit.metadata].
                 flit = data.get("tool", {}).get("flit", {}).get("metadata", {})
                 if isinstance(flit, dict):
+                    own(flit.get("dist-name") or flit.get("module"))
                     for item in declaration_list(flit.get("requires", []), "tool.flit.metadata.requires"):
                         add(item, "pyproject.toml [tool.flit.metadata.requires]")
                     for group, values in (flit.get("requires-extra") or {}).items():
@@ -208,6 +218,7 @@ def read_project(root: Path) -> dict:
             try:
                 cfg = configparser.ConfigParser(interpolation=None)
                 cfg.read_string(text)
+                own(cfg.get("metadata", "name", fallback=""))
                 for item in cfg.get("options", "install_requires", fallback="").splitlines():
                     if item.strip():
                         add(item.strip(), "setup.cfg [options.install_requires]")
@@ -235,18 +246,15 @@ def read_project(root: Path) -> dict:
         else:
             for value, source, group in found:
                 add(value, source, group)
+            own(setup_py_name(text))
         note("setup.py is not executed; only literal declarations in its setup() call are read")
     if not result["files"]:
         note("No supported static declaration file was found")
     return result
 
 
-def setup_py_declarations(text: str) -> list[tuple[str, str, str]] | None:
-    """Literal requirement lists passed to setup(), read from the syntax tree, never executed.
-
-    Handles lists written in the call and lists first assigned to a top-level name
-    (``install_requires=INSTALL_REQUIRES``). Anything computed is skipped.
-    """
+def setup_calls(text: str) -> tuple[dict, list[ast.Call]] | None:
+    """The setup() calls in a setup.py and its top-level assignments, from the syntax tree."""
     try:
         tree = ast.parse(text)
     except (SyntaxError, ValueError):
@@ -256,6 +264,37 @@ def setup_py_declarations(text: str) -> list[tuple[str, str, str]] | None:
         for node in tree.body
         if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name)
     }
+    calls = [
+        call for call in ast.walk(tree)
+        if isinstance(call, ast.Call)
+        and (call.func.attr if isinstance(call.func, ast.Attribute) else getattr(call.func, "id", "")) == "setup"
+    ]
+    return names, calls
+
+
+def setup_py_name(text: str) -> str | None:
+    """The literal name passed to setup(), directly or through a top-level variable."""
+    parsed = setup_calls(text)
+    for call in parsed[1] if parsed else ():
+        for keyword in call.keywords:
+            if keyword.arg == "name":
+                value = keyword.value
+                value = parsed[0].get(value.id, value) if isinstance(value, ast.Name) else value
+                if isinstance(value, ast.Constant) and isinstance(value.value, str):
+                    return value.value
+    return None
+
+
+def setup_py_declarations(text: str) -> list[tuple[str, str, str]] | None:
+    """Literal requirement lists passed to setup(), read from the syntax tree, never executed.
+
+    Handles lists written in the call and lists first assigned to a top-level name
+    (``install_requires=INSTALL_REQUIRES``). Anything computed is skipped.
+    """
+    parsed = setup_calls(text)
+    if parsed is None:
+        return None
+    names, calls = parsed
 
     def strings(node):
         node = names.get(node.id, node) if isinstance(node, ast.Name) else node
@@ -264,12 +303,7 @@ def setup_py_declarations(text: str) -> list[tuple[str, str, str]] | None:
         return []
 
     found = []
-    for call in ast.walk(tree):
-        if not isinstance(call, ast.Call):
-            continue
-        callee = call.func.attr if isinstance(call.func, ast.Attribute) else getattr(call.func, "id", "")
-        if callee != "setup":
-            continue
+    for call in calls:
         for keyword in call.keywords:
             if keyword.arg == "install_requires":
                 found += [(v, "setup.py install_requires", "required") for v in strings(keyword.value)]

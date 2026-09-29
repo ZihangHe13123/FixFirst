@@ -159,3 +159,14 @@ def test_lock_files_record_the_versions_a_project_was_tested_with(tmp_path):
         {"name": "pytest", "version": "3.5.0", "source": "Pipfile.lock"},
         {"name": "tablib", "version": "0.12.1", "source": "poetry.lock"},
     ]
+
+
+def test_the_projects_own_distribution_names_are_read_without_running_anything(tmp_path):
+    (tmp_path / "pyproject.toml").write_text('[project]\nname = "Shop_Core"\n[tool.poetry]\nname = "shop-core"\n')
+    (tmp_path / "setup.cfg").write_text("[metadata]\nname = shop.cli\n")
+    (tmp_path / "setup.py").write_text("NAME = 'PySnooper'\nsetup(name=NAME, version=VERSION)\n")
+    assert read_project(tmp_path)["own_names"] == ["shop-core", "shop-cli", "pysnooper"]
+    flit = tmp_path / "flit"
+    flit.mkdir()
+    (flit / "pyproject.toml").write_text('[tool.flit.metadata]\nmodule = "typer"\n')
+    assert read_project(flit)["own_names"] == ["typer"]

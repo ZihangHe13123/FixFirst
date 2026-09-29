@@ -190,9 +190,9 @@ then = [["?i", "used_by_library", "?lib"]]
 [[rule]]
 id = "D10"
 phase = "diagnose"
-description = "A project file has the same name as an installed library, and the library's attributes are missing: the project file shadows the library."
+description = "A project file has the same name as an installed library that is not the project itself, and the library's attributes are missing: the project file shadows the library."
 when = [
-  ["?i", "module", "?m"], ["?m", "is_local", "?p"], ["?m", "provided_by", "?d"],
+  ["?i", "module", "?m"], ["?m", "is_local", "?p"], ["?m", "provided_by", "?d"], ["not", "?d", "is_project", "yes"],
   ["?i", "signal", "?s"], ["test", "in", "?s", "no_attribute,cannot_import_name,partially_initialized"],
 ]
 then = [["?i", "diagnosis", "local_module"], ["?i", "remedy", "rename_shadow"], ["?i", "because", "?m"]]
@@ -210,10 +210,10 @@ then = [["?i", "diagnosis", "local_module"], ["?i", "remedy", "rename_shadow"], 
 [[rule]]
 id = "D12"
 phase = "diagnose"
-description = "A project file is named like a known third-party package and lacks that package's attributes."
+description = "A project file is named like a known third-party package that is not the project itself, and lacks that package's attributes."
 source = "knowledge: import names"
 when = [
-  ["?i", "module", "?m"], ["?m", "is_local", "?p"], ["?m", "import_name_of", "?d"],
+  ["?i", "module", "?m"], ["?m", "is_local", "?p"], ["?m", "import_name_of", "?d"], ["not", "?d", "is_project", "yes"],
   ["?i", "signal", "no_attribute"],
 ]
 then = [["?i", "diagnosis", "local_module"], ["?i", "remedy", "rename_shadow"], ["?i", "because", "?m"]]
