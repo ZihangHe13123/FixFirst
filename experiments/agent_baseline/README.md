@@ -165,11 +165,18 @@ held-out projects are added only after A2's results are merged.
   ends (also after a failed setup), the harness kills every process of the run, each one checked
   again just before (same start time, same sandbox), and then checks that none is left
   (`processes_stopped_at_end`); each grader check does the same for its own processes before it
-  reads the report. If that cannot be shown, the run ends as `cleanup_failed` (the episode's end is
-  kept in `episode_end`) and is not graded, and a reference is invalid. The profile refuses to have a
-  process started outside the sandbox on the run's behalf (launchd jobs, LaunchServices `open`,
-  Apple Events). Other system services that run commands for a caller, and a process that becomes
-  another user (a setuid program, which needs a password), are outside what the harness supports.
+  reads the report. Only the kernel's answer that a process no longer exists counts as gone: a
+  process list that fails, may be cut short or lacks the harness itself, a process query or sandbox
+  check that fails, and a process under the run's sandbox that cannot be read (it became another
+  user) all mean that nothing can be shown. Then the run ends as `cleanup_failed` (the episode's end
+  is kept in `episode_end`) and is not graded, and a reference is invalid. The profile refuses to
+  have a process started outside the sandbox on the run's behalf (launchd jobs, LaunchServices
+  `open`, Apple Events); other system services that run commands for a caller are outside what the
+  harness supports.
+- **Signals.** A command may signal itself and the processes it started, also detached ones, but not
+  the harness, the user's processes or another run (`Operation not permitted`). macOS counts each
+  `sandbox-exec` as its own sandbox, so a later command cannot signal what an earlier command of the
+  same run left in the background; such processes end with the run.
 - **Reference.** The known repair in `reference_repairs.toml` (the model never sees it) is applied to
   a separate copy in the sandbox, and the suite is run like a grader run. A reference counts only if
   every repair step exits 0 and its suite exits 0 with at least one passing test and none failing;
@@ -298,6 +305,15 @@ the run ends (`processes_stopped_at_end` 1, nothing written after the trigger). 
 the run ends with `finish`, a time cap, a model error, an answer without a tool call, a failed
 install, a broken grader report or a harness error; a run whose processes cannot be shown stopped is
 `cleanup_failed` and not graded.
+
+### After the fifth review (30 Sep): signals and failed process queries
+
+Both reproduced on `f380074` first, on processes created for the check and signalled by exact pid: a
+sandboxed command could kill a process outside any sandbox and another run's process (both exited
+with -15; now `denied 1`, both still running, while its own children, also detached ones, still end
+on SIGTERM). And with the process list failing (EIO), a process query failing (EPERM) or a sandbox
+check failing (-1), the clean-up reported success while the run's process was still alive; now each
+is an error, and a whole run with such a failure ends as `cleanup_failed`, not graded.
 
 ### Not done yet
 

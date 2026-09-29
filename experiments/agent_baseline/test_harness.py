@@ -8,6 +8,8 @@ own temporary folder.
 """
 
 from contextlib import contextmanager
+import ctypes
+import errno
 import json
 import os
 import shlex
@@ -680,3 +682,119 @@ def test_a_reference_whose_processes_cannot_be_shown_stopped_is_invalid(tmp_path
     data = agent_pilot.real_reference(ctx, {"id": "local", "ref": "v1", "install": []}, source, snapshot, [])
     assert any("cannot be checked (test)" in problem for problem in data["problems"])
     assert not list((ctx.out / "_reference").glob("*.json"))  # an invalid reference is never cached
+
+
+# ---- A run's commands may signal only what they started; failed process queries never count as clean ----
+
+QUIET = dict(stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+SEND = ("import os, signal, sys\ntry:\n    os.kill(int(sys.argv[1]), signal.SIGTERM); print('sent')\n"
+        "except OSError as e:\n    print('denied', e.errno)\n")
+MANAGE = ("import json, os, signal, subprocess\na = subprocess.Popen(['/bin/sleep', '30'])\n"
+          "b = subprocess.Popen(['/bin/sleep', '30'], start_new_session=True)\n"
+          "os.kill(a.pid, signal.SIGTERM); os.kill(b.pid, signal.SIGTERM)\n"
+          "print(json.dumps({'child': a.wait(5), 'detached child': b.wait(5)}))\n")
+
+
+def test_a_command_can_signal_only_the_processes_it_started(tmp_path):
+    run_, other = small_run(tmp_path, {"keep.txt": "x"}, "a"), small_run(tmp_path, {"keep.txt": "x"}, "b")
+    outside = subprocess.Popen(["/bin/sleep", "60"], **QUIET)  # disposable targets, signalled by exact pid
+    another_run = subprocess.Popen(["sandbox-exec", "-f", str(other.profile("agent")), "/bin/sleep", "60"], **QUIET)
+    try:
+        run_.execute(["/bin/bash", "-c", "/bin/sleep 60 > /dev/null 2>&1 & echo $! > left.pid"], "agent", 20)
+        left = int((run_.project / "left.pid").read_text())  # what an earlier command of the run left
+        time.sleep(0.3)
+        replies = {name: run_.execute([str(run_.python), "-c", SEND, str(pid)], "agent", 20)[1].strip()
+                   for name, pid in (("outside", outside.pid), ("another run", another_run.pid),
+                                     ("an earlier command's", left))}
+        time.sleep(0.1)
+        assert replies == dict.fromkeys(("outside", "another run", "an earlier command's"), "denied 1")
+        assert outside.poll() is None and another_run.poll() is None and iso._identity(left) is not None
+        code, output, _ = run_.execute([str(run_.python), "-c", MANAGE], "agent", 20)
+        assert json.loads(output) == {"child": -15, "detached child": -15}  # its own, also detached
+        run_.end_processes("end of the test")  # the harness still stops what the run left
+        assert iso._identity(left) is None and not run_.cleanup_problems
+    finally:
+        for proc in (outside, another_run):
+            proc.kill()
+            proc.wait()
+
+
+class NativeFailure:
+    """libSystem with one call failing the way the kernel reports errors, for a process of the run
+    (the one it names in waiter.pid under `root`, once there is one) or for the process list."""
+
+    def __init__(self, real, call: str, root: Path):
+        self.real, self.call, self.root, self.pid = real, call, root, None
+
+    def __getattr__(self, name):
+        return getattr(self.real, name)
+
+    def target(self):
+        if self.pid is None:
+            for path in self.root.glob("**/waiter.pid"):
+                text = path.read_text()
+                self.pid = int(text) if text.strip() else None
+        return self.pid
+
+    def proc_listallpids(self, buffer, size):
+        if buffer is not None and self.target():
+            if self.call == "list fails":
+                ctypes.set_errno(errno.EIO)
+                return 0
+            if self.call == "list is full":  # as if more processes were waiting than fit
+                return size // ctypes.sizeof(ctypes.c_int)
+            if self.call == "list without this process":
+                count = self.real.proc_listallpids(buffer, size)
+                pids = [pid for pid in buffer[:count] if pid != os.getpid()]
+                buffer[:len(pids)] = pids
+                return len(pids)
+        return self.real.proc_listallpids(buffer, size)
+
+    def proc_pidinfo(self, pid, *rest):
+        if pid == self.target() and self.call.startswith("info"):
+            ctypes.set_errno(errno.EPERM if self.call == "info EPERM" else errno.EIO)
+            return 0
+        return self.real.proc_pidinfo(pid, *rest)
+
+    def sandbox_check(self, pid, *rest):
+        if pid == self.target() and self.call == "sandbox check fails":
+            ctypes.set_errno(errno.EPERM)
+            return -1
+        return self.real.sandbox_check(pid, *rest)
+
+
+FAILURES = ["list fails", "list is full", "list without this process", "info EPERM", "info EIO",
+            "sandbox check fails"]
+
+
+@pytest.mark.parametrize("failure", FAILURES)
+def test_a_failed_process_query_is_never_taken_for_a_clean_stop(tmp_path, monkeypatch, failure):
+    owner = iso.new_mark()
+    profile = iso.write_profile(iso.Policy((tmp_path,), (), owner=owner), tmp_path / "p.sb", (Path.home(),))
+    waiter = subprocess.Popen(["sandbox-exec", "-f", str(profile), "/bin/sleep", "60"], **QUIET)
+    try:
+        time.sleep(0.3)
+        (tmp_path / "waiter.pid").write_text(str(waiter.pid))
+        monkeypatch.setattr(iso, "_system", lambda failing=NativeFailure(iso._system(), failure, tmp_path): failing)
+        result = iso.stop(owner, settle=0.5)
+        monkeypatch.undo()
+        assert "cannot be checked" in (result["error"] or "")
+        assert waiter.poll() is None  # alive: nothing was killed without proof, and nothing was reported clean
+    finally:
+        waiter.kill()
+        waiter.wait()
+
+
+@pytest.mark.parametrize("failure", ["list fails", "info EPERM", "sandbox check fails"])
+def test_a_run_whose_process_queries_fail_is_cleanup_failed_and_not_graded(tmp_path, monkeypatch, failure):
+    real = iso._system()
+    monkeypatch.setattr(iso, "_system", lambda failing=NativeFailure(real, failure, tmp_path / "out"): failing)
+    [row] = run(tmp_path, [call("run_command", command=FIX + " && python -c " + shlex.quote(DETACH)),
+                           call("finish", summary="fixed")])
+    monkeypatch.undo()
+    project = tmp_path / "out" / row["run_dir"] / "project"
+    with left_behind(project):
+        assert (row["end"], row["episode_end"], row["grading"], row["fixed"]) == (
+            "cleanup_failed", "finish", "not_graded", None)
+        assert "cannot" in row["error"] and "reasons" not in row
+        assert iso._identity(int((project / "waiter.pid").read_text())) is not None  # not reported as gone

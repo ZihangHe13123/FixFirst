@@ -250,8 +250,9 @@ def test_every_profile_names_its_owner_and_refuses_starting_processes_outside_th
     owner = iso.new_mark()
     policy = iso.Policy((Path("/private/tmp/run"),), (), owner=owner).extended(readable=(Path("/opt"),))
     lines = iso.profile_text(policy, denied=()).splitlines()
-    assert lines[-2:] == [f'(deny mach-lookup (global-name "org.fixfirst.run.{owner}"))',
-                          "(deny job-creation lsopen appleevent-send)"]  # last, so no later rule undoes them
+    assert lines[-4:] == [f'(deny mach-lookup (global-name "org.fixfirst.run.{owner}"))',
+                          "(deny job-creation lsopen appleevent-send)", "(deny signal)",
+                          "(allow signal (target self) (target same-sandbox))"]  # last: no later rule undoes them
     assert iso.new_mark() != owner
     for bad in ("", "abc123", 'a") (allow default', owner.upper()):  # no owner, or not a token of new_mark()
         with pytest.raises(ValueError):

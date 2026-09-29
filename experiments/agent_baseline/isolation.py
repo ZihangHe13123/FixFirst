@@ -17,7 +17,10 @@ under macOS sandbox-exec with a Policy:
   not a process's environment, folder, name or command line, tells the harness which processes are
   the owner's, including those that cleared their environment, changed folder or left their session;
 - it cannot have processes started outside the sandbox on its behalf: launchd jobs, LaunchServices
-  (`open`) and Apple Events are refused.
+  (`open`) and Apple Events are refused;
+- it may signal only itself and the processes started under the same sandbox (its own children, also
+  detached ones): not the harness, the user's processes, another run, or what an earlier command of
+  the same run left (each command gets its own sandbox; those processes end with the run).
 
 Processes start in their own process group, with stdin closed, and the whole group is killed at the
 deadline. A command ends when its own process ends: background processes it leaves (which may hold
@@ -29,6 +32,7 @@ from contextlib import contextmanager
 import ctypes
 from dataclasses import dataclass
 from datetime import datetime, timezone
+import errno
 import functools
 import hashlib
 import os
@@ -74,7 +78,7 @@ def owner_name(owner: str) -> str:
 
 def profile_text(policy: Policy, denied: tuple) -> str:
     """Later rules win: deny the private areas, allow the policy's paths, deny secrets again. Then the
-    owner's name, and the requests that would start a process outside the sandbox."""
+    owner's name, the requests that would start a process outside the sandbox, and the signal targets."""
     if not re.fullmatch(r"[0-9a-f]{24}", policy.owner):
         raise ValueError("a sandbox profile needs its owner's token (new_mark())")
     lines = ["(version 1)", "(allow default)"]
@@ -90,6 +94,8 @@ def profile_text(policy: Policy, denied: tuple) -> str:
                  + ' (literal "/dev/null") (subpath "/dev/fd"))')
     lines.append(f'(deny mach-lookup (global-name "{owner_name(policy.owner)}"))')
     lines.append("(deny job-creation lsopen appleevent-send)")
+    lines.append("(deny signal)")
+    lines.append("(allow signal (target self) (target same-sandbox))")
     return "\n".join(lines) + "\n"
 
 
@@ -187,43 +193,94 @@ def _system():
 
 
 def _pids() -> list[int]:
+    """Every pid on the system. The list must be whole: a failed or empty answer, one that may have been
+    cut short, or one without this process and launchd raises OSError."""
     lib = _system()
-    room = lib.proc_listallpids(None, 0) + 256
-    buffer = (ctypes.c_int * room)()
-    count = lib.proc_listallpids(buffer, ctypes.sizeof(buffer))
-    return [pid for pid in buffer[:max(count, 0)] if pid > 0]
+    ctypes.set_errno(0)
+    room = lib.proc_listallpids(None, 0)
+    if room <= 0:
+        raise OSError(ctypes.get_errno() or errno.EIO, "the process list cannot be read")
+    for _ in range(4):
+        room += 256
+        buffer = (ctypes.c_int * room)()
+        ctypes.set_errno(0)
+        count = lib.proc_listallpids(buffer, ctypes.sizeof(buffer))
+        if count <= 0:
+            raise OSError(ctypes.get_errno() or errno.EIO, "the process list cannot be read")
+        if count < room:  # it fitted, so nothing was cut off
+            pids = [pid for pid in buffer[:count] if pid > 0]
+            if os.getpid() not in pids or 1 not in pids:
+                raise OSError(errno.EIO, "the process list is incomplete")
+            return pids
+        room *= 2
+    raise OSError(errno.EAGAIN, "the process list kept growing while it was read")
 
 
 def _identity(pid: int) -> tuple | None:
-    """(start time, parent, name) of a live process of this user; None when it is gone, a zombie or
-    another user's (the harness can neither see nor stop those)."""
+    """(start time, parent, name) of a live process; None only when the kernel says there is no such
+    process (it exited, or is a zombie that can no longer run). PermissionError when it exists but
+    cannot be read (another user's); OSError for any other failure, which is never taken as "gone"."""
     info = _ProcInfo()
-    if _system().proc_pidinfo(pid, _PIDTBSDINFO, 0, ctypes.byref(info), ctypes.sizeof(info)) != ctypes.sizeof(info):
+    ctypes.set_errno(0)
+    size = _system().proc_pidinfo(pid, _PIDTBSDINFO, 0, ctypes.byref(info), ctypes.sizeof(info))
+    if size == ctypes.sizeof(info):
+        return (info.start_sec, info.start_usec), info.ppid, info.comm.decode("utf-8", "replace")
+    error = ctypes.get_errno()
+    if size == 0 and error == errno.ESRCH:
         return None
-    if info.uid != os.getuid():
-        return None
-    return (info.start_sec, info.start_usec), info.ppid, info.comm.decode("utf-8", "replace")
+    raise (PermissionError if error == errno.EPERM else OSError)(error or errno.EIO, f"process {pid} cannot be read")
+
+
+def _denies(pid: int, name: bytes) -> bool:
+    ctypes.set_errno(0)
+    result = _system().sandbox_check(pid, b"mach-lookup", _GLOBAL_NAME | _NO_REPORT, name)
+    if result not in (0, 1):
+        raise OSError(ctypes.get_errno() or errno.EIO, f"the sandbox of process {pid} cannot be checked")
+    return result == 1
 
 
 def _under(pid: int, owner: str) -> bool:
     """Whether the process runs under one of the owner's profiles: the owner's name is denied and a
     sibling name is allowed. An unsandboxed process allows both; another run's sandbox allows the
-    owner's name; a deny-by-default sandbox, and a pid that no longer exists, deny both."""
-    check, name = _system().sandbox_check, owner_name(owner).encode()
-    return (check(pid, b"mach-lookup", _GLOBAL_NAME | _NO_REPORT, name) == 1
-            and check(pid, b"mach-lookup", _GLOBAL_NAME | _NO_REPORT, name + b".unrelated") == 0)
+    owner's name; a deny-by-default sandbox, and a pid that no longer exists, deny both. A failed
+    check raises OSError; it is never taken as "not the owner's"."""
+    name = owner_name(owner).encode()
+    return _denies(pid, name) and not _denies(pid, name + b".unrelated")
+
+
+def _examine(pid: int, owner: str):
+    """The identity of the owner's process, "other" (the kernel says it is not the owner's), "gone"
+    (the kernel says it no longer exists) or "changed" (the pid changed hands during the check)."""
+    try:
+        before = _identity(pid)
+    except PermissionError:
+        before = "unreadable"
+    if before is None:
+        return "gone"
+    if not _under(pid, owner):
+        return "other"
+    if before == "unreadable":
+        raise PermissionError(errno.EPERM, f"process {pid} runs under the owner's sandbox but cannot be read")
+    after = _identity(pid)
+    if after is None:
+        return "gone"
+    return before if after[0] == before[0] else "changed"
 
 
 def owned(owner: str) -> dict[int, tuple]:
-    """The owner's live processes, pid -> (start time, parent, name). The start time is read before and
-    after the sandbox check, so a pid that changed hands meanwhile is not taken for the owner's."""
+    """The owner's live processes, pid -> (start time, parent, name). OSError when that cannot be shown:
+    the process list failed or looks incomplete, a query failed, or a process under the owner's sandbox
+    cannot be read (it became another user). A pid that changed hands during its check is checked again."""
     found = {}
     for pid in _pids():
-        before = _identity(pid)
-        if before and _under(pid, owner):
-            after = _identity(pid)
-            if after and after[0] == before[0]:
-                found[pid] = before
+        for _ in range(3):
+            state = _examine(pid, owner)
+            if state != "changed":
+                break
+        else:
+            raise OSError(errno.EAGAIN, f"process {pid} kept changing while it was checked")
+        if isinstance(state, tuple):
+            found[pid] = state
     return found
 
 
@@ -233,14 +290,15 @@ def _kill(pid: int, sig: int):
 
 def _kill_if_owned(pid: int, started: tuple, owner: str) -> bool:
     """SIGKILL the process only if it is still the same one (same start time) under the owner's
-    sandbox, checked just before: a pid that now belongs to another process is left alone."""
+    sandbox, checked just before: a pid that now belongs to another process is left alone. A failed
+    query or kill raises (the caller cannot then show that the process stopped)."""
     now = _identity(pid)
     if not now or now[0] != started or not _under(pid, owner):
         return False
     try:
         _kill(pid, signal.SIGKILL)
         return True
-    except (ProcessLookupError, PermissionError):
+    except ProcessLookupError:
         return False
 
 
@@ -271,7 +329,10 @@ def descendants(pid: int) -> list[tuple[int, tuple]]:
     own sessions, so the process group alone would miss them)."""
     children = {}
     for other in _pids():
-        found = _identity(other)
+        try:
+            found = _identity(other)
+        except PermissionError:
+            continue  # another user's process: the harness could not stop it anyway
         if found:
             children.setdefault(found[1], []).append((other, found[0]))
     result, todo = [], [pid]
