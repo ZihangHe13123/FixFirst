@@ -1,10 +1,19 @@
 {
   "purpose": "development trial: checks the pipeline, not a result",
+  "rescored": {
+    "date": "2026-09-29T19:59:55+08:00",
+    "note": "answers read again from results.jsonl with the current parser; no model was asked",
+    "answers_read_differently": []
+  },
   "models": {
     "Qwen3.6-35B-A3B-6bit": {
       "n": 10,
-      "answered": 10,
+      "complete_answers": 10,
+      "root_cause_without_first_step": 0,
+      "invalid_answers": 0,
       "failed_requests": 0,
+      "bad_responses": 0,
+      "not_sent": 0,
       "accuracy": 1.0,
       "macro_f1": 1.0,
       "per_label": {
@@ -14,12 +23,16 @@
         "config_missing": "2/2",
         "code_defect": "2/2"
       },
-      "median_seconds": 1.36
+      "median_seconds": 1.33
     },
     "gemma-4-26B-A4B-it-qat-4bit": {
       "n": 10,
-      "answered": 10,
+      "complete_answers": 10,
+      "root_cause_without_first_step": 0,
+      "invalid_answers": 0,
       "failed_requests": 0,
+      "bad_responses": 0,
+      "not_sent": 0,
       "accuracy": 1.0,
       "macro_f1": 1.0,
       "per_label": {
@@ -29,7 +42,7 @@
         "config_missing": "2/2",
         "code_defect": "2/2"
       },
-      "median_seconds": 1.47
+      "median_seconds": 1.46
     }
   }
 }
