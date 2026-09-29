@@ -10,17 +10,26 @@ under macOS sandbox-exec with a Policy:
   reads only what the policy names (the run's own folders, the interpreters and, for FixFirst's
   server, FixFirst's code), so reference repairs, labels, reference outcomes and other runs stay
   out of reach; ~/.ssh, ~/.omlx, ~/.claude and the keychains are never readable;
-- it has the network only when the policy says so.
+- it has the network only when the policy says so;
+- it belongs to an owner (a run, or one grader check): the profile denies a Mach name made from the
+  owner's random token, which nothing else denies. A sandbox is inherited by every process started
+  under it and can be neither dropped nor replaced (macOS refuses a second sandbox), so this, and
+  not a process's environment, folder, name or command line, tells the harness which processes are
+  the owner's, including those that cleared their environment, changed folder or left their session;
+- it cannot have processes started outside the sandbox on its behalf: launchd jobs, LaunchServices
+  (`open`) and Apple Events are refused.
 
 Processes start in their own process group, with stdin closed, and the whole group is killed at the
-deadline. A command ends when its own process ends: background processes it leaves (which may hold its
-output pipe) do not keep the harness waiting; they end with the run (sweep). Only the end of the
-output is kept.
+deadline. A command ends when its own process ends: background processes it leaves (which may hold
+its output pipe) do not keep the harness waiting. When a run or a grader check ends, stop() kills
+every process of its owner and proves that none is left. Only the end of a command's output is kept.
 """
 
 from contextlib import contextmanager
+import ctypes
 from dataclasses import dataclass
 from datetime import datetime, timezone
+import functools
 import hashlib
 import os
 from pathlib import Path
@@ -46,10 +55,11 @@ class Policy:
     readable: tuple
     network: bool = False
     readable_files: tuple = ()
+    owner: str = ""  # the token of the run or grader check that every process under the policy belongs to
 
     def extended(self, readable=(), readable_files=()) -> "Policy":
         return Policy(self.writable, self.readable + tuple(readable), self.network,
-                      self.readable_files + tuple(readable_files))
+                      self.readable_files + tuple(readable_files), self.owner)
 
 
 def _quoted(path) -> str:
@@ -57,8 +67,16 @@ def _quoted(path) -> str:
     return '"' + os.path.realpath(path).replace("\\", "\\\\").replace('"', '\\"') + '"'
 
 
+def owner_name(owner: str) -> str:
+    """A Mach service name that exists nowhere; only the owner's profiles deny it."""
+    return f"org.fixfirst.run.{owner}"
+
+
 def profile_text(policy: Policy, denied: tuple) -> str:
-    """Later rules win: deny the private areas, allow the policy's paths, deny secrets again."""
+    """Later rules win: deny the private areas, allow the policy's paths, deny secrets again. Then the
+    owner's name, and the requests that would start a process outside the sandbox."""
+    if not re.fullmatch(r"[0-9a-f]{24}", policy.owner):
+        raise ValueError("a sandbox profile needs its owner's token (new_mark())")
     lines = ["(version 1)", "(allow default)"]
     if not policy.network:
         lines.append("(deny network*)")
@@ -70,6 +88,8 @@ def profile_text(policy: Policy, denied: tuple) -> str:
     lines.append("(deny file-write*)")
     lines.append("(allow file-write* " + " ".join(f"(subpath {_quoted(p)})" for p in policy.writable)
                  + ' (literal "/dev/null") (subpath "/dev/fd"))')
+    lines.append(f'(deny mach-lookup (global-name "{owner_name(policy.owner)}"))')
+    lines.append("(deny job-creation lsopen appleevent-send)")
     return "\n".join(lines) + "\n"
 
 
@@ -101,10 +121,11 @@ class Tail:
         return f"...({dropped} bytes of earlier output not kept)...\n{text}" if dropped else text
 
 
-def execute(argv, cwd, env, profile: Path, timeout: float, keep: int = KEEP) -> tuple[int, str, bool]:
-    """Run under the profile; at the timeout kill the whole process group. (exit code, output, stopped).
-    The result comes when the command's own process ends, even if a process it left in the background
-    still holds the output pipe; only the last `keep` bytes of output are kept."""
+def execute(argv, cwd, env, profile: Path, timeout: float, owner: str, keep: int = KEEP) -> tuple[int, str, bool]:
+    """Run under the profile (whose owner is `owner`); at the timeout kill the command's process tree.
+    (exit code, output, stopped). The result comes when the command's own process ends, even if a
+    process it left in the background still holds the output pipe; only the last `keep` bytes of
+    output are kept."""
     if timeout <= 0:
         return STOPPED, "(not started: no time left)", True
     proc = subprocess.Popen(["sandbox-exec", "-f", str(profile), *[str(a) for a in argv]], cwd=cwd, env=env,
@@ -117,7 +138,7 @@ def execute(argv, cwd, env, profile: Path, timeout: float, keep: int = KEEP) -> 
         proc.wait(timeout=timeout)
         stopped = False
     except subprocess.TimeoutExpired:
-        kill_tree(proc)
+        kill_tree(proc, owner)
         try:
             proc.wait(timeout=30)
         except subprocess.TimeoutExpired:
@@ -129,94 +150,146 @@ def execute(argv, cwd, env, profile: Path, timeout: float, keep: int = KEEP) -> 
     return proc.returncode, tail.text(), False
 
 
-MARK = "FIXFIRST_RUN"
-
-
 def new_mark() -> str:
+    """A run's (or grader check's) owner token: 24 random hex digits."""
     return secrets.token_hex(12)
 
 
-def _listing(argv) -> str:
-    """A system listing (ps, lsof); other processes' environments need not be UTF-8."""
-    try:
-        return subprocess.run(argv, capture_output=True, text=True, errors="replace", timeout=60).stdout
-    except (OSError, subprocess.SubprocessError):
-        return ""
+class CleanupError(OSError):
+    """The processes of a run or grader check could not be shown to have stopped."""
 
 
-def marked_processes(mark: str, folder: Path) -> set[int]:
-    """This run's processes, found without their parents: every process the harness starts for the run
-    carries the mark in its environment, and those that dropped it are found by their working folder
-    inside the run's folder (any process of the user working there counts, so keep shells out of a
-    running run's folder). A process that clears its environment and leaves the folder is not found."""
-    uid, found = str(os.getuid()), set()
-    for line in _listing(["ps", "-axwwE", "-o", "pid=,uid=,command="]).splitlines():
-        parts = line.split(None, 2)
-        if len(parts) == 3 and parts[0].isdigit() and parts[1] == uid and f"{MARK}={mark}" in parts[2]:
-            found.add(int(parts[0]))
-    root = os.path.realpath(folder)
-    pid = None
-    for line in _listing(["lsof", "-a", "-d", "cwd", "-F", "pn", "-u", uid]).splitlines():
-        if line.startswith("p") and line[1:].isdigit():
-            pid = int(line[1:])
-        elif line.startswith("n") and pid is not None:
-            path = os.path.realpath(line[1:])
-            if path == root or path.startswith(root + os.sep):
-                found.add(pid)
-    found.discard(os.getpid())
+class _ProcInfo(ctypes.Structure):  # struct proc_bsdinfo, <sys/proc_info.h>
+    _fields_ = [("flags", ctypes.c_uint32), ("status", ctypes.c_uint32), ("xstatus", ctypes.c_uint32),
+                ("pid", ctypes.c_uint32), ("ppid", ctypes.c_uint32), ("uid", ctypes.c_uint32),
+                ("gid", ctypes.c_uint32), ("ruid", ctypes.c_uint32), ("rgid", ctypes.c_uint32),
+                ("svuid", ctypes.c_uint32), ("svgid", ctypes.c_uint32), ("rfu", ctypes.c_uint32),
+                ("comm", ctypes.c_char * 16), ("name", ctypes.c_char * 32), ("nfiles", ctypes.c_uint32),
+                ("pgid", ctypes.c_uint32), ("pjobc", ctypes.c_uint32), ("tdev", ctypes.c_uint32),
+                ("tpgid", ctypes.c_uint32), ("nice", ctypes.c_int32), ("start_sec", ctypes.c_uint64),
+                ("start_usec", ctypes.c_uint64)]
+
+
+_PIDTBSDINFO, _GLOBAL_NAME, _NO_REPORT = 3, 2, 0x40000000
+
+
+@functools.cache
+def _system():
+    """libSystem's process list, process information and sandbox_check (macOS only)."""
+    lib = ctypes.CDLL(None, use_errno=True)
+    lib.proc_listallpids.restype = ctypes.c_int
+    lib.proc_listallpids.argtypes = [ctypes.c_void_p, ctypes.c_int]
+    lib.proc_pidinfo.restype = ctypes.c_int
+    lib.proc_pidinfo.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_uint64, ctypes.c_void_p, ctypes.c_int]
+    lib.sandbox_check.restype = ctypes.c_int
+    lib.sandbox_check.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int]  # the name follows as a variadic
+    return lib
+
+
+def _pids() -> list[int]:
+    lib = _system()
+    room = lib.proc_listallpids(None, 0) + 256
+    buffer = (ctypes.c_int * room)()
+    count = lib.proc_listallpids(buffer, ctypes.sizeof(buffer))
+    return [pid for pid in buffer[:max(count, 0)] if pid > 0]
+
+
+def _identity(pid: int) -> tuple | None:
+    """(start time, parent, name) of a live process of this user; None when it is gone, a zombie or
+    another user's (the harness can neither see nor stop those)."""
+    info = _ProcInfo()
+    if _system().proc_pidinfo(pid, _PIDTBSDINFO, 0, ctypes.byref(info), ctypes.sizeof(info)) != ctypes.sizeof(info):
+        return None
+    if info.uid != os.getuid():
+        return None
+    return (info.start_sec, info.start_usec), info.ppid, info.comm.decode("utf-8", "replace")
+
+
+def _under(pid: int, owner: str) -> bool:
+    """Whether the process runs under one of the owner's profiles: the owner's name is denied and a
+    sibling name is allowed. An unsandboxed process allows both; another run's sandbox allows the
+    owner's name; a deny-by-default sandbox, and a pid that no longer exists, deny both."""
+    check, name = _system().sandbox_check, owner_name(owner).encode()
+    return (check(pid, b"mach-lookup", _GLOBAL_NAME | _NO_REPORT, name) == 1
+            and check(pid, b"mach-lookup", _GLOBAL_NAME | _NO_REPORT, name + b".unrelated") == 0)
+
+
+def owned(owner: str) -> dict[int, tuple]:
+    """The owner's live processes, pid -> (start time, parent, name). The start time is read before and
+    after the sandbox check, so a pid that changed hands meanwhile is not taken for the owner's."""
+    found = {}
+    for pid in _pids():
+        before = _identity(pid)
+        if before and _under(pid, owner):
+            after = _identity(pid)
+            if after and after[0] == before[0]:
+                found[pid] = before
     return found
 
 
-def sweep(mark: str, folder: Path) -> int:
-    """Kill every process of the run that is still alive, with everything below it. Used when a run
-    or a grader check ends, so nothing it started can change the case afterwards."""
-    stopped = set()
-    for _ in range(3):  # a process may start another while its parent is being killed
-        pids = marked_processes(mark, folder) - stopped
-        if not pids:
-            break
-        children = child_table()
-        for pid in pids:
-            for victim in [*reversed(descendants(pid, children)), pid]:
-                if victim in stopped:
-                    continue
-                try:
-                    os.kill(victim, signal.SIGKILL)
-                    stopped.add(victim)
-                except (ProcessLookupError, PermissionError):
-                    pass
-        time.sleep(0.05)
-    return len(stopped)
+def _kill(pid: int, sig: int):
+    os.kill(pid, sig)
 
 
-def child_table() -> dict[int, list[int]]:
+def _kill_if_owned(pid: int, started: tuple, owner: str) -> bool:
+    """SIGKILL the process only if it is still the same one (same start time) under the owner's
+    sandbox, checked just before: a pid that now belongs to another process is left alone."""
+    now = _identity(pid)
+    if not now or now[0] != started or not _under(pid, owner):
+        return False
+    try:
+        _kill(pid, signal.SIGKILL)
+        return True
+    except (ProcessLookupError, PermissionError):
+        return False
+
+
+def stop(owner: str, settle: float = 3.0) -> dict:
+    """Kill every process of the owner and prove that none is left: rounds of finding and killing
+    until the owner has no live process, for at most `settle` seconds. {"stopped": [names], "error":
+    None, or why the harness cannot say that the owner's processes are gone}."""
+    stopped, deadline = {}, time.monotonic() + settle
+    try:
+        while True:
+            found = owned(owner)
+            if not found:
+                return {"stopped": sorted(stopped.values()), "error": None}
+            if time.monotonic() > deadline:
+                left = [f"{name} ({pid})" for pid, (_, _, name) in sorted(found.items())]
+                return {"stopped": sorted(stopped.values()),
+                        "error": f"{len(left)} processes still alive after being killed: {', '.join(left[:5])}"}
+            for pid, (started, _, name) in found.items():
+                if _kill_if_owned(pid, started, owner):
+                    stopped[(pid, started)] = name
+            time.sleep(0.02)
+    except (OSError, AttributeError) as error:  # without these system calls nothing can be shown
+        return {"stopped": sorted(stopped.values()), "error": f"the processes cannot be checked: {error}"}
+
+
+def descendants(pid: int) -> list[tuple[int, tuple]]:
+    """(pid, start time) of every process below pid, by parent links (FixFirst's checks start their
+    own sessions, so the process group alone would miss them)."""
     children = {}
-    for line in _listing(["ps", "-A", "-o", "pid=,ppid="]).splitlines():
-        parts = line.split()
-        if len(parts) == 2 and parts[0].isdigit() and parts[1].isdigit():
-            children.setdefault(int(parts[1]), []).append(int(parts[0]))
-    return children
-
-
-def descendants(pid: int, children: dict | None = None) -> list[int]:
-    """Every process below pid, including those that started their own session (FixFirst's checks do)."""
-    children = child_table() if children is None else children
-    found, todo = [], [pid]
+    for other in _pids():
+        found = _identity(other)
+        if found:
+            children.setdefault(found[1], []).append((other, found[0]))
+    result, todo = [], [pid]
     while todo:
         for child in children.get(todo.pop(), []):
-            found.append(child)
-            todo.append(child)
-    return found
+            result.append(child)
+            todo.append(child[0])
+    return result
 
 
-def kill_tree(proc: subprocess.Popen):
-    """Kill a process, its group and everything below it (found before anything is killed)."""
-    below = descendants(proc.pid)
-    for pid in reversed(below):
-        try:
-            os.kill(pid, signal.SIGKILL)
-        except (ProcessLookupError, PermissionError):
-            pass
+def kill_tree(proc: subprocess.Popen, owner: str):
+    """At a deadline: kill the command's process, its group, and every process below it that is still
+    the owner's (a pid is killed only after it is checked again)."""
+    try:
+        for pid, started in reversed(descendants(proc.pid)):
+            _kill_if_owned(pid, started, owner)
+    except (OSError, AttributeError):
+        pass  # the group is still killed; stop() at the end of the run proves the rest
     try:
         os.killpg(proc.pid, signal.SIGKILL)
     except (ProcessLookupError, PermissionError):

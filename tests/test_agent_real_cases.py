@@ -157,7 +157,8 @@ def test_the_install_step_of_the_project_is_returned_for_the_sandbox(tmp_path):
 
 def test_a_sandbox_profile_denies_the_private_areas_and_allows_only_the_run(tmp_path):
     run, other = tmp_path / "out" / "runs" / "a", tmp_path / "out" / "runs" / "b"
-    policy = iso.Policy(writable=(run / "project", run / "tmp"), readable=(tmp_path / "python",), network=False)
+    policy = iso.Policy(writable=(run / "project", run / "tmp"), readable=(tmp_path / "python",), network=False,
+                        owner=iso.new_mark())
     text = iso.profile_text(policy, denied=(Path.home(), tmp_path / "out"))
     assert "(deny network*)" in text
     assert f'(deny file-read-data (subpath "{Path.home()}") (subpath "{tmp_path / "out"}"))' in text
@@ -166,7 +167,7 @@ def test_a_sandbox_profile_denies_the_private_areas_and_allows_only_the_run(tmp_
     write = next(line for line in text.splitlines() if line.startswith("(allow file-write*"))
     assert set(re.findall(r'\(subpath "([^"]+)"\)', write)) == {str(run / "project"), str(run / "tmp"), "/dev/fd"}
     assert text.index("(allow file-read-data") < text.index("(deny file-read* (subpath")  # secrets last
-    assert "(deny network*)" not in iso.profile_text(iso.Policy((), (), network=True), denied=())
+    assert "(deny network*)" not in iso.profile_text(iso.Policy((), (), network=True, owner=iso.new_mark()), denied=())
 
 
 def test_run_folders_are_unique_and_never_reused(tmp_path):
@@ -190,7 +191,7 @@ def test_profile_paths_are_real_paths(tmp_path):
     target.mkdir()
     link = tmp_path / "link"
     link.symlink_to(target)
-    text = iso.profile_text(iso.Policy(writable=(link,), readable=()), denied=())
+    text = iso.profile_text(iso.Policy(writable=(link,), readable=(), owner=iso.new_mark()), denied=())
     assert f'(subpath "{os.path.realpath(target)}")' in text and str(link) not in text
 
 
@@ -245,9 +246,16 @@ def test_a_usable_reference_cache_is_read_and_a_missing_one_is_not_an_error(tmp_
     assert [p.name for p in tmp_path.iterdir()] == ["ref.json"]  # no temporary file left behind
 
 
-def test_every_process_of_a_run_carries_its_mark(tmp_path):
-    env = rc.clean_env(tmp_path / ".venv" / "bin" / "python", tmp_path, tmp_path, "abc123")
-    assert env[iso.MARK] == "abc123"
+def test_every_profile_names_its_owner_and_refuses_starting_processes_outside_the_sandbox():
+    owner = iso.new_mark()
+    policy = iso.Policy((Path("/private/tmp/run"),), (), owner=owner).extended(readable=(Path("/opt"),))
+    lines = iso.profile_text(policy, denied=()).splitlines()
+    assert lines[-2:] == [f'(deny mach-lookup (global-name "org.fixfirst.run.{owner}"))',
+                          "(deny job-creation lsopen appleevent-send)"]  # last, so no later rule undoes them
+    assert iso.new_mark() != owner
+    for bad in ("", "abc123", 'a") (allow default', owner.upper()):  # no owner, or not a token of new_mark()
+        with pytest.raises(ValueError):
+            iso.profile_text(iso.Policy((), (), owner=bad), denied=())
 
 
 def returns_within(seconds, function, pipes=()):

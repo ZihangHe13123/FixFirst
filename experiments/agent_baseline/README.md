@@ -156,13 +156,20 @@ held-out projects are added only after A2's results are merged.
   sending slowly would never trip them). A command's result comes when its own process ends, with
   stdin closed and the last 1 MB of output kept (the model sees the last 6,000 characters): a process
   it leaves in the background does not keep the harness waiting, even while it holds the output pipe.
-  Every process the harness starts for a run carries the run's mark in its environment. When the
-  episode ends (finish, a cap or an error), the harness stops every process with the mark or with its
-  working folder inside the run (any of the user's processes working there counts, so keep shells out
-  of a run's folder while it runs), also those that left their parent, before it reads or grades the
-  case (`processes_stopped_at_end`); each grader check does the same for its own processes before it
-  reads the report. A process that both clears its environment and leaves the run's folders is not
-  found; the sandbox still limits what it can write, and the grader works on a copy.
+- **Which processes are a run's.** This is decided by the sandbox alone. Every profile of a run names
+  the run's random owner token (a Mach name that only that profile denies), and macOS gives every
+  process started under a sandbox the same sandbox, which it can neither drop nor replace. So a
+  process that cleared its environment, changed folder or left its session is still the run's, and a
+  process that only works in the run's folder, or has the token in its command line or environment,
+  is not. When the episode ends (finish, a cap, a model or harness error), and again when the run
+  ends (also after a failed setup), the harness kills every process of the run, each one checked
+  again just before (same start time, same sandbox), and then checks that none is left
+  (`processes_stopped_at_end`); each grader check does the same for its own processes before it
+  reads the report. If that cannot be shown, the run ends as `cleanup_failed` (the episode's end is
+  kept in `episode_end`) and is not graded, and a reference is invalid. The profile refuses to have a
+  process started outside the sandbox on the run's behalf (launchd jobs, LaunchServices `open`,
+  Apple Events). Other system services that run commands for a caller, and a process that becomes
+  another user (a setuid program, which needs a password), are outside what the harness supports.
 - **Reference.** The known repair in `reference_repairs.toml` (the model never sees it) is applied to
   a separate copy in the sandbox, and the suite is run like a grader run. A reference counts only if
   every repair step exits 0 and its suite exits 0 with at least one passing test and none failing;
@@ -198,7 +205,7 @@ held-out projects are added only after A2's results are merged.
   row in `results.jsonl` names its folder (`run_dir`). Every planned run gets a row, also when setup,
   the model, FixFirst's server, the harness or the grader fails: `end` (`finish`, `turn_cap`,
   `time_cap`, `stopped_without_tool`, `model_error`, `mcp_start_failed`, `setup_failed`,
-  `reference_invalid`, `unsupported_case`, `harness_error`), `error` with the stage, and `grading`
+  `reference_invalid`, `unsupported_case`, `harness_error`, `cleanup_failed`), `error` with the stage, and `grading`
   (`graded`, `not_graded`, `grading_error`); `fixed` is empty unless the run was graded. Arms
   alternate per case and run.
 - **Harness checks without a model.** `--model fake:SCRIPT.json` replays scripted replies, including
@@ -278,6 +285,19 @@ longer-lived child would have stopped the check and failed the run); 400 MB of o
 (1.3 GB more memory, now 1 MB kept and 7 MB more); and a command that read stdin waited on the
 harness's input until its timeout. With scripted replies on cachetools, both arms were still fixed at
 turn 2 and the rebuilt reference passed (215 passed).
+
+### After the fourth review (30 Sep): process ownership
+
+The review's two remaining findings, reproduced on `1fa6c65` first: the clean-up killed processes it
+did not own (of three test processes, the one that only worked in the run's folder and the one that
+only had the mark in its command line were killed along with the run's own), and it missed one it
+did own (a child started by `run_command` with a clean environment, working folder `/` and its own
+session wrote into the case after the run had returned as fixed). With ownership taken from the
+sandbox, only the process under the run's profile is killed, and the hidden child is stopped when
+the run ends (`processes_stopped_at_end` 1, nothing written after the trigger). The same holds when
+the run ends with `finish`, a time cap, a model error, an answer without a tool call, a failed
+install, a broken grader report or a harness error; a run whose processes cannot be shown stopped is
+`cleanup_failed` and not graded.
 
 ### Not done yet
 

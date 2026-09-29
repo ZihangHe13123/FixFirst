@@ -7,13 +7,18 @@ checked by hand (README). Every file written outside a run here is a harmless se
 own temporary folder.
 """
 
+from contextlib import contextmanager
 import json
+import os
 import shlex
+import signal
 import subprocess
+import textwrap
 import time
 from pathlib import Path
 import shutil
 import sys
+from xml.etree.ElementTree import ParseError
 
 import pytest
 
@@ -336,9 +341,8 @@ def test_the_harness_reads_a_hooked_environment_without_starting_it(tmp_path):
     assert not sentinel.exists()
 
 
-def test_a_hook_the_agent_adds_to_its_environment_never_runs_outside_the_sandbox(tmp_path, monkeypatch):
-    import subprocess
-    sentinel = tmp_path / "outside-sentinel.txt"
+def local_project(tmp_path, monkeypatch):
+    """A one-test project in a local git clone, its environment made with venv (offline), and a reference."""
     source = tmp_path / "source"
     (source / "tests").mkdir(parents=True)
     (source / "tests" / "test_ok.py").write_text("def test_ok():\n    assert True\n")
@@ -354,18 +358,24 @@ def test_a_hook_the_agent_adds_to_its_environment_never_runs_outside_the_sandbox
         return project_dir / ".venv" / "bin" / "python"
 
     monkeypatch.setattr(agent_pilot.rc, "create_environment", environment)
+    out = tmp_path / "out"
+    ctx = agent_pilot.Context(out, "fake", "t1", True, denied=(Path.home(), out, agent_pilot.FIXFIRST, *iso.SYSTEM_TEMP))
+    reference = {"outcomes": {"tests.test_ok::test_ok": "passed"}, "counts": {"passed": 1}, "exit_code": 0, "problems": []}
+    return ctx, source, snapshot, reference
+
+
+def test_a_hook_the_agent_adds_to_its_environment_never_runs_outside_the_sandbox(tmp_path, monkeypatch):
+    sentinel = tmp_path / "outside-sentinel.txt"
+    ctx, source, snapshot, reference = local_project(tmp_path, monkeypatch)
     hook = f"import pathlib; pathlib.Path({str(sentinel)!r}).write_text('hook ran')\n"
     version = f"python{sys.version_info.major}.{sys.version_info.minor}"
     steps = [call("write_file", path=f".venv/lib/{version}/site-packages/zz_agent_hook.pth", content=hook),
              call("run_command", command="python -c pass"), call("finish", summary="x")]
-    out = tmp_path / "out"
-    ctx = agent_pilot.Context(out, "fake", "t1", True, denied=(Path.home(), out, agent_pilot.FIXFIRST, *iso.SYSTEM_TEMP))
     row = {}
-    reference = {"outcomes": {"tests.test_ok::test_ok": "passed"}, "counts": {"passed": 1}, "exit_code": 0, "problems": []}
     agent_pilot.run_real(ctx, row, agent_pilot.Settings(max_turns=4), {"id": "hooked", "ref": "v1", "install": []},
                          source, snapshot, reference, "baseline", 1, script(tmp_path, steps))
     assert row["end"] == "finish" and row["grading"] == "graded"
-    assert (out / row["run_dir"] / "freeze-end.txt").exists()  # the end of the run read the environment
+    assert (ctx.out / row["run_dir"] / "freeze-end.txt").exists()  # the end of the run read the environment
     assert not sentinel.exists()  # yet the hook never wrote: it only ever started inside the sandbox
 
 
@@ -477,15 +487,17 @@ def test_named_pipes_and_a_child_holding_the_output_never_stall_a_run(tmp_path):
 
 def test_a_test_that_leaves_a_child_holding_the_output_is_graded_on_its_own_exit(tmp_path):
     # Started as the test process ends, after pytest stopped capturing: the child holds the output pipe.
-    test = ("import atexit, subprocess, sys\n\n\ndef test_leaves_a_child():\n"
-            "    atexit.register(subprocess.Popen, [sys.executable, '-c', 'import time; time.sleep(100)'],\n"
-            "                    start_new_session=True)\n")
+    test = ("import atexit, subprocess, sys\n\n\ndef leave():\n"
+            "    child = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(100)'], start_new_session=True)\n"
+            "    open('child.pid', 'w').write(str(child.pid))\n\n\n"
+            "def test_leaves_a_child():\n    atexit.register(leave)\n")
     run_ = small_run(tmp_path, {"tests/test_keep.py": test})
     started = time.monotonic()
     result = run_.suite()
     assert (result["exit_code"], result["stopped"], result["counts"]) == (0, False, {"passed": 1})
     assert time.monotonic() - started < 30
-    assert not iso.marked_processes("no-such-mark", run_.folder / "grader")  # the child was stopped
+    child = int((run_.folder / "grader" / "check-001" / "project" / "child.pid").read_text())
+    assert iso._identity(child) is None  # stopped with its check
 
 
 def test_a_flood_of_output_keeps_its_end_and_a_command_never_reads_the_harness_input(tmp_path):
@@ -494,13 +506,14 @@ def test_a_flood_of_output_keeps_its_end_and_a_command_never_reads_the_harness_i
         "import json, resource, sys, time\nfrom pathlib import Path\nsys.path.insert(0, sys.argv[1])\n"
         "import isolation as iso\n"
         "work = Path(sys.argv[2])\n"
-        "profile = iso.write_profile(iso.Policy((work,), ()), work / 'p.sb', (Path.home(),))\n"
+        "owner = iso.new_mark()\n"
+        "profile = iso.write_profile(iso.Policy((work,), (), owner=owner), work / 'p.sb', (Path.home(),))\n"
         "env = {'PATH': '/usr/bin:/bin'}\n"
         "flood = \"head -c 300000000 /dev/zero | tr '\\\\0' x; echo; echo last line\"\n"
-        "code, out, stopped = iso.execute(['/bin/bash', '-c', flood], work, env, profile, 120)\n"
+        "code, out, stopped = iso.execute(['/bin/bash', '-c', flood], work, env, profile, 120, owner)\n"
         "print(json.dumps([code, len(out), out[:60], out.splitlines()[-1]]))\n"
         "started = time.monotonic()\n"
-        "code, out, stopped = iso.execute(['/bin/cat'], work, env, profile, 5)\n"
+        "code, out, stopped = iso.execute(['/bin/cat'], work, env, profile, 5, owner)\n"
         "print(json.dumps([code, stopped, time.monotonic() - started]))\n"
         "print(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)\n")
     work = tmp_path / "work"
@@ -515,3 +528,155 @@ def test_a_flood_of_output_keeps_its_end_and_a_command_never_reads_the_harness_i
     code, stopped, seconds = json.loads(cat)
     assert (code, stopped) == (0, False) and seconds < 2
     assert int(peak) < 300 * 1024 * 1024  # bytes on macOS: the 300 MB were not held in memory
+
+
+# ---- R5: which processes are a run's, and that all of them end with it ---------------------------------
+
+# A process the run leaves behind that hides from every clue but its sandbox: clean environment, working
+# folder /, its own session. It waits for a trigger in the project and then writes there.
+WAITER = ("import sys, time; from pathlib import Path; folder = Path(sys.argv[1])\n"
+          "for _ in range(1500):\n"
+          "    if (folder / 'trigger').exists():\n"
+          "        (folder / 'late.txt').write_text('written after the run'); break\n"
+          "    time.sleep(0.02)\n")
+DETACH = ("import os, subprocess, sys\n"
+          f"waiter = subprocess.Popen([sys.executable, '-c', {WAITER!r}, os.getcwd()], env={{'PATH': '/usr/bin:/bin'}},\n"
+          "                          cwd='/', start_new_session=True, stdin=subprocess.DEVNULL,\n"
+          "                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n"
+          "open('waiter.pid', 'w').write(str(waiter.pid))\n")
+
+
+def written_after_the_run(folder: Path) -> bool:
+    """Whether a waiter left in `folder` still writes when triggered now, after the run returned."""
+    (folder / "trigger").write_text("go")
+    deadline = time.monotonic() + 1.5
+    while time.monotonic() < deadline:
+        if (folder / "late.txt").exists():
+            return True
+        time.sleep(0.02)
+    return False
+
+
+@contextmanager
+def left_behind(folder: Path):
+    """Whatever the assertions say, a waiter that escaped is killed at the end of the test."""
+    try:
+        yield
+    finally:
+        pid_file = folder / "waiter.pid"
+        pid = int(pid_file.read_text()) if pid_file.exists() else None
+        if pid and (iso._identity(pid) or (None, None, ""))[2].startswith("python"):
+            os.kill(pid, signal.SIGKILL)
+
+
+def test_only_processes_under_the_owners_sandbox_are_stopped(tmp_path):
+    folder, owner, other = tmp_path / "run", iso.new_mark(), iso.new_mark()
+    folder.mkdir()
+    ours = iso.write_profile(iso.Policy((folder,), (), owner=owner), folder / "ours.sb", (Path.home(),))
+    theirs = iso.write_profile(iso.Policy((folder,), (), owner=other), folder / "theirs.sb", (Path.home(),))
+    closed = folder / "deny-default.sb"  # like an App Sandbox: it denies the owner's name too, and all else
+    closed.write_text("(version 1)\n(deny default)\n(allow process-exec* process-fork file-read* sysctl-read)\n")
+    clean = {"PATH": "/usr/bin:/bin"}
+    hidden = ("import os, subprocess; p = subprocess.Popen(['/bin/sleep', '60'], env={}, cwd='/', "
+              "start_new_session=True); print(p.pid)")
+    procs = {
+        "owned": ["sandbox-exec", "-f", str(ours), "/bin/sleep", "60"],
+        "owned, then launched a hidden child": ["sandbox-exec", "-f", str(ours), "/usr/bin/python3", "-c", hidden],
+        "unrelated, working in the run's folder": ["/bin/sleep", "60"],
+        "unrelated, the owner's token in its command line and environment":
+            ["/bin/sh", "-c", "sleep 60; :", f"note:FIXFIRST_RUN={owner} {iso.owner_name(owner)}"],
+        "another run's sandbox": ["sandbox-exec", "-f", str(theirs), "/bin/sleep", "60"],
+        "a deny-by-default sandbox": ["sandbox-exec", "-f", str(closed), "/bin/sleep", "60"],
+    }
+    started = {}
+    try:
+        for name, argv in procs.items():
+            env = {**clean, "FIXFIRST_RUN": owner} if "token" in name else clean
+            started[name] = subprocess.Popen(argv, cwd=folder, env=env, stdin=subprocess.DEVNULL,
+                                             stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True,
+                                             start_new_session=True)
+        hidden_child = int(started["owned, then launched a hidden child"].stdout.readline())
+        started["owned, then launched a hidden child"].wait(10)
+        time.sleep(0.3)
+        assert set(iso.owned(owner)) == {started["owned"].pid, hidden_child}
+        result = iso.stop(owner)
+        assert result["error"] is None and len(result["stopped"]) == 2
+        assert started["owned"].wait(5) == -signal.SIGKILL and iso._identity(hidden_child) is None
+        assert all(proc.poll() is None for name, proc in started.items() if not name.startswith("owned"))
+    finally:
+        for proc in started.values():
+            if proc.poll() is None:
+                os.killpg(proc.pid, signal.SIGKILL)
+                proc.wait(5)
+
+
+@pytest.mark.parametrize("steps,extra,ending", [
+    ([call("finish", summary="fixed")], (), "finish"),
+    ([{"say": "done"}], (), "stopped_without_tool"),
+    ([{"fail": "the model server went away"}], (), "model_error"),
+    ([call("run_command", command="sleep 30")], ("--run-timeout", "4"), "time_cap"),
+])
+def test_a_child_that_left_its_session_folder_and_environment_ends_with_the_run(tmp_path, steps, extra, ending):
+    [row] = run(tmp_path, [call("run_command", command=FIX + " && python -c " + shlex.quote(DETACH)), *steps],
+                extra=extra)
+    project = tmp_path / "out" / row["run_dir"] / "project"
+    with left_behind(project):
+        assert (row["end"], row["grading"], row["fixed"]) == (ending, "graded", True)
+        assert row["processes_stopped_at_end"] >= 1 and (project / "waiter.pid").exists()
+        assert not written_after_the_run(project)
+
+
+def test_a_failed_install_that_left_a_process_behind_stops_it(tmp_path, monkeypatch):
+    ctx, source, snapshot, reference = local_project(tmp_path, monkeypatch)
+    monkeypatch.setattr(agent_pilot.rc, "install_commands",
+                        lambda project, python, cache: [[str(python), "-c", DETACH + "raise SystemExit(3)\n"]])
+    row = {}
+    agent_pilot.run_real(ctx, row, agent_pilot.Settings(max_turns=2), {"id": "local", "ref": "v1", "install": []},
+                         source, snapshot, reference, "baseline", 1, script(tmp_path, [call("finish", summary="x")]))
+    project = ctx.out / row["run_dir"] / "project"
+    with left_behind(project):
+        assert (row["end"], row["grading"], row["processes_stopped_at_end"]) == ("setup_failed", "not_graded", 1)
+        assert not written_after_the_run(project)
+
+
+def test_a_process_a_test_leaves_ends_with_its_grader_check_even_if_the_report_is_broken(tmp_path, monkeypatch):
+    run_ = small_run(tmp_path, {"tests/test_waiter.py": "def test_leaves_a_waiter():\n" + textwrap.indent(DETACH, "    ")})
+
+    def broken(path):
+        raise ParseError("the report is broken")
+    monkeypatch.setattr(agent_pilot.rc, "junit_outcomes", broken)
+    with pytest.raises(ParseError):
+        run_.suite()
+    copy = run_.folder / "grader" / "check-001" / "project"
+    with left_behind(copy):
+        assert (copy / "waiter.pid").exists() and not written_after_the_run(copy)
+
+
+def test_a_harness_error_in_the_episode_still_ends_the_runs_processes(tmp_path, monkeypatch):
+    def broken(self, turn, tool):
+        raise RuntimeError("the integrity check broke")
+    monkeypatch.setattr(agent_pilot.Run, "check_integrity", broken)
+    [row] = run(tmp_path, [call("run_command", command="python -c " + shlex.quote(DETACH)), call("finish", summary="x")])
+    project = tmp_path / "out" / row["run_dir"] / "project"
+    with left_behind(project):
+        assert (row["end"], row["grading"], row["fixed"]) == ("harness_error", "not_graded", None)
+        assert row["processes_stopped_at_end"] >= 1 and not written_after_the_run(project)
+
+
+def test_a_run_whose_processes_cannot_be_shown_stopped_is_never_graded(tmp_path, monkeypatch):
+    monkeypatch.setattr(iso, "_kill", lambda pid, sig: None)  # every kill silently fails
+    [row] = run(tmp_path, [call("run_command", command=FIX + " && python -c " + shlex.quote(DETACH)),
+                           call("finish", summary="fixed")])
+    project = tmp_path / "out" / row["run_dir"] / "project"
+    with left_behind(project):
+        assert (row["end"], row["episode_end"], row["grading"], row["fixed"]) == (
+            "cleanup_failed", "finish", "not_graded", None)
+        assert "still alive after being killed" in row["error"] and "reasons" not in row
+
+
+def test_a_reference_whose_processes_cannot_be_shown_stopped_is_invalid(tmp_path, monkeypatch):
+    ctx, source, snapshot, _ = local_project(tmp_path, monkeypatch)
+    monkeypatch.setattr(iso, "stop", lambda owner, settle=3.0: {"stopped": [], "error": "cannot be checked (test)"})
+    data = agent_pilot.real_reference(ctx, {"id": "local", "ref": "v1", "install": []}, source, snapshot, [])
+    assert any("cannot be checked (test)" in problem for problem in data["problems"])
+    assert not list((ctx.out / "_reference").glob("*.json"))  # an invalid reference is never cached

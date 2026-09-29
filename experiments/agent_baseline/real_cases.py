@@ -345,17 +345,14 @@ def workspace_digest(project_dir: Path, python: Path | None) -> str:
     return h.hexdigest()
 
 
-def clean_env(python: Path, home: Path, tmp: Path | None = None, mark: str | None = None) -> dict:
-    """The case interpreter first on PATH, its own HOME and temporary folder, nothing inherited.
-    `mark` tags every process of a run, so that the run can find and stop them all when it ends."""
+def clean_env(python: Path, home: Path, tmp: Path | None = None) -> dict:
+    """The case interpreter first on PATH, its own HOME and temporary folder, nothing inherited."""
     env = {k: os.environ[k] for k in CLEAN_ENV_KEYS if k in os.environ}
     env.update({"PATH": f"{python.parent}{os.pathsep}/usr/bin{os.pathsep}/bin", "HOME": str(home),
                 "LANG": "en_US.UTF-8", "VIRTUAL_ENV": str(python.parent.parent), "PYTHONDONTWRITEBYTECODE": "1",
                 "PYTHONNOUSERSITE": "1", "PIP_DISABLE_PIP_VERSION_CHECK": "1"})
     if tmp:
         env["TMPDIR"] = str(tmp)
-    if mark:
-        env["FIXFIRST_RUN"] = mark
     return env
 
 
@@ -397,7 +394,7 @@ def _grader_ignore(folder, names) -> set:
     return left_out
 
 
-def run_suite(project_dir: Path, python: Path, grader_dir: Path, execute, timeout=1200, mark=None) -> dict:
+def run_suite(project_dir: Path, python: Path, grader_dir: Path, execute, timeout=1200) -> dict:
     """The full test suite on a copy of the project in grader_dir (so the tests cannot change the
     workspace), with the case interpreter and a clean environment. `execute(argv, cwd, env, timeout)`
     runs it in the sandbox and returns (exit code, output, stopped)."""
@@ -408,7 +405,7 @@ def run_suite(project_dir: Path, python: Path, grader_dir: Path, execute, timeou
     report = grader_dir / "junit.xml"
     started = time.monotonic()
     code, output, stopped = execute([str(python), "-m", "pytest", "-q", "-p", "no:cacheprovider",
-                                     f"--junitxml={report}"], copy, clean_env(python, home, tmp, mark), timeout)
+                                     f"--junitxml={report}"], copy, clean_env(python, home, tmp), timeout)
     outcomes = junit_outcomes(report)  # a broken report raises: the caller records a grading error
     counts = {}
     for outcome in outcomes.values():

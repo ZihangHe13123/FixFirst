@@ -189,7 +189,9 @@ class Run:
     commands: int = 0
     installs: int = 0
     checks: int = 0
-    mark: str = field(default_factory=iso.new_mark)
+    mark: str = field(default_factory=iso.new_mark)  # owner token in every sandbox profile of the run
+    stopped: list = field(default_factory=list)  # names of the run's processes stopped when it ended
+    cleanup_problems: list = field(default_factory=list)  # processes that could not be shown stopped
 
     def __post_init__(self):
         for sub in ("state", "tmp"):
@@ -202,12 +204,14 @@ class Run:
     commands_log = property(lambda self: self.folder / "commands.jsonl")
 
     def policy(self, kind: str) -> iso.Policy:
-        agent = iso.Policy((self.project, self.state, self.tmp), tuple(self.interpreters), self.network)
+        agent = iso.Policy((self.project, self.state, self.tmp), tuple(self.interpreters), self.network,
+                           owner=self.mark)
         if kind == "agent":
             return agent
         if kind == "install":  # installing the project itself: its build requirements come from PyPI
             uv = shutil.which("uv")
-            return iso.Policy(agent.writable, agent.readable, True, (Path(os.path.realpath(uv)),) if uv else ())
+            return iso.Policy(agent.writable, agent.readable, True, (Path(os.path.realpath(uv)),) if uv else (),
+                              owner=self.mark)
         if kind == "mcp":
             return agent.extended(readable=fixfirst_readable())
         if kind == "ff":
@@ -221,27 +225,38 @@ class Run:
         return path
 
     def env(self, python: Path | None = None) -> dict:
-        return rc.clean_env(python or self.python, self.state, self.tmp, self.mark)
+        return rc.clean_env(python or self.python, self.state, self.tmp)
 
     def execute(self, argv, kind: str, timeout: float, env: dict | None = None):
-        return iso.execute(argv, self.project, env or self.env(), self.profile(kind), timeout)
+        return iso.execute(argv, self.project, env or self.env(), self.profile(kind), timeout, self.mark)
+
+    def end_processes(self, when: str):
+        """Stop every process of the run (all run under its profiles) and show that none is left; if
+        that cannot be shown, the problem is kept and the run is not graded."""
+        result = iso.stop(self.mark)
+        self.stopped += result["stopped"]
+        if result["error"]:
+            self.cleanup_problems.append(f"{when}: {result['error']}")
 
     def suite(self) -> dict:
         """The full suite on a fresh copy, offline, writing only into its own grader folder."""
         self.checks += 1
         grader = self.folder / "grader" / f"check-{self.checks:03d}"
         grader.mkdir(parents=True)
-        profile = iso.write_profile(iso.Policy((grader,), (self.project, *self.interpreters), False),
+        owner = iso.new_mark()  # the check's own: its processes are not the run's
+        profile = iso.write_profile(iso.Policy((grader,), (self.project, *self.interpreters), False, owner=owner),
                                     grader / "grader.sb", self.ctx.denied)
-        mark = iso.new_mark()
 
         def execute(argv, cwd, env, timeout):
             try:
-                return iso.execute(argv, cwd, env, profile, timeout)
+                return iso.execute(argv, cwd, env, profile, timeout, owner)
             finally:
-                iso.sweep(mark, grader)  # nothing a test started outlives its check or touches its report
+                stopped = iso.stop(owner)  # nothing a test started outlives its check or touches its report
+                if stopped["error"]:
+                    self.cleanup_problems.append(f"grader check {self.checks}: {stopped['error']}")
+                    raise iso.CleanupError(f"the grader check's processes could not be stopped: {stopped['error']}")
 
-        return rc.run_suite(self.project, self.python, grader, execute, mark=mark)
+        return rc.run_suite(self.project, self.python, grader, execute)
 
     def check_integrity(self, turn, tool: str):
         for key in rc.changed(self.baseline, rc.integrity(self.project)):
@@ -258,9 +273,10 @@ class MCPClient:
     def __init__(self, run: Run, budget: iso.Budget):
         argv = ["sandbox-exec", "-f", str(run.profile("mcp")), str(PYTHON), "-m", "fixfirst",
                 "--store", str(run.state / "store"), "mcp"]
+        self.owner = run.mark
         self.log = (run.folder / "mcp-server.log").open("w")
         self.dead = False
-        self.proc = subprocess.Popen(argv, cwd=run.project, env=rc.clean_env(PYTHON, run.state, run.tmp, run.mark),
+        self.proc = subprocess.Popen(argv, cwd=run.project, env=rc.clean_env(PYTHON, run.state, run.tmp),
                                      stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=self.log, text=True,
                                      bufsize=1, start_new_session=True)
         self.lines: queue.Queue = queue.Queue()
@@ -311,7 +327,7 @@ class MCPClient:
     def stop(self):
         """Kill the server and every check it started (they run in their own sessions)."""
         self.dead = True
-        iso.kill_tree(self.proc)
+        iso.kill_tree(self.proc, self.owner)
 
     def close(self):
         if not self.dead:
@@ -544,8 +560,9 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
             mcp.close()
         stats["agent_s"] = round(budget.used(), 2)
         stats["harness_s"] = round(budget.paused, 2)
-        # Background processes of the run (also those that left their parent) end with it.
-        stats["processes_stopped_at_end"] = iso.sweep(run.mark, run.folder)
+        # Every process of the run ends with the episode, before anything is read or graded.
+        run.end_processes("end of the episode")
+        stats["processes_stopped_at_end"] = len(run.stopped)
     return stats
 
 
@@ -667,8 +684,10 @@ def real_reference(ctx: Context, project: dict, source: Path, snapshot: Path, re
         data.update(exit_code=None, counts={}, outcomes={}, summary="",
                     setup_error=f"{type(error).__name__}: {error}"[:500])
     finally:
-        iso.sweep(run.mark, run.folder)
-    data["problems"] = ([data["setup_error"]] if data.get("setup_error") else []) + rc.validate_reference(data)
+        run.end_processes("after the reference")
+    data["processes_stopped"] = run.stopped
+    data["problems"] = (([data["setup_error"]] if data.get("setup_error") else []) + run.cleanup_problems
+                        + rc.validate_reference(data))
     rc.write_json(folder / "reference.json", data)
     if not data["problems"]:
         rc.write_json(cached, data)
@@ -688,6 +707,21 @@ def grade(run: Run, reference: dict, row: dict):
     row.update(grading="graded", fixed=verdict["fixed"], reasons=verdict["reasons"],
                grader_counts=verdict["counts"], reference_counts=verdict["reference_counts"],
                tests_changed=verdict["tests_changed"], violations=run.violations)
+
+
+def close_run(run: Run, row: dict):
+    """The last step of every run, however it ended (finished, capped, setup, model, grader or harness
+    error): stop its processes and show that none is left. A run for which that cannot be shown is
+    `cleanup_failed`: its episode's end is kept, and it is never graded."""
+    run.end_processes("end of the run")
+    row["processes_stopped_at_end"] = len(run.stopped)
+    if run.stopped:
+        row["processes_stopped"] = run.stopped[:20]
+    if run.cleanup_problems:
+        row.update(end="cleanup_failed", episode_end=row.get("end"), grading="not_graded", fixed=None,
+                   error="; ".join(run.cleanup_problems)[:500])
+        for key in ("reasons", "grader_counts", "tests_changed"):
+            row.pop(key, None)
 
 
 def file_hashes(project_dir: Path) -> dict:
@@ -712,7 +746,9 @@ def play(model, arm, run: Run, settings, fake_path, reference, row, state_digest
     stats = episode(model, arm, run, settings, fake, green, state_digest)
     stats["total_s"] = round(time.monotonic() - started, 1)
     row.update({k: round(v, 2) if isinstance(v, float) else v for k, v in stats.items()})
-    if stats["end"] == "mcp_start_failed":
+    if run.cleanup_problems:
+        row.update(grading="not_graded", fixed=None)  # close_run records why; nothing is graded
+    elif stats["end"] == "mcp_start_failed":
         row.update(grading="not_graded", fixed=None)
     else:
         grade(run, reference, row)
@@ -723,6 +759,14 @@ def play(model, arm, run: Run, settings, fake_path, reference, row, state_digest
 def run_real(ctx: Context, row: dict, settings, project, source, snapshot, reference, arm, run_index, fake_path):
     run = Run(ctx, iso.run_folder(ctx.out, project["id"], arm, run_index, ctx.model, ctx.attempt), ctx.network, True)
     row.update(run_dir=run.folder.relative_to(ctx.out).as_posix(), stage="setup")
+    try:
+        prepare_and_play_real(ctx, run, row, settings, project, source, snapshot, reference, arm, fake_path)
+    finally:
+        close_run(run, row)
+
+
+def prepare_and_play_real(ctx: Context, run: Run, row: dict, settings, project, source, snapshot, reference, arm,
+                          fake_path):
     commit = rc.source_commit(source)
     row["commit"] = commit
     setup_log = []
@@ -769,6 +813,14 @@ def run_generated(ctx: Context, row: dict, settings, spec, arm, run_index, fake_
     run = Run(ctx, iso.run_folder(ctx.out, spec, arm, run_index, ctx.model, ctx.attempt), False, False,
               PYTHON, interpreters(PYTHON.parent.parent))
     row.update(run_dir=run.folder.relative_to(ctx.out).as_posix(), stage="setup", cause=s.label)
+    try:
+        prepare_and_play_generated(ctx, run, row, settings, t, s, pristine, reference, arm, fake_path)
+    finally:
+        close_run(run, row)
+
+
+def prepare_and_play_generated(ctx: Context, run: Run, row: dict, settings, t, s, pristine, reference, arm,
+                               fake_path):
     if reference["problems"]:
         row.update(end="reference_invalid", error="; ".join(reference["problems"]), grading="not_graded", fixed=None)
         return
