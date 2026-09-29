@@ -34,9 +34,36 @@ TASKS = {
 }
 MARKER = ".study-task"
 
+# Keep OS, locale, terminal and network settings, not a participant's Python/pytest
+# overrides or application variables. Used by both the participant shell and grader.
+SYSTEM_ENV = set("""
+PATH HOME USER LOGNAME SHELL TMPDIR TMP TEMP
+SYSTEMROOT WINDIR SYSTEMDRIVE COMSPEC PATHEXT USERPROFILE HOMEDRIVE HOMEPATH
+APPDATA LOCALAPPDATA PROGRAMDATA PROGRAMFILES PROGRAMFILES(X86)
+COMMONPROGRAMFILES COMMONPROGRAMFILES(X86) PROCESSOR_ARCHITECTURE NUMBER_OF_PROCESSORS
+TERM COLORTERM TERM_PROGRAM COLUMNS LINES LANG LANGUAGE
+HTTP_PROXY HTTPS_PROXY ALL_PROXY NO_PROXY SSL_CERT_FILE SSL_CERT_DIR
+REQUESTS_CA_BUNDLE CURL_CA_BUNDLE
+""".split())
+
 
 def venv_python(folder: Path) -> Path:
     return folder / ".venv" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+
+
+def task_environment(folder: Path, environ=None) -> dict[str, str]:
+    """A fresh task terminal: preserve system settings, bind Python/pip to this task."""
+    source = os.environ if environ is None else environ
+    env = {key: value for key, value in source.items()
+           if (key.upper() in SYSTEM_ENV or key.upper().startswith("LC_"))
+           and key.upper() != "PATH"}
+    inherited_path = next((value for key, value in source.items() if key.upper() == "PATH"), os.defpath)
+    python = venv_python(folder)
+    env["PATH"] = str(python.parent) + os.pathsep + inherited_path
+    env["VIRTUAL_ENV"] = str(python.parent.parent)
+    env["PYTHONIOENCODING"] = "utf-8"
+    env["PYTHONNOUSERSITE"] = "1"
+    return env
 
 
 def fingerprint(folder: Path) -> dict:

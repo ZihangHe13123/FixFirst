@@ -1,6 +1,6 @@
 # User study protocol
 
-Version 1, 29 September 2026. Task B13 writes and maintains it; C runs the sessions
+Version 1.1, 29 September 2026. Task B13 writes and maintains it; C runs the sessions
 ([C2](../tasks/C2-user-study-sessions.md)). Changes after the pilot go in the last section.
 
 ## Research question and targets
@@ -63,6 +63,15 @@ In person, on C's laptop (Windows), or remotely through Zoom remote control of t
 FixFirst at the frozen version (v0.7.0, or the v0.7.x that B names in the B8 issue). Before each
 participant, `prepare.py` rebuilds all four tasks.
 
+Before each task, the experimenter starts the participant terminal with `open_task.py TARGET TASK`
+(commands in the B8 README). It opens in that task's directory, binds Python and pip to its own
+`.venv`, and starts without user shell profiles or temporary Python, pytest, pip and application
+variables. Confirm the interpreter with `python -c "import sys; print(sys.executable)"`.
+Both conditions use this terminal; in the FixFirst condition, select the same project and
+interpreter in FixFirst. Do not reveal test output during setup. Keep a separate experimenter
+terminal in the FixFirst repository for `grade.py`. Exit the task shell after each task and open
+the next task through the launcher. Setup and interpreter checks are outside the timed period.
+
 ## Procedure (about 70 minutes)
 
 1. Welcome, explain the study, sign the consent form (5 min).
@@ -74,18 +83,24 @@ participant, `prepare.py` rebuilds all four tasks.
 
 **Instruction read at the start of every task:**
 
-> This project's tests fail. Please make `pytest` pass. Do not change or delete the files in
-> `tests/`; you may change the project's code and install or remove packages. It counts as fixed
-> when `pytest` passes in a newly opened terminal. Tell me when you think you are done.
+> This project's tests fail. Please make `python -m pytest` pass in the prepared task terminal.
+> Do not change or delete the files in `tests/`; you may change the project's code and install or
+> remove packages. It counts as fixed when the tests also pass in a fresh task terminal using
+> this same environment, without temporary variable settings. Tell me when you think you are done.
 
-Chinese version: 这个项目的测试跑不通。请让 `pytest` 全部通过。不要修改或删除 `tests/` 里的文件；项目代码可以改，包可以装或卸。修好的标准是：新开一个终端，直接运行 `pytest` 也能全部通过。觉得完成了就告诉我。
+Chinese version: 这个项目的测试跑不通。请在准备好的任务终端里让 `python -m pytest` 全部通过。不要修改或删除 `tests/` 里的文件；项目代码可以改，包可以装或卸。修好的标准是：重新用同一任务环境打开干净终端，测试也能全部通过，临时设置的变量不算。觉得完成了就告诉我。
 
 **FixFirst tutorial (5 minutes, on the sample project, never on a task):** start FixFirst, press
-*Open a sample project*, then *Check my project*; read the first step under *Must fix* and open
-its *Details*; apply that one fix from `FIXES.md`; press *Check again* and show how the step moves
-to *Fixed and verified*. Do not demonstrate the remaining faults.
+*Open a sample project* (this already runs the first check); read the first step under *Must fix*
+and open its *Details*. Apply the two import fixes in `FIXES.md`: `from collections.abc import Mapping`
+in `pricing.py`, and `from helpers import double` in `reports.py`. Press *Check again*: the two
+collection issues now move to *Fixed and verified*, while two runtime faults become visible.
+Explain that fixing only the first import leaves collection blocked and does not verify it.
+Do not fix the remaining runtime faults during the tutorial.
 
-**Timing and grading**: the clock starts when the participant has heard the instruction. When they
+**Timing and grading**: finish setup, the tutorial and the spoken task instruction first. The
+clock starts when the experimenter says "start" and allows the participant to inspect and work
+on the project. Preparation, instruction and tutorial time are excluded. When they
 say they are done, the experimenter runs `grade.py`. PASS stops the clock. FAIL: say "not yet",
 keep the clock running and count a false completion claim. At 12 minutes, stop and record the task
 as not completed. The experimenter explains the instruction only; no hints about the fault.
@@ -97,7 +112,7 @@ Recorded per task in `sessions.csv` (columns in [templates/sessions.csv](../task
 | Measure | Meaning |
 |---|---|
 | `success` | `grade.py` passed within the time limit |
-| `seconds` | from the instruction to the passing grade; 720 when not completed |
+| `seconds` | from the experimenter's "start" to the passing grade; 720 when not completed |
 | `false_done_claims` | times the participant said "done" and the grade failed ("unsuccessful attempts" in the proposal) |
 | `tests_modified` | whether a file under `tests/` was changed (the grade then fails) |
 | `confidence_1to5` | "How confident are you that the project works now?" |

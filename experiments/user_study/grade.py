@@ -2,15 +2,14 @@
 
 Usage: python experiments/user_study/grade.py TARGET TASK [--show]     e.g. grade.py C:\\study T1
 
-Runs the task's tests with its own .venv, the way a fresh terminal would: variables set in the
-participant's terminal do not count. The files under tests/ must be the ones prepare.py
+Runs the task's tests with its own .venv and the same clean environment as open_task.py:
+temporary Python, pytest, pip and application variables do not count. The files under tests/ must be the ones prepare.py
 created. PASS needs every expected test to pass; failures, errors, skips and missing tests all
 count as FAIL. --show prints pytest's output as well.
 """
 
 import argparse
 import json
-import os
 from pathlib import Path
 import re
 import subprocess
@@ -18,7 +17,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from prepare import fingerprint, venv_python  # noqa: E402
+from prepare import fingerprint, task_environment, venv_python  # noqa: E402
 
 
 def grade(target: Path, task_id: str, show: bool = False) -> tuple[bool, str]:
@@ -34,10 +33,7 @@ def grade(target: Path, task_id: str, show: bool = False) -> tuple[bool, str]:
     python = venv_python(folder)
     if not python.exists():
         return False, "the task's .venv is missing; run prepare.py again"
-    env = {k: v for k, v in os.environ.items() if k not in ("PYTHONPATH", "PYTHONHOME")}
-    env["PATH"] = str(python.parent) + os.pathsep + env.get("PATH", "")
-    env["VIRTUAL_ENV"] = str(python.parent.parent)
-    env["PYTHONIOENCODING"] = "utf-8"
+    env = task_environment(folder)
     try:
         done = subprocess.run([str(python), "-m", "pytest", "-q", "-p", "no:cacheprovider"], cwd=folder, env=env,
                               capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=300)
