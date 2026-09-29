@@ -1,0 +1,14 @@
+[
+ {
+  "step": "venv -q --seed -p",
+  "exit_code": 0,
+  "seconds": 0.2,
+  "stderr": ""
+ },
+ {
+  "step": "pip install -q --python",
+  "exit_code": 0,
+  "seconds": 0.1,
+  "stderr": ""
+ }
+]

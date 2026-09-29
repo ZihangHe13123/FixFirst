@@ -74,3 +74,24 @@ def test_arms_alternate_between_cases_and_runs():
     assert agent_pilot.arm_order(["baseline", "mcp"], 0, 0) == ["baseline", "mcp"]
     assert agent_pilot.arm_order(["baseline", "mcp"], 1, 0) == ["mcp", "baseline"]
     assert agent_pilot.arm_order(["baseline", "mcp"], 1, 1) == ["baseline", "mcp"]
+
+
+def test_fixfirst_always_diagnoses_the_case_with_its_interpreter(tmp_path):
+    class StubMCP:
+        tools = [{"name": "diagnose"}]
+
+        def __init__(self):
+            self.seen = []
+
+        def call(self, name, arguments):
+            self.seen.append(arguments)
+            return "ok"
+
+    case = tmp_path / "project"
+    ws = agent_pilot.Workspace(case, case / ".venv" / "bin" / "python", tmp_path / "state", tmp_path / "p.sb", real=True)
+    stats = {"fixfirst_calls": 0, "mcp_arguments_filled": 0, "mcp_arguments_overridden": 0}
+    mcp = StubMCP()
+    agent_pilot.run_tool("diagnose", {"project": str(case)}, ws, stats, mcp)       # python filled in
+    agent_pilot.run_tool("diagnose", {"project": ".", "python": "/usr/bin/python3"}, ws, stats, mcp)  # overridden
+    assert (stats["mcp_arguments_filled"], stats["mcp_arguments_overridden"]) == (1, 1)
+    assert all(a == {"project": str(case), "python": str(ws.python)} for a in mcp.seen)

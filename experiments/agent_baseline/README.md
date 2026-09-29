@@ -17,10 +17,13 @@ The `mcp` arm is the one to use from now on; `fixfirst` stays only so the pilot 
 - **Cases**: projects built by `diagnosis_cases.py`, given as `template:scenario`.
 - **Isolation**: every command, FixFirst check and grading run executes under macOS `sandbox-exec`.
   It can write only inside the case, has no network, and cannot read `~/.ssh`, `~/.omlx`, `~/.claude`
-  or the keychains. Cases run with this repository's `.venv` Python (3.12, real libraries).
-- **Grader, independent of FixFirst**: restore the original test files and run the full suite. A case
-  counts as fixed when pytest exits 0, the same number of tests pass as in the healthy template, and
-  nothing is skipped. After every turn that changes files, the grader also runs on a copy, which gives
+  or the keychains. Cases run with this repository's `.venv` Python (3.12, real libraries). Real
+  projects each get their own environment; see "Real projects" below.
+- **Grader, independent of FixFirst**: run the full suite with the original tests. A case counts as
+  fixed when pytest exits 0, the same number of tests pass as in the healthy template, nothing is
+  skipped, and no test file was changed. (In the 28 Sep pilot and MCP check a run that edited a test
+  file still counted as fixed once the original tests were put back; that is now reported as
+  `passes_with_original_tests`, never as `fixed`.) After every turn that changes files, the grader also runs on a copy, which gives
   the first turn at which the project was really fixed ("first green turn").
 - **Recorded**: fixed, first green turn, turns, tool calls, pytest runs, FixFirst calls, tokens,
   model and tool seconds, test files changed. Every conversation is saved as a transcript.
@@ -104,6 +107,96 @@ All eight runs were fixed, no run changed a test file, and every run ended with 
 models renamed `yaml.py` instead of deleting it. With the cleaner MCP output the weaker model was
 faster than its baseline in all four cases; the stronger one stayed about level with its baseline.
 Still one run per cell: the formal run repeats each cell three times.
+
+## Real projects (B7 preparation, 29 Sep)
+
+B7 runs on real projects and with the network on, so that both arms can install packages. The
+harness now does this for development projects from `examples/real-world/projects.toml`; the new
+held-out projects are added only after A2's results are merged.
+
+```bash
+.venv/bin/python experiments/agent_baseline/agent_pilot.py --model Qwen3.6-35B-A3B-6bit \
+    --projects cachetools --sources ../test-projects/generalisation --network on \
+    --arms baseline mcp --runs 1 --max-turns 12 --run-timeout 900
+```
+
+- **Same start for both arms.** Every run exports the project from the source clone's commit
+  (`git archive`, no history, nothing from the working tree) and rebuilds its own `.venv` with uv from
+  the recorded snapshot (`examples/real-world/environments/<id>.txt`), then installs the project the
+  way the manifest says, without new dependencies. Environments are rebuilt, never copied (a copied
+  environment keeps absolute paths). The row records the commit, any snapshot pin the rebuilt
+  environment lacks, and a digest of the starting state.
+- **One interpreter.** Commands, pytest, FixFirst's diagnosis and the grader all use the case's
+  `.venv`. Commands get a fresh environment with no inherited Python, pytest or application
+  variables. The MCP `diagnose` call always gets the case's project and interpreter: a missing value
+  is filled in (`mcp_arguments_filled`), a different one is overridden (`mcp_arguments_overridden`).
+- **Sandbox.** Writes only inside the project, the run's state folder (HOME, pip's cache, FixFirst's
+  store) and the temp folder. `--network on` allows the network; reading under the home folder is
+  then limited to the run, this repository and the interpreters, and `~/.ssh`, `~/.omlx`, `~/.claude`
+  and the keychains stay unreadable. Neither the source clone nor FixFirst's own environment changes.
+- **Grader.** The full suite runs on a copy of the project, with the case interpreter and a clean
+  environment, and its per-test outcomes (JUnit XML) are compared with a reference outcome: the known
+  repair in `reference_repairs.toml`, applied once to a separate copy (the model never sees it). Fixed
+  means: no test file, `conftest.py` or test-selecting pytest setting changed (`addopts`, `testpaths`,
+  `filterwarnings`, ...; `pythonpath` is allowed, since putting `src` on the path is an accepted
+  repair), nothing fails or errors, every test that passes in the reference passes, and nothing is
+  skipped that the reference runs. The same check after each turn that changes the project or its
+  installed packages gives the first green turn.
+- **Recorded** in `results.jsonl` and the run folder: pip freeze at start and end with the
+  differences, every command with its exit code and duration (installs flagged), the settings, seed
+  and harness commit, turns, tool calls, tokens, time, and how the run ended (`finish`, `turn_cap`,
+  `time_cap`, `stopped_without_tool`, `model_error`, `setup_failed`). Failed runs are kept. Arms
+  alternate per case and run.
+- **Harness checks without a model.** `--model fake:SCRIPT.json` replays scripted tool calls.
+  `experiments/agent_baseline/test_harness.py` (macOS, offline, generated cases; run it explicitly)
+  and `tests/test_agent_real_cases.py` (any platform) check the grading, isolation and bookkeeping.
+
+### Dry run with scripted replies (cachetools, 29 Sep)
+
+Reference: `python -m pip install -e .` gives 215 passed. Each script ran in its own rebuilt copy
+with the network on:
+
+| Script | Ended | Fixed | Why not |
+|---|---|---|---|
+| run the tests, `pip install -e .`, run them, finish | finish | yes (green at turn 2) | |
+| `diagnose` with a wrong project and interpreter, install, `check_again`, finish | finish | yes (arguments overridden; FixFirst named D13 and then confirmed 215 passed) | |
+| `pythonpath = ["src"]` for pytest (an accepted repair) | finish | yes | |
+| `sys.path` in a new `tests/conftest.py` | finish | no | conftest changed |
+| `PYTHONPATH=src python -m pytest` only | finish | no | fails in the grader's clean environment |
+| delete `tests/` | finish | no | tests changed; no test ran |
+| `pytest.ini` with `--ignore=tests` | finish | no | pytest setting changed; no test ran |
+| the model request fails | model_error | no | recorded, graded as left |
+| endless commands, 3 turns / 0 seconds | turn_cap / time_cap | no | |
+
+### Smoke run with a model (`dev-smoke-2026-09-29/`)
+
+**A development smoke test of the harness, not a result**: one development project (cachetools
+5.5.0 on the macOS system Python 3.9.6: src layout, the project not installed), one fast local model
+(`Qwen3.6-35B-A3B-6bit` through omlx, started with environment variables and stopped afterwards; its
+settings files were unchanged), each arm once, at most 12 turns and 15 minutes, network on, harness
+commit `ddb0f9d`.
+
+| Arm | Ended | Fixed | First green turn | Turns | FixFirst calls | Installs | Tokens (prompt / completion) | Model time |
+|---|---|---|---|---|---|---|---|---|
+| baseline (first) | finish | yes | 3 | 5 | 0 | 1 | 13,836 / 543 | 85.8 s |
+| mcp (second) | finish | yes | 3 | 5 | 1 | 1 | 11,219 / 646 | 15.9 s |
+
+Both arms installed the project with `pip install -e .` and changed no file. They started from the
+same state (same digest, no missing pin). The baseline's model time includes loading the model on the
+first request. In the mcp run the model passed the right project but no interpreter; this smoke run
+still counted that as `mcp_arguments_overridden: 1`, and the harness now records it as
+`mcp_arguments_filled`. One easy case and one run per arm say nothing about FixFirst's effect.
+
+### Not done yet
+
+- The hard cases in B7 (six scenarios) still run with this repository's shared `.venv`. With the
+  network on they need their own environments too, so that installing a package cannot touch
+  FixFirst's environment; the sandbox already refuses such writes.
+- Reference repairs exist for cachetools and typer only. The held-out projects get theirs from A2's
+  verified repairs after A2's results are merged.
+- The formal models' exact weights, quantisation and settings are fixed before the freeze; the
+  formal run is 3 models × 2 arms × 3 runs (task B7).
+- macOS only (`sandbox-exec`).
 
 ## Before the formal run
 

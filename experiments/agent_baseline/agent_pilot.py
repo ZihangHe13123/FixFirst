@@ -370,7 +370,7 @@ def _episode(model, arm, ws: Workspace, log, green, settings, fake, mcp, state_d
                 {"role": "user", "content": f"The project is in {ws.case}. Its tests fail. Fix it."}]
     stats = {"turns": 0, "tool_calls": 0, "pytest_runs": 0, "fixfirst_calls": 0, "prompt_tokens": 0,
              "completion_tokens": 0, "model_s": 0.0, "tool_s": 0.0, "end": "turn_cap", "bad_calls": 0,
-             "first_green_turn": None, "error": None, "mcp_arguments_overridden": 0}
+             "first_green_turn": None, "error": None, "mcp_arguments_filled": 0, "mcp_arguments_overridden": 0}
     deadline = time.monotonic() + settings.run_timeout
     last = state_digest()
     for _ in range(settings.max_turns):
@@ -426,11 +426,16 @@ def run_tool(name, args, ws: Workspace, stats, mcp=None):
     if mcp and name in {t["name"] for t in mcp.tools}:
         stats["fixfirst_calls"] += 1
         if name == "diagnose" and ws.real:
-            # The case's project and interpreter, whatever the model passed.
-            forced = {**args, "project": str(ws.case), "python": str(ws.python)}
-            if forced != args:
-                stats["mcp_arguments_overridden"] += 1
-            args = forced
+            # The case's project and interpreter, whatever the model passed: a missing value is
+            # filled in, a different one is overridden.
+            forced = {"project": str(ws.case), "python": str(ws.python)}
+            for key, value in forced.items():
+                given = args.get(key)
+                if not given:
+                    stats["mcp_arguments_filled"] += 1
+                elif os.path.abspath(ws.case / str(given)) != value:
+                    stats["mcp_arguments_overridden"] += 1
+            args = {**args, **forced}
         return clip(mcp.call(name, args))
     if name == "run_command":
         command = args["command"]
