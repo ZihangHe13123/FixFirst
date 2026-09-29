@@ -397,6 +397,17 @@ def _(p):
     )
 
 
+@s("vi_private_moved", "version_incompatibility", False, "Private name imported from a path the installed library moved or removed")
+def _(p):
+    # Each name still exists elsewhere in the installed library (docs/B4_SCENARIOS.md).
+    module, name = p.pick(
+        [("sklearn.utils", "_print_elapsed_time"), ("pydantic.fields", "ModelField"),
+         ("scipy.sparse.sputils", "isdense"), ("numpy.lib.function_base", "iterable"),
+         ("sklearn.metrics.scorer", "_check_multimetric_scoring")]
+    )
+    p.imports(f"from {module} import {name}")
+
+
 # ----- missing configuration ------------------------------------------------------------
 
 

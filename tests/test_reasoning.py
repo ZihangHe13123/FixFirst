@@ -49,6 +49,29 @@ def test_rules_and_knowledge_diagnose_real_failures(tmp_path, scenario, cause, r
     assert session.actions[0].cause == (None if cause == "code_defect" else cause)
 
 
+@pytest.mark.parametrize("index, rule", [(0, "H01"), (3, "H09")])
+def test_a_private_name_moved_inside_a_library_is_a_likely_version_change(tmp_path, index, rule):
+    # 0: sklearn.utils._print_elapsed_time (cannot import name); 3: numpy.lib.function_base (no module).
+    session, issue = run_scenario(tmp_path, "vi_private_moved", index=index)
+    assert (issue.diagnosis, issue.diagnosis_source, issue.diagnosis_rule) == ("version_incompatibility", "heuristic", rule)
+    assert session.actions[0].action_id.startswith("find-release-")
+
+
+def test_a_missing_submodule_of_the_project_is_not_blamed_on_a_library(tmp_path):
+    root = tmp_path / "shopkit"
+    (root / "shop").mkdir(parents=True)
+    (root / "shop" / "__init__.py").write_text("")
+    (root / "test_shop.py").write_text("from shop.pricing import total\n\n\ndef test_total():\n    assert total([1]) == 1\n")
+    session = create_session(root, sys.executable, goal="pass_tests")
+    session.use_classifier = False
+    scan(session, cases.CHECKS)
+    issue = next(i for i in session.issues if i.status == "open" and i.tool == "pytest_run")
+    assert any(f.predicate == "submodule_of" and f.value == "module:shop" for f in session.facts)
+    assert issue.diagnosis_rule != "H09" and not any(
+        f.predicate == "likely" and f.rule_id == "H09" for f in session.facts
+    )
+
+
 def test_the_projects_own_installed_package_is_not_a_shadowed_library(tmp_path):
     # Working on a library's own repository with that library installed (often in editable
     # mode): its package is the project's code, not a file hiding someone else's library.

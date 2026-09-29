@@ -460,6 +460,18 @@ when = [
 then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
 
 [[rule]]
+id = "H09"
+phase = "heuristic"
+status = "hypothesis"
+description = "A submodule of an installed third-party library cannot be found: the installed version probably moved or removed it (a misspelt module path is the alternative)."
+when = [
+  ["?i", "exception", "ModuleNotFoundError"], ["?i", "missing_module", "?s"], ["?s", "submodule_of", "?m"],
+  ["?m", "provided_by", "?d"], ["not", "?m", "is_local", "?_"], ["not", "?i", "diagnosis", "?_"],
+  ["not", "?i", "no_older_release_has", "?_"],
+]
+then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
+
+[[rule]]
 id = "H02"
 phase = "heuristic"
 status = "hypothesis"

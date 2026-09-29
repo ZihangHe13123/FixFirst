@@ -615,6 +615,11 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
                 observed(subject, "missing_module", "module:" + evidence["missing_module"], refs)
             )
             modules.add(evidence["missing_module"])
+            top = evidence["missing_module"].split(".")[0]
+            if top != evidence["missing_module"]:
+                # Which package the missing submodule belongs to (and whether that is installed).
+                facts.append(observed("module:" + evidence["missing_module"], "submodule_of", "module:" + top, refs))
+                modules.add(top)
         for api in evidence["apis"]:
             facts.append(observed(subject, "api", "api:" + api, refs))
         for name in evidence["attributes"]:

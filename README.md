@@ -86,7 +86,7 @@ until a real check shows it.
       │          each module is installed, in the standard library, a local file or declared
   4  Knowledge   look up only the names in the evidence: what was removed, in which release,
       │          what replaces it, which package provides it (from official documentation)
-  5  Reason      103 rules, forward chaining in five phases:
+  5  Reason      104 rules, forward chaining in five phases:
       │          derive → diagnose → heuristic → fallback (decision tree) → plan
   6  Plan        order the actions: blocked or not, effect on the goal, strength of evidence,
       │          kind of action, cost
@@ -99,7 +99,7 @@ until a real check shows it.
 
 | Part (course technique) | What it does | How it is built | Code |
 |---|---|---|---|
-| **Rules** (decision automation) | Turn evidence and knowledge into root causes and next actions. A production system with variables, stratified negation and provenance; it concludes only when its conditions hold. | Written by the team: 103 rules in five phases, improved on development projects | `engine.py`, `knowledge/rules.toml`, `reasoning.py` |
+| **Rules** (decision automation) | Turn evidence and knowledge into root causes and next actions. A production system with variables, stratified negation and provenance; it concludes only when its conditions hold. | Written by the team: 104 rules in five phases, improved on development projects | `engine.py`, `knowledge/rules.toml`, `reasoning.py` |
 | **Domain knowledge graph** (knowledge representation) | Supplies the facts the rules need: 119 removed modules, APIs, arguments, usages and fixtures with the release that removed them and their replacements, 10 deprecations, 44 pytest fixtures mapped to their plugins, import name → package, unmaintained packages, Ruff rules that indicate likely bugs | Curated from official documentation and release notes (23 sources); every entry cites its source. Not learned from data | `domain.py`, `knowledge/domain.toml` |
 | **Evidence graph** (knowledge representation) | Records, for each session, the goal, issues, facts, causes, rules, actions, runs and sources (10 entity types, 15 relations); answers "why" and "what is left" questions by graph traversal | Built automatically during every check | `knowledge_graph.py` |
 | **Decision tree** (data mining) | Suggests a likely cause when no rule or heuristic applies, shown as unconfirmed | Gini tree trained on 215 generated, executed cases, over 44 evidence features (no labels, no parser category) | `evidence.py`, `classification.py` |
@@ -210,6 +210,7 @@ Experiments:
 fixfirst dataset --suite diagnosis --output workbench/diagnosis   # ~2 minutes, real runs
 fixfirst evaluate workbench/diagnosis --output workbench/diagnosis-eval
 fixfirst evaluate examples/diagnosis-dataset --output workbench/re-eval   # no execution
+fixfirst dataset --suite multi --output workbench/multi   # multi-fault cases for next-step ordering
 python scripts/record_playground.py --output workbench/playground
 fixfirst historical --assets examples/historical-regressions/assets --output workbench/replay
 python scripts/setup_real_world.py ../test-projects/generalisation   # the 13 held-out projects

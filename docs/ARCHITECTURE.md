@@ -75,7 +75,7 @@ page describes the code as of v0.6. `models.py` holds the shared Pydantic record
    - `fallback`: the tree's suggestion, only when neither matched (F01);
    - `plan`: actions (P01–P51), merged by action id across issues.
 
-   103 rules in total: 10 derive, 34 diagnose, 8 heuristic, 1 fallback, 50 plan.
+   104 rules in total: 10 derive, 34 diagnose, 9 heuristic, 1 fallback, 50 plan.
 
    The web page shows steps for issues concluded `affects_running = no` as optional and
    leaves them out of the problem count.
@@ -160,9 +160,14 @@ or a knowledge lookup. Unsupported questions are refused rather than guessed.
 
 ## Data and experiments
 
-- `diagnosis_cases.py`: 5 project templates × 43 single-fault scenarios, executed for real
-  (215 cases). Labels come from the scenario definition. Some scenarios are deliberately not
-  covered by the knowledge base.
+- `diagnosis_cases.py`: 5 project templates × 44 single-fault scenarios, executed for real.
+  Labels come from the scenario definition. Some scenarios are deliberately not covered by the
+  knowledge base. The committed dataset (215 cases) predates the 44th scenario,
+  `vi_private_moved` (docs/B4_SCENARIOS.md); it is regenerated at the freeze.
+- `hard_cases.py`: 30 evaluation-only cases (library behaviour changes, a two-layer fault).
+- `multi_cases.py`: five multi-fault cases for the next-step ordering evaluation, with which fault
+  hides which, the allowed repairs and every acceptable repair order; each case is validated
+  layer by layer by real runs when the suite is built (docs/B4_SCENARIOS.md).
 - `evaluation.py`: leave-one-template-out and leave-one-scenario-out cross-validation of the
   parser baseline, rules with/without the knowledge base, the tree, and the hybrids, with
   bootstrap confidence intervals.
