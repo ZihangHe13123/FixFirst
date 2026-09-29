@@ -10,8 +10,14 @@ Grading is independent of the model and of FixFirst: the full test suite runs wi
 interpreter in a clean environment (no inherited Python, pytest or application variables), and
 its per-test outcomes (JUnit XML) are compared with a reference outcome, obtained once by applying
 a known repair to a separate copy. A run counts as fixed only when no test file, conftest.py or
-test-selecting pytest setting was changed, nothing fails, and every test that passes in the
-reference passes.
+test-selecting pytest setting was changed at any check during the run, pytest exits 0, the same
+tests are collected as in the reference, nothing fails, and every test that passes in the
+reference passes. A reference that does not itself meet this bar is invalid and grades nothing.
+
+Where code runs: creating the environment and installing the snapshot's pinned packages happens
+outside the sandbox (no project code). Everything that runs the project's code (installing the
+project itself, the agent's commands, the tests of the grader and of the reference) is started by
+the harness under the sandbox (isolation.py); this module only builds the commands.
 """
 
 import configparser
@@ -88,30 +94,23 @@ def venv_python(project_dir: Path) -> Path:
     return project_dir / ".venv" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
 
 
-def build_environment(project_dir: Path, project: dict, snapshot: Path, log: list) -> Path:
-    """Rebuild the recorded environment in project_dir/.venv with uv, from the snapshot's pins."""
+def create_environment(project_dir: Path, project: dict, snapshot: Path, log: list) -> Path:
+    """Create project_dir/.venv and install the snapshot's pinned packages (no project code runs)."""
     uv = shutil.which("uv")
     if not uv:
         raise RuntimeError("uv is needed to rebuild the environments")
     version, pins, _ = read_snapshot(snapshot)
     env_dir = project_dir / ".venv"
     seed = ["--seed"] if project.get("pip", True) else []
-    steps = [[uv, "venv", "-q", *seed, "-p", interpreter(project, version), env_dir]]
+    python = venv_python(project_dir)
     with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False, encoding="utf-8") as stream:
         stream.write("\n".join(pins) + "\n")
         pinned = stream.name
-    python = venv_python(project_dir)
-    steps.append([uv, "pip", "install", "-q", "--python", python, "-r", pinned])
-    # The project itself, installed from this copy the way the manifest says, without new dependencies.
-    for line in project["install"]:
-        words = shlex.split(line)
-        if any(w == "." or w.startswith((".[", "./")) for w in words):
-            steps.append([uv, "pip", "install", "-q", "--no-deps", "--python", python, *words])
-    env = {**os.environ, "SETUPTOOLS_SCM_PRETEND_VERSION": project["ref"].lstrip("v")}
     try:
-        for argv in steps:
+        for argv in ([uv, "venv", "-q", *seed, "-p", interpreter(project, version), env_dir],
+                     [uv, "pip", "install", "-q", "--python", python, "-r", pinned]):
             started = time.monotonic()
-            result = run(argv, cwd=project_dir, env=env)
+            result = run(argv, cwd=project_dir)
             log.append({"step": " ".join(str(a) for a in argv[1:5]), "exit_code": result.returncode,
                         "seconds": round(time.monotonic() - started, 1), "stderr": result.stderr[-2000:]})
             if result.returncode:
@@ -119,6 +118,23 @@ def build_environment(project_dir: Path, project: dict, snapshot: Path, log: lis
     finally:
         os.unlink(pinned)
     return python
+
+
+def install_commands(project: dict, python: Path, uv_cache: Path) -> list[list[str]]:
+    """Commands that install the project itself from its folder, without new dependencies. They run
+    the project's build code, so the harness runs them in the sandbox (with the network for build
+    requirements)."""
+    commands = []
+    for line in project["install"]:
+        words = shlex.split(line)
+        if not any(w == "." or w.startswith((".[", "./")) for w in words):
+            continue  # third-party packages: already in the snapshot
+        if project.get("pip", True):
+            commands.append([str(python), "-m", "pip", "install", "-q", "--no-deps", *words])
+        else:
+            commands.append([shutil.which("uv") or "uv", "pip", "install", "-q", "--no-deps", "--no-config",
+                             "--cache-dir", str(uv_cache), "--python", str(python), *words])
+    return commands
 
 
 def freeze(python: Path) -> list[str]:
@@ -215,12 +231,14 @@ def workspace_digest(project_dir: Path, python: Path | None) -> str:
     return h.hexdigest()
 
 
-def clean_env(python: Path, home: Path) -> dict:
-    """What the grader runs with: the case interpreter first on PATH, nothing inherited."""
+def clean_env(python: Path, home: Path, tmp: Path | None = None) -> dict:
+    """The case interpreter first on PATH, its own HOME and temporary folder, nothing inherited."""
     env = {k: os.environ[k] for k in CLEAN_ENV_KEYS if k in os.environ}
     env.update({"PATH": f"{python.parent}{os.pathsep}/usr/bin{os.pathsep}/bin", "HOME": str(home),
                 "LANG": "en_US.UTF-8", "VIRTUAL_ENV": str(python.parent.parent), "PYTHONDONTWRITEBYTECODE": "1",
                 "PYTHONNOUSERSITE": "1", "PIP_DISABLE_PIP_VERSION_CHECK": "1"})
+    if tmp:
+        env["TMPDIR"] = str(tmp)
     return env
 
 
@@ -245,49 +263,70 @@ def junit_outcomes(path: Path) -> dict:
     return outcomes
 
 
-def run_suite(project_dir: Path, python: Path, home: Path, timeout=1200) -> dict:
-    """The full test suite, on a copy of the project (tests cannot change the workspace), with the
-    case interpreter and a clean environment."""
-    with tempfile.TemporaryDirectory() as scratch:
-        copy = Path(scratch) / project_dir.name
-        shutil.copytree(project_dir, copy, symlinks=True,
-                        ignore=shutil.ignore_patterns(".venv", ".pytest_cache", "__pycache__"))
-        report = Path(scratch) / "junit.xml"
-        started = time.monotonic()
-        try:
-            result = run([python, "-m", "pytest", "-q", "-p", "no:cacheprovider", f"--junitxml={report}"],
-                         cwd=copy, env=clean_env(python, home), timeout=timeout)
-            code, output = result.returncode, result.stdout + result.stderr
-        except subprocess.TimeoutExpired:
-            code, output = 124, f"(timed out after {timeout} s)"
-        outcomes = junit_outcomes(report)
+def run_suite(project_dir: Path, python: Path, grader_dir: Path, execute, timeout=1200) -> dict:
+    """The full test suite on a copy of the project in grader_dir (so the tests cannot change the
+    workspace), with the case interpreter and a clean environment. `execute(argv, cwd, env, timeout)`
+    runs it in the sandbox and returns (exit code, output, stopped)."""
+    copy, home, tmp = grader_dir / "project", grader_dir / "home", grader_dir / "tmp"
+    shutil.copytree(project_dir, copy, symlinks=True,
+                    ignore=shutil.ignore_patterns(".venv", ".pytest_cache", "__pycache__"))
+    home.mkdir()
+    tmp.mkdir()
+    report = grader_dir / "junit.xml"
+    started = time.monotonic()
+    code, output, stopped = execute([str(python), "-m", "pytest", "-q", "-p", "no:cacheprovider",
+                                     f"--junitxml={report}"], copy, clean_env(python, home, tmp), timeout)
+    outcomes = junit_outcomes(report)  # a broken report raises: the caller records a grading error
     counts = {}
     for outcome in outcomes.values():
         counts[outcome] = counts.get(outcome, 0) + 1
-    return {"exit_code": code, "counts": counts, "outcomes": outcomes, "seconds": round(time.monotonic() - started, 1),
+    return {"exit_code": code, "stopped": stopped, "counts": counts, "outcomes": outcomes,
+            "seconds": round(time.monotonic() - started, 1),
             "summary": output.strip().splitlines()[-1] if output.strip() else ""}
 
 
-def judge(result: dict, reference: dict, tests_changed: list[str]) -> dict:
-    """Compare a suite run with the reference outcome."""
+EXIT_CODES = {1: "tests failed", 2: "interrupted", 3: "internal error", 4: "usage error", 5: "no tests collected",
+              124: "stopped at the time limit"}
+
+
+def validate_reference(reference: dict) -> list[str]:
+    """A reference can grade only if its repair worked and its own suite passed cleanly."""
+    problems = [f"repair step {step['command']!r} exited with {step['exit_code']}"
+                for step in reference.get("repair", []) if step.get("exit_code") != 0]
+    if reference.get("exit_code") != 0:
+        code = reference.get("exit_code")
+        problems.append(f"the reference suite exited with {code} ({EXIT_CODES.get(code, 'unexpected')})")
+    outcomes = reference.get("outcomes") or {}
+    if not any(o == "passed" for o in outcomes.values()):
+        problems.append("no test passed in the reference")
+    bad = sorted(n for n, o in outcomes.items() if o in ("failed", "error"))
+    if bad:
+        problems.append(f"{len(bad)} tests failed or errored in the reference, e.g. {bad[0]}")
+    return problems
+
+
+def judge(result: dict, reference: dict, violations: list[str]) -> dict:
+    """Compare a suite run with a valid reference outcome (see validate_reference)."""
     reasons = []
-    if tests_changed:
-        reasons.append("tests, conftest.py or test-selecting pytest settings changed: " + ", ".join(tests_changed[:8]))
-    if not result["outcomes"]:
-        reasons.append(f"no test outcome was recorded (exit code {result['exit_code']}: {result['summary']})")
+    if violations:
+        reasons.append("tests, conftest.py or test-selecting pytest settings changed during the run: "
+                       + ", ".join(violations[:8]))
+    code = result["exit_code"]
+    if code != 0:
+        reasons.append(f"pytest exited with {code} ({EXIT_CODES.get(code, 'unexpected')}): {result['summary']}")
+    expected, found = set(reference["outcomes"]), set(result["outcomes"])
+    if expected - found:
+        missing = sorted(expected - found)
+        reasons.append(f"{len(missing)} tests of the reference were not run, e.g. {missing[0]}")
+    if found - expected:
+        extra = sorted(found - expected)
+        reasons.append(f"{len(extra)} tests that the reference does not have, e.g. {extra[0]}")
     bad = sorted(n for n, o in result["outcomes"].items() if o in ("failed", "error"))
     if bad:
         reasons.append(f"{len(bad)} tests failed or errored, e.g. {bad[0]}")
-    expected = sorted(n for n, o in reference["outcomes"].items() if o == "passed")
-    missing = [n for n in expected if result["outcomes"].get(n) != "passed"]
-    if missing:
-        reasons.append(f"{len(missing)} of the {len(expected)} tests that pass in the reference did not pass, "
-                       f"e.g. {missing[0]}")
-    allowed = {n for n, o in reference["outcomes"].items() if o in ("skipped", "xfailed")}
-    extra = sorted(n for n, o in result["outcomes"].items() if o in ("skipped", "xfailed") and n not in allowed)
-    if extra:
-        reasons.append(f"{len(extra)} tests skipped or xfailed that the reference runs, e.g. {extra[0]}")
-    if result["exit_code"] != 0 and reference.get("exit_code") == 0 and not reasons:
-        reasons.append(f"pytest exited with {result['exit_code']}")
+    lost = sorted(n for n, o in reference["outcomes"].items()
+                  if o == "passed" and result["outcomes"].get(n) not in (None, "passed", "failed", "error"))
+    if lost:
+        reasons.append(f"{len(lost)} tests that pass in the reference were skipped, e.g. {lost[0]}")
     return {"fixed": not reasons, "reasons": reasons, "counts": result["counts"],
-            "reference_counts": reference["counts"], "tests_changed": tests_changed}
+            "reference_counts": reference["counts"], "tests_changed": sorted(violations)}

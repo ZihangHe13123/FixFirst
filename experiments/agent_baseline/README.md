@@ -46,7 +46,7 @@ export LLM_API_KEY=<the same key>        # LLM_BASE_URL defaults to http://127.0
     --cases pkg-inventory:lm_renamed flat-shop:lm_src_layout    # arms: baseline and mcp
 ```
 
-Cases, transcripts and `results.jsonl` go to `workbench/agent_baseline/` (ignored by git). In zsh,
+Runs go to `../agent-runs/` next to the repository (`--out`), each in its own folder that is never reused; `results.jsonl` there has one row per run. The output folder must not be inside the repository or below any folder with pytest settings, which pytest in the runs would read. In zsh,
 list the cases as separate arguments: an unquoted `$CASES` is not split into words.
 
 ## Pilot, 28 Sep 2026
@@ -122,36 +122,66 @@ held-out projects are added only after A2's results are merged.
 
 - **Same start for both arms.** Every run exports the project from the source clone's commit
   (`git archive`, no history, nothing from the working tree) and rebuilds its own `.venv` with uv from
-  the recorded snapshot (`examples/real-world/environments/<id>.txt`), then installs the project the
-  way the manifest says, without new dependencies. Environments are rebuilt, never copied (a copied
-  environment keeps absolute paths). The row records the commit, any snapshot pin the rebuilt
-  environment lacks, and a digest of the starting state.
+  the recorded snapshot (`examples/real-world/environments/<id>.txt`). Environments are rebuilt, never
+  copied (a copied environment keeps absolute paths). The row records the commit, any snapshot pin the
+  rebuilt environment lacks, and a digest of the starting state.
+- **Where code runs.** Creating the environment and installing the snapshot's pinned packages happens
+  outside the sandbox; no project code runs there. Everything that runs the project's code runs under
+  `sandbox-exec` (`isolation.py`): installing the project itself (with the network, for its build
+  requirements), the agent's commands, FixFirst's server and the checks it starts, the reference
+  repair, and every test run of the grader and the reference.
+- **What each process may touch.** The agent's commands write only to the run's `project`, `state`
+  (HOME, pip's cache, FixFirst's store) and `tmp` (TMPDIR) folders, never the system temporary
+  folder. Under the home folder, the output folder, the repository and the system temporary folders
+  they read only the run's own folders and the interpreters, so `reference_repairs.toml`,
+  `examples/real-world/LABELS.md`, the reference outcomes and other runs are out of reach (checked by
+  real processes in `test_harness.py`); `~/.ssh`, `~/.omlx`, `~/.claude` and the keychains are never
+  readable. FixFirst's server may also read FixFirst's `src` and `.venv`, not the rest of the
+  repository. The network is on for the agent only with `--network on`.
 - **One interpreter.** Commands, pytest, FixFirst's diagnosis and the grader all use the case's
-  `.venv`. Commands get a fresh environment with no inherited Python, pytest or application
-  variables. The MCP `diagnose` call always gets the case's project and interpreter: a missing value
-  is filled in (`mcp_arguments_filled`), a different one is overridden (`mcp_arguments_overridden`).
-- **Sandbox.** Writes only inside the project, the run's state folder (HOME, pip's cache, FixFirst's
-  store) and the temp folder. `--network on` allows the network; reading under the home folder is
-  then limited to the run, this repository and the interpreters, and `~/.ssh`, `~/.omlx`, `~/.claude`
-  and the keychains stay unreadable. Neither the source clone nor FixFirst's own environment changes.
-- **Grader.** The full suite runs on a copy of the project, with the case interpreter and a clean
-  environment, and its per-test outcomes (JUnit XML) are compared with a reference outcome: the known
-  repair in `reference_repairs.toml`, applied once to a separate copy (the model never sees it). Fixed
-  means: no test file, `conftest.py` or test-selecting pytest setting changed (`addopts`, `testpaths`,
-  `filterwarnings`, ...; `pythonpath` is allowed, since putting `src` on the path is an accepted
-  repair), nothing fails or errors, every test that passes in the reference passes, and nothing is
-  skipped that the reference runs. The same check after each turn that changes the project or its
-  installed packages gives the first green turn.
-- **Recorded** in `results.jsonl` and the run folder: pip freeze at start and end with the
-  differences, every command with its exit code and duration (installs flagged), the settings, seed
-  and harness commit, turns, tool calls, tokens, time, and how the run ended (`finish`, `turn_cap`,
-  `time_cap`, `stopped_without_tool`, `model_error`, `setup_failed`). Failed runs are kept. Arms
+  `.venv`, with nothing inherited from the harness's environment. The MCP `diagnose` call always
+  gets the case's project and interpreter: a missing value is filled in (`mcp_arguments_filled`), a
+  different one is overridden (`mcp_arguments_overridden`).
+- **Time.** `--run-timeout` is the agent's budget. Model requests, every tool call, FixFirst's
+  server and every process get only what is left; at the deadline the whole process tree is killed
+  (FixFirst's checks run in their own sessions, so the harness finds them by parent process). Calls
+  left in a turn are not carried out and a `finish` after the deadline is not taken: the run ends as
+  `time_cap`. The harness's own checks (integrity, green checks) do not count against the budget and
+  are listed as `harness_s`.
+- **Reference.** The known repair in `reference_repairs.toml` (the model never sees it) is applied to
+  a separate copy in the sandbox, and the suite is run like a grader run. A reference counts only if
+  every repair step exits 0 and its suite exits 0 with at least one passing test and none failing;
+  otherwise the case's runs are recorded as `reference_invalid` and not graded. Generated cases use
+  the healthy template as their reference; scenarios that change test files or pytest settings have
+  none and are recorded as `unsupported_case` (6 of the 44 scenarios, for example a bug in a fixture).
+- **Grader.** The full suite runs offline on a fresh copy in the run's `grader/check-NNN` folder,
+  which is all it may write. Fixed means: pytest exits 0; the same tests are collected as in the
+  reference; nothing fails or errors; every test that passes in the reference passes; and no test
+  file, `conftest.py` or test-selecting pytest setting (`addopts`, `testpaths`, `filterwarnings`, ...;
+  `pythonpath` is allowed, since putting `src` on the path is an accepted repair) was ever changed.
+- **Integrity over the run.** After every tool call that can change files, the harness compares
+  those files and settings with the start. A change is recorded with its turn (`violations`) and
+  stays recorded even if it is undone later; a run with a violation is never green and never fixed.
+  The check sees the state between tool calls: a change made and undone inside one command is not
+  seen.
+- **Records, never overwritten.** Each run has its own folder,
+  `runs/<case>--<arm>--r<n>--<model>--<attempt>`, where the model part is a safe name plus a hash and
+  the attempt is the invocation's time and a random suffix (or `--attempt NAME`, which is refused if
+  already used). The folder keeps the transcript and `commands.jsonl` written as they happen, pip
+  freeze at start and end, `setup.json`, the sandbox profiles, every grader check and `row.json`; the
+  row in `results.jsonl` names its folder (`run_dir`). Every planned run gets a row, also when setup,
+  the model, FixFirst's server, the harness or the grader fails: `end` (`finish`, `turn_cap`,
+  `time_cap`, `stopped_without_tool`, `model_error`, `mcp_start_failed`, `setup_failed`,
+  `reference_invalid`, `unsupported_case`, `harness_error`), `error` with the stage, and `grading`
+  (`graded`, `not_graded`, `grading_error`); `fixed` is empty unless the run was graded. Arms
   alternate per case and run.
-- **Harness checks without a model.** `--model fake:SCRIPT.json` replays scripted tool calls.
-  `experiments/agent_baseline/test_harness.py` (macOS, offline, generated cases; run it explicitly)
-  and `tests/test_agent_real_cases.py` (any platform) check the grading, isolation and bookkeeping.
+- **Harness checks without a model.** `--model fake:SCRIPT.json` replays scripted replies, including
+  malformed ones and slow ones. `experiments/agent_baseline/test_harness.py` (macOS, real sandboxed
+  processes, offline; run it explicitly: `.venv/bin/python -m pytest -q experiments/agent_baseline/test_harness.py`)
+  and `tests/test_agent_real_cases.py` (any platform) check isolation, grading, time, bookkeeping and
+  integrity.
 
-### Dry run with scripted replies (cachetools, 29 Sep)
+### Dry run with scripted replies (cachetools, 29 Sep, before the review fixes)
 
 Reference: `python -m pip install -e .` gives 215 passed. Each script ran in its own rebuilt copy
 with the network on:
@@ -170,7 +200,10 @@ with the network on:
 
 ### Smoke run with a model (`dev-smoke-2026-09-29/`)
 
-**A development smoke test of the harness, not a result**: one development project (cachetools
+**Made with the harness before the 29 Sep review fixes** (commit `ddb0f9d`: its grader still ran
+outside the sandbox, the agent could read the repository, and the time cap was checked only between
+turns). It shows the tool flow with a real model; it was not repeated after the fixes. **A development
+smoke test of the harness, not a result**: one development project (cachetools
 5.5.0 on the macOS system Python 3.9.6: src layout, the project not installed), one fast local model
 (`Qwen3.6-35B-A3B-6bit` through omlx, started with environment variables and stopped afterwards; its
 settings files were unchanged), each arm once, at most 12 turns and 15 minutes, network on, harness
@@ -186,6 +219,18 @@ same state (same digest, no missing pin). The baseline's model time includes loa
 first request. In the mcp run the model passed the right project but no interpreter; this smoke run
 still counted that as `mcp_arguments_overridden: 1`, and the harness now records it as
 `mcp_arguments_filled`. One easy case and one run per arm say nothing about FixFirst's effect.
+
+### After the review fixes (29 Sep): scripted checks
+
+With the repaired harness, scripted replies on cachetools (network on): the reference repair ran in
+the sandbox and the reference passed validation (215 passed); the baseline script (install the
+project, finish) and the MCP script (`diagnose` with a wrong project, install, `check_again`) were both
+fixed at turn 2, FixFirst's diagnosis running under the restricted profile. The review's
+reproductions give: the agent cannot read the repair or the labels; the grader's project code
+cannot write outside its copy; a timeout or a reference with an error never grades as fixed; a
+0.05-second budget stops a 0.3-second command and the `finish` after it; a malformed tool call is
+recorded and the transcript saved; a test edited and put back stays a violation; a repeat keeps the
+first run's folder.
 
 ### Not done yet
 

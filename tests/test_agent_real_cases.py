@@ -3,6 +3,7 @@ integrity, and a grader that compares per-test outcomes with a reference."""
 
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 
@@ -10,6 +11,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "experiments" / "agent_baseline"))
 
+import isolation as iso  # noqa: E402
 import real_cases as rc  # noqa: E402
 
 
@@ -76,19 +78,33 @@ def outcome(outcomes, code=0):
 def test_the_grader_compares_with_the_reference():
     reference = outcome({"a": "passed", "b": "passed", "c": "skipped"})
     assert rc.judge(outcome({"a": "passed", "b": "passed", "c": "skipped"}), reference, [])["fixed"]
-    missing = rc.judge(outcome({"a": "passed"}), reference, [])
-    assert not missing["fixed"] and "1 of the 2 tests" in missing["reasons"][0]
+    assert rc.judge(outcome({"a": "passed", "b": "passed", "c": "passed"}), reference, [])["fixed"]
+    missing = rc.judge(outcome({"a": "passed", "c": "skipped"}), reference, [])
+    assert not missing["fixed"] and "1 tests of the reference were not run" in missing["reasons"][0]
     skipped = rc.judge(outcome({"a": "passed", "b": "skipped", "c": "skipped"}), reference, [])
-    assert not skipped["fixed"] and any("skipped or xfailed that the reference runs" in r for r in skipped["reasons"])
+    assert not skipped["fixed"] and any("pass in the reference were skipped" in r for r in skipped["reasons"])
+    extra = rc.judge(outcome({"a": "passed", "b": "passed", "c": "skipped", "d": "passed"}), reference, [])
+    assert not extra["fixed"] and any("that the reference does not have" in r for r in extra["reasons"])
     touched = rc.judge(outcome({"a": "passed", "b": "passed", "c": "skipped"}), reference, ["tests/test_b.py"])
-    assert not touched["fixed"] and "tests, conftest.py" in touched["reasons"][0]
-    assert not rc.judge(outcome({}, code=5), reference, [])["fixed"]
+    assert not touched["fixed"] and "changed during the run" in touched["reasons"][0]
 
 
-def test_the_exit_code_counts_only_when_the_reference_exits_cleanly():
+@pytest.mark.parametrize("code", [1, 2, 3, 4, 5, 124])
+def test_a_run_that_does_not_exit_cleanly_is_never_fixed(code):
     passing = {"a": "passed"}
-    assert not rc.judge(outcome(passing, code=1), outcome(passing, code=0), [])["fixed"]
-    assert rc.judge(outcome(passing, code=1), outcome(passing, code=1), [])["fixed"]
+    verdict = rc.judge(outcome(passing, code=code), outcome(passing), [])
+    assert not verdict["fixed"] and f"pytest exited with {code}" in verdict["reasons"][0]
+
+
+def test_a_reference_is_checked_before_it_grades_anything():
+    assert rc.validate_reference({**outcome({"a": "passed", "b": "skipped"}), "repair": [{"command": "x", "exit_code": 0}]}) == []
+    # The two counterexamples from the review: a reference that exits 1, and one with an error.
+    assert rc.validate_reference(outcome({"a": "passed"}, code=1))
+    problems = rc.validate_reference(outcome({"a": "passed", "b": "error"}, code=2))
+    assert any("exited with 2" in p for p in problems) and any("failed or errored" in p for p in problems)
+    assert rc.validate_reference({**outcome({"a": "passed"}), "repair": [{"command": "pip install x", "exit_code": 1}]})
+    assert rc.validate_reference(outcome({"a": "skipped"}))  # nothing passed
+    assert rc.validate_reference({"exit_code": None, "outcomes": {}, "counts": {}})
 
 
 def test_package_changes_are_listed_by_name():
@@ -101,9 +117,10 @@ def test_package_changes_are_listed_by_name():
 def test_the_grader_environment_inherits_nothing(tmp_path, monkeypatch):
     monkeypatch.setenv("PYTHONPATH", "src")
     monkeypatch.setenv("PYTEST_ADDOPTS", "-p no:randomly")
-    env = rc.clean_env(tmp_path / ".venv" / "bin" / "python", tmp_path)
+    env = rc.clean_env(tmp_path / ".venv" / "bin" / "python", tmp_path, tmp_path / "tmp")
     assert "PYTHONPATH" not in env and "PYTEST_ADDOPTS" not in env
     assert env["PATH"].split(os.pathsep)[0] == str(tmp_path / ".venv" / "bin")
+    assert env["TMPDIR"] == str(tmp_path / "tmp")
 
 
 @pytest.mark.parametrize("path,expected", [
@@ -126,3 +143,49 @@ def test_the_source_is_exported_from_the_commit_only(tmp_path):
     dest = tmp_path / "copy"
     rc.export_source(repo, rc.source_commit(repo), dest)
     assert (dest / "pkg" / "core.py").read_text() == "X = 1\n" and not (dest / "notes.txt").exists()
+
+
+def test_the_install_step_of_the_project_is_returned_for_the_sandbox(tmp_path):
+    python = tmp_path / ".venv" / "bin" / "python"
+    commands = rc.install_commands({"install": ["-e .", "pytest pytest-cov", "-r requirements.txt"]}, python,
+                                   tmp_path / "uv-cache")
+    assert commands == [[str(python), "-m", "pip", "install", "-q", "--no-deps", "-e", "."]]
+
+
+def test_a_sandbox_profile_denies_the_private_areas_and_allows_only_the_run(tmp_path):
+    run, other = tmp_path / "out" / "runs" / "a", tmp_path / "out" / "runs" / "b"
+    policy = iso.Policy(writable=(run / "project", run / "tmp"), readable=(tmp_path / "python",), network=False)
+    text = iso.profile_text(policy, denied=(Path.home(), tmp_path / "out"))
+    assert "(deny network*)" in text
+    assert f'(deny file-read-data (subpath "{Path.home()}") (subpath "{tmp_path / "out"}"))' in text
+    allow = next(line for line in text.splitlines() if line.startswith("(allow file-read-data"))
+    assert str(run / "project") in allow and str(tmp_path / "python") in allow and str(other) not in allow
+    write = next(line for line in text.splitlines() if line.startswith("(allow file-write*"))
+    assert set(re.findall(r'\(subpath "([^"]+)"\)', write)) == {str(run / "project"), str(run / "tmp"), "/dev/fd"}
+    assert text.index("(allow file-read-data") < text.index("(deny file-read* (subpath")  # secrets last
+    assert "(deny network*)" not in iso.profile_text(iso.Policy((), (), network=True), denied=())
+
+
+def test_run_folders_are_unique_and_never_reused(tmp_path):
+    first = iso.run_folder(tmp_path, "cachetools", "baseline", 1, "Qwen/3.6 35B", "20260929T000000Z-aaa")
+    second = iso.run_folder(tmp_path, "cachetools", "baseline", 1, "Qwen/3.6 35B:other", "20260929T000000Z-aaa")
+    assert first != second and "/" not in first.name
+    with pytest.raises(FileExistsError):
+        iso.run_folder(tmp_path, "cachetools", "baseline", 1, "Qwen/3.6 35B", "20260929T000000Z-aaa")
+    assert iso.new_attempt() != iso.new_attempt()
+
+
+def test_the_budget_does_not_count_paused_time():
+    budget = iso.Budget(10)
+    with budget.pause():
+        iso.time.sleep(0.05)
+    assert budget.used() < 0.05 and budget.remaining() > 9.9
+
+
+def test_profile_paths_are_real_paths(tmp_path):
+    target = tmp_path / "real"
+    target.mkdir()
+    link = tmp_path / "link"
+    link.symlink_to(target)
+    text = iso.profile_text(iso.Policy(writable=(link,), readable=()), denied=())
+    assert f'(subpath "{os.path.realpath(target)}")' in text and str(link) not in text
