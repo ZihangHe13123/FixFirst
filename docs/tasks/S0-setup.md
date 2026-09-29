@@ -81,8 +81,9 @@ echo "exit code: $LASTEXITCODE"
 1. 退出码是 0。
 2. 最后一行显示真的跑了测试，比如 9/29 的 main 在 macOS 上是 `272 passed, 1 skipped`。以后测试会越来越多，数字会变；如果显示 `no tests ran`，或者只有几个测试，说明不在仓库根目录，或者用的不是 `.venv` 里的 Python。
 3. 跳过的测试只能来自平台条件。`-rs` 会在 "short test summary info" 下面列出每个跳过的原因：
-   - macOS / Linux 上只跳过 1 个，原因是 `Windows PowerShell quoting`（这个测试只在 Windows 上跑）；
-   - Windows 上不应该有跳过。
+   - macOS / Linux 可跳过 `Windows PowerShell quoting`（这个测试只在 Windows 上跑）；
+   - Windows 可跳过 `named pipes are POSIX` 等明确要求 POSIX 的测试；不支持创建符号链接的环境也可能跳过对应测试（`no symlinks here`）。
+   - 以 `-rs` 列出的具体原因核对，合理的平台条件跳过不代表安装失败，不能只凭跳过数量判断。
 
    看到别的跳过原因，比如 `could not import 'yaml'`，说明开发依赖没装全：重新运行上面的安装脚本（它会重装 `.[dev]`），再跑一次；还是这样，就把 `-rs` 的输出贴到 S0 的 Issue 里。
 
