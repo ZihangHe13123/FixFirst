@@ -49,12 +49,14 @@ def test_temporary_import_settings_do_not_pass_the_grader(task, monkeypatch, var
 def test_environment_preserves_windows_runtime_but_not_test_or_application_overrides(tmp_path):
     env = task_environment(tmp_path, {
         "Path": "system-bin", "SystemRoot": r"C:\Windows", "TEMP": r"C:\Temp",
+        "PSModulePath": r"C:\Windows\system32\WindowsPowerShell\v1.0\Modules", "USERNAME": "alice",
         "LANG": "en_US.UTF-8", "HTTPS_PROXY": "http://proxy.invalid:8080",
         "PYTEST_PLUGINS": "injected", "pytest_addopts": "-o pythonpath=src",
         "PYTHONHOME": "other-python", "PIP_TARGET": "other-site-packages",
         "APP_CONFIG": "temporary-settings.toml", "BASH_ENV": "profile.sh",
     })
     assert env["SystemRoot"] == r"C:\Windows" and env["TEMP"] == r"C:\Temp"
+    assert env["PSModulePath"].endswith("Modules") and env["USERNAME"] == "alice"
     assert env["HTTPS_PROXY"] == "http://proxy.invalid:8080"
     assert env["PATH"].split(os.pathsep)[0] == str(venv_python(tmp_path).parent)
     assert env["VIRTUAL_ENV"] == str(tmp_path / ".venv")
