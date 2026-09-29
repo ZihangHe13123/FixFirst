@@ -385,6 +385,7 @@ def collect_project(session, env_id: str) -> Run:
                     {"name": component, "path": path.relative_to(session.project_root).as_posix()}
                 )
     data["python_files"], data["defined_names"] = index_sources(Path(session.project_root))
+    data["imported_names"] = index_imports(Path(session.project_root), data["python_files"])
     data["lint_config"] = lint_settings(Path(session.project_root))
     data["tested_versions"] = tested_versions(Path(session.project_root))
     run.stdout = json.dumps(redact_data(data), ensure_ascii=False, indent=2)
@@ -514,6 +515,35 @@ def index_sources(root: Path) -> tuple[list[str], list[str]]:
                 except OSError:
                     continue
     return sorted(files), sorted(names)
+
+
+def index_imports(root: Path, files: list[str], limit: int = 2000) -> dict[str, str]:
+    """What each imported name is: ``{"np": "numpy", "CliRunner": "click.testing.CliRunner"}``.
+
+    Read with the syntax tree, never executed. Relative imports are the project's own code and
+    names imported from different modules in different files are ambiguous; both are left out.
+    """
+    found: dict[str, set[str]] = {}
+    for relative in files:
+        path = root / relative
+        try:
+            if path.stat().st_size > MAX_BYTES:
+                continue
+            tree = ast.parse(path.read_text("utf-8", errors="replace"))
+        except (OSError, SyntaxError, ValueError):
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    name = alias.asname or alias.name.split(".")[0]
+                    found.setdefault(name, set()).add(alias.name if alias.asname else name)
+            elif isinstance(node, ast.ImportFrom) and node.module and not node.level:
+                for alias in node.names:
+                    if alias.name != "*":
+                        found.setdefault(alias.asname or alias.name, set()).add(f"{node.module}.{alias.name}")
+        if len(found) >= limit:
+            break
+    return {name: next(iter(modules)) for name, modules in sorted(found.items()) if len(modules) == 1}
 
 
 def declaration_verified(issue, old_runs, new_runs) -> bool:

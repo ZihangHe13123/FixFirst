@@ -86,7 +86,7 @@ until a real check shows it.
       │          each module is installed, in the standard library, a local file or declared
   4  Knowledge   look up only the names in the evidence: what was removed, in which release,
       │          what replaces it, which package provides it (from official documentation)
-  5  Reason      99 rules, forward chaining in five phases:
+  5  Reason      103 rules, forward chaining in five phases:
       │          derive → diagnose → heuristic → fallback (decision tree) → plan
   6  Plan        order the actions: blocked or not, effect on the goal, strength of evidence,
       │          kind of action, cost
@@ -99,7 +99,7 @@ until a real check shows it.
 
 | Part (course technique) | What it does | How it is built | Code |
 |---|---|---|---|
-| **Rules** (decision automation) | Turn evidence and knowledge into root causes and next actions. A production system with variables, stratified negation and provenance; it concludes only when its conditions hold. | Written by the team: 99 rules in five phases, improved on development projects | `engine.py`, `knowledge/rules.toml`, `reasoning.py` |
+| **Rules** (decision automation) | Turn evidence and knowledge into root causes and next actions. A production system with variables, stratified negation and provenance; it concludes only when its conditions hold. | Written by the team: 103 rules in five phases, improved on development projects | `engine.py`, `knowledge/rules.toml`, `reasoning.py` |
 | **Domain knowledge graph** (knowledge representation) | Supplies the facts the rules need: 119 removed modules, APIs, arguments, usages and fixtures with the release that removed them and their replacements, 10 deprecations, 44 pytest fixtures mapped to their plugins, import name → package, unmaintained packages, Ruff rules that indicate likely bugs | Curated from official documentation and release notes (23 sources); every entry cites its source. Not learned from data | `domain.py`, `knowledge/domain.toml` |
 | **Evidence graph** (knowledge representation) | Records, for each session, the goal, issues, facts, causes, rules, actions, runs and sources (10 entity types, 15 relations); answers "why" and "what is left" questions by graph traversal | Built automatically during every check | `knowledge_graph.py` |
 | **Decision tree** (data mining) | Suggests a likely cause when no rule or heuristic applies, shown as unconfirmed | Gini tree trained on 215 generated, executed cases, over 44 evidence features (no labels, no parser category) | `evidence.py`, `classification.py` |
@@ -163,6 +163,16 @@ scenarios are optimistic; the remaining errors (a data-dict `KeyError`, a buggy 
 removed library submodule) are listed in the report. Full tables, confusion matrix and
 per-scenario results: [examples/diagnosis-evaluation/REPORT.md](examples/diagnosis-evaluation/REPORT.md).
 
+**Hard cases.** 30 further cases use documented behaviour changes of installed libraries
+(NumPy 2, PyYAML 6, pydantic 2, Click 8.2) that the knowledge base does not list, plus a
+two-layer fault. With the tree trained on the 215 cases, FixFirst named the cause in 5 of 30.
+Two general heuristics written afterwards (H07: an imported library function rejects the call's
+arguments; H08: a library the project calls raises after a major upgrade past the declared lower
+bound) raise this to 15 of 30, without changing any result above. Because they were written after
+seeing these cases, 15 of 30 is a development result. Both NumPy changes (a changed `repr`, a
+changed type promotion) and pydantic's stricter validation are still missed:
+[examples/hard-evaluation/REPORT.md](examples/hard-evaluation/REPORT.md).
+
 **Real projects.** On 13 open-source projects it had never seen (9 domains, Python 3.9–3.14,
 ground truth written before the first run; [docs/GENERALISATION.md](docs/GENERALISATION.md)),
 FixFirst's first step was right for 2 of 13 at first and named the cause in 6. Every failure had
@@ -191,8 +201,8 @@ fixfirst interactive                           # terminal menu
 ```
 
 Goals: `collect_tests` (default), `check_style`, `pass_tests`. Sessions live in `.fixfirst/`
-under the current directory (`--store` changes it). `--no-classifier` uses rules and knowledge
-only; `--model` loads another decision tree.
+under the current directory (`--store` or `FIXFIRST_STORE` changes it). `--no-classifier` uses
+rules and knowledge only; `--model` loads another decision tree.
 
 Experiments:
 
@@ -206,6 +216,36 @@ python scripts/setup_real_world.py ../test-projects/generalisation   # the 13 he
 python scripts/run_real_world.py ../test-projects/generalisation --search
 python scripts/collect_public_data.py    # PyDFix and BugsInPy subsets, see docs/DATA_SOURCES.md
 ```
+
+## Coding agents (MCP)
+
+`fixfirst mcp` offers FixFirst to coding agents over the Model Context Protocol (stdio, no extra
+dependency). An agent gets three tools:
+
+| Tool | What it does |
+|---|---|
+| `diagnose` | runs the checks for a goal (default `pass_tests`) on a project folder and returns the steps to fix, most important first, each with its location, cause, rule and how to confirm it |
+| `check_again` | re-runs the checks after the agent changed the code and reports what is now fixed and what is new; the goal counts as reached only when a real check passes |
+| `explain` | the error, rules and documentation behind a step, and the checks that ran; runs nothing |
+
+The server's instructions tell the agent to diagnose first, fix the first step, check again, and
+stop once the goal is reached. The agent edits the code; FixFirst never does. Sessions are kept in
+`~/.fixfirst/sessions`, outside the project being fixed, and `fixfirst --store
+~/.fixfirst/sessions serve` shows them in the web interface. For Claude Code or any client that
+reads `mcpServers` (for example a project's `.mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "fixfirst": {
+      "command": "/path/to/FixFirst/.venv/bin/python",
+      "args": ["-m", "fixfirst", "mcp"]
+    }
+  }
+}
+```
+
+`experiments/agent_baseline/` compares local models fixing failures with and without these tools.
 
 ## Scope and safety
 
@@ -226,6 +266,8 @@ python scripts/collect_public_data.py    # PyDFix and BugsInPy subsets, see docs
   never count as fixes.
 - The web interface binds to 127.0.0.1, requires a per-launch token for every change and
   checks the Host header.
+- The MCP server talks over stdio only. Its tools run the same checks as the command line
+  (running tests executes project code) and never edit files.
 
 ## Repository
 
@@ -233,13 +275,14 @@ python scripts/collect_public_data.py    # PyDFix and BugsInPy subsets, see docs
 |---|---|
 | `src/fixfirst/` | the package (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)) |
 | `src/fixfirst/knowledge/` | rule base, domain knowledge, bundled decision tree |
-| `tests/` | 217 tests, most running real subprocesses; Windows runs all of them, macOS and Linux skip one PowerShell-only test |
+| `tests/` | 226 tests, most running real subprocesses; Windows runs all of them, macOS and Linux skip one PowerShell-only test |
+| `experiments/` | agent baseline: local models fixing failures with and without FixFirst ([README](experiments/agent_baseline/README.md)) |
 | `examples/` | recorded runs, datasets, experiment reports and the real-world check ([overview](examples/README.md)) |
 | `docs/` | architecture, data sources, generalisation check, real-project case studies, course alignment, team notes (`队友说明.md`), optimisation log; `docs/history/` keeps earlier versions' records |
 | `scripts/` | setup (macOS/Linux/Windows), real-project set-up and batch runs, demo recording |
 
 ```bash
-.venv/bin/ruff check src tests scripts
+.venv/bin/ruff check src tests scripts experiments
 .venv/bin/pytest -q
 ```
 

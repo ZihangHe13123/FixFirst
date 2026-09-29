@@ -13,8 +13,10 @@ component names the root cause of a failing test:
 
 Two cross-validation protocols train the tree without the held-out group: leave one
 project template out (unseen project structure) and leave one scenario out (unseen fault
-type). The rule base and knowledge graph are fixed and were written by the authors, which
-the report states. Older controlled datasets are evaluated for message grouping only.
+type). With ``--train`` a dataset is instead a held-out test set (for example the hard cases,
+``--suite hard``) for a tree trained on another dataset. The rule base and knowledge graph are
+fixed and were written by the authors, which the report states. Older controlled datasets are
+evaluated for message grouping only.
 """
 
 from collections import Counter
@@ -48,13 +50,13 @@ LABELS = {
 }
 
 
-def load_rows(dataset: Path) -> list[dict]:
+def load_rows(dataset: Path, skip=()) -> list[dict]:
     rows = []
     with (dataset / "cases.jsonl").open(encoding="utf-8") as stream:
         for line in stream:
             case = json.loads(line)
             session = load_session(dataset, case["session"])
-            with_kg, without_kg = diagnose(session), diagnose(session, knowledge=False)
+            with_kg, without_kg = diagnose(session, skip=skip), diagnose(session, knowledge=False, skip=skip)
             issues = {i.issue_id: i for i in session.issues}
             for issue_id, item in with_kg.items():
                 issue = issues[issue_id]
@@ -76,6 +78,7 @@ def load_rows(dataset: Path) -> list[dict]:
                         "rules": item["rule"],
                         "rule_id": item["rule_id"],
                         "likely": item["likely"],
+                        "likely_rule_id": item["likely_rule_id"],
                         "rules_no_kg": without_kg[issue_id]["rule"],
                         "likely_no_kg": without_kg[issue_id]["likely"],
                     }
@@ -122,23 +125,29 @@ def bootstrap(truth, predicted, cases, samples=2000, seed=7) -> list[float]:
     return [round(values[int(0.025 * samples)], 4), round(values[int(0.975 * samples) - 1], 4)]
 
 
+def predict(row: dict, model: dict) -> dict:
+    """Every method's diagnosis for one issue, with the tree `model`."""
+    label, confidence = predict_tree(row["features"], model)
+    suggestion = label if confidence >= MIN_CONFIDENCE else None
+    return {
+        "naive_v03": naive_diagnosis(row["kind"]),
+        "rules_no_kg": row["rules_no_kg"],
+        "rules": row["rules"],
+        "rules_heur": row["rules"] or row["likely"],
+        "tree": label,
+        "hybrid_no_kg": row["rules_no_kg"] or row["likely_no_kg"] or suggestion,
+        "hybrid": row["rules"] or row["likely"] or suggestion,
+    }
+
+
 def cross_validate(rows: list[dict], key: str) -> dict:
     predictions = {method: [None] * len(rows) for method in METHODS}
     for group in sorted({r[key] for r in rows}):
-        train = [r for r in rows if r[key] != group]
-        model = train_tree(train)
+        model = train_tree([r for r in rows if r[key] != group])
         for index, row in enumerate(rows):
-            if row[key] != group:
-                continue
-            label, confidence = predict_tree(row["features"], model)
-            suggestion = label if confidence >= MIN_CONFIDENCE else None
-            predictions["naive_v03"][index] = naive_diagnosis(row["kind"])
-            predictions["rules_no_kg"][index] = row["rules_no_kg"]
-            predictions["rules"][index] = row["rules"]
-            predictions["rules_heur"][index] = row["rules"] or row["likely"]
-            predictions["tree"][index] = label
-            predictions["hybrid_no_kg"][index] = row["rules_no_kg"] or row["likely_no_kg"] or suggestion
-            predictions["hybrid"][index] = row["rules"] or row["likely"] or suggestion
+            if row[key] == group:
+                for method, value in predict(row, model).items():
+                    predictions[method][index] = value
     return predictions
 
 
@@ -423,12 +432,101 @@ def evaluate_grouping(dataset: Path, output: Path, sbert_model=None) -> Path:
     return output / "REPORT.md"
 
 
-def evaluate(dataset: Path, output: Path, sbert_model=None) -> Path:
+def evaluate_transfer(dataset: Path, train: Path, output: Path, skip=()) -> Path:
+    """Test on one dataset (for example the hard cases) with a tree trained on another.
+
+    ``skip`` leaves rules out of the test set's reasoning (a before/after comparison).
+    """
+    manifest = json.loads((dataset / "manifest.json").read_text(encoding="utf-8"))
+    train_rows, rows = load_rows(train), load_rows(dataset, skip)
+    if not rows:
+        raise ValueError("The dataset has no failing tests to diagnose")
+    model = train_tree(train_rows)
+    predictions = {method: [] for method in METHODS}
+    said = []  # what the product (hybrid) concluded, and from which part
+    for row in rows:
+        predicted = predict(row, model)
+        for method, value in predicted.items():
+            predictions[method].append(value)
+        source = (row["rule_id"] if row["rules"] else row["likely_rule_id"] if row["likely"]
+                  else "tree" if predicted["hybrid"] else "none")
+        said.append(f"{predicted['hybrid'] or 'none'} ({source})")
+    results = {
+        "origin": manifest["origin"],
+        "suite": manifest.get("suite"),
+        "cases": len({r["case_id"] for r in rows}),
+        "issues": len(rows),
+        "labels": dict(Counter(r["label"] for r in rows)),
+        "trained_on": {"dataset": train.name, "issues": len(train_rows)},
+        "skipped_rules": sorted(skip),
+        "library_versions": manifest.get("library_versions", {}),
+        # Overall only: a held-out set may have no cases the knowledge graph covers.
+        "summary": {
+            method: {
+                **score([r["label"] for r in rows], predictions[method]),
+                "accuracy_95ci": bootstrap([r["label"] for r in rows], predictions[method],
+                                           [r["case_id"] for r in rows]),
+            }
+            for method in METHODS
+        },
+        "per_scenario": per_scenario(rows, predictions),
+        "hybrid_said": {
+            s: dict(Counter(said[i] for i, r in enumerate(rows) if r["scenario"] == s))
+            for s in sorted({r["scenario"] for r in rows})
+        },
+        "hybrid_confusion": confusion(rows, predictions["hybrid"]),
+        "limitations": manifest["limitations"],
+    }
+    (output / "metrics.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
+    with (output / "predictions.csv").open("w", newline="", encoding="utf-8") as stream:
+        writer = csv.writer(stream)
+        writer.writerow(["case_id", "scenario", "label", "exception", "rule_id", *METHODS, "message"])
+        for index, row in enumerate(rows):
+            writer.writerow([row["case_id"], row["scenario"], row["label"], row["exception"],
+                             row["rule_id"] or "", *(predictions[m][index] or "" for m in METHODS),
+                             row["message"]])
+    (output / "REPORT.md").write_text(transfer_report(results), encoding="utf-8")
+    return output / "REPORT.md"
+
+
+def transfer_report(results: dict) -> str:
+    labels = ", ".join(f"{k} {v}" for k, v in sorted(results["labels"].items()))
+    lines = [
+        "# Diagnosis on a held-out set",
+        "",
+        f"{results['cases']} executed cases ({results['issues']} failing-test issues). Labels: {labels}. "
+        f"The decision tree was trained on {results['trained_on']['dataset']} "
+        f"({results['trained_on']['issues']} issues); the rule base and knowledge graph were not "
+        "changed for these cases."
+        + (f" Rules left out: {', '.join(results['skipped_rules'])}." if results["skipped_rules"] else ""),
+        "",
+        *markdown_table(results["summary"]),
+        "",
+        "## Per scenario (accuracy)",
+        "",
+        "| Scenario | Cause | Rules | Rules + heuristics | Tree | FixFirst | FixFirst said (cases) |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for entry in results["per_scenario"]:
+        said = "; ".join(f"{k} ×{v}" for k, v in results["hybrid_said"][entry["scenario"]].items())
+        lines.append(
+            f"| {entry['scenario']} | {entry['label']} | {entry['rules']:.2f} | {entry['rules_heur']:.2f} "
+            f"| {entry['tree']:.2f} | {entry['hybrid']:.2f} | {said} |"
+        )
+    lines += ["", results["limitations"], ""]
+    return "\n".join(lines)
+
+
+def evaluate(dataset: Path, output: Path, sbert_model=None, train: Path | None = None, skip=()) -> Path:
     dataset, output = dataset.resolve(), output.resolve()
     if output.exists():
         raise ValueError("Evaluation directory already exists; use a new output directory")
+    if skip and not train:
+        raise ValueError("--skip-rules needs --train (a held-out test set)")
     output.mkdir(parents=True)
     manifest = json.loads((dataset / "manifest.json").read_text(encoding="utf-8"))
+    if train:
+        return evaluate_transfer(dataset, train.resolve(), output, tuple(skip))
     if manifest.get("origin") == "diagnosis_injection":
         return evaluate_diagnosis(dataset, output)
     return evaluate_grouping(dataset, output, sbert_model)

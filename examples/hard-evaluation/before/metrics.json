@@ -1,0 +1,252 @@
+{
+  "origin": "diagnosis_injection",
+  "suite": "hard",
+  "cases": 30,
+  "issues": 30,
+  "labels": {
+    "version_incompatibility": 25,
+    "local_module": 5
+  },
+  "trained_on": {
+    "dataset": "diagnosis-dataset",
+    "issues": 215
+  },
+  "skipped_rules": [
+    "H07",
+    "H08"
+  ],
+  "library_versions": {
+    "numpy": "2.5.3",
+    "click": "8.5.0",
+    "packaging": "26.3",
+    "scikit-learn": "1.9.0",
+    "pytest": "9.1.1",
+    "pydantic": "2.13.5",
+    "PyYAML": "6.0.3",
+    "Jinja2": "3.1.6",
+    "MarkupSafe": "3.0.3",
+    "scipy": "1.18.1"
+  },
+  "summary": {
+    "naive_v03": {
+      "n": 30,
+      "accuracy": 0.0,
+      "macro_f1": 0.0,
+      "coverage": 1.0,
+      "precision_when_answered": 0.0,
+      "accuracy_95ci": [
+        0.0,
+        0.0
+      ]
+    },
+    "rules_no_kg": {
+      "n": 30,
+      "accuracy": 0.1667,
+      "macro_f1": 0.2,
+      "coverage": 0.3333,
+      "precision_when_answered": 0.5,
+      "accuracy_95ci": [
+        0.0333,
+        0.3
+      ]
+    },
+    "rules": {
+      "n": 30,
+      "accuracy": 0.1667,
+      "macro_f1": 0.2,
+      "coverage": 0.3333,
+      "precision_when_answered": 0.5,
+      "accuracy_95ci": [
+        0.0333,
+        0.3
+      ]
+    },
+    "rules_heur": {
+      "n": 30,
+      "accuracy": 0.1667,
+      "macro_f1": 0.2,
+      "coverage": 0.3333,
+      "precision_when_answered": 0.5,
+      "accuracy_95ci": [
+        0.0333,
+        0.3
+      ]
+    },
+    "tree": {
+      "n": 30,
+      "accuracy": 0.1667,
+      "macro_f1": 0.2,
+      "coverage": 1.0,
+      "precision_when_answered": 0.1667,
+      "accuracy_95ci": [
+        0.0333,
+        0.3
+      ]
+    },
+    "hybrid_no_kg": {
+      "n": 30,
+      "accuracy": 0.1667,
+      "macro_f1": 0.2,
+      "coverage": 0.8333,
+      "precision_when_answered": 0.2,
+      "accuracy_95ci": [
+        0.0333,
+        0.3
+      ]
+    },
+    "hybrid": {
+      "n": 30,
+      "accuracy": 0.1667,
+      "macro_f1": 0.2,
+      "coverage": 0.8333,
+      "precision_when_answered": 0.2,
+      "accuracy_95ci": [
+        0.0333,
+        0.3
+      ]
+    }
+  },
+  "per_scenario": [
+    {
+      "scenario": "ml_renamed_then_alias",
+      "label": "local_module",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 0.0,
+      "rules_no_kg": 1.0,
+      "rules": 1.0,
+      "rules_heur": 1.0,
+      "tree": 1.0,
+      "hybrid_no_kg": 1.0,
+      "hybrid": 1.0
+    },
+    {
+      "scenario": "vb_click_mix_stderr",
+      "label": "version_incompatibility",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 0.0,
+      "hybrid_no_kg": 0.0,
+      "hybrid": 0.0
+    },
+    {
+      "scenario": "vb_numpy_promotion",
+      "label": "version_incompatibility",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 0.0,
+      "hybrid_no_kg": 0.0,
+      "hybrid": 0.0
+    },
+    {
+      "scenario": "vb_numpy_repr",
+      "label": "version_incompatibility",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 0.0,
+      "hybrid_no_kg": 0.0,
+      "hybrid": 0.0
+    },
+    {
+      "scenario": "vb_pydantic_coercion",
+      "label": "version_incompatibility",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 0.0,
+      "hybrid_no_kg": 0.0,
+      "hybrid": 0.0
+    },
+    {
+      "scenario": "vb_yaml_loader",
+      "label": "version_incompatibility",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 0.0,
+      "hybrid_no_kg": 0.0,
+      "hybrid": 0.0
+    }
+  ],
+  "hybrid_said": {
+    "ml_renamed_then_alias": {
+      "local_module (D16)": 5
+    },
+    "vb_click_mix_stderr": {
+      "none (none)": 5
+    },
+    "vb_numpy_promotion": {
+      "code_defect (tree)": 5
+    },
+    "vb_numpy_repr": {
+      "code_defect (D40)": 5
+    },
+    "vb_pydantic_coercion": {
+      "code_defect (tree)": 5
+    },
+    "vb_yaml_loader": {
+      "code_defect (tree)": 5
+    }
+  },
+  "hybrid_confusion": {
+    "missing_dependency": {
+      "missing_dependency": 0,
+      "local_module": 0,
+      "version_incompatibility": 0,
+      "config_missing": 0,
+      "code_defect": 0,
+      "none": 0
+    },
+    "local_module": {
+      "missing_dependency": 0,
+      "local_module": 5,
+      "version_incompatibility": 0,
+      "config_missing": 0,
+      "code_defect": 0,
+      "none": 0
+    },
+    "version_incompatibility": {
+      "missing_dependency": 0,
+      "local_module": 0,
+      "version_incompatibility": 0,
+      "config_missing": 0,
+      "code_defect": 20,
+      "none": 5
+    },
+    "config_missing": {
+      "missing_dependency": 0,
+      "local_module": 0,
+      "version_incompatibility": 0,
+      "config_missing": 0,
+      "code_defect": 0,
+      "none": 0
+    },
+    "code_defect": {
+      "missing_dependency": 0,
+      "local_module": 0,
+      "version_incompatibility": 0,
+      "config_missing": 0,
+      "code_defect": 0,
+      "none": 0
+    }
+  },
+  "limitations": "Hard cases for evaluation only: documented behaviour changes of installed libraries and one two-layer fault (labelled by the first layer), executed against real installed libraries. None is in the knowledge base, and the decision tree is never trained on them."
+}

@@ -97,15 +97,19 @@ def base_facts(session: Session, active, knowledge=True) -> tuple[list[Fact], di
     return facts, details
 
 
-def diagnose(session: Session, knowledge=True) -> dict:
-    """Rule diagnoses and evidence per open pytest issue, without planning (for experiments)."""
+def diagnose(session: Session, knowledge=True, skip=()) -> dict:
+    """Rule diagnoses and evidence per open pytest issue, without planning (for experiments).
+
+    ``skip`` leaves rules out by id, for ablations.
+    """
     current = environment_id(session.target_python)
     active = [
         i for i in session.issues
         if i.status != "resolved" and i.environment_id in (current, "unknown")
     ]
     facts, details = base_facts(session, active, knowledge)
-    base = engine.run(rule_base(), facts, phases=("derive", "diagnose", "heuristic"))
+    rules = [r for r in rule_base() if r.rule_id not in skip]
+    base = engine.run(rules, facts, phases=("derive", "diagnose", "heuristic"))
     result = {}
     for issue_id, evidence in details.items():
         found = next(
@@ -118,6 +122,7 @@ def diagnose(session: Session, knowledge=True) -> dict:
             "rule": found.value if found else None,
             "rule_id": found.rule_id if found else None,
             "likely": likely.value if likely else None,
+            "likely_rule_id": likely.rule_id if likely else None,
             "evidence": evidence,
         }
     return result

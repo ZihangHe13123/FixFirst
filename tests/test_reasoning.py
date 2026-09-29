@@ -499,3 +499,92 @@ def test_a_failure_inside_a_library_newer_than_the_lock_file_suggests_the_tested
     # A patch or minor difference alone is not suspicious.
     facts[1] = fact("dist:sqlalchemy", "installed_version", "1.4.54")
     assert ("issue-1", "likely", "version_incompatibility") not in engine.run(rule_base(), facts).keys
+
+
+def test_behaviour_change_heuristics_need_a_library_call_or_a_declared_older_major():
+    from fixfirst import engine
+    from fixfirst.models import Fact
+
+    def fact(s, p, v):
+        return Fact(fact_id=f"{s}:{p}:{v}", subject=s, predicate=p, value=v)
+
+    # H07: a function imported from a library rejects the call's arguments.
+    call = [
+        fact("issue-1", "exception", "TypeError"), fact("issue-1", "signal", "call_signature"),
+        fact("issue-1", "callee", "callable:yaml.load"), fact("issue-1", "callee_module", "module:yaml"),
+        fact("module:yaml", "provided_by", "dist:pyyaml"), fact("dist:pyyaml", "installed_version", "6.0.3"),
+    ]
+    base = engine.run(rule_base(), call)
+    assert ("issue-1", "likely", "version_incompatibility") in base.keys
+    actions = {a.action_id: a for a in engine.propose(rule_base(), base)}
+    assert "call-yaml.load" in actions and "declared-pyyaml" not in actions
+    # A project function that rejects its arguments is a code defect, not a version change.
+    local = [*call, fact("module:yaml", "is_local", "yaml.py")]
+    assert ("issue-1", "likely", "version_incompatibility") not in engine.run(rule_base(), local).keys
+    # With a declared lower bound one major version back, going back is offered too.
+    declared = [*call, fact("dist:pyyaml", "declared_spec", "pyyaml>=5.1"),
+                fact("dist:pyyaml", "declared_minimum", "5.1"), fact("dist:pyyaml", "declared_major_below", "6"),
+                fact("dist:pyyaml", "declared_in_file", "requirements.txt")]
+    actions = {a.action_id: a for a in engine.propose(rule_base(), engine.run(rule_base(), declared))}
+    assert actions["call-yaml.load"].template["cost"] < actions["declared-pyyaml"].template["cost"]
+    assert engine.render(actions["declared-pyyaml"].template["pip_install"], actions["declared-pyyaml"].bindings) == "pyyaml<6"
+
+    # H08: raised inside a library the project calls, one major version past the declared bound.
+    inside = [
+        fact("issue-2", "raised_by_library", "dist:packaging"), fact("issue-2", "project_calls", "dist:packaging"),
+        fact("dist:packaging", "installed_version", "26.3"), fact("dist:packaging", "declared_minimum", "20.0"),
+    ]
+    assert ("issue-2", "likely", "version_incompatibility") in engine.run(rule_base(), inside).keys
+    # Not when only the library's own code is involved, not for the test runner, not within a major.
+    assert ("issue-2", "likely", "version_incompatibility") not in engine.run(rule_base(), inside[:1] + inside[2:]).keys
+    runner = [*inside, fact("dist:packaging", "is_test_runner", "yes")]
+    assert ("issue-2", "likely", "version_incompatibility") not in engine.run(rule_base(), runner).keys
+    same_major = [*inside[:3], fact("dist:packaging", "declared_minimum", "26.0")]
+    assert ("issue-2", "likely", "version_incompatibility") not in engine.run(rule_base(), same_major).keys
+
+
+def test_a_hard_case_is_observed_and_its_call_change_recognised(tmp_path):
+    yaml = pytest.importorskip("yaml")
+    if int(yaml.__version__.split(".")[0]) < 6:
+        pytest.skip("the scenario needs PyYAML 6, where yaml.load requires a Loader")
+    from fixfirst.hard_cases import HARD_SCENARIOS
+    from fixfirst.reasoning import diagnose
+
+    scenario = next(s for s in HARD_SCENARIOS if s.scenario_id == "vb_yaml_loader")
+    manifest = json.loads(
+        cases.build_dataset(tmp_path / "hard", templates=[cases.TEMPLATES[0]], scenarios=[scenario]).read_text()
+    )
+    assert [c["label"] for c in manifest["cases"]] == ["version_incompatibility"] and not manifest["rejected"]
+    row = json.loads((tmp_path / "hard" / "cases.jsonl").read_text().splitlines()[0])
+    found = diagnose(cases.load_session(tmp_path / "hard", row["session"]))
+    assert [(v["likely"], v["likely_rule_id"]) for v in found.values()] == [("version_incompatibility", "H07")]
+
+
+def test_a_library_rejecting_a_call_and_a_library_raising_after_a_major_upgrade_are_likely_version_changes(tmp_path):
+    rejected = tmp_path / "rejected"
+    rejected.mkdir()
+    (rejected / "requirements.txt").write_text("Jinja2>=2.10\n")
+    (rejected / "render.py").write_text(
+        "from jinja2 import Environment\n\n\ndef make():\n    return Environment(autoescape_all=True)\n"
+    )
+    (rejected / "test_render.py").write_text("from render import make\n\n\ndef test_make():\n    assert make()\n")
+    session, issues = scan_project(rejected)
+    view = build_view(session)
+    assert len(issues) == 1 and issues[0].diagnosis == "version_incompatibility"
+    assert issues[0].diagnosis_source == "heuristic" and issues[0].diagnosis_rule == "H07"
+    assert view["steps"][0]["title"].startswith("Update the call to jinja2.Environment for jinja2 3.")
+    assert any(s["title"].startswith("Try jinja2 below 3:") for s in view["steps"])
+
+    raised = tmp_path / "raised"
+    raised.mkdir()
+    (raised / "requirements.txt").write_text("packaging>=20.0\n")
+    (raised / "releases.py").write_text(
+        "from packaging.version import parse\n\n\ndef newest(versions):\n    return max(versions, key=parse)\n"
+    )
+    (raised / "test_releases.py").write_text(
+        "from releases import newest\n\n\ndef test_newest():\n    assert newest(['1.0', '2.0', 'nightly']) == '2.0'\n"
+    )
+    session, issues = scan_project(raised)
+    view = build_view(session)
+    assert len(issues) == 1 and issues[0].diagnosis_rule == "H08"
+    assert view["steps"][0]["title"].startswith("Try packaging below 21: the project declares packaging>=20.0")

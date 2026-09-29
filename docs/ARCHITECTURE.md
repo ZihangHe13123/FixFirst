@@ -29,7 +29,8 @@ page describes the code as of v0.6. `models.py` holds the shared Pydantic record
             │                        completed check of the same scope and interpreter passes
             ▼
  knowledge_graph.py, report.py,      evidence graph + queries, HTML/JSON reports,
- web.py, cli.py, interactive.py      local web interface, CLI, terminal menu
+ web.py, cli.py, interactive.py,     local web interface, CLI, terminal menu,
+ mcp_server.py                       tools for coding agents over MCP (stdio)
 ```
 
 ## One troubleshooting round
@@ -74,7 +75,7 @@ page describes the code as of v0.6. `models.py` holds the shared Pydantic record
    - `fallback`: the tree's suggestion, only when neither matched (F01);
    - `plan`: actions (P01–P51), merged by action id across issues.
 
-   99 rules in total: 10 derive, 34 diagnose, 6 heuristic, 1 fallback, 48 plan.
+   103 rules in total: 10 derive, 34 diagnose, 8 heuristic, 1 fallback, 50 plan.
 
    The web page shows steps for issues concluded `affects_running = no` as optional and
    leaves them out of the problem count.

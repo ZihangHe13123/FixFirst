@@ -133,6 +133,20 @@ def test_setup_py_and_flit_declarations_are_read_without_running_them(tmp_path):
     }
 
 
+def test_imports_are_read_statically_and_ambiguous_names_left_out(tmp_path):
+    from fixfirst.project import index_imports
+
+    (tmp_path / "a.py").write_text(
+        "import numpy as np\nimport yaml, os.path\nfrom click.testing import CliRunner as Runner\n"
+        "from . import sibling\nfrom .helpers import tool\nfrom json import loads\n"
+    )
+    (tmp_path / "b.py").write_text("from pickle import loads\n")  # makes `loads` ambiguous
+    (tmp_path / "c.py").write_text("raise SystemExit('never executed')\nfrom pickle import dumps\n")
+    (tmp_path / "d.py").write_text("from yaml import load\nimport this is not python\n")  # unreadable
+    names = index_imports(tmp_path, ["a.py", "b.py", "c.py", "d.py", "missing.py"])
+    assert names == {"np": "numpy", "yaml": "yaml", "os": "os", "Runner": "click.testing.CliRunner", "dumps": "pickle.dumps"}
+
+
 def test_lock_files_record_the_versions_a_project_was_tested_with(tmp_path):
     from fixfirst.project import tested_versions
 

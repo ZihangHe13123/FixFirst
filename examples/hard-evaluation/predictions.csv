@@ -1,0 +1,61 @@
+case_id,scenario,label,exception,rule_id,naive_v03,rules_no_kg,rules,rules_heur,tree,hybrid_no_kg,hybrid,message
+flat-shop--vb_numpy_repr,vb_numpy_repr,version_incompatibility,AssertionError,D40,code_defect,code_defect,code_defect,code_defect,code_defect,code_defect,code_defect,"assert 'max=np.float64(2.0)' == 'max=2.0'
+  
+  - max=2.0
+  + max=np.float64(2.0)"
+flat-shop--vb_numpy_promotion,vb_numpy_promotion,version_incompatibility,TypeError,,code_defect,,,,code_defect,code_defect,code_defect,Object of type float32 is not JSON serializable
+flat-shop--vb_yaml_loader,vb_yaml_loader,version_incompatibility,TypeError,,code_defect,,,version_incompatibility,code_defect,version_incompatibility,version_incompatibility,load() missing 1 required positional argument: 'Loader'
+flat-shop--vb_pydantic_coercion,vb_pydantic_coercion,version_incompatibility,ValidationError,,code_defect,,,,code_defect,code_defect,code_defect,"1 validation error for Label
+code
+  Input should be a valid string [type=string_type, input_value=7, input_type=int]
+    For further information visit https://e"
+flat-shop--vb_click_mix_stderr,vb_click_mix_stderr,version_incompatibility,TypeError,,code_defect,,,version_incompatibility,code_defect,version_incompatibility,version_incompatibility,CliRunner.__init__() got an unexpected keyword argument 'mix_stderr'
+flat-shop--ml_renamed_then_alias,ml_renamed_then_alias,local_module,ModuleNotFoundError,D16,missing_dependency,local_module,local_module,local_module,local_module,local_module,local_module,No module named 'helper'
+src-billing--vb_numpy_repr,vb_numpy_repr,version_incompatibility,AssertionError,D40,code_defect,code_defect,code_defect,code_defect,code_defect,code_defect,code_defect,"assert 'max=np.float64(2.0)' == 'max=2.0'
+  
+  - max=2.0
+  + max=np.float64(2.0)"
+src-billing--vb_numpy_promotion,vb_numpy_promotion,version_incompatibility,TypeError,,code_defect,,,,code_defect,code_defect,code_defect,Object of type float32 is not JSON serializable
+src-billing--vb_yaml_loader,vb_yaml_loader,version_incompatibility,TypeError,,code_defect,,,version_incompatibility,code_defect,version_incompatibility,version_incompatibility,load() missing 1 required positional argument: 'Loader'
+src-billing--vb_pydantic_coercion,vb_pydantic_coercion,version_incompatibility,ValidationError,,code_defect,,,,code_defect,code_defect,code_defect,"1 validation error for Label
+code
+  Input should be a valid string [type=string_type, input_value=7, input_type=int]
+    For further information visit https://e"
+src-billing--vb_click_mix_stderr,vb_click_mix_stderr,version_incompatibility,TypeError,,code_defect,,,version_incompatibility,code_defect,version_incompatibility,version_incompatibility,CliRunner.__init__() got an unexpected keyword argument 'mix_stderr'
+src-billing--ml_renamed_then_alias,ml_renamed_then_alias,local_module,ModuleNotFoundError,D16,missing_dependency,local_module,local_module,local_module,local_module,local_module,local_module,No module named 'billing.rates'
+pkg-inventory--vb_numpy_repr,vb_numpy_repr,version_incompatibility,AssertionError,D40,code_defect,code_defect,code_defect,code_defect,code_defect,code_defect,code_defect,"assert 'max=np.float64(2.0)' == 'max=2.0'
+  
+  - max=2.0
+  + max=np.float64(2.0)"
+pkg-inventory--vb_numpy_promotion,vb_numpy_promotion,version_incompatibility,TypeError,,code_defect,,,,code_defect,code_defect,code_defect,Object of type float32 is not JSON serializable
+pkg-inventory--vb_yaml_loader,vb_yaml_loader,version_incompatibility,TypeError,,code_defect,,,version_incompatibility,code_defect,version_incompatibility,version_incompatibility,load() missing 1 required positional argument: 'Loader'
+pkg-inventory--vb_pydantic_coercion,vb_pydantic_coercion,version_incompatibility,ValidationError,,code_defect,,,,code_defect,code_defect,code_defect,"1 validation error for Label
+code
+  Input should be a valid string [type=string_type, input_value=7, input_type=int]
+    For further information visit https://e"
+pkg-inventory--vb_click_mix_stderr,vb_click_mix_stderr,version_incompatibility,TypeError,,code_defect,,,version_incompatibility,code_defect,version_incompatibility,version_incompatibility,CliRunner.__init__() got an unexpected keyword argument 'mix_stderr'
+pkg-inventory--ml_renamed_then_alias,ml_renamed_then_alias,local_module,ModuleNotFoundError,D16,missing_dependency,local_module,local_module,local_module,local_module,local_module,local_module,No module named 'inventory.utils.numbers'
+unittest-grades--vb_numpy_repr,vb_numpy_repr,version_incompatibility,AssertionError,D40,code_defect,code_defect,code_defect,code_defect,code_defect,code_defect,code_defect,"assert 'max=np.float64(2.0)' == 'max=2.0'
+  
+  - max=2.0
+  + max=np.float64(2.0)"
+unittest-grades--vb_numpy_promotion,vb_numpy_promotion,version_incompatibility,TypeError,,code_defect,,,,code_defect,code_defect,code_defect,Object of type float32 is not JSON serializable
+unittest-grades--vb_yaml_loader,vb_yaml_loader,version_incompatibility,TypeError,,code_defect,,,version_incompatibility,code_defect,version_incompatibility,version_incompatibility,load() missing 1 required positional argument: 'Loader'
+unittest-grades--vb_pydantic_coercion,vb_pydantic_coercion,version_incompatibility,ValidationError,,code_defect,,,,code_defect,code_defect,code_defect,"1 validation error for Label
+code
+  Input should be a valid string [type=string_type, input_value=7, input_type=int]
+    For further information visit https://e"
+unittest-grades--vb_click_mix_stderr,vb_click_mix_stderr,version_incompatibility,TypeError,,code_defect,,,version_incompatibility,code_defect,version_incompatibility,version_incompatibility,CliRunner.__init__() got an unexpected keyword argument 'mix_stderr'
+unittest-grades--ml_renamed_then_alias,ml_renamed_then_alias,local_module,ModuleNotFoundError,D16,missing_dependency,local_module,local_module,local_module,local_module,local_module,local_module,No module named 'grading_helpers'
+fixture-orders--vb_numpy_repr,vb_numpy_repr,version_incompatibility,AssertionError,D40,code_defect,code_defect,code_defect,code_defect,code_defect,code_defect,code_defect,"assert 'max=np.float64(2.0)' == 'max=2.0'
+  
+  - max=2.0
+  + max=np.float64(2.0)"
+fixture-orders--vb_numpy_promotion,vb_numpy_promotion,version_incompatibility,TypeError,,code_defect,,,,code_defect,code_defect,code_defect,Object of type float32 is not JSON serializable
+fixture-orders--vb_yaml_loader,vb_yaml_loader,version_incompatibility,TypeError,,code_defect,,,version_incompatibility,code_defect,version_incompatibility,version_incompatibility,load() missing 1 required positional argument: 'Loader'
+fixture-orders--vb_pydantic_coercion,vb_pydantic_coercion,version_incompatibility,ValidationError,,code_defect,,,,code_defect,code_defect,code_defect,"1 validation error for Label
+code
+  Input should be a valid string [type=string_type, input_value=7, input_type=int]
+    For further information visit https://e"
+fixture-orders--vb_click_mix_stderr,vb_click_mix_stderr,version_incompatibility,TypeError,,code_defect,,,version_incompatibility,code_defect,version_incompatibility,version_incompatibility,CliRunner.__init__() got an unexpected keyword argument 'mix_stderr'
+fixture-orders--ml_renamed_then_alias,ml_renamed_then_alias,local_module,ModuleNotFoundError,D16,missing_dependency,local_module,local_module,local_module,local_module,local_module,local_module,No module named 'orders.tax'

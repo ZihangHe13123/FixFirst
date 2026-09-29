@@ -26,6 +26,12 @@ MODULE_ATTR = re.compile(r"module '([\w.]+)' has no attribute '(\w+)'")
 OBJECT_ATTR = re.compile(r"'(\w+)' object has no attribute '(\w+)'")
 KWARG = re.compile(r"(?:([\w.]+)\(\) )?got an unexpected keyword argument '(\w+)'")
 POSITIONAL = re.compile(r"([\w.]+)\(\) (?:takes|missing) \d+ (?:positional|required)")
+CALL_SIGNATURE = re.compile(
+    r"missing \d+ required (?:positional|keyword-only) arguments?"
+    r"|takes (?:from \d+ to )?\d+ positional arguments? but \d+ (?:was|were) given"
+    r"|got an unexpected keyword argument|got multiple values for argument"
+    r"|positional-only arguments? passed as keyword"
+)
 MISSING_FILE = re.compile(r"(?:No such file or directory|\[WinError [23]\][^\r\n:]*): '([^']+)'")
 PIP_CONFLICT = re.compile(
     r"^(?P<who>\S+) (?P<version>\S+) has requirement (?P<requirement>.+), but you have \S+ \S+?\.?$"
@@ -450,6 +456,25 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
     evidence["signals"] = [name for name in SIGNALS if signals[name]]
     evidence["modules"] = [m.split(".")[0] for m in evidence["modules"]]
     evidence["modules"] = list(dict.fromkeys(evidence["modules"]))
+    # A call rejected for its arguments, and what was called as the code spells it
+    # (``yaml.load``, ``CliRunner``). Kept out of the features, so the tree is unchanged.
+    evidence["call_signature"] = exception == "TypeError" and bool(CALL_SIGNATURE.search(message))
+    evidence["callees"] = []
+    if evidence["call_signature"]:
+        lines = executed_lines(traceback)
+        for owner in evidence["owners"]:
+            call = next(
+                (m for m in (re.search(rf"([A-Za-z_][\w.]*\.)?\b{re.escape(owner)}\s*\(", line)
+                             for line in reversed(lines)) if m),
+                None,
+            )
+            add("callees", (call[1] or "") + owner if call else owner)
+    # Did the project's own code call into the library that raised?
+    first = next((i for i, (path, kind) in enumerate(zip(frames, kinds))
+                  if kind == "third_party" and library and f"/{library}" in path.replace("\\", "/")), None)
+    evidence["project_calls_library"] = first is not None and any(
+        kind in ("project", "test") for kind in kinds[:first]
+    )
     return evidence
 
 
@@ -622,9 +647,25 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
             names = environment.get("import_distributions", {}).get(evidence["library"]) or [
                 evidence["library"]
             ]
-            facts.append(
-                observed(subject, "raised_by_library", "dist:" + canonicalize_name(names[0]), refs)
-            )
+            dist = "dist:" + canonicalize_name(names[0])
+            facts.append(observed(subject, "raised_by_library", dist, refs))
+            if evidence.get("project_calls_library"):
+                facts.append(observed(subject, "project_calls", dist, refs))
+            if dist == "dist:pytest" or dist.startswith("dist:pytest-"):
+                facts.append(observed(dist, "is_test_runner", "yes", refs))
+        if evidence.get("call_signature"):
+            facts.append(observed(subject, "signal", "call_signature", refs))
+            # Resolve what was called through the project's own imports (read statically).
+            imported = project.get("imported_names", {})
+            for callee in evidence["callees"]:
+                head, _, rest = callee.partition(".")
+                if head not in imported:
+                    continue
+                qualified = imported[head] + (f".{rest}" if rest else "")
+                top = qualified.split(".")[0]
+                facts.append(observed(subject, "callee", "callable:" + qualified, refs))
+                facts.append(observed(subject, "callee_module", "module:" + top, refs))
+                modules.add(top)
         details[subject] = evidence
     contexts = {}
     for module in sorted(modules):
@@ -685,6 +726,28 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
         # Stay in the release series the project was tested with: behaviour changes also land
         # in minor releases (SQLAlchemy 1.4 already changed result objects).
         facts.append(observed(dist, "tested_series_below", f"{tested.major}.{tested.minor + 1}", ref))
+    # The lowest version the project declares, for the libraries involved in a failure: code
+    # written for 1.x may not behave the same on 2.x.
+    involved = {f.value for f in facts if f.predicate in ("raised_by_library", "provided_by")}
+    for row in project.get("declarations", []):
+        dist = "dist:" + row["name"]
+        if dist not in involved:
+            continue
+        try:
+            requirement = Requirement(row["requirement"])
+            lows = [
+                Version(s.version) for s in requirement.specifier
+                if s.operator in (">=", "~=", "==", "===", ">") and "*" not in s.version
+            ]
+        except (InvalidRequirement, InvalidVersion):
+            continue
+        if not lows:
+            continue
+        low, ref = max(lows), [f"{project_run.run_id}:stdout:1"]
+        facts.append(observed(dist, "declared_spec", f"{row['name']}{requirement.specifier}", ref))
+        facts.append(observed(dist, "declared_minimum", str(low), ref))
+        facts.append(observed(dist, "declared_major_below", str(low.major + 1), ref))
+        facts.append(observed(dist, "declared_in_file", row["source"], ref))
     # Release searches (versions.py): which releases still provide a name.
     searches = {}
     for run in session.runs:

@@ -20,8 +20,8 @@ def parser():
     )
     cli.add_argument(
         "--store",
-        default=os.environ.get("FIXFIRST_STORE", ".fixfirst"),
-        help="directory that holds troubleshooting sessions",
+        help="directory that holds troubleshooting sessions (default: $FIXFIRST_STORE, "
+        "else .fixfirst; for mcp, ~/.fixfirst/sessions)",
     )
     sub = cli.add_subparsers(dest="command", required=True)
     init = sub.add_parser("init", help="create a session (does not run the project)")
@@ -38,6 +38,7 @@ def parser():
     serve = sub.add_parser("serve", help="open the local web interface")
     serve.add_argument("--port", type=int, default=0, help="port on 127.0.0.1 (default: any free)")
     serve.add_argument("--no-open", action="store_true", help="do not open a browser")
+    sub.add_parser("mcp", help="serve FixFirst to coding agents over MCP (stdio)")
     for name, help_text in [
         ("scan", "run checks (pytest imports project code)"),
         ("import", "import an existing log"),
@@ -103,11 +104,19 @@ def parser():
     )
     dataset = sub.add_parser("dataset", help="generate a labelled dataset by real execution")
     dataset.add_argument("--output", default="workbench/dataset")
-    dataset.add_argument("--suite", choices=["diagnosis", "collection", "execution"], default="diagnosis")
+    dataset.add_argument(
+        "--suite", choices=["diagnosis", "hard", "collection", "execution"], default="diagnosis"
+    )
     evaluation = sub.add_parser("evaluate", help="run the experiments on a dataset")
     evaluation.add_argument("dataset")
     evaluation.add_argument("--output", default="workbench/evaluation")
     evaluation.add_argument("--sbert-model")
+    evaluation.add_argument(
+        "--train", help="diagnosis dataset to train the tree on; DATASET is then a held-out test set"
+    )
+    evaluation.add_argument(
+        "--skip-rules", nargs="+", default=[], metavar="RULE", help="leave these rules out (with --train)"
+    )
     historical = sub.add_parser("historical", help="replay sourced upstream regressions offline")
     historical.add_argument("--assets", required=True, help="directory with manifest.json and wheels")
     historical.add_argument("--output", required=True, help="a new output directory")
@@ -125,13 +134,22 @@ def show(session):
         print(f"  {action.priority}. {action.action_id} — {action.title}")
 
 
+def default_store(command):
+    # An agent starts the MCP server inside the project it is fixing; keep sessions out of it.
+    return str(Path.home() / ".fixfirst" / "sessions") if command == "mcp" else ".fixfirst"
+
+
 def main(argv=None):
     for stream in (sys.stdout, sys.stderr):
         if hasattr(stream, "reconfigure"):
             stream.reconfigure(errors="backslashreplace")
     args = parser().parse_args(argv)
-    store = Store(args.store)
+    store = Store(args.store or os.environ.get("FIXFIRST_STORE") or default_store(args.command))
     try:
+        if args.command == "mcp":
+            from .mcp_server import serve as serve_mcp
+
+            return serve_mcp(store.root)
         if args.command == "historical":
             from .historical_cases import replay
 
@@ -165,7 +183,8 @@ def main(argv=None):
             if args.command == "evaluate":
                 from .evaluation import evaluate
 
-                print(evaluate(Path(args.dataset), Path(args.output), args.sbert_model))
+                train = Path(args.train) if args.train else None
+                print(evaluate(Path(args.dataset), Path(args.output), args.sbert_model, train, args.skip_rules))
                 return 0
             if getattr(args, "scenario", None) == "playground":
                 from .playground import playground
@@ -184,6 +203,11 @@ def main(argv=None):
                 from .diagnosis_cases import build_dataset
 
                 print(build_dataset(Path(args.output)))
+                return 0
+            if getattr(args, "suite", None) == "hard":
+                from .hard_cases import build_dataset as build_hard
+
+                print(build_hard(Path(args.output)))
                 return 0
             from . import cases
 

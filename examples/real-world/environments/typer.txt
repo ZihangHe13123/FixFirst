@@ -9,6 +9,6 @@ pygments==2.21.0
 pytest==9.1.1
 setuptools==84.0.0
 tomli==2.4.1
-typer @ file:///Users/zhihang/Project/%E8%AF%BE%E7%A8%8BProjec/test-projects/generalisation/typer
+typer @ file://<home>/Project/%E8%AF%BE%E7%A8%8BProjec/test-projects/generalisation/typer
 typing-extensions==4.16.0
 wheel==0.48.0

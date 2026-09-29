@@ -483,6 +483,31 @@ when = [
 then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
 
 [[rule]]
+id = "H07"
+phase = "heuristic"
+status = "hypothesis"
+description = "A function or class the code imports from an installed library rejects the arguments it is called with. Libraries add, rename and remove parameters between versions, so a version difference is the likely cause (a wrong call is the alternative)."
+when = [
+  ["?i", "exception", "TypeError"], ["?i", "signal", "call_signature"], ["?i", "callee_module", "?m"],
+  ["?m", "provided_by", "?d"], ["not", "?m", "is_local", "?_"], ["not", "?m", "in_stdlib", "yes"],
+  ["not", "?i", "diagnosis", "?_"],
+]
+then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
+
+[[rule]]
+id = "H08"
+phase = "heuristic"
+status = "hypothesis"
+description = "The failure is raised inside a library that the project's code calls, and the installed library is a major version newer than the lowest version the project declares: code written for the older version may not behave the same."
+when = [
+  ["?i", "raised_by_library", "?d"], ["?i", "project_calls", "?d"], ["?d", "declared_minimum", "?mv"],
+  ["?d", "installed_version", "?iv"], ["test", "major_gt", "?iv", "?mv"],
+  ["not", "?d", "is_test_runner", "yes"], ["not", "?d", "tested_version", "?_"],
+  ["not", "?i", "diagnosis", "?_"],
+]
+then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
+
+[[rule]]
 id = "H05"
 phase = "heuristic"
 status = "hypothesis"
@@ -720,7 +745,7 @@ cause = "local_module"
 issue = "?i"
 cost = 2
 title = "Rename {?p}: it hides the real {?m} module"
-explanation = "Python imports the project file {?p} instead of the library or standard module {?m}, so its functions appear to be missing. Rename the file, delete stale __pycache__ entries and update imports that meant the project file."
+explanation = "Python imports the project file {?p} instead of the library or standard module {?m}, so its functions appear to be missing. Rename it to a name no library uses, for example with a project_ prefix, and keep its contents: it is part of the project, so do not delete it. Then delete stale __pycache__ entries and update any imports that meant the project file."
 verification = "Re-run the affected tests; the import must resolve to the library"
 
 [[rule]]
@@ -936,6 +961,45 @@ title = "Try {?d} below {?b}: the project was tested with {?d} {?tv}, this envir
 explanation = "The failure is raised inside {?d}, and {?src} records that the project worked with {?d} {?tv}; the installed {?iv} is a newer major version, which usually changes behaviour. Install {?d} below {?b} to return to the release series the project was tested with, or update the project for the new version."
 pip_install = "{?d}<{?b}"
 verification = "Re-run the tests with the same interpreter"
+
+[[rule]]
+id = "P62"
+phase = "plan"
+description = "Go back to the major version of the library that the project declares."
+when = [
+  ["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"],
+  ["?d", "declared_spec", "?spec"], ["?d", "declared_in_file", "?src"], ["?d", "declared_minimum", "?mv"],
+  ["?d", "declared_major_below", "?b"], ["?d", "installed_version", "?iv"],
+  ["test", "major_gt", "?iv", "?mv"], ["not", "?d", "tested_version", "?_"],
+]
+[rule.action]
+id = "declared-{?d}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 2
+title = "Try {?d} below {?b}: the project declares {?spec}, this environment has {?iv}"
+explanation = "{?src} declares {?spec}, so the code was written for {?d} {?mv} or a later release of that series; the installed {?d} {?iv} is a newer major version, which often changes behaviour and signatures. Install {?d} below {?b} to go back to the series the project was written for, or update the code for {?d} {?iv} using its changelog or migration guide."
+pip_install = "{?d}<{?b}"
+verification = "Re-run the tests with the same interpreter"
+
+[[rule]]
+id = "P63"
+phase = "plan"
+description = "An imported library function or class rejects the call's arguments: compare the call with the installed version's signature."
+when = [
+  ["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"], ["?i", "callee", "?c"],
+  ["?i", "callee_module", "?m"], ["?m", "provided_by", "?d"], ["?d", "installed_version", "?iv"],
+]
+[rule.action]
+id = "call-{?c}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 1
+title = "Update the call to {?c} for {?d} {?iv}"
+explanation = "{?c} comes from {?d} {?iv} and rejects the arguments the code passes. Libraries add, rename and remove parameters between versions, so the code was probably written for another {?d} release. Check {?c} in the documentation or changelog of {?d} {?iv} and update the call; if the project must keep the old call, install the {?d} release it was written for."
+verification = "Re-run the affected tests with the same interpreter"
 
 [[rule]]
 id = "P31"

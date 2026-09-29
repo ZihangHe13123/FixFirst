@@ -17,7 +17,7 @@
         "where": [
           "flask_sqlalchemy/__init__.py:14"
         ],
-        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/flask-sqlalchemy/.venv/bin/python' -m pip install 'flask<3'",
+        "command": "'<home>/Project/课程Projec/test-projects/generalisation/flask-sqlalchemy/.venv/bin/python' -m pip install 'flask<3'",
         "rules": [
           "H01"
         ],
@@ -32,7 +32,7 @@
         "where": [
           "flask_sqlalchemy/__init__.py:14"
         ],
-        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/flask-sqlalchemy/.venv/bin/python' -m pip install 'flask<3'",
+        "command": "'<home>/Project/课程Projec/test-projects/generalisation/flask-sqlalchemy/.venv/bin/python' -m pip install 'flask<3'",
         "rules": [
           "H01"
         ],
@@ -47,7 +47,7 @@
         "where": [
           "flask_sqlalchemy/__init__.py:14"
         ],
-        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/flask-sqlalchemy/.venv/bin/python' -m pip install 'flask<3'",
+        "command": "'<home>/Project/课程Projec/test-projects/generalisation/flask-sqlalchemy/.venv/bin/python' -m pip install 'flask<3'",
         "rules": [
           "H01"
         ],
@@ -62,7 +62,7 @@
         "where": [
           "flask_sqlalchemy/__init__.py:14"
         ],
-        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/flask-sqlalchemy/.venv/bin/python' -m pip install 'flask<3'",
+        "command": "'<home>/Project/课程Projec/test-projects/generalisation/flask-sqlalchemy/.venv/bin/python' -m pip install 'flask<3'",
         "rules": [
           "H01"
         ],
@@ -84,7 +84,7 @@
         "rule": "H01"
       },
       {
-        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/flask-sqlalchemy/.venv/bin/python: No module named ",
+        "title": "Could not start ruff in the target environment: <home>/Project/课程Projec/test-projects/generalisation/flask-sqlalchemy/.venv/bin/python: No module named ",
         "tool": "ruff",
         "kind": "tool_failure",
         "diagnosis": null,
@@ -109,7 +109,7 @@
         "suspected": false,
         "optional": false,
         "where": [],
-        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/django-model-utils/.venv/bin/python' -m pip install 'django<5'",
+        "command": "'<home>/Project/课程Projec/test-projects/generalisation/django-model-utils/.venv/bin/python' -m pip install 'django<5'",
         "rules": [
           "H01"
         ],
@@ -170,7 +170,7 @@
         "rule": "H01"
       },
       {
-        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/django-model-utils/.venv/bin/python: No module name",
+        "title": "Could not start ruff in the target environment: <home>/Project/课程Projec/test-projects/generalisation/django-model-utils/.venv/bin/python: No module name",
         "tool": "ruff",
         "kind": "tool_failure",
         "diagnosis": null,
@@ -241,7 +241,7 @@
         "rule": "D01"
       },
       {
-        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/requests/.venv/bin/python: No module named ruff",
+        "title": "Could not start ruff in the target environment: <home>/Project/课程Projec/test-projects/generalisation/requests/.venv/bin/python: No module named ruff",
         "tool": "ruff",
         "kind": "tool_failure",
         "diagnosis": null,
@@ -289,7 +289,7 @@
     "pending": 0,
     "issues": [
       {
-        "title": "ConftestImportFailure: ModuleNotFoundError: No module named 'distutils' (from /Users/zhihang/Project/课程Projec/test-projects/generalisation/seaborn/seaborn/conft",
+        "title": "ConftestImportFailure: ModuleNotFoundError: No module named 'distutils' (from <home>/Project/课程Projec/test-projects/generalisation/seaborn/seaborn/conft",
         "tool": "pytest_run",
         "kind": "other_unknown",
         "diagnosis": "version_incompatibility",
@@ -297,7 +297,7 @@
         "rule": "D01"
       },
       {
-        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/seaborn/.venv/bin/python: No module named ruff",
+        "title": "Could not start ruff in the target environment: <home>/Project/课程Projec/test-projects/generalisation/seaborn/.venv/bin/python: No module named ruff",
         "tool": "ruff",
         "kind": "tool_failure",
         "diagnosis": null,
@@ -331,7 +331,7 @@
         "where": [
           "imblearn/pipeline.py:17"
         ],
-        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/imbalanced-learn/.venv/bin/python' -m pip install 'scikit-learn<1'",
+        "command": "'<home>/Project/课程Projec/test-projects/generalisation/imbalanced-learn/.venv/bin/python' -m pip install 'scikit-learn<1'",
         "rules": [
           "H01"
         ],
@@ -346,7 +346,7 @@
         "where": [
           "imblearn/metrics/tests/test_classification.py:20"
         ],
-        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/imbalanced-learn/.venv/bin/python' -m pip install 'scikit-learn<1'",
+        "command": "'<home>/Project/课程Projec/test-projects/generalisation/imbalanced-learn/.venv/bin/python' -m pip install 'scikit-learn<1'",
         "rules": [
           "H01"
         ],
@@ -361,7 +361,7 @@
         "where": [
           "imblearn/utils/estimator_checks.py:28"
         ],
-        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/imbalanced-learn/.venv/bin/python' -m pip install 'scikit-learn<1'",
+        "command": "'<home>/Project/课程Projec/test-projects/generalisation/imbalanced-learn/.venv/bin/python' -m pip install 'scikit-learn<1'",
         "rules": [
           "H01"
         ],
@@ -495,7 +495,7 @@
         "rule": "H01"
       },
       {
-        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/imbalanced-learn/.venv/bin/python: No module named ",
+        "title": "Could not start ruff in the target environment: <home>/Project/课程Projec/test-projects/generalisation/imbalanced-learn/.venv/bin/python: No module named ",
         "tool": "ruff",
         "kind": "tool_failure",
         "diagnosis": null,
@@ -551,7 +551,7 @@
         "rule": "F01"
       },
       {
-        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/typer/.venv/bin/python: No module named ruff",
+        "title": "Could not start ruff in the target environment: <home>/Project/课程Projec/test-projects/generalisation/typer/.venv/bin/python: No module named ruff",
         "tool": "ruff",
         "kind": "tool_failure",
         "diagnosis": null,
@@ -975,7 +975,7 @@
         "where": [
           "extra/test_hypothesis.py:9"
         ],
-        "command": "'/Users/zhihang/Project/课程Projec/test-projects/generalisation/jmespath/.venv/bin/python' -m pip install 'Python<3.12'",
+        "command": "'<home>/Project/课程Projec/test-projects/generalisation/jmespath/.venv/bin/python' -m pip install 'Python<3.12'",
         "rules": [
           "D01"
         ],
@@ -1075,7 +1075,7 @@
         "rule": "D01"
       },
       {
-        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/jmespath/.venv/bin/python: No module named ruff",
+        "title": "Could not start ruff in the target environment: <home>/Project/课程Projec/test-projects/generalisation/jmespath/.venv/bin/python: No module named ruff",
         "tool": "ruff",
         "kind": "tool_failure",
         "diagnosis": null,
@@ -1210,7 +1210,7 @@
         "rule": "F01"
       },
       {
-        "title": "ConftestImportFailure: ModuleNotFoundError: No module named 'six' (from /Users/zhihang/Project/课程Projec/test-projects/generalisation/parsel/docs/conftest.py)",
+        "title": "ConftestImportFailure: ModuleNotFoundError: No module named 'six' (from <home>/Project/课程Projec/test-projects/generalisation/parsel/docs/conftest.py)",
         "tool": "pytest_run",
         "kind": "other_unknown",
         "diagnosis": "missing_dependency",
@@ -1218,7 +1218,7 @@
         "rule": "F01"
       },
       {
-        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/parsel/.venv/bin/python: No module named ruff",
+        "title": "Could not start ruff in the target environment: <home>/Project/课程Projec/test-projects/generalisation/parsel/.venv/bin/python: No module named ruff",
         "tool": "ruff",
         "kind": "tool_failure",
         "diagnosis": null,
@@ -1394,7 +1394,7 @@
         "rule": "F01"
       },
       {
-        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/records/.venv/bin/python: No module named ruff",
+        "title": "Could not start ruff in the target environment: <home>/Project/课程Projec/test-projects/generalisation/records/.venv/bin/python: No module named ruff",
         "tool": "ruff",
         "kind": "tool_failure",
         "diagnosis": null,
@@ -1458,7 +1458,7 @@
         "rule": "F01"
       },
       {
-        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/cachetools/.venv/bin/python: No module named ruff",
+        "title": "Could not start ruff in the target environment: <home>/Project/课程Projec/test-projects/generalisation/cachetools/.venv/bin/python: No module named ruff",
         "tool": "ruff",
         "kind": "tool_failure",
         "diagnosis": null,
@@ -1500,7 +1500,7 @@
     "pending": 0,
     "issues": [
       {
-        "title": "Could not start pip in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/more-itertools/.venv/bin/python: No module named pip",
+        "title": "Could not start pip in the target environment: <home>/Project/课程Projec/test-projects/generalisation/more-itertools/.venv/bin/python: No module named pip",
         "tool": "pip_check",
         "kind": "tool_failure",
         "diagnosis": null,
@@ -1516,7 +1516,7 @@
         "rule": null
       },
       {
-        "title": "Could not start ruff in the target environment: /Users/zhihang/Project/课程Projec/test-projects/generalisation/more-itertools/.venv/bin/python: No module named ru",
+        "title": "Could not start ruff in the target environment: <home>/Project/课程Projec/test-projects/generalisation/more-itertools/.venv/bin/python: No module named ru",
         "tool": "ruff",
         "kind": "tool_failure",
         "diagnosis": null,
