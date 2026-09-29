@@ -1,4 +1,4 @@
-"""Tools for the held-out check on a new batch of real projects (docs/tasks/A1, A3, C1).
+"""Tools for the held-out check on a new batch of real projects (docs/tasks/A1, A2, C1).
 
 Usage:
   python scripts/heldout.py pytest TARGET --manifest FILE [--only ID ...] [--repeat N] [--output DIR]

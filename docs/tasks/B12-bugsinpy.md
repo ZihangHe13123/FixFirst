@@ -1,11 +1,11 @@
-# A2 BugsInPy 真实缺陷验证
+# B12 BugsInPy 真实缺陷验证
 
 | | |
 |---|---|
-| 负责 | A |
+| 负责 | B（AI 协助） |
 | 截止 | 10/9（五）：选好并复现至少 4 个缺陷（不运行 FixFirst）；10/12（一）：用冻结版跑完，交 PR |
-| 预计用时 | 6–8 小时 |
-| 要先完成 | [S0](S0-setup.md)、装好 uv；第二阶段要等 B5（10/9 冻结 v0.7.0） |
+| 预计用时 | 3–5 小时 |
+| 要先完成 | 第二阶段要等 B5（10/9 冻结 v0.7.0） |
 | 交付 | 主仓库的 `examples/bugsinpy-verification/`，通过 PR 提交 |
 | 对应计划 | 后续计划 §4 P0 第 5 项 |
 
@@ -21,7 +21,7 @@ proposal 承诺：在**至少 8 个真实缺陷、至少 4 个库**上验证 Fix
 ## 分两个阶段
 
 - **阶段 1（10/6–10/9）：只复现，不运行 FixFirst。** 挑出能在今天的环境里复现的 bug：有 bug 时测试失败，打上修复后测试通过。
-- **阶段 2（10/10 以后）：用冻结版 v0.7.0 运行 FixFirst。** 这样结果和 A3 出自同一个版本，B 也没有机会根据这些结果改规则。
+- **阶段 2（10/10 以后）：用冻结版 v0.7.0 运行 FixFirst。** 这样结果和 A2 的留出测试出自同一个版本，也不会有人根据这些结果去改规则。
 
 ## 工具
 
@@ -35,7 +35,7 @@ proposal 承诺：在**至少 8 个真实缺陷、至少 4 个库**上验证 Fix
 
 结果写在 `<目标文件夹>/results/<项目>-<编号>.json`，两次测试的输出放在旁边。脚本开头的说明写了全部细节。
 
-B 在写这个脚本时试过三个 bug，这里说明一下，免得你重复踩坑：
+写这个脚本时已经试过几个 bug：
 
 | Bug | 结果 |
 |---|---|
@@ -89,7 +89,7 @@ Windows：
 在主仓库里新建分支，把尝试记录写进 `examples/bugsinpy-verification/attempts.csv`：
 
 ```bash
-git switch main && git pull && git switch -c a2-bugsinpy
+git switch main && git pull && git switch -c b12-bugsinpy
 mkdir -p examples/bugsinpy-verification
 ```
 
@@ -101,7 +101,7 @@ tqdm-3,3.9,pytest nose,reproduced,
 PySnooper-1,3.9,pytest python_toolbox,not reproduced,buggy version passes on Python 3.9 / macOS
 ```
 
-阶段 1 的目标：至少 4 个复现成功的 bug，来自至少 2 个项目。PySnooper 2 如果算进去，要标注 dev。10/9 前在 A2 的 Issue 里报数，例如 "tqdm 2、3，cookiecutter 1，tornado 4 复现成功"。
+阶段 1 的目标：至少 4 个复现成功的 bug，来自至少 2 个项目。PySnooper 2 如果算进去，要标注 dev。10/9 前在 B12 的 Issue 里记一笔，例如 "tqdm 2、3，cookiecutter 1，tornado 4 复现成功"。
 
 ## 阶段 2：用冻结版运行 FixFirst（10/10 以后）
 
@@ -135,7 +135,7 @@ git describe --tags              # 应该显示 v0.7.0
 
 ### 6. 整理结果
 
-回到你的分支（`git switch a2-bugsinpy`），把 `~/bugsinpy-cases/results/` 里选中 bug 的 `.json`、`-buggy-test.txt`、`-fixed-test.txt`、`-bug_patch.txt` 复制到 `examples/bugsinpy-verification/results/`，然后写 `examples/bugsinpy-verification/README.md`，内容包括：
+回到你的分支（`git switch b12-bugsinpy`），把 `~/bugsinpy-cases/results/` 里选中 bug 的 `.json`、`-buggy-test.txt`、`-fixed-test.txt`、`-bug_patch.txt` 复制到 `examples/bugsinpy-verification/results/`，然后写 `examples/bugsinpy-verification/README.md`，内容包括：
 
 1. **做法**：用 BugsInPy 的哪一版（提交 `11c5f1e`），Python 3.9，怎么判定复现（修复前失败、修复后通过），用的 FixFirst 版本（v0.7.0），以及怎样重跑（命令）。
 2. **结果表**：
@@ -153,7 +153,7 @@ git describe --tags              # 应该显示 v0.7.0
 grep -rn "/Users/\|C:\\\\Users" examples/bugsinpy-verification || echo "no local paths"
 ```
 
-然后提交，开 PR，标题写 "A2: BugsInPy verification"，10/12 前交。
+然后提交，开 PR，标题写 "B12: BugsInPy verification"，10/12 前交。
 
 ## 完成标准
 

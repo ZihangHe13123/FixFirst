@@ -13,14 +13,14 @@
 
 proposal 承诺用 10–15 个**没见过的**真实项目做留出测试。报告里"FixFirst 在新项目上表现如何"只能拿这批项目回答，老师也最可能追问这一点。
 
-9/24 试调研用过的 13 个项目，已经在第 2、3 轮被用来改规则，不能再当测试集。规则由 B 在 AI 协助下编写，所以新项目必须由别人挑、别人标注，而且**标签要先于运行**。10/9 冻结版本以后，A3 在这批项目上只跑一次 FixFirst，按这里写的标签打分。
+9/24 试调研用过的 13 个项目，已经在第 2、3 轮被用来改规则，不能再当测试集。规则由 B 在 AI 协助下编写，所以新项目必须由别人挑、别人标注，而且**标签要先于运行**。10/9 冻结版本以后，你在 A2 里用这批项目只跑一次 FixFirst，按这里写的标签打分。
 
 ## 规矩（违反任何一条，这批数据就不能再当留出测试）
 
 1. **只放私有仓库，只给 C 看。** 名单、pytest 输出、标签都放在你自己的私有仓库里。不要在群里或公开 Issue 里提具体项目，不要给 B 看。
 2. **冻结前不在这些项目上运行 FixFirst。** 网页界面、`fixfirst` 命令、`run_real_world.py`、MCP 都不行。只用 `heldout.py pytest` 查看原始的 pytest 输出。
 3. **标签是你自己的判断。** 可以查官方文档、release notes、GitHub issue，也可以在副本里动手试（第 5 步）。不要把 pytest 输出贴给 AI 让它下结论：之后要用同样的输出测试大模型基线，标签如果来自 AI，这个比较就不成立了。
-4. **下面这些项目不能用**：试调研的 13 个（见 `examples/real-world/projects.toml`）、flask 1.1.4、humanize，以及 `examples/` 里出现过的其他项目。BugsInPy 里的 17 个项目留给 A2，这里也不用。
+4. **下面这些项目不能用**：试调研的 13 个（见 `examples/real-world/projects.toml`）、flask 1.1.4、humanize，以及 `examples/` 里出现过的其他项目。BugsInPy 里的 17 个项目留给 B12，这里也不用。
 5. **挑项目时不考虑 FixFirst 能不能做对。** 你也不需要知道它有哪些规则。按下面的抽样办法做，试过的每个候选都记下来，包括放弃的，并写明原因。
 
 ## 要凑成什么样
@@ -157,7 +157,7 @@ Windows 同样，把开头换成 `.venv\Scripts\python`，路径换成 `$HOME\..
 
 ## 第 5 步：在副本里验证
 
-标签要经过实际验证，这是它最有价值的地方。**不要**在 `~/heldout-projects` 里的原项目上试：A3 要用原样的环境运行 FixFirst。用 `twin` 复制一份，副本的包版本和原项目完全一样：
+标签要经过实际验证，这是它最有价值的地方。**不要**在 `~/heldout-projects` 里的原项目上试：A2 要用原样的环境运行 FixFirst。用 `twin` 复制一份，副本的包版本和原项目完全一样：
 
 ```bash
 .venv/bin/python scripts/heldout.py twin ~/heldout-projects --manifest ~/fixfirst-heldout/projects.toml --id <id> --to ~/heldout-try
@@ -196,7 +196,7 @@ uv pip install --python .venv\Scripts\python.exe "flask<2.4"
 | `labelled_on` | 日期，例如 2026-10-02 |
 | `reviewed_by`、`review_notes` | 留给 C 在 C1 里填 |
 
-`also_acceptable`、`partial_if`、`wrong_if` 是 A3 打分时的依据。写得越具体，打分时的争议就越少。
+`also_acceptable`、`partial_if`、`wrong_if` 是 A2 打分时的依据。写得越具体，打分时的争议就越少。
 
 `candidates.csv` 里每个试过的候选各写一行，包括放弃的，写明来源（awesome-python 的哪个分类）和放弃的原因。
 
@@ -251,7 +251,7 @@ git push
 - **克隆时报 "Remote branch … not found"**：`ref` 必须和 GitHub 上的 tag 名一字不差，注意有没有 `v`。
 - **安装很慢或卡住**：多半是在编译 C 扩展，按规则跳过这个项目。
 - **不确定属于哪一类根因**：先按上面的表判断；还是拿不准，就在 `review_notes` 里写下你的犹豫，留给 C1 讨论。不要去问 B。
-- **磁盘**：每个项目连环境大约 100 MB–1 GB。A3 完成之前不要删 `~/heldout-projects`，也不要在里面升级或安装任何东西。
+- **磁盘**：每个项目连环境大约 100 MB–1 GB。A2 完成之前不要删 `~/heldout-projects`，也不要在里面升级或安装任何东西。
 
 ## 完成标准
 

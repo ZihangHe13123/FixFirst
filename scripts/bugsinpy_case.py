@@ -1,4 +1,4 @@
-"""Reproduce one BugsInPy bug and record how FixFirst handles it (docs/tasks/A2).
+"""Reproduce one BugsInPy bug and record how FixFirst handles it (docs/tasks/B12).
 
 Usage: python scripts/bugsinpy_case.py PROJECT BUG [--target DIR] [--python VERSION]
        [--deps PACKAGE ...] [--node NODE ...] [--no-build-isolation] [--no-fixfirst]

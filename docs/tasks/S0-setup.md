@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| 负责 | 全员，每人自己做一遍 |
+| 负责 | A、C 各做一遍（B 已经做过） |
 | 截止 | 10/1（四） |
 | 预计用时 | 1–2 小时 |
 | 交付 | 在 S0 的 Issue 里回复：姓名、系统、测试结果的最后一行 |
@@ -28,8 +28,7 @@ Windows 上把 `python3` 换成 `py --version`。
 
 ## 2. 加入仓库
 
-1. 把你的 GitHub 用户名发给 HE ZIHANG，他会把你加为协作者（collaborator）。
-2. 到邮箱里接受邀请，或者直接打开 https://github.com/ZihangHe13123/FixFirst/invitations 点 Accept。接受邀请以后，你才能推分支，别人也才能把 Issue 分配给你。
+邀请已经在 9/29 发给 creazydiamond 和 StupidGuy1122（可以推分支、提 PR、认领 Issue），7 天内有效。到邮箱里接受邀请，或者直接打开 https://github.com/ZihangHe13123/FixFirst/invitations 点 Accept。过期了就在群里说一声，B 重新发。
 
 ## 3. 克隆仓库，设置提交身份
 
@@ -104,21 +103,21 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup.ps1
 
 ## 7. 每天怎么提交
 
-每个任务开一个分支，分支名用"任务编号-简短英文"，例如 `c2-study-protocol`。改完推到 GitHub，再开一个 Pull Request（PR），由 B 合并。
+每个任务开一个分支，分支名用"任务编号-简短英文"，例如 `c2-study-data`。改完推到 GitHub，再开一个 Pull Request（PR），由 B 合并。
 
 ```bash
 git switch main && git pull                 # 每次开工前，先拿到最新代码
-git switch -c c2-study-protocol             # 新建分支（已有分支用 git switch c2-study-protocol）
+git switch -c c2-study-data                 # 新建分支（已有分支用 git switch c2-study-data）
 # ……改文件……
 git status                                  # 看一下改了哪些文件
-git add docs/user-study/PROTOCOL.md         # 只加这次要提交的文件
-git commit -m "Add the user study protocol draft"
-git push -u origin c2-study-protocol
+git add docs/user-study/sessions.csv        # 只加这次要提交的文件
+git commit -m "Add the user study session data"
+git push -u origin c2-study-data
 ```
 
 推送成功后打开仓库页面，会出现一条黄色提示 **Compare & pull request**，点它：
 
-- 标题写"任务编号：做了什么"，例如 `C2: user study protocol draft`；
+- 标题写"任务编号：做了什么"，例如 `A2: held-out results on v0.7.0`；
 - 正文按模板填，把卡片里的完成标准复制进去打勾；
 - 任务全部完成时，在正文里写 `Closes #Issue编号`，PR 合并后 Issue 会自动关闭。
 

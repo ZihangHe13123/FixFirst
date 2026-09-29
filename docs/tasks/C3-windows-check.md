@@ -1,16 +1,16 @@
-# C4 Windows 验收：冻结版和最终版
+# C3 Windows 验收：冻结版和最终版
 
 | | |
 |---|---|
 | 负责 | C，在 Windows 电脑上做 |
 | 时间 | 冻结版 v0.7.0：10/10–10/11；最终提交版：10/23 |
 | 预计用时 | 每次 2–3 小时 |
-| 要先完成 | B5（冻结）；最终版要等 C6 合并、B 宣布最终版本 |
-| 交付 | 在 C4 的 Issue 里按反馈格式回复结果 |
+| 要先完成 | B5（冻结）；最终版要等 B15 合并、B 宣布最终版本 |
+| 交付 | 在 C3 的 Issue 里按反馈格式回复结果 |
 
 ## 为什么要做
 
-FixFirst 同时支持 Windows，组里只有 C 的电脑能真正验证它。冻结版要用于用户研究（C3 在 Windows 上做），最终版是提交给老师运行的版本，两次都必须在 Windows 上完整跑通。
+FixFirst 同时支持 Windows，组里只有 C 的电脑能真正验证它。冻结版要用于用户研究（C2 在 Windows 上做），最终版是提交给老师运行的版本，两次都必须在 Windows 上完整跑通。
 
 ## 步骤
 
@@ -23,7 +23,7 @@ FixFirst 同时支持 Windows，组里只有 C 的电脑能真正验证它。冻
    powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup.ps1 -Recreate
    ```
 
-   C6 整理目录以后，代码在 `SystemCode\` 下面，上面的命令要在 `C:\dev\FixFirst\SystemCode` 里运行。
+   B15 整理目录以后，代码在 `SystemCode\` 下面，上面的命令要在 `C:\dev\FixFirst\SystemCode` 里运行。
 2. 自动检查：
 
    ```powershell
@@ -38,13 +38,14 @@ FixFirst 同时支持 Windows，组里只有 C 的电脑能真正验证它。冻
    - 复制界面给出的安装命令，在 PowerShell 里执行，确认能正常运行；
    - 点页面底部的 **Download a shareable report** 导出报告，打开看看中文正不正常，用户名有没有被替换成 `<home>`；
    - 关掉再打开，之前的会话还在。
+   - 冻结版这次，顺手截几张 Windows 上安装和使用的图（setup.ps1 运行完、首页、检查结果页），发给 B，用在使用指南（B14）里。
 4. 最终版额外检查：
    - 从 GitHub 上下载 ZIP（Code → Download ZIP）；
-   - 解压到一个新文件夹，完全按 [C5](C5-user-guide.md) 的使用指南从头安装，看会不会卡住。这也是在验收使用指南。
+   - 解压到一个新文件夹，完全按 [B14](B14-user-guide.md) 的使用指南从头安装，看会不会卡住。这也是在验收使用指南。
 
 ## 反馈格式
 
-在 C4 的 Issue 里回复：
+在 C3 的 Issue 里回复：
 
 ```text
 版本：v0.7.0（git describe --tags 的输出）

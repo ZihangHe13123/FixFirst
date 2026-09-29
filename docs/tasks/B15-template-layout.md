@@ -1,9 +1,9 @@
-# C6 按课程示例整理仓库目录
+# B15 按课程示例整理仓库目录
 
 | | |
 |---|---|
-| 负责 | C |
-| 时间 | B 在 Issue 里宣布"代码定稿"之后（约 10/20）开始，10/22（四）前合并 |
+| 负责 | B（AI 协助）。A、C 各写一句自己的贡献，放进 README 的分工表 |
+| 时间 | 代码定稿之后（约 10/20）开始，10/22（四）前合并 |
 | 预计用时 | 3–4 小时 |
 | 要先完成 | 其他改代码的 PR 都已合并（否则移动目录以后会有大量冲突） |
 | 交付 | 一个 PR：新的目录结构，以及按 7 个部分写的根目录 README |
@@ -30,7 +30,7 @@
 ```bash
 cd ~/FixFirst
 git switch main && git pull
-git switch -c c6-template-layout
+git switch -c b15-template-layout
 mkdir SystemCode
 git mv src tests scripts examples experiments docs pyproject.toml start-fixfirst.bat start-fixfirst.command SystemCode/
 git mv README.md SystemCode/README.md
@@ -135,7 +135,7 @@ Quick start（从 SystemCode/README.md 的 Quick start 复制，命令前加 cd 
 
 - `SystemCode/README.md` 开头加一句："This is the technical README; the course submission overview is in the root README.md"。
 - `SystemCode/README.md` 里 MCP 配置的示例路径，改成 `/path/to/FixFirst/SystemCode/.venv/bin/python`。
-- `SystemCode/docs/tasks/README.md` 的"卡片里的约定"加一句："C6 以后，命令都在 `SystemCode/` 里运行"。
+- `SystemCode/docs/tasks/README.md` 的"卡片里的约定"加一句："B15 以后，命令都在 `SystemCode/` 里运行"。
 
 ## 第 5 步：验证
 
@@ -162,7 +162,7 @@ Quick start（从 SystemCode/README.md 的 Quick start 复制，命令前加 cd 
 
 ## 第 6 步：提交，通知大家
 
-开 PR，标题写 "C6: course submission layout"。B 合并以后，在群里通知所有人：
+开 PR，标题写 "B15: course submission layout"，合并以后在群里通知所有人：
 
 ```text
 仓库目录已整理：代码都在 SystemCode/ 里。请 git pull，删掉根目录的旧 .venv，

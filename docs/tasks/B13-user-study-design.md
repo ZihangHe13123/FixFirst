@@ -1,17 +1,17 @@
-# C2 用户研究：方案、知情同意书、招募
+# B13 用户研究：方案、同意书、问卷和分析
 
 | | |
 |---|---|
-| 负责 | C。全员帮忙找人 |
-| 截止 | 方案初稿 10/5（一）；10/10（六）前定好 8 名正式参与者和 2 名试用者的时间 |
-| 预计用时 | 6–8 小时 |
-| 要先完成 | 无，**招募今天就可以开始** |
-| 交付 | 主仓库的 `docs/user-study/`：`PROTOCOL.md`、`CONSENT.md`、`QUESTIONNAIRE.md`、`RECRUITING.md`，通过 PR 提交；参与者名单**不进仓库** |
-| 对应计划 | 后续计划 §4 P0 第 9 项、§9.4 |
+| 负责 | B（AI 协助）。招募和现场实验由 C 负责（[C2](C2-user-study-sessions.md)） |
+| 截止 | 方案文件 10/5（一）；分析 10/21（三） |
+| 预计用时 | 约 4 小时 |
+| 要先完成 | 方案无；分析要等 C2 交数据 |
+| 交付 | 主仓库 `docs/user-study/` 下：`PROTOCOL.md`、`CONSENT.md`、`QUESTIONNAIRE.md`（10/5）；`analysis.py`、`RESULTS.md`（10/21） |
+| 对应计划 | 后续计划 §4 P0 第 9 项 |
 
 ## 为什么要做
 
-商业价值和"好不好用"只能靠用户研究来证明，这是 proposal 的承诺：6–8 人，完成率 80%，中位用时降低 20%。现在只差这一项实验还没开始，而找人最花时间，所以要最先动手。无论结果好坏都如实报告，做了就比没做强得多。
+商业价值和"好不好用"只能靠用户研究来证明，这是 proposal 的承诺：6–8 人，完成率 80%，中位用时降低 20%。找人最花时间，所以 C 今天就开始招募；方案要在 10/5 前写好，试用之后再调整。无论结果好坏都如实报告。
 
 ## 研究设计（写进 PROTOCOL.md，可以在这个基础上改）
 
@@ -26,7 +26,7 @@
 
 两种条件下都**不能用 AI 助手**：ChatGPT、Copilot、Gemini、Claude、搜索引擎里的 AI 对话都不行，普通搜索结果页可以看。
 
-**任务**：B 在 B8 里准备 4 个故障项目，分成两组，每组 2 个，两组难度相当：
+**任务**：B8 准备 4 个故障项目，分成两组，每组 2 个，两组难度相当：
 
 - A 组：T1、T2；
 - B 组：T3、T4。
@@ -73,7 +73,7 @@
 | `tests_modified` | 是否改过测试文件。改过的不算成功 |
 | `confidence_1to5` | 做完后自评"项目现在能用了"的把握，1–5 分 |
 
-**分析**（在 C3 里做）：
+**分析**（B 在本卡片最后一步做）：
 
 - 每种条件的完成率；
 - 用时的中位数；
@@ -99,7 +99,7 @@
 
 最后是签名和日期。签好的同意书由 C 自己保存，扫描件也不进仓库。
 
-发封邮件问一下课程老师，这样的课程用户研究需不需要额外审批，把回复存档。这封邮件由组长或 C 来发。
+B 发封邮件问一下课程老师，这样的课程用户研究需不需要额外审批，把回复存档。
 
 ## 问卷（QUESTIONNAIRE.md）
 
@@ -123,36 +123,57 @@
    - FixFirst 哪一步最有用？
    - 哪里让你困惑？
 
-## 招募（RECRUITING.md 里放消息模板，名单不进仓库）
+招募消息的模板在 [C2](C2-user-study-sessions.md) 里，C 直接用，不用等这里的方案。
 
-消息模板：
+## 分析（C2 交数据以后）
 
-```text
-【招募】帮我们测一个 Python 排错工具（约 70 分钟）
-我们是 IRS 课程第 24 组。想请会写 Python 的同学，在我们的电脑上修 4 个出错的小项目，
-其中一半可以用我们的工具。不录屏、不记名，数据只用于课程报告。
-时间：10/11–10/19，地点：学校（或 Zoom 远程控制）。有兴趣请回复可以的时间段。
+`docs/user-study/analysis.py` 读取 C 提交的 `sessions.csv` 和 `questionnaire.csv`，输出 `RESULTS.md` 要用的数字。主仓库的 `.venv` 里已经有 scipy（scikit-learn 依赖它）。核心部分：
 
-[Recruiting] Help us test a Python troubleshooting tool (about 70 minutes)
-We are IRS Group 24. You will fix 4 small broken Python projects on our laptop, half of them
-with our tool. No screen recording, no names; data is used only for our course report.
-When: 11–19 Oct, on campus (or remotely via Zoom remote control). Reply with times that suit you.
+```python
+import csv
+from statistics import median
+from scipy.stats import wilcoxon
+
+rows = [r for r in csv.DictReader(open("docs/user-study/sessions.csv", encoding="utf-8-sig"))
+        if not r["participant"].startswith(("PILOT", "P00"))]
+for condition in ("fixfirst", "baseline"):
+    group = [r for r in rows if r["condition"] == condition]
+    done = sum(r["success"] == "yes" for r in group)
+    print(condition, f"completed {done}/{len(group)}",
+          "median seconds", median(int(r["seconds"]) for r in group))
+
+# Paired: each participant's mean time with and without FixFirst (unfinished tasks count as 720 s).
+people = sorted({r["participant"] for r in rows})
+def mean_time(p, c):
+    times = [int(r["seconds"]) for r in rows if r["participant"] == p and r["condition"] == c]
+    return sum(times) / len(times)
+with_ff = [mean_time(p, "fixfirst") for p in people]
+without = [mean_time(p, "baseline") for p in people]
+print("Wilcoxon signed-rank:", wilcoxon(with_ff, without))
 ```
 
-- 发在课程群、其他小组、朋友圈，每位组员至少找 3 个人。
-- 名单、联系方式、时间表放在 C 自己的表格里，参与者只用 P01、P02……编号。
-- 一个时段 90 分钟，含准备和收尾。试用放在 10/11–10/12，正式实验放在 10/13–10/19。
+**这个脚本最好在试用之后就写好**，用试用数据先跑通；C 交正式数据时，只要运行一条命令。
+
+`RESULTS.md` 写这几部分，报告（[B11](B11-report.md)）的用户研究一节由它改写：
+
+1. 参与者概况：人数、Python 经验的分布；
+2. 完成率和中位用时的对照表，写明和 proposal 目标（80%，降低 20%）的差距；
+3. 配对比较：每个人的用时差，以及检验结果（n 小，只作参考）；
+4. SUS 平均分和分布，以及怎么解读（68 分左右是平均水平）；
+5. 错误声称"好了"的次数、改测试文件的次数；
+6. 访谈里反复出现的意见；
+7. 局限：人数少、学习效应（第二轮更熟练）、任务是人为构造的、实验员是组员；
+8. 试用后对方案做了哪些调整。
 
 ## 步骤
 
-1. **今天**：发招募消息，建自己的时间表。
-2. 10/5 前：写好 `PROTOCOL.md`、`CONSENT.md`、`QUESTIONNAIRE.md`、`RECRUITING.md`，开 PR，请 B 看任务部分，请 A 看流程。
-3. 10/10 前：确定试用者 2 人、正式参与者 8 人的时间；把研究是否需要额外审批的回复存档。
-4. 接着做 [C3](C3-user-study-run.md)。
+1. 10/5 前：写好 `PROTOCOL.md`、`CONSENT.md`、`QUESTIONNAIRE.md` 并合并，在 C2 的 Issue 里告诉 C；发邮件问老师是否需要额外审批。
+2. 试用（10/11–10/12）以后：按 C 的反馈修改方案，写进 PROTOCOL.md 的 "Changes after the pilot" 一节；用试用数据把 `analysis.py` 跑通。
+3. C 交正式数据以后：运行 `analysis.py`，写 `RESULTS.md`，10/21 前合并。
 
 ## 完成标准
 
-- [ ] 四个文件都已通过 PR 合并
-- [ ] 10/10 前确定了至少 6 名正式参与者和 1 名试用者的时间，最好是 8 + 2
-- [ ] 名单和同意书没有进仓库
+- [ ] 三个方案文件 10/5 前合并，C 已经在用
 - [ ] 已向老师确认是否需要额外审批
+- [ ] `analysis.py` 能直接跑出 `RESULTS.md` 里的数字
+- [ ] 结果如实报告，包括没达到目标的部分

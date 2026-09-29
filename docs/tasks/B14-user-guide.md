@@ -1,10 +1,10 @@
-# C5 安装和使用指南（报告附录）
+# B14 安装和使用指南（报告附录）
 
 | | |
 |---|---|
-| 负责 | C（A 在 Mac 上试一遍） |
-| 截止 | 初稿 10/19（一）；10/22（四）定稿，在 C6 合并之后，路径改成 `SystemCode/` |
-| 预计用时 | 6–8 小时 |
+| 负责 | B（AI 协助）。Windows 的截图由 C 在 C3 里提供；A、C 各照着装一遍 |
+| 截止 | 初稿 10/19（一）；10/22（四）定稿，在 B15 合并之后，路径改成 `SystemCode/` |
+| 预计用时 | 约 3 小时 |
 | 交付 | 报告附录 "Installation and User Guide"（英文，带截图，放进报告），同一份内容放进主仓库 `docs/USER_GUIDE.md` |
 | 对应计划 | 后续计划 §7；评分项 "System Implementation（功能、易用性、使用指南）" |
 
@@ -19,7 +19,7 @@
    - Windows：下载或克隆，运行 `setup.ps1`，双击 `start-fixfirst.bat`；
    - macOS / Linux：运行 `scripts/setup.sh`，启动 `fixfirst serve`。
 
-   每一步配截图，命令写成可以直接复制的样子。C6 之后的路径都在 `SystemCode/` 下面。
+   每一步配截图，命令写成可以直接复制的样子。B15 之后的路径都在 `SystemCode/` 下面。
 3. **First run with the sample project**：从 Open a sample project 开始，一直到 All tests pass，每一步截图：Must fix 列表、Details 里的规则和来源、Check again 之后的 Fixed and verified。
 4. **Using it on your own project**：
    - 选项目文件夹和 Python（项目自己的 `.venv`）；
@@ -49,10 +49,10 @@
 
 ## 步骤
 
-1. 10/19 前：在 Windows 上边装边写、边截图，写成 `docs/USER_GUIDE.md` 开 PR。截图放 `docs/user-guide-images/`，用 PNG，每张不超过 500 KB。
-2. 请 A 在 Mac 上照着从头装一遍，记下卡住的地方，改进指南。
-3. C6 合并以后，把所有路径改成 `SystemCode/...`，重新截安装部分的图。
-4. 10/22 前定稿，复制进报告附录。C4 最终版验收时再照着装一次。
+1. 10/19 前：边装边写、边截图，写成 `docs/USER_GUIDE.md` 开 PR。截图放 `docs/user-guide-images/`，用 PNG，每张不超过 500 KB。
+2. 请 A 在 Mac（或自己的电脑）上照着从头装一遍，记下卡住的地方，改进指南。Windows 部分的截图来自 C3。
+3. B15 合并以后，把所有路径改成 `SystemCode/...`，重新截安装部分的图。
+4. 10/22 前定稿，复制进报告附录。C3 最终版验收时，C 会在 Windows 上再照着装一次。
 
 ## 完成标准
 
