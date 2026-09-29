@@ -1,0 +1,2 @@
+participant,task,cause_score,scorer,notes
+P00-EXAMPLE,T1,correct,HZ,"Example row (delete it). Scores: correct, partly or wrong; blank means not scored yet"

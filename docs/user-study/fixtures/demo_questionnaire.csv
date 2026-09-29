@@ -1,0 +1,7 @@
+participant,python_years,used_pytest,sus_1,sus_2,sus_3,sus_4,sus_5,sus_6,sus_7,sus_8,sus_9,sus_10,easier_condition,most_helpful,confusing,interview_stuck,interview_would_use
+PILOT1,1,yes,4,2,4,2,4,2,4,2,4,2,DEMO pilot answer,DEMO pilot answer,DEMO pilot answer,DEMO pilot answer,DEMO pilot answer
+P01,1,yes,5,1,5,1,5,1,5,1,5,1,"DEMO: FixFirst, it named the file and the line","DEMO: the first step under Must fix","DEMO: nothing","DEMO: looked for the Markup import","DEMO: yes, for old projects"
+P02,2,no,4,2,4,2,4,2,4,2,4,2,"DEMO: FixFirst","DEMO: Details with the rule","DEMO: the word verified","DEMO: searched the distutils error","DEMO: maybe"
+P03,3,yes,3,3,3,3,3,3,3,3,3,3,"DEMO: about the same","DEMO: Check again","DEMO: where to choose the interpreter","DEMO: did not know where settings go","DEMO: not sure"
+P04,0.5,yes,4,2,5,1,4,2,5,1,4,3,"DEMO: FixFirst","DEMO: the command to copy","DEMO: the optional section","DEMO: reinstalled packages","DEMO: yes"
+P06,4,no,4,2,4,2,4,2,,2,4,2,,,,,

@@ -1,0 +1,27 @@
+participant,date,order,fixfirst_set,task,condition,start_time,seconds,success,false_done_claims,tests_modified,confidence_1to5,cause_explanation,notes
+P00-EXAMPLE,2026-10-13,FixFirst first,A,T1,fixfirst,14:05,431,yes,0,no,4,"a local file named like the library hid it","Template example row: never analysed"
+PILOT1,2026-10-11,FixFirst first,A,T1,fixfirst,10:05,500,yes,0,no,4,"DEMO pilot: Markup moved","Pilot rows are never analysed"
+PILOT1,2026-10-11,FixFirst first,A,T3,baseline,10:40,720,no,1,no,2,"DEMO pilot: no idea",
+P01,2026-10-13,FixFirst first,A,T1,fixfirst,09:10,300,yes,1,no,5,"DEMO: Jinja2 removed Markup; it has to come from markupsafe",
+P01,2026-10-13,FixFirst first,A,T2,fixfirst,09:20,200,yes,0,no,4,"DEMO: the package was not installed",
+P01,2026-10-13,FixFirst first,A,T3,baseline,09:35,500,yes,1,no,4,"DEMO: distutils is gone in Python 3.12",
+P01,2026-10-13,FixFirst first,A,T4,baseline,09:50,720,no,3,yes,2,"DEMO: the tests were wrong","DEMO: edited a test file; grade failed"
+P02,2026-10-13,FixFirst first,B,T3,fixfirst,11:10,250,yes,0,no,4,"DEMO: Python 3.12 has no distutils any more",
+P02,2026-10-13,FixFirst first,B,T4,fixfirst,11:20,350,yes,0,no,4,"DEMO: settings.toml was missing; I copied the example",
+P02,2026-10-13,FixFirst first,B,T1,baseline,11:35,400,yes,0,no,4,"DEMO: Markup moved from jinja2 to markupsafe",
+P02,2026-10-13,FixFirst first,B,T2,baseline,11:50,600,yes,1,no,3,"DEMO: an import path problem",
+P03,2026-10-14,Baseline first,B,T1,baseline,09:10,720,no,2,no,1,"DEMO: the test data was wrong",
+P03,2026-10-14,Baseline first,B,T2,baseline,09:25,450,yes,0,no,4,"DEMO: the src package had to be installed with pip install -e .",
+P03,2026-10-14,Baseline first,B,T3,fixfirst,09:45,150,yes,0,no,5,"DEMO: distutils was removed from the standard library",
+P03,2026-10-14,Baseline first,B,T4,fixfirst,09:55,720,no,2,no,2,"DEMO: a config problem",
+P04,2026-10-14,Baseline first,A,T3,baseline,11:10,550,yes,0,no,3,"DEMO: LooseVersion comes from distutils, which Python 3.12 dropped",
+P04,2026-10-14,Baseline first,A,T4,baseline,11:25,650,yes,0,no,4,"DEMO: a settings file",
+P04,2026-10-14,Baseline first,A,T1,fixfirst,11:45,100,yes,0,no,5,"DEMO: old Jinja2 API: Markup was removed",
+P04,2026-10-14,Baseline first,A,T2,fixfirst,11:50,400,yes,1,no,4,"DEMO: the project itself was not installed",
+P05,2026-10-15,FixFirst first,A,T1,fixfirst,09:10,320,yes,0,no,4,"DEMO: Markup is not in jinja2 3.1",
+P05,2026-10-15,FixFirst first,A,T2,fixfirst,09:20,280,yes,0,no,4,"DEMO: had to install the project",
+P05,2026-10-15,FixFirst first,A,T3,baseline,09:35,720,no,1,no,2,"DEMO: the network was down",
+P05,2026-10-15,FixFirst first,A,T4,baseline,09:50,610,yes,0,no,4,,"DEMO: the question was not asked"
+P06,2026-10-15,FixFirst first,B,T3,fixfirst,11:10,210,yes,0,no,3,"DEMO: the tests were broken",
+P06,2026-10-15,FixFirst first,B,T4,fixfirst,11:20,720,no,1,no,2,,"DEMO: the question was not asked"
+P06,2026-10-15,FixFirst first,B,T1,baseline,11:40,,withdrawn,,,,,"DEMO: left the study after the first round; T2 was never started"

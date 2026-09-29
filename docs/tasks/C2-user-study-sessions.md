@@ -84,9 +84,9 @@ When: 11–19 Oct, on campus (or remotely via Zoom remote control). Reply with t
    - 他说"好了"，在**实验员终端**从 FixFirst 主仓库运行 `.venv\Scripts\python experiments\user_study\grade.py C:\study T1`（换成当前任务编号）；
    - PASS：记下用时；
    - FAIL：说一句"还没通过"，计时继续，`false_done_claims` 加 1；
-   - 到 12 分钟停止，记为未完成，用时记 720 秒；
+   - 到 12 分钟停止，记为未完成，用时记 720 秒；参与者中途不做了、离开研究，这一题的 `success` 写 `withdrawn`；
    - 问一句"你有多大把握项目现在能用了"，1–5 分；
-   - 再问一句"你觉得刚才是什么原因出的错"，照原话记进 `cause_explanation`，不要纠正他。
+   - 再问一句"你觉得刚才是什么原因出的错"，照原话记进 `cause_explanation`，不要纠正他；说不出来就写 `(no answer)`，只有没问到才留空。
    - 在参与者终端输入 `exit` 退出本题环境；下一题重新运行 `open_task.py`。
 6. **第二轮**：同上。
 7. **结束**：用过 FixFirst 以后填问卷（SUS 加三个问题）；再问访谈的两个问题，简要记下回答。
@@ -102,7 +102,7 @@ When: 11–19 Oct, on campus (or remotely via Zoom remote control). Reply with t
 全部做完以后：
 
 1. 新建分支 `c2-study-data`。
-2. 把记录表存成 `docs/user-study/sessions.csv`（`condition` 这一列统一写 `fixfirst` 或 `baseline`），问卷答案存成 `docs/user-study/questionnaire.csv`。
+2. 把记录表存成 `docs/user-study/sessions.csv`（`condition` 这一列统一写 `fixfirst` 或 `baseline`），问卷答案按 [templates/questionnaire.csv](templates/questionnaire.csv) 的列存成 `docs/user-study/questionnaire.csv`。没答的 SUS 题留空，不要补。每一列的规则见 [DATA.md](../user-study/DATA.md)；交之前可以在主仓库里运行 `.venv\Scripts\python docs\user-study\analysis.py`，表里有记错的地方它会逐条列出来。
 3. 开 PR，在 C2 的 Issue 里告诉 B。
 
 B 会用 `analysis.py` 跑出结果，写成 `RESULTS.md`，你看一遍数字对不对就行。
