@@ -23,4 +23,4 @@
 | vb_pydantic_coercion | version_incompatibility | 0.00 | 0.00 | 0.00 | 0.00 | code_defect (tree) ×5 |
 | vb_yaml_loader | version_incompatibility | 0.00 | 1.00 | 0.00 | 1.00 | version_incompatibility (H07) ×5 |
 
-Hard cases for evaluation only: documented behaviour changes of installed libraries and one two-layer fault (labelled by the first layer), executed against real installed libraries. None is in the knowledge base, and the decision tree is never trained on them.
+Hard cases, never used to train the decision tree: documented behaviour changes of installed libraries and one two-layer fault (labelled by the first layer), executed against real installed libraries. None is in the knowledge base. Heuristics H07 and H08 were written after seeing them, so results on these cases are development results, not held-out evidence.

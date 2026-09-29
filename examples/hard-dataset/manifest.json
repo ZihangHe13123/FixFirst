@@ -262,7 +262,7 @@
     }
   ],
   "rejected": [],
-  "limitations": "Hard cases for evaluation only: documented behaviour changes of installed libraries and one two-layer fault (labelled by the first layer), executed against real installed libraries. None is in the knowledge base, and the decision tree is never trained on them.",
+  "limitations": "Hard cases, never used to train the decision tree: documented behaviour changes of installed libraries and one two-layer fault (labelled by the first layer), executed against real installed libraries. None is in the knowledge base. Heuristics H07 and H08 were written after seeing them, so results on these cases are development results, not held-out evidence.",
   "library_versions": {
     "numpy": "2.5.3",
     "click": "8.5.0",

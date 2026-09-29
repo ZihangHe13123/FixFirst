@@ -11,7 +11,7 @@ JSON and evidence-graph JSON next to it.
 | `playground/` | Four faults, four root causes, fixed step by step; the best overview of the product | `01-first-scan.html` |
 | `diagnosis-evaluation/` | The root-cause experiment: baselines, rules with/without the knowledge graph, decision tree, hybrid; two cross-validation protocols | `REPORT.md` |
 | `diagnosis-dataset/` | 215 executed single-fault cases (5 templates × 43 scenarios) with labels; `environment.json` is the shared interpreter snapshot | `manifest.json` |
-| `hard-dataset/` | 30 executed hard cases (5 templates × 6 scenarios): documented behaviour changes of installed libraries (NumPy 2, PyYAML 6, pydantic 2, Click 8.2) and a two-layer fault; for evaluation only, never for training | `manifest.json` |
+| `hard-dataset/` | 30 executed hard cases (5 templates × 6 scenarios): documented behaviour changes of installed libraries (NumPy 2, PyYAML 6, pydantic 2, Click 8.2) and a two-layer fault; never used to train the tree, but H07 and H08 were written after seeing them, so they are development data | `manifest.json` |
 | `hard-evaluation/` | Diagnosis on the hard cases with the tree trained on the 215 cases; `before/` leaves out the heuristics H07 and H08, which were written after seeing these cases | `REPORT.md` |
 | `demo/` | Import error + style finding: fixing style alone does not close the import issue | `01-failure.html` |
 | `execution-demo/` | Failing tests: a selected-node pass, a skipped test that is *not* a fix, full recovery | `01-two-failures.html` |

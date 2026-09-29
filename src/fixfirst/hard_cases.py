@@ -1,8 +1,9 @@
-"""Hard cases for evaluation only: library behaviour changes and a two-layer fault.
+"""Hard cases: library behaviour changes and a two-layer fault, never used to train the tree.
 
 In the main diagnosis dataset (diagnosis_cases.py) the error usually names the cause, and the
-decision tree is trained on those cases. These scenarios are harder and are never used for
-training or for writing rules. Each uses a documented change in a library that is really
+decision tree is trained on those cases. These scenarios are harder and are never used to train
+the tree. Heuristics H07 and H08 were written after seeing them, so results on them are
+development results, not held-out ones. Each uses a documented change in a library that is really
 installed (NumPy 2, PyYAML 6, pydantic 2, Click 8.2) and raises no "name was removed" error,
 or two faults where the second appears only after the first is fixed. None of them is in the
 knowledge base. Like a real project, each declares the library with the lower bound its code
@@ -100,9 +101,11 @@ def build_dataset(output: Path, python: str | None = None) -> Path:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     manifest["suite"] = "hard"
     manifest["limitations"] = (
-        "Hard cases for evaluation only: documented behaviour changes of installed libraries and "
-        "one two-layer fault (labelled by the first layer), executed against real installed "
-        "libraries. None is in the knowledge base, and the decision tree is never trained on them."
+        "Hard cases, never used to train the decision tree: documented behaviour changes of "
+        "installed libraries and one two-layer fault (labelled by the first layer), executed "
+        "against real installed libraries. None is in the knowledge base. Heuristics H07 and H08 "
+        "were written after seeing them, so results on these cases are development results, not "
+        "held-out evidence."
     )
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     return manifest_path
