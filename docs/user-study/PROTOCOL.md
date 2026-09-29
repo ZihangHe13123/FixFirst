@@ -1,7 +1,8 @@
 # User study protocol
 
-Version 1.1, 29 September 2026. Task B13 writes and maintains it; C runs the sessions
+Version 1.2, 29 September 2026. Task B13 writes and maintains it; C runs the sessions
 ([C2](../tasks/C2-user-study-sessions.md)). Changes after the pilot go in the last section.
+Version 1.2 adds the data rules ([DATA.md](DATA.md)) and the analysis script; the design is unchanged.
 
 ## Research question and targets
 
@@ -116,12 +117,16 @@ Recorded per task in `sessions.csv` (columns in [templates/sessions.csv](../task
 | `false_done_claims` | times the participant said "done" and the grade failed ("unsuccessful attempts" in the proposal) |
 | `tests_modified` | whether a file under `tests/` was changed (the grade then fails) |
 | `confidence_1to5` | "How confident are you that the project works now?" |
-| `cause_explanation` | the participant's own one-sentence explanation of the cause, written down verbatim; B later marks it correct, partly correct or wrong against the known cause ("understanding of the advice" in the proposal) |
+| `cause_explanation` | the participant's own one-sentence explanation of the cause, written down verbatim (`(no answer)` when they cannot say); B later marks it correct, partly correct or wrong against the known cause, in `cause_scores.csv`, from a sheet that hides the condition ("understanding of the advice" in the proposal) |
 
 After the FixFirst round: the System Usability Scale; at the end: three open questions and the
 interview ([QUESTIONNAIRE.md](QUESTIONNAIRE.md)).
 
 ## Analysis (B13)
+
+[analysis.py](analysis.py) computes the numbers; [DATA.md](DATA.md) gives the exact definitions and the
+rules for missing, excluded and contradictory records. The unit of the paired comparison is the
+participant, and only participants with both conditions complete are paired.
 
 - Completion rate per condition.
 - Median time of completed tasks per condition, against the 20% target.
@@ -138,7 +143,7 @@ interview ([QUESTIONNAIRE.md](QUESTIONNAIRE.md)).
 - Participants appear only as P01, P02 …; names, contact details and signed consent forms stay with
   C, outside the repository, and are deleted after the course.
 - No screen or audio recording.
-- The anonymous tables (`sessions.csv`, `questionnaire.csv`) are published with the report.
+- The anonymous tables (`sessions.csv`, `questionnaire.csv`, `cause_scores.csv`) are published with the report.
 
 ## Threats to validity
 

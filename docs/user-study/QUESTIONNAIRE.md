@@ -50,5 +50,8 @@ Scoring (done by B): odd items score minus 1, even items 5 minus score; the sum 
 
 ## `questionnaire.csv` columns
 
+Template: [templates/questionnaire.csv](../tasks/templates/questionnaire.csv); rules: [DATA.md](DATA.md).
+Leave an unanswered SUS item blank; it is never filled in. 没答的 SUS 题留空，不要补。
+
 `participant, python_years, used_pytest, sus_1, …, sus_10, easier_condition, most_helpful,
 confusing, interview_stuck, interview_would_use`

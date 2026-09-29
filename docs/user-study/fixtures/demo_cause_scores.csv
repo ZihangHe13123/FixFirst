@@ -1,0 +1,23 @@
+participant,task,cause_score,scorer,notes
+PILOT1,T1,correct,DEMO,Pilot rows are never analysed
+P01,T1,correct,DEMO,
+P01,T2,correct,DEMO,
+P01,T3,correct,DEMO,
+P01,T4,wrong,DEMO,
+P02,T3,correct,DEMO,
+P02,T4,correct,DEMO,
+P02,T1,correct,DEMO,
+P02,T2,partly,DEMO,
+P03,T1,wrong,DEMO,
+P03,T2,correct,DEMO,
+P03,T3,correct,DEMO,
+P03,T4,partly,DEMO,
+P04,T3,correct,DEMO,
+P04,T4,partly,DEMO,
+P04,T1,correct,DEMO,
+P04,T2,correct,DEMO,
+P05,T1,correct,DEMO,
+P05,T2,partly,DEMO,
+P05,T3,wrong,DEMO,
+P05,T4,,DEMO,The question was not asked: left unscored
+P06,T3,wrong,DEMO,
