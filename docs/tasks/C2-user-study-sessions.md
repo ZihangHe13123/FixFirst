@@ -39,7 +39,7 @@ When: 11–19 Oct, on campus (or remotely via Zoom remote control). Reply with t
 
 ## 第 2 步：准备电脑（试用前一天）
 
-1. 更新主仓库，切到冻结版 v0.7.0，按 [C3](C3-windows-check.md) 的方法确认测试全部通过。
+1. 更新主仓库，切到 B 在 B8 的 Issue 里指定的版本标签（一般是 v0.7.0；试用后如果改过任务项目，会是 v0.7.1，FixFirst 本身不变），按 [C3](C3-windows-check.md) 的方法确认测试全部通过。
 2. 按 B8 的 README（`experiments/user_study/`）运行 `prepare.py`，建好 4 个任务的副本。然后检查判分脚本 `grade.py`：
    - 每个新建的任务，判分都是 FAIL；
    - 用参考答案改好以后，判分都是 PASS。
@@ -78,7 +78,8 @@ When: 11–19 Oct, on campus (or remotely via Zoom remote control). Reply with t
    - PASS：记下用时；
    - FAIL：说一句"还没通过"，计时继续，`false_done_claims` 加 1；
    - 到 12 分钟停止，记为未完成，用时记 720 秒；
-   - 问一句"你有多大把握项目现在能用了"，1–5 分。
+   - 问一句"你有多大把握项目现在能用了"，1–5 分；
+   - 再问一句"你觉得刚才是什么原因出的错"，照原话记进 `cause_explanation`，不要纠正他。
 6. **第二轮**：同上。
 7. **结束**：用过 FixFirst 以后填问卷（SUS 加三个问题）；再问访谈的两个问题，简要记下回答。
 8. **当天就把数据录进表格**：只写编号，不写名字。

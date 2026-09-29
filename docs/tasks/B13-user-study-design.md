@@ -37,6 +37,8 @@
 
 每个任务限时 **12 分钟**。试用之后可以调整，调整要写进方案。
 
+proposal 写的是每人两个任务（每种条件一个）。这里每种条件做两个，是为了减少单个任务难易带来的偶然影响；如果试用时发现太累，就改回每种条件一个，并写进方案。
+
 **平衡顺序**：8 个人按下表轮换，每 4 个人一轮：
 
 | 参与者 | 第一轮 | 第二轮 |
@@ -72,11 +74,14 @@
 | `false_done_claims` | 说"好了"但判分没通过的次数 |
 | `tests_modified` | 是否改过测试文件。改过的不算成功 |
 | `confidence_1to5` | 做完后自评"项目现在能用了"的把握，1–5 分 |
+| `cause_explanation` | 做完后用一句话说出刚才出错的原因，照原话记下；B 事后对照任务的已知原因判断说对没有。对应 proposal 的"对建议的理解"（understanding of the advice） |
 
 **分析**（B 在本卡片最后一步做）：
 
 - 每种条件的完成率；
-- 用时的中位数；
+- **成功完成的任务的中位用时**：这是 proposal 目标（降低 20%）用的指标；
+- 另报"未完成按 720 秒计入"的中位用时，和上一项分开命名，不能用它宣布达到 proposal 的目标；
+- 说对原因的比例（`cause_explanation`）；
 - 每个人两种条件的用时差；
 - Wilcoxon 符号秩检验作为补充；
 - SUS 平均分；
@@ -138,9 +143,10 @@ rows = [r for r in csv.DictReader(open("docs/user-study/sessions.csv", encoding=
         if not r["participant"].startswith(("PILOT", "P00"))]
 for condition in ("fixfirst", "baseline"):
     group = [r for r in rows if r["condition"] == condition]
-    done = sum(r["success"] == "yes" for r in group)
-    print(condition, f"completed {done}/{len(group)}",
-          "median seconds", median(int(r["seconds"]) for r in group))
+    solved = [int(r["seconds"]) for r in group if r["success"] == "yes"]
+    print(condition, f"completed {len(solved)}/{len(group)}",
+          "| median seconds of solved tasks (proposal target):", median(solved) if solved else "n/a",
+          "| median seconds, unsolved counted as 720:", median(int(r["seconds"]) for r in group))
 
 # Paired: each participant's mean time with and without FixFirst (unfinished tasks count as 720 s).
 people = sorted({r["participant"] for r in rows})
@@ -157,10 +163,10 @@ print("Wilcoxon signed-rank:", wilcoxon(with_ff, without))
 `RESULTS.md` 写这几部分，报告（[B11](B11-report.md)）的用户研究一节由它改写：
 
 1. 参与者概况：人数、Python 经验的分布；
-2. 完成率和中位用时的对照表，写明和 proposal 目标（80%，降低 20%）的差距；
+2. 完成率、**成功任务的中位用时**的对照表，写明和 proposal 目标（完成率 80%，成功任务的中位用时降低 20%）的差距；"未完成按 720 秒计入"的中位用时单独列一行，名称写清楚；
 3. 配对比较：每个人的用时差，以及检验结果（n 小，只作参考）；
 4. SUS 平均分和分布，以及怎么解读（68 分左右是平均水平）；
-5. 错误声称"好了"的次数、改测试文件的次数；
+5. 错误声称"好了"的次数、改测试文件的次数，以及说对原因的比例；
 6. 访谈里反复出现的意见；
 7. 局限：人数少、学习效应（第二轮更熟练）、任务是人为构造的、实验员是组员；
 8. 试用后对方案做了哪些调整。
