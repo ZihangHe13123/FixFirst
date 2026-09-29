@@ -39,6 +39,9 @@ When: 11–19 Oct, on campus (or remotely via Zoom remote control). Reply with t
 
 ## 第 2 步：准备电脑（试用前一天）
 
+**前提**：[C3](C3-windows-check.md) 第一部分（任务终端和判分在 Windows 上的验收）已经全部符合预期。它只在 macOS 上验证过，没在 Windows 上验收之前不要开始试用。
+
+
 1. 更新主仓库，切到 B 在 B8 的 Issue 里指定的版本标签（一般是 v0.7.0；试用后如果改过任务项目，会是 v0.7.1，FixFirst 本身不变），按 [C3](C3-windows-check.md) 的方法确认测试全部通过。
 2. 按 [B8 的 README](../../experiments/user_study/README.md) 运行一次自检：
 
