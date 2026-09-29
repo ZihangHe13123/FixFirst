@@ -1,0 +1,3 @@
+[booking]
+max_seats = 4
+currency = "SGD"
