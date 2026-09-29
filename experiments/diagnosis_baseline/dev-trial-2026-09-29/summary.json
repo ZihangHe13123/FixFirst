@@ -1,0 +1,35 @@
+{
+  "purpose": "development trial: checks the pipeline, not a result",
+  "models": {
+    "Qwen3.6-35B-A3B-6bit": {
+      "n": 10,
+      "answered": 10,
+      "failed_requests": 0,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "per_label": {
+        "missing_dependency": "2/2",
+        "local_module": "2/2",
+        "version_incompatibility": "2/2",
+        "config_missing": "2/2",
+        "code_defect": "2/2"
+      },
+      "median_seconds": 1.36
+    },
+    "gemma-4-26B-A4B-it-qat-4bit": {
+      "n": 10,
+      "answered": 10,
+      "failed_requests": 0,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "per_label": {
+        "missing_dependency": "2/2",
+        "local_module": "2/2",
+        "version_incompatibility": "2/2",
+        "config_missing": "2/2",
+        "code_defect": "2/2"
+      },
+      "median_seconds": 1.47
+    }
+  }
+}
