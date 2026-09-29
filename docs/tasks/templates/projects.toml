@@ -1,0 +1,45 @@
+# The new held-out batch (task A1). Copy this file into the private repository
+# fixfirst-heldout and add one [[project]] block per project; the scripts need at least one.
+# The fields are the same as in examples/real-world/projects.toml:
+#
+#   id         short name, lowercase with hyphens; the same id is used in the label files
+#   repo       owner/name on GitHub
+#   ref        the release (tag) to use, e.g. "v1.4.0" or "2.2.0"
+#   domain     e.g. "Web: Flask extension", "Data visualisation"
+#   layout     project layout and how dependencies are declared,
+#              e.g. "src layout, pyproject.toml (hatch)" or "flat package, setup.py, requirements-dev.txt"
+#   python     Python version installed by uv, e.g. "3.12" (do not use "system": Windows has none)
+#   install    how the project's own files tell a newcomer to install it; each item is what
+#              follows `pip install`, run inside the project folder
+#   scenario   one sentence: how this environment was made and what was deliberately left out.
+#              Write it before running pytest.
+#
+# Only for a code-defect project (a real bug fix):
+#   commit     check out this commit instead of the release (the parent of the fix)
+#   tests_from take test files from this commit (the fix itself) ...
+#   test_files ... namely these files
+#
+# Example (remove the leading "# " to use it as a starting point):
+#
+# [[project]]
+# id = "example-cli"
+# repo = "owner/example-cli"
+# ref = "v1.2.0"
+# domain = "Command-line tools"
+# layout = "flat package, setup.py, requirements-dev.txt"
+# python = "3.12"
+# install = ["-e .", "-r requirements-dev.txt"]
+# scenario = "The documented development setup; unpinned dependencies get today's releases."
+#
+# [[project]]
+# id = "example-bugfix"
+# repo = "owner/example"
+# ref = "v2.0.1"                        # nearest release before the commit; used as the version number
+# commit = "<parent of the fix, 40 characters>"
+# tests_from = "<the fix commit>"
+# test_files = ["tests/test_parser.py"]
+# domain = "Data parsing"
+# layout = "src layout, pyproject.toml (setuptools)"
+# python = "3.12"
+# install = ["-e .", "pytest"]
+# scenario = "Code defect: the parent of the fix for issue #123, with the test that the fix added."

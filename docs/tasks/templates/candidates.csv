@@ -1,0 +1,2 @@
+id,repo,ref,python,domain,found_in,tried_on,pytest_summary,root_cause_guess,kept,reason
+EXAMPLE-typer,fastapi/typer,0.3.2,3.10,Command-line tools,awesome-python: Command-line Interface Development,2026-09-29,"2 errors",missing_dependency,no,"Example row: typer is a pilot project, so it may not be used (delete this row)"
