@@ -7,7 +7,7 @@ Usage:
   python experiments/diagnosis_baseline/one_shot.py --rescore DIR
 
 DATASET is a recorded dataset: examples/diagnosis-dataset, or the output of `fixfirst dataset
---suite diagnosis|hard|multi`. For each case the prompt holds the records FixFirst's diagnosis
+--suite diagnosis|hard`. For each case the prompt holds the records FixFirst's diagnosis
 reads (see evidence()): pytest's output and the exception records of FixFirst's pytest plugin,
 pip check and Ruff output when they ran, the environment snapshot and the project index. FixFirst's
 conclusions, its knowledge base and the case definition never enter the prompt; each prompt is
