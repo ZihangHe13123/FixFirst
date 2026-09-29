@@ -5,7 +5,7 @@
 | 负责 | C。全员帮忙找人；A 可以协助计时 |
 | 时间 | 招募今天开始，10/10 前定好人；试用 10/11–10/12；正式实验 10/13–10/19 |
 | 预计用时 | 15–20 小时：每人约 90 分钟，另加招募和准备 |
-| 要先完成 | 招募不用等；实验要等 B13（方案、同意书、问卷，10/5）和 B8（任务项目和判分脚本，10/10） |
+| 要先完成 | 招募不用等；实验要等 B13（方案、同意书、问卷，10/5）和 B8（任务项目和判分脚本，10/8，冻结前合并） |
 | 交付 | 匿名的 `docs/user-study/sessions.csv` 和 `questionnaire.csv`，通过 PR 提交 |
 | 对应计划 | 后续计划 §4 P0 第 9 项 |
 
@@ -40,14 +40,17 @@ When: 11–19 Oct, on campus (or remotely via Zoom remote control). Reply with t
 ## 第 2 步：准备电脑（试用前一天）
 
 1. 更新主仓库，切到 B 在 B8 的 Issue 里指定的版本标签（一般是 v0.7.0；试用后如果改过任务项目，会是 v0.7.1，FixFirst 本身不变），按 [C3](C3-windows-check.md) 的方法确认测试全部通过。
-2. 按 B8 的 README（`experiments/user_study/`）运行 `prepare.py`，建好 4 个任务的副本。然后检查判分脚本 `grade.py`：
-   - 每个新建的任务，判分都是 FAIL；
-   - 用参考答案改好以后，判分都是 PASS。
+2. 按 [B8 的 README](../../experiments/user_study/README.md) 运行一次自检：
 
-   有任何一条不对，就在 B8 的 Issue 里告诉 B。
+   ```powershell
+   .venv\Scripts\python experiments\user_study\prepare.py C:\study --self-test
+   ```
+
+   应该看到 4 行 `as expected`，最后是 `Self-test passed`。不对就在 B8 的 Issue 里告诉 B。自检会用参考答案把任务改好，所以之后要再运行一次 `prepare.py C:\study`（不带 `--self-test`）重建。
 3. 关掉所有 AI 功能：VS Code 里停用 Copilot 等扩展；浏览器不登录任何 AI 助手。
 4. 准备好：
-   - 一个空白终端；
+   - 一个保留在 FixFirst 主仓库的实验员终端，用来准备任务和判分；
+   - 一个参与者终端，每题通过 `open_task.py` 进入该题的目录和 `.venv`，见下方步骤；
    - FixFirst 网页界面（先不打开）；
    - 手机计时器；
    - 打印好的同意书和问卷，或者网页表单；
@@ -68,18 +71,20 @@ When: 11–19 Oct, on campus (or remotely via Zoom remote control). Reply with t
 
 每个参与者照这张清单做：
 
-1. **开始前**：运行 `prepare.py` 重建全部任务，关掉上一个人留下的浏览器标签和终端。
-2. **说明研究**，签同意书。签好的同意书你自己保存，不进仓库。
+1. **开始前**：运行 `prepare.py C:\study` 重建全部任务，关掉上一个人留下的浏览器标签和终端。
+2. **说明研究**，签同意书。签好的同意书你自己保存，不进仓库。告诉参与者修好的标准：重新用同一任务环境打开干净终端，`python -m pytest` 也能全部通过（临时设置的环境变量不算）。
 3. **问背景**：Python 经验多少年，用过 pytest 吗。
-4. **第一轮**：如果这一轮有 FixFirst，先用样例项目（Open a sample project）教 5 分钟。
+4. **第一轮**：如果这一轮有 FixFirst，先按 [PROTOCOL.md](../user-study/PROTOCOL.md) 用样例项目教 5 分钟：修好 `pricing.py` 和 `reports.py` 的两处导入，再展示两项 Fixed and verified。只改第一处时，另一处仍阻断测试，不能说已经验证。
 5. **每个任务**：
-   - 参与者读完说明就开始计时；
-   - 他说"好了"，你就运行 `grade.py`；
+   - **计时前**，在参与者终端从 FixFirst 主仓库运行 `.venv\Scripts\python experiments\user_study\open_task.py C:\study T1`（换成当前任务编号）。它会进入任务目录并绑定该题的 `.venv`；用 `python -c "import sys; print(sys.executable)"` 核对路径。两种条件的准备相同，不提前显示测试结果；有 FixFirst 时也确认其目标解释器是这一个；
+   - 念完 B8 README 的统一任务说明，允许澄清规则；说“开始”并允许参与者查看项目和操作时开始计时；
+   - 他说"好了"，在**实验员终端**从 FixFirst 主仓库运行 `.venv\Scripts\python experiments\user_study\grade.py C:\study T1`（换成当前任务编号）；
    - PASS：记下用时；
    - FAIL：说一句"还没通过"，计时继续，`false_done_claims` 加 1；
    - 到 12 分钟停止，记为未完成，用时记 720 秒；
    - 问一句"你有多大把握项目现在能用了"，1–5 分；
    - 再问一句"你觉得刚才是什么原因出的错"，照原话记进 `cause_explanation`，不要纠正他。
+   - 在参与者终端输入 `exit` 退出本题环境；下一题重新运行 `open_task.py`。
 6. **第二轮**：同上。
 7. **结束**：用过 FixFirst 以后填问卷（SUS 加三个问题）；再问访谈的两个问题，简要记下回答。
 8. **当天就把数据录进表格**：只写编号，不写名字。

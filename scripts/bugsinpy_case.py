@@ -177,7 +177,7 @@ def main() -> int:
         raise SystemExit("run_test.sh names no test; pass the tests with --node")
     record = {"case": case, "repository": row["project_repository"], "buggy_commit": buggy,
               "fixed_commit": fixed, "bugsinpy_python": info.get("python_version"),
-              "patched_files": source, "tests": nodes, "run_test_sh": run_test.strip(),
+              "patched_files": source, "tests": nodes, "run_test_sh": run_test.strip(), "deps": args.deps,
               "date": datetime.now().astimezone().isoformat(timespec="seconds")}
     python = venv_python(folder)
     if not python.exists():

@@ -1,0 +1,48 @@
+bug,python,deps,result,note
+PySnooper-1,3.9.6,pytest python_toolbox,not reproduced,the buggy source passes its test on Python 3.9 / macOS (tried while writing the script)
+PySnooper-2,3.9.6,pytest python_toolbox six,reproduced,"dev: B saw FixFirst's result on it while testing the script, so it is not an independent result"
+PySnooper-3,-,-,unavailable,the fixed commit is no longer in the upstream repository
+tqdm-1,3.9.6,pytest nose,reproduced,
+tqdm-2,3.9.6,pytest nose,reproduced,
+tqdm-3,3.9.6,pytest nose,reproduced,
+tqdm-4,3.9.6,pytest nose,reproduced,
+tqdm-5,3.9.6,pytest nose,reproduced,
+tqdm-6,3.9.6,pytest nose,reproduced,
+tqdm-7,3.9.6,pytest nose,reproduced,
+tqdm-8,3.9.6,pytest nose,reproduced,
+tqdm-9,3.9.6,pytest nose,reproduced,
+cookiecutter-1,3.9.6,pytest pytest-mock freezegun,error,exit 4: the project's pytest settings need pytest-cov
+cookiecutter-1,3.9.6,pytest pytest-mock freezegun pytest-cov,not reproduced,the buggy source passes its test
+cookiecutter-2,3.9.6,pytest pytest-mock freezegun,error,exit 4: the project's pytest settings need pytest-cov
+cookiecutter-2,3.9.6,pytest pytest-mock freezegun pytest-cov,reproduced,
+cookiecutter-3,3.9.6,pytest pytest-mock freezegun,error,exit 4: the project's pytest settings need pytest-cov
+cookiecutter-3,3.9.6,pytest pytest-mock freezegun pytest-cov,reproduced,
+cookiecutter-4,3.9.6,pytest pytest-mock freezegun,reproduced,
+tornado-1,3.9.6,pytest,error,exit 4: pytest 9 cannot collect this tornado version's test classes (no attribute 'runTest')
+tornado-1,3.9.6,pytest<8,reproduced,
+tornado-2,3.9.6,pytest,error,exit 4: pytest 9 cannot collect this tornado version's test classes (no attribute 'runTest')
+tornado-2,3.9.6,pytest<8,reproduced,
+tornado-3,3.9.6,pytest,not reproduced,the buggy source passes its test
+tornado-3,3.9.6,pytest<8,not reproduced,the buggy source passes its test
+tornado-4,3.9.6,pytest,error,exit 4: pytest 9 cannot collect this tornado version's test classes (no attribute 'runTest')
+tornado-4,3.9.6,pytest<8,reproduced,
+tornado-5,3.9.6,pytest,reproduced,with pytest 9.1.1
+tornado-6,3.9.6,pytest,reproduced,with pytest 9.1.1
+tornado-7,3.9.6,pytest,error,exit 4: pytest 9 cannot collect this tornado version's test classes (no attribute 'runTest')
+tornado-7,3.9.6,pytest<8,reproduced,
+tornado-8,3.9.6,pytest,error,exit 4: pytest 9 cannot collect this tornado version's test classes (no attribute 'runTest')
+tornado-8,3.9.6,pytest<8,reproduced,
+tornado-9,3.9.6,pytest,reproduced,with pytest 9.1.1
+tornado-10,3.9.6,pytest,error,exit 4: pytest 9 cannot collect this tornado version's test classes (no attribute 'runTest')
+tornado-10,3.9.6,pytest<8,reproduced,
+tornado-11,3.9.6,pytest,error,exit 4: pytest 9 cannot collect this tornado version's test classes (no attribute 'runTest')
+tornado-11,3.9.6,pytest<8,reproduced,
+tornado-12,3.9.6,pytest,error,exit 4: pytest 9 cannot collect this tornado version's test classes (no attribute 'runTest')
+tornado-12,3.9.6,pytest<8,reproduced,
+tornado-13,3.9.6,pytest,error,exit 4: pytest 9 cannot collect this tornado version's test classes (no attribute 'runTest')
+tornado-13,3.9.6,pytest<8,reproduced,
+tornado-14,3.9.6,pytest,reproduced,with pytest 9.1.1
+tornado-15,3.9.6,pytest,error,exit 4: pytest 9 cannot collect this tornado version's test classes (no attribute 'runTest')
+tornado-15,3.9.6,pytest<8,reproduced,
+tornado-16,3.9.6,pytest,error,exit 4: pytest 9 cannot collect this tornado version's test classes (no attribute 'runTest')
+tornado-16,3.9.6,pytest<8,reproduced,

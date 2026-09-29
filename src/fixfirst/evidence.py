@@ -667,6 +667,10 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
                 facts.append(observed(subject, "callee_module", "module:" + top, refs))
                 modules.add(top)
         details[subject] = evidence
+    # The distributions this project builds. Installed (for example in editable mode), their
+    # modules are the project's own code, not another library that a project file hides.
+    for name in project.get("own_names", []) if project_run else []:
+        facts.append(observed("dist:" + name, "is_project", "yes", project_ref))
     contexts = {}
     for module in sorted(modules):
         context = module_context(session, module, project)

@@ -1,0 +1,7 @@
+[project]
+name = "release-checker"
+version = "0.5.1"
+requires-python = ">=3.8"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

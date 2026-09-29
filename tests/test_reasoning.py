@@ -49,6 +49,31 @@ def test_rules_and_knowledge_diagnose_real_failures(tmp_path, scenario, cause, r
     assert session.actions[0].cause == (None if cause == "code_defect" else cause)
 
 
+def test_the_projects_own_installed_package_is_not_a_shadowed_library(tmp_path):
+    # Working on a library's own repository with that library installed (often in editable
+    # mode): its package is the project's code, not a file hiding someone else's library.
+    def diagnose(name):
+        root = tmp_path / name
+        root.mkdir()
+        (root / "pyproject.toml").write_text(f'[project]\nname = "{name}"\nversion = "0"\n')
+        (root / "jinja2.py").write_text("def render(text):\n    return text\n")
+        (root / "test_render.py").write_text(
+            "import jinja2\n\n\ndef test_escape():\n    assert jinja2.escape_all('<a>') == '&lt;a&gt;'\n"
+        )
+        session = create_session(root, sys.executable, goal="pass_tests")
+        session.use_classifier = False
+        scan(session, cases.CHECKS)
+        issue = next(i for i in session.issues if i.status == "open" and i.tool == "pytest_run")
+        return session, issue
+
+    session, issue = diagnose("Jinja2")
+    assert issue.diagnosis_rule not in ("D10", "D12")
+    assert not any(a.action_id.startswith("rename-") for a in session.actions)
+    # The same files in a project with another name still hide the installed Jinja2.
+    session, issue = diagnose("shop")
+    assert issue.diagnosis_rule == "D10" and session.actions[0].action_id == "rename-jinja2.py"
+
+
 def test_knowledge_backed_advice_cites_its_source(tmp_path):
     session, issue = run_scenario(tmp_path, "vi_stdlib_module")
     action = session.actions[0]
