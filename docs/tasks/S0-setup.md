@@ -74,12 +74,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup.ps1
 .venv\Scripts\python -m pytest -q
 ```
 
-测试应该全部通过，大约需要 1–3 分钟。**没有 failed 和 error 就对了**，skipped 可以有：
+测试应该全部通过，大约需要 1–3 分钟。写这份说明时（9/29）的结果是：
 
-- 只在 Windows 上跑的 PowerShell 测试，在 macOS / Linux 上会跳过；
-- 有一个难例测试要用 PyYAML，安装脚本不装它，所以新装的环境里这个测试也会跳过。
+- macOS / Linux：`231 passed, 1 skipped`（跳过的那个是只在 Windows 上跑的 PowerShell 测试）；
+- Windows：`232 passed`。
 
-作为参考，9/29 晚上的 main 在 B 的 macOS 开发环境（装了 PyYAML）里是 `272 passed, 1 skipped`；这个版本还没在 Windows 上跑过。以后测试会越来越多，数字会变。如果只有计时相关的测试偶尔失败，先重跑一次，见 [Windows 测试说明](../WINDOWS_TEAM_TEST.md)。
+以后测试会越来越多，数字会变。如果只有计时相关的测试偶尔失败，先重跑一次，见 [Windows 测试说明](../WINDOWS_TEAM_TEST.md)。
 
 ## 5. 亲手用一遍 FixFirst
 
