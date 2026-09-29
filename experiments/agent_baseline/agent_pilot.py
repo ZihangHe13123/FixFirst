@@ -1,25 +1,51 @@
-"""Agent baseline: a model fixes generated FixFirst cases, with and without FixFirst.
+"""Agent baseline (task B7): a model fixes failing projects, with and without FixFirst.
 
-Every arm gets the same system prompt and the same basic tools (run_command, read_file,
-write_file, finish). Arms:
-  baseline  basic tools only
-  fixfirst  plus fixfirst_check (ff_tool.py, raw issue list) and a usage note: the 28 Sep pilot
-  mcp       plus the tools of `fixfirst mcp`, spoken to over MCP stdio; the server's
-            instructions are added to the system prompt, as MCP clients do
-Every command, FixFirst check and grading run executes under macOS sandbox-exec: writes only
-inside the case, no network.
+Cases:
+  generated  --cases template:scenario: projects built by diagnosis_cases.py, run offline with this
+             repository's .venv as in the 28 Sep pilot. Their reference is the healthy template;
+             scenarios that change test files or pytest settings have none and are refused.
+  real       --projects ID ...: projects from a manifest (default examples/real-world/projects.toml).
+             Every run exports the project from a fixed commit of its source clone (--sources) and
+             rebuilds its own .venv from the recorded snapshot; the reference comes from applying the
+             known repair in --repairs to a separate copy, and must itself pass cleanly.
+Arms (same system prompt, basic tools, model settings, budget, network condition and grader):
+  baseline   run_command, read_file, write_file, finish
+  mcp        plus the tools of `fixfirst mcp` over MCP stdio, its instructions added to the system
+             prompt as MCP clients do; its diagnosis always targets the case's project and interpreter
+  fixfirst   the 28 Sep pilot's raw tool (ff_tool.py), generated cases only
+Isolation (isolation.py): everything that runs a case's code (the agent's commands, FixFirst's server
+and its checks, installing the project, the grader, the reference) runs under macOS sandbox-exec. It
+writes only to the run's own folders (or the grader's copy), reads under the home folder, the output
+folder, the repository and the system temporary folders only the run's folders and the interpreters
+(FixFirst's server also its code), and has the network only for the agent and installs when
+--network on. The grader is always offline. Commands, pytest, FixFirst's diagnosis target and the
+grader use the case's interpreter with nothing inherited from the harness's environment.
+Time: --run-timeout is the agent's budget; model requests, every tool call and every process get only
+what is left, and processes are killed as a whole tree at the deadline. The harness's own checks do
+not count against it. Nothing the model asks for after the deadline is carried out.
+Integrity: after every tool call the harness compares test files, conftest.py and test-selecting pytest
+settings with the start; a change is recorded with its turn and stays recorded even if undone later.
+It sees the state between tool calls, not every write inside one command.
+Records (never overwritten): each run has its own folder, runs/<case>--<arm>--r<n>--<model>--<attempt>,
+with the transcript and commands written as they happen, pip freeze at start and end, the setup log
+and the row. results.jsonl gets one row per run, also when setup, the model, the harness or the grader
+fails; `end`, `error` and `grading` say what happened. Arms alternate per case and run.
+--model fake:SCRIPT.json replays scripted replies instead of asking a model, to check the harness.
 
 Configuration (environment variables):
   LLM_BASE_URL            OpenAI-compatible endpoint (default http://127.0.0.1:8123/v1)
   LLM_API_KEY             bearer token for that endpoint (optional)
-  FIXFIRST_TARGET_PYTHON  interpreter the cases run with (default: this repo's .venv)
+  FIXFIRST_TARGET_PYTHON  interpreter the generated cases run with (default: this repo's .venv)
 
 Usage:
   .venv/bin/python experiments/agent_baseline/agent_pilot.py --model M \
-      --cases pkg-inventory:lm_renamed flat-shop:lm_src_layout --arms baseline fixfirst
+      --cases pkg-inventory:lm_renamed flat-shop:lm_src_layout --arms baseline mcp
+  .venv/bin/python experiments/agent_baseline/agent_pilot.py --model M --projects cachetools \
+      --sources ../test-projects/generalisation --network on --max-turns 12 --run-timeout 900
 """
 
 import argparse
+from dataclasses import dataclass, field
 import hashlib
 import json
 import os
@@ -27,16 +53,23 @@ import queue
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import threading
 import time
+import traceback
 from pathlib import Path
+from xml.etree.ElementTree import ParseError
 
 import httpx
 
 from fixfirst import diagnosis_cases as dc
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import isolation as iso  # noqa: E402
+import real_cases as rc  # noqa: E402
+
 FIXFIRST = HERE.parents[1]
 PYTHON = Path(os.environ.get("FIXFIRST_TARGET_PYTHON", str(FIXFIRST / ".venv" / "bin" / "python")))
 BASE = os.environ.get("LLM_BASE_URL", "http://127.0.0.1:8123/v1")
@@ -44,16 +77,22 @@ _KEY = os.environ.get("LLM_API_KEY", "")
 HEADERS = {"Authorization": f"Bearer {_KEY}"} if _KEY else {}
 TMP = os.path.realpath(tempfile.gettempdir())
 HOME = str(Path.home())
-MAX_TURNS = 20
 OUTPUT_LIMIT = 6000
+COMMAND_CAP = {True: 600, False: 180}  # seconds per command, with and without the network
+INSTALL = re.compile(r"\b(pip|uv)\b.*\b(install|uninstall)\b")
+PYTEST_FILES = ("pytest.ini", "pyproject.toml", "tox.ini", "setup.cfg", "conftest.py")
 
-SYSTEM = (
-    "You are an autonomous coding agent. The Python project in your working directory has "
-    "failing tests. Make the full test suite pass by fixing the root cause in the project. "
-    "Do not edit, delete or skip tests. The machine is offline, so packages cannot be "
-    "installed. Use the tools; do not guess what a command would print. When the full test "
-    "suite passes, call finish with one sentence on the cause and the fix."
-)
+
+def system_prompt(network: bool) -> str:
+    packages = ("You may install, upgrade or remove packages with `python -m pip`; the machine is online."
+                if network else "The machine is offline, so packages cannot be installed.")
+    return (
+        "You are an autonomous coding agent. The Python project in your working directory has "
+        "failing tests. Make the full test suite pass by fixing the root cause in the project. "
+        f"Do not edit, delete or skip tests. {packages} Use the tools; do not guess what a command "
+        "would print. When the full test suite passes, call finish with one sentence on the cause and the fix."
+    )
+
 
 BASIC_TOOLS = [
     {"type": "function", "function": {
@@ -91,56 +130,186 @@ FIXFIRST_TOOL = {"type": "function", "function": {
     "parameters": {"type": "object", "properties": {}}}}
 
 
-def profile(case: Path, extra: list[Path] = ()) -> Path:
-    writable = [case, *extra, Path(TMP)]
-    rules = " ".join(f'(subpath "{p}")' for p in writable)
-    text = (
-        "(version 1)\n(allow default)\n(deny network*)\n"
-        f'(deny file-read* (subpath "{HOME}/.ssh") (subpath "{HOME}/.omlx") (subpath "{HOME}/.claude") '
-        f'(subpath "{HOME}/Library/Keychains"))\n'
-        f'(deny file-write*)\n(allow file-write* {rules} (literal "/dev/null") (subpath "/dev/fd"))\n'
-    )
-    path = case.parent / f"{case.name}.sb"
-    path.write_text(text)
-    return path
+@dataclass
+class Settings:
+    max_turns: int = 20
+    run_timeout: float = 1800
+    temperature: float = 0.2
+    max_tokens: int = 4096
+    seed: int = 20261001
 
 
-def sandbox_env(case, home=None):
-    return {"PATH": f"{PYTHON.parent}:/usr/bin:/bin", "HOME": str(home or case), "LANG": "en_US.UTF-8",
-            "TMPDIR": TMP, "VIRTUAL_ENV": str(PYTHON.parent.parent), "PYTHONDONTWRITEBYTECODE": "1"}
+class ModelError(Exception):
+    """The model endpoint did not answer with a usable message."""
+
+
+class ModelTimeout(ModelError):
+    """The model did not answer before the run's time was up."""
+
+
+class ToolTimeout(Exception):
+    """A tool call reached the run's deadline and was stopped."""
+
+
+class SetupError(Exception):
+    """The case could not be prepared; nothing was run or graded."""
+
+
+def interpreters(venv: Path) -> tuple:
+    """The folders an environment's interpreter reads, from its pyvenv.cfg (the interpreter is not run)."""
+    return (venv, *map(Path, rc.venv_record(venv)["interpreters"]))
+
+
+def fixfirst_readable() -> tuple:
+    """What FixFirst's own server needs to read: its code and its environment, not the rest of the repository."""
+    return (FIXFIRST / "src", *interpreters(PYTHON.parent.parent))
+
+
+@dataclass
+class Context:
+    """One invocation: where runs go, which attempt this is, what is denied to every run."""
+    out: Path
+    model: str  # the model's identity in folder names (a scripted fake is named by its file)
+    attempt: str
+    network: bool
+    denied: tuple = ()
+
+
+@dataclass
+class Run:
+    """One run's folders, interpreter and bookkeeping."""
+    ctx: Context
+    folder: Path
+    network: bool
+    real: bool
+    python: Path = PYTHON
+    interpreters: tuple = ()
+    baseline: dict = field(default_factory=dict)
+    violations: dict = field(default_factory=dict)  # changed test file or setting -> where it was first seen
+    commands: int = 0
+    installs: int = 0
+    checks: int = 0
+    mark: str = field(default_factory=iso.new_mark)  # owner token in every sandbox profile of the run
+    stopped: list = field(default_factory=list)  # names of the run's processes stopped when it ended
+    cleanup_problems: list = field(default_factory=list)  # processes that could not be shown stopped
+
+    def __post_init__(self):
+        for sub in ("state", "tmp"):
+            (self.folder / sub).mkdir(parents=True, exist_ok=True)
+
+    project = property(lambda self: self.folder / "project")
+    state = property(lambda self: self.folder / "state")
+    tmp = property(lambda self: self.folder / "tmp")
+    transcript = property(lambda self: self.folder / "transcript.json")
+    commands_log = property(lambda self: self.folder / "commands.jsonl")
+
+    def policy(self, kind: str) -> iso.Policy:
+        agent = iso.Policy((self.project, self.state, self.tmp), tuple(self.interpreters), self.network,
+                           owner=self.mark)
+        if kind == "agent":
+            return agent
+        if kind == "install":  # installing the project itself: its build requirements come from PyPI
+            uv = shutil.which("uv")
+            return iso.Policy(agent.writable, agent.readable, True, (Path(os.path.realpath(uv)),) if uv else (),
+                              owner=self.mark)
+        if kind == "mcp":
+            return agent.extended(readable=fixfirst_readable())
+        if kind == "ff":
+            return agent.extended(readable=fixfirst_readable(), readable_files=(HERE / "ff_tool.py",))
+        raise ValueError(kind)
+
+    def profile(self, kind: str) -> Path:
+        path = self.folder / f"{kind}.sb"
+        if not path.exists():
+            iso.write_profile(self.policy(kind), path, self.ctx.denied)
+        return path
+
+    def env(self, python: Path | None = None) -> dict:
+        return rc.clean_env(python or self.python, self.state, self.tmp)
+
+    def execute(self, argv, kind: str, timeout: float, env: dict | None = None):
+        return iso.execute(argv, self.project, env or self.env(), self.profile(kind), timeout, self.mark)
+
+    def end_processes(self, when: str):
+        """Stop every process of the run (all run under its profiles) and show that none is left; if
+        that cannot be shown, the problem is kept and the run is not graded."""
+        result = iso.stop(self.mark)
+        self.stopped += result["stopped"]
+        if result["error"]:
+            self.cleanup_problems.append(f"{when}: {result['error']}")
+
+    def suite(self) -> dict:
+        """The full suite on a fresh copy, offline, writing only into its own grader folder."""
+        self.checks += 1
+        grader = self.folder / "grader" / f"check-{self.checks:03d}"
+        grader.mkdir(parents=True)
+        owner = iso.new_mark()  # the check's own: its processes are not the run's
+        profile = iso.write_profile(iso.Policy((grader,), (self.project, *self.interpreters), False, owner=owner),
+                                    grader / "grader.sb", self.ctx.denied)
+
+        def execute(argv, cwd, env, timeout):
+            try:
+                return iso.execute(argv, cwd, env, profile, timeout, owner)
+            finally:
+                stopped = iso.stop(owner)  # nothing a test started outlives its check or touches its report
+                if stopped["error"]:
+                    self.cleanup_problems.append(f"grader check {self.checks}: {stopped['error']}")
+                    raise iso.CleanupError(f"the grader check's processes could not be stopped: {stopped['error']}")
+
+        return rc.run_suite(self.project, self.python, grader, execute)
+
+    def check_integrity(self, turn, tool: str):
+        for key in rc.changed(self.baseline, rc.integrity(self.project)):
+            self.violations.setdefault(key, {"turn": turn, "after": tool})
+
+    def log_command(self, entry: dict):
+        with self.commands_log.open("a", encoding="utf-8") as stream:
+            stream.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
 
 class MCPClient:
     """Minimal MCP stdio client: starts `fixfirst mcp` in the sandbox and relays tool calls."""
 
-    def __init__(self, case: Path, sb: Path, state_dir: Path):
-        argv = ["sandbox-exec", "-f", str(sb), str(PYTHON), "-m", "fixfirst",
-                "--store", str(state_dir / "store"), "mcp"]
-        self.log = (state_dir / "mcp-server.log").open("w")
-        self.proc = subprocess.Popen(argv, cwd=case, env=sandbox_env(case, state_dir), stdin=subprocess.PIPE,
-                                     stdout=subprocess.PIPE, stderr=self.log, text=True, bufsize=1)
+    def __init__(self, run: Run, budget: iso.Budget):
+        argv = ["sandbox-exec", "-f", str(run.profile("mcp")), str(PYTHON), "-m", "fixfirst",
+                "--store", str(run.state / "store"), "mcp"]
+        self.owner = run.mark
+        self.log = (run.folder / "mcp-server.log").open("w")
+        self.dead = False
+        self.proc = subprocess.Popen(argv, cwd=run.project, env=rc.clean_env(PYTHON, run.state, run.tmp),
+                                     stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=self.log, text=True,
+                                     bufsize=1, start_new_session=True)
         self.lines: queue.Queue = queue.Queue()
         threading.Thread(target=self._read, daemon=True).start()
         self.next_id = 0
         hello = self.request("initialize", {"protocolVersion": "2025-06-18", "capabilities": {},
-                                            "clientInfo": {"name": "agent_pilot", "version": "1"}})
+                                            "clientInfo": {"name": "agent_pilot", "version": "1"}},
+                             min(120, budget.remaining()))
         self.instructions = hello.get("instructions", "")
         self.proc.stdin.write(json.dumps({"jsonrpc": "2.0", "method": "notifications/initialized"}) + "\n")
         self.proc.stdin.flush()
-        self.tools = self.request("tools/list", {})["tools"]
+        self.tools = self.request("tools/list", {}, min(120, budget.remaining()))["tools"]
+        self.names = {t["name"] for t in self.tools}
 
     def _read(self):
         for line in self.proc.stdout:
             self.lines.put(line)
 
-    def request(self, method, params, timeout=900):
+    def request(self, method, params, timeout):
         self.next_id += 1
         self.proc.stdin.write(json.dumps({"jsonrpc": "2.0", "id": self.next_id, "method": method,
                                           "params": params}) + "\n")
         self.proc.stdin.flush()
         deadline = time.monotonic() + timeout
         while True:
-            answer = json.loads(self.lines.get(timeout=max(1, deadline - time.monotonic())))
+            left = deadline - time.monotonic()
+            try:
+                if left <= 0:
+                    raise queue.Empty
+                answer = json.loads(self.lines.get(timeout=left))
+            except queue.Empty:
+                self.stop()
+                raise ToolTimeout(f"FixFirst's server did not answer {method} in time") from None
             if answer.get("id") == self.next_id:
                 if "error" in answer:
                     raise RuntimeError(answer["error"]["message"])
@@ -150,28 +319,24 @@ class MCPClient:
         return [{"type": "function", "function": {"name": t["name"], "description": t["description"],
                                                   "parameters": t["inputSchema"]}} for t in self.tools]
 
-    def call(self, name, arguments):
-        result = self.request("tools/call", {"name": name, "arguments": arguments})
+    def call(self, name, arguments, timeout):
+        result = self.request("tools/call", {"name": name, "arguments": arguments}, timeout)
         text = "\n".join(c.get("text", "") for c in result["content"] if c.get("type") == "text")
         return ("Error: " if result.get("isError") else "") + text
 
+    def stop(self):
+        """Kill the server and every check it started (they run in their own sessions)."""
+        self.dead = True
+        iso.kill_tree(self.proc, self.owner)
+
     def close(self):
-        try:
-            self.proc.stdin.close()
-            self.proc.wait(timeout=30)
-        except (OSError, subprocess.TimeoutExpired):
-            self.proc.kill()
+        if not self.dead:
+            try:
+                self.proc.stdin.close()
+                self.proc.wait(timeout=30)
+            except (OSError, subprocess.TimeoutExpired):
+                self.stop()
         self.log.close()
-
-
-def sandboxed(case, argv, sb, timeout=180, home=None):
-    env = sandbox_env(case, home)
-    try:
-        proc = subprocess.run(["sandbox-exec", "-f", str(sb), *argv], cwd=case, env=env,
-                              capture_output=True, text=True, timeout=timeout)
-        return proc.returncode, proc.stdout + proc.stderr
-    except subprocess.TimeoutExpired:
-        return 124, f"(timed out after {timeout} s)"
 
 
 def clip(text):
@@ -179,204 +344,614 @@ def clip(text):
 
 
 def inside(case: Path, path: str) -> Path | None:
-    target = (case / path).resolve() if not os.path.isabs(path) else Path(path).resolve()
-    return target if target == case or case in target.parents else None
+    root = case.resolve()
+    target = (root / path).resolve() if not os.path.isabs(path) else Path(path).resolve()
+    return target if target == root or root in target.parents else None
 
 
-def pytest_counts(output):
-    counts = {}
-    for number, word in re.findall(r"(\d+) (passed|failed|errors?|skipped|xfailed|xpassed)", output):
-        counts[word.rstrip("s") if word.startswith("error") else word] = int(number)
-    return counts
+# ---- Models ------------------------------------------------------------------------------------
+
+class FakeModel:
+    """Scripted replies, to check the harness without a model. The script is a JSON list; each step
+    is {"call": name, "arguments": {...}}, {"calls": [...]} for several, {"say": text} for an answer
+    without a tool call, {"fail": text} for a failed request or {"raw": message} for a message sent as
+    it is (to test malformed replies). "delay": seconds makes the reply take that long."""
+
+    def __init__(self, path: Path):
+        self.steps = json.loads(Path(path).read_text(encoding="utf-8"))
+        self.index = 0
+
+    def reply(self, timeout: float):
+        if self.index >= len(self.steps):
+            return {"content": "(script finished)"}, {}
+        step = self.steps[self.index]
+        self.index += 1
+        delay = float(step.get("delay", 0))
+        if delay > timeout:
+            time.sleep(max(0.0, timeout))
+            raise ModelTimeout("the scripted reply took longer than the time left")
+        time.sleep(delay)
+        if "fail" in step:
+            raise ModelError(step["fail"])
+        if "raw" in step:
+            return step["raw"], step.get("usage", {})
+        if "say" in step:
+            return {"content": step["say"]}, {}
+        calls = step.get("calls") or [step]
+        return {"content": "", "tool_calls": [
+            {"id": f"call-{self.index}-{n}", "type": "function",
+             "function": {"name": c["call"], "arguments": json.dumps(c.get("arguments", {}))}}
+            for n, c in enumerate(calls)]}, {}
 
 
-def build_case(root: Path, template: str, scenario: str, arm: str):
-    t = next(x for x in dc.TEMPLATES if x.name == template)
-    s = next(x for x in dc.SCENARIOS if x.scenario_id == scenario)
-    pristine = root / "_templates" / template
-    if not pristine.exists():
-        dc.build_template(pristine, t)
-    case = (root / f"{template}--{scenario}--{arm}").resolve()
-    if case.exists():
-        shutil.rmtree(case)
-    shutil.copytree(pristine, case)
-    s.apply(dc.Project(case, t, dc.TEMPLATES.index(t)))
-    return pristine.resolve(), case, s.label
+def chat(model, messages, tools, settings: Settings, fake: FakeModel | None, timeout: float):
+    if fake:
+        return fake.reply(timeout)
+    body = {"model": model, "messages": messages, "tools": tools, "max_tokens": settings.max_tokens,
+            "temperature": settings.temperature, "seed": settings.seed}
+    data = post_before(f"{BASE}/chat/completions", body, timeout)
+    choices = data.get("choices") if isinstance(data, dict) else None
+    if not isinstance(choices, list) or not choices or not isinstance(choices[0], dict):
+        raise ModelError("the response has no choices")
+    return choices[0].get("message"), data.get("usage")
 
 
-def test_files(case: Path):
-    return {p.relative_to(case): hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in case.rglob("test_*.py") if ".pytest_cache" not in p.parts}
+def post_before(url: str, body: dict, timeout: float) -> dict:
+    """POST and read the JSON reply, all within `timeout` seconds. httpx's timeouts limit each wait,
+    not the whole request (a server that keeps sending slowly would never trip them), so the request
+    runs in a thread and its connection is closed at the deadline."""
+    if timeout <= 0:
+        raise ModelTimeout("no time left for the request")
+    client = httpx.Client(timeout=timeout)
+    result, done = {}, threading.Event()
+
+    def request():
+        try:
+            response = client.post(url, json=body, headers=HEADERS)
+            response.raise_for_status()
+            result["data"] = response.json()
+        except Exception as error:  # handed to the caller below
+            result["error"] = error
+        finally:
+            done.set()
+
+    threading.Thread(target=request, daemon=True).start()
+    finished = done.wait(timeout)
+    client.close()  # at the deadline this aborts the request in the thread
+    if not finished:
+        raise ModelTimeout(f"no complete reply within {timeout:.2f} s")
+    error = result.get("error")
+    if isinstance(error, httpx.TimeoutException):
+        raise ModelTimeout(str(error) or "timed out") from error
+    if error:
+        raise error
+    return result["data"]
 
 
-def digest(case: Path) -> str:
-    h = hashlib.sha256()
-    for p in sorted(case.rglob("*")):
-        if p.is_file() and not {".pytest_cache", "__pycache__"} & set(p.parts):
-            h.update(str(p.relative_to(case)).encode())
-            h.update(p.read_bytes())
-    return h.hexdigest()
-
-
-def is_green(case, generated, before_tests, expected):
-    """Grade a copy of the project against the original tests, without touching the case."""
-    with tempfile.TemporaryDirectory(dir=TMP) as tmp:
-        copy = Path(tmp) / "c"
-        shutil.copytree(case, copy, ignore=shutil.ignore_patterns(".pytest_cache", "__pycache__"))
-        for rel in before_tests:
-            shutil.copy2(generated / rel, copy / rel)
-        code, output = sandboxed(copy, [str(PYTHON), "-m", "pytest", "-q", "-p", "no:cacheprovider"],
-                                 profile(copy))
-        counts = pytest_counts(output)
-        return code == 0 and counts.get("passed") == expected and not counts.get("skipped")
-
-
-def episode(model, arm, case, log, green):
-    state_dir = case.parent / f"{case.name}.state"
-    state_dir.mkdir(exist_ok=True)
-    sb = profile(case, [state_dir])
-    mcp = MCPClient(case, sb, state_dir) if arm == "mcp" else None
+def parse_call(call) -> tuple[str | None, dict | None, str | None]:
+    """(name, arguments, problem) of one tool call; a problem means the call is not carried out."""
+    if not isinstance(call, dict):
+        return None, None, "the tool call is not an object"
+    function = call.get("function")
+    if not isinstance(function, dict) or not isinstance(function.get("name"), str) or not function["name"]:
+        return None, None, "the tool call has no function name"
+    raw = function.get("arguments") or "{}"
     try:
-        return _episode(model, arm, case, log, green, sb, state_dir, mcp)
-    finally:
-        if mcp:
-            mcp.close()
+        arguments = raw if isinstance(raw, dict) else json.loads(raw)
+    except (TypeError, ValueError):
+        return function["name"], None, "the arguments are not JSON"
+    if not isinstance(arguments, dict):
+        return function["name"], None, "the arguments are not a JSON object"
+    return function["name"], arguments, None
 
 
-def _episode(model, arm, case, log, green, sb, state_dir, mcp):
-    tools = BASIC_TOOLS + ([FIXFIRST_TOOL] if arm == "fixfirst" else []) + (mcp.openai_tools() if mcp else [])
-    system = SYSTEM + (FIXFIRST_INSTRUCTIONS if arm == "fixfirst" else "")
-    if mcp and mcp.instructions:
-        system += "\n\n" + mcp.instructions  # what an MCP client adds from the server
-    messages = [{"role": "system", "content": system},
-                {"role": "user", "content": f"The project is in {case}. Its tests fail. Fix it."}]
+def count(value) -> int:
+    return value if isinstance(value, int) and value >= 0 else 0
+
+
+# ---- The episode --------------------------------------------------------------------------------
+
+def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest) -> dict:
     stats = {"turns": 0, "tool_calls": 0, "pytest_runs": 0, "fixfirst_calls": 0, "prompt_tokens": 0,
              "completion_tokens": 0, "model_s": 0.0, "tool_s": 0.0, "end": "turn_cap", "bad_calls": 0,
-             "first_green_turn": None}
-    last = digest(case)
-    for _ in range(MAX_TURNS):
-        body = {"model": model, "messages": messages, "tools": tools, "max_tokens": 4096, "temperature": 0.2}
-        started = time.monotonic()
-        response = httpx.post(f"{BASE}/chat/completions", json=body, headers=HEADERS, timeout=1200)
-        stats["model_s"] += time.monotonic() - started
-        response.raise_for_status()
-        data = response.json()
-        stats["turns"] += 1
-        usage = data.get("usage") or {}
-        stats["prompt_tokens"] += usage.get("prompt_tokens") or 0
-        stats["completion_tokens"] += usage.get("completion_tokens") or 0
-        message = data["choices"][0]["message"]
-        calls = message.get("tool_calls") or []
-        assistant = {"role": "assistant", "content": message.get("content") or ""}
-        if calls:
-            assistant["tool_calls"] = calls
-        messages.append(assistant)
-        if not calls:
-            stats["end"] = "stopped_without_tool"
-            break
-        finished = False
-        for call in calls:
-            stats["tool_calls"] += 1
-            name = call["function"]["name"]
+             "first_green_turn": None, "error": None, "mcp_arguments_filled": 0, "mcp_arguments_overridden": 0}
+    budget = iso.Budget(settings.run_timeout)
+    tools = BASIC_TOOLS + ([FIXFIRST_TOOL] if arm == "fixfirst" else [])
+    system = system_prompt(run.network) + (FIXFIRST_INSTRUCTIONS if arm == "fixfirst" else "")
+    messages = []
+    mcp = None
+
+    def save():
+        run.transcript.write_text(json.dumps(messages, ensure_ascii=False, indent=1), encoding="utf-8")
+
+    try:
+        if arm == "mcp":
+            try:
+                mcp = MCPClient(run, budget)
+            except (OSError, RuntimeError, ValueError, KeyError, ToolTimeout) as error:
+                stats.update(end="mcp_start_failed", error=f"{type(error).__name__}: {error}"[:500])
+                return stats
+            tools = tools + mcp.openai_tools()
+            if mcp.instructions:
+                system += "\n\n" + mcp.instructions  # what an MCP client adds from the server
+        messages += [{"role": "system", "content": system},
+                     {"role": "user", "content": f"The project is in {run.project}. Its tests fail. Fix it."}]
+        with budget.pause():
+            last = state_digest()
+        for turn in range(1, settings.max_turns + 1):
+            if budget.remaining() <= 0:
+                stats["end"] = "time_cap"
+                break
             started = time.monotonic()
             try:
-                args = json.loads(call["function"].get("arguments") or "{}")
-                result = run_tool(name, args, case, sb, state_dir, stats, mcp)
-            except Exception as exc:
-                stats["bad_calls"] += 1
-                result = f"error: {exc}"
-            stats["tool_s"] += time.monotonic() - started
-            messages.append({"role": "tool", "tool_call_id": call.get("id", name), "content": result})
-            finished = finished or name == "finish"
-        current = digest(case)
-        if current != last:
-            last = current
-            if stats["first_green_turn"] is None and green():
-                stats["first_green_turn"] = stats["turns"]
-        if finished:
-            stats["end"] = "finish"
-            break
-    log.write_text(json.dumps(messages, ensure_ascii=False, indent=1))
+                message, usage = chat(model, messages, tools, settings, fake, budget.remaining())
+            except ModelTimeout as error:
+                stats["end"] = "time_cap" if budget.remaining() <= 0 else "model_error"
+                stats["error"] = f"{type(error).__name__}: {error}"[:500]
+                break
+            except (httpx.HTTPError, ValueError, ModelError) as error:
+                stats["end"], stats["error"] = "model_error", f"{type(error).__name__}: {error}"[:500]
+                break
+            finally:
+                stats["model_s"] += time.monotonic() - started
+            if not isinstance(message, dict):
+                stats["end"], stats["error"] = "model_error", "the reply has no message object"
+                break
+            calls = message.get("tool_calls") or []
+            if not isinstance(calls, list):
+                stats["end"], stats["error"] = "model_error", "tool_calls is not a list"
+                break
+            usage = usage if isinstance(usage, dict) else {}
+            stats["turns"] = turn
+            stats["prompt_tokens"] += count(usage.get("prompt_tokens"))
+            stats["completion_tokens"] += count(usage.get("completion_tokens"))
+            content = message.get("content")
+            assistant = {"role": "assistant", "content": content if isinstance(content, str) else ""}
+            if calls:
+                assistant["tool_calls"] = calls
+            messages.append(assistant)
+            if not calls:
+                stats["end"] = "stopped_without_tool"
+                break
+            finished = timed_out = False
+            for index, call in enumerate(calls):
+                call_id = call.get("id") if isinstance(call, dict) and isinstance(call.get("id"), str) else f"call-{turn}-{index}"
+                if timed_out or budget.remaining() <= 0:
+                    timed_out = True
+                    messages.append({"role": "tool", "tool_call_id": call_id, "content": "not run: the run's time is up"})
+                    continue
+                stats["tool_calls"] += 1
+                name, arguments, problem = parse_call(call)
+                started = time.monotonic()
+                if problem:
+                    stats["bad_calls"] += 1
+                    result = f"error: {problem}"
+                else:
+                    try:
+                        result = run_tool(name, arguments, run, stats, mcp, budget, turn)
+                    except ToolTimeout as error:
+                        timed_out, result = True, f"stopped: the run's time is up ({error})"
+                    except (KeyError, TypeError, ValueError, OSError, RuntimeError) as error:
+                        stats["bad_calls"] += 1
+                        result = f"error: {type(error).__name__}: {error}"
+                stats["tool_s"] += time.monotonic() - started
+                messages.append({"role": "tool", "tool_call_id": call_id, "content": result})
+                if not problem and name not in ("read_file", "finish"):
+                    with budget.pause():
+                        run.check_integrity(turn, name)
+                if name == "finish" and not problem and not timed_out and budget.remaining() > 0:
+                    finished = True
+            save()
+            if timed_out or budget.remaining() <= 0:
+                stats["end"] = "time_cap"
+                break
+            with budget.pause():
+                current = state_digest()
+                if current != last:
+                    last = current
+                    if stats["first_green_turn"] is None and green():
+                        stats["first_green_turn"] = turn
+            if finished:
+                stats["end"] = "finish"
+                break
+    finally:
+        save()
+        if mcp:
+            mcp.close()
+        stats["agent_s"] = round(budget.used(), 2)
+        stats["harness_s"] = round(budget.paused, 2)
+        # Every process of the run ends with the episode, before anything is read or graded.
+        run.end_processes("end of the episode")
+        stats["processes_stopped_at_end"] = len(run.stopped)
     return stats
 
 
-def run_tool(name, args, case, sb, state_dir, stats, mcp=None):
-    if mcp and name in {t["name"] for t in mcp.tools}:
+def run_tool(name, args, run: Run, stats, mcp, budget: iso.Budget, turn):
+    if mcp and name in mcp.names:
+        if mcp.dead:
+            return "error: FixFirst's server was stopped"
         stats["fixfirst_calls"] += 1
-        return clip(mcp.call(name, args))
+        if name == "diagnose" and run.real:
+            # The case's project and interpreter, whatever the model passed: a missing value is
+            # filled in, a different one is overridden.
+            forced = {"project": str(run.project), "python": str(run.python)}
+            for key, value in forced.items():
+                given = args.get(key)
+                if not given:
+                    stats["mcp_arguments_filled"] += 1
+                elif os.path.abspath(run.project / str(given)) != value:
+                    stats["mcp_arguments_overridden"] += 1
+            args = {**args, **forced}
+        return clip(mcp.call(name, args, budget.remaining()))
     if name == "run_command":
         command = args["command"]
+        if not isinstance(command, str):
+            raise TypeError("command must be a string")
         if "pytest" in command:
             stats["pytest_runs"] += 1
-        code, output = sandboxed(case, ["/bin/bash", "-c", command], sb)
+        started = time.monotonic()
+        code, output, stopped = run.execute(["/bin/bash", "-c", command], "agent",
+                                            min(COMMAND_CAP[run.network], budget.remaining()))
+        run.commands += 1
+        install = bool(INSTALL.search(command))
+        run.installs += install
+        run.log_command({"turn": turn, "command": command, "exit_code": code, "stopped": stopped,
+                         "seconds": round(time.monotonic() - started, 2), "install": install})
+        if stopped and budget.remaining() <= 0:
+            raise ToolTimeout("the command was stopped at the deadline")
         return f"exit code {code}\n{clip(output)}"
+    # The file tools run in the harness, so they never wait on a named pipe and never read without limit.
     if name == "read_file":
-        target = inside(case, args["path"])
+        target = inside(run.project, str(args["path"]))
         if not target or not target.is_file():
             return "error: no such file in the project"
-        return clip(target.read_text(encoding="utf-8", errors="replace"))
+        data = rc.read_regular(target)
+        if data is None:
+            return "error: not a regular file of at most 16 MB"
+        return clip(data.decode("utf-8", "replace").replace("\r\n", "\n").replace("\r", "\n"))
     if name == "write_file":
-        target = inside(case, args["path"])
+        target = inside(run.project, str(args["path"]))
         if not target:
             return "error: path is outside the project"
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(args["content"], encoding="utf-8")
-        return f"wrote {len(args['content'])} characters to {target.relative_to(case)}"
+        rc.write_regular(target, str(args["content"]))
+        return f"wrote {len(str(args['content']))} characters to {target.relative_to(run.project.resolve())}"
     if name == "fixfirst_check":
         stats["fixfirst_calls"] += 1
-        code, output = sandboxed(case, [str(PYTHON), str(HERE / "ff_tool.py"), str(case),
-                                        str(state_dir / "session.json"), str(PYTHON)], sb, timeout=600,
-                                 home=state_dir)
+        code, output, stopped = run.execute([str(PYTHON), str(HERE / "ff_tool.py"), str(run.project),
+                                             str(run.state / "session.json"), str(PYTHON)], "ff",
+                                            min(600, budget.remaining()), env=run.env(PYTHON))
+        if stopped and budget.remaining() <= 0:
+            raise ToolTimeout("FixFirst's check was stopped at the deadline")
         return clip(output) if code == 0 else f"fixfirst failed (exit {code}):\n{clip(output)}"
     if name == "finish":
         return "ok"
+    stats["bad_calls"] += 1
     return f"error: unknown tool {name}"
 
 
-def grade(case, before_tests, generated: Path, expected):
-    changed = [str(p) for p, digest_ in test_files(case).items() if before_tests.get(p) != digest_]
-    for rel in before_tests:  # judge against the original tests
-        shutil.copy2(generated / rel, case / rel)
-    sb = profile(case)
-    code, output = sandboxed(case, [str(PYTHON), "-m", "pytest", "-q", "-p", "no:cacheprovider"], sb)
-    counts = pytest_counts(output)
-    passed = code == 0 and counts.get("passed") == expected and not counts.get("skipped")
-    return {"fixed": passed, "tests_changed": changed, "grader_counts": counts}
+# ---- References --------------------------------------------------------------------------------
+
+def generated_reference(ctx: Context, template: str, pristine: Path, cache: dict) -> dict:
+    """The healthy template's own outcome, run like a grader run."""
+    if template in cache:
+        return cache[template]
+    folder = ctx.out / "_templates" / f"{template}--reference--{ctx.attempt}"
+    run = Run(ctx, folder, False, False, PYTHON, interpreters(PYTHON.parent.parent))
+    shutil.copytree(pristine, run.project)
+    suite = run.suite()
+    data = {"template": template, "exit_code": suite["exit_code"], "counts": suite["counts"],
+            "summary": suite["summary"], "outcomes": suite["outcomes"]}
+    data["problems"] = rc.validate_reference(data)
+    (folder / "reference.json").write_text(json.dumps(data, indent=1) + "\n", encoding="utf-8")
+    cache[template] = data
+    return data
 
 
-def main():
+def real_reference(ctx: Context, project: dict, source: Path, snapshot: Path, repair: list[str]) -> dict:
+    """The outcome after the known repair, on a separate copy, checked before it grades anything.
+    Only valid references are cached (written atomically); an unusable cache is set aside and the
+    reference built again. Every attempt keeps its own folder. Errors are left to the caller, which
+    records them for every planned run of the case."""
+    commit = rc.source_commit(source)
+    if not commit:
+        raise RuntimeError(f"no git clone of {project['id']} in {source}")
+    key = hashlib.sha256(json.dumps([commit, snapshot.read_text(encoding="utf-8"), repair]).encode()).hexdigest()
+    name = f"{iso.slug(project['id'], 30)}--{key[:12]}"
+    (ctx.out / "_reference").mkdir(parents=True, exist_ok=True)
+    cached = ctx.out / "_reference" / f"{name}.json"
+    data, note = rc.read_reference_cache(cached, key, ctx.attempt)
+    if data:
+        return data
+    folder = ctx.out / "_reference" / f"{name}--{ctx.attempt}"
+    run = Run(ctx, folder, True, True)
+    data = {"key": key, "commit": commit, "repair": [], "problems": [], "cache_note": note}
+    try:
+        rc.export_source(source, commit, run.project)
+        run.python = rc.create_environment(run.project, project, snapshot, [])
+        run.interpreters = interpreters(run.project / ".venv")
+        env = {**run.env(), "SETUPTOOLS_SCM_PRETEND_VERSION": project["ref"].lstrip("v")}
+        for argv in rc.install_commands(project, run.python, run.tmp / "uv-cache"):
+            code, output, _ = run.execute(argv, "install", 900, env=env)
+            data["repair"].append({"command": "install the project: " + " ".join(argv[-2:]), "exit_code": code})
+        for command in repair:
+            code, output, _ = run.execute(["/bin/bash", "-c", command], "install", 900)
+            data["repair"].append({"command": command, "exit_code": code, "output": output[-1000:]})
+        suite = run.suite()
+        data.update(exit_code=suite["exit_code"], counts=suite["counts"], summary=suite["summary"],
+                    outcomes=suite["outcomes"])
+    except (RuntimeError, OSError, subprocess.SubprocessError, ParseError) as error:
+        data.update(exit_code=None, counts={}, outcomes={}, summary="",
+                    setup_error=f"{type(error).__name__}: {error}"[:500])
+    finally:
+        run.end_processes("after the reference")
+    data["processes_stopped"] = run.stopped
+    data["problems"] = (([data["setup_error"]] if data.get("setup_error") else []) + run.cleanup_problems
+                        + rc.validate_reference(data))
+    rc.write_json(folder / "reference.json", data)
+    if not data["problems"]:
+        rc.write_json(cached, data)
+    return data
+
+
+# ---- Runs ---------------------------------------------------------------------------------------
+
+def grade(run: Run, reference: dict, row: dict):
+    row["stage"] = "grading"
+    try:
+        run.check_integrity("end", "final state")
+        verdict = rc.judge(run.suite(), reference, sorted(run.violations))
+    except (OSError, ParseError, KeyError, ValueError) as error:
+        row.update(grading="grading_error", fixed=None, grading_error=f"{type(error).__name__}: {error}"[:500])
+        return
+    row.update(grading="graded", fixed=verdict["fixed"], reasons=verdict["reasons"],
+               grader_counts=verdict["counts"], reference_counts=verdict["reference_counts"],
+               tests_changed=verdict["tests_changed"], violations=run.violations)
+
+
+def close_run(run: Run, row: dict):
+    """The last step of every run, however it ended (finished, capped, setup, model, grader or harness
+    error): stop its processes and show that none is left. A run for which that cannot be shown is
+    `cleanup_failed`: its episode's end is kept, and it is never graded."""
+    run.end_processes("end of the run")
+    row["processes_stopped_at_end"] = len(run.stopped)
+    if run.stopped:
+        row["processes_stopped"] = run.stopped[:20]
+    if run.cleanup_problems:
+        row.update(end="cleanup_failed", episode_end=row.get("end"), grading="not_graded", fixed=None,
+                   error="; ".join(run.cleanup_problems)[:500])
+        for key in ("reasons", "grader_counts", "tests_changed"):
+            row.pop(key, None)
+
+
+def file_hashes(project_dir: Path) -> dict:
+    return {p.relative_to(project_dir).as_posix(): rc.file_hash(p) for p in rc._walk(project_dir)}
+
+
+def play(model, arm, run: Run, settings, fake_path, reference, row, state_digest):
+    """The episode, then the grade; a run whose episode never started is not graded."""
+    fake = FakeModel(fake_path) if fake_path else None
+    files_before = file_hashes(run.project)
+
+    def green():
+        if run.violations:
+            return False
+        try:
+            return rc.judge(run.suite(), reference, [])["fixed"]
+        except (OSError, ParseError):
+            return False
+
+    row["stage"] = "episode"
+    started = time.monotonic()
+    stats = episode(model, arm, run, settings, fake, green, state_digest)
+    stats["total_s"] = round(time.monotonic() - started, 1)
+    row.update({k: round(v, 2) if isinstance(v, float) else v for k, v in stats.items()})
+    if run.cleanup_problems:
+        row.update(grading="not_graded", fixed=None)  # close_run records why; nothing is graded
+    elif stats["end"] == "mcp_start_failed":
+        row.update(grading="not_graded", fixed=None)
+    else:
+        grade(run, reference, row)
+    row.update(files_changed=rc.changed(files_before, file_hashes(run.project)), commands=run.commands,
+               install_commands=run.installs, grader_checks=run.checks)
+
+
+def run_real(ctx: Context, row: dict, settings, project, source, snapshot, reference, arm, run_index, fake_path):
+    run = Run(ctx, iso.run_folder(ctx.out, project["id"], arm, run_index, ctx.model, ctx.attempt), ctx.network, True)
+    row.update(run_dir=run.folder.relative_to(ctx.out).as_posix(), stage="setup")
+    try:
+        prepare_and_play_real(ctx, run, row, settings, project, source, snapshot, reference, arm, fake_path)
+    finally:
+        close_run(run, row)
+
+
+def prepare_and_play_real(ctx: Context, run: Run, row: dict, settings, project, source, snapshot, reference, arm,
+                          fake_path):
+    commit = rc.source_commit(source)
+    row["commit"] = commit
+    setup_log = []
+    try:
+        rc.export_source(source, commit, run.project)
+        run.python = rc.create_environment(run.project, project, snapshot, setup_log)
+        record = rc.venv_record(run.project / ".venv")  # read before any project code can change it
+        run.interpreters = interpreters(run.project / ".venv")
+        row["python"] = record["version"]
+        env = {**run.env(), "SETUPTOOLS_SCM_PRETEND_VERSION": project["ref"].lstrip("v")}
+        for argv in rc.install_commands(project, run.python, run.tmp / "uv-cache"):
+            code, output, _ = run.execute(argv, "install", 900, env=env)
+            setup_log.append({"step": "install the project (sandboxed): " + " ".join(argv[-2:]), "exit_code": code,
+                              "output": output[-2000:]})
+            if code:
+                raise SetupError(f"installing the project failed ({code})")
+    except (RuntimeError, OSError, subprocess.SubprocessError, SetupError) as error:
+        row.update(end="setup_failed", error=f"{type(error).__name__}: {error}"[:500], grading="not_graded", fixed=None)
+        return
+    finally:
+        (run.folder / "setup.json").write_text(json.dumps(setup_log, indent=1), encoding="utf-8")
+    start = rc.freeze(run.python)
+    (run.folder / "freeze-start.txt").write_text("\n".join(start) + "\n", encoding="utf-8")
+    run.baseline = rc.integrity(run.project)
+    row.update(snapshot_mismatch=rc.snapshot_mismatch(snapshot, start),
+               start_digest=rc.workspace_digest(run.project, run.python)[:16])
+    try:
+        play(ctx.model, arm, run, settings, fake_path, reference, row,
+             lambda: rc.workspace_digest(run.project, run.python))
+    finally:
+        end = rc.freeze(run.python)
+        (run.folder / "freeze-end.txt").write_text("\n".join(end) + "\n", encoding="utf-8")
+        row["packages"] = rc.freeze_difference(start, end)
+
+
+def run_generated(ctx: Context, row: dict, settings, spec, arm, run_index, fake_path, references):
+    template, scenario = spec.split(":")
+    t = next(x for x in dc.TEMPLATES if x.name == template)
+    s = next(x for x in dc.SCENARIOS if x.scenario_id == scenario)
+    pristine = ctx.out / "_templates" / template
+    if not pristine.exists():
+        dc.build_template(pristine, t)
+    reference = generated_reference(ctx, template, pristine, references)
+    run = Run(ctx, iso.run_folder(ctx.out, spec, arm, run_index, ctx.model, ctx.attempt), False, False,
+              PYTHON, interpreters(PYTHON.parent.parent))
+    row.update(run_dir=run.folder.relative_to(ctx.out).as_posix(), stage="setup", cause=s.label)
+    try:
+        prepare_and_play_generated(ctx, run, row, settings, t, s, pristine, reference, arm, fake_path)
+    finally:
+        close_run(run, row)
+
+
+def prepare_and_play_generated(ctx: Context, run: Run, row: dict, settings, t, s, pristine, reference, arm,
+                               fake_path):
+    if reference["problems"]:
+        row.update(end="reference_invalid", error="; ".join(reference["problems"]), grading="not_graded", fixed=None)
+        return
+    shutil.copytree(pristine, run.project)
+    s.apply(dc.Project(run.project, t, dc.TEMPLATES.index(t)))
+    if rc.integrity(run.project) != rc.integrity(pristine):
+        row.update(end="unsupported_case", grading="not_graded", fixed=None,
+                   error="the scenario changes test files or pytest settings, so the healthy template is no reference")
+        return
+    run.baseline = rc.integrity(run.project)
+    play(ctx.model, arm, run, settings, fake_path, reference, row, lambda: rc.workspace_digest(run.project, None))
+
+
+def arm_order(arms: list[str], case_index: int, run_index: int) -> list[str]:
+    """Alternate which arm goes first, per case and run."""
+    return list(arms) if (case_index + run_index) % 2 == 0 else list(reversed(arms))
+
+
+def check_output_folder(out: Path) -> str | None:
+    """Runs must not sit below a folder with pytest settings: pytest would read them."""
+    out = out.resolve()
+    if out == FIXFIRST or FIXFIRST in out.parents:
+        return f"{out} is inside the FixFirst repository; choose a folder outside it (default: {FIXFIRST.parent / 'agent-runs'})"
+    for folder in out.parents:
+        found = [name for name in PYTEST_FILES if (folder / name).exists()]
+        if found:
+            return f"{folder} has {', '.join(found)}; pytest in the runs would read it"
+    return None
+
+
+def redact(text: str, out: Path) -> str:
+    pairs = ((out.as_uri(), "file://<out>"), (str(out), "<out>"), (FIXFIRST.as_uri(), "file://<repo>"),
+             (str(FIXFIRST), "<repo>"), (TMP, "<tmp>"), ("/private/tmp", "<tmp>"),
+             (Path(HOME).as_uri(), "file://<home>"), (HOME, "<home>"))
+    for path, name in pairs:
+        text = text.replace(path, name)
+    return text
+
+
+def main(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", required=True)
-    parser.add_argument("--cases", nargs="+", required=True, help="template:scenario, e.g. flat-shop:lm_src_layout")
-    parser.add_argument("--arms", nargs="+", default=["baseline", "mcp"],
-                        choices=["baseline", "fixfirst", "mcp"])
-    parser.add_argument("--out", default=str(FIXFIRST / "workbench" / "agent_baseline"))
-    args = parser.parse_args()
-    root = Path(args.out).resolve()
-    root.mkdir(parents=True, exist_ok=True)
-    for spec in args.cases:
-        template, scenario = spec.split(":")
-        for arm in args.arms:
-            pristine, case, label = build_case(root, template, scenario, arm)
-            code, output = sandboxed(pristine, [str(PYTHON), "-m", "pytest", "-q", "-p", "no:cacheprovider"],
-                                     profile(pristine))
-            expected = pytest_counts(output).get("passed")
-            generated = root / "_generated" / case.name
-            if generated.exists():
-                shutil.rmtree(generated)
-            shutil.copytree(case, generated)
-            before = test_files(case)
-            started = time.monotonic()
-            log = root / f"{case.name}--{args.model}.json"
-            stats = episode(args.model, arm, case, log,
-                            lambda: is_green(case, generated, before, expected))
-            stats["total_s"] = round(time.monotonic() - started, 1)
-            stats.update(grade(case, before, generated, expected))
-            row = {"model": args.model, "case": f"{template}:{scenario}", "cause": label, "arm": arm,
-                   "expected_tests": expected, **{k: round(v, 1) if isinstance(v, float) else v for k, v in stats.items()}}
-            print(json.dumps(row, ensure_ascii=False), flush=True)
-            with (root / "results.jsonl").open("a") as stream:
-                stream.write(json.dumps(row, ensure_ascii=False) + "\n")
+    parser.add_argument("--model", required=True, help="model name, or fake:SCRIPT.json")
+    parser.add_argument("--cases", nargs="*", default=[], help="generated: template:scenario")
+    parser.add_argument("--projects", nargs="*", default=[], help="real projects from the manifest")
+    parser.add_argument("--manifest", default=str(FIXFIRST / "examples" / "real-world" / "projects.toml"))
+    parser.add_argument("--sources", default=str(FIXFIRST.parent / "agent-runs" / "_sources"),
+                        help="folder with a git clone of each project at its release")
+    parser.add_argument("--repairs", default=str(HERE / "reference_repairs.toml"),
+                        help="known repairs, used only to compute the grader's reference outcome")
+    parser.add_argument("--arms", nargs="+", default=["baseline", "mcp"], choices=["baseline", "fixfirst", "mcp"])
+    parser.add_argument("--runs", type=int, default=1)
+    parser.add_argument("--network", choices=["off", "on"], default="off")
+    parser.add_argument("--max-turns", type=int, default=20)
+    parser.add_argument("--run-timeout", type=float, default=1800, help="the agent's seconds per run")
+    parser.add_argument("--temperature", type=float, default=0.2)
+    parser.add_argument("--max-tokens", type=int, default=4096)
+    parser.add_argument("--seed", type=int, default=20261001)
+    parser.add_argument("--attempt", help="a name for this invocation (default: time and a random suffix)")
+    parser.add_argument("--out", default=str(FIXFIRST.parent / "agent-runs"))
+    args = parser.parse_args(argv)
+    if not args.cases and not args.projects:
+        parser.error("give --cases or --projects")
+    if args.projects and "fixfirst" in args.arms:
+        parser.error("the fixfirst arm is only for the generated cases of the 28 Sep pilot")
+    if args.attempt and not re.fullmatch(r"[A-Za-z0-9._-]+", args.attempt):
+        parser.error("--attempt may use letters, digits, dot, dash and underscore")
+    out = Path(args.out).resolve()
+    problem = check_output_folder(out)
+    if problem:
+        parser.error(problem)
+    attempt = args.attempt or iso.new_attempt()
+    if (out / "runs").exists() and any((out / "runs").glob(f"*--{attempt}")):
+        parser.error(f"attempt {attempt} already has runs in {out}; runs are never overwritten")
+    out.mkdir(parents=True, exist_ok=True)
+    fake_path = Path(args.model.split(":", 1)[1]).resolve() if args.model.startswith("fake:") else None
+    identity = f"fake-{fake_path.stem}-{iso.slug(str(fake_path))[-8:]}" if fake_path else args.model
+    ctx = Context(out, identity, attempt, args.network == "on",
+                  denied=(Path(HOME), out, FIXFIRST, *iso.SYSTEM_TEMP))
+    settings = Settings(args.max_turns, args.run_timeout, args.temperature, args.max_tokens, args.seed)
+    manifest_path = Path(args.manifest).resolve()
+    manifest = rc.load_manifest(manifest_path) if args.projects else {}
+    repairs = rc.tomllib.loads(Path(args.repairs).read_text(encoding="utf-8")) if args.projects else {}
+    harness = subprocess.run(["git", "rev-parse", "HEAD"], cwd=FIXFIRST, capture_output=True, text=True).stdout.strip()
+    dirty = [line for line in subprocess.run(["git", "status", "--porcelain", "--", "src", "experiments/agent_baseline"],
+                                             cwd=FIXFIRST, capture_output=True, text=True).stdout.splitlines() if line.strip()]
+    unknown = [p for p in args.projects if p not in manifest]
+    no_repair = [p for p in args.projects if p in manifest and p not in repairs]
+    if unknown or no_repair:
+        parser.error("; ".join([f"not in the manifest: {', '.join(unknown)}"] * bool(unknown)
+                               + [f"no known repair in {args.repairs} (the grader needs a reference): "
+                                  f"{', '.join(no_repair)}"] * bool(no_repair)))
+    references = {}
+    work = [("generated", spec) for spec in args.cases] + [("real", pid) for pid in args.projects]
+    for case_index, (kind, name) in enumerate(work):
+        reference = None
+        if kind == "real":
+            project = manifest[name]
+            source = Path(args.sources).resolve() / name
+            snapshot = manifest_path.parent / "environments" / f"{name}.txt"
+            try:
+                reference = real_reference(ctx, project, source, snapshot, repairs[name]["repair"])
+            except Exception as error:  # the per-case boundary: every planned run gets a row below
+                reference = {"problems": [f"preparing the reference failed: {type(error).__name__}: {error}"[:500]],
+                             "traceback": traceback.format_exc()[-3000:]}
+        for run_index in range(1, args.runs + 1):
+            for order, arm in enumerate(arm_order(args.arms, case_index, run_index - 1), start=1):
+                row = {"model": args.model, "model_slug": iso.slug(identity), "attempt": attempt, "case": name,
+                       "kind": kind, "arm": arm, "run": run_index, "order": order, "seed": args.seed,
+                       "network": "on" if (ctx.network and kind == "real") else "off", "settings": vars(settings),
+                       "harness_commit": harness, "uncommitted_changes": dirty, "end": None, "error": None,
+                       "grading": None, "fixed": None}
+                try:
+                    if kind == "real" and reference["problems"]:
+                        row.update(end="reference_invalid", error="; ".join(reference["problems"])[:500],
+                                   grading="not_graded", reference_traceback=reference.get("traceback"),
+                                   reference_cache_note=reference.get("cache_note"))
+                    elif kind == "real":
+                        run_real(ctx, row, settings, project, source, snapshot, reference, arm, run_index, fake_path)
+                    else:
+                        run_generated(ctx, row, settings, name, arm, run_index, fake_path, references)
+                except Exception as error:  # the per-run boundary: record it and go on to the next run
+                    row.update(end=row.get("end") or "harness_error", grading="not_graded", fixed=None,
+                               error=f"{type(error).__name__}: {error}"[:500],
+                               traceback=traceback.format_exc()[-3000:])
+                finally:
+                    text = redact(json.dumps(row, ensure_ascii=False, default=str), out)
+                    print(text, flush=True)
+                    with (out / "results.jsonl").open("a", encoding="utf-8") as stream:
+                        stream.write(text + "\n")
+                    if row.get("run_dir"):
+                        (out / row["run_dir"] / "row.json").write_text(text + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

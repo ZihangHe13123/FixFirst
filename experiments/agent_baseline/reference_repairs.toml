@@ -1,0 +1,11 @@
+# Known repairs of the development projects (examples/real-world/LABELS.md), used only to compute
+# the grader's reference outcome on a separate copy. The model never sees this file. Each repair
+# runs in the project folder with the case's interpreter first on PATH.
+
+[cachetools]
+repair = ["python -m pip install -e ."]
+label = "local_module: src layout, the project itself is not installed"
+
+[typer]
+repair = ["python -m pip install shellingham"]
+label = "missing_dependency: shellingham is declared in the [test] extra, which was not installed"

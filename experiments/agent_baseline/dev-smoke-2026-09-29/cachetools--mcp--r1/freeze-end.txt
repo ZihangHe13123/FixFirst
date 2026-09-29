@@ -1,0 +1,14 @@
+-e file://<repo>/workbench/agent_baseline/b7-smoke-2026-09-29/cachetools--mcp--r1/project
+coverage==7.10.7
+exceptiongroup==1.3.1
+iniconfig==2.1.0
+packaging==26.3
+pip==26.0.1
+pluggy==1.6.0
+pygments==2.21.0
+pytest-cov==7.1.0
+pytest==8.4.2
+setuptools==82.0.1
+tomli==2.4.1
+typing-extensions==4.16.0
+wheel==0.48.0
