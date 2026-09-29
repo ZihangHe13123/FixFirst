@@ -6,7 +6,7 @@
 | 截止 | 10/5（一）23:59：标签写完、提交到私有仓库，并在 A1 的 Issue 里贴出提交号 |
 | 预计用时 | 15–20 小时。每个项目 1–1.5 小时，大约要试 20 个候选 |
 | 要先完成 | [S0](S0-setup.md)，并且装好 uv |
-| 交付 | 私有仓库 `fixfirst-heldout` 中的 `projects.toml`、`environments/`、`pytest/`、`labels-A.csv`、`candidates.csv` |
+| 交付 | 私有仓库 `fixfirst-heldout` 中的 `projects.toml`、`environments/`、`pytest/`、`labels-A.csv`、`candidates.csv`、`ai-assistance.md` |
 | 对应计划 | 后续计划 §4 P0 第 2 项 |
 
 ## 为什么要做
@@ -15,13 +15,28 @@ proposal 承诺用 10–15 个**没见过的**真实项目做留出测试。报�
 
 9/24 试调研用过的 13 个项目，已经在第 2、3 轮被用来改规则，不能再当测试集。规则由 B 在 AI 协助下编写，所以新项目必须由别人挑、别人标注，而且**标签要先于运行**。10/9 冻结版本以后，你在 A2 里用这批项目只跑一次 FixFirst，按这里写的标签打分。
 
-## 规矩（违反任何一条，这批数据就不能再当留出测试）
+**这些标签是评测用的标准答案。** 本轮不拿它们训练决策树、修改规则或调整基线提示词；排查记录用于验证和复现答案。这里没有用人的排查轨迹训练 agent 的任务。9/29 修订：允许有记录的 AI 辅助排查，最终判断仍由人验证、复核。
 
-1. **只放私有仓库，只给 C 看。** 名单、pytest 输出、标签都放在你自己的私有仓库里。不要在群里或公开 Issue 里提具体项目，不要给 B 看。
+## 规矩（保护评测独立性）
+
+1. **材料放私有仓库，团队内只给 C 看。** 不要在群里或公开 Issue 里提具体项目，不要给 B 或参与 FixFirst 开发的 AI 会话看。A 可以按下一节在自己的独立 AI 会话中使用必要的开源代码、脱敏报错和版本信息；不共享这个会话给开发侧。
 2. **冻结前不在这些项目上运行 FixFirst。** 网页界面、`fixfirst` 命令、`run_real_world.py`、MCP 都不行。只用 `heldout.py pytest` 查看原始的 pytest 输出。
-3. **标签是你自己的判断。** 可以查官方文档、release notes、GitHub issue，也可以在副本里动手试（第 5 步）。不要把 pytest 输出贴给 AI 让它下结论：之后要用同样的输出测试大模型基线，标签如果来自 AI，这个比较就不成立了。
+3. **允许 AI 辅助，最终标签必须有人工核实的依据。** AI 可以解释报错、查找资料、提出候选原因和验证方法。A 要打开来源核对，并在副本里实际验证（第 5 步），C 按 C1 独立复核；不能直接复制 AI 的结论当标准答案。记录使用情况，报告写明“AI 辅助排查、人工验证和复核”。
 4. **下面这些项目不能用**：试调研的 13 个（见 `examples/real-world/projects.toml`）、flask 1.1.4、humanize，以及 `examples/` 里出现过的其他项目。BugsInPy 里的 17 个项目留给 B12，这里也不用。
 5. **挑项目时不考虑 FixFirst 能不能做对。** 你也不需要知道它有哪些规则。按下面的抽样办法做，试过的每个候选都记下来，包括放弃的，并写明原因。
+
+## 卡住时怎样用 AI
+
+1. **先保存观察。** 留下原始 pytest 输出、环境版本、自己已经试过的方法和不确定点；不确定就写不确定。
+2. **使用独立助手。** 用 A 自己的独立会话，不接入 FixFirst/MCP，不提供 FixFirst 的诊断或正式基线的回答。优先选不参加正式模型对比的助手；换一个模型也不能省掉人工验证。
+3. **把回答当作待验证的线索。** 可以这样问：“请解释这个错误，列出有证据支持的候选原因、对应版本的官方资料或源码位置，以及区分这些原因的最小验证步骤。无法确认的地方请明确说明。”AI 给出的链接也要亲自打开核对。
+4. **在副本中验证。** 尽量一次只改变一个因素，记录改动、前后输出和环境差异。第一层错误消失后若还有下一层，分别记录；不能靠删测试、跳过测试或放宽断言证明修好。一次通过、或加等待后通过，都不足以单独确定根因。
+5. **记录辅助。** 在私有仓库的 `ai-assistance.md` 中记模型/日期、用途、采纳或拒绝的建议、人工核查来源和验证记录位置（[模板](templates/ai-assistance.md)）。完全没用 AI 也写明。C 提交独立初判之前，不给 C 看 A 的标签或 AI 回答；步骤见 [C1](C1-label-review.md)。
+6. **无法核实就保留待定。** 不为了凑类别而猜标签。A、C 最终仍无法验证的候选，在 `candidates.csv` 记录“根因未能核实”、尝试过程和排除原因，报告这些排除数量；不要因为某个模型答错而淘汰候选。
+
+已经用过 AI 的案例可以补齐记录和验证，不因使用 AI 自动作废。若具体新候选已经被 B 或其开发助手看到，另记暴露的时间和范围：本轮严格的“开发者未见”主集换用未暴露候选，该例保留作开发或补充分析，其他未暴露候选不受连带影响。不要删掉暴露或排除记录。
+
+这项许可适用于 A1/C1 的数据准备。A2 的最终打分仍由人完成，用户研究参与者在两种条件下仍不能使用 AI。
 
 ## 要凑成什么样
 
@@ -74,6 +89,8 @@ proposal 承诺用 10–15 个**没见过的**真实项目做留出测试。报�
 5. **补齐非版本类的根因**：在第 4 条的基础上，做一个真实会发生的变化（漏装测试 extra、没安装项目、没设环境变量……）。这个变化要在跑 pytest **之前**写进 `scenario`。
 6. **记下每个候选**，写进 `candidates.csv`。某类根因的名额满了以后，再遇到这一类的候选也要记下来，`kept` 写 `no`，理由写 "quota full"。
 
+按上述流程仍无法稳定复现或无法核实根因的候选，依“卡住时怎样用 AI”第 6 条记录并说明排除，不能悄悄换掉。
+
 ## 第 0 步：准备私有仓库
 
 1. 在 GitHub 上新建仓库：右上角 + → New repository → 名字填 `fixfirst-heldout` → 选 **Private** → 勾选 Add a README → Create。
@@ -88,6 +105,7 @@ git clone https://github.com/<你的用户名>/fixfirst-heldout.git
 cp ~/FixFirst/docs/tasks/templates/projects.toml ~/fixfirst-heldout/projects.toml
 cp ~/FixFirst/docs/tasks/templates/labels.csv ~/fixfirst-heldout/labels-A.csv
 cp ~/FixFirst/docs/tasks/templates/candidates.csv ~/fixfirst-heldout/candidates.csv
+cp ~/FixFirst/docs/tasks/templates/ai-assistance.md ~/fixfirst-heldout/ai-assistance.md
 ```
 
 Windows（PowerShell）：
@@ -98,6 +116,7 @@ git clone https://github.com/<你的用户名>/fixfirst-heldout.git
 Copy-Item C:\dev\FixFirst\docs\tasks\templates\projects.toml $HOME\fixfirst-heldout\projects.toml
 Copy-Item C:\dev\FixFirst\docs\tasks\templates\labels.csv $HOME\fixfirst-heldout\labels-A.csv
 Copy-Item C:\dev\FixFirst\docs\tasks\templates\candidates.csv $HOME\fixfirst-heldout\candidates.csv
+Copy-Item C:\dev\FixFirst\docs\tasks\templates\ai-assistance.md $HOME\fixfirst-heldout\ai-assistance.md
 ```
 
 模板里以 `EXAMPLE` 开头的行只是示范，写第一个真实项目之前删掉。示范的内容来自试调研的 typer 项目，演示每一列该写到多细。
@@ -206,7 +225,7 @@ uv pip install --python .venv\Scripts\python.exe "flask<2.4"
 
 ```bash
 cd ~/fixfirst-heldout
-git add projects.toml environments pytest labels-A.csv candidates.csv
+git add projects.toml environments pytest labels-A.csv candidates.csv ai-assistance.md
 git commit -m "Label <id>"
 git push
 ```
@@ -250,7 +269,7 @@ git push
 - **`uv` 找不到**：装完 uv 以后要新开一个终端。
 - **克隆时报 "Remote branch … not found"**：`ref` 必须和 GitHub 上的 tag 名一字不差，注意有没有 `v`。
 - **安装很慢或卡住**：多半是在编译 C 扩展，按规则跳过这个项目。
-- **不确定属于哪一类根因**：先按上面的表判断；还是拿不准，就在 `review_notes` 里写下你的犹豫，留给 C1 讨论。不要去问 B。
+- **不确定属于哪一类根因**：先按上面的表判断，可以按“卡住时怎样用 AI”找线索并验证；仍拿不准，就记录不确定点，与 C 私下查证。不要让 B 或其开发助手诊断这个新候选。
 - **磁盘**：每个项目连环境大约 100 MB–1 GB。A2 完成之前不要删 `~/heldout-projects`，也不要在里面升级或安装任何东西。
 
 ## 完成标准
@@ -258,6 +277,7 @@ git push
 - [ ] 至少 10 个项目，每类根因都有（`heldout.py check` 显示的数量）
 - [ ] `heldout.py check` 显示 `Complete.`
 - [ ] 每个标签都在副本里验证过（`checked_by_trying` 不空）
+- [ ] `ai-assistance.md` 记录了 AI 使用情况（未使用也声明）；来源已人工核查，AI 回答没有直接当作标签
 - [ ] `candidates.csv` 记下了所有试过的候选，放弃的写明了原因
 - [ ] 私有仓库只邀请了 C
 - [ ] 10/5 23:59 前，在 A1 的 Issue 里贴出了提交号，没有写项目名
