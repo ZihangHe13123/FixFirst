@@ -1,11 +1,14 @@
 """Prepare the held-out real-world projects listed in examples/real-world/projects.toml.
 
-Usage: python scripts/setup_real_world.py [target-dir] [--only ID ...]
+Usage: python scripts/setup_real_world.py [target-dir] [--only ID ...] [--manifest FILE]
 
 Clones each project at its tag, creates its environment and installs it the way the manifest
 describes. Uses uv when it is available (fast, and it provides the listed Python versions);
 otherwise `python -m venv` and pip with the current interpreter's version. The installed
-package list is saved next to the manifest so that results can be reproduced.
+package list is saved next to the manifest (environments/<id>.txt) so that results can be
+reproduced. --manifest reads another project list, for example a new held-out batch kept
+outside this repository until it has been run. An entry may name a `commit` to check out
+instead of its release, and `tests_from` + `test_files` to take test files from another commit.
 """
 
 import argparse
@@ -37,19 +40,29 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("target", nargs="?", default="../test-projects/generalisation")
     parser.add_argument("--only", nargs="*", default=[])
+    parser.add_argument("--manifest", default=str(HERE / "projects.toml"))
     args = parser.parse_args()
     target = Path(args.target).resolve()
     target.mkdir(parents=True, exist_ok=True)
     uv = shutil.which("uv")
-    projects = tomllib.loads((HERE / "projects.toml").read_text("utf-8"))["project"]
-    (HERE / "environments").mkdir(exist_ok=True)
+    manifest = Path(args.manifest).resolve()
+    projects = tomllib.loads(manifest.read_text("utf-8"))["project"]
+    environments = manifest.parent / "environments"
+    environments.mkdir(exist_ok=True)
     failed = []
     for project in projects:
         if args.only and project["id"] not in args.only:
             continue
         print(f"== {project['id']} ({project['repo']} {project['ref']})", flush=True)
         folder = target / project["id"]
-        if not folder.exists():
+        if not folder.exists() and project.get("commit"):
+            # A commit instead of a release, optionally with test files from a later commit
+            # (for example the parent of a bug fix, with the test that the fix added).
+            run(["git", "clone", "-q", f"https://github.com/{project['repo']}", folder])
+            run(["git", "checkout", "-q", project["commit"]], cwd=folder)
+            if project.get("tests_from"):
+                run(["git", "checkout", project["tests_from"], "--", *project["test_files"]], cwd=folder)
+        elif not folder.exists():
             run(["git", "clone", "-q", "--depth", "1", "--branch", project["ref"],
                  f"https://github.com/{project['repo']}", folder])
         env_dir = folder / ".venv"
@@ -76,9 +89,11 @@ def main() -> int:
         version = subprocess.run([str(python), "-c", "import sys; print(sys.version.split()[0])"],
                                  capture_output=True, text=True, check=False).stdout.strip()
         lines = [line for line in listing.stdout.splitlines() if not line.startswith("-e ")]
-        (HERE / "environments" / f"{project['id']}.txt").write_text(
-            f"# Python {version}\n" + "\n".join(lines) + "\n", encoding="utf-8"
-        )
+        text = f"# Python {version}\n" + "\n".join(lines) + "\n"
+        # A project installed from its folder is listed as `name @ file:///Users/...`.
+        home = Path.home()
+        text = text.replace(home.as_uri(), "file://<home>").replace(str(home), "<home>")
+        (environments / f"{project['id']}.txt").write_text(text, encoding="utf-8")
     if failed:
         print("\nSome installs failed (recorded as part of the scenario):", *failed, sep="\n  ")
     print(f"\nReady in {target}. Each project has its interpreter in .venv.")

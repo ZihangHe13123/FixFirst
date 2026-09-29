@@ -14,7 +14,7 @@ Numbers are from the files in this repository; each row links to where it can be
 | Real-project walk-throughs | Real projects | humanize (healthy), humanize without test dependencies, Flask 1.1.4 on today's libraries | End-to-end use: Flask from no runnable test to 525 passing ([record](REAL_PROJECTS.md)) | Done |
 | Held-out real-world check | Real projects, labels committed before running | 13 open-source projects, 9 domains, Python 3.9–3.14 | First-step correctness on unseen projects ([record](GENERALISATION.md)) | Round 1 held out (2/13); a fresh set chosen by another member is next |
 | **PyDFix** (ISSTA 2021) | Public research data, BSD-3-Clause | 1,927 table rows → **22 distinct import errors in 10 repositories** | External text-only check of parsing and knowledge coverage ([details](../examples/public-data/README.md)) | Collected; labels to do |
-| **BugsInPy** (ESEC/FSE 2020) | Public benchmark, facts and links only | **501 real bugs in 17 projects**; 70 bugs in 5 projects need nothing compiled | Verification on real code defects; checking that code defects are not blamed on the environment ([details](../examples/public-data/README.md)) | Indexed; none reproduced yet |
+| **BugsInPy** (ESEC/FSE 2020) | Public benchmark, facts and links only | **501 real bugs in 17 projects**; 70 bugs in 5 projects need nothing compiled | Verification on real code defects; checking that code defects are not blamed on the environment ([details](../examples/public-data/README.md)) | Indexed; `scripts/bugsinpy_case.py` reproduces one bug and checks it before and after the fix; the verification run is task A2 |
 
 Regenerate the two public sources with `.venv/bin/python scripts/collect_public_data.py`.
 

@@ -214,7 +214,9 @@ python scripts/record_playground.py --output workbench/playground
 fixfirst historical --assets examples/historical-regressions/assets --output workbench/replay
 python scripts/setup_real_world.py ../test-projects/generalisation   # the 13 held-out projects
 python scripts/run_real_world.py ../test-projects/generalisation --search
+python scripts/heldout.py -h             # a new held-out batch: plain pytest, copies, labels, scores
 python scripts/collect_public_data.py    # PyDFix and BugsInPy subsets, see docs/DATA_SOURCES.md
+python scripts/bugsinpy_case.py tqdm 2 --deps pytest nose   # reproduce one BugsInPy bug, check it
 ```
 
 ## Coding agents (MCP)
@@ -275,10 +277,10 @@ reads `mcpServers` (for example a project's `.mcp.json`):
 |---|---|
 | `src/fixfirst/` | the package (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)) |
 | `src/fixfirst/knowledge/` | rule base, domain knowledge, bundled decision tree |
-| `tests/` | 226 tests, most running real subprocesses; Windows runs all of them, macOS and Linux skip one PowerShell-only test |
+| `tests/` | 232 tests, most running real subprocesses; Windows runs all of them, macOS and Linux skip one PowerShell-only test |
 | `experiments/` | agent baseline: local models fixing failures with and without FixFirst ([README](experiments/agent_baseline/README.md)) |
 | `examples/` | recorded runs, datasets, experiment reports and the real-world check ([overview](examples/README.md)) |
-| `docs/` | architecture, data sources, generalisation check, real-project case studies, course alignment, team notes (`队友说明.md`), optimisation log; `docs/history/` keeps earlier versions' records |
+| `docs/` | architecture, data sources, generalisation check, real-project case studies, course alignment, team plan and task cards (`后续计划.md`, `tasks/`), team notes (`队友说明.md`), optimisation log; `docs/history/` keeps earlier versions' records |
 | `scripts/` | setup (macOS/Linux/Windows), real-project set-up and batch runs, demo recording |
 
 ```bash

@@ -2,12 +2,14 @@
 a user would see: the headline, the steps in order and the cause behind each.
 
 Usage: python scripts/run_real_world.py [target-dir] [--only ID ...] [--output FILE] [--search]
+       [--manifest FILE]
 
 The same checks as the web page's "Check again" run with the goal "Make my tests pass". With
 --search, a first step that offers to find a working release is followed, as a user pressing
 "Find it" would, and the step shown afterwards is recorded too (it needs internet access).
 Sessions are saved in <target-dir>/.fixfirst, so they can be opened with
-`fixfirst --store <target-dir>/.fixfirst serve`.
+`fixfirst --store <target-dir>/.fixfirst serve`. --manifest reads another project list; the
+results are then written next to it unless --output says otherwise.
 """
 
 import argparse
@@ -49,12 +51,14 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("target", nargs="?", default="../test-projects/generalisation")
     parser.add_argument("--only", nargs="*", default=[])
-    parser.add_argument("--output", default=str(HERE / "results-latest.json"))
+    parser.add_argument("--output", help="default: results-latest.json next to the manifest")
     parser.add_argument("--search", action="store_true", help="follow a first 'Find it' step")
+    parser.add_argument("--manifest", default=str(HERE / "projects.toml"))
     args = parser.parse_args()
     target = Path(args.target).resolve()
     store = Store(target / ".fixfirst")
-    projects = tomllib.loads((HERE / "projects.toml").read_text("utf-8"))["project"]
+    manifest = Path(args.manifest).resolve()
+    projects = tomllib.loads(manifest.read_text("utf-8"))["project"]
     results = []
     for project in projects:
         if args.only and project["id"] not in args.only:
@@ -107,7 +111,7 @@ def main() -> int:
         )
         first = view["steps"][0]["title"] if view["steps"] else "(no must-fix step)"
         print(f"   {view['status']['headline']} | first step: {first}", flush=True)
-    output = Path(args.output)
+    output = Path(args.output) if args.output else manifest.parent / "results-latest.json"
     previous = json.loads(output.read_text("utf-8")) if output.exists() and args.only else []
     merged = {r["id"]: r for r in previous} | {r["id"]: r for r in results}
     output.write_text(json.dumps(list(merged.values()), indent=2, ensure_ascii=False) + "\n", "utf-8")
