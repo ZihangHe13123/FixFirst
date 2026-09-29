@@ -22,6 +22,7 @@ import tempfile
 import time
 
 from . import diagnosis_cases as dc
+from .classification import naive_diagnosis
 from .models import now
 from .service import create_session, scan
 
@@ -168,6 +169,105 @@ def validate(case, root: Path, python: str | None = None) -> list[list[str]]:
             repaired.add(fault_id)
 
 
+# Ordering only (docs/B4_SCENARIOS.md, "Grading for B17"): a method picks an issue, and the
+# reference repair of the fault behind that issue is applied. The reference repair stands in for
+# whatever the method suggested, so a replay says which problem the method tackles, never whether
+# its advice was right.
+
+CATEGORY_ORDER = ["missing_dependency", "local_module", "version_incompatibility", "config_missing", "code_defect"]
+
+
+def first_message(session, issue) -> int:
+    position = {event.event_id: index for index, event in enumerate(session.events)}
+    return min(position[event_id] for event_id in issue.event_ids)
+
+
+def message_order(session, issues):
+    """Baseline: the first failure in pytest's output, as FixFirst's parser read it."""
+    tests = [i for i in issues if i.tool in ("pytest", "pytest_run")]
+    return min(tests, key=lambda i: first_message(session, i), default=None)
+
+
+def category_order(session, issues):
+    """Baseline: the parser category's root cause in a fixed order, style last; ties in message order."""
+    def rank(issue):
+        return len(CATEGORY_ORDER) if issue.tool == "ruff" else CATEGORY_ORDER.index(naive_diagnosis(issue.kind))
+    return min(issues, key=lambda i: (rank(i), first_message(session, i)), default=None)
+
+
+BASELINES = {"message_order": message_order, "category_order": category_order}
+
+
+def build(case, root: Path, repaired=()) -> dict:
+    """The case's project with the listed faults repaired."""
+    applied = apply(case, root)
+    for fault_id in repaired:
+        applied[fault_id][1]()
+    return applied
+
+
+def open_issues(case, repaired, python: str):
+    """Check the project in the state where `repaired` faults are repaired: (session, open issues)."""
+    with tempfile.TemporaryDirectory() as scratch:
+        root = Path(scratch) / "project"
+        build(case, root, repaired)
+        session = create_session(root, python, case[0], goal="pass_tests")
+        scan(session, CHECKS)
+    return session, [i for i in session.issues if i.status == "open" and i.tool in ("pytest", "pytest_run", "ruff")]
+
+
+def targeted(case, title: str, repaired, python: str) -> str | None:
+    """The observable required fault behind an issue: repairing it alone makes the issue go away.
+
+    A fault's observable text is not enough: a fault can break several tests with different
+    messages (total_off_by_one shows "4 != 3" in one test and "8 != 6" in another).
+    """
+    for fault_id, hidden_by in case[2]:
+        if fault_id in OPTIONAL_FAULTS or fault_id in repaired or not set(hidden_by) <= set(repaired):
+            continue
+        _, issues = open_issues(case, [*repaired, fault_id], python)
+        if title not in {issue.title for issue in issues}:
+            return fault_id
+    return None
+
+
+def replay(case, choose, python: str | None = None, limit: int = 10) -> dict:
+    """Check, let `choose` pick one open issue, apply the reference repair of the fault behind it
+    (nothing if there is none), and repeat until every required fault is repaired."""
+    python = python or sys.executable
+    required = {fault_id for fault_id, _ in case[2] if fault_id not in OPTIONAL_FAULTS}
+    repaired, steps = [], []
+    while not required <= set(repaired) and len(steps) < limit:
+        session, issues = open_issues(case, repaired, python)
+        issue = choose(session, issues)
+        fault = targeted(case, issue.title, repaired, python) if issue else None
+        if fault:
+            repaired.append(fault)
+        steps.append({"issue": issue.title if issue else None, "fault": fault})
+    with tempfile.TemporaryDirectory() as scratch:
+        build(case, Path(scratch) / "project", repaired)
+        code, _ = check_output(Path(scratch) / "project", python)
+    return {
+        "steps": steps,
+        "first_issue_right": bool(steps) and steps[0]["fault"] is not None,
+        "wrong_issue_attempts": sum(step["fault"] is None for step in steps),
+        "reached_goal": required <= set(repaired) and code == 0,
+    }
+
+
+def baseline_report(python: str | None = None) -> list[dict]:
+    """Both naive baselines on every case (a development check of what the cases can measure)."""
+    rows = []
+    for case in CASES:
+        for name, choose in BASELINES.items():
+            result = replay(case, choose, python)
+            rows.append({"case": case[0], "baseline": name, **result})
+            print(f"  {case[0]} {name}: first issue right {result['first_issue_right']}, "
+                  f"wrong-issue attempts {result['wrong_issue_attempts']}, reached goal {result['reached_goal']}, "
+                  f"faults {[step['fault'] for step in result['steps']]}", flush=True)
+    return rows
+
+
 def build_dataset(output: Path, python: str | None = None) -> Path:
     output = output.expanduser().resolve()
     if output.exists():
@@ -179,8 +279,9 @@ def build_dataset(output: Path, python: str | None = None) -> Path:
         "schema_version": 1, "suite": "multi", "created_at": now(), "python": sys.version.split()[0],
         "license": "CC0-1.0 for generated fixture code", "definitions": "docs/B4_SCENARIOS.md",
         "cases": [], "rejected": [],
-        "limitations": "Generated projects with two or three injected faults each, for the next-step ordering "
-                       "evaluation only; they are not a sample of naturally occurring failures.",
+        "limitations": "Generated projects with two or three injected faults each, built by the team before the "
+                       "freeze for the next-step ordering evaluation (B17): not held out, and not a sample of "
+                       "naturally occurring failures.",
     }
     try:
         for case in CASES:

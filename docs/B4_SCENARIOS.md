@@ -97,17 +97,64 @@ text that shows a fault is observable.
 | M4 | unittest-grades | `env_missing`; `total_off_by_one` | 2: either order |
 | M5 | fixture-orders | `renamed_helper`; `private_moved` (renamed_helper: same module, later line); `numpy_alias` (private_moved) | 1 |
 
-**Grading for B17** (fixed now, applied after the freeze):
+**Grading for B17** (fixed before the freeze, applied after it). Two questions are scored
+separately: whether a method picks the right problem (ordering), and whether the step it proposes
+is itself right (advice). A step that picks the right problem with the wrong action counts for the
+first and against the second.
 
-- *Acceptable orders* are all orders consistent with "hidden by". No single order is the answer.
-- A step *targets* a fault when one of its issues shows the fault's observable text.
-- *First step reasonable*: the first step targets a required fault that is observable now.
-- *Invalid attempts before the goal*: follow the method's first step, apply the allowed repair of
-  the fault it targets, check again, and repeat until every required fault is repaired (at most
-  10 steps). A step that targets no observable required fault (a hidden fault, an optional lint
-  finding, generic advice) counts as one invalid attempt.
-- Baselines: *message order* (the first failure in pytest's output) and *fixed category order*
-  (missing dependency, local module, version, configuration, code defect, then style).
+*Acceptable orders* are all orders consistent with "hidden by"; no single order is the answer.
+
+*Ordering: which problem comes first.*
+
+- The fault *behind* an issue is the observable required fault whose repair alone makes that issue
+  go away in the next check (`multi_cases.targeted`). The observable texts in the table only show
+  that a fault is visible; one fault can break several tests with different messages.
+- *First issue right*: the first step's issue has a fault behind it that is observable now.
+- *Wrong-issue attempts before the goal* (`multi_cases.replay`): let the method pick an issue;
+  when a fault is behind it, apply that fault's reference repair, otherwise (a hidden fault, the
+  optional lint finding, an issue behind no required fault) apply nothing and count one attempt.
+  Check again and repeat until every required fault is repaired, at most 10 steps. The reference
+  repair stands in for whatever the method suggested, so this measures the choice of problem only,
+  never whether the advice was right.
+- Baselines (ordering only; they propose no action): *message order*, the first failure in
+  pytest's output as FixFirst's parser read it; *fixed category order*, each issue's root cause
+  from its parser category alone (FixFirst v0.3), in the order missing dependency, local module,
+  version, configuration, code defect, then Ruff findings, ties in message order.
+
+*Advice: is the proposed action right.* Scored only for methods that propose actions (FixFirst,
+and the language models of B3/B7), and never by putting the reference repair in place of the
+method's action.
+
+- *First step correct*: the first step's issue has a fault behind it that is observable now, and
+  the action itself is one of that fault's allowed repairs (the table above). The action is judged
+  as written: for FixFirst from the action's kind, target and command; for a model from its text,
+  by two raters with the allowed repairs and without knowing which method wrote it. An action that
+  is not an allowed repair is *wrong* even when it is attached to the right issue: for example
+  `pip install helper` for the renamed helper module in M1. Advice that names no concrete change
+  (re-run the tests, check the environment) is *generic*.
+- If a replay that follows the method's own actions is reported, a step changes the project only
+  when its action is an allowed repair of the fault behind its issue; any other step changes
+  nothing and counts as an invalid attempt, at most 10 steps; a method that does not reach the goal
+  is reported as such.
+
+**What these cases can measure** (development check, 29 September, before any FixFirst ordering
+result): both naive baselines were replayed on M1–M5 (`multi_cases.baseline_report()`). Both picked
+a right first issue in 5 of 5 cases, made no wrong-issue attempts and reached the goal in every
+case. In these cases a collection error hides everything behind it, the faults visible together
+(M2, M4) may be repaired in either order, and the only decoy is the optional lint finding, which
+neither baseline picks. So **the ordering measures cannot show an advantage over the naive
+baselines on this suite**; B17 reports that as it is. M1–M5 are not changed or extended after
+this check to create an advantage; the other data on B17's task card (the playground project and
+the two-layer hard cases) are used as planned. What the suite can still show: whether a method's first step
+picks a hidden fault or the optional lint finding (the baselines do not), and whether its actions
+are allowed repairs (advice).
+
+The same check found a flaw in the first version of this grading, which decided the fault behind
+an issue from the observable text alone: after `env_missing` is repaired, `total_off_by_one` also
+fails `test_<function>` (for example `8 != 6` in M4), which the text `4 != 3` does not match, so
+both baselines were counted wrong from then on and never reached the goal in M2 and M4. The rule
+above (the repair that makes the issue go away) replaced it before the results were used for
+anything.
 
 **Validation.** When the suite is built, every case is checked by real runs: the faults that should
 be observable are, the hidden ones are not, repairing each layer reveals exactly the next one, and
