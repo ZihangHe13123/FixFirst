@@ -98,7 +98,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup.ps1
 考试时每个人都要能把系统讲清楚。按顺序读：
 
 1. `README.md` 的 **How it works** 一节，约 15 分钟。
-2. 《FixFirst 技术原理详解》：放在 pre 用的共享文件夹 `FixFirst_Proposal` 里，是中文的。先读第 0 节的全景，再读和自己任务相关的章节。手上没有这份文件，就在 S0 的 Issue 里说一声。
+2. [《FixFirst 技术原理详解》](../技术原理详解.md)（中文）：先读第 0 节的全景，再读和自己任务相关的章节。每节最后的“老师可能问”可以当自测题。
 3. [docs/ARCHITECTURE.md](../ARCHITECTURE.md)：需要时再查。
 4. 自己要用的脚本，读一下开头的说明。每个脚本的第一段都写了用法，运行时加 `-h` 可以看到全部参数。
 

@@ -280,7 +280,7 @@ reads `mcpServers` (for example a project's `.mcp.json`):
 | `tests/` | 232 tests, most running real subprocesses; Windows runs all of them, macOS and Linux skip one PowerShell-only test |
 | `experiments/` | agent baseline: local models fixing failures with and without FixFirst ([README](experiments/agent_baseline/README.md)) |
 | `examples/` | recorded runs, datasets, experiment reports and the real-world check ([overview](examples/README.md)) |
-| `docs/` | architecture, data sources, generalisation check, real-project case studies, course alignment, team plan and task cards (`后续计划.md`, `tasks/`), team notes (`队友说明.md`), optimisation log; `docs/history/` keeps earlier versions' records |
+| `docs/` | architecture, data sources, generalisation check, real-project case studies, course alignment, team plan and task cards (`后续计划.md`, `tasks/`), a technical study guide in Chinese (`技术原理详解.md`), team notes (`队友说明.md`), optimisation log; `docs/history/` keeps earlier versions' records |
 | `scripts/` | setup (macOS/Linux/Windows), real-project set-up and batch runs, demo recording |
 
 ```bash
