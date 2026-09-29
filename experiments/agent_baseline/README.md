@@ -147,7 +147,9 @@ held-out projects are added only after A2's results are merged.
   (FixFirst's checks run in their own sessions, so the harness finds them by parent process). Calls
   left in a turn are not carried out and a `finish` after the deadline is not taken: the run ends as
   `time_cap`. The harness's own checks (integrity, green checks) do not count against the budget and
-  are listed as `harness_s`.
+  are listed as `harness_s`. A process the agent detaches on purpose (`nohup` or `setsid` with its
+  output redirected) can outlive its command; the sandbox still limits what it can write, and the
+  grader works on a copy.
 - **Reference.** The known repair in `reference_repairs.toml` (the model never sees it) is applied to
   a separate copy in the sandbox, and the suite is run like a grader run. A reference counts only if
   every repair step exits 0 and its suite exits 0 with at least one passing test and none failing;
