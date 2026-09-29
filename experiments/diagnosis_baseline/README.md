@@ -121,8 +121,24 @@ Checked on the way: no prompt contained the case name, scenario or label; every 
 JSON (at most 64 tokens, no thinking block); a request to a model that does not exist was recorded
 as an HTTP 404 error and counted as wrong. The omlx settings file was unchanged afterwards.
 
-Single-fault generated cases are easy: like the agent pilot, this trial says nothing about how the
-models compare with FixFirst. The formal run needs the harder sets below.
+## Development trial 2, 29 September 2026 (`dev-trial-2026-09-29-b/`)
+
+**Also a check of the pipeline, not a result.** The same 10 cases, models and settings, with the
+evidence described above, run from commit bcd352e with no uncommitted changes.
+
+| Model | Complete answers | Failed requests | Correct | Median seconds | Prompt tokens |
+|---|---|---|---|---|---|
+| Qwen3.6-35B-A3B-6bit | 10/10 | 0 | 10/10 | 4.23 | 3,513–4,881 |
+| gemma-4-26B-A4B-it-qat-4bit | 10/10 | 0 | 10/10 | 2.87 | 3,618–5,166 |
+
+Prompts are about three times longer than in trial 1 (1,060–2,629 tokens); the evidence is
+8,908–16,084 characters. Every answer was one plain JSON object (at most 60 tokens, no thinking
+block, no problems recorded). A separate run with a model name the server does not have (not
+kept) recorded `request_failed` (HTTP 404) for that model and still answered and summarised the
+next one. The omlx settings files were unchanged afterwards and the server was stopped.
+
+Single-fault generated cases are easy: like the agent pilot, these trials say nothing about how
+the models compare with FixFirst. The formal run needs the harder sets below.
 
 ## Formal run (after B4 is final)
 

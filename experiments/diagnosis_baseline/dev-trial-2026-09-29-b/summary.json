@@ -1,0 +1,43 @@
+{
+  "purpose": "development trial 2: the evidence FixFirst reads; checks the pipeline, not a result",
+  "models": {
+    "Qwen3.6-35B-A3B-6bit": {
+      "n": 10,
+      "complete_answers": 10,
+      "root_cause_without_first_step": 0,
+      "invalid_answers": 0,
+      "failed_requests": 0,
+      "bad_responses": 0,
+      "not_sent": 0,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "per_label": {
+        "missing_dependency": "2/2",
+        "local_module": "2/2",
+        "version_incompatibility": "2/2",
+        "config_missing": "2/2",
+        "code_defect": "2/2"
+      },
+      "median_seconds": 4.23
+    },
+    "gemma-4-26B-A4B-it-qat-4bit": {
+      "n": 10,
+      "complete_answers": 10,
+      "root_cause_without_first_step": 0,
+      "invalid_answers": 0,
+      "failed_requests": 0,
+      "bad_responses": 0,
+      "not_sent": 0,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "per_label": {
+        "missing_dependency": "2/2",
+        "local_module": "2/2",
+        "version_incompatibility": "2/2",
+        "config_missing": "2/2",
+        "code_defect": "2/2"
+      },
+      "median_seconds": 2.87
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "purpose": "development trial 2: the evidence FixFirst reads; checks the pipeline, not a result",
+  "date": "2026-09-29T20:02:02+08:00",
+  "dataset": "examples/diagnosis-dataset",
+  "cases_sha256": "24b5392de44c4359621bd9f5f1600070d30491e1e42d74d7602482f3c9c50173",
+  "cases": [
+    "pkg-inventory--md_declared",
+    "pkg-inventory--md_unknown_runtime",
+    "src-billing--lm_src_layout",
+    "flat-shop--lm_shadow_library",
+    "unittest-grades--vi_removed_kwarg",
+    "flat-shop--vi_numpy2",
+    "pkg-inventory--cm_environ",
+    "flat-shop--cm_environ",
+    "src-billing--cd_dict_key",
+    "flat-shop--cd_zero_division"
+  ],
+  "models": [
+    "Qwen3.6-35B-A3B-6bit",
+    "gemma-4-26B-A4B-it-qat-4bit"
+  ],
+  "decoding": {
+    "temperature": 0,
+    "top_p": 1,
+    "max_tokens": 1024
+  },
+  "thinking": "disabled through chat_template_kwargs; any <think> block is removed before parsing",
+  "evidence": {
+    "checks": [
+      "pytest",
+      "pytest_run",
+      "pip_check",
+      "ruff"
+    ],
+    "limits": {
+      "pytest_output_chars": 20000,
+      "tool_output_chars": 6000,
+      "exception_records": 50,
+      "exception_message_chars": 1000,
+      "list_items": 500
+    },
+    "omitted": {
+      "environment": [
+        "_run_id",
+        "_environment_id",
+        "packages[].requires"
+      ],
+      "project": [
+        "environment_run_id",
+        "files[].sha256"
+      ]
+    }
+  },
+  "answer_format": "one JSON object, bare or in one code fence; root_cause one of the five classes, first_step a non-empty string",
+  "seed": 20260929,
+  "system_prompt_sha256": "b4a3bb0dcb9ce78273f0d75cbb83bba66c80b159dbe79461cba1412d8aea30c0",
+  "system_prompt": "You diagnose why a Python project's tests fail. You get what the project's checks recorded:\n- pytest's output, and the exception behind each failure as a pytest plugin recorded it (type, message, the file and line that raised it, warnings the test had recorded);\n- pip check and Ruff output, when they ran;\n- the environment: Python version, installed distributions, which distribution provides each import name, the standard library's module names;\n- the project index, read from the files without running them: files, Python files, top-level modules, names defined in the code (defined_names), what each imported name refers to (imported_names), the distributions the project itself builds (own_names), declared dependencies with their install status, Python requirements, lint settings, and versions pinned in lock files (tested_versions).\nName the root cause of the failing tests as exactly one of these classes:\n- missing_dependency: The code imports a third-party distribution that is not installed in the selected interpreter.\n- local_module: A project module cannot be resolved: it was renamed or moved, the src layout is not on the path, a circular import, or a project file shadows a library or standard-library module.\n- version_incompatibility: The installed library or Python version no longer provides an API the code uses (removed module, attribute, function or keyword argument).\n- config_missing: A required environment variable, settings key or configuration file is not available at run time.\n- code_defect: The failure comes from project logic: a wrong assertion, a bug in a function, a typo or a syntax error.\nAlso give the first thing the user should do. Answer with one JSON object and nothing else:\n{\"root_cause\": \"<one class name from the list>\", \"first_step\": \"<one sentence>\"}",
+  "fixfirst_commit": "bcd352e6fa6052018e48f0a286ad0c9204f7beaf",
+  "uncommitted_changes": [],
+  "endpoint": "http://127.0.0.1:8123/v1"
+}
