@@ -15,12 +15,16 @@ tests are collected as in the reference, nothing fails, and every test that pass
 reference passes. A reference that does not itself meet this bar is invalid and grades nothing.
 
 Where code runs: creating the environment and installing the snapshot's pinned packages happens
-outside the sandbox (no project code). Everything that runs the project's code (installing the
+outside the sandbox, before the agent starts (uv then runs the new environment's interpreter, which
+holds only the snapshot's packages). After that the case's interpreter is never started outside the
+sandbox: its home and version come from pyvenv.cfg as written at creation (venv_record), installed
+packages from their metadata files (freeze). Everything that runs the project's code (installing the
 project itself, the agent's commands, the tests of the grader and of the reference) is started by
 the harness under the sandbox (isolation.py); this module only builds the commands.
 """
 
 import configparser
+from contextlib import contextmanager
 import hashlib
 import json
 import os
@@ -28,6 +32,7 @@ from pathlib import Path
 import re
 import shlex
 import shutil
+import stat
 import subprocess
 import tarfile
 import tempfile
@@ -52,6 +57,57 @@ CLEAN_ENV_KEYS = ("SYSTEMROOT", "WINDIR", "COMSPEC", "PATHEXT")
 def run(argv, cwd=None, env=None, timeout=1800) -> subprocess.CompletedProcess:
     return subprocess.run([str(a) for a in argv], cwd=cwd, env=env, capture_output=True, text=True,
                           errors="replace", timeout=timeout)
+
+
+@contextmanager
+def open_regular(path: Path):
+    """A binary stream of a regular file, or None for anything else (a folder, a named pipe, a device,
+    a link to one of them, a missing file). The harness reads the agent's files outside the sandbox,
+    so opening must never wait: a plain open of a named pipe waits until something writes to it."""
+    try:
+        fd = os.open(path, os.O_RDONLY | getattr(os, "O_BINARY", 0) | getattr(os, "O_NONBLOCK", 0))
+    except OSError:
+        fd = None
+    if fd is not None and not stat.S_ISREG(os.fstat(fd).st_mode):
+        os.close(fd)
+        fd = None
+    if fd is None:
+        yield None
+        return
+    with os.fdopen(fd, "rb") as stream:
+        yield stream
+
+
+def read_regular(path: Path, limit: int = 16 << 20) -> bytes | None:
+    """A regular file's bytes; None for anything else or for a file over `limit` bytes."""
+    with open_regular(path) as stream:
+        data = stream.read(limit + 1) if stream else None
+    return data if data is not None and len(data) <= limit else None
+
+
+def write_regular(path: Path, text: str):
+    """Write text into a regular file (created if missing) for the agent's write_file tool: the final
+    name is not followed if it is a link, and a named pipe is refused instead of waited on."""
+    flags = os.O_WRONLY | os.O_CREAT | getattr(os, "O_BINARY", 0) | getattr(os, "O_NOFOLLOW", 0)
+    fd = os.open(path, flags | getattr(os, "O_NONBLOCK", 0), 0o666)
+    if not stat.S_ISREG(os.fstat(fd).st_mode):
+        os.close(fd)
+        raise OSError(f"{path.name} is not a regular file")
+    with os.fdopen(fd, "wb") as stream:
+        stream.truncate(0)
+        stream.write(text.encode("utf-8"))
+
+
+def file_hash(path: Path) -> str:
+    """sha256 of a regular file, read in pieces; a fixed value for anything else, so that a test file
+    replaced by a named pipe still counts as changed."""
+    with open_regular(path) as stream:
+        if stream is None:
+            return "not a regular file"
+        h = hashlib.sha256()
+        for piece in iter(lambda: stream.read(1 << 20), b""):
+            h.update(piece)
+        return h.hexdigest()
 
 
 def load_manifest(path: Path) -> dict:
@@ -137,9 +193,57 @@ def install_commands(project: dict, python: Path, uv_cache: Path) -> list[list[s
     return commands
 
 
+def venv_record(venv: Path) -> dict:
+    """What the environment's pyvenv.cfg says, read (never run) right after it is created: the folder
+    of the base interpreter, the version, and the folders the interpreter needs to read."""
+    values = {}
+    for line in (venv / "pyvenv.cfg").read_text(encoding="utf-8").splitlines():
+        key, sep, value = line.partition("=")
+        if sep:
+            values[key.strip().lower()] = value.strip()
+    home = Path(values["home"])
+    return {"home": str(home), "version": values.get("version_info") or values.get("version") or "unknown",
+            "interpreters": sorted({os.path.realpath(home), os.path.realpath(home.parent)})}
+
+
+def canonical(name: str) -> str:
+    return re.sub(r"[-_.]+", "-", name).lower()
+
+
+def _headers(path: Path) -> dict:
+    found = {}
+    with open_regular(path) as stream:
+        for _ in range(5000 if stream else 0):
+            line = stream.readline(1 << 16).decode("utf-8", "replace")
+            if not line.strip():
+                break  # the metadata headers end at the first blank line
+            key, sep, value = line.partition(":")
+            if sep and key in ("Name", "Version") and key not in found:
+                found[key] = value.strip()
+            if len(found) == 2:
+                break
+    return found
+
+
 def freeze(python: Path) -> list[str]:
-    result = run(["uv", "pip", "freeze", "--python", python])
-    return sorted(line for line in result.stdout.splitlines() if line.strip())
+    """The installed distributions like `pip freeze`, read from their metadata files; nothing is run,
+    so no startup hook (.pth, sitecustomize) of the environment executes. Only regular files are read."""
+    venv, lines = python.parent.parent, set()
+    for site in sorted(venv.glob("lib/python*/site-packages")) + sorted(venv.glob("Lib/site-packages")):
+        for info in sorted(site.glob("*.dist-info")) + sorted(site.glob("*.egg-info")):
+            headers = _headers(info / ("METADATA" if info.suffix == ".dist-info" else "PKG-INFO"))
+            if not headers.get("Name"):
+                continue
+            try:
+                url = json.loads(read_regular(info / "direct_url.json", 1 << 20) or b"{}")
+            except ValueError:
+                url = {}
+            if isinstance(url, dict) and url.get("url"):
+                editable = isinstance(url.get("dir_info"), dict) and url["dir_info"].get("editable")
+                lines.add(f"-e {url['url']}" if editable else f"{canonical(headers['Name'])} @ {url['url']}")
+            else:
+                lines.add(f"{canonical(headers['Name'])}=={headers.get('Version', '')}")
+    return sorted(lines)
 
 
 def freeze_difference(before: list[str], after: list[str]) -> dict:
@@ -157,8 +261,12 @@ def freeze_difference(before: list[str], after: list[str]) -> dict:
 def snapshot_mismatch(snapshot: Path, installed: list[str]) -> list[str]:
     """Pins of the snapshot that the rebuilt environment does not have exactly."""
     _, pins, _ = read_snapshot(snapshot)
-    have = {line.lower() for line in installed}
-    return [pin for pin in pins if pin.lower() not in have]
+
+    def key(line):
+        name, sep, version = line.partition("==")
+        return f"{canonical(name)}=={version}" if sep else line.lower()
+    have = {key(line) for line in installed}
+    return [pin for pin in pins if key(pin) not in have]
 
 
 def _walk(project_dir: Path):
@@ -177,15 +285,21 @@ def is_test_file(relative: Path) -> bool:
 def pytest_settings(project_dir: Path) -> dict:
     """The test-selecting pytest settings, by file and key (pytest.ini is hashed as a test file)."""
     found = {}
+
+    def text(path):
+        data = read_regular(path)
+        if data is None:
+            raise ValueError("not a regular file of a sensible size")
+        return data.decode("utf-8")
     pyproject = project_dir / "pyproject.toml"
     if pyproject.exists():
         try:
-            data = tomllib.loads(pyproject.read_text(encoding="utf-8"))
+            data = tomllib.loads(text(pyproject))
             options = data.get("tool", {}).get("pytest", {})
             options = options.get("ini_options", options) if isinstance(options, dict) else {}
             found.update({f"pyproject.toml:{k}": json.dumps(v, sort_keys=True) for k, v in options.items()
                           if k in SELECTING_KEYS})
-        except (tomllib.TOMLDecodeError, UnicodeDecodeError):
+        except ValueError:  # also TOMLDecodeError and UnicodeDecodeError
             found["pyproject.toml"] = "unreadable"
     for name, section in (("setup.cfg", "tool:pytest"), ("tox.ini", "pytest")):
         path = project_dir / name
@@ -193,8 +307,8 @@ def pytest_settings(project_dir: Path) -> dict:
             continue
         parser = configparser.RawConfigParser(strict=False)
         try:
-            parser.read_string(path.read_text(encoding="utf-8"))
-        except (configparser.Error, UnicodeDecodeError):
+            parser.read_string(text(path))
+        except (configparser.Error, ValueError):
             found[name] = "unreadable"
             continue
         if parser.has_section(section):
@@ -208,7 +322,7 @@ def integrity(project_dir: Path) -> dict:
     for path in _walk(project_dir):
         relative = path.relative_to(project_dir)
         if is_test_file(relative):
-            state[relative.as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
+            state[relative.as_posix()] = file_hash(path)
     for key, value in pytest_settings(project_dir).items():
         state[key] = hashlib.sha256(value.encode()).hexdigest()
     return state
@@ -223,7 +337,7 @@ def workspace_digest(project_dir: Path, python: Path | None) -> str:
     h = hashlib.sha256()
     for path in _walk(project_dir):
         h.update(path.relative_to(project_dir).as_posix().encode())
-        h.update(path.read_bytes())
+        h.update(file_hash(path).encode())
     venv = project_dir / ".venv"
     if python and venv.exists():
         for info in sorted(venv.rglob("*.dist-info")):
@@ -231,14 +345,17 @@ def workspace_digest(project_dir: Path, python: Path | None) -> str:
     return h.hexdigest()
 
 
-def clean_env(python: Path, home: Path, tmp: Path | None = None) -> dict:
-    """The case interpreter first on PATH, its own HOME and temporary folder, nothing inherited."""
+def clean_env(python: Path, home: Path, tmp: Path | None = None, mark: str | None = None) -> dict:
+    """The case interpreter first on PATH, its own HOME and temporary folder, nothing inherited.
+    `mark` tags every process of a run, so that the run can find and stop them all when it ends."""
     env = {k: os.environ[k] for k in CLEAN_ENV_KEYS if k in os.environ}
     env.update({"PATH": f"{python.parent}{os.pathsep}/usr/bin{os.pathsep}/bin", "HOME": str(home),
                 "LANG": "en_US.UTF-8", "VIRTUAL_ENV": str(python.parent.parent), "PYTHONDONTWRITEBYTECODE": "1",
                 "PYTHONNOUSERSITE": "1", "PIP_DISABLE_PIP_VERSION_CHECK": "1"})
     if tmp:
         env["TMPDIR"] = str(tmp)
+    if mark:
+        env["FIXFIRST_RUN"] = mark
     return env
 
 
@@ -247,7 +364,10 @@ def junit_outcomes(path: Path) -> dict:
     outcomes = {}
     if not path.exists():
         return outcomes
-    for case in ElementTree.parse(path).getroot().iter("testcase"):
+    data = read_regular(path, 256 << 20)
+    if data is None:
+        raise ElementTree.ParseError(f"{path.name} is not a regular file of a sensible size")
+    for case in ElementTree.fromstring(data).iter("testcase"):
         node = f"{case.get('classname', '')}::{case.get('name', '')}"
         kinds = {child.tag for child in case}
         if "failure" in kinds:
@@ -263,19 +383,32 @@ def junit_outcomes(path: Path) -> dict:
     return outcomes
 
 
-def run_suite(project_dir: Path, python: Path, grader_dir: Path, execute, timeout=1200) -> dict:
+def _grader_ignore(folder, names) -> set:
+    """Left out of the grader's copy: the environment, caches, and special files (named pipes,
+    sockets), which hold no content and cannot be copied."""
+    left_out = {".venv", ".pytest_cache", "__pycache__"} & set(names)
+    for name in names:
+        try:
+            mode = os.lstat(os.path.join(folder, name)).st_mode
+        except OSError:
+            continue
+        if not (stat.S_ISDIR(mode) or stat.S_ISREG(mode) or stat.S_ISLNK(mode)):
+            left_out.add(name)
+    return left_out
+
+
+def run_suite(project_dir: Path, python: Path, grader_dir: Path, execute, timeout=1200, mark=None) -> dict:
     """The full test suite on a copy of the project in grader_dir (so the tests cannot change the
     workspace), with the case interpreter and a clean environment. `execute(argv, cwd, env, timeout)`
     runs it in the sandbox and returns (exit code, output, stopped)."""
     copy, home, tmp = grader_dir / "project", grader_dir / "home", grader_dir / "tmp"
-    shutil.copytree(project_dir, copy, symlinks=True,
-                    ignore=shutil.ignore_patterns(".venv", ".pytest_cache", "__pycache__"))
+    shutil.copytree(project_dir, copy, symlinks=True, ignore=_grader_ignore)
     home.mkdir()
     tmp.mkdir()
     report = grader_dir / "junit.xml"
     started = time.monotonic()
     code, output, stopped = execute([str(python), "-m", "pytest", "-q", "-p", "no:cacheprovider",
-                                     f"--junitxml={report}"], copy, clean_env(python, home, tmp), timeout)
+                                     f"--junitxml={report}"], copy, clean_env(python, home, tmp, mark), timeout)
     outcomes = junit_outcomes(report)  # a broken report raises: the caller records a grading error
     counts = {}
     for outcome in outcomes.values():
@@ -330,3 +463,32 @@ def judge(result: dict, reference: dict, violations: list[str]) -> dict:
         reasons.append(f"{len(lost)} tests that pass in the reference were skipped, e.g. {lost[0]}")
     return {"fixed": not reasons, "reasons": reasons, "counts": result["counts"],
             "reference_counts": reference["counts"], "tests_changed": sorted(violations)}
+
+
+REFERENCE_KEYS = ("key", "commit", "repair", "exit_code", "counts", "outcomes", "problems")
+
+
+def read_reference_cache(path: Path, key: str, attempt: str) -> tuple[dict | None, str | None]:
+    """A cached reference only if it is complete, for this key and still valid. Anything else is set
+    aside (renamed, never deleted) and reported, so that the reference is built again."""
+    if not path.exists():
+        return None, None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        missing = [k for k in REFERENCE_KEYS if not isinstance(data, dict) or k not in data]
+        problem = (f"missing {', '.join(missing)}" if missing else "another key" if data["key"] != key
+                   else "; ".join(data["problems"] or validate_reference(data)) or None)
+    except (ValueError, OSError, TypeError, KeyError, AttributeError) as error:
+        problem = f"unreadable ({type(error).__name__})"
+    if not problem:
+        return data, None
+    aside = path.with_name(f"{path.name}.unusable-{attempt}")
+    path.rename(aside)
+    return None, f"the cached reference was not usable ({problem}); kept as {aside.name} and built again"
+
+
+def write_json(path: Path, data) -> None:
+    """Write through a temporary file and rename, so that a reader never sees half a file."""
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    temporary.write_text(json.dumps(data, indent=1) + "\n", encoding="utf-8")
+    os.replace(temporary, path)

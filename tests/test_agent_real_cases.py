@@ -1,11 +1,14 @@
 """The agent baseline's real-project helpers (task B7): environments rebuilt from snapshots, test
 integrity, and a grader that compares per-test outcomes with a reference."""
 
+import hashlib
 import os
 from pathlib import Path
 import re
 import subprocess
 import sys
+import threading
+from xml.etree import ElementTree
 
 import pytest
 
@@ -189,3 +192,133 @@ def test_profile_paths_are_real_paths(tmp_path):
     link.symlink_to(target)
     text = iso.profile_text(iso.Policy(writable=(link,), readable=()), denied=())
     assert f'(subpath "{os.path.realpath(target)}")' in text and str(link) not in text
+
+
+def test_the_environment_record_is_read_from_pyvenv_cfg(tmp_path):
+    uv = write(tmp_path / "uv" / "pyvenv.cfg", "home = /opt/py/bin\nimplementation = CPython\nversion_info = 3.9.6\n")
+    venv = write(tmp_path / "venv" / "pyvenv.cfg", f"home = {tmp_path}/base/bin\nversion = 3.12.14\n")
+    assert rc.venv_record(uv.parent)["version"] == "3.9.6"
+    record = rc.venv_record(venv.parent)
+    assert record["version"] == "3.12.14" and os.path.realpath(tmp_path / "base") in record["interpreters"]
+
+
+def test_freeze_reads_metadata_and_never_runs_the_environment(tmp_path):
+    site = tmp_path / ".venv" / "lib" / "python3.12" / "site-packages"
+    write(site / "Foo_Bar-1.2.dist-info" / "METADATA", "Metadata-Version: 2.1\nName: Foo_Bar\nVersion: 1.2\n\nName: not a header\n")
+    write(site / "proj-0.1.dist-info" / "METADATA", "Name: proj\nVersion: 0.1\n")
+    write(site / "proj-0.1.dist-info" / "direct_url.json", '{"url": "file:///x/proj", "dir_info": {"editable": true}}')
+    write(site / "local-2.0.dist-info" / "METADATA", "Name: local\nVersion: 2.0\n")
+    write(site / "local-2.0.dist-info" / "direct_url.json", '{"url": "file:///x/local", "dir_info": {}}')
+    write(site / "old-3.0-py3.12.egg-info" / "PKG-INFO", "Name: old\nVersion: 3.0\n")
+    sentinel = tmp_path / "hook-ran.txt"
+    write(site / "hook.pth", f"import pathlib; pathlib.Path({str(sentinel)!r}).write_text('ran')\n")
+    assert rc.freeze(tmp_path / ".venv" / "bin" / "python") == [
+        "-e file:///x/proj", "foo-bar==1.2", "local @ file:///x/local", "old==3.0"]
+    assert not sentinel.exists()
+
+
+def test_snapshot_pins_match_whatever_the_name_spelling(tmp_path):
+    snapshot = write(tmp_path / "s.txt", "# Python 3.12.14\ntyping_extensions==4.16.0\nPyYAML==6.0.3\n")
+    assert rc.snapshot_mismatch(snapshot, ["pyyaml==6.0.3", "typing-extensions==4.16.0"]) == []
+
+
+def valid_reference(key="k"):
+    return {"key": key, "commit": "c", "repair": [{"command": "x", "exit_code": 0}], "exit_code": 0,
+            "counts": {"passed": 1}, "outcomes": {"t::a": "passed"}, "problems": []}
+
+
+@pytest.mark.parametrize("content", ["{", "[1, 2]", '{"key": "k"}',
+                                     '{"key": "other", "commit": "c", "repair": [], "exit_code": 0, "counts": {}, "outcomes": {"t::a": "passed"}, "problems": []}',
+                                     '{"key": "k", "commit": "c", "repair": [], "exit_code": 1, "counts": {}, "outcomes": {"t::a": "passed"}, "problems": []}',
+                                     '{"key": "k", "commit": "c", "repair": [], "exit_code": 0, "counts": {}, "outcomes": [], "problems": []}'])
+def test_an_unusable_reference_cache_is_set_aside_and_reported(tmp_path, content):
+    cached = write(tmp_path / "ref.json", content)
+    data, note = rc.read_reference_cache(cached, "k", "attempt-1")
+    assert data is None and "not usable" in note and "built again" in note
+    assert not cached.exists() and (tmp_path / "ref.json.unusable-attempt-1").read_text() == content
+
+
+def test_a_usable_reference_cache_is_read_and_a_missing_one_is_not_an_error(tmp_path):
+    assert rc.read_reference_cache(tmp_path / "none.json", "k", "a") == (None, None)
+    rc.write_json(tmp_path / "ref.json", valid_reference())
+    assert rc.read_reference_cache(tmp_path / "ref.json", "k", "a") == (valid_reference(), None)
+    assert [p.name for p in tmp_path.iterdir()] == ["ref.json"]  # no temporary file left behind
+
+
+def test_every_process_of_a_run_carries_its_mark(tmp_path):
+    env = rc.clean_env(tmp_path / ".venv" / "bin" / "python", tmp_path, tmp_path, "abc123")
+    assert env[iso.MARK] == "abc123"
+
+
+def returns_within(seconds, function, pipes=()):
+    """function's result (or error), failing if it is still waiting after `seconds`; the pipes are then
+    opened for writing so that the waiting thread can finish."""
+    box = {}
+
+    def target():
+        try:
+            box["value"] = function()
+        except Exception as error:
+            box["error"] = error
+    thread = threading.Thread(target=target, daemon=True)
+    thread.start()
+    thread.join(seconds)
+    waited = thread.is_alive()
+    for pipe in pipes if waited else ():
+        try:
+            os.close(os.open(pipe, os.O_WRONLY | os.O_NONBLOCK))
+        except OSError:
+            pass
+    thread.join(5)
+    assert not waited, "the harness waited on a named pipe"
+    return box
+
+
+@pytest.mark.skipif(not hasattr(os, "mkfifo"), reason="named pipes are POSIX")
+def test_named_pipes_the_agent_leaves_never_make_the_harness_wait(tmp_path):
+    project = tmp_path / "project"
+    write(project / "tests" / "test_ok.py", "def test_ok():\n    assert True\n")
+    site = project / ".venv" / "lib" / "python3.12" / "site-packages"
+    write(site / "real-2.0.dist-info" / "METADATA", "Name: real\nVersion: 2.0\n\nbody\n")
+    (site / "pipe-1.0.dist-info").mkdir()
+    pipes = [project / "tests" / "test_pipe.py", project / "pyproject.toml", project / "notes.txt",
+             site / "pipe-1.0.dist-info" / "METADATA", site / "real-2.0.dist-info" / "direct_url.json",
+             tmp_path / "junit.xml"]
+    for pipe in pipes:
+        os.mkfifo(pipe)
+    python = project / ".venv" / "bin" / "python"
+    state = returns_within(5, lambda: rc.integrity(project), pipes)["value"]
+    assert state["tests/test_pipe.py"] == "not a regular file" and "pyproject.toml" in state  # changes count
+    assert returns_within(5, lambda: rc.pytest_settings(project), pipes)["value"] == {"pyproject.toml": "unreadable"}
+    assert "value" in returns_within(5, lambda: rc.workspace_digest(project, python), pipes)
+    assert returns_within(5, lambda: rc.freeze(python), pipes)["value"] == ["real==2.0"]
+    assert isinstance(returns_within(5, lambda: rc.junit_outcomes(tmp_path / "junit.xml"), pipes)["error"],
+                      ElementTree.ParseError)
+    assert returns_within(5, lambda: rc.read_regular(project / "notes.txt"), pipes)["value"] is None
+    assert isinstance(returns_within(5, lambda: rc.write_regular(project / "notes.txt", "x"), pipes)["error"],
+                      OSError)
+    assert rc._grader_ignore(str(project), ["notes.txt", "tests", ".venv"]) == {"notes.txt", ".venv"}
+
+
+def test_regular_files_hash_and_read_as_before(tmp_path):
+    path = write(tmp_path / "tests" / "test_a.py", "def test_a():\n    pass\n")
+    assert rc.file_hash(path) == hashlib.sha256(path.read_bytes()).hexdigest()
+    assert rc.integrity(tmp_path) == {"tests/test_a.py": hashlib.sha256(path.read_bytes()).hexdigest()}
+    assert rc.read_regular(path) == path.read_bytes() and rc.read_regular(path, limit=5) is None
+    assert rc.read_regular(tmp_path / "missing.py") is None and rc.read_regular(tmp_path) is None
+
+
+def test_write_file_replaces_the_contents_and_does_not_follow_a_link(tmp_path):
+    target = write(tmp_path / "a.txt", "a much longer text than the new one")
+    rc.write_regular(target, "short")
+    assert target.read_text(encoding="utf-8") == "short"
+    rc.write_regular(tmp_path / "new.txt", "line\nline")
+    assert (tmp_path / "new.txt").read_bytes() == b"line\nline"
+    outside = write(tmp_path / "outside.txt", "keep")
+    try:
+        (tmp_path / "link.txt").symlink_to(outside)
+    except OSError:
+        pytest.skip("no symlinks here")
+    with pytest.raises(OSError):
+        rc.write_regular(tmp_path / "link.txt", "changed")
+    assert outside.read_text(encoding="utf-8") == "keep"

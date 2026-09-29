@@ -12,7 +12,10 @@ under macOS sandbox-exec with a Policy:
   out of reach; ~/.ssh, ~/.omlx, ~/.claude and the keychains are never readable;
 - it has the network only when the policy says so.
 
-Processes start in their own process group and the whole group is killed at the deadline.
+Processes start in their own process group, with stdin closed, and the whole group is killed at the
+deadline. A command ends when its own process ends: background processes it leaves (which may hold its
+output pipe) do not keep the harness waiting; they end with the run (sweep). Only the end of the
+output is kept.
 """
 
 from contextlib import contextmanager
@@ -26,6 +29,7 @@ import secrets
 import signal
 import subprocess
 import tempfile
+import threading
 import time
 
 HOME = Path.home()
@@ -33,6 +37,7 @@ SENSITIVE = (".ssh", ".omlx", ".claude", "Library/Keychains")
 SYSTEM_TEMP = tuple(sorted({Path(os.path.realpath(tempfile.gettempdir())), Path("/private/tmp"),
                             Path("/private/var/folders")}))
 STOPPED = 124
+KEEP = 1 << 20  # bytes of a command's output that are kept (the end)
 
 
 @dataclass(frozen=True)
@@ -73,30 +78,129 @@ def write_profile(policy: Policy, path: Path, denied: tuple) -> Path:
     return path
 
 
-def execute(argv, cwd, env, profile: Path, timeout: float) -> tuple[int, str, bool]:
-    """Run under the profile; at the timeout kill the whole process group. (exit code, output, stopped)."""
+class Tail:
+    """The last `keep` bytes of a stream, read in a thread until the stream ends."""
+
+    def __init__(self, keep: int):
+        self.keep, self.data, self.dropped, self.lock = keep, bytearray(), 0, threading.Lock()
+
+    def drain(self, stream):
+        with stream:
+            for piece in iter(lambda: stream.read1(1 << 16), b""):
+                with self.lock:
+                    self.data += piece
+                    extra = len(self.data) - self.keep
+                    if extra > 0:
+                        del self.data[:extra]
+                        self.dropped += extra
+
+    def text(self) -> str:
+        with self.lock:
+            data, dropped = bytes(self.data), self.dropped
+        text = data.decode("utf-8", "replace").replace("\r\n", "\n").replace("\r", "\n")
+        return f"...({dropped} bytes of earlier output not kept)...\n{text}" if dropped else text
+
+
+def execute(argv, cwd, env, profile: Path, timeout: float, keep: int = KEEP) -> tuple[int, str, bool]:
+    """Run under the profile; at the timeout kill the whole process group. (exit code, output, stopped).
+    The result comes when the command's own process ends, even if a process it left in the background
+    still holds the output pipe; only the last `keep` bytes of output are kept."""
     if timeout <= 0:
         return STOPPED, "(not started: no time left)", True
     proc = subprocess.Popen(["sandbox-exec", "-f", str(profile), *[str(a) for a in argv]], cwd=cwd, env=env,
-                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, errors="replace",
+                            stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                             start_new_session=True)
+    tail = Tail(keep)
+    reader = threading.Thread(target=tail.drain, args=(proc.stdout,), daemon=True)
+    reader.start()
     try:
-        output, _ = proc.communicate(timeout=timeout)
-        return proc.returncode, output, False
+        proc.wait(timeout=timeout)
+        stopped = False
     except subprocess.TimeoutExpired:
         kill_tree(proc)
-        output, _ = proc.communicate()
-        return STOPPED, (output or "") + f"\n(stopped after {timeout:.1f} s)", True
+        try:
+            proc.wait(timeout=30)
+        except subprocess.TimeoutExpired:
+            pass
+        stopped = True
+    reader.join(1)  # the rest of the output; a background process may hold the pipe much longer
+    if stopped:
+        return STOPPED, tail.text() + f"\n(stopped after {timeout:.1f} s)", True
+    return proc.returncode, tail.text(), False
 
 
-def descendants(pid: int) -> list[int]:
-    """Every process below pid, including those that started their own session (FixFirst's checks do)."""
-    listing = subprocess.run(["ps", "-A", "-o", "pid=,ppid="], capture_output=True, text=True).stdout
+MARK = "FIXFIRST_RUN"
+
+
+def new_mark() -> str:
+    return secrets.token_hex(12)
+
+
+def _listing(argv) -> str:
+    """A system listing (ps, lsof); other processes' environments need not be UTF-8."""
+    try:
+        return subprocess.run(argv, capture_output=True, text=True, errors="replace", timeout=60).stdout
+    except (OSError, subprocess.SubprocessError):
+        return ""
+
+
+def marked_processes(mark: str, folder: Path) -> set[int]:
+    """This run's processes, found without their parents: every process the harness starts for the run
+    carries the mark in its environment, and those that dropped it are found by their working folder
+    inside the run's folder (any process of the user working there counts, so keep shells out of a
+    running run's folder). A process that clears its environment and leaves the folder is not found."""
+    uid, found = str(os.getuid()), set()
+    for line in _listing(["ps", "-axwwE", "-o", "pid=,uid=,command="]).splitlines():
+        parts = line.split(None, 2)
+        if len(parts) == 3 and parts[0].isdigit() and parts[1] == uid and f"{MARK}={mark}" in parts[2]:
+            found.add(int(parts[0]))
+    root = os.path.realpath(folder)
+    pid = None
+    for line in _listing(["lsof", "-a", "-d", "cwd", "-F", "pn", "-u", uid]).splitlines():
+        if line.startswith("p") and line[1:].isdigit():
+            pid = int(line[1:])
+        elif line.startswith("n") and pid is not None:
+            path = os.path.realpath(line[1:])
+            if path == root or path.startswith(root + os.sep):
+                found.add(pid)
+    found.discard(os.getpid())
+    return found
+
+
+def sweep(mark: str, folder: Path) -> int:
+    """Kill every process of the run that is still alive, with everything below it. Used when a run
+    or a grader check ends, so nothing it started can change the case afterwards."""
+    stopped = set()
+    for _ in range(3):  # a process may start another while its parent is being killed
+        pids = marked_processes(mark, folder) - stopped
+        if not pids:
+            break
+        children = child_table()
+        for pid in pids:
+            for victim in [*reversed(descendants(pid, children)), pid]:
+                if victim in stopped:
+                    continue
+                try:
+                    os.kill(victim, signal.SIGKILL)
+                    stopped.add(victim)
+                except (ProcessLookupError, PermissionError):
+                    pass
+        time.sleep(0.05)
+    return len(stopped)
+
+
+def child_table() -> dict[int, list[int]]:
     children = {}
-    for line in listing.splitlines():
+    for line in _listing(["ps", "-A", "-o", "pid=,ppid="]).splitlines():
         parts = line.split()
         if len(parts) == 2 and parts[0].isdigit() and parts[1].isdigit():
             children.setdefault(int(parts[1]), []).append(int(parts[0]))
+    return children
+
+
+def descendants(pid: int, children: dict | None = None) -> list[int]:
+    """Every process below pid, including those that started their own session (FixFirst's checks do)."""
+    children = child_table() if children is None else children
     found, todo = [], [pid]
     while todo:
         for child in children.get(todo.pop(), []):

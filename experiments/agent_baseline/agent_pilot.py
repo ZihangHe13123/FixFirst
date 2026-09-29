@@ -155,14 +155,14 @@ class SetupError(Exception):
     """The case could not be prepared; nothing was run or graded."""
 
 
-def base_prefix(python: Path) -> Path:
-    return Path(subprocess.run([str(python), "-c", "import sys; print(sys.base_prefix)"],
-                               capture_output=True, text=True).stdout.strip())
+def interpreters(venv: Path) -> tuple:
+    """The folders an environment's interpreter reads, from its pyvenv.cfg (the interpreter is not run)."""
+    return (venv, *map(Path, rc.venv_record(venv)["interpreters"]))
 
 
 def fixfirst_readable() -> tuple:
     """What FixFirst's own server needs to read: its code and its environment, not the rest of the repository."""
-    return (FIXFIRST / "src", PYTHON.parent.parent, base_prefix(PYTHON))
+    return (FIXFIRST / "src", *interpreters(PYTHON.parent.parent))
 
 
 @dataclass
@@ -189,6 +189,7 @@ class Run:
     commands: int = 0
     installs: int = 0
     checks: int = 0
+    mark: str = field(default_factory=iso.new_mark)
 
     def __post_init__(self):
         for sub in ("state", "tmp"):
@@ -220,7 +221,7 @@ class Run:
         return path
 
     def env(self, python: Path | None = None) -> dict:
-        return rc.clean_env(python or self.python, self.state, self.tmp)
+        return rc.clean_env(python or self.python, self.state, self.tmp, self.mark)
 
     def execute(self, argv, kind: str, timeout: float, env: dict | None = None):
         return iso.execute(argv, self.project, env or self.env(), self.profile(kind), timeout)
@@ -232,8 +233,15 @@ class Run:
         grader.mkdir(parents=True)
         profile = iso.write_profile(iso.Policy((grader,), (self.project, *self.interpreters), False),
                                     grader / "grader.sb", self.ctx.denied)
-        return rc.run_suite(self.project, self.python, grader,
-                            lambda argv, cwd, env, timeout: iso.execute(argv, cwd, env, profile, timeout))
+        mark = iso.new_mark()
+
+        def execute(argv, cwd, env, timeout):
+            try:
+                return iso.execute(argv, cwd, env, profile, timeout)
+            finally:
+                iso.sweep(mark, grader)  # nothing a test started outlives its check or touches its report
+
+        return rc.run_suite(self.project, self.python, grader, execute, mark=mark)
 
     def check_integrity(self, turn, tool: str):
         for key in rc.changed(self.baseline, rc.integrity(self.project)):
@@ -252,7 +260,7 @@ class MCPClient:
                 "--store", str(run.state / "store"), "mcp"]
         self.log = (run.folder / "mcp-server.log").open("w")
         self.dead = False
-        self.proc = subprocess.Popen(argv, cwd=run.project, env=rc.clean_env(PYTHON, run.state, run.tmp),
+        self.proc = subprocess.Popen(argv, cwd=run.project, env=rc.clean_env(PYTHON, run.state, run.tmp, run.mark),
                                      stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=self.log, text=True,
                                      bufsize=1, start_new_session=True)
         self.lines: queue.Queue = queue.Queue()
@@ -365,16 +373,43 @@ def chat(model, messages, tools, settings: Settings, fake: FakeModel | None, tim
         return fake.reply(timeout)
     body = {"model": model, "messages": messages, "tools": tools, "max_tokens": settings.max_tokens,
             "temperature": settings.temperature, "seed": settings.seed}
-    try:
-        response = httpx.post(f"{BASE}/chat/completions", json=body, headers=HEADERS, timeout=timeout)
-    except httpx.TimeoutException as error:
-        raise ModelTimeout(str(error) or "timed out") from error
-    response.raise_for_status()
-    data = response.json()
+    data = post_before(f"{BASE}/chat/completions", body, timeout)
     choices = data.get("choices") if isinstance(data, dict) else None
     if not isinstance(choices, list) or not choices or not isinstance(choices[0], dict):
         raise ModelError("the response has no choices")
     return choices[0].get("message"), data.get("usage")
+
+
+def post_before(url: str, body: dict, timeout: float) -> dict:
+    """POST and read the JSON reply, all within `timeout` seconds. httpx's timeouts limit each wait,
+    not the whole request (a server that keeps sending slowly would never trip them), so the request
+    runs in a thread and its connection is closed at the deadline."""
+    if timeout <= 0:
+        raise ModelTimeout("no time left for the request")
+    client = httpx.Client(timeout=timeout)
+    result, done = {}, threading.Event()
+
+    def request():
+        try:
+            response = client.post(url, json=body, headers=HEADERS)
+            response.raise_for_status()
+            result["data"] = response.json()
+        except Exception as error:  # handed to the caller below
+            result["error"] = error
+        finally:
+            done.set()
+
+    threading.Thread(target=request, daemon=True).start()
+    finished = done.wait(timeout)
+    client.close()  # at the deadline this aborts the request in the thread
+    if not finished:
+        raise ModelTimeout(f"no complete reply within {timeout:.2f} s")
+    error = result.get("error")
+    if isinstance(error, httpx.TimeoutException):
+        raise ModelTimeout(str(error) or "timed out") from error
+    if error:
+        raise error
+    return result["data"]
 
 
 def parse_call(call) -> tuple[str | None, dict | None, str | None]:
@@ -509,6 +544,8 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
             mcp.close()
         stats["agent_s"] = round(budget.used(), 2)
         stats["harness_s"] = round(budget.paused, 2)
+        # Background processes of the run (also those that left their parent) end with it.
+        stats["processes_stopped_at_end"] = iso.sweep(run.mark, run.folder)
     return stats
 
 
@@ -546,17 +583,21 @@ def run_tool(name, args, run: Run, stats, mcp, budget: iso.Budget, turn):
         if stopped and budget.remaining() <= 0:
             raise ToolTimeout("the command was stopped at the deadline")
         return f"exit code {code}\n{clip(output)}"
+    # The file tools run in the harness, so they never wait on a named pipe and never read without limit.
     if name == "read_file":
         target = inside(run.project, str(args["path"]))
         if not target or not target.is_file():
             return "error: no such file in the project"
-        return clip(target.read_text(encoding="utf-8", errors="replace"))
+        data = rc.read_regular(target)
+        if data is None:
+            return "error: not a regular file of at most 16 MB"
+        return clip(data.decode("utf-8", "replace").replace("\r\n", "\n").replace("\r", "\n"))
     if name == "write_file":
         target = inside(run.project, str(args["path"]))
         if not target:
             return "error: path is outside the project"
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(str(args["content"]), encoding="utf-8")
+        rc.write_regular(target, str(args["content"]))
         return f"wrote {len(str(args['content']))} characters to {target.relative_to(run.project.resolve())}"
     if name == "fixfirst_check":
         stats["fixfirst_calls"] += 1
@@ -579,7 +620,7 @@ def generated_reference(ctx: Context, template: str, pristine: Path, cache: dict
     if template in cache:
         return cache[template]
     folder = ctx.out / "_templates" / f"{template}--reference--{ctx.attempt}"
-    run = Run(ctx, folder, False, False, PYTHON, (PYTHON.parent.parent, base_prefix(PYTHON)))
+    run = Run(ctx, folder, False, False, PYTHON, interpreters(PYTHON.parent.parent))
     shutil.copytree(pristine, run.project)
     suite = run.suite()
     data = {"template": template, "exit_code": suite["exit_code"], "counts": suite["counts"],
@@ -590,21 +631,28 @@ def generated_reference(ctx: Context, template: str, pristine: Path, cache: dict
     return data
 
 
-def real_reference(ctx: Context, project: dict, source: Path, commit: str, snapshot: Path, repair: list[str]) -> dict:
+def real_reference(ctx: Context, project: dict, source: Path, snapshot: Path, repair: list[str]) -> dict:
     """The outcome after the known repair, on a separate copy, checked before it grades anything.
-    Only valid references are cached; every attempt keeps its own folder."""
+    Only valid references are cached (written atomically); an unusable cache is set aside and the
+    reference built again. Every attempt keeps its own folder. Errors are left to the caller, which
+    records them for every planned run of the case."""
+    commit = rc.source_commit(source)
+    if not commit:
+        raise RuntimeError(f"no git clone of {project['id']} in {source}")
     key = hashlib.sha256(json.dumps([commit, snapshot.read_text(encoding="utf-8"), repair]).encode()).hexdigest()
     name = f"{iso.slug(project['id'], 30)}--{key[:12]}"
+    (ctx.out / "_reference").mkdir(parents=True, exist_ok=True)
     cached = ctx.out / "_reference" / f"{name}.json"
-    if cached.exists():
-        return json.loads(cached.read_text(encoding="utf-8"))
+    data, note = rc.read_reference_cache(cached, key, ctx.attempt)
+    if data:
+        return data
     folder = ctx.out / "_reference" / f"{name}--{ctx.attempt}"
     run = Run(ctx, folder, True, True)
-    data = {"key": key, "commit": commit, "repair": [], "problems": []}
+    data = {"key": key, "commit": commit, "repair": [], "problems": [], "cache_note": note}
     try:
         rc.export_source(source, commit, run.project)
         run.python = rc.create_environment(run.project, project, snapshot, [])
-        run.interpreters = (base_prefix(run.python),)
+        run.interpreters = interpreters(run.project / ".venv")
         env = {**run.env(), "SETUPTOOLS_SCM_PRETEND_VERSION": project["ref"].lstrip("v")}
         for argv in rc.install_commands(project, run.python, run.tmp / "uv-cache"):
             code, output, _ = run.execute(argv, "install", 900, env=env)
@@ -618,10 +666,12 @@ def real_reference(ctx: Context, project: dict, source: Path, commit: str, snaps
     except (RuntimeError, OSError, subprocess.SubprocessError, ParseError) as error:
         data.update(exit_code=None, counts={}, outcomes={}, summary="",
                     setup_error=f"{type(error).__name__}: {error}"[:500])
+    finally:
+        iso.sweep(run.mark, run.folder)
     data["problems"] = ([data["setup_error"]] if data.get("setup_error") else []) + rc.validate_reference(data)
-    (folder / "reference.json").write_text(json.dumps(data, indent=1) + "\n", encoding="utf-8")
+    rc.write_json(folder / "reference.json", data)
     if not data["problems"]:
-        cached.write_text(json.dumps(data, indent=1) + "\n", encoding="utf-8")
+        rc.write_json(cached, data)
     return data
 
 
@@ -641,8 +691,7 @@ def grade(run: Run, reference: dict, row: dict):
 
 
 def file_hashes(project_dir: Path) -> dict:
-    return {p.relative_to(project_dir).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in rc._walk(project_dir)}
+    return {p.relative_to(project_dir).as_posix(): rc.file_hash(p) for p in rc._walk(project_dir)}
 
 
 def play(model, arm, run: Run, settings, fake_path, reference, row, state_digest):
@@ -680,7 +729,9 @@ def run_real(ctx: Context, row: dict, settings, project, source, snapshot, refer
     try:
         rc.export_source(source, commit, run.project)
         run.python = rc.create_environment(run.project, project, snapshot, setup_log)
-        run.interpreters = (base_prefix(run.python),)
+        record = rc.venv_record(run.project / ".venv")  # read before any project code can change it
+        run.interpreters = interpreters(run.project / ".venv")
+        row["python"] = record["version"]
         env = {**run.env(), "SETUPTOOLS_SCM_PRETEND_VERSION": project["ref"].lstrip("v")}
         for argv in rc.install_commands(project, run.python, run.tmp / "uv-cache"):
             code, output, _ = run.execute(argv, "install", 900, env=env)
@@ -696,9 +747,7 @@ def run_real(ctx: Context, row: dict, settings, project, source, snapshot, refer
     start = rc.freeze(run.python)
     (run.folder / "freeze-start.txt").write_text("\n".join(start) + "\n", encoding="utf-8")
     run.baseline = rc.integrity(run.project)
-    row.update(python=subprocess.run([str(run.python), "-c", "import sys; print(sys.version.split()[0])"],
-                                     capture_output=True, text=True).stdout.strip(),
-               snapshot_mismatch=rc.snapshot_mismatch(snapshot, start),
+    row.update(snapshot_mismatch=rc.snapshot_mismatch(snapshot, start),
                start_digest=rc.workspace_digest(run.project, run.python)[:16])
     try:
         play(ctx.model, arm, run, settings, fake_path, reference, row,
@@ -718,7 +767,7 @@ def run_generated(ctx: Context, row: dict, settings, spec, arm, run_index, fake_
         dc.build_template(pristine, t)
     reference = generated_reference(ctx, template, pristine, references)
     run = Run(ctx, iso.run_folder(ctx.out, spec, arm, run_index, ctx.model, ctx.attempt), False, False,
-              PYTHON, (PYTHON.parent.parent, base_prefix(PYTHON)))
+              PYTHON, interpreters(PYTHON.parent.parent))
     row.update(run_dir=run.folder.relative_to(ctx.out).as_posix(), stage="setup", cause=s.label)
     if reference["problems"]:
         row.update(end="reference_invalid", error="; ".join(reference["problems"]), grading="not_graded", fixed=None)
@@ -805,6 +854,12 @@ def main(argv=None):
     harness = subprocess.run(["git", "rev-parse", "HEAD"], cwd=FIXFIRST, capture_output=True, text=True).stdout.strip()
     dirty = [line for line in subprocess.run(["git", "status", "--porcelain", "--", "src", "experiments/agent_baseline"],
                                              cwd=FIXFIRST, capture_output=True, text=True).stdout.splitlines() if line.strip()]
+    unknown = [p for p in args.projects if p not in manifest]
+    no_repair = [p for p in args.projects if p in manifest and p not in repairs]
+    if unknown or no_repair:
+        parser.error("; ".join([f"not in the manifest: {', '.join(unknown)}"] * bool(unknown)
+                               + [f"no known repair in {args.repairs} (the grader needs a reference): "
+                                  f"{', '.join(no_repair)}"] * bool(no_repair)))
     references = {}
     work = [("generated", spec) for spec in args.cases] + [("real", pid) for pid in args.projects]
     for case_index, (kind, name) in enumerate(work):
@@ -813,9 +868,11 @@ def main(argv=None):
             project = manifest[name]
             source = Path(args.sources).resolve() / name
             snapshot = manifest_path.parent / "environments" / f"{name}.txt"
-            if name not in repairs:
-                parser.error(f"{name}: no known repair in {args.repairs}; the grader needs a reference")
-            reference = real_reference(ctx, project, source, rc.source_commit(source), snapshot, repairs[name]["repair"])
+            try:
+                reference = real_reference(ctx, project, source, snapshot, repairs[name]["repair"])
+            except Exception as error:  # the per-case boundary: every planned run gets a row below
+                reference = {"problems": [f"preparing the reference failed: {type(error).__name__}: {error}"[:500]],
+                             "traceback": traceback.format_exc()[-3000:]}
         for run_index in range(1, args.runs + 1):
             for order, arm in enumerate(arm_order(args.arms, case_index, run_index - 1), start=1):
                 row = {"model": args.model, "model_slug": iso.slug(identity), "attempt": attempt, "case": name,
@@ -826,7 +883,8 @@ def main(argv=None):
                 try:
                     if kind == "real" and reference["problems"]:
                         row.update(end="reference_invalid", error="; ".join(reference["problems"])[:500],
-                                   grading="not_graded")
+                                   grading="not_graded", reference_traceback=reference.get("traceback"),
+                                   reference_cache_note=reference.get("cache_note"))
                     elif kind == "real":
                         run_real(ctx, row, settings, project, source, snapshot, reference, arm, run_index, fake_path)
                     else:

@@ -126,10 +126,14 @@ held-out projects are added only after A2's results are merged.
   copied (a copied environment keeps absolute paths). The row records the commit, any snapshot pin the
   rebuilt environment lacks, and a digest of the starting state.
 - **Where code runs.** Creating the environment and installing the snapshot's pinned packages happens
-  outside the sandbox; no project code runs there. Everything that runs the project's code runs under
-  `sandbox-exec` (`isolation.py`): installing the project itself (with the network, for its build
-  requirements), the agent's commands, FixFirst's server and the checks it starts, the reference
-  repair, and every test run of the grader and the reference.
+  outside the sandbox, before the agent starts; no project code runs there. After that the case's
+  interpreter is never started outside the sandbox: its home folder and version come from `pyvenv.cfg`
+  as written at creation, and pip freeze at start and end is read from the packages' metadata files,
+  so a startup hook (`.pth`, `sitecustomize`) in the environment, one the agent adds included, only
+  ever runs inside the sandbox. Everything that runs the project's code runs under `sandbox-exec`
+  (`isolation.py`): installing the project itself (with the network, for its build requirements), the
+  agent's commands, FixFirst's server and the checks it starts, the reference repair, and every test
+  run of the grader and the reference.
 - **What each process may touch.** The agent's commands write only to the run's `project`, `state`
   (HOME, pip's cache, FixFirst's store) and `tmp` (TMPDIR) folders, never the system temporary
   folder. Under the home folder, the output folder, the repository and the system temporary folders
@@ -147,13 +151,28 @@ held-out projects are added only after A2's results are merged.
   (FixFirst's checks run in their own sessions, so the harness finds them by parent process). Calls
   left in a turn are not carried out and a `finish` after the deadline is not taken: the run ends as
   `time_cap`. The harness's own checks (integrity, green checks) do not count against the budget and
-  are listed as `harness_s`. A process the agent detaches on purpose (`nohup` or `setsid` with its
-  output redirected) can outlive its command; the sandbox still limits what it can write, and the
-  grader works on a copy.
+  are listed as `harness_s`. A model request is cut at the deadline as a whole: it runs in a thread
+  and its connection is closed then, since httpx's timeouts only limit each wait (a server that keeps
+  sending slowly would never trip them). A command's result comes when its own process ends, with
+  stdin closed and the last 1 MB of output kept (the model sees the last 6,000 characters): a process
+  it leaves in the background does not keep the harness waiting, even while it holds the output pipe.
+  Every process the harness starts for a run carries the run's mark in its environment. When the
+  episode ends (finish, a cap or an error), the harness stops every process with the mark or with its
+  working folder inside the run (any of the user's processes working there counts, so keep shells out
+  of a run's folder while it runs), also those that left their parent, before it reads or grades the
+  case (`processes_stopped_at_end`); each grader check does the same for its own processes before it
+  reads the report. A process that both clears its environment and leaves the run's folders is not
+  found; the sandbox still limits what it can write, and the grader works on a copy.
 - **Reference.** The known repair in `reference_repairs.toml` (the model never sees it) is applied to
   a separate copy in the sandbox, and the suite is run like a grader run. A reference counts only if
   every repair step exits 0 and its suite exits 0 with at least one passing test and none failing;
-  otherwise the case's runs are recorded as `reference_invalid` and not graded. Generated cases use
+  otherwise the case's runs are recorded as `reference_invalid` and not graded. Preparing a reference
+  is its own error boundary: a missing snapshot, a failed build or an unusable cache is recorded on
+  every planned run of the case (with the error and any cache note) and the next case goes ahead. A
+  cached reference is used only if it is complete, for the same key and still valid; it is written
+  atomically, and an unusable one is renamed `*.unusable-<attempt>` (kept) and the reference built
+  again. Unknown projects or projects without a known repair are refused before any run starts.
+  Generated cases use
   the healthy template as their reference; scenarios that change test files or pytest settings have
   none and are recorded as `unsupported_case` (6 of the 44 scenarios, for example a bug in a fixture).
 - **Grader.** The full suite runs offline on a fresh copy in the run's `grader/check-NNN` folder,
@@ -166,6 +185,11 @@ held-out projects are added only after A2's results are merged.
   stays recorded even if it is undone later; a run with a violation is never green and never fixed.
   The check sees the state between tool calls: a change made and undone inside one command is not
   seen.
+- **Files the agent leaves.** The harness reads the agent's files outside the sandbox (integrity,
+  digests, pip freeze, the JUnit report, the `read_file` and `write_file` tools), so it reads only
+  regular files, opens them without waiting and never reads without limit: a test file replaced by a
+  named pipe counts as changed, `read_file` and `write_file` refuse a pipe (`write_file` also refuses
+  a link as the file name), and the grader's copy leaves pipes and sockets out.
 - **Records, never overwritten.** Each run has its own folder,
   `runs/<case>--<arm>--r<n>--<model>--<attempt>`, where the model part is a safe name plus a hash and
   the attempt is the invocation's time and a random suffix (or `--attempt NAME`, which is refused if
@@ -233,6 +257,27 @@ cannot write outside its copy; a timeout or a reference with an error never grad
 0.05-second budget stops a 0.3-second command and the `finish` after it; a malformed tool call is
 recorded and the transcript saved; a test edited and put back stays a violation; a repeat keeps the
 first run's folder.
+
+### After the third review (29 Sep): scripted checks
+
+The review's three remaining gaps, reproduced and then re-checked: a `.pth` hook in the case's
+environment no longer runs when the harness reads the interpreter's paths, its version or pip freeze
+(it did in all three before), and a hook the agent adds during a run never writes outside the
+sandbox; a model reply that keeps trickling is cut at 0.21 s for a 0.2 s budget and the server sees
+the connection closed (the reply ran to its end after about 0.6 s before); a child that left its
+parent is stopped when the run ends (it wrote after the run before); a half-written reference cache
+and a missing snapshot are recorded on their cases' runs and the batch goes on (the cache error
+escaped and stopped the batch before).
+
+Four more ways the agent could stall the harness came up in the same round and were fixed, each
+reproduced on the previous head first: a named pipe in the workspace made the integrity check, the
+digest, the pytest settings and the JUnit report wait forever, and `write_file` onto one as well (a
+scripted run was still stuck after 150 s); a detached child that kept the output pipe made a
+finished command wait for it (12.1 s for a 3 s cap, now 1.1 s; in the grader 100 s, now 2 s, and a
+longer-lived child would have stopped the check and failed the run); 400 MB of output was all kept
+(1.3 GB more memory, now 1 MB kept and 7 MB more); and a command that read stdin waited on the
+harness's input until its timeout. With scripted replies on cachetools, both arms were still fixed at
+turn 2 and the rebuilt reference passed (215 passed).
 
 ### Not done yet
 
