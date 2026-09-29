@@ -70,7 +70,8 @@ A blank `cause_score` means not scored yet; it is reported as unscored, never as
   for the target.
 - **Paired comparison, one unit per participant**: only participants with the configured number of
   usable tasks in both conditions (two, as the protocol says; `--tasks-per-condition 1` if the pilot
-  changes the protocol, which the output records). Each participant's mean time per condition, with
+  changes the protocol, which the output records; then a participant's two tasks must be the matched
+  pair the protocol names, T1 and T3 or T2 and T4, in either condition). Each participant's mean time per condition, with
   unfinished tasks counted as 720 s; difference = FixFirst − baseline, negative = faster with
   FixFirst. The Wilcoxon signed-rank test (two-sided, zero differences dropped) is a supplement;
   it is not computed without pairs or when every difference is zero.
@@ -92,7 +93,9 @@ table is corrected:
 - a required column is missing; a participant code is empty;
 - the same participant and task twice; an unknown condition or task; `fixfirst_set` not A or B,
   different on one participant's rows, or tasks outside the sets it implies;
-- more tasks in a condition than configured;
+- more tasks in a condition than configured; with one task per condition, a participant's two tasks
+  that are not T1 and T3 or T2 and T4 (a participant with one task missing is simply not paired);
+- `--time-limit` that is not a positive number of seconds;
 - `seconds` not a whole number, negative, or above 720; a success without a time or after the time
   limit; a task not completed with a time other than 720;
 - a success with modified tests;

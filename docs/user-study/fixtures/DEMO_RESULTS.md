@@ -4,7 +4,7 @@
 
 ## Inputs and configuration
 
-- Script: analysis.py 1.0 (SHA-256 e567e1c2e2fa); protocol version 1.2
+- Script: analysis.py 1.0 (SHA-256 453717ce63bd); protocol version 1.2
 - Tasks per condition: 2; time limit: 720 s; rows whose participant starts with PILOT or P00 are not analysed
 
 | Input | Rows | SHA-256 |

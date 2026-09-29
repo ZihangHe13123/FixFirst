@@ -39,6 +39,8 @@ VERSION = "1.0"
 CONDITIONS = ("fixfirst", "baseline")
 SETS = {"A": ("T1", "T2"), "B": ("T3", "T4")}
 TASKS = {task: name for name, tasks in SETS.items() for task in tasks}
+# PROTOCOL.md: with one task per condition, the tasks of matched difficulty are T1 and T3, or T2 and T4.
+MATCHED_PAIRS = ({"T1", "T3"}, {"T2", "T4"})
 EXCLUDED_PREFIXES = ("PILOT", "P00")
 KNOWN_CAUSES = {
     "T1": "Jinja2 3.1 removed jinja2.Markup, which the code imports (Markup now comes from markupsafe).",
@@ -201,6 +203,11 @@ def load_sessions(path: Path, config: Config, data: Data, problems: list):
             if wrong:
                 problems.append(f"{person}: {condition} tasks {', '.join(wrong)} are not in set {expected} "
                                 f"(fixfirst_set is {chosen})")
+        if config.tasks_per_condition == 1 and all(len(rows) == 1 for rows in conditions.values()):
+            tasks = {task for rows in conditions.values() for task, _ in rows}
+            if tasks not in MATCHED_PAIRS:
+                problems.append(f"{person}: with one task per condition the protocol pairs T1 with T3 or T2 with T4, "
+                                f"not {' and '.join(sorted(tasks))}")
 
 
 def sus_score(row: dict) -> tuple[float | None, list[str]]:
@@ -570,6 +577,13 @@ def load(args, config: Config) -> Data:
     return data
 
 
+def positive(text: str) -> int:
+    value = int(text)
+    if value <= 0:
+        raise argparse.ArgumentTypeError("must be a positive number of seconds")
+    return value
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--sessions", default=str(HERE / "sessions.csv"))
@@ -577,7 +591,7 @@ def main(argv=None) -> int:
     parser.add_argument("--causes", default=str(HERE / "cause_scores.csv"))
     parser.add_argument("--protocol", default=str(HERE / "PROTOCOL.md"))
     parser.add_argument("--tasks-per-condition", type=int, default=2, choices=(1, 2))
-    parser.add_argument("--time-limit", type=int, default=720)
+    parser.add_argument("--time-limit", type=positive, default=720)
     parser.add_argument("--output", help="write the Markdown here instead of printing it")
     parser.add_argument("--json", help="also write the numbers as JSON")
     parser.add_argument("--demo", action="store_true", help="the inputs are fictional: mark the output DEMO")

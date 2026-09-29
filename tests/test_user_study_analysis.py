@@ -260,3 +260,40 @@ def test_session_and_questionnaire_problems_are_listed_together(tmp_path):
     problems = "\n".join(error.value.problems)
     assert "is not fixfirst or baseline" in problems and "used_pytest 'maybe'" in problems
     assert "P01 is also on line 2" in problems
+
+
+@pytest.mark.parametrize("fixfirst_set,fixfirst_task,baseline_task", [
+    ("A", "T1", "T3"), ("A", "T2", "T4"), ("B", "T3", "T1"), ("B", "T4", "T2"),
+])
+def test_one_task_per_condition_accepts_the_matched_pairs_in_either_condition(tmp_path, fixfirst_set,
+                                                                               fixfirst_task, baseline_task):
+    rows = [{**rows_for("P01", fixfirst_set, [100], [600])[0], "task": fixfirst_task},
+            {**rows_for("P01", fixfirst_set, [100], [600])[1], "task": baseline_task}]
+    _, results = run(tmp_path, rows, per_condition=1)
+    assert [(who, d) for who, *_, d in results["paired"]["pairs"]] == [("P01", -500)]
+
+
+@pytest.mark.parametrize("fixfirst_set,fixfirst_task,baseline_task", [("A", "T1", "T4"), ("A", "T2", "T3"), ("B", "T3", "T2")])
+def test_one_task_per_condition_rejects_tasks_of_different_kinds(tmp_path, fixfirst_set, fixfirst_task, baseline_task):
+    rows = [{**rows_for("P01", fixfirst_set, [100], [600])[0], "task": fixfirst_task},
+            {**rows_for("P01", fixfirst_set, [100], [600])[1], "task": baseline_task}]
+    with pytest.raises(analysis.DataError, match="pairs T1 with T3 or T2 with T4"):
+        run(tmp_path, rows, per_condition=1)
+
+
+def test_one_task_per_condition_with_a_task_missing_is_not_paired(tmp_path):
+    rows = rows_for("P01", "A", [100], [600])[:1]  # only the FixFirst task
+    _, results = run(tmp_path, rows, per_condition=1)
+    assert results["paired"]["pairs"] == []
+    assert results["paired"]["excluded"] == [("P01", "baseline: 0 of 1 tasks usable (1 not in the table)")]
+
+
+def test_two_tasks_per_condition_are_unaffected_by_the_pair_rule(tmp_path):
+    _, results = run(tmp_path, rows_for("P01", "A", [300, 200], [500, 720]))
+    assert results["paired"]["n"] == 1
+
+
+@pytest.mark.parametrize("limit", ["0", "-5"])
+def test_the_time_limit_must_be_positive(tmp_path, limit):
+    with pytest.raises(SystemExit):
+        analysis.main(["--sessions", str(tmp_path / "s.csv"), "--time-limit", limit])
