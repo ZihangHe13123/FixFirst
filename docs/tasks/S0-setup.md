@@ -64,22 +64,30 @@ macOS / Linux：
 
 ```bash
 bash scripts/setup.sh python3.12
-.venv/bin/python -m pytest -q
+.venv/bin/python -m pytest -q -rs
+echo "exit code: $?"
 ```
 
 Windows：
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup.ps1
-.venv\Scripts\python -m pytest -q
+.venv\Scripts\python -m pytest -q -rs
+echo "exit code: $LASTEXITCODE"
 ```
 
-测试应该全部通过，大约需要 1–3 分钟。写这份说明时（9/29）的结果是：
+大约需要 1–3 分钟。**三条都满足才算通过**：
 
-- macOS / Linux：`231 passed, 1 skipped`（跳过的那个是只在 Windows 上跑的 PowerShell 测试）；
-- Windows：`232 passed`。
+1. 退出码是 0。
+2. 最后一行显示真的跑了测试，比如 9/29 的 main 在 macOS 上是 `272 passed, 1 skipped`。以后测试会越来越多，数字会变；如果显示 `no tests ran`，或者只有几个测试，说明不在仓库根目录，或者用的不是 `.venv` 里的 Python。
+3. 跳过的测试只能来自平台条件。`-rs` 会在 "short test summary info" 下面列出每个跳过的原因：
+   - macOS / Linux 可跳过 `Windows PowerShell quoting`（这个测试只在 Windows 上跑）；
+   - Windows 可跳过 `named pipes are POSIX` 等明确要求 POSIX 的测试；不支持创建符号链接的环境也可能跳过对应测试（`no symlinks here`）。
+   - 以 `-rs` 列出的具体原因核对，合理的平台条件跳过不代表安装失败，不能只凭跳过数量判断。
 
-以后测试会越来越多，数字会变。如果只有计时相关的测试偶尔失败，先重跑一次，见 [Windows 测试说明](../WINDOWS_TEAM_TEST.md)。
+   看到别的跳过原因，比如 `could not import 'yaml'`，说明开发依赖没装全：重新运行上面的安装脚本（它会重装 `.[dev]`），再跑一次；还是这样，就把 `-rs` 的输出贴到 S0 的 Issue 里。
+
+在 PyYAML 加进开发依赖以前就装好环境的，要重新运行一次安装脚本，那个难例测试才不会被跳过。如果只有计时相关的测试偶尔失败，先重跑一次，见 [Windows 测试说明](../WINDOWS_TEAM_TEST.md)。
 
 ## 5. 亲手用一遍 FixFirst
 
