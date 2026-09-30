@@ -11,8 +11,8 @@ requires-python = ">=3.10"
 dependencies = ["pydantic>=2.8,<3", "Jinja2>=3.1,<4", "scikit-learn>=1.5,<2", "packaging>=24.2,<27", "tomli>=2,<3; python_version < '3.11'"]
 
 [project.optional-dependencies]
-# PyYAML: a hard-case test runs PyYAML 6, where yaml.load needs a Loader.
-dev = ["pytest>=8,<10", "ruff>=0.9,<1", "build>=1,<2", "PyYAML>=6,<7"]
+# Runtime API regression fixtures exercise PyYAML 6's Loader and Click 8.2's stream arguments.
+dev = ["pytest>=8,<10", "ruff>=0.9,<1", "build>=1,<2", "PyYAML>=6,<7", "click>=8.2,<9"]
 semantic = ["sentence-transformers>=3,<6"]
 notebooks = ["nbclient>=0.10,<1", "nbformat>=5.10,<6", "ipykernel>=6,<8"]
 
