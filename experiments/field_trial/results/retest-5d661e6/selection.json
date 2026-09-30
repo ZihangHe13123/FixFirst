@@ -1,0 +1,123 @@
+{
+ "production_sha": "5d661e654bc5acb27d1997b2351c28873125966a",
+ "seed": 1566973541,
+ "drawn_at": "2026-10-01T01:32:27+08:00",
+ "rules": "RETEST.md and sample_retest.py as committed in 0cd70c9 (unchanged at draw time)",
+ "clones": [
+  "jakevdp/PythonDataScienceHandbook d66231454ef753818dc9213c9b5942e067266966 2023-05-05 master",
+  "amueller/introduction_to_ml_with_python ea60cf6cf791553b6cca7cf31802c68cb3798ebb 2024-03-13 main",
+  "  'projects/Fetch_and_store_tweets/img/step-6.png'",
+  "Python-World/python-mini-projects e0cfd4b0fe5e0bb4d443daba594e83332d5fb720 2022-05-25 master",
+  "geekcomputers/Python 808584709a9b710d7e0ece36a6ea4ffcf109b537 2026-08-31 master",
+  "mdn/django-locallibrary-tutorial 92f1c1e7bdd4ada5209a3c69876ce29e6cee3d96 2026-09-04 main",
+  "mjhea0/flaskr-tdd 305122f48823d98fd7fe8de989af2821b3c5d46d 2023-10-17 main",
+  "wsvincent/djangox 14c0374eaab52dc49898229ffe9a3e8f0e0e51c2 2026-04-08 main"
+ ],
+ "automatic_choice": {
+  "jakevdp/PythonDataScienceHandbook": [
+   "notebooks/03.05-Hierarchical-Indexing.ipynb",
+   "notebooks/02.03-Computation-on-arrays-ufuncs.ipynb"
+  ],
+  "amueller/introduction_to_ml_with_python": [
+   "08-conclusion.ipynb"
+  ],
+  "Python-World/python-mini-projects": [
+   "projects/Battery_notification/battery.py",
+   "projects/Encrypt_and_decrypt_text/aes_encode.py"
+  ],
+  "geekcomputers/Python": [
+   "read_excel_file.py"
+  ],
+  "tutorial apps": [
+   "mdn/django-locallibrary-tutorial",
+   "mjhea0/flaskr-tdd",
+   "wsvincent/djangox"
+  ]
+ },
+ "manual_exclusions": [
+  {
+   "source": "Python-World/python-mini-projects",
+   "task": "projects/Battery_notification/battery.py",
+   "reason": "GUI and hardware: reads the battery sensor and shows a desktop notification popup (pynotifier; win10toast is Windows-only)"
+  },
+  {
+   "source": "Python-World/python-mini-projects",
+   "task": "projects/chatbot/bot.py",
+   "reason": "network service and credentials: wechaty bot needs a puppet service token and runs as a long-lived bot"
+  },
+  {
+   "source": "Python-World/python-mini-projects",
+   "task": "projects/Todo_app/app.py",
+   "reason": "long-running server: the README command starts the Flask development server"
+  },
+  {
+   "source": "geekcomputers/Python",
+   "task": "read_excel_file.py",
+   "reason": "data file missing from the repository: opens sample.xlsx, which no file in the repository provides"
+  },
+  {
+   "source": "geekcomputers/Python",
+   "task": "automail.py",
+   "reason": "credentials and network service: Gmail API (ezgmail) in an endless polling loop"
+  }
+ ],
+ "final": [
+  {
+   "id": "R-N1",
+   "source": "jakevdp/PythonDataScienceHandbook",
+   "task": "notebooks/03.05-Hierarchical-Indexing.ipynb",
+   "goal": "all cells execute"
+  },
+  {
+   "id": "R-N2",
+   "source": "jakevdp/PythonDataScienceHandbook",
+   "task": "notebooks/02.03-Computation-on-arrays-ufuncs.ipynb",
+   "goal": "all cells execute"
+  },
+  {
+   "id": "R-N3",
+   "source": "amueller/introduction_to_ml_with_python",
+   "task": "08-conclusion.ipynb",
+   "goal": "all cells execute"
+  },
+  {
+   "id": "R-S1",
+   "source": "Python-World/python-mini-projects",
+   "task": "projects/Encrypt_and_decrypt_text/aes_encode.py",
+   "goal": "README example: python aes_encode.py \"hello world\""
+  },
+  {
+   "id": "R-S2",
+   "source": "Python-World/python-mini-projects",
+   "task": "projects/Cli_todo/todo.py",
+   "goal": "README command that needs no prompt: python todo.py tasks (add/done prompt for input)",
+   "replaces": "projects/Battery_notification/battery.py"
+  },
+  {
+   "id": "R-S3",
+   "source": "geekcomputers/Python",
+   "task": "Tweet Pre-Processing.py",
+   "goal": "python \"Tweet Pre-Processing.py\" (NLTK corpora are a small one-off data download)",
+   "replaces": "read_excel_file.py"
+  },
+  {
+   "id": "R-C1",
+   "source": "mdn/django-locallibrary-tutorial",
+   "task": "default branch",
+   "goal": "README: python manage.py test (SQLite)"
+  },
+  {
+   "id": "R-C2",
+   "source": "mjhea0/flaskr-tdd",
+   "task": "default branch",
+   "goal": "README: python -m pytest (SQLite)"
+  },
+  {
+   "id": "R-C3",
+   "source": "wsvincent/djangox",
+   "task": "default branch",
+   "goal": "README gives no test command (tests exist but are not described): python manage.py migrate (SQLite)"
+  }
+ ],
+ "budget": "10 FixFirst-guided rounds and 60 minutes of active time per task; download waits recorded apart; a download unfinished after 30 minutes is U"
+}
