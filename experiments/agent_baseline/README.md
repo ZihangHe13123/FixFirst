@@ -326,6 +326,56 @@ is an error, and a whole run with such a failure ends as `cleanup_failed`, not g
   formal run is 3 models × 2 arms × 3 runs (task B7).
 - macOS only (`sandbox-exec`).
 
+## Three arms: FixFirst's facts or its full diagnosis (30 Sep, scripted checks only)
+
+To tell whether an agent gains from the facts FixFirst collects or from its diagnosis, a third arm
+gets only the facts:
+
+| Arm | Tools |
+|---|---|
+| `baseline` | `run_command`, `read_file`, `write_file`, `finish` |
+| `facts` | the same, plus FixFirst's facts (`fixfirst mcp --facts`, one tool: `observe`) |
+| `mcp` | the same, plus FixFirst's full diagnosis (`diagnose`, `check_again`, `explain`) |
+
+`observe` runs the same checks as `diagnose` and returns what they showed, as JSON: the interpreter,
+how each check ended (exit code, test counts), each current failure's exception, message, where it
+was raised (project, library or standard library) and the names involved, what the environment and
+the project say about each module involved (installed and which version, standard library, project
+file, similarly named project file, declared where) and pip check's conflicts. It never contains a
+root cause or parser category, a rule, a knowledge-base fact, a model prediction, an order of
+importance, a release search or a fix (`src/fixfirst/facts.py` builds it from an allowlist;
+`tests/test_mcp_facts.py`). FixFirst's sessions, which hold its diagnoses, are kept in the run's
+`fixfirst-store`, which the agent cannot read (checked in `test_harness.py`).
+
+`--call-policy` sets how the two FixFirst arms call it:
+
+- `server` (default, B7's protocol): the tools, and each server's own instructions.
+- `scheduled`: the harness calls FixFirst itself before the first turn and after every turn that
+  changed the project, by the same rule in both arms, and gives the model the report (not the
+  tools). Its time counts against the agent's budget (`fixfirst_s`); its text is part of the prompt,
+  so the model's tokens include it (`fixfirst_output_chars` measures it independently of a model).
+  The three arms are compared under this policy first.
+- `required` and `on_demand`: the tools, with the same instruction to call them before changing
+  anything and after each change, or only the note that they are available. These compare forced
+  and on-demand calls.
+
+Every arm starts from the same copy with the same permissions, budget and external grader. Each row
+also records `first_green_s`, `fixfirst_calls`, `fixfirst_reports`, `facts_only_verified` (every
+facts report held only facts' fields) and, in the full arm on generated cases whose cause is known,
+`fixfirst_first_cause` and `wrong_first_cause`. Arms rotate which goes first per case and run.
+
+```bash
+.venv/bin/python experiments/agent_baseline/agent_pilot.py --model fake:SCRIPT.json \
+    --cases pkg-inventory:lm_renamed --arms baseline facts mcp --call-policy scheduled --runs 3
+.venv/bin/python experiments/agent_baseline/compare_arms.py ../agent-runs/results.jsonl --json arms.json
+```
+
+`compare_arms.py` reports per model, policy and arm the fixed rate with a Wilson interval, turns and
+seconds to the first green check, tokens, calls and FixFirst's cost, and pairs arms on the same case
+and run (exact McNemar for fixed, sign tests for turns and tokens); runs that were not graded are
+counted apart, never as failures. So far this was checked with scripted replies only, on public
+development cases; the model and budget for a real comparison are not chosen yet.
+
 ## Before the formal run
 
 - **MCP server**: done on 28 Sep (`fixfirst mcp`): tools `diagnose`, `check_again`, `explain`, output

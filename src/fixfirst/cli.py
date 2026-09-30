@@ -74,7 +74,9 @@ def parser():
     serve = sub.add_parser("serve", help="open the local web interface")
     serve.add_argument("--port", type=int, default=0, help="port on 127.0.0.1 (default: any free)")
     serve.add_argument("--no-open", action="store_true", help="do not open a browser")
-    sub.add_parser("mcp", help="serve FixFirst to coding agents over MCP (stdio)")
+    mcp = sub.add_parser("mcp", help="serve FixFirst to coding agents over MCP (stdio)")
+    mcp.add_argument("--facts", action="store_true",
+                     help="facts only (one tool, observe): what the checks showed, no diagnosis or advice")
     for name, help_text in [
         ("scan", "run checks (pytest imports project code)"),
         ("import", "import an existing log"),
@@ -186,7 +188,7 @@ def main(argv=None):
         if args.command == "mcp":
             from .mcp_server import serve as serve_mcp
 
-            return serve_mcp(store.root)
+            return serve_mcp(store.root, mode="facts" if args.facts else "full")
         if args.command == "historical":
             from .historical_cases import replay
 

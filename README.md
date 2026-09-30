@@ -282,6 +282,9 @@ reads `mcpServers` (for example a project's `.mcp.json`):
 ```
 
 `experiments/agent_baseline/` compares local models fixing failures with and without these tools.
+For that comparison, `fixfirst mcp --facts` offers a facts-only mode: one tool, `observe`, returns
+what the checks showed (how each check ended, each failure's exception and location, and what the
+environment says about the modules involved) as JSON, with no cause, ranking or advice.
 
 ## Scope and safety
 
