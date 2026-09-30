@@ -72,27 +72,32 @@ def tools_of(scope: str | None) -> tuple:
     return SCOPE_TOOLS.get(scope.split(":", 1)[0], ()) if scope else ()
 
 
-def _hash(path: Path) -> tuple[str | None, int, str | None]:
-    """(sha256, size, problem) of a regular file, read with a size limit; opening never waits."""
+def _read_bytes(path: Path) -> tuple[bytes | None, str | None]:
+    """A regular file's bytes, at most MAX_BYTES, read once from one descriptor that was opened
+    without waiting and checked before reading; (None, problem) for anything else. Nothing is
+    opened twice, so a file swapped for a named pipe meanwhile cannot block a second open."""
     try:
         fd = os.open(path, os.O_RDONLY | getattr(os, "O_BINARY", 0) | getattr(os, "O_NONBLOCK", 0))
     except OSError as error:
-        return None, 0, f"cannot be read ({error.strerror or error})"
+        return None, f"cannot be read ({error.strerror or error})"
     info = os.fstat(fd)
     if not stat.S_ISREG(info.st_mode):
         os.close(fd)
-        return None, 0, "is not a regular file"
+        return None, "is not a regular file"
     if info.st_size > MAX_BYTES:
         os.close(fd)
-        return None, info.st_size, f"is larger than {MAX_BYTES} bytes"
-    digest, size = hashlib.sha256(), 0
+        return None, f"is larger than {MAX_BYTES} bytes"
     with os.fdopen(fd, "rb") as stream:
-        for piece in iter(lambda: stream.read(1 << 20), b""):
-            size += len(piece)
-            if size > MAX_BYTES:
-                return None, size, f"grew beyond {MAX_BYTES} bytes while it was read"
-            digest.update(piece)
-    return digest.hexdigest(), size, None
+        data = stream.read(MAX_BYTES + 1)
+    if len(data) > MAX_BYTES:
+        return None, f"grew beyond {MAX_BYTES} bytes while it was read"
+    return data, None
+
+
+def _hash(path: Path) -> tuple[str | None, int, str | None]:
+    """(sha256, size, problem) of a regular file (see _read_bytes)."""
+    data, problem = _read_bytes(path)
+    return (None, 0, problem) if problem else (hashlib.sha256(data).hexdigest(), len(data), None)
 
 
 def _environment(folder: Path) -> bool:
@@ -125,16 +130,17 @@ def _python_files(root: Path, problems: list) -> dict:
 
 
 def _read(path: Path) -> tuple[str | None, str | None]:
-    """(text, problem): None and no problem when the file does not exist."""
+    """(text, problem): None and no problem when the file does not exist. The text comes from the
+    same single read that checked the file (no second, unbounded open)."""
     if not path.exists():
         return None, None
-    digest, _, problem = _hash(path)
+    data, problem = _read_bytes(path)
     if problem:
         return None, f"{path.name} {problem}"
     try:
-        return path.read_text(encoding="utf-8"), None
-    except (OSError, UnicodeDecodeError) as error:
-        return None, f"{path.name} cannot be read ({error})"
+        return data.decode("utf-8"), None
+    except UnicodeDecodeError as error:
+        return None, f"{path.name} cannot be decoded as UTF-8 ({error.reason})"
 
 
 def pytest_settings(root: Path) -> dict:

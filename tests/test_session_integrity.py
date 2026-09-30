@@ -4,6 +4,7 @@ unchanged."""
 
 import json
 import os
+import subprocess
 import sys
 
 import pytest
@@ -268,3 +269,36 @@ def test_only_a_person_accepts_a_new_baseline(tmp_path, capsys):
     assert cli(["--store", str(store.root), "accept-baseline", session.session_id]) == 0  # the command line
     assert "New baseline accepted; changed since the previous one: tests/test_cart.py" in capsys.readouterr().out
     assert json.dumps(store.load(session.session_id).verification_baseline).count("accepted by the user") == 1
+
+
+READ_IN_CHILD = """import os, sys
+from pathlib import Path
+from fixfirst import integrity
+path, fstat = Path(sys.argv[1]), os.fstat
+def fstat_then_swap(fd):  # the path becomes a named pipe once its descriptor has been checked
+    os.fstat = fstat
+    info = fstat(fd)
+    path.unlink()
+    os.mkfifo(path)
+    return info
+if sys.argv[2] == "swap":
+    os.fstat = fstat_then_swap
+print(integrity._read(path))
+"""
+
+
+@pytest.mark.skipif(not hasattr(os, "mkfifo"), reason="named pipes are POSIX")
+def test_a_settings_file_that_is_or_becomes_a_named_pipe_is_read_without_waiting(tmp_path):
+    """Codex's cases, each in a child process with a time limit: a settings file that is a named pipe,
+    and one swapped for a named pipe after its descriptor was checked, which blocked the old second
+    open. A file is checked and read from one descriptor opened without waiting, never opened twice."""
+    def read_in_child(path, swap=""):
+        return subprocess.run([sys.executable, "-c", READ_IN_CHILD, str(path), swap],
+                              capture_output=True, text=True, timeout=10).stdout.strip()
+
+    os.mkfifo(tmp_path / "pytest.ini")
+    assert read_in_child(tmp_path / "pytest.ini") == repr((None, "pytest.ini is not a regular file"))
+    text = "[tool:pytest]\npython_files = spec_*.py\n"
+    (tmp_path / "setup.cfg").write_text(text)
+    assert read_in_child(tmp_path / "setup.cfg", "swap") == repr((text, None))  # what was checked is what is read
+    assert (tmp_path / "setup.cfg").is_fifo()
