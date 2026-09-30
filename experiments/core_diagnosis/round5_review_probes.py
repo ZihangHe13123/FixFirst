@@ -154,6 +154,41 @@ PROBES = [
 ]
 
 
+# D1 review (4bded78): which receiver loads each Python compiles `receiver.ptp()` to. Predicted from
+# dis before running: 3.13 fuses a store and the next load (STORE_FAST_LOAD_FAST) and two loads
+# (LOAD_FAST_LOAD_FAST); 3.14 also reads locals with LOAD_FAST_BORROW. NumPy 2.3.5 (for 3.14) still
+# raises the removal message without AttributeError.name/obj, like 2.2.6.
+D1_ENVS = {"3.12": ("numpy_copy_false/venv", "numpy_copy_false/venv-old"),
+           "3.13": ("d1-py313/venv", "numpy_copy_false/venv-old"),   # numpy 2.2.6
+           "3.14": ("d1-py314/venv", "numpy_copy_false/venv-old")}   # numpy 2.3.5
+D1_PATTERNS = {
+    "param": ("def spread(values):\n    return int(values.ptp())\n",
+              "np.array([1, 5, 3])", {"3.12": "found", "3.13": "found", "3.14": "missed (LOAD_FAST_BORROW)"}),
+    "store_then_load": ("def spread(values):\n    array = np.asarray(values)\n    return int(array.ptp())\n",
+                        "[1, 5, 3]", {"3.12": "found", "3.13": "missed (STORE_FAST_LOAD_FAST)",
+                                      "3.14": "missed (STORE_FAST_LOAD_FAST)"}),
+    "global": ("DATA = np.array([1, 5, 3])\n\n\ndef spread(values):\n    return int(DATA.ptp())\n",
+               "None", {"3.12": "found", "3.13": "found", "3.14": "found"}),
+    "closure": ("def spread(values):\n    data = np.asarray(values)\n\n    def inner():\n"
+                "        return int(data.ptp())\n    return inner()\n",
+                "[1, 5, 3]", {"3.12": "found", "3.13": "found", "3.14": "found"}),
+    "second_of_two_locals": ("def spread(values, floor=0):\n    return max(floor, int(values.ptp()))\n",
+                             "np.array([1, 5, 3])", {"3.12": "found", "3.13": "missed (LOAD_FAST_LOAD_FAST)",
+                                                     "3.14": "missed (LOAD_FAST_BORROW_LOAD_FAST_BORROW)"}),
+    "attribute_chain": ("class Holder:\n    def __init__(self, values):\n        self.data = np.asarray(values)\n\n\n"
+                        "def spread(values):\n    return int(Holder(values).data.ptp())\n",
+                        "[1, 5, 3]", {"3.12": "not inferred (by design)", "3.13": "not inferred (by design)",
+                                      "3.14": "not inferred (by design)"}),
+}
+for _version, _env in D1_ENVS.items():
+    for _pattern, (_source, _argument, _expected) in D1_PATTERNS.items():
+        PROBES.append({
+            "name": f"d1_{_pattern}_py{_version.replace('.', '')}", "focus": "D1 receiver", "env": _env,
+            "files": {**DECLARE_NUMPY, "app.py": "import numpy as np\n\n\n" + _source,
+                      "test_app.py": "import numpy as np\n\nfrom app import spread\n\n\ndef test_spread():\n"
+                                     f"    assert spread({_argument}) == 4\n"},
+            "expect": f"Python {_version}: removed ndarray.ptp through this receiver is {_expected[_version]}."})
+
 def run(runs: Path, tag: str, only=()) -> None:
     from fixfirst.evidence import issue_evidence
     from fixfirst.service import create_session, scan
