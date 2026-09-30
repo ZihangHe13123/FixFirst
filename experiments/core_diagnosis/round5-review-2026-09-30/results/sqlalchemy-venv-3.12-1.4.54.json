@@ -1,0 +1,77 @@
+{
+ "python": "3.12.13",
+ "sqlalchemy": "1.4.54",
+ "legacy": {
+  "result_class": "LegacyCursorResult",
+  "returns_rows": {
+   "ok": true,
+   "value": "False"
+  },
+  "iterate_ddl": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically."
+  },
+  "keys_ddl": {
+   "ok": true,
+   "value": "[]",
+   "warnings": [
+    "RemovedIn20Warning: Calling the .keys() method on a result set that does not return rows is deprecated and will raise ResourceClosedError in SQLAlchemy 2.0. (Ba"
+   ]
+  },
+  "iter_created_ddl": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically."
+  },
+  "records_like_generator_created": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically."
+  },
+  "guarded_by_returns_rows": {
+   "ok": true,
+   "value": "[]"
+  },
+  "fetchall_ddl": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically."
+  },
+  "iterate_closed_select": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object is closed."
+  }
+ },
+ "future": {
+  "result_class": "CursorResult",
+  "returns_rows": {
+   "ok": true,
+   "value": "False"
+  },
+  "iterate_ddl": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically."
+  },
+  "keys_ddl": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically."
+  },
+  "iter_created_ddl": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically."
+  },
+  "records_like_generator_created": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically."
+  },
+  "guarded_by_returns_rows": {
+   "ok": true,
+   "value": "[]"
+  },
+  "fetchall_ddl": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically."
+  },
+  "iterate_closed_select": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object is closed."
+  }
+ }
+}

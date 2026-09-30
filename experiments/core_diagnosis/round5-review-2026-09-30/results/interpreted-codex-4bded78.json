@@ -1,0 +1,26 @@
+[
+ {
+  "probe": "newbyteorder_real",
+  "edit": [
+   "array.newbyteorder(\">\")",
+   "array.view(array.dtype.newbyteorder(\">\"))"
+  ],
+  "tests_exit": 0
+ },
+ {
+  "probe": "d1_param_py312",
+  "edit": [
+   "values.ptp()",
+   "np.ptp(values)"
+  ],
+  "tests_exit": 0
+ },
+ {
+  "probe": "d1_param_py313",
+  "edit": [
+   "values.ptp()",
+   "np.ptp(values)"
+  ],
+  "tests_exit": 0
+ }
+]

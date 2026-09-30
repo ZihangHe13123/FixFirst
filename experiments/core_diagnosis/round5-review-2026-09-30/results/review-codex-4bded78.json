@@ -1,0 +1,1258 @@
+{
+ "implementation": {
+  "head": "4bded7881cc2b950693a0aa611367495f40b02d4",
+  "src_uncommitted": false,
+  "source_sha256": "74011d62007852c79f3b67c8f5ab127e23605b1f0e3e120ebd8ea307cc2b33a0",
+  "python": "3.12.13",
+  "scikit-learn": "1.9.1"
+ },
+ "probes": [
+  {
+   "name": "local_class_named_ndarray",
+   "focus": "type provenance",
+   "expect": "The project's own class lacks ptp (fails on 1.26 too): the text 'ndarray' object must not borrow NumPy's ptp removal.",
+   "truth": "fails on the older release too",
+   "old_tail": "         ^^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'ndarray' object has no attribute 'ptp'\n\napp.py:12: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: 'ndarray' object has no att...\n1 failed in 0.20s\n",
+   "current_tail": "^^^^\n\ntest_app.py:5: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalues = [1, 5, 3]\n\n    def spread(values):\n>       return int(ndarray(values).ptp())\n                   ^^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'ndarray' object has no attribute 'ptp'\n\napp.py:12: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: 'ndarray' object has no att...\n1 failed in 0.04s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "code_defect",
+     "rule": "D43",
+     "source": "rule",
+     "tree": "local_module",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:12",
+      "library": "",
+      "attributes": [
+       "ptp",
+       "app.ndarray.ptp"
+      ],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Inspect the exception raised while running the test",
+     "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+     "command": null,
+     "where": [
+      "app.py:12"
+     ],
+     "rules": [
+      "D43: The missing attribute or unexpected argument belongs to a class or function defined in the project."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ndarray_subclass_ptp",
+   "focus": "type provenance",
+   "expect": "A real version change through an inherited method; the registered type is the project's subclass, so a missed positive is expected (not a false claim).",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.15s\n",
+   "current_tail": "_ _ _ _ _ _ _ _ _ _ _ \n\nvalues = [1, 5, 3]\n\n    def spread(values):\n>       return float(np.asarray(values).view(Signal).ptp())\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:9: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.03s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "code_defect",
+     "rule": "F01",
+     "source": "model",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:9",
+      "library": "",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Inspect the exception raised while running the test",
+     "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+     "command": null,
+     "where": [
+      "app.py:9"
+     ],
+     "rules": [
+      "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "newbyteorder_real",
+   "focus": "real positive",
+   "expect": "A real NumPy 2 removal with a documented replacement: expected the view(dtype.newbyteorder) step.",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.15s\n",
+   "current_tail": "endian_view(values):\n        array = np.asarray(values, dtype=\"<u2\")\n>       return array.newbyteorder(\">\").tolist()\n               ^^^^^^^^^^^^^^^^^^\nE       AttributeError: `newbyteorder` was removed from the ndarray class in NumPy 2.0. Use `arr.view(arr.dtype.newbyteorder(order))` instead.\n\napp.py:6: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_view - AttributeError: `newbyteorder` was removed fr...\n1 failed in 0.03s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "D03",
+     "source": "rule",
+     "tree": "missing_dependency",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:6",
+      "library": "",
+      "attributes": [
+       "numpy.ndarray.newbyteorder"
+      ],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Replace numpy.ndarray.newbyteorder: removed in numpy 2.0",
+     "explanation": "The target interpreter has numpy 2.2.6, which no longer provides numpy.ndarray.newbyteorder (removed in 2.0). Change the code to use array.view(array.dtype.newbyteorder(order)) instead of array.newbyteorder(order), preserving the intended byte-order view semantics, or pin numpy below 2.0 if the project must keep the old API.",
+     "command": null,
+     "where": [
+      "app.py:6"
+     ],
+     "rules": [
+      "D03: The code calls a method name that the installed Python or library version removed (for example unittest aliases or NumPy ndarray methods)."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_param_py312",
+   "focus": "D1 receiver",
+   "expect": "Python 3.12: removed ndarray.ptp through this receiver is found.",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.17s\n",
+   "current_tail": " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalues = array([1, 5, 3])\n\n    def spread(values):\n>       return int(values.ptp())\n                   ^^^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:5: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.03s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "D03",
+     "source": "rule",
+     "tree": "missing_dependency",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:5",
+      "library": "",
+      "attributes": [
+       "numpy.ndarray.ptp"
+      ],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Replace numpy.ndarray.ptp: removed in numpy 2.0",
+     "explanation": "The target interpreter has numpy 2.2.6, which no longer provides numpy.ndarray.ptp (removed in 2.0). Change the code to use numpy.ptp(array, ...) instead of array.ptp(...); preserve the existing axis, out and keepdims arguments, or pin numpy below 2.0 if the project must keep the old API.",
+     "command": null,
+     "where": [
+      "app.py:5"
+     ],
+     "rules": [
+      "D03: The code calls a method name that the installed Python or library version removed (for example unittest aliases or NumPy ndarray methods)."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_store_then_load_py312",
+   "focus": "D1 receiver",
+   "expect": "Python 3.12: removed ndarray.ptp through this receiver is found.",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.17s\n",
+   "current_tail": " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalues = [1, 5, 3]\n\n    def spread(values):\n        array = np.asarray(values)\n>       return int(array.ptp())\n                   ^^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:6: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.03s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "D03",
+     "source": "rule",
+     "tree": "missing_dependency",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:6",
+      "library": "",
+      "attributes": [
+       "numpy.ndarray.ptp"
+      ],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Replace numpy.ndarray.ptp: removed in numpy 2.0",
+     "explanation": "The target interpreter has numpy 2.2.6, which no longer provides numpy.ndarray.ptp (removed in 2.0). Change the code to use numpy.ptp(array, ...) instead of array.ptp(...); preserve the existing axis, out and keepdims arguments, or pin numpy below 2.0 if the project must keep the old API.",
+     "command": null,
+     "where": [
+      "app.py:6"
+     ],
+     "rules": [
+      "D03: The code calls a method name that the installed Python or library version removed (for example unittest aliases or NumPy ndarray methods)."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_global_py312",
+   "focus": "D1 receiver",
+   "expect": "Python 3.12: removed ndarray.ptp through this receiver is found.",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.15s\n",
+   "current_tail": ":7: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalues = None\n\n    def spread(values):\n>       return int(DATA.ptp())\n                   ^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:8: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.04s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "D03",
+     "source": "rule",
+     "tree": "missing_dependency",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:8",
+      "library": "",
+      "attributes": [
+       "numpy.ndarray.ptp"
+      ],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Replace numpy.ndarray.ptp: removed in numpy 2.0",
+     "explanation": "The target interpreter has numpy 2.2.6, which no longer provides numpy.ndarray.ptp (removed in 2.0). Change the code to use numpy.ptp(array, ...) instead of array.ptp(...); preserve the existing axis, out and keepdims arguments, or pin numpy below 2.0 if the project must keep the old API.",
+     "command": null,
+     "where": [
+      "app.py:8"
+     ],
+     "rules": [
+      "D03: The code calls a method name that the installed Python or library version removed (for example unittest aliases or NumPy ndarray methods)."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_closure_py312",
+   "focus": "D1 receiver",
+   "expect": "Python 3.12: removed ndarray.ptp through this receiver is found.",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.17s\n",
+   "current_tail": "inner()\n           ^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n    def inner():\n>       return int(data.ptp())\n                   ^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:8: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.03s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "D03",
+     "source": "rule",
+     "tree": "missing_dependency",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:8",
+      "library": "",
+      "attributes": [
+       "numpy.ndarray.ptp"
+      ],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Replace numpy.ndarray.ptp: removed in numpy 2.0",
+     "explanation": "The target interpreter has numpy 2.2.6, which no longer provides numpy.ndarray.ptp (removed in 2.0). Change the code to use numpy.ptp(array, ...) instead of array.ptp(...); preserve the existing axis, out and keepdims arguments, or pin numpy below 2.0 if the project must keep the old API.",
+     "command": null,
+     "where": [
+      "app.py:8"
+     ],
+     "rules": [
+      "D03: The code calls a method name that the installed Python or library version removed (for example unittest aliases or NumPy ndarray methods)."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_second_of_two_locals_py312",
+   "focus": "D1 receiver",
+   "expect": "Python 3.12: removed ndarray.ptp through this receiver is found.",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.17s\n",
+   "current_tail": "_ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalues = array([1, 5, 3]), floor = 0\n\n    def spread(values, floor=0):\n>       return max(floor, int(values.ptp()))\n                              ^^^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:5: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.03s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "D03",
+     "source": "rule",
+     "tree": "missing_dependency",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:5",
+      "library": "",
+      "attributes": [
+       "numpy.ndarray.ptp"
+      ],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Replace numpy.ndarray.ptp: removed in numpy 2.0",
+     "explanation": "The target interpreter has numpy 2.2.6, which no longer provides numpy.ndarray.ptp (removed in 2.0). Change the code to use numpy.ptp(array, ...) instead of array.ptp(...); preserve the existing axis, out and keepdims arguments, or pin numpy below 2.0 if the project must keep the old API.",
+     "command": null,
+     "where": [
+      "app.py:5"
+     ],
+     "rules": [
+      "D03: The code calls a method name that the installed Python or library version removed (for example unittest aliases or NumPy ndarray methods)."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_attribute_chain_py312",
+   "focus": "D1 receiver",
+   "expect": "Python 3.12: removed ndarray.ptp through this receiver is not inferred (by design).",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.17s\n",
+   "current_tail": " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalues = [1, 5, 3]\n\n    def spread(values):\n>       return int(Holder(values).data.ptp())\n                   ^^^^^^^^^^^^^^^^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:10: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.04s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "code_defect",
+     "rule": "F01",
+     "source": "model",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:10",
+      "library": "",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Inspect the exception raised while running the test",
+     "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+     "command": null,
+     "where": [
+      "app.py:10"
+     ],
+     "rules": [
+      "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_param_py313",
+   "focus": "D1 receiver",
+   "expect": "Python 3.13: removed ndarray.ptp through this receiver is found.",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.17s\n",
+   "current_tail": " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalues = array([1, 5, 3])\n\n    def spread(values):\n>       return int(values.ptp())\n                   ^^^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:5: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.41s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "D03",
+     "source": "rule",
+     "tree": "missing_dependency",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:5",
+      "library": "",
+      "attributes": [
+       "numpy.ndarray.ptp"
+      ],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Replace numpy.ndarray.ptp: removed in numpy 2.0",
+     "explanation": "The target interpreter has numpy 2.2.6, which no longer provides numpy.ndarray.ptp (removed in 2.0). Change the code to use numpy.ptp(array, ...) instead of array.ptp(...); preserve the existing axis, out and keepdims arguments, or pin numpy below 2.0 if the project must keep the old API.",
+     "command": null,
+     "where": [
+      "app.py:5"
+     ],
+     "rules": [
+      "D03: The code calls a method name that the installed Python or library version removed (for example unittest aliases or NumPy ndarray methods)."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_store_then_load_py313",
+   "focus": "D1 receiver",
+   "expect": "Python 3.13: removed ndarray.ptp through this receiver is missed (STORE_FAST_LOAD_FAST).",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.15s\n",
+   "current_tail": " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalues = [1, 5, 3]\n\n    def spread(values):\n        array = np.asarray(values)\n>       return int(array.ptp())\n                   ^^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:6: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.09s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "D03",
+     "source": "rule",
+     "tree": "missing_dependency",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:6",
+      "library": "",
+      "attributes": [
+       "numpy.ndarray.ptp"
+      ],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Replace numpy.ndarray.ptp: removed in numpy 2.0",
+     "explanation": "The target interpreter has numpy 2.2.6, which no longer provides numpy.ndarray.ptp (removed in 2.0). Change the code to use numpy.ptp(array, ...) instead of array.ptp(...); preserve the existing axis, out and keepdims arguments, or pin numpy below 2.0 if the project must keep the old API.",
+     "command": null,
+     "where": [
+      "app.py:6"
+     ],
+     "rules": [
+      "D03: The code calls a method name that the installed Python or library version removed (for example unittest aliases or NumPy ndarray methods)."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_global_py313",
+   "focus": "D1 receiver",
+   "expect": "Python 3.13: removed ndarray.ptp through this receiver is found.",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.15s\n",
+   "current_tail": ":7: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalues = None\n\n    def spread(values):\n>       return int(DATA.ptp())\n                   ^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:8: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.09s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "D03",
+     "source": "rule",
+     "tree": "missing_dependency",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:8",
+      "library": "",
+      "attributes": [
+       "numpy.ndarray.ptp"
+      ],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Replace numpy.ndarray.ptp: removed in numpy 2.0",
+     "explanation": "The target interpreter has numpy 2.2.6, which no longer provides numpy.ndarray.ptp (removed in 2.0). Change the code to use numpy.ptp(array, ...) instead of array.ptp(...); preserve the existing axis, out and keepdims arguments, or pin numpy below 2.0 if the project must keep the old API.",
+     "command": null,
+     "where": [
+      "app.py:8"
+     ],
+     "rules": [
+      "D03: The code calls a method name that the installed Python or library version removed (for example unittest aliases or NumPy ndarray methods)."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_closure_py313",
+   "focus": "D1 receiver",
+   "expect": "Python 3.13: removed ndarray.ptp through this receiver is found.",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.18s\n",
+   "current_tail": "inner()\n           ^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n    def inner():\n>       return int(data.ptp())\n                   ^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:8: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.09s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "D03",
+     "source": "rule",
+     "tree": "missing_dependency",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:8",
+      "library": "",
+      "attributes": [
+       "numpy.ndarray.ptp"
+      ],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Replace numpy.ndarray.ptp: removed in numpy 2.0",
+     "explanation": "The target interpreter has numpy 2.2.6, which no longer provides numpy.ndarray.ptp (removed in 2.0). Change the code to use numpy.ptp(array, ...) instead of array.ptp(...); preserve the existing axis, out and keepdims arguments, or pin numpy below 2.0 if the project must keep the old API.",
+     "command": null,
+     "where": [
+      "app.py:8"
+     ],
+     "rules": [
+      "D03: The code calls a method name that the installed Python or library version removed (for example unittest aliases or NumPy ndarray methods)."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_second_of_two_locals_py313",
+   "focus": "D1 receiver",
+   "expect": "Python 3.13: removed ndarray.ptp through this receiver is missed (LOAD_FAST_LOAD_FAST).",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.16s\n",
+   "current_tail": "_ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalues = array([1, 5, 3]), floor = 0\n\n    def spread(values, floor=0):\n>       return max(floor, int(values.ptp()))\n                              ^^^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:5: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.09s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "D03",
+     "source": "rule",
+     "tree": "missing_dependency",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:5",
+      "library": "",
+      "attributes": [
+       "numpy.ndarray.ptp"
+      ],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Replace numpy.ndarray.ptp: removed in numpy 2.0",
+     "explanation": "The target interpreter has numpy 2.2.6, which no longer provides numpy.ndarray.ptp (removed in 2.0). Change the code to use numpy.ptp(array, ...) instead of array.ptp(...); preserve the existing axis, out and keepdims arguments, or pin numpy below 2.0 if the project must keep the old API.",
+     "command": null,
+     "where": [
+      "app.py:5"
+     ],
+     "rules": [
+      "D03: The code calls a method name that the installed Python or library version removed (for example unittest aliases or NumPy ndarray methods)."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_attribute_chain_py313",
+   "focus": "D1 receiver",
+   "expect": "Python 3.13: removed ndarray.ptp through this receiver is not inferred (by design).",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.18s\n",
+   "current_tail": " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalues = [1, 5, 3]\n\n    def spread(values):\n>       return int(Holder(values).data.ptp())\n                   ^^^^^^^^^^^^^^^^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:10: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.09s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "code_defect",
+     "rule": "F01",
+     "source": "model",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:10",
+      "library": "",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Inspect the exception raised while running the test",
+     "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+     "command": null,
+     "where": [
+      "app.py:10"
+     ],
+     "rules": [
+      "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_param_py314",
+   "focus": "D1 receiver",
+   "expect": "Python 3.14: removed ndarray.ptp through this receiver is missed (LOAD_FAST_BORROW).",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.16s\n",
+   "current_tail": " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalues = array([1, 5, 3])\n\n    def spread(values):\n>       return int(values.ptp())\n                   ^^^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:5: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.63s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "code_defect",
+     "rule": "F01",
+     "source": "model",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:5",
+      "library": "",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Inspect the exception raised while running the test",
+     "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+     "command": null,
+     "where": [
+      "app.py:5"
+     ],
+     "rules": [
+      "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_store_then_load_py314",
+   "focus": "D1 receiver",
+   "expect": "Python 3.14: removed ndarray.ptp through this receiver is missed (STORE_FAST_LOAD_FAST).",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.16s\n",
+   "current_tail": " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalues = [1, 5, 3]\n\n    def spread(values):\n        array = np.asarray(values)\n>       return int(array.ptp())\n                   ^^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:6: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.10s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "code_defect",
+     "rule": "F01",
+     "source": "model",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:6",
+      "library": "",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Inspect the exception raised while running the test",
+     "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+     "command": null,
+     "where": [
+      "app.py:6"
+     ],
+     "rules": [
+      "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_global_py314",
+   "focus": "D1 receiver",
+   "expect": "Python 3.14: removed ndarray.ptp through this receiver is found.",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.18s\n",
+   "current_tail": ":7: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalues = None\n\n    def spread(values):\n>       return int(DATA.ptp())\n                   ^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:8: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.10s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "D03",
+     "source": "rule",
+     "tree": "missing_dependency",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:8",
+      "library": "",
+      "attributes": [
+       "numpy.ndarray.ptp"
+      ],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Replace numpy.ndarray.ptp: removed in numpy 2.0",
+     "explanation": "The target interpreter has numpy 2.3.5, which no longer provides numpy.ndarray.ptp (removed in 2.0). Change the code to use numpy.ptp(array, ...) instead of array.ptp(...); preserve the existing axis, out and keepdims arguments, or pin numpy below 2.0 if the project must keep the old API.",
+     "command": null,
+     "where": [
+      "app.py:8"
+     ],
+     "rules": [
+      "D03: The code calls a method name that the installed Python or library version removed (for example unittest aliases or NumPy ndarray methods)."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_closure_py314",
+   "focus": "D1 receiver",
+   "expect": "Python 3.14: removed ndarray.ptp through this receiver is found.",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.16s\n",
+   "current_tail": "inner()\n           ^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n    def inner():\n>       return int(data.ptp())\n                   ^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:8: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.10s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "D03",
+     "source": "rule",
+     "tree": "missing_dependency",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:8",
+      "library": "",
+      "attributes": [
+       "numpy.ndarray.ptp"
+      ],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Replace numpy.ndarray.ptp: removed in numpy 2.0",
+     "explanation": "The target interpreter has numpy 2.3.5, which no longer provides numpy.ndarray.ptp (removed in 2.0). Change the code to use numpy.ptp(array, ...) instead of array.ptp(...); preserve the existing axis, out and keepdims arguments, or pin numpy below 2.0 if the project must keep the old API.",
+     "command": null,
+     "where": [
+      "app.py:8"
+     ],
+     "rules": [
+      "D03: The code calls a method name that the installed Python or library version removed (for example unittest aliases or NumPy ndarray methods)."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_second_of_two_locals_py314",
+   "focus": "D1 receiver",
+   "expect": "Python 3.14: removed ndarray.ptp through this receiver is missed (LOAD_FAST_BORROW_LOAD_FAST_BORROW).",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.16s\n",
+   "current_tail": "_ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalues = array([1, 5, 3]), floor = 0\n\n    def spread(values, floor=0):\n>       return max(floor, int(values.ptp()))\n                              ^^^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:5: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.09s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "code_defect",
+     "rule": "F01",
+     "source": "model",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:5",
+      "library": "",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Inspect the exception raised while running the test",
+     "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+     "command": null,
+     "where": [
+      "app.py:5"
+     ],
+     "rules": [
+      "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "d1_attribute_chain_py314",
+   "focus": "D1 receiver",
+   "expect": "Python 3.14: removed ndarray.ptp through this receiver is not inferred (by design).",
+   "truth": "version change",
+   "old_tail": ".                                                                        [100%]\n1 passed in 0.18s\n",
+   "current_tail": " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalues = [1, 5, 3]\n\n    def spread(values):\n>       return int(Holder(values).data.ptp())\n                   ^^^^^^^^^^^^^^^^^^^^^^^\nE       AttributeError: `ptp` was removed from the ndarray class in NumPy 2.0. Use np.ptp(arr, ...) instead.\n\napp.py:10: AttributeError\n=========================== short test summary info ============================\nFAILED test_app.py::test_spread - AttributeError: `ptp` was removed from the ...\n1 failed in 0.10s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "code_defect",
+     "rule": "F01",
+     "source": "model",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "AttributeError",
+      "raised_in": "project",
+      "where": "app.py:10",
+      "library": "",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Inspect the exception raised while running the test",
+     "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+     "command": null,
+     "where": [
+      "app.py:10"
+     ],
+     "rules": [
+      "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+     ]
+    }
+   ]
+  }
+ ]
+}

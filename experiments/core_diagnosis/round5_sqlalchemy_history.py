@@ -6,7 +6,10 @@ It also checks the returns_rows guard and two counterexamples that fail in every
 from a result that was closed explicitly, and fetchall on a statement that returns no rows).
 Run it with each interpreter to compare; it prints one JSON object.
 
-  VENV/bin/python experiments/core_diagnosis/round5_sqlalchemy_history.py
+  VENV/bin/python experiments/core_diagnosis/round5_sqlalchemy_history.py [--records]
+
+With --records (records installed in VENV, e.g. records==0.5.3 from PyPI) it also runs records'
+own Database.query on a CREATE TABLE and an INSERT without consuming them, and a SELECT with all().
 """
 
 import json
@@ -65,9 +68,23 @@ def check(future: bool) -> dict:
     return found
 
 
+def check_records() -> dict:
+    import records
+
+    database = records.Database("sqlite://")
+    return {
+        "records_file": records.__file__.rsplit("site-packages/", 1)[-1],
+        "query_create_table_not_consumed": attempt(lambda: type(database.query("CREATE TABLE t (x INTEGER)")).__name__),
+        "query_insert_not_consumed": attempt(lambda: type(database.query("INSERT INTO t VALUES (1)")).__name__),
+        "query_select_all": attempt(lambda: len(database.query("SELECT x FROM t").all())),
+    }
+
+
 def main() -> None:
     record = {"python": sys.version.split()[0], "sqlalchemy": sqlalchemy.__version__,
               "legacy": check(future=False)}
+    if "--records" in sys.argv[1:]:
+        record["records"] = check_records()
     if sqlalchemy.__version__.startswith("1.4"):
         record["future"] = check(future=True)
     print(json.dumps(record, indent=1))

@@ -43,6 +43,26 @@ P4 的位置只列了导入行；如果只改那一行，第 5 行会报 NameErr
 - 项目自己的 `class ndarray` 没有 ptp；
 - packaging 的 `parse("nightly")` 被判为版本变化（H10），`Version("nightly")` 被判为输入错误（H12）。
 
+## D1 修法复核（`4bded78`）
+
+- **3.12 + numpy 2.2.6**：参数、局部变量、全局变量、闭包、前面还有另一个局部变量等所有直接名字接收者都判为 D03；属性链按设计不推断；没有误报。
+- **3.13 + numpy 2.2.6**：只有同一行连读两个局部变量（`LOAD_FAST_LOAD_FAST`）时漏判。
+- **3.14 + numpy 2.3.5**：凡是局部变量接收者都漏判（`LOAD_FAST_BORROW` 及其合并形式），全局变量和闭包仍能判出。numpy 2.3.5 的删除错误同样不带 `name`，所以这种组合会实际遇到。
+- 第一步给出了具体替换，按它编辑后测试都通过。
+- 建议：把 `LOAD_FAST_BORROW` 当作 `LOAD_FAST` 处理；对以元组为参数的合并指令，取最后一个名字作为接收者。
+- 结果文件：`results/review-codex-4bded78*.json`。
+
+## SQLAlchemy 历史核实
+
+- **"1.4 legacy 直接迭代得到空列表、2.0 才报错"不成立。** 在 1.3.24、1.4.54、2.0.44 中，对不返回行的结果做迭代都会抛 `ResourceClosedError`。
+- **真正的分界在 1.3 → 1.4。** 从 1.4 起，只是创建迭代器（例如 records 0.5.3 的 `query()` 构造生成器）就会立即抛错，1.3 则是懒执行。
+  - 源码依据：1.4 与 2.0 的 `_iterator_getter` 会读取 `_row_getter`，进而读取 `_NoResultMetaData._keymap`；1.3 的 `ResultProxy.__iter__` 是生成器函数。
+- **1.4 → 2.0 变化的是 `keys()`**：1.4 legacy 返回 `[]` 并发出 RemovedIn20Warning，2.0 改为抛错。
+- **修法**：`returns_rows` 判断在所有版本都有效。records 上游 0.6.0 就是用 `returns_rows` 修的，`<2` 的版本上限不能修好这个问题。
+- **反例**：`fetchall()` 和迭代已关闭的结果，在所有版本都失败。
+- **文档出处未知**：抓取到的 1.4 changelog 和迁移指南里都没有找到相关条目。
+- 结果文件：`results/sqlalchemy-*.json`、`results/records-*.json`；检查脚本：`../round5_sqlalchemy_history.py`。
+
 ## 复现
 
 先用 `round5_cases.py build` 建好环境。packaging 的两个探针还需要另建 `RUNS/packaging-old/venv`（packaging 21.3 + pytest）。`RUNS` 不能放在任何项目目录里。
