@@ -12,7 +12,7 @@ import json
 import math
 from pathlib import Path
 
-from .evidence import FEATURE_NAMES, LEGACY_FEATURE_NAMES
+from .evidence import FEATURE_LAYOUTS, FEATURE_NAMES
 
 DIAGNOSES = [
     "missing_dependency",
@@ -21,7 +21,7 @@ DIAGNOSES = [
     "config_missing",
     "code_defect",
 ]
-SCHEMA_VERSION = 4
+SCHEMA_VERSION = 5
 MIN_CONFIDENCE = 0.6
 NAIVE = {
     "import_failure": "missing_dependency",
@@ -38,12 +38,12 @@ def naive_diagnosis(kind: str) -> str:
 
 def validate_model(model: dict) -> dict:
     version = model.get("schema_version")
-    if version not in (3, SCHEMA_VERSION) or model.get("task") != "root_cause":
+    if version not in FEATURE_LAYOUTS or model.get("task") != "root_cause":
         raise ValueError(
             "Unsupported classifier model. Models from FixFirst 0.3 predicted parser "
             "categories; retrain with `fixfirst evaluate` on a diagnosis dataset."
         )
-    expected = LEGACY_FEATURE_NAMES if version == 3 else FEATURE_NAMES
+    expected = FEATURE_LAYOUTS[version]
     if model.get("feature_names") != expected:
         raise ValueError("Classifier features do not match this FixFirst version")
     if any(label not in DIAGNOSES for label in model["classes"]):
@@ -69,9 +69,8 @@ def predict_tree(vector: list[float], model: dict) -> tuple[str, float]:
     # New observations retain the old prefix. A legacy model ignores only the
     # explicitly versioned extension; arbitrary extra or missing columns fail.
     compatible_extension = (
-        model.get("schema_version") == 3
-        and model["feature_names"] == LEGACY_FEATURE_NAMES
-        and len(vector) == len(FEATURE_NAMES)
+        model["feature_names"] == FEATURE_LAYOUTS.get(model.get("schema_version"))
+        and any(len(vector) == len(names) and len(names) > width for names in FEATURE_LAYOUTS.values())
     )
     if len(vector) != width and not compatible_extension:
         raise ValueError("Feature vector has the wrong length")
@@ -105,27 +104,31 @@ def train_tree(
     if any(r["label"] not in DIAGNOSES for r in rows):
         raise ValueError("Training label outside the supported diagnoses")
     names = FEATURE_NAMES if feature_names is None else list(feature_names)
-    if names not in (LEGACY_FEATURE_NAMES, FEATURE_NAMES):
+    if names not in FEATURE_LAYOUTS.values():
         raise ValueError("Unsupported training feature layout")
     if any(len(r["features"]) != len(names) for r in rows):
         raise ValueError("Training feature vector has the wrong length")
     if any(not math.isfinite(value) for r in rows for value in r["features"]):
         raise ValueError("Training features must be finite numbers")
+    weights = [r.get("weight", 1.0) for r in rows]
+    if any(not math.isfinite(value) or value <= 0 for value in weights):
+        raise ValueError("Training weights must be finite and positive")
     clf = DecisionTreeClassifier(
         criterion="gini",
         max_depth=max_depth,
         min_samples_leaf=min_samples_leaf,
         random_state=42,
     )
-    clf.fit([r["features"] for r in rows], [r["label"] for r in rows])
+    clf.fit([r["features"] for r in rows], [r["label"] for r in rows], sample_weight=weights)
     tree = clf.tree_
     model = {
-        "schema_version": 3 if names == LEGACY_FEATURE_NAMES else SCHEMA_VERSION,
+        "schema_version": next(version for version, layout in FEATURE_LAYOUTS.items() if names == layout),
         "task": "root_cause",
         "feature_names": names,
         "classes": [str(c) for c in clf.classes_],
         "training_examples": len(rows),
         "training_groups": sorted({r["group"] for r in rows if r.get("group")}),
+        "training_weight": sum(weights),
         "hyperparameters": {"max_depth": max_depth, "min_samples_leaf": min_samples_leaf},
         "description": "Gini decision tree over observed evidence features; suggestions only.",
         "feature_importances": {

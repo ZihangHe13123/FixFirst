@@ -525,13 +525,26 @@ then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?
 id = "H07"
 phase = "heuristic"
 status = "hypothesis"
-description = "A function or class the code imports from an installed library rejects the arguments it is called with. Libraries add, rename and remove parameters between versions, so a version difference is the likely cause (a wrong call is the alternative)."
+description = "An imported function rejects its arguments at the call boundary. Without a matching documented change, first suspect the call's argument names or required values; this alone does not establish an upgrade problem."
 when = [
   ["?i", "exception", "TypeError"], ["?i", "signal", "call_signature"], ["?i", "callee_module", "?m"],
   ["?m", "provided_by", "?d"], ["not", "?m", "is_local", "?_"], ["not", "?m", "in_stdlib", "yes"],
-  ["not", "?i", "diagnosis", "?_"],
+  ["not", "?i", "diagnosis", "?_"], ["not", "?i", "documented_behavior", "?_"],
+  ["not", "?i", "raised_by_library", "?_"],
 ]
-then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
+then = [["?i", "likely", "code_defect"], ["?i", "likely_because", "?d"]]
+
+[[rule]]
+id = "H11"
+phase = "heuristic"
+status = "hypothesis"
+description = "A standard-library function rejects the call's arguments without a recognised compatibility diagnosis: check the call first."
+when = [
+  ["?i", "exception", "TypeError"], ["?i", "signal", "call_signature"], ["?i", "callee_module", "?m"],
+  ["?m", "in_stdlib", "yes"], ["not", "?m", "is_local", "?_"],
+  ["not", "?i", "diagnosis", "?_"], ["not", "?i", "documented_behavior", "?_"],
+]
+then = [["?i", "likely", "code_defect"], ["?i", "likely_because", "?m"]]
 
 [[rule]]
 id = "H08"
@@ -1036,17 +1049,35 @@ id = "P63"
 phase = "plan"
 description = "An imported library function or class rejects the call's arguments: compare the call with the installed version's signature."
 when = [
-  ["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"], ["?i", "callee", "?c"],
+  ["?i", "likely", "code_defect"], ["?i", "likely_because", "?d"], ["?i", "callee", "?c"],
   ["?i", "callee_module", "?m"], ["?m", "provided_by", "?d"], ["?d", "installed_version", "?iv"],
 ]
 [rule.action]
 id = "call-{?c}"
 kind = "manual_fix"
-cause = "version_incompatibility"
+cause = "code_defect"
 issue = "?i"
 cost = 1
-title = "Update the call to {?c} for {?d} {?iv}"
-explanation = "{?c} comes from {?d} {?iv} and rejects the arguments the code passes. Libraries add, rename and remove parameters between versions, so the code was probably written for another {?d} release. Check {?c} in the documentation or changelog of {?d} {?iv} and update the call; if the project must keep the old call, install the {?d} release it was written for."
+title = "Check the arguments passed to {?c} for {?d} {?iv}"
+explanation = "The supplied arguments do not match this installed callable. Check spelling, required values and positional versus keyword arguments, then update the call and rerun the affected tests. A rejected argument by itself does not show that another release is needed."
+verification = "Re-run the affected tests with the same interpreter"
+
+[[rule]]
+id = "P65"
+phase = "plan"
+description = "Check arguments to a standard-library callable without assuming a version change."
+when = [
+  ["?i", "likely", "code_defect"], ["?i", "callee", "?c"], ["?i", "callee_module", "?m"],
+  ["?m", "in_stdlib", "yes"], ["?i", "signal", "call_signature"],
+]
+[rule.action]
+id = "call-{?c}"
+kind = "manual_fix"
+cause = "code_defect"
+issue = "?i"
+cost = 1
+title = "Check the arguments passed to {?c}"
+explanation = "Compare the argument names and required values with the callable's signature. Correct the call, preserve the test's intended result, and rerun the affected tests."
 verification = "Re-run the affected tests with the same interpreter"
 
 [[rule]]

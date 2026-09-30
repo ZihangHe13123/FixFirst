@@ -3,10 +3,10 @@
 In the main diagnosis dataset (diagnosis_cases.py) the error usually names the cause, and the
 decision tree is trained on those cases. These scenarios are harder and are never used to train
 the tree. Heuristics H07 and H08 were written after seeing them, so results on them are
-development results, not held-out ones. Three families also informed the 2026-09-30
+development results, not held-out ones. Five families also informed the 2026-09-30
 behavior knowledge and evidence changes. Each uses a documented change in a library that is really
 installed (NumPy 2, PyYAML 6, pydantic 2, Click 8.2) and raises no "name was removed" error,
-or two faults where the second appears only after the first is fixed. Three families now have
+or two faults where the second appears only after the first is fixed. Five families now have
 matching knowledge: this measures development coverage, not unseen-library generalisation.
 Like a real project, each declares the library with the lower bound its code
 was written for (numpy>=1.21, PyYAML>=5.1, ...). Every added test checks a function's result,
@@ -61,7 +61,7 @@ def _(p):
     add_check(p, "price_json", "    assert price_json([1]) == '{\"price\": 1.5}'")
 
 
-@h("vb_yaml_loader", "version_incompatibility", "PyYAML 6.0 made the Loader argument of yaml.load required")
+@h("vb_yaml_loader", "version_incompatibility", "PyYAML 6.0 made the Loader argument of yaml.load required", knowledge=True)
 def _(p):
     declare(p, "PyYAML>=5.1")
     p.imports("import yaml\n\n\ndef load_settings(text):\n    return yaml.load(text)\n")
@@ -79,7 +79,7 @@ def _(p):
     add_check(p, "label_code", "    assert label_code(7) == \"7\"")
 
 
-@h("vb_click_mix_stderr", "version_incompatibility", "Click 8.2 removed CliRunner's mix_stderr argument")
+@h("vb_click_mix_stderr", "version_incompatibility", "Click 8.2 removed CliRunner's mix_stderr argument", knowledge=True)
 def _(p):
     declare(p, "click>=8.0")
     p.imports(

@@ -18,6 +18,7 @@ from packaging.version import InvalidVersion, Version
 from .behavior import observed_changes
 from .models import Fact, Issue, Run, Session
 from .runner import environment_id
+from .source_context import FEATURE_NAMES as SOURCE_FEATURE_NAMES, feature_values, resolved_calls
 
 MODULE_MISSING = re.compile(r"No module named '([\w.]+)'")
 CANNOT_IMPORT = re.compile(
@@ -122,7 +123,9 @@ CONTEXT_FEATURE_NAMES = [
     "context_external_provider",
     "context_data_operation",
 ]
-FEATURE_NAMES = LEGACY_FEATURE_NAMES + CONTEXT_FEATURE_NAMES
+V4_FEATURE_NAMES = LEGACY_FEATURE_NAMES + CONTEXT_FEATURE_NAMES
+FEATURE_NAMES = V4_FEATURE_NAMES + SOURCE_FEATURE_NAMES
+FEATURE_LAYOUTS = {3: LEGACY_FEATURE_NAMES, 4: V4_FEATURE_NAMES, 5: FEATURE_NAMES}
 
 
 WINDOWS_ABSOLUTE = re.compile(r"^[A-Za-z]:/")
@@ -379,7 +382,8 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
     evidence = {
         "issue_id": issue.issue_id,
         "exception": exception,
-        "exception_module": str(exception_record.get("exception_module") or ""),
+        "exception_module": (str(exception_record.get("exception_module") or "")
+                             if exception_record.get("exception_type") == exception else ""),
         "message": message[:2000],
         "executed_lines": executed_lines(traceback)[:80],
         "stage": issue.stage,
@@ -580,7 +584,7 @@ def module_context(session: Session, module: str, project: dict) -> dict:
     }
 
 
-def features(evidence: dict, contexts: dict, project: dict) -> list[float]:
+def features(evidence: dict, contexts: dict, project: dict, environment=None) -> list[float]:
     """Numeric evidence features for the decision tree, in FEATURE_NAMES order."""
     module = evidence["missing_module"] or (evidence["modules"][0] if evidence["modules"] else None)
     context = contexts.get(module, {}) if module else {}
@@ -620,6 +624,7 @@ def features(evidence: dict, contexts: dict, project: dict) -> list[float]:
     values["context_data_operation"] = evidence["exception"] in (
         "KeyError", "ValueError", "NameError", "SyntaxError", "IndexError", "ZeroDivisionError",
     )
+    values.update(feature_values(evidence, values, project, environment or {}))
     return [float(values[name]) for name in FEATURE_NAMES]
 
 
@@ -711,12 +716,7 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
         if evidence.get("call_signature"):
             facts.append(observed(subject, "signal", "call_signature", refs))
             # Resolve what was called through the project's own imports (read statically).
-            imported = project.get("imported_names", {})
-            for callee in evidence["callees"]:
-                head, _, rest = callee.partition(".")
-                if head not in imported:
-                    continue
-                qualified = imported[head] + (f".{rest}" if rest else "")
+            for qualified in resolved_calls(evidence, project, legacy=True):
                 top = qualified.split(".")[0]
                 facts.append(observed(subject, "callee", "callable:" + qualified, refs))
                 facts.append(observed(subject, "callee_module", "module:" + top, refs))
@@ -833,7 +833,7 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
             )
     for issue in diagnosable:
         evidence = details[issue.issue_id]
-        evidence["features"] = features(evidence, contexts, project)
+        evidence["features"] = features(evidence, contexts, project, environment)
     return facts, details
 
 

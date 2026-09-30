@@ -91,3 +91,11 @@ def test_training_rejects_incomplete_or_nonfinite_observations(bad):
         rows[0]["features"][0] = float("nan" if bad == "nan" else "inf")
     with pytest.raises(ValueError, match="wrong length|finite numbers"):
         train_tree(rows)
+
+
+@pytest.mark.parametrize("weight", [0, -1, float("nan")])
+def test_invalid_sample_weights_cannot_silently_change_training(weight):
+    rows = rows_for(FEATURE_NAMES)
+    rows[0]["weight"] = weight
+    with pytest.raises(ValueError, match="finite and positive"):
+        train_tree(rows)

@@ -1,0 +1,13 @@
+{
+  "label_source": "examples/real-world/LABELS.md, including its corrections",
+  "review_status": "Existing author labels, new automated execution checks; human rereview pending",
+  "cases": [
+    {"id": "cachetools", "label": "local_module", "pattern": "No module named 'cachetools'", "repair": ["-e", "."], "explanation": "Install this src-layout project into the interpreter that runs its tests."},
+    {"id": "typer", "label": "missing_dependency", "pattern": "No module named 'shellingham'", "repair": ["shellingham"], "verify_collection_only": true, "explanation": "Install the omitted test dependency named in the project's test extra. Verify that collection succeeds; full test execution has a separate timeout."},
+    {"id": "flask-sqlalchemy", "label": "version_incompatibility", "pattern": "cannot import name '_app_ctx_stack'", "repair": ["Flask==2.3.3"], "explanation": "Use a Flask release that still supplies the imported API; later SQLAlchemy failures are separate."},
+    {"id": "django-model-utils", "label": "version_incompatibility", "pattern": "cannot import name 'ugettext_lazy'", "repair": ["Django==3.2.25"], "verify_collection_only": true, "explanation": "Restore the translation API required by both application and test code. Verify collection; later database failures exceeded the full-run output limit."},
+    {"id": "records", "label": "version_incompatibility", "pattern": "This result object does not return rows", "repair": ["SQLAlchemy==1.3.24"], "explanation": "Restore the pre-1.4 result behavior required by records 0.5.3; record later SQLite failures separately."},
+    {"id": "parsel", "label": "missing_dependency", "pattern": "No module named 'six'", "repair": ["six", "lxml", "w3lib", "cssselect"], "explanation": "Install the project's declared dependencies, omitted after its installation failed."},
+    {"id": "more-itertools", "label": "healthy", "pattern": "", "repair": [], "explanation": "Healthy control; excluded from classifier training."}
+  ]
+}

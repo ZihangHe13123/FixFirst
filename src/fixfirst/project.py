@@ -420,6 +420,11 @@ def collect_project(session, env_id: str) -> Run:
                 )
     data["python_files"], data["defined_names"] = index_sources(Path(session.project_root))
     data["imported_names"] = index_imports(Path(session.project_root), data["python_files"])
+    from .source_context import index_source_context
+
+    data["source_context"] = index_source_context(
+        Path(session.project_root), data["python_files"], MAX_BYTES,
+    )
     from .behavior import index_behavior_context
 
     data.update(index_behavior_context(

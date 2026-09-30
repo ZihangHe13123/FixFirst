@@ -93,3 +93,23 @@ on the same public 215 development records; keep the hard development cases out 
 training. Compare fixed hyperparameters first, then use nested scenario-grouped
 validation for any depth selection. Report tuning results as development evidence;
 the independent A1/C1 evaluation and B5 freeze remain separate.
+
+## Observation and real-data continuation
+
+The user approved the next proposal to enrich distinguishing observations and
+audit a small batch of real development failures. Add bounded, file/scope-aware
+call provenance, external bases and relevant version records; pair the old and
+new snapshots of the same synthetic faults when training for incomplete-history
+compatibility. Those paired views must remain in the same validation group.
+
+Replay publicly documented development faults in separate source exports and
+environments, validating only their labelled layer. Preserve failed verification
+attempts and explicitly mark human rereview pending. Run real-data and ordinary
+API-misuse augmentation as separate comparisons. Neither the stress cases nor
+the reserved ordinary-error controls enter fitting.
+
+The real-data trial exposed ordinary argument/validation errors being called
+version changes. Correct generic argument guidance and use documented,
+version-qualified Click/PyYAML changes for specific migration advice. Evaluate
+both the raw tree and complete system; retain rejected variants and any tradeoffs
+instead of selecting solely for the highest synthetic score.

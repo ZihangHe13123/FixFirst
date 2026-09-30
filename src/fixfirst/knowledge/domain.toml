@@ -40,6 +40,24 @@ action_title = "Convert the numeric input to text before validating the string f
 replacement = "If the field is intended to accept that number as text, pass str(value) for the affected field before validation. Otherwise correct the input to a string. Preserve other field validation and run the unchanged tests; do not downgrade the whole environment just to suppress validation."
 source = "pydantic-number-coercion"
 
+[[behavior]]
+id = "yaml-required-loader"
+distribution = "pyyaml"
+version = "6.0"
+summary = "PyYAML 6 requires a Loader argument for yaml.load; this call omits it."
+action_title = "Choose an explicit safe YAML loader"
+replacement = "For standard YAML data, replace yaml.load(text) with yaml.safe_load(text), or pass Loader=yaml.SafeLoader explicitly. If the application needs custom tags, review the required constructors separately. Keep the tests unchanged and rerun them."
+source = "pyyaml-6-loader"
+
+[[behavior]]
+id = "click-runner-streams"
+distribution = "click"
+version = "8.2"
+summary = "Click 8.2 removed CliRunner's mix_stderr constructor option and exposes captured stdout and stderr separately."
+action_title = "Update CliRunner's stream capture arguments"
+replacement = "Remove mix_stderr from the CliRunner constructor. Use result.stdout and result.stderr when the test needs the separate streams; result.output represents their combined terminal output. Preserve the expected behavior and rerun the unchanged tests."
+source = "click-8.2-streams"
+
 # --------------------------------------------------------------------------------------
 # Root causes (diagnosis classes)
 # --------------------------------------------------------------------------------------
@@ -740,3 +758,11 @@ url = "https://nose.readthedocs.io/en/latest/"
 [sources."ruff-rules"]
 title = "Ruff: rules reference"
 url = "https://docs.astral.sh/ruff/rules/"
+
+[sources."pyyaml-6-loader"]
+title = "PyYAML 6.0 changelog: yaml.load requires its Loader argument"
+url = "https://github.com/yaml/pyyaml/blob/main/CHANGES"
+
+[sources."click-8.2-streams"]
+title = "Click 8.2 changelog: CliRunner stream capture changes"
+url = "https://click.palletsprojects.com/en/stable/changes/#version-8-2-0"

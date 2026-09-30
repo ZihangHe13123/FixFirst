@@ -60,6 +60,8 @@ def load_rows(dataset: Path, skip=()) -> list[dict]:
             issues = {i.issue_id: i for i in session.issues}
             for issue_id, item in with_kg.items():
                 issue = issues[issue_id]
+                if "labelled_issue_ids" in case and issue_id not in case["labelled_issue_ids"]:
+                    continue
                 if issue.tool != "pytest_run" or issue.status != "open":
                     continue
                 evidence = item["evidence"]
@@ -69,6 +71,7 @@ def load_rows(dataset: Path, skip=()) -> list[dict]:
                         "template": case["template"],
                         "scenario": case["scenario"],
                         "group": case["scenario"],
+                        "observation_view": case.get("observation_view", "recorded"),
                         "label": case["label"],
                         "knowledge_covered": case["knowledge_covered"],
                         "kind": issue.kind,

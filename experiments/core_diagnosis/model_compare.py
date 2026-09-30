@@ -18,7 +18,7 @@ import fixfirst
 from fixfirst.classification import default_model, predict_tree, train_tree
 from fixfirst.diagnosis_cases import load_session
 from fixfirst.evaluation import load_rows, predict, score
-from fixfirst.evidence import FEATURE_NAMES, LEGACY_FEATURE_NAMES
+from fixfirst.evidence import V4_FEATURE_NAMES as FEATURE_NAMES, LEGACY_FEATURE_NAMES
 from fixfirst.reasoning import infer_and_plan
 from fixfirst.workspace import build_view
 
@@ -96,7 +96,7 @@ def run(train, transfers, output):
     output.mkdir(parents=True, exist_ok=False)
     implementation = Path(fixfirst.__file__).resolve().parents[2]
     rows = load_rows(train)
-    if any(len(r["features"]) != len(FEATURE_NAMES) for r in rows):
+    if any(len(r["features"]) < len(FEATURE_NAMES) for r in rows):
         raise ValueError("Current evidence features are required")
     sources = sorted((implementation / "src/fixfirst").glob("*.py")) + sorted(
         (implementation / "src/fixfirst/knowledge").glob("*")

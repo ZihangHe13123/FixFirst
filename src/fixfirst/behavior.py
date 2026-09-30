@@ -207,6 +207,17 @@ def observed_changes(evidence: dict, project: dict) -> list[tuple[str, str]]:
     providers -= set(project.get("own_names", []))
     providers -= {row["name"] for row in project.get("local_modules", [])}
     found = []
+    if evidence.get("call_signature"):
+        from .source_context import resolved_calls
+
+        calls = resolved_calls(evidence, project, legacy=True)
+        local = {row["name"] for row in project.get("local_modules", [])}
+        if "yaml.load" in calls and "yaml" not in local and re.search(
+            r"\bload\(\) missing 1 required positional argument: ['\"]Loader['\"]", evidence["message"],
+        ):
+            found.append(("yaml-required-loader", "pyyaml"))
+        if "click.testing.CliRunner" in calls and "click" not in local and "mix_stderr" in evidence.get("kwargs", []):
+            found.append(("click-runner-streams", "click"))
     if "numpy" in providers:
         if (
             evidence["exception"] == "AssertionError"
