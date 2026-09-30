@@ -27,6 +27,7 @@ def inspect_project(root, source, test, requirement, *, unit=False):
     return session, issue, check
 
 
+@pytest.mark.parametrize("locked", [False, True])
 @pytest.mark.parametrize("requirement,source,test,before,after,title", [
     ("numpy>=1.21", 'import numpy as np\ndef convert():\n    return np.reshape([1,2,3], (2,2))\n',
      "assert convert().shape == (3,1)", "(2,2)", "(3,1)", "Correct the reshape dimensions"),
@@ -37,7 +38,12 @@ def inspect_project(root, source, test, requirement, *, unit=False):
     ("click>=7", 'import click\ndef convert():\n    return click.IntRange(0,5).convert("9",None,None)\n',
      "assert convert() == 3", 'convert("9"', 'convert("3"', "Correct the value rejected by the Click parameter"),
 ])
-def test_input_repair_preserves_the_test_and_does_not_downgrade(tmp_path, requirement, source, test, before, after, title):
+def test_input_repair_preserves_the_test_and_does_not_downgrade(
+        tmp_path, requirement, source, test, before, after, title, locked):
+    if locked:
+        package = requirement.split(">=")[0].lower()
+        version = {"numpy": "1.26.4", "pyyaml": "5.4.1", "click": "7.1.2"}[package]
+        (tmp_path / "uv.lock").write_text(f'[[package]]\nname = "{package}"\nversion = "{version}"\n')
     session, issue, check = inspect_project(tmp_path, source, test, requirement)
     assert issue.diagnosis == "code_defect" and issue.diagnosis_rule == "H12"
     assert build_view(session)["steps"][0]["title"].startswith(title)

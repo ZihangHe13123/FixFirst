@@ -514,11 +514,12 @@ then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?
 id = "H06"
 phase = "heuristic"
 status = "hypothesis"
-description = "The failure is raised inside a library that is a major version newer than the one the project's lock file records: behaviour changed between those versions."
+description = "The failure is raised inside a library newer than the project's locked major version; with no more specific input or migration evidence, investigate that version difference."
 when = [
   ["?i", "raised_by_library", "?d"], ["?d", "tested_version", "?tv"], ["?d", "installed_version", "?iv"],
   ["test", "major_gt", "?iv", "?tv"], ["not", "?i", "diagnosis", "?_"],
   ["not", "?i", "exception", "ValidationError"], ["not", "?i", "documented_behavior", "?_"],
+  ["not", "?i", "input_symptom", "?_"],
 ]
 then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
 
@@ -1038,8 +1039,8 @@ kind = "manual_fix"
 cause = "version_incompatibility"
 issue = "?i"
 cost = 1
-title = "Try {?d} below {?b}: the project was tested with {?d} {?tv}, this environment has {?iv}"
-explanation = "The failure is raised inside {?d}, and {?src} records that the project worked with {?d} {?tv}; the installed {?iv} is a newer major version, which usually changes behaviour. Install {?d} below {?b} to return to the release series the project was tested with, or update the project for the new version."
+title = "Check the locked {?d} {?tv} series below {?b}; this environment has {?iv}"
+explanation = "The failure is raised inside {?d}, and {?src} locks {?d} {?tv}, while the installed {?iv} is a newer major version. The lock file alone does not prove that these inputs passed on the older version. In a disposable environment, check the locked series below {?b} while preserving the project's other constraints, or investigate a specific migration. The suggested bound has not been verified to fix this failure."
 pip_install = "{?d}<{?b}"
 verification = "Re-run the tests with the same interpreter"
 
