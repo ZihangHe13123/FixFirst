@@ -11,7 +11,7 @@ import subprocess
 import sys
 import tempfile
 
-from . import domain, engine
+from . import domain, engine, integrity
 from .evidence import issue_evidence
 from .models import Session, GOAL_CHECKS, check_scope
 from .processes import ManagedProcess
@@ -160,6 +160,11 @@ def build_view(session: Session) -> dict:
         "pending": pending,
         "checked": bool(session.runs),
         "last_checked": session.runs[-1].started_at if session.runs else None,
+        "baseline": {
+            "changed": [key.split(":", 1)[1] for key in session.baseline_check.get("changed", [])],
+            "recorded_at": session.verification_baseline.get("recorded_at"),
+            "accepted": session.verification_baseline.get("reason") == "accepted by the user",
+        },
     }
 
 
@@ -251,6 +256,24 @@ def _status(session: Session, steps, open_issues, optional_issues=()) -> dict:
             "headline": "Not checked yet",
             "detail": "FixFirst will run your project's checks and explain what it finds. "
             "Nothing is changed or installed.",
+        }
+    changed = session.baseline_check.get("changed", [])
+    if integrity.affects(changed, GOAL_CHECKS[session.goal]):
+        # Execution result, baseline change and verification are three different things.
+        target = GOAL_CHECKS[session.goal]
+        run = next((r for r in reversed(session.runs) if r.tool == target), None)
+        passed = run.test_summary.get("passed") if run else None
+        result = (
+            "The last check passed" + (f" ({passed} test{'s' if passed != 1 else ''})" if passed else "")
+            if run and run.verified_pass else "The last check did not pass"
+        )
+        what = "Ruff's settings" if target == "ruff" else "the tests or their settings"
+        return {
+            "kind": "baseline_changed",
+            "headline": "The code-check settings changed" if target == "ruff" else "The tests changed",
+            "detail": f"{result}, but {what} changed since the baseline ({integrity.describe(changed)}). A pass "
+            "now does not show that the original problem is fixed. Restore them, or accept the changes as the "
+            "new baseline if they are intended.",
         }
     if session.goal_status == "achieved":
         target = GOAL_CHECKS[session.goal]

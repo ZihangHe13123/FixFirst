@@ -120,6 +120,17 @@ program run. Existing sessions preserve their explicit pytest or code-check goal
    close an issue. Empty Ruff findings with a nonzero exit code are a tool failure and cannot
    verify that an earlier finding was fixed.
 
+   A verification is measured against a baseline (`integrity.py`), recorded at the session's
+   first check: the test files and conftest.py files with the pytest settings that select or
+   judge tests (`pythonpath` and unrelated pyproject metadata do not count), the files a unittest
+   pattern selects, or Ruff's settings for the style goal; a program's entry, arguments and input
+   are already fixed by its check scope. Three things are kept apart: the run's result, whether
+   the baseline changed (`Session.baseline_check`), and whether the original problem is verified.
+   A pass after the baseline changed stays a fact about that run; the issues it would close wait
+   (`Issue.verification = "not_comparable"`) and the goal is not called reached until the change is
+   undone or a person accepts it as the new baseline (`fixfirst accept-baseline`, or the web page).
+   The MCP tools cannot accept a baseline.
+
 ## Finding a release that works
 
 When a name is missing from an installed library, a rule can only say that an older release

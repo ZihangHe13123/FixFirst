@@ -14,11 +14,13 @@ from test_integration import cli
 
 
 def write_test_source(root, first=False, second=False, decoration=""):
+    # The fix is in the project (cart.py); the tests stay the same unless a decoration is asked for.
+    (root / "cart.py").write_text(f"DISCOUNT = {10 if first else 15}\nTAX = {20 if second else 25}\n")
     (root / "test_cart.py").write_text(
-        "import pytest\n\n"
+        "import pytest\n\nimport cart\n\n\n"
         + decoration
-        + f"def test_discount():\n    assert {10 if first else 15} == 10\n\n"
-        + f"def test_tax():\n    assert {20 if second else 25} == 20\n"
+        + "def test_discount():\n    assert cart.DISCOUNT == 10\n\n\n"
+        + "def test_tax():\n    assert cart.TAX == 20\n"
     )
 
 
@@ -78,17 +80,18 @@ def test_fixture_phase_recorded_and_recovered(tmp_path, stage):
         if stage == "setup"
         else "    yield\n    raise RuntimeError('cleanup failed')\n"
     )
+    # The fixture's work is in the project (resources.py), so the fix does not touch the tests.
+    (tmp_path / "resources.py").write_text("def use():\n" + body)
     (tmp_path / "test_fixture.py").write_text(
-        "import pytest\n@pytest.fixture\ndef resource():\n"
-        + body
-        + "\ndef test_using(resource):\n    assert True\n"
+        "import pytest\n\nimport resources\n\n\n@pytest.fixture\ndef resource():\n"
+        "    yield from resources.use()\n\n\ndef test_using(resource):\n    assert True\n"
     )
     session = create_session(tmp_path, sys.executable, goal="pass_tests")
     scan(session, ["pytest_run"])
     assert session.issues[0].stage == stage
     assert session.issues[0].kind == "test_runtime_error"
     assert session.runs[-1].passed_nodes == []
-    (tmp_path / "test_fixture.py").write_text("def test_using():\n    assert True\n")
+    (tmp_path / "resources.py").write_text("def use():\n    yield\n")
     scan(session, ["pytest_run"])
     assert session.issues[0].status == "resolved"
 

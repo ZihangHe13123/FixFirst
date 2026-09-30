@@ -125,6 +125,8 @@ class Issue(Record):
     last_seen: str = Field(default_factory=now)
     note: str = ""
     targets: list[str] = Field(default_factory=list)
+    # Whether a pass verified the original problem against the baseline tests (integrity.py).
+    verification: Literal["comparable", "not_comparable"] | None = None
 
 
 class Fact(Record):
@@ -182,3 +184,6 @@ class Session(Record):
     goal_status: Literal["unknown", "blocked", "achieved"] = "unknown"
     stopped: bool = False
     environment: dict = Field(default_factory=dict)
+    # The tests and settings a verification is measured against, and the latest comparison (integrity.py).
+    verification_baseline: dict = Field(default_factory=dict)
+    baseline_check: dict = Field(default_factory=dict)

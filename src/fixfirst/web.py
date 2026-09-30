@@ -108,6 +108,10 @@ class App:
                 if not action or not action.check or action.blocked_reasons:
                     raise ValueError("This action is not a runnable check")
                 scan(session, [action.check], targets=action.targets)
+            elif op == "accept-baseline":  # a person's decision on the page; the MCP tools cannot do this
+                from .integrity import accept
+
+                accept(session)
             elif op == "mark-fixed":
                 for issue_id in body.get("issue_ids", []):
                     issue = next((i for i in session.issues if i.issue_id == issue_id), None)

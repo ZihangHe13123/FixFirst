@@ -47,6 +47,7 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
   </div>
   <div class="act">
     <button class="primary big" id="check">{{ 'Run the first check' if not view.checked else 'Check again' }}</button>
+    {% if view.status.kind == 'baseline_changed' %}<button id="accept-baseline">Accept the changes as the new baseline</button>{% endif %}
     {% if view.last_checked %}<span class="small">Last checked <span data-time="{{ view.last_checked }}"></span></span>{% endif %}
   </div>
 </section>
@@ -160,6 +161,9 @@ document.querySelectorAll('.search').forEach(b=>b.onclick=async()=>{
   busy('Trying older releases…','FixFirst installs them one by one into a temporary environment. This can take a few minutes.');
   try{await post(`/api/sessions/${SESSION}/run`,{action_id:b.dataset.action});location.reload()}catch(err){showError(err.message)}});
 const get=id=>document.getElementById(id);
+if(get('accept-baseline'))get('accept-baseline').onclick=async()=>{
+  if(!confirm('Accept the changed tests and settings as the new baseline? Later checks are verified against them.'))return;
+  try{await post(`/api/sessions/${SESSION}/accept-baseline`,{});location.reload()}catch(err){showError(err.message)}};
 function settingsVisibility(){
   const g=get('goal').value,k=get('settings-kind');
   get('settings-execution').hidden=!['run_project','pass_unittest'].includes(g);

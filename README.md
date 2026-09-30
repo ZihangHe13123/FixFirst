@@ -285,6 +285,14 @@ reads `mcpServers` (for example a project's `.mcp.json`):
 
 ## Scope and safety
 
+- Changing tests is not taken as fixing them. FixFirst records the tests, conftest.py files and
+  the pytest settings that select or judge tests at the first check (for unittest, the files its
+  pattern selects; for the code check, Ruff's settings). If they change, a later pass is shown as
+  a pass, but the original problem is not counted as fixed and the page says that the tests
+  changed: restore them, or accept the changes as the new baseline (the button, or
+  `fixfirst accept-baseline SESSION`). Adding `pythonpath` or editing unrelated pyproject metadata
+  does not count. An agent using the MCP tools cannot accept a new baseline.
+
 - Supported: small Python projects on macOS, Linux and Windows; target interpreters Python
   3.9–3.14 (venv, uv or conda); native scripts/modules, unittest, optional notebooks, pytest,
   Ruff and pip. Declarations are read statically from
