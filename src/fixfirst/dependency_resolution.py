@@ -191,8 +191,9 @@ def collect(session, targets, timeout):
             # uv explicitly distinguishes a missing wheel from unsatisfiable
             # version metadata. Do not turn our trial restriction into a claim
             # about the application or the named package we tried to change.
+            plain = " ".join(re.sub(r"(?m)^[ \t│╰─▶]+", "", failure["output"]).split())
             wheel = re.search(r"\b([A-Za-z0-9][A-Za-z0-9._-]*(?:==[^\s,]+)?)\s+(?:has|have) no usable wheels\b",
-                              failure["output"])
+                              plain)
             if wheel:
                 result["trial_restriction"] = "wheels_only"
                 result["blocked_requirement"] = wheel[1]
