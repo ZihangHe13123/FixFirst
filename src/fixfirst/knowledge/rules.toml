@@ -89,6 +89,29 @@ description = "The failed assertion is about the warnings the test recorded, and
 when = [["?i", "asserts_on", "recorded_warnings"], ["?i", "extra_warning", "?x"]]
 then = [["?i", "warning_noise", "?x"]]
 
+[[rule]]
+id = "G14"
+phase = "derive"
+description = "The observed behavior matches a documented change, the installed library includes it, and the project declares compatibility with an older version."
+when = [
+  ["?i", "behavior_symptom", "?b"], ["?b", "changed_in", "?d"], ["?b", "changed_in_version", "?v"],
+  ["?d", "installed_version", "?iv"], ["test", "version_gte", "?iv", "?v"],
+  ["?d", "declared_minimum", "?mv"], ["test", "version_lt", "?mv", "?v"],
+]
+then = [["?i", "documented_behavior", "?b"]]
+
+[[rule]]
+id = "G15"
+phase = "derive"
+description = "A matching documented change postdates the project's recorded tested version, when no minimum declaration is available."
+when = [
+  ["?i", "behavior_symptom", "?b"], ["?b", "changed_in", "?d"], ["?b", "changed_in_version", "?v"],
+  ["?d", "installed_version", "?iv"], ["test", "version_gte", "?iv", "?v"],
+  ["?d", "tested_version", "?tv"], ["test", "version_lt", "?tv", "?v"],
+  ["not", "?d", "declared_minimum", "?_"],
+]
+then = [["?i", "documented_behavior", "?b"]]
+
 # ======================================================================================
 # diagnose: version incompatibility (knowledge of removed names)
 # ======================================================================================
@@ -148,6 +171,7 @@ description = "A library call passes a keyword argument that the installed libra
 source = "knowledge: removed keyword arguments"
 when = [
   ["?i", "kwarg", "?x"],
+  ["?i", "callee", "?c"], ["?x", "removed_callable", "?c"],
   ["not", "?i", "owner_is_local", "yes"],
   ["?x", "removed_from", "?d"], ["?x", "removed_in_version", "?v"],
   ["?d", "installed_version", "?iv"], ["test", "version_gte", "?iv", "?v"],
@@ -361,7 +385,10 @@ then = [["?i", "diagnosis", "config_missing"], ["?i", "remedy", "provide_env"], 
 id = "D40"
 phase = "diagnose"
 description = "A test assertion failed: the observed behaviour differs from the test's expectation."
-when = [["?i", "exception", "AssertionError"], ["not", "?i", "warning_noise", "?_"]]
+when = [
+  ["?i", "exception", "AssertionError"], ["not", "?i", "warning_noise", "?_"],
+  ["not", "?i", "documented_behavior", "?_"],
+]
 then = [["?i", "diagnosis", "code_defect"]]
 
 [[rule]]
@@ -491,6 +518,7 @@ description = "The failure is raised inside a library that is a major version ne
 when = [
   ["?i", "raised_by_library", "?d"], ["?d", "tested_version", "?tv"], ["?d", "installed_version", "?iv"],
   ["test", "major_gt", "?iv", "?tv"], ["not", "?i", "diagnosis", "?_"],
+  ["not", "?i", "exception", "ValidationError"], ["not", "?i", "documented_behavior", "?_"],
 ]
 then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
 
@@ -498,13 +526,26 @@ then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?
 id = "H07"
 phase = "heuristic"
 status = "hypothesis"
-description = "A function or class the code imports from an installed library rejects the arguments it is called with. Libraries add, rename and remove parameters between versions, so a version difference is the likely cause (a wrong call is the alternative)."
+description = "An imported function rejects its arguments at the call boundary. Without a matching documented change, first suspect the call's argument names or required values; this alone does not establish an upgrade problem."
 when = [
   ["?i", "exception", "TypeError"], ["?i", "signal", "call_signature"], ["?i", "callee_module", "?m"],
   ["?m", "provided_by", "?d"], ["not", "?m", "is_local", "?_"], ["not", "?m", "in_stdlib", "yes"],
-  ["not", "?i", "diagnosis", "?_"],
+  ["not", "?i", "diagnosis", "?_"], ["not", "?i", "documented_behavior", "?_"],
+  ["not", "?i", "raised_by_library", "?_"],
 ]
-then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
+then = [["?i", "likely", "code_defect"], ["?i", "likely_because", "?d"]]
+
+[[rule]]
+id = "H11"
+phase = "heuristic"
+status = "hypothesis"
+description = "A standard-library function rejects the call's arguments without a recognised compatibility diagnosis: check the call first."
+when = [
+  ["?i", "exception", "TypeError"], ["?i", "signal", "call_signature"], ["?i", "callee_module", "?m"],
+  ["?m", "in_stdlib", "yes"], ["not", "?m", "is_local", "?_"],
+  ["not", "?i", "diagnosis", "?_"], ["not", "?i", "documented_behavior", "?_"],
+]
+then = [["?i", "likely", "code_defect"], ["?i", "likely_because", "?m"]]
 
 [[rule]]
 id = "H08"
@@ -516,8 +557,17 @@ when = [
   ["?d", "installed_version", "?iv"], ["test", "major_gt", "?iv", "?mv"],
   ["not", "?d", "is_test_runner", "yes"], ["not", "?d", "tested_version", "?_"],
   ["not", "?i", "diagnosis", "?_"],
+  ["not", "?i", "exception", "ValidationError"], ["not", "?i", "documented_behavior", "?_"],
 ]
 then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
+
+[[rule]]
+id = "H10"
+phase = "heuristic"
+status = "hypothesis"
+description = "A specific documented behavior change fits the observed failure and the project's version context. Confirm the intended behavior by applying the narrow remedy and rerunning unchanged tests."
+when = [["?i", "documented_behavior", "?b"], ["not", "?i", "diagnosis", "?_"]]
+then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?b"]]
 
 [[rule]]
 id = "H05"
@@ -955,6 +1005,24 @@ explanation = "None of the older releases checked in a temporary environment pro
 verification = "Re-run the tests with the same interpreter"
 
 [[rule]]
+id = "P66"
+phase = "plan"
+description = "An inconclusive bounded search is not proof that an API never existed or a reason to repeat the same search."
+when = [
+  ["?i", "likely", "version_incompatibility"], ["?i", "api", "?x"],
+  ["?x", "release_search", "?d"], ["?x", "search_inconclusive", "yes"],
+]
+[rule.action]
+id = "review-search-{?x}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 2
+title = "Review compatibility for {?x}: the release search was inconclusive"
+explanation = "The bounded search could not verify a usable {?d} release. Some versions may not have been checked, may have failed installation or import, or the network may have been unavailable. Check the recorded trials and the upstream migration guide before choosing a release or changing the call. This is not evidence that the API never existed."
+verification = "Validate the chosen change in a separate environment, then rerun the affected tests"
+
+[[rule]]
 id = "P61"
 phase = "plan"
 description = "Go back to the major version of the library that the project's lock file records."
@@ -991,7 +1059,7 @@ cause = "version_incompatibility"
 issue = "?i"
 cost = 2
 title = "Try {?d} below {?b}: the project declares {?spec}, this environment has {?iv}"
-explanation = "{?src} declares {?spec}, so the code was written for {?d} {?mv} or a later release of that series; the installed {?d} {?iv} is a newer major version, which often changes behaviour and signatures. Install {?d} below {?b} to go back to the series the project was written for, or update the code for {?d} {?iv} using its changelog or migration guide."
+explanation = "{?src} declares {?spec}, whose minimum is {?mv}; this alone does not establish which version the project was written or tested with. The observed failure suggests a compatibility check against installed {?d} {?iv}. In a disposable environment, test a compatible older release while preserving the project's other dependency constraints, or update the affected call using the migration guide. The suggested bound has not been verified to fix this project."
 pip_install = "{?d}<{?b}"
 verification = "Re-run the tests with the same interpreter"
 
@@ -1000,18 +1068,55 @@ id = "P63"
 phase = "plan"
 description = "An imported library function or class rejects the call's arguments: compare the call with the installed version's signature."
 when = [
-  ["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"], ["?i", "callee", "?c"],
+  ["?i", "likely", "code_defect"], ["?i", "likely_because", "?d"], ["?i", "callee", "?c"],
   ["?i", "callee_module", "?m"], ["?m", "provided_by", "?d"], ["?d", "installed_version", "?iv"],
 ]
 [rule.action]
 id = "call-{?c}"
 kind = "manual_fix"
+cause = "code_defect"
+issue = "?i"
+cost = 1
+title = "Check the arguments passed to {?c} for {?d} {?iv}"
+explanation = "The supplied arguments do not match this installed callable. Check spelling, required values and positional versus keyword arguments, then update the call and rerun the affected tests. A rejected argument by itself does not show that another release is needed."
+verification = "Re-run the affected tests with the same interpreter"
+
+[[rule]]
+id = "P65"
+phase = "plan"
+description = "Check arguments to a standard-library callable without assuming a version change."
+when = [
+  ["?i", "likely", "code_defect"], ["?i", "callee", "?c"], ["?i", "callee_module", "?m"],
+  ["?m", "in_stdlib", "yes"], ["?i", "signal", "call_signature"],
+]
+[rule.action]
+id = "call-{?c}"
+kind = "manual_fix"
+cause = "code_defect"
+issue = "?i"
+cost = 1
+title = "Check the arguments passed to {?c}"
+explanation = "Compare the argument names and required values with the callable's signature. Correct the call, preserve the test's intended result, and rerun the affected tests."
+verification = "Re-run the affected tests with the same interpreter"
+
+[[rule]]
+id = "P64"
+phase = "plan"
+description = "Give the narrow migration step for the observed documented behavior; keep the user's tests and other validation unchanged."
+when = [
+  ["?i", "documented_behavior", "?b"], ["?b", "changed_in", "?d"],
+  ["?d", "installed_version", "?iv"], ["?b", "action_title", "?title"],
+  ["?b", "change_summary", "?why"], ["?b", "replacement", "?fix"],
+]
+[rule.action]
+id = "adapt-{?b}"
+kind = "manual_fix"
 cause = "version_incompatibility"
 issue = "?i"
 cost = 1
-title = "Update the call to {?c} for {?d} {?iv}"
-explanation = "{?c} comes from {?d} {?iv} and rejects the arguments the code passes. Libraries add, rename and remove parameters between versions, so the code was probably written for another {?d} release. Check {?c} in the documentation or changelog of {?d} {?iv} and update the call; if the project must keep the old call, install the {?d} release it was written for."
-verification = "Re-run the affected tests with the same interpreter"
+title = "{?title}"
+explanation = "{?why} This environment has {?d} {?iv}. {?fix} The compatibility diagnosis is a hypothesis supported by this symptom and version context; verify the result with the original test suite."
+verification = "Run the affected tests and then the full suite, without changing the tests"
 
 [[rule]]
 id = "P31"

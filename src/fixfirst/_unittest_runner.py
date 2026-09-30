@@ -40,7 +40,8 @@ class Result(unittest.TextTestResult):
         stage = "collect" if type(test).__name__ == "_FailedTest" else "call"
         emit({"type": "failure", "nodeid": test.id(), "stage": stage, "message": trace[:60_000]})
         emit({"type": "exception", "nodeid": test.id(), "stage": stage,
-              "exception_type": err[0].__name__, "exception_message": str(err[1])[:4000],
+              "exception_type": err[0].__name__, "exception_module": err[0].__module__,
+              "exception_message": str(err[1])[:4000],
               "source_file": source.filename if source else "",
               "source_line": source.lineno if source else None})
 

@@ -1,0 +1,2260 @@
+{
+  "kind": "actual_generated_first_step_verification",
+  "records": [
+    {
+      "id": "cachetools",
+      "source_commit": "6c78a8ff67b21834c3873cc918d87b2c5cb22e5c",
+      "snapshot_sha256": "d2ce2873f9fdbea32d72c9d5c7a4c37f329ef346eb22f8186564db16a83ecf59",
+      "label": "local_module",
+      "outcome": "first_failure_resolved",
+      "error": null,
+      "first_action": {
+        "schema_version": 1,
+        "action_id": "fix-path-cachetools",
+        "kind": "manual_fix",
+        "title": "Make the project module cachetools importable",
+        "explanation": "src/cachetools exists in the project but the test run cannot import cachetools. For a src layout, install the project in editable mode (pip install -e .) or set pytest's pythonpath; otherwise check the package's location and __init__.py.",
+        "verification": "Re-run test collection",
+        "check": null,
+        "issue_ids": [
+          "issue-c85056100e16a4"
+        ],
+        "reason_refs": [
+          "issue-c85056100e16a4:remedy:fix_import_path",
+          "issue-c85056100e16a4:because:module:cachetools",
+          "module:cachetools:is_local:src/cachetools"
+        ],
+        "preconditions": [],
+        "blocked_reasons": [],
+        "goal_impact": 2,
+        "evidence_rank": 2,
+        "cost": 2,
+        "priority": 1,
+        "targets": [],
+        "cause": "local_module",
+        "rule_ids": [
+          "P12"
+        ],
+        "command": []
+      },
+      "action_after_inspection": null,
+      "execution_source": "explicit_editable_install_alternative_in_action_text",
+      "steps": [
+        {
+          "step": "venv -q --seed -p",
+          "exit_code": 0,
+          "seconds": 0.3,
+          "stderr": ""
+        },
+        {
+          "step": "pip install -q --python",
+          "exit_code": 0,
+          "seconds": 0.2,
+          "stderr": ""
+        },
+        {
+          "step": "before",
+          "argv": [
+            "/fixfirst/.venv/bin/python",
+            "/run/cachetools/state/check.py",
+            "run",
+            "/run/cachetools/project",
+            "/run/cachetools/project/.venv/bin/python",
+            "/run/cachetools/state/before.json",
+            "/run/cachetools/state/saved.json"
+          ],
+          "exit_code": 0,
+          "seconds": 1.26,
+          "stopped": false,
+          "output": ""
+        },
+        {
+          "step": "generated-repair",
+          "argv": [
+            "/run/cachetools/project/.venv/bin/python",
+            "-m",
+            "pip",
+            "install",
+            "-e",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 2.77,
+          "stopped": false,
+          "output": "Obtaining file:///run/cachetools/project\n  Installing build dependencies: started\n  Installing build dependencies: finished with status 'done'\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Getting requirements to build editable: started\n  Getting requirements to build editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: cachetools\n  Building editable for cachetools (pyproject.toml): started\n  Building editable for cachetools (pyproject.toml): finished with status 'done'\n  Created wheel for cachetools: filename=cachetools-5.5.0-0.editable-py3-none-any.whl size=3854 sha256=a3d96dcdbab86ff8c5bf1fbac949513ccf14b89a8fcb2b74089e58c8f51b1230\n  Stored in directory: /run/cachetools/tmp/pip-ephem-wheel-cache-r3be05yk/wheels/67/9d/50/64a96ff19f6d32ad5126b22c4f5980d0fe7d3c4de441a0e1c7\nSuccessfully built cachetools\nInstalling collected packages: cachetools\nSuccessfully installed cachetools-5.5.0\n"
+        },
+        {
+          "step": "after",
+          "argv": [
+            "/fixfirst/.venv/bin/python",
+            "/run/cachetools/state/check.py",
+            "run",
+            "/run/cachetools/project",
+            "/run/cachetools/project/.venv/bin/python",
+            "/run/cachetools/state/after.json",
+            "/run/cachetools/state/saved.json"
+          ],
+          "exit_code": 0,
+          "seconds": 0.82,
+          "stopped": false,
+          "output": ""
+        }
+      ],
+      "cleanup": {
+        "stopped": [],
+        "error": null
+      },
+      "test_changes": [],
+      "verification_scope": "test_execution",
+      "target_error_remaining": false,
+      "reached_tests": true,
+      "after_fully_passed": true,
+      "attempt": "fixfirst-generated-first-step-r4a",
+      "raw_record_sha256": "96975f50552eda4a537859e112645f4d882fa1bf1b2b412bbe67909b86263996",
+      "before": {
+        "goal_status": "blocked",
+        "evidence": {
+          "issue-c85056100e16a4": {
+            "exception": "ModuleNotFoundError",
+            "message": "No module named 'cachetools'",
+            "where": "tests/test_cache.py:3"
+          }
+        },
+        "checks": [
+          {
+            "tool": "pytest_run",
+            "status": "completed",
+            "exit_code": 2,
+            "verified_pass": false,
+            "test_summary": {
+              "passed": 0,
+              "failed": 0,
+              "skipped": 0,
+              "xfail_or_xpass": 0,
+              "selected": 0,
+              "incomplete": 0
+            },
+            "finish": [
+              {
+                "type": "finish",
+                "exit_code": 2,
+                "collected": 0,
+                "collect_only": false,
+                "records_dropped": false
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "goal_status": "achieved",
+        "evidence": {},
+        "checks": [
+          {
+            "tool": "pytest_run",
+            "status": "completed",
+            "exit_code": 0,
+            "verified_pass": true,
+            "test_summary": {
+              "passed": 215,
+              "failed": 0,
+              "skipped": 0,
+              "xfail_or_xpass": 0,
+              "selected": 215,
+              "incomplete": 0
+            },
+            "finish": [
+              {
+                "type": "finish",
+                "exit_code": 0,
+                "collected": 215,
+                "collect_only": false,
+                "records_dropped": false
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "parsel",
+      "source_commit": "7ed4b24a9b8ef874c644c6cec01654539bc66cc3",
+      "snapshot_sha256": "48737388a8891af00970424542cc32d13158bdd5d879dfcf988fb8073fd6b5ff",
+      "label": "missing_dependency",
+      "outcome": "first_step_not_verified",
+      "error": null,
+      "first_action": {
+        "schema_version": 1,
+        "action_id": "install-six",
+        "kind": "manual_fix",
+        "title": "Install the declared dependency that provides six",
+        "explanation": "setup.py install_requires declares it, but the target interpreter cannot import six. Install it into this interpreter, or install all of the project's declared dependencies at once. FixFirst does not install anything itself.",
+        "verification": "Re-run the project declaration check and test collection",
+        "check": null,
+        "issue_ids": [
+          "issue-421919cb661a7c",
+          "issue-9cff58732dfe24"
+        ],
+        "reason_refs": [
+          "issue-421919cb661a7c:remedy:install_declared",
+          "issue-421919cb661a7c:missing_module:module:six",
+          "module:six:declared_in:setup.py install_requires",
+          "issue-9cff58732dfe24:remedy:install_declared",
+          "issue-9cff58732dfe24:missing_module:module:six"
+        ],
+        "preconditions": [],
+        "blocked_reasons": [],
+        "goal_impact": 2,
+        "evidence_rank": 2,
+        "cost": 2,
+        "priority": 1,
+        "targets": [],
+        "cause": "missing_dependency",
+        "rule_ids": [
+          "P16"
+        ],
+        "command": [
+          "/run/parsel/project/.venv/bin/python",
+          "-m",
+          "pip",
+          "install",
+          "six"
+        ]
+      },
+      "action_after_inspection": null,
+      "execution_source": "generated_action_command",
+      "steps": [
+        {
+          "step": "venv -q --seed -p",
+          "exit_code": 0,
+          "seconds": 0.0,
+          "stderr": ""
+        },
+        {
+          "step": "pip install -q --python",
+          "exit_code": 0,
+          "seconds": 0.3,
+          "stderr": ""
+        },
+        {
+          "step": "install-project",
+          "argv": [
+            "/run/parsel/project/.venv/bin/python",
+            "-m",
+            "pip",
+            "install",
+            "-q",
+            "--no-deps",
+            "-e",
+            "."
+          ],
+          "exit_code": 1,
+          "seconds": 2.19,
+          "stopped": false,
+          "output": "  error: subprocess-exited-with-error\n  \n  × Getting requirements to build editable did not run successfully.\n  │ exit code: 1\n  ╰─> [24 lines of output]\n      Traceback (most recent call last):\n        File \"/run/parsel/project/.venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 389, in <module>\n          main()\n        File \"/run/parsel/project/.venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 373, in main\n          json_out[\"return_val\"] = hook(**hook_input[\"kwargs\"])\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/run/parsel/project/.venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 157, in get_requires_for_build_editable\n          return hook(config_settings)\n                 ^^^^^^^^^^^^^^^^^^^^^\n        File \"/run/parsel/tmp/pip-build-env-06st_i4m/overlay/lib/python3.12/site-packages/setuptools/build_meta.py\", line 481, in get_requires_for_build_editable\n          return self.get_requires_for_build_wheel(config_settings)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/run/parsel/tmp/pip-build-env-06st_i4m/overlay/lib/python3.12/site-packages/setuptools/build_meta.py\", line 333, in get_requires_for_build_wheel\n          return self._get_build_requires(config_settings, requirements=[])\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/run/parsel/tmp/pip-build-env-06st_i4m/overlay/lib/python3.12/site-packages/setuptools/build_meta.py\", line 301, in _get_build_requires\n          self.run_setup()\n        File \"/run/parsel/tmp/pip-build-env-06st_i4m/overlay/lib/python3.12/site-packages/setuptools/build_meta.py\", line 520, in run_setup\n          super().run_setup(setup_script=setup_script)\n        File \"/run/parsel/tmp/pip-build-env-06st_i4m/overlay/lib/python3.12/site-packages/setuptools/build_meta.py\", line 317, in run_setup\n          exec(code, locals())  # noqa: S102 # exec is intentional here\n          ^^^^^^^^^^^^^^^^^^^^\n        File \"<string>\", line 6, in <module>\n      ModuleNotFoundError: No module named 'pkg_resources'\n      [end of output]\n  \n  note: This error originates from a subprocess, and is likely not a problem with pip.\nERROR: Failed to build 'file:///run/parsel/project' when getting requirements to build editable\n"
+        },
+        {
+          "step": "before",
+          "argv": [
+            "/fixfirst/.venv/bin/python",
+            "/run/parsel/state/check.py",
+            "run",
+            "/run/parsel/project",
+            "/run/parsel/project/.venv/bin/python",
+            "/run/parsel/state/before.json",
+            "/run/parsel/state/saved.json"
+          ],
+          "exit_code": 0,
+          "seconds": 0.99,
+          "stopped": false,
+          "output": ""
+        },
+        {
+          "step": "generated-repair",
+          "argv": [
+            "/run/parsel/project/.venv/bin/python",
+            "-m",
+            "pip",
+            "install",
+            "six"
+          ],
+          "exit_code": 0,
+          "seconds": 0.46,
+          "stopped": false,
+          "output": "Collecting six\n  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)\nDownloading six-1.17.0-py2.py3-none-any.whl (11 kB)\nInstalling collected packages: six\nSuccessfully installed six-1.17.0\n"
+        },
+        {
+          "step": "after",
+          "argv": [
+            "/fixfirst/.venv/bin/python",
+            "/run/parsel/state/check.py",
+            "run",
+            "/run/parsel/project",
+            "/run/parsel/project/.venv/bin/python",
+            "/run/parsel/state/after.json",
+            "/run/parsel/state/saved.json"
+          ],
+          "exit_code": 0,
+          "seconds": 0.93,
+          "stopped": false,
+          "output": ""
+        }
+      ],
+      "cleanup": {
+        "stopped": [],
+        "error": null
+      },
+      "test_changes": [],
+      "verification_scope": "test_execution",
+      "target_error_remaining": false,
+      "reached_tests": false,
+      "after_fully_passed": false,
+      "attempt": "fixfirst-generated-first-step-r4a",
+      "raw_record_sha256": "1ee15ee41c2251688679ecde2ecee6b65409956b16487ff03ccb1729a152b4ae",
+      "before": {
+        "goal_status": "blocked",
+        "evidence": {
+          "issue-421919cb661a7c": {
+            "exception": "ModuleNotFoundError",
+            "message": "No module named 'six'",
+            "where": "tests/test_selector.py:4"
+          },
+          "issue-9cff58732dfe24": {
+            "exception": "ConftestImportFailure",
+            "message": "ModuleNotFoundError: No module named 'six' (from /run/parsel/project/docs/conftest.py)",
+            "where": "parsel/selector.py:7"
+          }
+        },
+        "checks": [
+          {
+            "tool": "pytest_run",
+            "status": "completed",
+            "exit_code": 2,
+            "verified_pass": false,
+            "test_summary": {
+              "passed": 0,
+              "failed": 0,
+              "skipped": 0,
+              "xfail_or_xpass": 0,
+              "selected": 0,
+              "incomplete": 0
+            },
+            "finish": [
+              {
+                "type": "finish",
+                "exit_code": 2,
+                "collected": 0,
+                "collect_only": false,
+                "records_dropped": false
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "goal_status": "blocked",
+        "evidence": {
+          "issue-7abba46bd59aa5": {
+            "exception": "ModuleNotFoundError",
+            "message": "No module named 'lxml'",
+            "where": "parsel/selector.py:8"
+          },
+          "issue-69f01d5d7426a0": {
+            "exception": "ConftestImportFailure",
+            "message": "ModuleNotFoundError: No module named 'lxml' (from /run/parsel/project/docs/conftest.py)",
+            "where": "parsel/selector.py:8"
+          }
+        },
+        "checks": [
+          {
+            "tool": "pytest_run",
+            "status": "completed",
+            "exit_code": 2,
+            "verified_pass": false,
+            "test_summary": {
+              "passed": 0,
+              "failed": 0,
+              "skipped": 0,
+              "xfail_or_xpass": 0,
+              "selected": 0,
+              "incomplete": 0
+            },
+            "finish": [
+              {
+                "type": "finish",
+                "exit_code": 2,
+                "collected": 0,
+                "collect_only": false,
+                "records_dropped": false
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "records",
+      "source_commit": "80ad70f07dd7a1ed35c08d60270d4c2abb95a4a6",
+      "snapshot_sha256": "4ef33e5629cbf15e0fb7bb7678b05079272af8e1deb0db40e7e4bc24317f7415",
+      "label": "version_incompatibility",
+      "outcome": "first_failure_resolved",
+      "error": null,
+      "first_action": {
+        "schema_version": 1,
+        "action_id": "tested-sqlalchemy",
+        "kind": "manual_fix",
+        "title": "Try sqlalchemy below 1.3: the project was tested with sqlalchemy 1.2.6, this environment has 2.0.54",
+        "explanation": "The failure is raised inside sqlalchemy, and Pipfile.lock records that the project worked with sqlalchemy 1.2.6; the installed 2.0.54 is a newer major version, which usually changes behaviour. Install sqlalchemy below 1.3 to return to the release series the project was tested with, or update the project for the new version.",
+        "verification": "Re-run the tests with the same interpreter",
+        "check": null,
+        "issue_ids": [
+          "issue-bfa2c65905b792",
+          "issue-367fef92957e4b",
+          "issue-2383c548cad4cd",
+          "issue-6fd11c879f4025",
+          "issue-268585690ca1a1",
+          "issue-0090d1f8afb9e0",
+          "issue-ffb90bd5a2b0c4",
+          "issue-bc952285e3ba89",
+          "issue-ea7ff7d87ea6a5",
+          "issue-fe005e2a019c0c",
+          "issue-a82deddcfbd16e",
+          "issue-6ed320a72f9472",
+          "issue-7a045c98450800",
+          "issue-1042042fdc79d0",
+          "issue-a67f971bbac602",
+          "issue-1eb920d2f69225"
+        ],
+        "reason_refs": [
+          "issue-bfa2c65905b792:likely:version_incompatibility",
+          "issue-bfa2c65905b792:likely_because:dist:sqlalchemy",
+          "dist:sqlalchemy:tested_version:1.2.6",
+          "dist:sqlalchemy:tested_in:Pipfile.lock",
+          "dist:sqlalchemy:tested_series_below:1.3",
+          "dist:sqlalchemy:installed_version:2.0.54",
+          "issue-367fef92957e4b:likely:version_incompatibility",
+          "issue-367fef92957e4b:likely_because:dist:sqlalchemy",
+          "issue-2383c548cad4cd:likely:version_incompatibility",
+          "issue-2383c548cad4cd:likely_because:dist:sqlalchemy",
+          "issue-6fd11c879f4025:likely:version_incompatibility",
+          "issue-6fd11c879f4025:likely_because:dist:sqlalchemy",
+          "issue-268585690ca1a1:likely:version_incompatibility",
+          "issue-268585690ca1a1:likely_because:dist:sqlalchemy",
+          "issue-0090d1f8afb9e0:likely:version_incompatibility",
+          "issue-0090d1f8afb9e0:likely_because:dist:sqlalchemy",
+          "issue-ffb90bd5a2b0c4:likely:version_incompatibility",
+          "issue-ffb90bd5a2b0c4:likely_because:dist:sqlalchemy",
+          "issue-bc952285e3ba89:likely:version_incompatibility",
+          "issue-bc952285e3ba89:likely_because:dist:sqlalchemy",
+          "issue-ea7ff7d87ea6a5:likely:version_incompatibility",
+          "issue-ea7ff7d87ea6a5:likely_because:dist:sqlalchemy",
+          "issue-fe005e2a019c0c:likely:version_incompatibility",
+          "issue-fe005e2a019c0c:likely_because:dist:sqlalchemy",
+          "issue-a82deddcfbd16e:likely:version_incompatibility",
+          "issue-a82deddcfbd16e:likely_because:dist:sqlalchemy",
+          "issue-6ed320a72f9472:likely:version_incompatibility",
+          "issue-6ed320a72f9472:likely_because:dist:sqlalchemy",
+          "issue-7a045c98450800:likely:version_incompatibility",
+          "issue-7a045c98450800:likely_because:dist:sqlalchemy",
+          "issue-1042042fdc79d0:likely:version_incompatibility",
+          "issue-1042042fdc79d0:likely_because:dist:sqlalchemy",
+          "issue-a67f971bbac602:likely:version_incompatibility",
+          "issue-a67f971bbac602:likely_because:dist:sqlalchemy",
+          "issue-1eb920d2f69225:likely:version_incompatibility",
+          "issue-1eb920d2f69225:likely_because:dist:sqlalchemy"
+        ],
+        "preconditions": [],
+        "blocked_reasons": [],
+        "goal_impact": 1,
+        "evidence_rank": 0,
+        "cost": 1,
+        "priority": 3,
+        "targets": [],
+        "cause": "version_incompatibility",
+        "rule_ids": [
+          "P61"
+        ],
+        "command": [
+          "/run/records/project/.venv/bin/python",
+          "-m",
+          "pip",
+          "install",
+          "sqlalchemy<1.3"
+        ]
+      },
+      "action_after_inspection": null,
+      "execution_source": "generated_action_command",
+      "steps": [
+        {
+          "step": "venv -q --seed -p",
+          "exit_code": 0,
+          "seconds": 0.0,
+          "stderr": ""
+        },
+        {
+          "step": "pip install -q --python",
+          "exit_code": 0,
+          "seconds": 0.1,
+          "stderr": ""
+        },
+        {
+          "step": "install-project",
+          "argv": [
+            "/run/records/project/.venv/bin/python",
+            "-m",
+            "pip",
+            "install",
+            "-q",
+            "--no-deps",
+            "-e",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 1.52,
+          "stopped": false,
+          "output": ""
+        },
+        {
+          "step": "before",
+          "argv": [
+            "/fixfirst/.venv/bin/python",
+            "/run/records/state/check.py",
+            "run",
+            "/run/records/project",
+            "/run/records/project/.venv/bin/python",
+            "/run/records/state/before.json",
+            "/run/records/state/saved.json"
+          ],
+          "exit_code": 0,
+          "seconds": 3.66,
+          "stopped": false,
+          "output": ""
+        },
+        {
+          "step": "generated-repair",
+          "argv": [
+            "/run/records/project/.venv/bin/python",
+            "-m",
+            "pip",
+            "install",
+            "sqlalchemy<1.3"
+          ],
+          "exit_code": 0,
+          "seconds": 2.62,
+          "stopped": false,
+          "output": "Collecting sqlalchemy<1.3\n  Downloading SQLAlchemy-1.2.19.tar.gz (5.7 MB)\n     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.7/5.7 MB 34.6 MB/s  0:00:00\n  Installing build dependencies: started\n  Installing build dependencies: finished with status 'done'\n  Getting requirements to build wheel: started\n  Getting requirements to build wheel: finished with status 'done'\n  Preparing metadata (pyproject.toml): started\n  Preparing metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: sqlalchemy\n  Building wheel for sqlalchemy (pyproject.toml): started\n  Building wheel for sqlalchemy (pyproject.toml): finished with status 'done'\n  Created wheel for sqlalchemy: filename=sqlalchemy-1.2.19-cp312-cp312-macosx_11_0_arm64.whl size=1107133 sha256=61842e6ca33640bfcdd5412758796fe3c6a59dcedb48de60c2d2df9f76f3cd7f\n  Stored in directory: /run/records/state/Library/Caches/pip/wheels/0b/7e/50/84e9e1171b9f75c3c2c401f9360cf19609f1e07087d721e480\nSuccessfully built sqlalchemy\nInstalling collected packages: sqlalchemy\n  Attempting uninstall: sqlalchemy\n    Found existing installation: SQLAlchemy 2.0.54\n    Uninstalling SQLAlchemy-2.0.54:\n      Successfully uninstalled SQLAlchemy-2.0.54\nSuccessfully installed sqlalchemy-1.2.19\n"
+        },
+        {
+          "step": "after",
+          "argv": [
+            "/fixfirst/.venv/bin/python",
+            "/run/records/state/check.py",
+            "run",
+            "/run/records/project",
+            "/run/records/project/.venv/bin/python",
+            "/run/records/state/after.json",
+            "/run/records/state/saved.json"
+          ],
+          "exit_code": 0,
+          "seconds": 33.9,
+          "stopped": false,
+          "output": ""
+        }
+      ],
+      "cleanup": {
+        "stopped": [],
+        "error": null
+      },
+      "test_changes": [],
+      "verification_scope": "test_execution",
+      "target_error_remaining": false,
+      "reached_tests": true,
+      "after_fully_passed": false,
+      "attempt": "fixfirst-generated-first-step-r4a",
+      "raw_record_sha256": "1f059fcd2996b825a5fb8db171f33ea2c397a67e2a028cfa4b49577729764a5a",
+      "before": {
+        "goal_status": "blocked",
+        "evidence": {
+          "issue-bfa2c65905b792": {
+            "exception": "ResourceClosedError",
+            "message": "This result object does not return rows. It has been closed automatically.",
+            "where": "records.py:365"
+          },
+          "issue-367fef92957e4b": {
+            "exception": "ResourceClosedError",
+            "message": "This result object does not return rows. It has been closed automatically.",
+            "where": "records.py:365"
+          },
+          "issue-2383c548cad4cd": {
+            "exception": "ResourceClosedError",
+            "message": "This result object does not return rows. It has been closed automatically.",
+            "where": "records.py:365"
+          },
+          "issue-6fd11c879f4025": {
+            "exception": "ResourceClosedError",
+            "message": "This result object does not return rows. It has been closed automatically.",
+            "where": "records.py:365"
+          },
+          "issue-268585690ca1a1": {
+            "exception": "ResourceClosedError",
+            "message": "This result object does not return rows. It has been closed automatically.",
+            "where": "records.py:365"
+          },
+          "issue-0090d1f8afb9e0": {
+            "exception": "ResourceClosedError",
+            "message": "This result object does not return rows. It has been closed automatically.",
+            "where": "records.py:365"
+          },
+          "issue-ffb90bd5a2b0c4": {
+            "exception": "ResourceClosedError",
+            "message": "This result object does not return rows. It has been closed automatically.",
+            "where": "records.py:365"
+          },
+          "issue-bc952285e3ba89": {
+            "exception": "ResourceClosedError",
+            "message": "This result object does not return rows. It has been closed automatically.",
+            "where": "records.py:365"
+          },
+          "issue-ea7ff7d87ea6a5": {
+            "exception": "ResourceClosedError",
+            "message": "This result object does not return rows. It has been closed automatically.",
+            "where": "records.py:365"
+          },
+          "issue-fe005e2a019c0c": {
+            "exception": "ResourceClosedError",
+            "message": "This result object does not return rows. It has been closed automatically.",
+            "where": "records.py:365"
+          },
+          "issue-a82deddcfbd16e": {
+            "exception": "ResourceClosedError",
+            "message": "This result object does not return rows. It has been closed automatically.",
+            "where": "records.py:365"
+          },
+          "issue-6ed320a72f9472": {
+            "exception": "ResourceClosedError",
+            "message": "This result object does not return rows. It has been closed automatically.",
+            "where": "records.py:365"
+          },
+          "issue-7a045c98450800": {
+            "exception": "ResourceClosedError",
+            "message": "This result object does not return rows. It has been closed automatically.",
+            "where": "records.py:365"
+          },
+          "issue-1042042fdc79d0": {
+            "exception": "ResourceClosedError",
+            "message": "This result object does not return rows. It has been closed automatically.",
+            "where": "records.py:365"
+          },
+          "issue-a67f971bbac602": {
+            "exception": "ResourceClosedError",
+            "message": "This result object does not return rows. It has been closed automatically.",
+            "where": "records.py:365"
+          },
+          "issue-1eb920d2f69225": {
+            "exception": "ResourceClosedError",
+            "message": "This result object does not return rows. It has been closed automatically.",
+            "where": "records.py:365"
+          }
+        },
+        "checks": [
+          {
+            "tool": "pytest_run",
+            "status": "completed",
+            "exit_code": 1,
+            "verified_pass": false,
+            "test_summary": {
+              "passed": 23,
+              "failed": 16,
+              "skipped": 0,
+              "xfail_or_xpass": 0,
+              "selected": 39,
+              "incomplete": 0
+            },
+            "finish": [
+              {
+                "type": "finish",
+                "exit_code": 1,
+                "collected": 39,
+                "collect_only": false,
+                "records_dropped": false
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "goal_status": "blocked",
+        "evidence": {
+          "issue-14d1ac5a8efa65": {
+            "exception": "ProgrammingError",
+            "message": "(sqlite3.ProgrammingError) Cannot operate on a closed database. (Background on this error at: http://sqlalche.me/e/f405)",
+            "where": "records.py:365"
+          },
+          "issue-7e656db19153e7": {
+            "exception": "ProgrammingError",
+            "message": "(sqlite3.ProgrammingError) Cannot operate on a closed database. (Background on this error at: http://sqlalche.me/e/f405)",
+            "where": "records.py:365"
+          },
+          "issue-16d0cc347fbe3b": {
+            "exception": "ProgrammingError",
+            "message": "(sqlite3.ProgrammingError) Cannot operate on a closed database. (Background on this error at: http://sqlalche.me/e/f405)",
+            "where": "records.py:365"
+          },
+          "issue-fec6a04d884a36": {
+            "exception": "ProgrammingError",
+            "message": "(sqlite3.ProgrammingError) Cannot operate on a closed database. (Background on this error at: http://sqlalche.me/e/f405)",
+            "where": "records.py:365"
+          },
+          "issue-fabe24f67a972a": {
+            "exception": "ProgrammingError",
+            "message": "(sqlite3.ProgrammingError) Cannot operate on a closed database. (Background on this error at: http://sqlalche.me/e/f405)",
+            "where": "records.py:365"
+          },
+          "issue-aafd8122774cc8": {
+            "exception": "ProgrammingError",
+            "message": "(sqlite3.ProgrammingError) Cannot operate on a closed database. (Background on this error at: http://sqlalche.me/e/f405)",
+            "where": "records.py:365"
+          },
+          "issue-83f9291ce31472": {
+            "exception": "OperationalError",
+            "message": "(sqlite3.OperationalError) database is locked [SQL: 'DROP TABLE foo'] (Background on this error at: http://sqlalche.me/e/e3q8)",
+            "where": "records.py:362"
+          },
+          "issue-26494c8f3ee1de": {
+            "exception": "OperationalError",
+            "message": "(sqlite3.OperationalError) database is locked [SQL: 'DROP TABLE foo'] (Background on this error at: http://sqlalche.me/e/e3q8)",
+            "where": "records.py:362"
+          },
+          "issue-b94c88ed166fc6": {
+            "exception": "OperationalError",
+            "message": "(sqlite3.OperationalError) database is locked [SQL: 'DROP TABLE foo'] (Background on this error at: http://sqlalche.me/e/e3q8)",
+            "where": "records.py:362"
+          },
+          "issue-2372c32dc155ef": {
+            "exception": "OperationalError",
+            "message": "(sqlite3.OperationalError) database is locked [SQL: 'DROP TABLE foo'] (Background on this error at: http://sqlalche.me/e/e3q8)",
+            "where": "records.py:362"
+          },
+          "issue-1a0e8e968b878c": {
+            "exception": "OperationalError",
+            "message": "(sqlite3.OperationalError) database is locked [SQL: 'DROP TABLE foo'] (Background on this error at: http://sqlalche.me/e/e3q8)",
+            "where": "records.py:362"
+          },
+          "issue-e523fe32bd2305": {
+            "exception": "OperationalError",
+            "message": "(sqlite3.OperationalError) database is locked [SQL: 'DROP TABLE foo'] (Background on this error at: http://sqlalche.me/e/e3q8)",
+            "where": "records.py:362"
+          }
+        },
+        "checks": [
+          {
+            "tool": "pytest_run",
+            "status": "completed",
+            "exit_code": 1,
+            "verified_pass": false,
+            "test_summary": {
+              "passed": 33,
+              "failed": 6,
+              "skipped": 0,
+              "xfail_or_xpass": 0,
+              "selected": 39,
+              "incomplete": 0
+            },
+            "finish": [
+              {
+                "type": "finish",
+                "exit_code": 1,
+                "collected": 39,
+                "collect_only": false,
+                "records_dropped": false
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "typer",
+      "source_commit": "c3a4c72a4f1a18b7f16addb508862ec63411fa63",
+      "snapshot_sha256": "bfd1d142265e9a18b704c55236c2ec017a70f9a82734c7d708a1f2e9b47f512e",
+      "label": "missing_dependency",
+      "outcome": "first_failure_resolved",
+      "error": null,
+      "first_action": {
+        "schema_version": 1,
+        "action_id": "install-shellingham",
+        "kind": "manual_fix",
+        "title": "Install the declared dependency that provides shellingham",
+        "explanation": "pyproject.toml [tool.flit.metadata.requires-extra.test] declares it, but the target interpreter cannot import shellingham. Install it into this interpreter, or install all of the project's declared dependencies at once. FixFirst does not install anything itself.",
+        "verification": "Re-run the project declaration check and test collection",
+        "check": null,
+        "issue_ids": [
+          "issue-4a402c0c44d38a"
+        ],
+        "reason_refs": [
+          "issue-4a402c0c44d38a:remedy:install_declared",
+          "issue-4a402c0c44d38a:missing_module:module:shellingham",
+          "module:shellingham:declared_in:pyproject.toml [tool.flit.metadata.requires-extra.test]",
+          "module:shellingham:declared_in:pyproject.toml [tool.flit.metadata.requires-extra.all]"
+        ],
+        "preconditions": [],
+        "blocked_reasons": [],
+        "goal_impact": 2,
+        "evidence_rank": 2,
+        "cost": 2,
+        "priority": 1,
+        "targets": [],
+        "cause": "missing_dependency",
+        "rule_ids": [
+          "P16"
+        ],
+        "command": [
+          "/run/typer/project/.venv/bin/python",
+          "-m",
+          "pip",
+          "install",
+          "shellingham"
+        ]
+      },
+      "action_after_inspection": null,
+      "execution_source": "generated_action_command",
+      "steps": [
+        {
+          "step": "venv -q --seed -p",
+          "exit_code": 0,
+          "seconds": 0.0,
+          "stderr": ""
+        },
+        {
+          "step": "pip install -q --python",
+          "exit_code": 0,
+          "seconds": 0.1,
+          "stderr": ""
+        },
+        {
+          "step": "install-project",
+          "argv": [
+            "/run/typer/project/.venv/bin/python",
+            "-m",
+            "pip",
+            "install",
+            "-q",
+            "--no-deps",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 1.48,
+          "stopped": false,
+          "output": ""
+        },
+        {
+          "step": "before",
+          "argv": [
+            "/fixfirst/.venv/bin/python",
+            "/run/typer/state/check.py",
+            "run",
+            "/run/typer/project",
+            "/run/typer/project/.venv/bin/python",
+            "/run/typer/state/before.json",
+            "/run/typer/state/saved.json"
+          ],
+          "exit_code": 0,
+          "seconds": 1.38,
+          "stopped": false,
+          "output": ""
+        },
+        {
+          "step": "generated-repair",
+          "argv": [
+            "/run/typer/project/.venv/bin/python",
+            "-m",
+            "pip",
+            "install",
+            "shellingham"
+          ],
+          "exit_code": 0,
+          "seconds": 0.45,
+          "stopped": false,
+          "output": "Collecting shellingham\n  Downloading shellingham-1.5.4-py2.py3-none-any.whl.metadata (3.5 kB)\nDownloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)\nInstalling collected packages: shellingham\nSuccessfully installed shellingham-1.5.4\n"
+        },
+        {
+          "step": "after",
+          "argv": [
+            "/fixfirst/.venv/bin/python",
+            "/run/typer/state/check.py",
+            "collect",
+            "/run/typer/project",
+            "/run/typer/project/.venv/bin/python",
+            "/run/typer/state/after.json",
+            "/run/typer/state/saved.json"
+          ],
+          "exit_code": 0,
+          "seconds": 0.83,
+          "stopped": false,
+          "output": ""
+        }
+      ],
+      "cleanup": {
+        "stopped": [],
+        "error": null
+      },
+      "test_changes": [],
+      "verification_scope": "test_collection",
+      "target_error_remaining": false,
+      "reached_tests": true,
+      "after_fully_passed": false,
+      "attempt": "fixfirst-generated-first-step-r4a",
+      "raw_record_sha256": "e002a7adce63cd4ca916dce92192c6a4428b746599112259d8d7fd842accf67e",
+      "before": {
+        "goal_status": "blocked",
+        "evidence": {
+          "issue-4a402c0c44d38a": {
+            "exception": "ModuleNotFoundError",
+            "message": "No module named 'shellingham'",
+            "where": "tests/test_completion/test_completion_install.py:6"
+          }
+        },
+        "checks": [
+          {
+            "tool": "pytest_run",
+            "status": "completed",
+            "exit_code": 2,
+            "verified_pass": false,
+            "test_summary": {
+              "passed": 0,
+              "failed": 0,
+              "skipped": 0,
+              "xfail_or_xpass": 0,
+              "selected": 475,
+              "incomplete": 475
+            },
+            "finish": [
+              {
+                "type": "finish",
+                "exit_code": 2,
+                "collected": 475,
+                "collect_only": false,
+                "records_dropped": false
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "goal_status": "achieved",
+        "evidence": {},
+        "checks": [
+          {
+            "tool": "pytest",
+            "status": "completed",
+            "exit_code": 0,
+            "verified_pass": true,
+            "test_summary": {},
+            "finish": [
+              {
+                "type": "finish",
+                "exit_code": 0,
+                "collected": 492,
+                "collect_only": true,
+                "records_dropped": false
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "django-model-utils",
+      "source_commit": "8af8cf269cc037dba0bcdaa79ac3956dca3323ac",
+      "snapshot_sha256": "b67875269f157374467f10ec0326ff3f98ea696273b45f3900ea0d023d7cb669",
+      "label": "version_incompatibility",
+      "outcome": "first_failure_resolved",
+      "error": null,
+      "first_action": {
+        "schema_version": 1,
+        "action_id": "find-release-django.utils.translation.ugettext_lazy",
+        "kind": "inspect",
+        "title": "Find an older django that provides django.utils.translation.ugettext_lazy",
+        "explanation": "django 5.2.17 no longer provides django.utils.translation.ugettext_lazy. FixFirst can try older django releases in a temporary environment with this Python and tell you exactly which one to install. It downloads prebuilt packages from PyPI, runs no build scripts and does not change your environment; it takes up to a few minutes.",
+        "verification": "The search result appears as the next step",
+        "check": "version_search",
+        "issue_ids": [
+          "issue-2653486fbcc006"
+        ],
+        "reason_refs": [
+          "issue-2653486fbcc006:likely:version_incompatibility",
+          "issue-2653486fbcc006:likely_because:dist:django",
+          "issue-2653486fbcc006:api:api:django.utils.translation.ugettext_lazy",
+          "dist:django:installed_version:5.2.17"
+        ],
+        "preconditions": [],
+        "blocked_reasons": [],
+        "goal_impact": 2,
+        "evidence_rank": 0,
+        "cost": 1,
+        "priority": 1,
+        "targets": [
+          "django",
+          "django.utils.translation.ugettext_lazy"
+        ],
+        "cause": null,
+        "rule_ids": [
+          "P58"
+        ],
+        "command": []
+      },
+      "action_after_inspection": {
+        "schema_version": 1,
+        "action_id": "use-release-django.utils.translation.ugettext_lazy",
+        "kind": "manual_fix",
+        "title": "Install django 3.2.25: this release was verified to provide django.utils.translation.ugettext_lazy",
+        "explanation": "FixFirst installed django 3.2.25 in a temporary environment with this Python and confirmed that it provides django.utils.translation.ugettext_lazy. The command pins that exact version. Re-run the project's tests to check the full environment, or update the code that imports the name. The bounded search may not have checked every newer release.",
+        "verification": "Re-run the tests with the same interpreter",
+        "check": null,
+        "issue_ids": [
+          "issue-2653486fbcc006"
+        ],
+        "reason_refs": [
+          "issue-2653486fbcc006:remedy:use_release",
+          "issue-2653486fbcc006:because:api:django.utils.translation.ugettext_lazy",
+          "api:django.utils.translation.ugettext_lazy:release_search:dist:django",
+          "api:django.utils.translation.ugettext_lazy:provided_until_release:3.2.25"
+        ],
+        "preconditions": [],
+        "blocked_reasons": [],
+        "goal_impact": 2,
+        "evidence_rank": 2,
+        "cost": 1,
+        "priority": 1,
+        "targets": [],
+        "cause": "version_incompatibility",
+        "rule_ids": [
+          "P57"
+        ],
+        "command": [
+          "/run/django-model-utils/project/.venv/bin/python",
+          "-m",
+          "pip",
+          "install",
+          "django==3.2.25"
+        ]
+      },
+      "execution_source": "generated_action_command",
+      "steps": [
+        {
+          "step": "venv -q --seed -p",
+          "exit_code": 0,
+          "seconds": 0.0,
+          "stderr": ""
+        },
+        {
+          "step": "pip install -q --python",
+          "exit_code": 0,
+          "seconds": 0.2,
+          "stderr": ""
+        },
+        {
+          "step": "install-project",
+          "argv": [
+            "/run/django-model-utils/project/.venv/bin/python",
+            "-m",
+            "pip",
+            "install",
+            "-q",
+            "--no-deps",
+            "-e",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 1.32,
+          "stopped": false,
+          "output": ""
+        },
+        {
+          "step": "before",
+          "argv": [
+            "/fixfirst/.venv/bin/python",
+            "/run/django-model-utils/state/check.py",
+            "run",
+            "/run/django-model-utils/project",
+            "/run/django-model-utils/project/.venv/bin/python",
+            "/run/django-model-utils/state/before.json",
+            "/run/django-model-utils/state/saved.json"
+          ],
+          "exit_code": 0,
+          "seconds": 1.06,
+          "stopped": false,
+          "output": ""
+        },
+        {
+          "step": "inspection",
+          "argv": [
+            "/fixfirst/.venv/bin/python",
+            "/run/django-model-utils/state/check.py",
+            "inspect",
+            "/run/django-model-utils/project",
+            "/run/django-model-utils/project/.venv/bin/python",
+            "/run/django-model-utils/state/inspection.json",
+            "/run/django-model-utils/state/saved.json"
+          ],
+          "exit_code": 0,
+          "seconds": 21.21,
+          "stopped": false,
+          "output": ""
+        },
+        {
+          "step": "generated-repair",
+          "argv": [
+            "/run/django-model-utils/project/.venv/bin/python",
+            "-m",
+            "pip",
+            "install",
+            "django==3.2.25"
+          ],
+          "exit_code": 0,
+          "seconds": 1.45,
+          "stopped": false,
+          "output": "Collecting django==3.2.25\n  Using cached Django-3.2.25-py3-none-any.whl.metadata (4.1 kB)\nRequirement already satisfied: asgiref<4,>=3.3.2 in ./.venv/lib/python3.11/site-packages (from django==3.2.25) (3.12.1)\nCollecting pytz (from django==3.2.25)\n  Using cached pytz-2026.4-py2.py3-none-any.whl.metadata (22 kB)\nRequirement already satisfied: sqlparse>=0.2.2 in ./.venv/lib/python3.11/site-packages (from django==3.2.25) (0.6.0)\nUsing cached Django-3.2.25-py3-none-any.whl (7.9 MB)\nUsing cached pytz-2026.4-py2.py3-none-any.whl (506 kB)\nInstalling collected packages: pytz, django\n  Attempting uninstall: django\n    Found existing installation: Django 5.2.17\n    Uninstalling Django-5.2.17:\n      Successfully uninstalled Django-5.2.17\n\nSuccessfully installed django-3.2.25 pytz-2026.4\n"
+        },
+        {
+          "step": "after",
+          "argv": [
+            "/fixfirst/.venv/bin/python",
+            "/run/django-model-utils/state/check.py",
+            "collect",
+            "/run/django-model-utils/project",
+            "/run/django-model-utils/project/.venv/bin/python",
+            "/run/django-model-utils/state/after.json",
+            "/run/django-model-utils/state/saved.json"
+          ],
+          "exit_code": 0,
+          "seconds": 2.45,
+          "stopped": false,
+          "output": ""
+        }
+      ],
+      "cleanup": {
+        "stopped": [],
+        "error": null
+      },
+      "test_changes": [],
+      "verification_scope": "test_collection",
+      "target_error_remaining": false,
+      "reached_tests": true,
+      "after_fully_passed": false,
+      "attempt": "fixfirst-generated-first-step-r4b",
+      "raw_record_sha256": "1e872e06a5417df21530e53b39ba923998cdf5be89ef73ef12a0ac29e5029ed0",
+      "before": {
+        "goal_status": "blocked",
+        "evidence": {
+          "issue-2653486fbcc006": {
+            "exception": "ImportError",
+            "message": "ImportError: cannot import name 'ugettext_lazy' from 'django.utils.translation' (/run/django-model-utils/project/.venv/lib/python3.11/site-packages/django/utils/translation/__init__.py)",
+            "where": "model_utils/models.py:4"
+          }
+        },
+        "checks": [
+          {
+            "tool": "pytest_run",
+            "status": "completed",
+            "exit_code": 1,
+            "verified_pass": false,
+            "test_summary": {},
+            "finish": []
+          }
+        ]
+      },
+      "inspection": {
+        "goal_status": "blocked",
+        "evidence": {
+          "issue-2653486fbcc006": {
+            "exception": "ImportError",
+            "message": "ImportError: cannot import name 'ugettext_lazy' from 'django.utils.translation' (/run/django-model-utils/project/.venv/lib/python3.11/site-packages/django/utils/translation/__init__.py)",
+            "where": "model_utils/models.py:4"
+          }
+        },
+        "checks": [
+          {
+            "tool": "pytest_run",
+            "status": "completed",
+            "exit_code": 1,
+            "verified_pass": false,
+            "test_summary": {},
+            "finish": []
+          },
+          {
+            "tool": "version_search",
+            "status": "completed",
+            "exit_code": 0,
+            "verified_pass": true,
+            "test_summary": {},
+            "result": {
+              "dist": "django",
+              "api": "django.utils.translation.ugettext_lazy",
+              "installed": "5.2.17",
+              "python": "3.11.15",
+              "checked": [
+                {
+                  "version": "5.2.16",
+                  "result": "missing"
+                },
+                {
+                  "version": "5.2.15",
+                  "result": "missing"
+                },
+                {
+                  "version": "5.2.13",
+                  "result": "missing"
+                },
+                {
+                  "version": "5.2.9",
+                  "result": "missing"
+                },
+                {
+                  "version": "5.2.1",
+                  "result": "missing"
+                },
+                {
+                  "version": "1.8.19",
+                  "result": "provides"
+                },
+                {
+                  "version": "3.1.14",
+                  "result": "provides"
+                },
+                {
+                  "version": "4.2.30",
+                  "result": "missing"
+                },
+                {
+                  "version": "4.0.10",
+                  "result": "missing"
+                },
+                {
+                  "version": "3.2.25",
+                  "result": "provides"
+                }
+              ],
+              "provides": "3.2.25",
+              "below": "3.3",
+              "first_without": "4.0",
+              "status": "partial"
+            }
+          }
+        ]
+      },
+      "after": {
+        "goal_status": "achieved",
+        "evidence": {},
+        "checks": [
+          {
+            "tool": "pytest",
+            "status": "completed",
+            "exit_code": 0,
+            "verified_pass": true,
+            "test_summary": {},
+            "finish": [
+              {
+                "type": "finish",
+                "exit_code": 0,
+                "collected": 300,
+                "collect_only": true,
+                "records_dropped": false
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "flask-sqlalchemy",
+      "source_commit": "da0e0df80cc368d95dc5a118ce857cead172aded",
+      "snapshot_sha256": "62d237da1723bace1e21467297cd57b058856ec4d95d5c9c1e3f998c98710513",
+      "label": "version_incompatibility",
+      "outcome": "manual_action_requires_interpretation",
+      "error": null,
+      "first_action": {
+        "schema_version": 1,
+        "action_id": "find-release-flask._app_ctx_stack",
+        "kind": "inspect",
+        "title": "Find an older flask that provides flask._app_ctx_stack",
+        "explanation": "flask 3.1.3 no longer provides flask._app_ctx_stack. FixFirst can try older flask releases in a temporary environment with this Python and tell you exactly which one to install. It downloads prebuilt packages from PyPI, runs no build scripts and does not change your environment; it takes up to a few minutes.",
+        "verification": "The search result appears as the next step",
+        "check": "version_search",
+        "issue_ids": [
+          "issue-d69ed6f35a28ec"
+        ],
+        "reason_refs": [
+          "issue-d69ed6f35a28ec:likely:version_incompatibility",
+          "issue-d69ed6f35a28ec:likely_because:dist:flask",
+          "issue-d69ed6f35a28ec:api:api:flask._app_ctx_stack",
+          "dist:flask:installed_version:3.1.3"
+        ],
+        "preconditions": [],
+        "blocked_reasons": [],
+        "goal_impact": 2,
+        "evidence_rank": 0,
+        "cost": 1,
+        "priority": 1,
+        "targets": [
+          "flask",
+          "flask._app_ctx_stack"
+        ],
+        "cause": null,
+        "rule_ids": [
+          "P58"
+        ],
+        "command": []
+      },
+      "action_after_inspection": {
+        "schema_version": 1,
+        "action_id": "find-release-flask._app_ctx_stack",
+        "kind": "inspect",
+        "title": "Find an older flask that provides flask._app_ctx_stack",
+        "explanation": "flask 3.1.3 no longer provides flask._app_ctx_stack. FixFirst can try older flask releases in a temporary environment with this Python and tell you exactly which one to install. It downloads prebuilt packages from PyPI, runs no build scripts and does not change your environment; it takes up to a few minutes.",
+        "verification": "The search result appears as the next step",
+        "check": "version_search",
+        "issue_ids": [
+          "issue-d69ed6f35a28ec"
+        ],
+        "reason_refs": [
+          "issue-d69ed6f35a28ec:likely:version_incompatibility",
+          "issue-d69ed6f35a28ec:likely_because:dist:flask",
+          "issue-d69ed6f35a28ec:api:api:flask._app_ctx_stack",
+          "dist:flask:installed_version:3.1.3"
+        ],
+        "preconditions": [],
+        "blocked_reasons": [],
+        "goal_impact": 2,
+        "evidence_rank": 0,
+        "cost": 1,
+        "priority": 1,
+        "targets": [
+          "flask",
+          "flask._app_ctx_stack"
+        ],
+        "cause": null,
+        "rule_ids": [
+          "P58"
+        ],
+        "command": []
+      },
+      "execution_source": null,
+      "steps": [
+        {
+          "step": "venv -q --seed -p",
+          "exit_code": 0,
+          "seconds": 0.0,
+          "stderr": ""
+        },
+        {
+          "step": "pip install -q --python",
+          "exit_code": 0,
+          "seconds": 0.1,
+          "stderr": ""
+        },
+        {
+          "step": "install-project",
+          "argv": [
+            "/run/flask-sqlalchemy/project/.venv/bin/python",
+            "-m",
+            "pip",
+            "install",
+            "-q",
+            "--no-deps",
+            "-e",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 1.44,
+          "stopped": false,
+          "output": ""
+        },
+        {
+          "step": "before",
+          "argv": [
+            "/fixfirst/.venv/bin/python",
+            "/run/flask-sqlalchemy/state/check.py",
+            "run",
+            "/run/flask-sqlalchemy/project",
+            "/run/flask-sqlalchemy/project/.venv/bin/python",
+            "/run/flask-sqlalchemy/state/before.json",
+            "/run/flask-sqlalchemy/state/saved.json"
+          ],
+          "exit_code": 0,
+          "seconds": 1.86,
+          "stopped": false,
+          "output": ""
+        },
+        {
+          "step": "inspection",
+          "argv": [
+            "/fixfirst/.venv/bin/python",
+            "/run/flask-sqlalchemy/state/check.py",
+            "inspect",
+            "/run/flask-sqlalchemy/project",
+            "/run/flask-sqlalchemy/project/.venv/bin/python",
+            "/run/flask-sqlalchemy/state/inspection.json",
+            "/run/flask-sqlalchemy/state/saved.json"
+          ],
+          "exit_code": 0,
+          "seconds": 7.32,
+          "stopped": false,
+          "output": ""
+        }
+      ],
+      "cleanup": {
+        "stopped": [],
+        "error": null
+      },
+      "test_changes": null,
+      "verification_scope": null,
+      "target_error_remaining": null,
+      "reached_tests": null,
+      "after_fully_passed": null,
+      "attempt": "fixfirst-generated-first-step-r4b",
+      "raw_record_sha256": "948a5523394e549c2315a78d3dcb786b60c45684fd6f563dab1a6cb1a67dbb0e",
+      "before": {
+        "goal_status": "blocked",
+        "evidence": {
+          "issue-d69ed6f35a28ec": {
+            "exception": "ImportError",
+            "message": "cannot import name '_app_ctx_stack' from 'flask' (/run/flask-sqlalchemy/project/.venv/lib/python3.12/site-packages/flask/__init__.py)",
+            "where": "flask_sqlalchemy/__init__.py:14"
+          }
+        },
+        "checks": [
+          {
+            "tool": "pytest_run",
+            "status": "completed",
+            "exit_code": 4,
+            "verified_pass": false,
+            "test_summary": {},
+            "finish": []
+          }
+        ]
+      },
+      "inspection": {
+        "goal_status": "blocked",
+        "evidence": {
+          "issue-d69ed6f35a28ec": {
+            "exception": "ImportError",
+            "message": "cannot import name '_app_ctx_stack' from 'flask' (/run/flask-sqlalchemy/project/.venv/lib/python3.12/site-packages/flask/__init__.py)",
+            "where": "flask_sqlalchemy/__init__.py:14"
+          }
+        },
+        "checks": [
+          {
+            "tool": "pytest_run",
+            "status": "completed",
+            "exit_code": 4,
+            "verified_pass": false,
+            "test_summary": {},
+            "finish": []
+          },
+          {
+            "tool": "version_search",
+            "status": "completed",
+            "exit_code": 0,
+            "verified_pass": false,
+            "test_summary": {},
+            "result": {
+              "dist": "flask",
+              "api": "flask._app_ctx_stack",
+              "installed": "3.1.3",
+              "python": "3.12.13",
+              "checked": [
+                {
+                  "version": "3.1.2",
+                  "result": "missing"
+                },
+                {
+                  "version": "3.1.1",
+                  "result": "missing"
+                },
+                {
+                  "version": "3.0.3",
+                  "result": "missing"
+                },
+                {
+                  "version": "2.0.3",
+                  "result": "failed"
+                },
+                {
+                  "version": "1.1.4",
+                  "result": "failed"
+                },
+                {
+                  "version": "1.0.4",
+                  "result": "failed"
+                },
+                {
+                  "version": "0.12.5",
+                  "result": "failed"
+                },
+                {
+                  "version": "0.11.1",
+                  "result": "failed"
+                },
+                {
+                  "version": "3.1.0",
+                  "result": "missing"
+                },
+                {
+                  "version": "3.0.2",
+                  "result": "missing"
+                },
+                {
+                  "version": "3.0.1",
+                  "result": "missing"
+                },
+                {
+                  "version": "3.0.0",
+                  "result": "missing"
+                }
+              ],
+              "provides": null,
+              "below": null,
+              "first_without": null,
+              "status": "not_judged"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "more-itertools",
+      "source_commit": "28ab73678adc39eacc2610bd67c1c4a37def6c28",
+      "snapshot_sha256": "8c7de9a324d0d8084305186d41423fd2bda823a78495ca4f89ba465b8b93876b",
+      "label": "healthy",
+      "outcome": "healthy",
+      "error": null,
+      "first_action": null,
+      "action_after_inspection": null,
+      "execution_source": null,
+      "steps": [
+        {
+          "step": "venv -q -p 3.14.6",
+          "exit_code": 0,
+          "seconds": 0.0,
+          "stderr": ""
+        },
+        {
+          "step": "pip install -q --python",
+          "exit_code": 0,
+          "seconds": 0.0,
+          "stderr": ""
+        },
+        {
+          "step": "install-project",
+          "argv": [
+            "/home/user/.local/bin/uv",
+            "pip",
+            "install",
+            "-q",
+            "--no-deps",
+            "--no-config",
+            "--cache-dir",
+            "/run/more-itertools/state/uv-cache",
+            "--python",
+            "/run/more-itertools/project/.venv/bin/python",
+            "-e",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 0.29,
+          "stopped": false,
+          "output": ""
+        },
+        {
+          "step": "before",
+          "argv": [
+            "/fixfirst/.venv/bin/python",
+            "/run/more-itertools/state/check.py",
+            "run",
+            "/run/more-itertools/project",
+            "/run/more-itertools/project/.venv/bin/python",
+            "/run/more-itertools/state/before.json",
+            "/run/more-itertools/state/saved.json"
+          ],
+          "exit_code": 0,
+          "seconds": 4.31,
+          "stopped": false,
+          "output": ""
+        }
+      ],
+      "cleanup": {
+        "stopped": [],
+        "error": null
+      },
+      "test_changes": null,
+      "verification_scope": null,
+      "target_error_remaining": null,
+      "reached_tests": null,
+      "after_fully_passed": null,
+      "attempt": "fixfirst-generated-first-step-r4b",
+      "raw_record_sha256": "989ae923e8e7a3686e5c00b8c5d228b87a2a6fb681cba7ee08f46bbd41c8b2f0",
+      "before": {
+        "goal_status": "achieved",
+        "evidence": {},
+        "checks": [
+          {
+            "tool": "pytest_run",
+            "status": "completed",
+            "exit_code": 0,
+            "verified_pass": true,
+            "test_summary": {
+              "passed": 670,
+              "failed": 0,
+              "skipped": 1,
+              "xfail_or_xpass": 0,
+              "selected": 671,
+              "incomplete": 0
+            },
+            "finish": [
+              {
+                "type": "finish",
+                "exit_code": 0,
+                "collected": 671,
+                "collect_only": false,
+                "records_dropped": false
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "flask-sqlalchemy",
+      "source_commit": "da0e0df80cc368d95dc5a118ce857cead172aded",
+      "snapshot_sha256": "62d237da1723bace1e21467297cd57b058856ec4d95d5c9c1e3f998c98710513",
+      "label": "version_incompatibility",
+      "outcome": "first_failure_resolved",
+      "error": null,
+      "first_action": {
+        "schema_version": 1,
+        "action_id": "find-release-flask._app_ctx_stack",
+        "kind": "inspect",
+        "title": "Find an older flask that provides flask._app_ctx_stack",
+        "explanation": "flask 3.1.3 no longer provides flask._app_ctx_stack. FixFirst can try older flask releases in a temporary environment with this Python and tell you exactly which one to install. It downloads prebuilt packages from PyPI, runs no build scripts and does not change your environment; it takes up to a few minutes.",
+        "verification": "The search result appears as the next step",
+        "check": "version_search",
+        "issue_ids": [
+          "issue-139b5276a3f7a4"
+        ],
+        "reason_refs": [
+          "issue-139b5276a3f7a4:likely:version_incompatibility",
+          "issue-139b5276a3f7a4:likely_because:dist:flask",
+          "issue-139b5276a3f7a4:api:api:flask._app_ctx_stack",
+          "dist:flask:installed_version:3.1.3"
+        ],
+        "preconditions": [],
+        "blocked_reasons": [],
+        "goal_impact": 2,
+        "evidence_rank": 0,
+        "cost": 1,
+        "priority": 1,
+        "targets": [
+          "flask",
+          "flask._app_ctx_stack"
+        ],
+        "cause": null,
+        "rule_ids": [
+          "P58"
+        ],
+        "command": []
+      },
+      "action_after_inspection": {
+        "schema_version": 1,
+        "action_id": "use-release-flask._app_ctx_stack",
+        "kind": "manual_fix",
+        "title": "Install flask 2.3.3: this release was verified to provide flask._app_ctx_stack",
+        "explanation": "FixFirst installed flask 2.3.3 in a temporary environment with this Python and confirmed that it provides flask._app_ctx_stack. The command pins that exact version. Re-run the project's tests to check the full environment, or update the code that imports the name. The bounded search may not have checked every newer release.",
+        "verification": "Re-run the tests with the same interpreter",
+        "check": null,
+        "issue_ids": [
+          "issue-139b5276a3f7a4"
+        ],
+        "reason_refs": [
+          "issue-139b5276a3f7a4:remedy:use_release",
+          "issue-139b5276a3f7a4:because:api:flask._app_ctx_stack",
+          "api:flask._app_ctx_stack:release_search:dist:flask",
+          "api:flask._app_ctx_stack:provided_until_release:2.3.3"
+        ],
+        "preconditions": [],
+        "blocked_reasons": [],
+        "goal_impact": 2,
+        "evidence_rank": 2,
+        "cost": 1,
+        "priority": 1,
+        "targets": [],
+        "cause": "version_incompatibility",
+        "rule_ids": [
+          "P57"
+        ],
+        "command": [
+          "/run/flask-sqlalchemy/project/.venv/bin/python",
+          "-m",
+          "pip",
+          "install",
+          "flask==2.3.3"
+        ]
+      },
+      "execution_source": "generated_action_command",
+      "steps": [
+        {
+          "step": "venv -q --seed -p",
+          "exit_code": 0,
+          "seconds": 0.0,
+          "stderr": ""
+        },
+        {
+          "step": "pip install -q --python",
+          "exit_code": 0,
+          "seconds": 0.0,
+          "stderr": ""
+        },
+        {
+          "step": "install-project",
+          "argv": [
+            "/run/flask-sqlalchemy/project/.venv/bin/python",
+            "-m",
+            "pip",
+            "install",
+            "-q",
+            "--no-deps",
+            "-e",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 1.44,
+          "stopped": false,
+          "output": ""
+        },
+        {
+          "step": "before",
+          "argv": [
+            "/fixfirst/.venv/bin/python",
+            "/run/flask-sqlalchemy/state/check.py",
+            "run",
+            "/run/flask-sqlalchemy/project",
+            "/run/flask-sqlalchemy/project/.venv/bin/python",
+            "/run/flask-sqlalchemy/state/before.json",
+            "/run/flask-sqlalchemy/state/saved.json"
+          ],
+          "exit_code": 0,
+          "seconds": 1.81,
+          "stopped": false,
+          "output": ""
+        },
+        {
+          "step": "inspection",
+          "argv": [
+            "/fixfirst/.venv/bin/python",
+            "/run/flask-sqlalchemy/state/check.py",
+            "inspect",
+            "/run/flask-sqlalchemy/project",
+            "/run/flask-sqlalchemy/project/.venv/bin/python",
+            "/run/flask-sqlalchemy/state/inspection.json",
+            "/run/flask-sqlalchemy/state/saved.json"
+          ],
+          "exit_code": 0,
+          "seconds": 4.02,
+          "stopped": false,
+          "output": ""
+        },
+        {
+          "step": "generated-repair",
+          "argv": [
+            "/run/flask-sqlalchemy/project/.venv/bin/python",
+            "-m",
+            "pip",
+            "install",
+            "flask==2.3.3"
+          ],
+          "exit_code": 0,
+          "seconds": 0.35,
+          "stopped": false,
+          "output": "Collecting flask==2.3.3\n  Using cached flask-2.3.3-py3-none-any.whl.metadata (3.6 kB)\nRequirement already satisfied: Werkzeug>=2.3.7 in ./.venv/lib/python3.12/site-packages (from flask==2.3.3) (3.1.8)\nRequirement already satisfied: Jinja2>=3.1.2 in ./.venv/lib/python3.12/site-packages (from flask==2.3.3) (3.1.6)\nRequirement already satisfied: itsdangerous>=2.1.2 in ./.venv/lib/python3.12/site-packages (from flask==2.3.3) (2.2.0)\nRequirement already satisfied: click>=8.1.3 in ./.venv/lib/python3.12/site-packages (from flask==2.3.3) (8.5.0)\nRequirement already satisfied: blinker>=1.6.2 in ./.venv/lib/python3.12/site-packages (from flask==2.3.3) (1.9.0)\nRequirement already satisfied: MarkupSafe>=2.0 in ./.venv/lib/python3.12/site-packages (from Jinja2>=3.1.2->flask==2.3.3) (3.0.3)\nUsing cached flask-2.3.3-py3-none-any.whl (96 kB)\nInstalling collected packages: flask\n  Attempting uninstall: flask\n    Found existing installation: Flask 3.1.3\n    Uninstalling Flask-3.1.3:\n      Successfully uninstalled Flask-3.1.3\nSuccessfully installed flask-2.3.3\n"
+        },
+        {
+          "step": "after",
+          "argv": [
+            "/fixfirst/.venv/bin/python",
+            "/run/flask-sqlalchemy/state/check.py",
+            "run",
+            "/run/flask-sqlalchemy/project",
+            "/run/flask-sqlalchemy/project/.venv/bin/python",
+            "/run/flask-sqlalchemy/state/after.json",
+            "/run/flask-sqlalchemy/state/saved.json"
+          ],
+          "exit_code": 0,
+          "seconds": 1.92,
+          "stopped": false,
+          "output": ""
+        }
+      ],
+      "cleanup": {
+        "stopped": [],
+        "error": null
+      },
+      "test_changes": [],
+      "verification_scope": "test_execution",
+      "target_error_remaining": false,
+      "reached_tests": true,
+      "after_fully_passed": false,
+      "attempt": "fixfirst-generated-first-step-r4c",
+      "raw_record_sha256": "411546d3d77dbd897854c2d7a4ef67a33e1efb8566abf93b5efbe77e13fb3ed6",
+      "before": {
+        "goal_status": "blocked",
+        "evidence": {
+          "issue-139b5276a3f7a4": {
+            "exception": "ImportError",
+            "message": "cannot import name '_app_ctx_stack' from 'flask' (/run/flask-sqlalchemy/project/.venv/lib/python3.12/site-packages/flask/__init__.py)",
+            "where": "flask_sqlalchemy/__init__.py:14"
+          }
+        },
+        "checks": [
+          {
+            "tool": "pytest_run",
+            "status": "completed",
+            "exit_code": 4,
+            "verified_pass": false,
+            "test_summary": {},
+            "finish": []
+          }
+        ]
+      },
+      "inspection": {
+        "goal_status": "blocked",
+        "evidence": {
+          "issue-139b5276a3f7a4": {
+            "exception": "ImportError",
+            "message": "cannot import name '_app_ctx_stack' from 'flask' (/run/flask-sqlalchemy/project/.venv/lib/python3.12/site-packages/flask/__init__.py)",
+            "where": "flask_sqlalchemy/__init__.py:14"
+          }
+        },
+        "checks": [
+          {
+            "tool": "pytest_run",
+            "status": "completed",
+            "exit_code": 4,
+            "verified_pass": false,
+            "test_summary": {},
+            "finish": []
+          },
+          {
+            "tool": "version_search",
+            "status": "completed",
+            "exit_code": 0,
+            "verified_pass": true,
+            "test_summary": {},
+            "result": {
+              "dist": "flask",
+              "api": "flask._app_ctx_stack",
+              "installed": "3.1.3",
+              "python": "3.12.13",
+              "checked": [
+                {
+                  "version": "3.1.2",
+                  "result": "missing"
+                },
+                {
+                  "version": "3.1.1",
+                  "result": "missing"
+                },
+                {
+                  "version": "3.0.3",
+                  "result": "missing"
+                },
+                {
+                  "version": "2.0.3",
+                  "result": "failed"
+                },
+                {
+                  "version": "2.3.3",
+                  "result": "provides"
+                }
+              ],
+              "provides": "2.3.3",
+              "below": "2.4",
+              "first_without": "3.0",
+              "status": "partial"
+            }
+          }
+        ]
+      },
+      "after": {
+        "goal_status": "blocked",
+        "evidence": {
+          "issue-475b5db94448d3": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-4393a33d32e066": {
+            "exception": "Failed",
+            "message": "DID NOT WARN. No warnings of type (<class 'flask_sqlalchemy.FSADeprecationWarning'>,) were emitted.\n Emitted warnings: [].",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-bb1812cb060fcc": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-37c25555d37f6e": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-ad546097f442ad": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-9b994c61527f2b": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-0542ebd3b12325": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-6819725326258d": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-7d5fd1c2d0b70f": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-5b5896c0ce27a5": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-a704d022ffd246": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-2ef4642dbecb93": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-c8cee631aa1036": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-6a05cf302a6d67": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-5b73e08c9fe101": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-0607ddd64632d7": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-5d5c1933b93a80": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-62f83a9ea11ffd": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-2185cdafdfffe9": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-38c3edaa687877": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-9ba6b08d8d7f8a": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-fb1444c63aca98": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-d1589e0b51c29c": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-ae00b8c52cdd43": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-3617fb685979ad": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-0a4a71a9bb63f9": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-74befe9ae89636": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-76b2bc98b011e9": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-3a8e959111b379": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-c3ad6afc5987dd": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-a9a354fba8c975": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-8f4b6a8fb6d175": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-624d97612bac13": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-686083530c6b74": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-944bf913ca2676": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-e1d726f17ef93e": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-e7ce32bc63ec07": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-b2d9fac03faa44": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-70a65b82b1c176": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-7cbe29da626fce": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-9c3fb43278dad5": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-a62569fbacbad1": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-4bb4107a4a0341": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-4f231935fb52a6": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-ac5d39bf04d29c": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-020aeff5f2f40d": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-92796a88928ada": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-c1081b1942d0dd": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-888ce497e2935f": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-d396503d974838": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-718a87c1413084": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-e190cbad7375c9": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-24a886bac8e03d": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-4a58f253a9e760": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-dcb7a025bce05a": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-ce4e0083a148dc": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-757c69ea76ebd0": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-a96970c9e4b791": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-51d2842ee485f8": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-6c04f1410eddc6": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-733bb8f8e8f702": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-92af946df7f749": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-90c7c688c64d18": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-b1edd75df40537": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-8ef92b9ed12c20": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-f8fb7ed630afef": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-db521a9046f7f6": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          },
+          "issue-e661f429d831ab": {
+            "exception": "AttributeError",
+            "message": "module 'sqlalchemy' has no attribute '__all__'",
+            "where": "flask_sqlalchemy/__init__.py:112"
+          }
+        },
+        "checks": [
+          {
+            "tool": "pytest_run",
+            "status": "completed",
+            "exit_code": 1,
+            "verified_pass": false,
+            "test_summary": {
+              "passed": 5,
+              "failed": 68,
+              "skipped": 0,
+              "xfail_or_xpass": 0,
+              "selected": 73,
+              "incomplete": 0
+            },
+            "finish": [
+              {
+                "type": "finish",
+                "exit_code": 1,
+                "collected": 73,
+                "collect_only": false,
+                "records_dropped": false
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "limits": "Original public development projects only. Generated commands or explicitly offered manual alternatives, with inspections recorded separately. Target-layer progress does not imply all tests pass; new human rereview remains pending."
+}

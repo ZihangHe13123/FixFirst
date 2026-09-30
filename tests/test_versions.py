@@ -69,6 +69,16 @@ def test_search_skips_releases_that_cannot_be_judged():
     )
 
 
+def test_broken_old_releases_do_not_hide_the_skipped_compatible_series():
+    data = pypi("3.1.2", "3.1.1", "3.1.0", "3.0.3", "3.0.2", "3.0.1", "3.0.0",
+                "2.3.3", "2.2.5", "2.1.3", "2.0.3", "1.1.4", "1.0.4", "0.12.5", "0.11.1")
+    box = FakeSandbox(last="2.3.3", first="2.1.3", broken={"2.0.3", "1.1.4", "1.0.4", "0.12.5", "0.11.1"})
+    result = run(data, box, installed="3.1.3")
+    assert result["provides"] == "2.3.3"
+    assert box.tried[:5] == ["3.1.2", "3.1.1", "3.0.3", "2.0.3", "2.3.3"]
+    assert len(box.tried) <= versions.MAX_PROBES
+
+
 @pytest.mark.parametrize("installed", ["1.5.1", "1.5.2", "1.5.3"])
 def test_search_finds_a_name_present_only_in_an_earlier_patch(installed):
     data = pypi("1.4.0", "1.5.0", "1.5.1", "1.5.2", "1.5.3")

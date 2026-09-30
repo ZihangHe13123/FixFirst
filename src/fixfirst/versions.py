@@ -210,7 +210,13 @@ def search(python: str, python_version: str, markers: dict, dist: str, installed
                     break  # Other patches may still have a name introduced and later removed.
                 index, step = min(index + step, len(versions) - 1), step * 2
             else:
-                versions.pop(index)
+                # A broken old release says nothing about versions skipped by
+                # the doubling step. Inspect that nearer gap before spending
+                # the budget on still older releases which may all fail import.
+                if index > missing + 1:
+                    index = missing + 1
+                else:
+                    versions.pop(index)
         if found is None:
             for release in available:
                 if len(result["checked"]) >= MAX_PROBES:

@@ -522,8 +522,8 @@ def portable(session: Session, project: Path) -> dict:
     """Replace machine-specific paths while keeping environment ids consistent."""
     text = session.model_dump_json()
     replacements = [
-        (str(project), "/project"),
         (session.target_python, PORTABLE_PYTHON),
+        (str(project), "/project"),
         (sys.prefix, "/venv"),
         (str(Path.home()), "/home/user"),
         (environment_id(session.target_python), environment_id(PORTABLE_PYTHON)),

@@ -420,6 +420,16 @@ def collect_project(session, env_id: str) -> Run:
                 )
     data["python_files"], data["defined_names"] = index_sources(Path(session.project_root))
     data["imported_names"] = index_imports(Path(session.project_root), data["python_files"])
+    from .source_context import index_source_context
+
+    data["source_context"] = index_source_context(
+        Path(session.project_root), data["python_files"], MAX_BYTES,
+    )
+    from .behavior import index_behavior_context
+
+    data.update(index_behavior_context(
+        Path(session.project_root), data["python_files"], data["imported_names"], MAX_BYTES, MAX_INDEXED_FILES,
+    ))
     data["lint_config"] = lint_settings(Path(session.project_root))
     data["tested_versions"] = tested_versions(Path(session.project_root))
     run.stdout = json.dumps(redact_data(data), ensure_ascii=False, indent=2)

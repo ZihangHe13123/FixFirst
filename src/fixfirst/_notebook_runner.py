@@ -88,6 +88,10 @@ def main():
                     if output.output_type != "error":
                         continue
                     trace = re.sub(r"\x1b\[[0-9;]*m", "", "\n".join(output.get("traceback", [])))
+                    # IPython abbreviates paths under the inherited home as ~/...
+                    # Expand while recording, not later on a different replay host.
+                    trace = re.sub(r"(?m)^File ~(?=[/\\])",
+                                   lambda _: "File " + str(Path.home()), trace)
                     emit({"type": "failure", "stage": "run", "nodeid": f"{entry}:cell {index + 1}",
                           "message": trace[:60_000]})
                     emit({"type": "exception", "stage": "run", "nodeid": f"{entry}:cell {index + 1}",

@@ -133,7 +133,7 @@ def test_historical_assets_reject_tampered_files(tmp_path):
 def single_leaf_model(tmp_path, label):
     path = tmp_path / "model.json"
     model = {
-        "schema_version": 3,
+        "schema_version": 6,
         "task": "root_cause",
         "feature_names": FEATURE_NAMES,
         "classes": [label],

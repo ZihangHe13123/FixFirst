@@ -1,0 +1,31 @@
+|--- module_mentioned <= 0.50
+|   |--- context_configuration <= 0.50
+|   |   |--- interface_history_match <= 0.50
+|   |   |   |--- api_mentioned <= 0.50
+|   |   |   |   |--- class: code_defect
+|   |   |   |--- api_mentioned >  0.50
+|   |   |   |   |--- raised_in_project <= 0.50
+|   |   |   |   |   |--- class: version_incompatibility
+|   |   |   |   |--- raised_in_project >  0.50
+|   |   |   |   |   |--- context_project_names <= 0.50
+|   |   |   |   |   |   |--- class: code_defect
+|   |   |   |   |   |--- context_project_names >  0.50
+|   |   |   |   |   |   |--- class: code_defect
+|   |   |--- interface_history_match >  0.50
+|   |   |   |--- class: version_incompatibility
+|   |--- context_configuration >  0.50
+|   |   |--- class: config_missing
+|--- module_mentioned >  0.50
+|   |--- context_external_api <= 0.50
+|   |   |--- api_mentioned <= 0.50
+|   |   |   |--- interface_history_match <= 0.50
+|   |   |   |   |--- class: missing_dependency
+|   |   |   |--- interface_history_match >  0.50
+|   |   |   |   |--- class: version_incompatibility
+|   |   |--- api_mentioned >  0.50
+|   |   |   |--- context_local_symbol <= 0.50
+|   |   |   |   |--- class: local_module
+|   |   |   |--- context_local_symbol >  0.50
+|   |   |   |   |--- class: code_defect
+|   |--- context_external_api >  0.50
+|   |   |--- class: version_incompatibility

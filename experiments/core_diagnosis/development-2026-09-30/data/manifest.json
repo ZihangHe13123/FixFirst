@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-09-30T05:07:28+00:00",
+  "origin": "diagnosis_injection",
+  "python": "3.12.14",
+  "license": "CC0-1.0 for generated fixture code",
+  "templates": [
+    "flat-shop",
+    "src-billing",
+    "pkg-inventory",
+    "unittest-grades",
+    "fixture-orders"
+  ],
+  "scenarios": [
+    {
+      "id": "vb_numpy_repr",
+      "label": "version_incompatibility",
+      "knowledge": true,
+      "description": "NumPy 2 prints scalars as np.float64(...) (NEP 51), so a formatted summary changes"
+    },
+    {
+      "id": "vb_numpy_promotion",
+      "label": "version_incompatibility",
+      "knowledge": true,
+      "description": "NumPy 2 keeps float32 when a Python float is added (NEP 50), so json.dumps rejects the result"
+    },
+    {
+      "id": "vb_yaml_loader",
+      "label": "version_incompatibility",
+      "knowledge": false,
+      "description": "PyYAML 6.0 made the Loader argument of yaml.load required"
+    },
+    {
+      "id": "vb_pydantic_coercion",
+      "label": "version_incompatibility",
+      "knowledge": true,
+      "description": "pydantic 2 no longer turns numbers into strings for str fields"
+    },
+    {
+      "id": "vb_click_mix_stderr",
+      "label": "version_incompatibility",
+      "knowledge": false,
+      "description": "Click 8.2 removed CliRunner's mix_stderr argument"
+    },
+    {
+      "id": "ml_renamed_then_alias",
+      "label": "local_module",
+      "knowledge": false,
+      "description": "Helper module renamed; once the import is fixed, a NumPy alias removed in 1.24 fails at run time"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "flat-shop--vb_numpy_repr",
+      "template": "flat-shop",
+      "scenario": "vb_numpy_repr",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--vb_numpy_promotion",
+      "template": "flat-shop",
+      "scenario": "vb_numpy_promotion",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--vb_yaml_loader",
+      "template": "flat-shop",
+      "scenario": "vb_yaml_loader",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--vb_pydantic_coercion",
+      "template": "flat-shop",
+      "scenario": "vb_pydantic_coercion",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--vb_click_mix_stderr",
+      "template": "flat-shop",
+      "scenario": "vb_click_mix_stderr",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "flat-shop--ml_renamed_then_alias",
+      "template": "flat-shop",
+      "scenario": "ml_renamed_then_alias",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vb_numpy_repr",
+      "template": "src-billing",
+      "scenario": "vb_numpy_repr",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vb_numpy_promotion",
+      "template": "src-billing",
+      "scenario": "vb_numpy_promotion",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vb_yaml_loader",
+      "template": "src-billing",
+      "scenario": "vb_yaml_loader",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vb_pydantic_coercion",
+      "template": "src-billing",
+      "scenario": "vb_pydantic_coercion",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--vb_click_mix_stderr",
+      "template": "src-billing",
+      "scenario": "vb_click_mix_stderr",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "src-billing--ml_renamed_then_alias",
+      "template": "src-billing",
+      "scenario": "ml_renamed_then_alias",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vb_numpy_repr",
+      "template": "pkg-inventory",
+      "scenario": "vb_numpy_repr",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vb_numpy_promotion",
+      "template": "pkg-inventory",
+      "scenario": "vb_numpy_promotion",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vb_yaml_loader",
+      "template": "pkg-inventory",
+      "scenario": "vb_yaml_loader",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vb_pydantic_coercion",
+      "template": "pkg-inventory",
+      "scenario": "vb_pydantic_coercion",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--vb_click_mix_stderr",
+      "template": "pkg-inventory",
+      "scenario": "vb_click_mix_stderr",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "pkg-inventory--ml_renamed_then_alias",
+      "template": "pkg-inventory",
+      "scenario": "ml_renamed_then_alias",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vb_numpy_repr",
+      "template": "unittest-grades",
+      "scenario": "vb_numpy_repr",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vb_numpy_promotion",
+      "template": "unittest-grades",
+      "scenario": "vb_numpy_promotion",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vb_yaml_loader",
+      "template": "unittest-grades",
+      "scenario": "vb_yaml_loader",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vb_pydantic_coercion",
+      "template": "unittest-grades",
+      "scenario": "vb_pydantic_coercion",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--vb_click_mix_stderr",
+      "template": "unittest-grades",
+      "scenario": "vb_click_mix_stderr",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "unittest-grades--ml_renamed_then_alias",
+      "template": "unittest-grades",
+      "scenario": "ml_renamed_then_alias",
+      "label": "local_module",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vb_numpy_repr",
+      "template": "fixture-orders",
+      "scenario": "vb_numpy_repr",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vb_numpy_promotion",
+      "template": "fixture-orders",
+      "scenario": "vb_numpy_promotion",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vb_yaml_loader",
+      "template": "fixture-orders",
+      "scenario": "vb_yaml_loader",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vb_pydantic_coercion",
+      "template": "fixture-orders",
+      "scenario": "vb_pydantic_coercion",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--vb_click_mix_stderr",
+      "template": "fixture-orders",
+      "scenario": "vb_click_mix_stderr",
+      "label": "version_incompatibility",
+      "issues": 1
+    },
+    {
+      "case_id": "fixture-orders--ml_renamed_then_alias",
+      "template": "fixture-orders",
+      "scenario": "ml_renamed_then_alias",
+      "label": "local_module",
+      "issues": 1
+    }
+  ],
+  "rejected": [],
+  "limitations": "Hard cases, never used to train the decision tree: documented behaviour changes of installed libraries and one two-layer fault (labelled by the first layer), executed against real installed libraries. Three behavior families now have curated knowledge. Heuristics and behavior knowledge were written after seeing these cases, so their results measure development coverage, not held-out generalisation.",
+  "library_versions": {
+    "numpy": "2.5.3",
+    "click": "8.5.0",
+    "packaging": "26.3",
+    "scikit-learn": "1.9.0",
+    "pytest": "9.1.1",
+    "pydantic": "2.13.5",
+    "PyYAML": "6.0.3",
+    "Jinja2": "3.1.6",
+    "MarkupSafe": "3.0.3",
+    "scipy": "1.18.1"
+  },
+  "seconds": 7.9,
+  "suite": "hard"
+}

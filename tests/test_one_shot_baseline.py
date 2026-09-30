@@ -46,8 +46,8 @@ def with_project(session, change):
 def test_the_model_gets_the_imports_that_fixfirsts_heuristic_reads():
     session = click_session()
     cleared = with_project(session, lambda data: data.update(imported_names={}))
-    # Without the project's imports FixFirst loses its H07 conclusion ...
-    assert [d["likely_rule_id"] for d in diagnose(session).values()] == ["H07"]
+    # The documented call change still needs the project's observed import binding.
+    assert [d["likely_rule_id"] for d in diagnose(session).values()] == ["H10"]
     assert [d["likely_rule_id"] for d in diagnose(cleared).values()] == [None]
     # ... so the model must see them too.
     assert '"CliRunner": "click.testing.CliRunner"' in one_shot.evidence(session)

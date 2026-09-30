@@ -60,6 +60,8 @@ def load_rows(dataset: Path, skip=()) -> list[dict]:
             issues = {i.issue_id: i for i in session.issues}
             for issue_id, item in with_kg.items():
                 issue = issues[issue_id]
+                if "labelled_issue_ids" in case and issue_id not in case["labelled_issue_ids"]:
+                    continue
                 if issue.tool != "pytest_run" or issue.status != "open":
                     continue
                 evidence = item["evidence"]
@@ -68,6 +70,8 @@ def load_rows(dataset: Path, skip=()) -> list[dict]:
                         "case_id": case["case_id"],
                         "template": case["template"],
                         "scenario": case["scenario"],
+                        "group": case["scenario"],
+                        "observation_view": case.get("observation_view", "recorded"),
                         "label": case["label"],
                         "knowledge_covered": case["knowledge_covered"],
                         "kind": issue.kind,
@@ -75,6 +79,7 @@ def load_rows(dataset: Path, skip=()) -> list[dict]:
                         "exception": evidence["exception"],
                         "message": evidence["message"][:160],
                         "features": evidence["features"],
+                        "features_no_kg": without_kg[issue_id]["evidence"]["features"],
                         "rules": item["rule"],
                         "rule_id": item["rule_id"],
                         "likely": item["likely"],
@@ -129,13 +134,15 @@ def predict(row: dict, model: dict) -> dict:
     """Every method's diagnosis for one issue, with the tree `model`."""
     label, confidence = predict_tree(row["features"], model)
     suggestion = label if confidence >= MIN_CONFIDENCE else None
+    plain_label, plain_confidence = predict_tree(row.get("features_no_kg", row["features"]), model)
+    plain_suggestion = plain_label if plain_confidence >= MIN_CONFIDENCE else None
     return {
         "naive_v03": naive_diagnosis(row["kind"]),
         "rules_no_kg": row["rules_no_kg"],
         "rules": row["rules"],
         "rules_heur": row["rules"] or row["likely"],
         "tree": label,
-        "hybrid_no_kg": row["rules_no_kg"] or row["likely_no_kg"] or suggestion,
+        "hybrid_no_kg": row["rules_no_kg"] or row["likely_no_kg"] or plain_suggestion,
         "hybrid": row["rules"] or row["likely"] or suggestion,
     }
 

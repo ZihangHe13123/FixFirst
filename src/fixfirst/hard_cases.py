@@ -3,10 +3,12 @@
 In the main diagnosis dataset (diagnosis_cases.py) the error usually names the cause, and the
 decision tree is trained on those cases. These scenarios are harder and are never used to train
 the tree. Heuristics H07 and H08 were written after seeing them, so results on them are
-development results, not held-out ones. Each uses a documented change in a library that is really
+development results, not held-out ones. Five families also informed the 2026-09-30
+behavior knowledge and evidence changes. Each uses a documented change in a library that is really
 installed (NumPy 2, PyYAML 6, pydantic 2, Click 8.2) and raises no "name was removed" error,
-or two faults where the second appears only after the first is fixed. None of them is in the
-knowledge base. Like a real project, each declares the library with the lower bound its code
+or two faults where the second appears only after the first is fixed. Five families now have
+matching knowledge: this measures development coverage, not unseen-library generalisation.
+Like a real project, each declares the library with the lower bound its code
 was written for (numpy>=1.21, PyYAML>=5.1, ...). Every added test checks a function's result,
 so deleting the faulty code does not make it pass.
 """
@@ -19,9 +21,9 @@ from . import diagnosis_cases as dc
 HARD_SCENARIOS: list[dc.Scenario] = []
 
 
-def h(scenario_id, label, description):
+def h(scenario_id, label, description, knowledge=False):
     def register(function):
-        HARD_SCENARIOS.append(dc.Scenario(scenario_id, label, False, description, function))
+        HARD_SCENARIOS.append(dc.Scenario(scenario_id, label, knowledge, description, function))
         return function
 
     return register
@@ -38,7 +40,7 @@ def declare(p, requirement):
 
 
 @h("vb_numpy_repr", "version_incompatibility",
-   "NumPy 2 prints scalars as np.float64(...) (NEP 51), so a formatted summary changes")
+   "NumPy 2 prints scalars as np.float64(...) (NEP 51), so a formatted summary changes", knowledge=True)
 def _(p):
     declare(p, "numpy>=1.21")
     p.imports(
@@ -49,7 +51,7 @@ def _(p):
 
 
 @h("vb_numpy_promotion", "version_incompatibility",
-   "NumPy 2 keeps float32 when a Python float is added (NEP 50), so json.dumps rejects the result")
+   "NumPy 2 keeps float32 when a Python float is added (NEP 50), so json.dumps rejects the result", knowledge=True)
 def _(p):
     declare(p, "numpy>=1.21")
     p.imports(
@@ -59,7 +61,7 @@ def _(p):
     add_check(p, "price_json", "    assert price_json([1]) == '{\"price\": 1.5}'")
 
 
-@h("vb_yaml_loader", "version_incompatibility", "PyYAML 6.0 made the Loader argument of yaml.load required")
+@h("vb_yaml_loader", "version_incompatibility", "PyYAML 6.0 made the Loader argument of yaml.load required", knowledge=True)
 def _(p):
     declare(p, "PyYAML>=5.1")
     p.imports("import yaml\n\n\ndef load_settings(text):\n    return yaml.load(text)\n")
@@ -67,7 +69,7 @@ def _(p):
 
 
 @h("vb_pydantic_coercion", "version_incompatibility",
-   "pydantic 2 no longer turns numbers into strings for str fields")
+   "pydantic 2 no longer turns numbers into strings for str fields", knowledge=True)
 def _(p):
     declare(p, "pydantic>=1.8")
     p.imports(
@@ -77,7 +79,7 @@ def _(p):
     add_check(p, "label_code", "    assert label_code(7) == \"7\"")
 
 
-@h("vb_click_mix_stderr", "version_incompatibility", "Click 8.2 removed CliRunner's mix_stderr argument")
+@h("vb_click_mix_stderr", "version_incompatibility", "Click 8.2 removed CliRunner's mix_stderr argument", knowledge=True)
 def _(p):
     declare(p, "click>=8.0")
     p.imports(
@@ -103,9 +105,9 @@ def build_dataset(output: Path, python: str | None = None) -> Path:
     manifest["limitations"] = (
         "Hard cases, never used to train the decision tree: documented behaviour changes of "
         "installed libraries and one two-layer fault (labelled by the first layer), executed "
-        "against real installed libraries. None is in the knowledge base. Heuristics H07 and H08 "
-        "were written after seeing them, so results on these cases are development results, not "
-        "held-out evidence."
+        "against real installed libraries. Three behavior families now have curated knowledge. "
+        "Heuristics and behavior knowledge were written after seeing these cases, so their "
+        "results measure development coverage, not held-out generalisation."
     )
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     return manifest_path

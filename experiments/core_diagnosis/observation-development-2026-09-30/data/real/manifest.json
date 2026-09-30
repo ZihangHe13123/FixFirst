@@ -1,0 +1,8 @@
+{
+  "origin": "verified_public_development",
+  "cases": 7,
+  "faults": 6,
+  "limitations": "Existing author labels with automated repair validation, not a newly human-reviewed or independent test set. Only the selected failure layer is labelled; knowledge coverage is unannotated. Healthy controls are excluded from fitting.",
+  "cases_sha256": "818652d67ec8c97b6b4dd402e6269ba96065d5386312596c092dc10ea0e8ea92",
+  "audit_sha256": "9926fd7e538192c0e8a77c5469f15e0921af02d8c4acd066d6b21bdec493ace5"
+}

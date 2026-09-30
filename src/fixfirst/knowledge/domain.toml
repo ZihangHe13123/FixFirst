@@ -8,7 +8,55 @@
 
 [meta]
 title = "FixFirst Python troubleshooting knowledge"
-updated = "2026-09-24"
+updated = "2026-09-30"
+
+# Behavior changes are matched using observed values/calls and version context.
+# They are compatibility hypotheses, not proof that every failure inside a library
+# was caused by an upgrade.
+[[behavior]]
+id = "numpy-scalar-repr"
+distribution = "numpy"
+version = "2.0"
+summary = "NumPy 2 includes the scalar type in repr output; the compared strings differ only by that wrapper."
+action_title = "Format the NumPy scalar explicitly when building the output"
+replacement = 'Use str(value), or !s instead of !r in the scalar format, when the required output is the plain numeric text. Keep the expected numeric value and the tests unchanged; avoid replacing all numeric values with strings.'
+source = "numpy-scalar-representation"
+
+[[behavior]]
+id = "numpy-scalar-promotion"
+distribution = "numpy"
+version = "2.0"
+summary = "NumPy 2 preserves a NumPy float scalar when it is combined with a Python float; the observed JSON call rejects the resulting scalar."
+action_title = "Convert the computed NumPy scalar to a Python float before JSON encoding"
+replacement = "Convert the computed numeric result with float(result) at the JSON boundary, preserving the numeric JSON value. Do not stringify it or use default=str; check the required precision and run the unchanged tests."
+source = "numpy-scalar-promotion"
+
+[[behavior]]
+id = "pydantic-number-to-string"
+distribution = "pydantic"
+version = "2.0"
+summary = "Pydantic 2 no longer coerces numeric input into a str field by default; this field rejects a numeric value."
+action_title = "Convert the numeric input to text before validating the string field"
+replacement = "If the field is intended to accept that number as text, pass str(value) for the affected field before validation. Otherwise correct the input to a string. Preserve other field validation and run the unchanged tests; do not downgrade the whole environment just to suppress validation."
+source = "pydantic-number-coercion"
+
+[[behavior]]
+id = "yaml-required-loader"
+distribution = "pyyaml"
+version = "6.0"
+summary = "PyYAML 6 requires a Loader argument for yaml.load; this call omits it."
+action_title = "Choose an explicit safe YAML loader"
+replacement = "For standard YAML data, replace yaml.load(text) with yaml.safe_load(text), or pass Loader=yaml.SafeLoader explicitly. If the application needs custom tags, review the required constructors separately. Keep the tests unchanged and rerun them."
+source = "pyyaml-6-loader"
+
+[[behavior]]
+id = "click-runner-streams"
+distribution = "click"
+version = "8.2"
+summary = "Click 8.2 removed CliRunner's mix_stderr constructor option and exposes captured stdout and stderr separately."
+action_title = "Update CliRunner's stream capture arguments"
+replacement = "Remove mix_stderr from the CliRunner constructor. Use result.stdout and result.stderr when the test needs the separate streams; result.output represents their combined terminal output. Preserve the expected behavior and rerun the unchanged tests."
+source = "click-8.2-streams"
 
 # --------------------------------------------------------------------------------------
 # Root causes (diagnosis classes)
@@ -207,6 +255,7 @@ source = "python-3.11"
 
 [[removed]]
 kind = "attribute"
+owners = ["unittest.TestCase"]
 names = ["assertEquals", "assertNotEquals", "assertAlmostEquals", "assertNotAlmostEquals", "assert_", "failUnless", "failIf", "failUnlessEqual", "failIfEqual", "failUnlessRaises", "assertRegexpMatches", "assertRaisesRegexp", "assertNotRegexpMatches", "assertDictContainsSubset"]
 distribution = "python"
 version = "3.12"
@@ -261,6 +310,7 @@ source = "sklearn-1.2"
 [[removed]]
 kind = "kwarg"
 names = ["OneHotEncoder.sparse"]
+callables = ["sklearn.preprocessing.OneHotEncoder"]
 distribution = "scikit-learn"
 version = "1.4"
 replacement = "sparse_output"
@@ -269,6 +319,7 @@ source = "sklearn-1.4"
 [[removed]]
 kind = "kwarg"
 names = ["squared"]
+callables = ["sklearn.metrics.mean_squared_error"]
 distribution = "scikit-learn"
 version = "1.6"
 replacement = "root_mean_squared_error() instead of mean_squared_error(squared=False)"
@@ -639,17 +690,29 @@ url = "https://numpy.org/doc/stable/release/1.24.0-notes.html"
 title = "NumPy 2.0 migration guide (NEP 52 namespace cleanup)"
 url = "https://numpy.org/doc/stable/numpy_2_0_migration_guide.html"
 
+[sources."numpy-scalar-representation"]
+title = "NumPy 2.0 release notes: representation of NumPy scalars changed"
+url = "https://numpy.org/doc/stable/release/2.0.0-notes.html#representation-of-numpy-scalars-changed"
+
+[sources."numpy-scalar-promotion"]
+title = "NumPy 2.0 migration guide: changes to data type promotion"
+url = "https://numpy.org/doc/stable/numpy_2_0_migration_guide.html#changes-to-numpy-data-type-promotion"
+
+[sources."pydantic-number-coercion"]
+title = "Pydantic V2 migration guide: validator behavior changes"
+url = "https://pydantic.dev/docs/validation/latest/get-started/migration/#validator-behavior-changes"
+
 [sources."sklearn-1.2"]
 title = "scikit-learn 1.2 release highlights and changelog"
 url = "https://scikit-learn.org/stable/whats_new/v1.2.html"
 
 [sources."sklearn-1.4"]
-title = "scikit-learn 1.4 changelog (OneHotEncoder sparse removed)"
-url = "https://scikit-learn.org/stable/whats_new/v1.4.html"
+title = "scikit-learn OneHotEncoder 1.3 API: sparse removal in 1.4"
+url = "https://scikit-learn.org/1.3/modules/generated/sklearn.preprocessing.OneHotEncoder.html"
 
 [sources."sklearn-1.6"]
-title = "scikit-learn 1.6 changelog (squared parameter removed)"
-url = "https://scikit-learn.org/stable/whats_new/v1.6.html"
+title = "scikit-learn mean_squared_error 1.5 API: squared removal in 1.6"
+url = "https://scikit-learn.org/1.5/modules/generated/sklearn.metrics.mean_squared_error.html"
 
 [sources."scipy-1.14"]
 title = "SciPy 1.14.0 release notes (removed simps, trapz, cumtrapz)"
@@ -698,3 +761,11 @@ url = "https://nose.readthedocs.io/en/latest/"
 [sources."ruff-rules"]
 title = "Ruff: rules reference"
 url = "https://docs.astral.sh/ruff/rules/"
+
+[sources."pyyaml-6-loader"]
+title = "PyYAML 6.0 changelog: yaml.load requires its Loader argument"
+url = "https://github.com/yaml/pyyaml/blob/main/CHANGES"
+
+[sources."click-8.2-streams"]
+title = "Click 8.2 changelog: CliRunner stream capture changes"
+url = "https://click.palletsprojects.com/en/stable/changes/#version-8-2-0"

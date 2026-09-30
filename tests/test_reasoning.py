@@ -57,6 +57,35 @@ def test_a_private_name_moved_inside_a_library_is_a_likely_version_change(tmp_pa
     assert session.actions[0].action_id.startswith("find-release-")
 
 
+@pytest.mark.parametrize("status", ["not_judged", "offline"])
+def test_inconclusive_release_search_does_not_repeat_or_claim_absence(tmp_path, status):
+    from fixfirst.models import Run
+    from fixfirst.reasoning import infer_and_plan
+    from fixfirst.runner import environment_id
+    from packaging.utils import canonicalize_name
+
+    session, issue = run_scenario(tmp_path, "vi_private_moved")
+    first = session.actions[0]
+    dist, api = first.targets
+    installed = next(p["version"] for p in session.environment["packages"]
+                     if canonicalize_name(p["name"]) == dist)
+    session.runs.append(Run(tool="version_search", exit_code=0,
+                            environment_id=environment_id(session.target_python),
+                            stdout=json.dumps({"dist": dist, "api": api, "installed": installed,
+                                               "checked": [], "status": status, "provides": None})))
+    infer_and_plan(session)
+    assert any(a.action_id.startswith("review-search-") for a in session.actions)
+    assert not any(a.action_id.startswith(("find-release-", "check-name-", "use-release-")) for a in session.actions)
+    assert issue.diagnosis == "version_incompatibility"
+
+    # The attempt is tied to the installed version it actually examined.
+    saved = json.loads(session.runs[-1].stdout)
+    saved["installed"] = "0.0"
+    session.runs[-1].stdout = json.dumps(saved)
+    infer_and_plan(session)
+    assert any(a.action_id.startswith("find-release-") for a in session.actions)
+
+
 def test_a_missing_submodule_of_the_project_is_not_blamed_on_a_library(tmp_path):
     root = tmp_path / "shopkit"
     (root / "shop").mkdir(parents=True)
@@ -556,26 +585,26 @@ def test_behaviour_change_heuristics_need_a_library_call_or_a_declared_older_maj
     def fact(s, p, v):
         return Fact(fact_id=f"{s}:{p}:{v}", subject=s, predicate=p, value=v)
 
-    # H07: a function imported from a library rejects the call's arguments.
+    # A rejected argument alone is not evidence of an upgrade.
     call = [
         fact("issue-1", "exception", "TypeError"), fact("issue-1", "signal", "call_signature"),
         fact("issue-1", "callee", "callable:yaml.load"), fact("issue-1", "callee_module", "module:yaml"),
         fact("module:yaml", "provided_by", "dist:pyyaml"), fact("dist:pyyaml", "installed_version", "6.0.3"),
     ]
     base = engine.run(rule_base(), call)
-    assert ("issue-1", "likely", "version_incompatibility") in base.keys
+    assert ("issue-1", "likely", "code_defect") in base.keys
+    assert ("issue-1", "likely", "version_incompatibility") not in base.keys
     actions = {a.action_id: a for a in engine.propose(rule_base(), base)}
     assert "call-yaml.load" in actions and "declared-pyyaml" not in actions
     # A project function that rejects its arguments is a code defect, not a version change.
     local = [*call, fact("module:yaml", "is_local", "yaml.py")]
     assert ("issue-1", "likely", "version_incompatibility") not in engine.run(rule_base(), local).keys
-    # With a declared lower bound one major version back, going back is offered too.
+    # A lower bound alone does not turn the same rejected argument into an upgrade.
     declared = [*call, fact("dist:pyyaml", "declared_spec", "pyyaml>=5.1"),
                 fact("dist:pyyaml", "declared_minimum", "5.1"), fact("dist:pyyaml", "declared_major_below", "6"),
                 fact("dist:pyyaml", "declared_in_file", "requirements.txt")]
     actions = {a.action_id: a for a in engine.propose(rule_base(), engine.run(rule_base(), declared))}
-    assert actions["call-yaml.load"].template["cost"] < actions["declared-pyyaml"].template["cost"]
-    assert engine.render(actions["declared-pyyaml"].template["pip_install"], actions["declared-pyyaml"].bindings) == "pyyaml<6"
+    assert "call-yaml.load" in actions and "declared-pyyaml" not in actions
 
     # H08: raised inside a library the project calls, one major version past the declared bound.
     inside = [
@@ -605,10 +634,10 @@ def test_a_hard_case_is_observed_and_its_call_change_recognised(tmp_path):
     assert [c["label"] for c in manifest["cases"]] == ["version_incompatibility"] and not manifest["rejected"]
     row = json.loads((tmp_path / "hard" / "cases.jsonl").read_text().splitlines()[0])
     found = diagnose(cases.load_session(tmp_path / "hard", row["session"]))
-    assert [(v["likely"], v["likely_rule_id"]) for v in found.values()] == [("version_incompatibility", "H07")]
+    assert [(v["likely"], v["likely_rule_id"]) for v in found.values()] == [("version_incompatibility", "H10")]
 
 
-def test_a_library_rejecting_a_call_and_a_library_raising_after_a_major_upgrade_are_likely_version_changes(tmp_path):
+def test_bad_arguments_are_separate_from_a_library_failure_after_a_major_upgrade(tmp_path):
     rejected = tmp_path / "rejected"
     rejected.mkdir()
     (rejected / "requirements.txt").write_text("Jinja2>=2.10\n")
@@ -618,10 +647,10 @@ def test_a_library_rejecting_a_call_and_a_library_raising_after_a_major_upgrade_
     (rejected / "test_render.py").write_text("from render import make\n\n\ndef test_make():\n    assert make()\n")
     session, issues = scan_project(rejected)
     view = build_view(session)
-    assert len(issues) == 1 and issues[0].diagnosis == "version_incompatibility"
+    assert len(issues) == 1 and issues[0].diagnosis == "code_defect"
     assert issues[0].diagnosis_source == "heuristic" and issues[0].diagnosis_rule == "H07"
-    assert view["steps"][0]["title"].startswith("Update the call to jinja2.Environment for jinja2 3.")
-    assert any(s["title"].startswith("Try jinja2 below 3:") for s in view["steps"])
+    assert view["steps"][0]["title"].startswith("Check the arguments passed to jinja2.Environment for jinja2 3.")
+    assert not any(s["title"].startswith("Try jinja2 below 3:") for s in view["steps"])
 
     raised = tmp_path / "raised"
     raised.mkdir()

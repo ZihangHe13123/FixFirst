@@ -12,16 +12,19 @@ def native_failure(run):
     text = run.stderr or run.stdout
     frames = list(FRAME.finditer(text))
     tail = text[frames[-1].end():] if frames else text
-    candidates = list(EXCEPTION.finditer(tail))
-    match = candidates[-1] if frames and candidates else None
+    # The first unindented line after the final frame is the exception header.
+    # Its message can contain bare field names or even lines resembling another
+    # exception; choosing the last match turns Pydantic's "code" field into a type.
+    match = EXCEPTION.search(tail) if frames else None
     if match:
-        name, message = match[1].split(".")[-1], match[2] or ""
+        module, _, name = match[1].rpartition(".")
+        message = ((match[2] or "") + tail[match.end():]).strip()[:4000]
         frame = frames[-1]
         run.records.extend([
             {"type": "failure", "stage": "run", "nodeid": "", "message": text,
              "record_source": "native_traceback"},
             {"type": "exception", "stage": "run", "nodeid": "",
-             "exception_type": name, "exception_message": message,
+             "exception_type": name, "exception_module": module, "exception_message": message,
              "source_file": frame[1], "source_line": int(frame[2]),
              "record_source": "native_traceback"},
         ])

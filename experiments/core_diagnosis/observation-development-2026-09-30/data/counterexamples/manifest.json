@@ -1,0 +1,6 @@
+{
+  "description": "Actually executed ordinary-error counterexamples; never used for training",
+  "cases_sha256": "7d68e0f7821bea20ba7030325fd943821dc5b12f7f6f6b63c15ea122189b5ad6",
+  "environment_sha256": "8b63e8cc8ac53da52e62daaf555758fef70a8a062017aa55f80dccae6a3260de",
+  "additional_controls": 4
+}

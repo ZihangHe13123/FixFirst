@@ -15,8 +15,11 @@ from packaging.requirements import InvalidRequirement, Requirement
 from packaging.utils import canonicalize_name
 from packaging.version import InvalidVersion, Version
 
+from .behavior import observed_changes
 from .models import Fact, Issue, Run, Session
 from .runner import environment_id
+from .source_context import FEATURE_NAMES as SOURCE_FEATURE_NAMES, feature_values, resolved_calls
+from .interface_history import FEATURE_NAMES as HISTORY_FEATURE_NAMES, feature_values as history_features
 
 MODULE_MISSING = re.compile(r"No module named '([\w.]+)'")
 CANNOT_IMPORT = re.compile(
@@ -45,6 +48,9 @@ EXCEPTION_LINE = re.compile(r"^E\s+([A-Za-z_][\w.]*(?:Error|Exception|Exit|Warni
 FRAME = re.compile(r"^(\S.*?\.py|<[^>]+>):(\d+):? (?:in \S+|\w+(?:Error|Exception))?\s*$", re.M)
 # Plain Python tracebacks, printed when pytest or a plugin fails before pytest can format them.
 PLAIN_FRAME = re.compile(r'^\s*File "([^"]+)", line (\d+)(?:, in \S+)?', re.M)
+# IPython supplies file frames and arrow-marked executed lines in notebook errors.
+NOTEBOOK_FRAME = re.compile(r"^File (.+?\.py):(\d+)(?:, in .*)?$", re.M)
+NOTEBOOK_EXECUTED = re.compile(r"^\s*-+>\s*\d+\s+(.*)$")
 IMPORT_STATEMENT = re.compile(r"^(?:from ([\w.]+) import ([\w, ()]+)|import ([\w.]+))")
 NUMPY_REMOVED = re.compile(r"`(?:np|numpy)\.(\w+)` was removed")
 FIXTURE_MISSING = re.compile(r"fixture '(\w+)' not found")
@@ -91,7 +97,7 @@ SIGNALS = (
     "relative_import",
     "removed_hint",
 )
-FEATURE_NAMES = [
+LEGACY_FEATURE_NAMES = [
     *(f"exception_{name}" for name in EXCEPTIONS),
     "exception_other",
     "stage_collect",
@@ -111,6 +117,20 @@ FEATURE_NAMES = [
     "owner_defined_locally",
     *(f"signal_{name}" for name in SIGNALS),
 ]
+# Keep the schema-3 prefix stable so existing exported models remain usable.
+# These shared contexts pool observable signals across different fault mechanisms;
+# they are not diagnoses, rule matches or identifiers from the knowledge base.
+CONTEXT_FEATURE_NAMES = [
+    "context_configuration",
+    "context_project_names",
+    "context_import_operation",
+    "context_external_provider",
+    "context_data_operation",
+]
+V4_FEATURE_NAMES = LEGACY_FEATURE_NAMES + CONTEXT_FEATURE_NAMES
+V5_FEATURE_NAMES = V4_FEATURE_NAMES + SOURCE_FEATURE_NAMES
+FEATURE_NAMES = V5_FEATURE_NAMES + HISTORY_FEATURE_NAMES
+FEATURE_LAYOUTS = {3: LEGACY_FEATURE_NAMES, 4: V4_FEATURE_NAMES, 5: V5_FEATURE_NAMES, 6: FEATURE_NAMES}
 
 
 WINDOWS_ABSOLUTE = re.compile(r"^[A-Za-z]:/")
@@ -160,7 +180,7 @@ def frames_in(traceback: str) -> list[tuple[str, str]]:
     """(path, line) of every traceback frame, in pytest's format or Python's own."""
     found = []
     for line in traceback.splitlines():
-        match = FRAME.match(line) or PLAIN_FRAME.match(line)
+        match = FRAME.match(line) or PLAIN_FRAME.match(line) or NOTEBOOK_FRAME.match(line)
         if match:
             found.append((match[1], match[2]))
     return found
@@ -179,7 +199,10 @@ def executed_lines(traceback: str) -> list[str]:
     lines = traceback.splitlines()
     executed = []
     for index, line in enumerate(lines):
-        if line.startswith(">"):
+        notebook_line = NOTEBOOK_EXECUTED.match(line)
+        if notebook_line:
+            executed.append(notebook_line[1].strip())
+        elif line.startswith(">"):
             executed.append(line[1:].strip())
         elif ((FRAME.match(line) and " in " in line) or PLAIN_FRAME.match(line)) and index + 1 < len(lines):
             following = lines[index + 1]
@@ -307,22 +330,37 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
     environment = current_environment(session)
 
     located = frames_in(traceback)
-    if not located and exception_record.get("source_file"):
-        located = [(exception_record["source_file"], str(exception_record.get("source_line") or 1))]
-    frames = [path for path, _ in located]
     source_file = str(exception_record.get("source_file") or "")
-    last = source_file if source_file and exception_record.get("stage") != "collect" else ""
+    notebook = bool(exception_record.get("cell") and source_file)
+
+    def frame_key(path):
+        value = path.replace("\\", "/")
+        if not value.startswith(("/", "<")) and not WINDOWS_ABSOLUTE.match(value):
+            value = posixpath.normpath(session.project_root.replace("\\", "/") + "/" + value)
+        return value.casefold() if WINDOWS_ABSOLUTE.match(value) else value
+
+    # pytest may hide a library frame in longrepr. The probe still records the
+    # innermost frame of the actual exception; preserve it for provenance/call flow.
+    if source_file and exception_record.get("stage") != "collect" and not notebook:
+        source_line = str(exception_record.get("source_line") or "")
+        if located and frame_key(located[-1][0]) == frame_key(source_file):
+            located[-1] = (source_file, source_line or located[-1][1])
+        else:
+            located.append((source_file, source_line))
+    frames = [path for path, _ in located]
+    last = source_file if source_file and exception_record.get("stage") != "collect" and not notebook else ""
     if not last and frames:
         last = frames[-1]
+    if not last and notebook:
+        last = source_file
     raised_in = classify_path(last, session.project_root, environment)
     kinds = [classify_path(f, session.project_root, environment) for f in frames]
-    # The installed library whose code raised (for example jinja2 importing a removed name).
+    # Attribute the raising frame, not an outer library which called user code.
     library = ""
-    for path, kind in zip(frames, kinds):
-        if kind == "third_party":
-            inside = re.split(r"(?:site|dist)-packages[\\/]", path.replace("\\", "/"), maxsplit=1)
-            if len(inside) == 2:
-                library = re.split(r"[/.]", inside[1], maxsplit=1)[0]
+    if raised_in == "third_party":
+        inside = re.split(r"(?:site|dist)-packages[\\/]", last.replace("\\", "/"), maxsplit=1)
+        if len(inside) == 2:
+            library = re.split(r"[/.]", inside[1], maxsplit=1)[0]
     # The last frame in the user's own code is where they should look.
     root = session.project_root.replace("\\", "/").rstrip("/") + "/"
     where = ""
@@ -336,7 +374,8 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
         for path, line in REQUEST_LOCATION.findall(traceback):
             if classify_path(path, session.project_root, environment) in ("project", "test"):
                 where = f"{shown_path(path, session.project_root)}:{line}"
-    if exception_record.get("cell") and source_file:
+    source_location = where
+    if notebook:
         where = f"{shown_path(source_file, session.project_root)} · cell {exception_record['cell']}"
     warnings = [
         describe_warning(w, session.project_root, environment)
@@ -357,10 +396,16 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
     evidence = {
         "issue_id": issue.issue_id,
         "exception": exception,
+        "exception_module": (str(exception_record.get("exception_module") or "")
+                             if exception_record.get("exception_type") == exception else ""),
         "message": message[:2000],
+        "executed_lines": executed_lines(traceback)[:80],
         "stage": issue.stage,
         "raised_in": raised_in,
         "where": where,
+        # The notebook cell is the user-facing location; static callable matching
+        # must use the actual Python file/line when that cell calls a module.
+        "source_location": source_location,
         "library": library,
         "third_party_frame_ratio": round(kinds.count("third_party") / len(kinds), 3) if kinds else 0.0,
         "missing_module": None,
@@ -461,7 +506,7 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
     evidence["modules"] = [m.split(".")[0] for m in evidence["modules"]]
     evidence["modules"] = list(dict.fromkeys(evidence["modules"]))
     # A call rejected for its arguments, and what was called as the code spells it
-    # (``yaml.load``, ``CliRunner``). Kept out of the features, so the tree is unchanged.
+    # (``yaml.load``, ``CliRunner``). Used for grounded advice, not classifier labels.
     evidence["call_signature"] = exception == "TypeError" and bool(CALL_SIGNATURE.search(message))
     evidence["callees"] = []
     if evidence["call_signature"]:
@@ -556,7 +601,7 @@ def module_context(session: Session, module: str, project: dict) -> dict:
     }
 
 
-def features(evidence: dict, contexts: dict, project: dict) -> list[float]:
+def features(evidence: dict, contexts: dict, project: dict, environment=None, *, interface_history=True) -> list[float]:
     """Numeric evidence features for the decision tree, in FEATURE_NAMES order."""
     module = evidence["missing_module"] or (evidence["modules"][0] if evidence["modules"] else None)
     context = contexts.get(module, {}) if module else {}
@@ -577,6 +622,27 @@ def features(evidence: dict, contexts: dict, project: dict) -> list[float]:
     values["api_mentioned"] = bool(evidence["apis"] or evidence["kwargs"])
     values["owner_defined_locally"] = any(o in defined for o in evidence["owners"])
     values.update({f"signal_{name}": name in evidence["signals"] for name in SIGNALS})
+    values["context_configuration"] = any(
+        values[f"signal_{name}"]
+        for name in ("environ_lookup", "getenv", "config_words", "config_file", "config_context")
+    )
+    values["context_project_names"] = any(
+        values[name] for name in (
+            "module_local", "module_similar_local", "owner_defined_locally",
+            "signal_relative_import", "signal_partially_initialized",
+        )
+    )
+    values["context_import_operation"] = evidence["exception"] in (
+        "ImportError", "ModuleNotFoundError",
+    ) or values["signal_cannot_import_name"] or values["signal_relative_import"]
+    values["context_external_provider"] = any(
+        values[name] for name in ("module_installed", "module_stdlib", "raised_in_third_party")
+    )
+    values["context_data_operation"] = evidence["exception"] in (
+        "KeyError", "ValueError", "NameError", "SyntaxError", "IndexError", "ZeroDivisionError",
+    )
+    values.update(feature_values(evidence, values, project, environment or {}))
+    values.update(history_features(evidence, values, project, environment or {}, use_history=interface_history))
     return [float(values[name]) for name in FEATURE_NAMES]
 
 
@@ -590,7 +656,7 @@ def observed(subject, predicate, value, refs) -> Fact:
     )
 
 
-def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dict]:
+def observations(session: Session, issues: list[Issue], *, interface_history=True) -> tuple[list[Fact], dict]:
     """Observed facts for the rule base plus per-issue evidence and feature vectors."""
     facts: list[Fact] = []
     details = {}
@@ -663,15 +729,13 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
                 facts.append(observed(subject, "project_calls", dist, refs))
             if dist == "dist:pytest" or dist.startswith("dist:pytest-"):
                 facts.append(observed(dist, "is_test_runner", "yes", refs))
+        for change, distribution in observed_changes(evidence, project):
+            facts.append(observed(subject, "behavior_symptom", "behavior:" + change, refs + project_ref))
+            facts.append(observed(subject, "behavior_provider", "dist:" + distribution, refs + project_ref))
         if evidence.get("call_signature"):
             facts.append(observed(subject, "signal", "call_signature", refs))
             # Resolve what was called through the project's own imports (read statically).
-            imported = project.get("imported_names", {})
-            for callee in evidence["callees"]:
-                head, _, rest = callee.partition(".")
-                if head not in imported:
-                    continue
-                qualified = imported[head] + (f".{rest}" if rest else "")
+            for qualified in resolved_calls(evidence, project, legacy=True):
                 top = qualified.split(".")[0]
                 facts.append(observed(subject, "callee", "callable:" + qualified, refs))
                 facts.append(observed(subject, "callee_module", "module:" + top, refs))
@@ -725,7 +789,7 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
         if lint.get("other"):
             facts.append(observed("project", "other_linter", lint["other"], project_ref))
     # Versions the project was locked to, for the libraries that raised a failure.
-    raising = {f.value for f in facts if f.predicate == "raised_by_library"}
+    raising = {f.value for f in facts if f.predicate in ("raised_by_library", "behavior_provider")}
     for index, row in enumerate(project.get("tested_versions", [])):
         dist = "dist:" + row["name"]
         if dist not in raising:
@@ -742,7 +806,7 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
         facts.append(observed(dist, "tested_series_below", f"{tested.major}.{tested.minor + 1}", ref))
     # The lowest version the project declares, for the libraries involved in a failure: code
     # written for 1.x may not behave the same on 2.x.
-    involved = {f.value for f in facts if f.predicate in ("raised_by_library", "provided_by")}
+    involved = {f.value for f in facts if f.predicate in ("raised_by_library", "provided_by", "behavior_provider")}
     for row in project.get("declarations", []):
         dist = "dist:" + row["name"]
         if dist not in involved:
@@ -765,15 +829,25 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
     # Release searches (versions.py): which releases still provide a name.
     searches = {}
     for run in session.runs:
-        if run.tool == "version_search" and run.verified_pass and run.environment_id == environment_id(session.target_python):
+        if (run.tool == "version_search" and run.source == "executed" and run.status == "completed"
+                and run.exit_code == 0 and run.environment_id == environment_id(session.target_python)):
             try:
                 data = json.loads(run.stdout)
             except ValueError:
                 continue
+            if not isinstance(data, dict) or not data.get("api") or not data.get("dist"):
+                continue
+            current_version = next((p.get("version") for p in environment.get("packages", [])
+                                    if canonicalize_name(p.get("name", "")) == canonicalize_name(data["dist"])), None)
+            if environment and data.get("installed") != current_version:
+                continue  # A later environment change needs a new search.
             searches[data.get("api", "")] = (run, data)
     for api, (run, data) in searches.items():
         name, ref = "api:" + api, [f"{run.run_id}:stdout:1"]
         facts.append(observed(name, "release_search", "dist:" + canonicalize_name(data["dist"]), ref))
+        if not run.verified_pass:
+            facts.append(observed(name, "search_inconclusive", "yes", ref))
+            continue
         if data.get("provides"):
             facts.append(observed(name, "provided_until_release", data["provides"], ref))
         if data.get("below"):
@@ -788,7 +862,7 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
             )
     for issue in diagnosable:
         evidence = details[issue.issue_id]
-        evidence["features"] = features(evidence, contexts, project)
+        evidence["features"] = features(evidence, contexts, project, environment, interface_history=interface_history)
     return facts, details
 
 
