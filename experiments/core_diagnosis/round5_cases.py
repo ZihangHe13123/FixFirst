@@ -358,6 +358,8 @@ def diagnose(out: Path, tag: str, model: Path | None) -> None:
             "status": view["status"].get("kind"), "headline": view["status"].get("headline"),
             "issues": [{"tool": i.tool, "title": i.title[:200], "diagnosis": i.diagnosis,
                         "rule": i.diagnosis_rule, "source": i.diagnosis_source,
+                        # What the tree alone suggested, whatever the rules then concluded.
+                        "tree": i.prediction, "tree_confidence": i.prediction_confidence,
                         "evidence": {k: v for k, v in issue_evidence(session, i).items()
                                      if k in ("exception", "raised_in", "where", "source_location", "library")}}
                        for i in issues],
