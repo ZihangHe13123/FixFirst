@@ -164,14 +164,20 @@ def parser():
 
 
 def show(session):
+    from .workspace import build_view
+
     print(f"\n{session.name} · {session.session_id}")
     print(f"Goal: {GOALS[session.goal]} | {session.goal_status}")
     for issue in session.issues:
         cause = f"  → {issue.diagnosis} ({issue.diagnosis_source})" if issue.diagnosis else ""
         print(f"  [{STATES[issue.status]}] {issue.issue_id}  {issue.title[:110]}{cause}")
     print("\nNext steps (manual fixes are never run for you):")
-    for action in session.actions[:5]:
-        print(f"  {action.priority}. {action.action_id} — {action.title}")
+    for rank, step in enumerate(build_view(session)["steps"][:5], 1):
+        print(f"  {rank}. {step['id']} — {step['title']}")
+        print(f"     {step['explanation']}")
+        if step["command"]:
+            print(f"     {step['command']}")
+    print(f"Check again: fixfirst scan {session.session_id}")
 
 
 def default_store(command):
@@ -325,6 +331,7 @@ def main(argv=None):
             elif args.command == "import":
                 import_log(session, args.file, args.tool, args.exit_code)
             elif args.command == "run":
+                infer_and_plan(session)
                 action = next((a for a in session.actions if a.action_id == args.action), None)
                 if not action or not action.check or action.blocked_reasons:
                     raise ValueError(
@@ -360,6 +367,7 @@ def main(argv=None):
                 session.stopped = args.command == "stop"
                 session.history.append({"time": now(), "kind": args.command})
             elif args.command == "show":
+                infer_and_plan(session)
                 if args.json:
                     print(json.dumps(session.model_dump(mode="json"), ensure_ascii=True, indent=2))
                 else:

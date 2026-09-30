@@ -272,6 +272,8 @@ def search_releases(session: Session, targets: list[str]) -> Run:
     from packaging.utils import canonicalize_name
 
     from .versions import search
+    from .dependency_context import context, combined_specifier, requirements_for, trial_constraints
+    from .evidence import project_index
 
     if len(targets) != 2 or not all(isinstance(t, str) and SEARCH_TARGET.match(t) for t in targets):
         raise ValueError("A release search needs a distribution name and a dotted name")
@@ -290,7 +292,13 @@ def search_releases(session: Session, targets: list[str]) -> Run:
     if not installed or not environment.get("python_version"):
         run.status, run.stderr = "launch_failed", "Take an environment snapshot first (press Check again)."
         return run
-    result = search(python, environment["python_version"], environment.get("markers", {}), dist, installed, api)
+    project_run, project = project_index(session)
+    dependencies = context(environment, {**project, "_run_id": project_run.run_id if project_run else None})
+    result = search(python, environment["python_version"], environment.get("markers", {}), dist, installed, api,
+                    specifier=combined_specifier(dependencies, dist), constraints=trial_constraints(dependencies, dist),
+                    context_fingerprint=dependencies["fingerprint"])
+    result["requirement_sources"] = requirements_for(dependencies, dist)
+    result["constraint_notes"] = dependencies["notes"]
     run.stdout = json.dumps(result)
     run.exit_code = 0
     run.duration_s = round(time.monotonic() - start, 3)

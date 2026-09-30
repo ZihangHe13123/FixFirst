@@ -248,6 +248,22 @@ def read_project(root: Path) -> dict:
                 add(value, source, group)
             own(setup_py_name(text))
         note("setup.py is not executed; only literal declarations in its setup() call are read")
+    for filename in ("environment.yml", "environment.yaml"):
+        path = root / filename
+        if not path.exists():
+            continue
+        text = read(path)
+        if text is None:
+            continue
+        from .conda_declarations import read as read_conda
+
+        conda = read_conda(text, filename, MAX_DECLARATIONS)
+        for requirement, source in conda["pip"]:
+            add(requirement, source)
+        result["requires_python"].extend(conda["python"])
+        result.setdefault("conda_declarations", []).extend(conda["conda"])
+        for message in conda["notes"]:
+            note(message)
     if not result["files"]:
         note("No supported static declaration file was found")
     return result
