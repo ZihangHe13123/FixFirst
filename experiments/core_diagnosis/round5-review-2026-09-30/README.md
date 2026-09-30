@@ -63,6 +63,18 @@ P4 的位置只列了导入行；如果只改那一行，第 5 行会报 NameErr
 - **文档出处未知**：抓取到的 1.4 changelog 和迁移指南里都没有找到相关条目。
 - 结果文件：`results/sqlalchemy-*.json`、`results/records-*.json`；检查脚本：`../round5_sqlalchemy_history.py`。
 
+## 最终复查（生产 head `ba52e22`）
+
+- **9 例**：根因 8/8，健康对照正常。第一步中完全满足 3 个（P1、P3、P4），部分指导 4 个（P2、N1、N2、N4），通用建议 1 个（N3）。8 个编辑执行后都通过，测试未改。
+- **46 个探针**：D1–D4 全部关闭。
+  - D1：3 个 Python 版本上的 21 个直接名字接收者全部判为 D03。
+  - D2：值传给另一个合法字段时判为 H12。
+  - D3：奇异矩阵加锁文件时不再建议降级。
+  - D4：没有声明依赖的项目也能给出迁移建议。
+- **唯一确认的问题**：`sqla_generator_then_consumed`。同一函数里先构造生成器、随即消费，在 1.3 下同样失败，却被判为 1.4 的变化（H10）。不过它的 `returns_rows` 第一步在 2.0.44 和 1.3.24 下都能修好；错的只是标签和解释。
+- **保留的边界**：solve 不报错只改形状、Pydantic 别名或 validator 正例、子类 ptp、属性链接收者。
+- 结果文件：`results/*-codex-ba52e22*.json`。
+
 ## 复现
 
 先用 `round5_cases.py build` 建好环境。packaging 的两个探针还需要另建 `RUNS/packaging-old/venv`（packaging 21.3 + pytest）。`RUNS` 不能放在任何项目目录里。

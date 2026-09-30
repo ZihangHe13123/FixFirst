@@ -58,6 +58,16 @@ STEPS = [
              "from the error (name missing, input {'nmae': 'Ada', ...})."},
 ]
 
+# Grades that changed with a later head's first-step text (the edits and their execution are the same).
+REGRADE = {
+    "codex-ba52e22": {
+        "pydantic_field_name_typo": ("partial", "Step text (H12): compare the missing field with the keys supplied at "
+                                     "app.py:10 and check for a misspelt key. The key itself comes from the error."),
+        "stdlib_safeconfigparser_removed": ("complete", "Step text now says to update the import and every "
+                                            "SafeConfigParser constructor or reference; place settings.py:1."),
+    },
+}
+
 PROBE_STEPS = [
     {"probe": "optional_swapped_valid_key", "env": "pydantic_optional_required/venv",
      "edits": [("app.py", "    email: Optional[str]\n", "    email: Optional[str] = None\n")],
@@ -76,6 +86,7 @@ def main(argv=None) -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--runs", type=Path, required=True)
     parser.add_argument("--tag", required=True)
+    parser.add_argument("--cases-only", action="store_true", help="skip the probe steps (a 35c9246 finding)")
     args = parser.parse_args(argv)
     runs = args.runs.resolve()
     results = []
@@ -88,14 +99,17 @@ def main(argv=None) -> None:
         before = {n: rc.sha(work / n) for n in tests}
         apply(work, step["edits"])
         run = rc.pytest(work, folder / "venv")
-        results.append({"case": case["name"], "variant": step.get("variant"), "grade": step["grade"],
-                        "from": step["from"], "edits": step["edits"], "tests_exit": run["exit_code"],
+        grade, source = REGRADE.get(args.tag, {}).get(case["name"], (step["grade"], step["from"]))
+        if step.get("variant"):
+            grade, source = step["grade"], step["from"]
+        results.append({"case": case["name"], "variant": step.get("variant"), "grade": grade,
+                        "from": source, "edits": step["edits"], "tests_exit": run["exit_code"],
                         "target_error_left": bool(case["error"]) and case["error"] in run["output"],
                         "tests_unchanged": before == {n: rc.sha(work / n) for n in tests},
                         "tail": run["output"][-400:]})
         print(json.dumps({k: results[-1][k] for k in ("case", "variant", "grade", "tests_exit",
                                                       "target_error_left", "tests_unchanged")}), flush=True)
-    for step in PROBE_STEPS:
+    for step in [] if args.cases_only else PROBE_STEPS:
         source = runs / f"review-{args.tag}" / step["probe"] / "project"
         work = runs / f"review-{args.tag}" / step["probe"] / "interpreted"
         shutil.copytree(source, work)
