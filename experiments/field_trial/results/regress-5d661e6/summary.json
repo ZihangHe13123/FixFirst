@@ -1,0 +1,228 @@
+{
+ "production_sha": "5d661e654bc5acb27d1997b2351c28873125966a",
+ "original_build": "0eb87e5",
+ "pairing": "Initial states strictly restored for all eight rerun tasks (see initial-state.json); operator fixes replayed identically where the same situation arose. Trajectories diverge where FixFirst's steps changed (C1 from round 1, C2 from round 2, C3 from round 1); later layers are not paired, so layer counts are descriptive and nothing here is claimed as a causal improvement.",
+ "metrics": {
+  "original": {
+   "healthy": 3,
+   "false_alarms": 0,
+   "faulty": 6,
+   "M1": 0,
+   "M2": 1,
+   "H": 2,
+   "N": 2,
+   "U": 1
+  },
+  "rerun": {
+   "healthy": 3,
+   "false_alarms": 0,
+   "faulty": 6,
+   "M1": 0,
+   "M2": 1,
+   "H": 3,
+   "N": 1,
+   "U": 1,
+   "U_note": "N3 not rerun; original U kept"
+  },
+  "model_only_M1_M2": "1/6 -> 1/6",
+  "with_human_fallback_M1_M2_H": "3/6 -> 4/6 (the extra one is C1, reached by an operator fallback that the protocol allows after a wrong step)"
+ },
+ "first_steps_excluding_N3": {
+  "original": {
+   "layers": 15,
+   "complete_or_partial": 5,
+   "generic": 6,
+   "wrong": 4
+  },
+  "rerun": {
+   "layers": 11,
+   "complete": 1,
+   "partial": 3,
+   "generic": 6,
+   "wrong": 1,
+   "reached_at_budget_end_ungraded": 1
+  }
+ },
+ "steps_that_made_the_environment_worse": {
+  "original": 5,
+  "rerun": 0
+ },
+ "c_patterns": {
+  "one_package_per_round": "gone (C1 now one batch command, which fails)",
+  "unbounded_upgrade_overshoot": "gone (C2 trial and bounded searches; C3 no unbounded upgrade)",
+  "repeated_version_changes": "gone (C2 no up/down on sqlalchemy/flask; C3 no down-then-up on Django)",
+  "stale_cli_actions": "gone (C2: five resolved issues, none listed)"
+ },
+ "projects": {
+  "N1": {
+   "original": {
+    "outcome": "healthy, no false alarm",
+    "rounds": 1,
+    "first_steps": [
+     "FixFirst's notebook driver: complete"
+    ]
+   },
+   "rerun": {
+    "outcome": "healthy, no false alarm",
+    "rounds": 1,
+    "first_steps": [
+     "FixFirst's notebook driver: complete"
+    ],
+    "noise": "9 non-blocking 'project' issues (8 before; environment.yml's Python pin is now read)"
+   }
+  },
+  "N2": {
+   "original": {
+    "outcome": "H",
+    "rounds": 2,
+    "first_steps": [
+     "matplotlib style rename: generic",
+     "Ellipse angle keyword-only: generic (executing cell 22, defining cell 20)"
+    ]
+   },
+   "rerun": {
+    "outcome": "H",
+    "rounds": 2,
+    "first_steps": [
+     "matplotlib style rename: generic",
+     "Ellipse angle keyword-only: generic (executing cell 22, defining cell 20)"
+    ],
+    "note": "operator edits byte-identical to the original's"
+   }
+  },
+  "N3": {
+   "original": {
+    "outcome": "U",
+    "first_steps": [
+     "IPython set_matplotlib_formats: complete",
+     "imageio (environment.yml): generic",
+     "missing data after a silent !wget: partial"
+    ]
+   },
+   "rerun": {
+    "outcome": "U (not rerun)",
+    "note": "the 84 MB external download and long computation are not restarted; the original U stays in the denominator"
+   }
+  },
+  "S1": {
+   "original": {
+    "outcome": "healthy, no false alarm",
+    "rounds": 0
+   },
+   "rerun": {
+    "outcome": "healthy, no false alarm",
+    "rounds": 0
+   }
+  },
+  "S2": {
+   "original": {
+    "outcome": "M2",
+    "rounds": 1,
+    "first_steps": [
+     "DataFrame.append (D02): partial; offered an uninstallable 'pandas<2' alternative"
+    ]
+   },
+   "rerun": {
+    "outcome": "M2",
+    "rounds": 1,
+    "first_steps": [
+     "DataFrame.append (D02): partial; no unverified downgrade offered"
+    ],
+    "note": "edit and output files byte-identical to the original's"
+   }
+  },
+  "S3": {
+   "original": {
+    "outcome": "healthy, no false alarm",
+    "rounds": 0,
+    "noise": "collection requirements.txt entries listed as missing"
+   },
+   "rerun": {
+    "outcome": "healthy, no false alarm",
+    "rounds": 0,
+    "noise": "same"
+   }
+  },
+  "C1": {
+   "original": {
+    "outcome": "N",
+    "rounds": 10,
+    "first_steps": [
+     "missing declared dependencies: complete, but one package per round; the failed pinned install never seen"
+    ]
+   },
+   "rerun": {
+    "outcome": "H",
+    "rounds": 2,
+    "first_steps": [
+     "missing declared dependencies: wrong - one batch command keeping every 2023 pin plus --only-binary=:all: fails at the sdist-only Flask-Mail==0.9.1 (also multidict==6.0.4, langdetect==1.0.9); FixFirst does not see the failure and repeats the step"
+    ],
+    "operator": "round 2: the protocol's unpinned install fallback (the command the original used after its budget); tests pass; final environment identical to the original's post-budget one",
+    "note": "N -> H is not a FixFirst success: the protocol allows an operator fallback after a wrong step; the original's correct-but-slow steps never allowed one"
+   }
+  },
+  "C2": {
+   "original": {
+    "outcome": "N",
+    "rounds": 10,
+    "first_steps": [
+     "pytest missing after failed install: generic",
+     "SQLAlchemy MutableMapping (D02): wrong - unbounded upgrade overshoot",
+     "_BindParamClause: wrong - stale false CLI actions, search",
+     "flask._app_ctx_stack: complete - verified flask 2.3.3, which broke flask-caching",
+     "__ident_func__: generic",
+     "_BindParamClause again (D09): partial - provider not consumer",
+     "DeclarativeBase: wrong - searched older releases"
+    ]
+   },
+   "rerun": {
+    "outcome": "N",
+    "rounds": 10,
+    "first_steps": [
+     "pytest missing after failed install: generic (unchanged)",
+     "SQLAlchemy MutableMapping (D02): partial - coordinated pin change + trial; stopped at the declared psycopg2 until the operator aligned the declaration, then exact edit SQLAlchemy==2.1.1 + install set moving alembic; pip check clean",
+     "flask._app_ctx_stack: generic - bounded search (flask 3.0.0-3.1.2) not_found; consumer pin Flask_SQLAlchemy==2.2 not named",
+     "flask_sqlalchemy.Model: generic - search limited to the declared 2.2, inconclusive; no migration hint",
+     "marshmallow.__version__: complete - verified 3.26.2, exact command",
+     "flask_jwt_extended.jwt_optional: reached at the budget end, not graded"
+    ],
+    "operator": [
+     "round 1: dev requirements with psycopg2-binary (identical 43 packages to the original)",
+     "round 3: requirements/prod.txt psycopg2 -> psycopg2-binary to match the environment",
+     "round 6: pip install -U flask flask-sqlalchemy sqlalchemy (the original's fix)",
+     "round 8: port 'from flask_sqlalchemy import Model' to flask_sqlalchemy.model"
+    ],
+    "note": "the trajectory diverges from round 2 on; later layers are not paired"
+   }
+  },
+  "C3": {
+   "original": {
+    "outcome": "H",
+    "rounds": 5,
+    "first_steps": [
+     "Django 1.10.5 on Python 3.12 (H09): partial - label right, searched older Django",
+     "imp in Django 1.5.12: wrong - unbounded upgrade to Django 6.1.1",
+     "providing_args: generic",
+     "__classcell__ on Python 3.9: generic"
+    ]
+   },
+   "rerun": {
+    "outcome": "H",
+    "rounds": 3,
+    "first_steps": [
+     "Django 1.10.5 on Python 3.12 (H09): partial - names the older-Python route first, warns against down/up moves, trial stops honestly at the sdist-only django-cors-middleware==1.3.1; no available interpreter given",
+     "__classcell__ on Python 3.9: generic (unchanged)"
+    ],
+    "operator": [
+     "round 2: Python 3.9 venv with the pinned requirements + fixfirst configure (the original's route)",
+     "round 3: Django 1.11 LTS (the original's fix)"
+    ]
+   }
+  }
+ },
+ "supplementary_not_paired": {
+  "SUP-C1": "pinned install log imported: first step names the real blocker multidict==6.0.4 (requirements.txt:35); its trial stops at the pure-Python sdist-only flask-mail==0.9.1, no candidate",
+  "SUP-C2": "pinned install log imported: names psycopg2 (requirements/prod.txt:15) but frames the fix as a version/Python change; the log's 'pg_config executable not found' (system client) is not surfaced; no trial for the unpinned declaration",
+  "C3": "no failed installation to import; its round-6 path is in the paired run"
+ }
+}
