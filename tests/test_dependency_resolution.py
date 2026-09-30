@@ -70,7 +70,7 @@ def offline_resolver(tmp_path, monkeypatch):
         return original(argv, *args, **kwargs)
 
     monkeypatch.setattr(runner, "execute", execute)
-    return created, commands
+    return created, commands, wheels
 
 
 def test_joint_resolution_uses_new_metadata_and_preserves_other_requirements(tmp_path, offline_resolver):
@@ -102,6 +102,20 @@ def test_resolution_keeps_other_pin_and_retains_real_resolver_failure(tmp_path, 
     assert result["checks"][-1]["exit_code"] != 0
     assert "ff-trial" in result["checks"][-1]["output"]
     assert all(not p.exists() for p in offline_resolver[0])
+
+
+def test_transitive_dependency_can_update_but_unrelated_package_stays_pinned(tmp_path, offline_resolver):
+    session, _ = fixture_session(tmp_path / "project", "ff-trial-base==1.0\nff-trial-ext\n")
+    session.environment["packages"][0]["requires"] = ["ff-trial-helper>=1"]
+    session.environment["packages"].append({"name": "ff-trial-helper", "version": "1.0", "requires": []})
+    wheels = offline_resolver[2]
+    for version in ("1.0", "2.0"):
+        wheel(wheels, "ff-trial-helper", version)
+    wheel(wheels, "ff-trial-base", "2.0", ["ff-trial-helper>=2"])
+    result = json.loads(collect(session, ["ff-trial-base", ">1.0"], 20).stdout)
+    assert result["status"] == "resolved", result
+    assert "ff-trial-helper==2.0" in result["install_requests"]
+    assert "ff-trial-other==1.0" in result["install_requests"]
 
 
 @pytest.mark.parametrize("requirements", ["ff-trial-base==1.0\nother @ https://example.org/other.whl\n",
@@ -162,3 +176,52 @@ def test_documented_python_is_only_a_hint_and_conda_unknowns_are_kept(tmp_path):
     assert all(m["source"].startswith("https://") and m["conda_source"].startswith("https://") for m in project["conda_mappings"])
     assert project["python_hints"] == [{"version": "3.5.2", "source": "README.md:2"}]
     assert not project["requires_python"]
+
+
+def test_expired_trial_is_not_cached_as_success_and_does_not_install(tmp_path, monkeypatch):
+    from fixfirst import runner
+    from fixfirst.parsers import parse
+
+    session, project = fixture_session(tmp_path / "project", "ff-trial-base==1.0\nff-trial-ext\n")
+    def should_not_run(*args, **kwargs):
+        pytest.fail("An expired trial must not start a subprocess")
+    monkeypatch.setattr(runner, "execute", should_not_run)
+    run = collect(session, ["ff-trial-base", ">1"], 0)
+    assert run.status == "timeout"
+    data = json.loads(run.stdout)
+    assert data["status"] == "not_resolved" and not data["checks"]
+    assert "install_requests" not in data
+    parse(run)
+    assert not run.verified_pass
+    run.source = "imported"
+    session.runs.append(run)
+    assert latest(session, session.environment, project, "ff-trial-base", ">1") == (None, None)
+
+
+@pytest.mark.parametrize("blocker,output", [
+    ("docopt==0.6.2", "Because docopt==0.6.2 has no usable wheels and you require docopt==0.6.2"),
+    ("docopt", "Because all versions of docopt have no usable wheels and you require docopt"),
+])
+def test_wheel_restriction_names_actual_blocker_without_blaming_changed_package(tmp_path, monkeypatch, blocker, output):
+    from fixfirst import runner
+    from fixfirst.dependency_resolution import advise
+    from fixfirst.models import Action
+
+    session, project = fixture_session(tmp_path / "project", "ff-trial-base==1.0\nff-trial-ext\ndocopt\n")
+    def execute(argv, cwd, tool, scope, interpreter, *args, **kwargs):
+        installing = "install" in argv
+        return Run(tool=tool, scope=scope, environment_id=environment_id(interpreter),
+                   exit_code=1 if installing else 0,
+                   stderr=output if installing else "")
+    monkeypatch.setattr(runner, "execute", execute)
+    trial = collect(session, ["ff-trial-base"], 20)
+    result = json.loads(trial.stdout)
+    assert result["trial_restriction"] == "wheels_only"
+    assert result["blocked_requirement"] == blocker
+    ingest(session, [trial])
+    action = Action(action_id="trial", kind="manual_fix", title="review", explanation="Change the Python version", verification="")
+    advise(session, action, session.environment, project, "ff-trial-base")
+    assert blocker in action.title and "ff-trial-base" not in action.title
+    assert "does not establish a version conflict" in action.explanation
+    assert "Change the Python version" not in action.explanation
+    assert not action.command and not action.check

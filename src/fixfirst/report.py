@@ -33,6 +33,8 @@ TOOL_NAMES = {
     "project": "Project declarations",
     "pip_check": "Dependency consistency",
     "pip_install": "Installation log",
+    "version_search": "Release search",
+    "dependency_resolve": "Dependency set trial",
     "pytest": "Test collection",
     "pytest_run": "Test run",
     "ruff": "Code check",

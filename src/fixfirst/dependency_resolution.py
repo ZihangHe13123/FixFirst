@@ -26,7 +26,7 @@ MAX_SECONDS = 300
 
 
 def fingerprint(environment, project):
-    value = {"context": context(environment, project)["fingerprint"],
+    value = {"trial_protocol": 2, "context": context(environment, project)["fingerprint"],
              "files": project.get("files", []), "notes": project.get("notes", []),
              "conda": project.get("conda_declarations", []),
              "python_hints": project.get("python_hints", [])}
@@ -62,14 +62,27 @@ def inputs(environment, project, name, direction=""):
         (constraints if row.get("constraint") else requests).append(value)
     if not edits or not any(canonicalize_name(Requirement(v).name) == name for v in requests):
         raise ValueError("The named distribution must have an active, versioned, required project declaration")
-    # Preserve packages outside the declared project roots. Updating a declared
+    # Preserve packages outside the declared project dependency graph. Updating a declared
     # root (e.g. alembic) may change its Requires-Dist, so its old metadata must not
     # incorrectly prohibit a joint solution. Unrelated installed packages stay.
     roots = {canonicalize_name(Requirement(v).name) for v in requests}
+    dependencies = context(environment, project)
+    if dependencies["notes"]:
+        raise ValueError("Installed dependency metadata is incomplete: " + "; ".join(dependencies["notes"][:3]))
+    graph = {}
+    for row in dependencies["requirements"]:
+        if row["owner"] != "project":
+            graph.setdefault(row["owner"], set()).add(row["name"])
+    related, pending = set(roots), list(roots)
+    while pending:
+        owner = pending.pop()
+        for target in graph.get(owner, set()) - related:
+            related.add(target)
+            pending.append(target)
     own = set(project.get("own_names", []))
     for package in environment.get("packages", []):
         target = canonicalize_name(package.get("name", ""))
-        if target and target not in roots | own | {"pip", "setuptools", "wheel"}:
+        if target and target not in related | own | {"pip", "setuptools", "wheel"}:
             requests.append(str(Requirement(target + "==" + package["version"])))
     if len(requests) + len(constraints) > MAX_REQUIREMENTS:
         raise ValueError(f"More than {MAX_REQUIREMENTS} requirements; use the project's environment manager")
@@ -172,6 +185,18 @@ def collect(session, targets, timeout):
             result["status"] = "resolved"
     except (ValueError, OSError, KeyError, TypeError) as error:
         result["error"] = str(error)
+    if result["status"] != "resolved" and result["checks"]:
+        failure = result["checks"][-1]
+        if failure["step"] == "install declared set":
+            # uv explicitly distinguishes a missing wheel from unsatisfiable
+            # version metadata. Do not turn our trial restriction into a claim
+            # about the application or the named package we tried to change.
+            wheel = re.search(r"\b([A-Za-z0-9][A-Za-z0-9._-]*(?:==[^\s,]+)?)\s+(?:has|have) no usable wheels\b",
+                              failure["output"])
+            if wheel:
+                result["trial_restriction"] = "wheels_only"
+                result["blocked_requirement"] = wheel[1]
+                result["error"] = f"The wheel-only trial cannot install {wheel[1]}"
     # Listing availability uses uv's local catalog, not an interpreter download.
     if result["status"] != "resolved" and run.status == "completed" and uv and deadline - time.monotonic() > 1:
         for hint in result["python_hints"][:3]:
@@ -209,12 +234,16 @@ def advise(session, action, environment, project, name, direction=""):
             action.explanation = (
                 f"In a temporary environment using Python {result['python']}, the declared set installed "
                 f"from wheels and passed the dependency consistency check. Proposed edits: {edits}. "
-                "All other project version requirements were kept, and packages outside the declared roots "
+                "All other project version requirements were kept, and packages outside the declared dependency graph "
                 "were held at their recorded versions. Review these edits first. This is an installation "
                 "candidate: the application and its tests have NOT run with it; API migration may still be needed. "
                 "After making the declaration edits, run the recorded installation below, then Check again "
                 "with the original input/tests. Keep the tests unchanged. If this reveals another failure, "
                 "handle that new evidence rather than reinstalling the old pin.")
+            action.explanation += (
+                " The trial ignores pip/uv configuration files; environment index settings still apply. "
+                "If your usual installer needs an index or mirror configured in a file, confirm that it "
+                "provides this set before applying it.")
             # Never suggest installing project dependencies into system Python.
             if activation_env(session.target_python):
                 action.command = [session.target_python, "-m", "pip", "install", "--only-binary=:all:",
@@ -229,8 +258,17 @@ def advise(session, action, environment, project, name, direction=""):
                                                  *result["install_requests"]])
                     + ". Select that interpreter for Check again. Do not reuse an existing environment directory.")
         else:
-            action.title = f"Review the unresolved {name} dependency set and interpreter"
-            action.explanation += " The temporary trial did not find an installable set: " + result.get("error", result["status"]) + "."
+            action.title = f"Review why the {name} dependency trial did not complete"
+            action.explanation = "The temporary trial did not produce an installation candidate: " + result.get("error", result["status"]) + "."
+            if result.get("trial_restriction") == "wheels_only":
+                blocked = result["blocked_requirement"]
+                action.title = f"The wheel-only trial stopped at {blocked}"
+                action.explanation += (
+                    f" The immediate blocker is {blocked}, which has no usable wheel in the resolver output. "
+                    "FixFirst's trial disables source builds. This result does not establish a version conflict "
+                    "or an unsupported Python, and does not justify changing another package's pin. "
+                    "Review that dependency's documented source-build or Conda installation route in a separate "
+                    "environment, or obtain a supported wheel, before retrying the complete project setup.")
             for hint in result.get("python_hints", []):
                 action.explanation += f" {hint['source']} mentions Python {hint['version']} (a documentation hint, not a verified environment)."
                 if hint.get("uv_available") is False:
@@ -240,7 +278,8 @@ def advise(session, action, environment, project, name, direction=""):
             failed = next((c for c in reversed(result.get("checks", [])) if c["exit_code"] != 0), None)
             if failed:
                 action.explanation += " Resolver output: " + failed["output"][-2000:]
-            action.explanation += " A different interpreter or a coordinated declaration/code migration needs review; do not repeat the same unresolved trial."
+            action.explanation += " No declaration changes or installation command have been verified by this trial. Keep the original requirements until a reviewed alternative is available; do not repeat the same unresolved trial."
+            action.explanation += " The trial ignores pip/uv configuration files (environment index settings still apply); a configured private index or mirror may give a different result."
         return trial_run
     try:
         inputs(environment, project, name, direction)
@@ -258,4 +297,5 @@ def advise(session, action, environment, project, name, direction=""):
         "constraints stay in force, declared dependencies resolve together, and unrelated installed packages "
         "stay at their current versions. Downloads wheels; at most 5 minutes. Installation success is "
         "separate from running the original program/tests. The trial does not change your project or environment.")
+    action.explanation += " The trial ignores pip/uv configuration files; environment index settings still apply."
     return None

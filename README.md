@@ -303,11 +303,26 @@ environment says about the modules involved) as JSON, with no cause, ranking or 
   3.9–3.14 (venv, uv or conda); native scripts/modules, unittest, optional notebooks, pytest,
   Ruff and pip. Declarations are read statically from
   `pyproject.toml` (PEP 621, dependency groups, flit), `requirements*.txt`, `setup.cfg` and
-  literal lists in `setup.py` (never executed); lock files give the versions a project was
-  tested with. Windows support is new and is being validated on real machines.
+  literal lists in `setup.py` (never executed). A bounded `environment.yml` / `.yaml` reader
+  keeps pip entries and documented PyPI alternatives for eight common scientific packages;
+  unknown Conda names, channel and build syntax stay explicit. Lock files record selected
+  versions, not proof that the project's tests passed. Windows support is new and is being
+  validated on real machines.
 - Checks run as if the project's virtual environment were activated. The release search runs
   only when asked, installs prebuilt wheels only (no build scripts) into a throwaway
   environment and needs internet access.
+- Repair plans use current declarations and installed dependency metadata. Missing required
+  dependencies can be installed together. Imported pip failures identify the blocked package
+  and requirement; they do not prove a successful repair or silently override a project pin.
+- **Try a dependency set** is an explicit check for a blocked version requirement (CLI:
+  `fixfirst run SESSION_ID ACTION_ID`, using the action ID shown in the report). It tries
+  changing that requirement in a temporary environment while preserving the other project
+  constraints and unrelated installed packages. The recorded result includes exact proposed
+  declaration edits, installation versions and a dependency consistency check. Review and
+  make the edits before running the proposed installation, then rerun the original checks.
+  This trial never edits the project or target environment, and **does not run the application
+  or establish that it is repaired**. It is not run by a normal scan. Incomplete declarations,
+  resolver failures and timeouts remain unresolved; no retry loop is started automatically.
 - Checks run with timeouts, output limits and no shell. The environment snapshot runs outside
   the project so project files cannot shadow the standard library during the check.
 - Output is redacted before it is stored: credentials in URLs, token/password assignments,
@@ -347,6 +362,11 @@ environment says about the modules involved) as JSON, with no cause, ranking or 
   trials. It may miss a working release or leave newer releases unchecked. An unfinished or
   failed trial does not prove that no older version works; a verified import still needs the
   project's tests to confirm the full environment.
+- Dependency-set trials use wheels only and stop within a 300-second execution budget.
+  Packages available only as source distributions may be excluded even when a manual build
+  could work. A successful resolver result may still require API or application changes.
+  Python versions mentioned in README files are documentation hints; they are not necessarily
+  supported by the current machine or downloadable by its environment manager.
 - Behaviour changes that raise no "name is missing" error (a library returning different
   results) are only recognised through a lock file; otherwise they look like code defects.
 - The only held-out real-world measurement is round 1 of the generalisation check (2 of 13);
