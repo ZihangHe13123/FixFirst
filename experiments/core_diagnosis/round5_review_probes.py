@@ -197,6 +197,45 @@ for _version, _env in D1_ENVS.items():
                                      f"    assert spread({_argument}) == 4\n"},
             "expect": f"Python {_version}: removed ndarray.ptp through this receiver is {_expected[_version]}."})
 
+# SQLAlchemy review (ba52e22): the eager result iterator of 1.4. Expectations written before running.
+SQLA = ("sqla20/venv", "sqla13/venv")  # SQLAlchemy 2.0.44 and 1.3.24, with pytest
+SQLA_TEST = ("from sqlalchemy import create_engine\n\nfrom app import {name}\n\n\ndef test_{name}():\n"
+             "    with create_engine(\"sqlite://\").connect() as connection:\n{body}")
+SQLA_PROBES = {
+    "sqla_lazy_generator": (
+        "def query(connection, sql):\n    cursor = connection.execute(text(sql))\n"
+        "    rows = (tuple(row) for row in cursor)\n    return rows\n",
+        "query", "        query(connection, \"CREATE TABLE t (x INTEGER)\")\n"
+                 "        assert list(query(connection, \"SELECT 1\")) == [(1,)]\n",
+        "Real 1.4 change (1.3 builds the generator lazily and never consumes it): expected the eager "
+        "iterator history and the returns_rows step."),
+    "sqla_generator_then_consumed": (
+        "def query_all(connection, sql):\n    cursor = connection.execute(text(sql))\n"
+        "    rows = (tuple(row) for row in cursor)\n    return list(rows)\n",
+        "query_all", "        assert query_all(connection, \"CREATE TABLE t (x INTEGER)\") == []\n",
+        "The generator is consumed in the same function, so 1.3 fails too (at list): not a version change. "
+        "Risk: the error line is the generator construction, so the history may still be borrowed."),
+    "sqla_list_consumption": (
+        "def query_all(connection, sql):\n    cursor = connection.execute(text(sql))\n    return list(cursor)\n",
+        "query_all", "        assert query_all(connection, \"CREATE TABLE t (x INTEGER)\") == []\n",
+        "Consumption fails on 1.3 too: must not be called the 1.4 change."),
+    "sqla_fetchall": (
+        "def query_all(connection, sql):\n    cursor = connection.execute(text(sql))\n    return cursor.fetchall()\n",
+        "query_all", "        assert query_all(connection, \"CREATE TABLE t (x INTEGER)\") == []\n",
+        "fetchall fails on 1.3 too: must not be called the 1.4 change."),
+    "sqla_closed_then_generator": (
+        "def query(connection, sql):\n    cursor = connection.execute(text(sql))\n    cursor.close()\n"
+        "    rows = (tuple(row) for row in cursor)\n    return rows\n",
+        "query", "        assert list(query(connection, \"SELECT 1\")) == [(1,)]\n",
+        "A result closed on purpose fails on 1.3 too (at consumption): must not be called the 1.4 change."),
+}
+for _name, (_source, _function, _body, _expect) in SQLA_PROBES.items():
+    PROBES.append({"name": _name, "focus": "sqlalchemy history", "env": SQLA,
+                   "files": {"requirements.txt": "SQLAlchemy>=1.3\n",
+                             "app.py": "from sqlalchemy import text\n\n\n" + _source,
+                             "test_app.py": SQLA_TEST.format(name=_function, body=_body)},
+                   "expect": _expect})
+
 def run(runs: Path, tag: str, only=()) -> None:
     from fixfirst.evidence import issue_evidence
     from fixfirst.service import create_session, scan
