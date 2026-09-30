@@ -236,6 +236,51 @@ for _name, (_source, _function, _body, _expect) in SQLA_PROBES.items():
                              "test_app.py": SQLA_TEST.format(name=_function, body=_body)},
                    "expect": _expect})
 
+# a56a621 review: consumption forms around generator_consumption. Expectations written before running.
+GENERATOR = "    cursor = connection.execute(text(sql))\n    rows = (tuple(row) for row in cursor)\n"
+DDL_EMPTY = "        assert {name}(connection, \"CREATE TABLE t (x INTEGER)\") == {empty}\n"
+SQLA_CONSUMERS = {
+    "sqla_alias_then_list": ("    batch = rows\n    return list(batch)\n", "[]",
+                             "Alias then list: 1.3 fails too; the alias is recorded, so no version change expected."),
+    "sqla_for_loop_consumption": ("    found = []\n    for row in rows:\n        found.append(row)\n    return found\n", "[]",
+                                  "A for loop consumes it: 1.3 fails too; no version change expected."),
+    "sqla_star_unpacking": ("    return [*rows]\n", "[]",
+                            "[*rows] consumes it (1.3 fails too). Predicted: not a listed consumer, so the "
+                            "1.4 history may still be borrowed."),
+    "sqla_join_consumption": ("    return \"\\n\".join(\",\".join(map(str, row)) for row in rows)\n", "\"\"",
+                              "join over a generator of rows consumes it (1.3 fails too). Predicted: not recognised."),
+    "sqla_nested_consumer": ("    def materialise():\n        return list(rows)\n    return materialise()\n", "[]",
+                             "Consumed in a nested function (1.3 fails too). Predicted: nested bodies are not "
+                             "searched, so not recognised."),
+}
+for _name, (_tail, _empty, _expect) in SQLA_CONSUMERS.items():
+    PROBES.append({"name": _name, "focus": "generator consumption", "env": SQLA,
+                   "files": {"requirements.txt": "SQLAlchemy>=1.3\n",
+                             "app.py": "from sqlalchemy import text\n\n\ndef query_all(connection, sql):\n"
+                                       + GENERATOR + _tail,
+                             "test_app.py": SQLA_TEST.format(name="query_all",
+                                                             body=DDL_EMPTY.format(name="query_all", empty=_empty))},
+                   "expect": _expect})
+PROBES.append({"name": "sqla_generator_in_lambda", "focus": "generator consumption", "env": SQLA,
+               "files": {"requirements.txt": "SQLAlchemy>=1.3\n",
+                         "app.py": "from sqlalchemy import text\n\nrows_of = lambda cursor: (tuple(row) for row in cursor)\n\n\n"
+                                   "def query(connection, sql):\n    return rows_of(connection.execute(text(sql)))\n",
+                         "test_app.py": SQLA_TEST.format(name="query", body=
+                             "        query(connection, \"CREATE TABLE t (x INTEGER)\")\n"
+                             "        assert list(query(connection, \"SELECT 1\")) == [(1,)]\n")},
+               "expect": "A real 1.4 change, but the generator is built in a lambda (no recorded context): "
+                         "expected no version inference (a missed positive, not a false claim)."})
+PROBES.append({"name": "sqla_wrapped_not_consumed", "focus": "generator consumption", "env": SQLA,
+               "files": {"requirements.txt": "SQLAlchemy>=1.3\n",
+                         "app.py": "from sqlalchemy import text\n\n\nclass Rows:\n    def __init__(self, source):\n"
+                                   "        self._source = source\n\n    def all(self):\n        return list(self._source)\n\n\n"
+                                   "def query(connection, sql):\n" + GENERATOR + "    return Rows(rows)\n",
+                         "test_app.py": SQLA_TEST.format(name="query", body=
+                             "        query(connection, \"CREATE TABLE t (x INTEGER)\")\n"
+                             "        assert query(connection, \"SELECT 1\").all() == [(1,)]\n")},
+               "expect": "records-like: the generator is handed to a wrapper and not consumed here (1.3 passes): "
+                         "expected the 1.4 history and the returns_rows step."})
+
 def run(runs: Path, tag: str, only=()) -> None:
     from fixfirst.evidence import issue_evidence
     from fixfirst.service import create_session, scan
