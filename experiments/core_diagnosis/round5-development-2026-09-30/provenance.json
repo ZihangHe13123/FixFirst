@@ -1,5 +1,5 @@
 {
-  "redactions": "Host-specific directories and username replaced by placeholders. Original observations and review findings are retained. Claude reviewed ba52e22; the final consumption guard a56a621 has Codex execution evidence and awaits Claude closing review.",
+  "redactions": "Host-specific directories and username replaced by placeholders. Original observations, expectations and review findings are retained. Claude closed the final 18f2875 production delta in ff2d9f0, with 12 SQL probes and interpreted repairs of both conservative misses. The simple lazy positive remains covered; lambda and unknown wrappers retain input guidance without the migration label.",
   "files": {
     "environments.json": {
       "raw_sha256": "086f7e413cbe8da464f4606cc0a12d5a265179a354847bd0d787261c760cb97e",
@@ -40,6 +40,10 @@
     "receiver-probes-ba52e22.json": {
       "raw_sha256": "596094159aa9dd0b8a1e2d57a717a6c5e1c9e0686cbe3f3d23a6d6ef8ea51d23",
       "published_sha256": "ad6c567821c7575387ca25520ef859e5aaf9f8935f96b86aaae634aa5c1bf926"
+    },
+    "final-consumption-probes.json": {
+      "raw_sha256": "9c2dde1c3846de0f552bb703e10b59f7fb78d143fa8eeb3f37cbca112364720b",
+      "published_sha256": "9c2dde1c3846de0f552bb703e10b59f7fb78d143fa8eeb3f37cbca112364720b"
     }
   }
 }

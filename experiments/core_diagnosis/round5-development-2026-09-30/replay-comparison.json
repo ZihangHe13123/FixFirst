@@ -2,7 +2,7 @@
   "kind": "fixed_model_recorded_development_comparison",
   "limits": "Fixed models on existing development observations, including fitting data. Old snapshots lack the new runtime metadata. This is regression replay, not independent evaluation, cross-validation, or fresh project execution. The real-records snapshot lacks generator-consumption context; it now gets input guidance and misses the original version label (6/6 to 5/6 in either full system). No data or labels were changed.",
   "before_head": "39244136ec06ff1d3a714cdb9a3a11c213b189ea",
-  "after_head": "a56a621",
+  "after_head": "18f2875",
   "before_source_sha256": {
     "__init__.py": "7042a3ae28ec8b6423586c61b0ab382b541447cb17be5c5c412cbb0d4a7426c8",
     "__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
@@ -62,7 +62,7 @@
     "_runtime_evidence.py": "406480fea2a622fd111e63ba3af5281585f69e880806129d9048667bca61dfd0",
     "_unittest_runner.py": "abb94b5f4852a575ecdd0bc8702ce3758724bd55fca00c6e806055a483053356",
     "_winprocess.py": "a57855d492192b3ac29004d1212f135721ac930c6b2bfba30dce1496840ad1b4",
-    "behavior.py": "795042a1705cedb473fd0651270d0538d7b384f95970ea662a231afaf9e6fe2a",
+    "behavior.py": "4c308ec9b93854d877dce8d79e8f590916730f64153e7abdf98493c6c50d53d0",
     "cases.py": "f4e25213b6902b081bdda50ab896903f91a23280496ff23cc3f587f4809c170d",
     "classification.py": "bfa74a12e35c72a93928a80913108a72e9d791c4f6ac9261570804707d099980",
     "cli.py": "8bc63822fddf8a06221c47a4d045c81c522d2c4df7e69b9c80ff94ca73a545e6",
