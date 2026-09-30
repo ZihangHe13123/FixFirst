@@ -9,9 +9,10 @@ nothing is unpickled.
 from functools import lru_cache
 from importlib import resources
 import json
+import math
 from pathlib import Path
 
-from .evidence import FEATURE_NAMES
+from .evidence import FEATURE_NAMES, LEGACY_FEATURE_NAMES
 
 DIAGNOSES = [
     "missing_dependency",
@@ -20,7 +21,7 @@ DIAGNOSES = [
     "config_missing",
     "code_defect",
 ]
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 MIN_CONFIDENCE = 0.6
 NAIVE = {
     "import_failure": "missing_dependency",
@@ -36,12 +37,14 @@ def naive_diagnosis(kind: str) -> str:
 
 
 def validate_model(model: dict) -> dict:
-    if model.get("schema_version") != SCHEMA_VERSION or model.get("task") != "root_cause":
+    version = model.get("schema_version")
+    if version not in (3, SCHEMA_VERSION) or model.get("task") != "root_cause":
         raise ValueError(
             "Unsupported classifier model. Models from FixFirst 0.3 predicted parser "
             "categories; retrain with `fixfirst evaluate` on a diagnosis dataset."
         )
-    if model.get("feature_names") != FEATURE_NAMES:
+    expected = LEGACY_FEATURE_NAMES if version == 3 else FEATURE_NAMES
+    if model.get("feature_names") != expected:
         raise ValueError("Classifier features do not match this FixFirst version")
     if any(label not in DIAGNOSES for label in model["classes"]):
         raise ValueError("Classifier has an unknown label")
@@ -62,7 +65,15 @@ def default_model() -> dict | None:
 
 def predict_tree(vector: list[float], model: dict) -> tuple[str, float]:
     """Walk the exported tree; return the leaf's majority label and its share."""
-    if len(vector) != len(model["feature_names"]):
+    width = len(model["feature_names"])
+    # New observations retain the old prefix. A legacy model ignores only the
+    # explicitly versioned extension; arbitrary extra or missing columns fail.
+    compatible_extension = (
+        model.get("schema_version") == 3
+        and model["feature_names"] == LEGACY_FEATURE_NAMES
+        and len(vector) == len(FEATURE_NAMES)
+    )
+    if len(vector) != width and not compatible_extension:
         raise ValueError("Feature vector has the wrong length")
     nodes, labels = model["nodes"], model["classes"]
     at, visited = 0, set()
@@ -77,12 +88,15 @@ def predict_tree(vector: list[float], model: dict) -> tuple[str, float]:
             best = max(range(len(values)), key=values.__getitem__)
             return labels[best], round(values[best] / total, 3)
         feature = node["feature"]
-        if not 0 <= feature < len(vector):
+        if not 0 <= feature < width:
             raise ValueError("Classifier model uses an invalid feature index")
         at = node["left"] if vector[feature] <= node["threshold"] else node["right"]
 
 
-def train_tree(rows: list[dict], output: Path | None = None, max_depth=6, min_samples_leaf=2):
+def train_tree(
+    rows: list[dict], output: Path | None = None, max_depth=6, min_samples_leaf=2,
+    *, feature_names: list[str] | None = None,
+):
     """Train on rows of {"features": [...], "label": ..., "group": ...}."""
     from sklearn.tree import DecisionTreeClassifier, export_text
 
@@ -90,6 +104,13 @@ def train_tree(rows: list[dict], output: Path | None = None, max_depth=6, min_sa
         raise ValueError("Not enough labelled examples to train")
     if any(r["label"] not in DIAGNOSES for r in rows):
         raise ValueError("Training label outside the supported diagnoses")
+    names = FEATURE_NAMES if feature_names is None else list(feature_names)
+    if names not in (LEGACY_FEATURE_NAMES, FEATURE_NAMES):
+        raise ValueError("Unsupported training feature layout")
+    if any(len(r["features"]) != len(names) for r in rows):
+        raise ValueError("Training feature vector has the wrong length")
+    if any(not math.isfinite(value) for r in rows for value in r["features"]):
+        raise ValueError("Training features must be finite numbers")
     clf = DecisionTreeClassifier(
         criterion="gini",
         max_depth=max_depth,
@@ -99,17 +120,17 @@ def train_tree(rows: list[dict], output: Path | None = None, max_depth=6, min_sa
     clf.fit([r["features"] for r in rows], [r["label"] for r in rows])
     tree = clf.tree_
     model = {
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": 3 if names == LEGACY_FEATURE_NAMES else SCHEMA_VERSION,
         "task": "root_cause",
-        "feature_names": FEATURE_NAMES,
+        "feature_names": names,
         "classes": [str(c) for c in clf.classes_],
         "training_examples": len(rows),
-        "training_groups": sorted({r.get("group", "") for r in rows}),
+        "training_groups": sorted({r["group"] for r in rows if r.get("group")}),
         "hyperparameters": {"max_depth": max_depth, "min_samples_leaf": min_samples_leaf},
         "description": "Gini decision tree over observed evidence features; suggestions only.",
         "feature_importances": {
             name: round(float(value), 4)
-            for name, value in zip(FEATURE_NAMES, clf.feature_importances_)
+            for name, value in zip(names, clf.feature_importances_)
             if value > 0
         },
         "nodes": [
@@ -127,7 +148,7 @@ def train_tree(rows: list[dict], output: Path | None = None, max_depth=6, min_sa
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(json.dumps(model, indent=2), encoding="utf-8")
         output.with_suffix(".txt").write_text(
-            export_text(clf, feature_names=FEATURE_NAMES), encoding="utf-8"
+            export_text(clf, feature_names=names), encoding="utf-8"
         )
     return model
 

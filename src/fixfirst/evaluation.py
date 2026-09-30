@@ -68,6 +68,7 @@ def load_rows(dataset: Path, skip=()) -> list[dict]:
                         "case_id": case["case_id"],
                         "template": case["template"],
                         "scenario": case["scenario"],
+                        "group": case["scenario"],
                         "label": case["label"],
                         "knowledge_covered": case["knowledge_covered"],
                         "kind": issue.kind,

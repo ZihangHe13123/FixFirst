@@ -92,7 +92,7 @@ SIGNALS = (
     "relative_import",
     "removed_hint",
 )
-FEATURE_NAMES = [
+LEGACY_FEATURE_NAMES = [
     *(f"exception_{name}" for name in EXCEPTIONS),
     "exception_other",
     "stage_collect",
@@ -112,6 +112,17 @@ FEATURE_NAMES = [
     "owner_defined_locally",
     *(f"signal_{name}" for name in SIGNALS),
 ]
+# Keep the schema-3 prefix stable so existing exported models remain usable.
+# These shared contexts pool observable signals across different fault mechanisms;
+# they are not diagnoses, rule matches or identifiers from the knowledge base.
+CONTEXT_FEATURE_NAMES = [
+    "context_configuration",
+    "context_project_names",
+    "context_import_operation",
+    "context_external_provider",
+    "context_data_operation",
+]
+FEATURE_NAMES = LEGACY_FEATURE_NAMES + CONTEXT_FEATURE_NAMES
 
 
 WINDOWS_ABSOLUTE = re.compile(r"^[A-Za-z]:/")
@@ -474,7 +485,7 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
     evidence["modules"] = [m.split(".")[0] for m in evidence["modules"]]
     evidence["modules"] = list(dict.fromkeys(evidence["modules"]))
     # A call rejected for its arguments, and what was called as the code spells it
-    # (``yaml.load``, ``CliRunner``). Kept out of the features, so the tree is unchanged.
+    # (``yaml.load``, ``CliRunner``). Used for grounded advice, not classifier labels.
     evidence["call_signature"] = exception == "TypeError" and bool(CALL_SIGNATURE.search(message))
     evidence["callees"] = []
     if evidence["call_signature"]:
@@ -590,6 +601,25 @@ def features(evidence: dict, contexts: dict, project: dict) -> list[float]:
     values["api_mentioned"] = bool(evidence["apis"] or evidence["kwargs"])
     values["owner_defined_locally"] = any(o in defined for o in evidence["owners"])
     values.update({f"signal_{name}": name in evidence["signals"] for name in SIGNALS})
+    values["context_configuration"] = any(
+        values[f"signal_{name}"]
+        for name in ("environ_lookup", "getenv", "config_words", "config_file", "config_context")
+    )
+    values["context_project_names"] = any(
+        values[name] for name in (
+            "module_local", "module_similar_local", "owner_defined_locally",
+            "signal_relative_import", "signal_partially_initialized",
+        )
+    )
+    values["context_import_operation"] = evidence["exception"] in (
+        "ImportError", "ModuleNotFoundError",
+    ) or values["signal_cannot_import_name"] or values["signal_relative_import"]
+    values["context_external_provider"] = any(
+        values[name] for name in ("module_installed", "module_stdlib", "raised_in_third_party")
+    )
+    values["context_data_operation"] = evidence["exception"] in (
+        "KeyError", "ValueError", "NameError", "SyntaxError", "IndexError", "ZeroDivisionError",
+    )
     return [float(values[name]) for name in FEATURE_NAMES]
 
 

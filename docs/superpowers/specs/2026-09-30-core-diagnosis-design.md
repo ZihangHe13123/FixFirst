@@ -81,3 +81,15 @@ human-data plan remains available for a subsequent controlled training round.
 
 Deliver code, reproducible development evidence, remaining failures and a reviewable
 PR. This design was approved in the conversation before implementation.
+
+## Model continuation
+
+The user subsequently asked to continue improving model performance. The next
+round targets the learned tree with shared configuration, project-name, import,
+external-provider and data-operation contexts. These features contain observed
+evidence only, with no diagnosis, rule result or knowledge identifier. Retain the
+44-feature schema-3 prefix and support existing models. Train a separate candidate
+on the same public 215 development records; keep the hard development cases out of
+training. Compare fixed hyperparameters first, then use nested scenario-grouped
+validation for any depth selection. Report tuning results as development evidence;
+the independent A1/C1 evaluation and B5 freeze remain separate.
