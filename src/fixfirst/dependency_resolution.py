@@ -26,7 +26,7 @@ MAX_SECONDS = 300
 
 
 def fingerprint(environment, project):
-    value = {"trial_protocol": 3, "context": context(environment, project)["fingerprint"],
+    value = {"trial_protocol": 4, "context": context(environment, project)["fingerprint"],
              "files": project.get("files", []), "notes": project.get("notes", []),
              "conda": project.get("conda_declarations", []),
              "python_hints": project.get("python_hints", [])}
@@ -196,12 +196,23 @@ def collect(session, targets, timeout):
             # version metadata. Do not turn our trial restriction into a claim
             # about the application or the named package we tried to change.
             plain = " ".join(re.sub(r"(?m)^[ \t│╰─▶]+", "", failure["output"]).split())
-            wheel = re.search(r"\b([A-Za-z0-9][A-Za-z0-9._-]*(?:==[^\s,]+)?)\s+(?:has|have) no usable wheels\b",
-                              plain)
+            atom = r"(?:===|==|~=|!=|>=|<=|>|<)\s*[A-Za-z0-9*.+!_-]+"
+            wheel = re.search(
+                r"(?<![\w.<>!=~,-])([A-Za-z0-9][A-Za-z0-9._-]*(?:\[[\w.,-]+\])?"
+                + rf"(?:\s*{atom}(?:\s*,\s*{atom})*)?)\s+(?:has|have) no usable wheels\b",
+                plain,
+            )
             if wheel:
+                try:
+                    blocked = str(Requirement(wheel[1]))
+                except ValueError:
+                    blocked = None
+            else:
+                blocked = None
+            if blocked:
                 result["trial_restriction"] = "wheels_only"
-                result["blocked_requirement"] = wheel[1]
-                result["error"] = f"The wheel-only trial cannot install {wheel[1]}"
+                result["blocked_requirement"] = blocked
+                result["error"] = f"The wheel-only trial cannot install {blocked}"
     # Listing availability uses uv's local catalog, not an interpreter download.
     if result["status"] != "resolved" and run.status == "completed" and uv and deadline - time.monotonic() > 1:
         for hint in result["python_hints"][:3]:

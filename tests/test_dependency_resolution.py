@@ -221,6 +221,8 @@ def test_expired_trial_is_not_cached_as_success_and_does_not_install(tmp_path, m
     ("docopt==0.6.2", "Because docopt==0.6.2 has no usable wheels and you require docopt==0.6.2"),
     ("docopt", "Because all versions of docopt have no usable wheels and you require docopt"),
     ("docopt==0.6.2", "╰─▶ Because docopt==0.6.2 has no\n    │ usable wheels and you require docopt==0.6.2"),
+    ("docopt>=0.6", "Because all versions of docopt>=0.6 have no usable wheels"),
+    ("docopt<0.7,>=0.6", "Because docopt >= 0.6, <0.7 has no usable wheels"),
 ])
 def test_wheel_restriction_names_actual_blocker_without_blaming_changed_package(tmp_path, monkeypatch, blocker, output):
     from fixfirst import runner
