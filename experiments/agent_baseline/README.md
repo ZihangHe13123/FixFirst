@@ -344,8 +344,14 @@ the project say about each module involved (installed and which version, standar
 file, similarly named project file, declared where) and pip check's conflicts. It never contains a
 root cause or parser category, a rule, a knowledge-base fact, a model prediction, an order of
 importance, a release search or a fix (`src/fixfirst/facts.py` builds it from an allowlist;
-`tests/test_mcp_facts.py`). FixFirst's sessions, which hold its diagnoses, are kept in the run's
-`fixfirst-store`, which the agent cannot read (checked in `test_harness.py`).
+`tests/test_mcp_facts.py`). The facts server still works out a diagnosis while it ingests a check,
+but keeps its sessions in its own memory and writes none to disk, and its sandbox has no access to
+a session store: its checks run the project's own code under that sandbox, and that code (which
+the agent may change) must not find a diagnosis to read. `test_harness.py` checks this with the
+real stored diagnosis field, not only a marker. This closes the route by which a diagnosis could be
+read from disk; it is not full process isolation between the server and the project code its
+checks run, which share one sandbox (that code could, for example, stop the server). The full
+arm's sessions are kept in the run's `fixfirst-store`, which the agent's commands cannot read.
 
 `--call-policy` sets how the two FixFirst arms call it:
 
@@ -360,9 +366,12 @@ importance, a release search or a fix (`src/fixfirst/facts.py` builds it from an
   and on-demand calls.
 
 Every arm starts from the same copy with the same permissions, budget and external grader. Each row
-also records `first_green_s`, `fixfirst_calls`, `fixfirst_reports`, `facts_only_verified` (every
-facts report held only facts' fields) and, in the full arm on generated cases whose cause is known,
-`fixfirst_first_cause` and `wrong_first_cause`. Arms rotate which goes first per case and run.
+also records `first_green_s`, `fixfirst_calls`, `fixfirst_reports`, `fixfirst_s` (the time of every
+FixFirst call, the model's own and the scheduled ones, also when a call fails), `usage_reported`
+(whether the model server reported tokens at all), `facts_only_verified` (every facts report held
+only facts' fields) and, in the full arm on generated cases whose cause is known,
+`fixfirst_first_cause` and `wrong_first_cause`. Arms rotate which goes first per case and run. A
+FixFirst server that exits fails the call at once instead of waiting for its timeout.
 
 ```bash
 .venv/bin/python experiments/agent_baseline/agent_pilot.py --model fake:SCRIPT.json \
@@ -373,7 +382,11 @@ facts report held only facts' fields) and, in the full arm on generated cases wh
 `compare_arms.py` reports per model, policy and arm the fixed rate with a Wilson interval, turns and
 seconds to the first green check, tokens, calls and FixFirst's cost, and pairs arms on the same case
 and run (exact McNemar for fixed, sign tests for turns and tokens); runs that were not graded are
-counted apart, never as failures. So far this was checked with scripted replies only, on public
+counted apart, never as failures. Runs are pooled or paired only under the same protocol (model
+settings, budget, call policy, network and harness version, a harness with uncommitted changes
+counting as its own), shown as a protocol id; the same run read twice counts once and two
+different results for one run are refused; tokens a server did not report count as missing, not
+zero. So far this was checked with scripted replies only, on public
 development cases; the model and budget for a real comparison are not chosen yet.
 
 ## Before the formal run

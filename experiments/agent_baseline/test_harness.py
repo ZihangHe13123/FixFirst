@@ -844,14 +844,15 @@ def test_the_three_arms_start_alike_and_both_fixfirst_arms_get_the_same_schedule
 
 def test_the_facts_arm_cannot_read_fixfirsts_sessions(tmp_path):
     steps = [call("fixfirst:first"),
-             call("run_command", command="ls ../fixfirst-store && cat ../fixfirst-store/*/session.json"),
+             call("run_command", command="ls ..; ls ../fixfirst-store; cat ../fixfirst-store/*/session.json"),
              call("finish", summary="looked around")]
     [row] = run(tmp_path, steps, arms=("facts",))
     transcript = json.loads((tmp_path / "out" / row["run_dir"] / "transcript.json").read_text())
     observed, listing = [m["content"] for m in transcript if m["role"] == "tool"][:2]
     assert json.loads(observed)["facts_only"] is True and row["facts_only_verified"] is True
-    assert "Operation not permitted" in listing and "diagnosis" not in listing
-    assert list((tmp_path / "out" / row["run_dir"] / "fixfirst-store").glob("session-*/session.json"))
+    assert "ls: ..: Operation not permitted" in listing and "No such file" in listing  # nothing to find either
+    assert "diagnosis" not in listing
+    assert not (tmp_path / "out" / row["run_dir"] / "fixfirst-store").exists()  # facts sessions stay in memory
 
 
 @pytest.mark.parametrize("policy,words", [
@@ -872,3 +873,79 @@ def test_the_required_and_on_demand_policies_offer_the_tools_in_the_same_words(t
         system = json.loads((tmp_path / "out" / by_arm[arm]["run_dir"] / "transcript.json").read_text())[0]
         assert system["content"].endswith(words[arm])
     assert by_arm["facts"]["facts_only_verified"] is True and by_arm["mcp"]["fixfirst_first_cause"] == "local_module"
+    assert all(by_arm[a]["fixfirst_s"] > 0 for a in ("facts", "mcp"))  # the model's own calls cost time too
+    assert all(r["usage_reported"] is False for r in rows_)  # scripted replies report no tokens
+
+
+LOOK_FOR_SESSIONS = """from pathlib import Path
+import json
+import os
+
+
+def value():
+    for root in (Path(__file__).parents[1], Path.home(), Path(os.environ.get("TMPDIR", "/tmp"))):
+        try:
+            for file in root.rglob("session.json"):
+                for issue in json.loads(file.read_text()).get("issues", []):
+                    if issue.get("diagnosis"):
+                        return "PRIVATE_DIAGNOSIS=" + issue["diagnosis"]
+        except OSError:
+            continue
+    return "NO_SESSION_FOUND"
+"""
+
+
+def test_the_facts_server_leaves_no_diagnosis_where_the_projects_code_could_read_it(tmp_path):
+    """Codex's case: observe runs the project's code under the server's sandbox. After a first
+    observe, that code looks for FixFirst's sessions and returns a stored diagnosis if it finds one."""
+    run_ = small_run(tmp_path, {"app.py": "def value():\n    return 1\n",
+                                "test_app.py": "from app import value\n\n\ndef test_value():\n    assert value() == 2\n"})
+    client = agent_pilot.MCPClient(run_, iso.Budget(90), facts=True)
+    arguments = {"project": str(run_.project), "python": str(run_.python)}
+    try:
+        first = client.call("observe", arguments, 80)
+        assert json.loads(first)["failures"][0]["exception"] == "AssertionError"
+        (run_.project / "app.py").write_text(LOOK_FOR_SESSIONS)  # the project's code, not a test
+        second = client.call("observe", arguments, 80)
+    finally:
+        client.close()
+        run_.end_processes("end of the test")
+    assert "PRIVATE_DIAGNOSIS" not in second and "NO_SESSION_FOUND" in second
+    assert not list(run_.folder.rglob("session.json")) and not run_.fixfirst_store.exists()
+
+
+def test_the_time_of_every_fixfirst_call_counts_also_when_it_fails():
+    class Slow:
+        names, facts, dead = {"observe"}, True, False
+
+        def __init__(self, error=None):
+            self.error = error
+
+        def call(self, name, arguments, timeout):
+            time.sleep(0.12)
+            if self.error:
+                raise self.error
+            return '{"facts_only":true,"failures":[]}'
+
+    run_ = type("R", (), {"real": False})()
+    for mcp in (Slow(), Slow(agent_pilot.ToolTimeout("no time left"))):
+        stats = {"fixfirst_calls": 0, "fixfirst_s": 0, "fixfirst_output_chars": 0}
+        try:
+            agent_pilot.run_tool("observe", {}, run_, stats, mcp, iso.Budget(5), 1)
+        except agent_pilot.ToolTimeout:
+            pass
+        assert stats["fixfirst_calls"] == 1 and stats["fixfirst_s"] >= 0.1
+
+
+def test_a_fixfirst_server_that_exits_fails_the_call_at_once(tmp_path, monkeypatch):
+    run_ = small_run(tmp_path, {"keep.txt": "x"})
+    broken = tmp_path / "broken-venv"  # an interpreter whose server exits at once
+    (broken / "bin").mkdir(parents=True)
+    (broken / "pyvenv.cfg").write_text("home = /usr/bin\nversion = 3.12.0\n")
+    (broken / "bin" / "python").write_text("#!/bin/sh\nexit 3\n")
+    (broken / "bin" / "python").chmod(0o755)
+    monkeypatch.setattr(agent_pilot, "PYTHON", broken / "bin" / "python")
+    started = time.monotonic()
+    with pytest.raises(RuntimeError, match=r"exited \(code 3\)"):
+        agent_pilot.MCPClient(run_, iso.Budget(120), facts=True)
+    assert time.monotonic() - started < 20  # not the 120-second initialize timeout

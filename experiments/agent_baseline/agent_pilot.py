@@ -226,8 +226,9 @@ class Run:
             uv = shutil.which("uv")
             return iso.Policy(agent.writable, agent.readable, True, (Path(os.path.realpath(uv)),) if uv else (),
                               owner=self.mark)
-        if kind == "mcp":
-            return iso.Policy((*agent.writable, self.fixfirst_store), (*agent.readable, *fixfirst_readable()),
+        if kind in ("mcp", "mcp_facts"):  # the facts server keeps no store, so it gets none
+            store = (self.fixfirst_store,) if kind == "mcp" else ()
+            return iso.Policy((*agent.writable, *store), (*agent.readable, *fixfirst_readable()),
                               agent.network, owner=self.mark)
         if kind == "ff":
             return agent.extended(readable=fixfirst_readable(), readable_files=(HERE / "ff_tool.py",))
@@ -286,8 +287,9 @@ class MCPClient:
     """Minimal MCP stdio client: starts `fixfirst mcp` in the sandbox and relays tool calls."""
 
     def __init__(self, run: Run, budget: iso.Budget, facts: bool = False):
-        run.fixfirst_store.mkdir(exist_ok=True)
-        argv = ["sandbox-exec", "-f", str(run.profile("mcp")), str(PYTHON), "-m", "fixfirst",
+        if not facts:  # the facts server keeps its sessions in memory and writes no store
+            run.fixfirst_store.mkdir(exist_ok=True)
+        argv = ["sandbox-exec", "-f", str(run.profile("mcp_facts" if facts else "mcp")), str(PYTHON), "-m", "fixfirst",
                 "--store", str(run.fixfirst_store), "mcp", *(["--facts"] if facts else [])]
         self.owner, self.facts = run.mark, facts
         self.log = (run.folder / "mcp-server.log").open("w")
@@ -310,8 +312,11 @@ class MCPClient:
     def _read(self):
         for line in self.proc.stdout:
             self.lines.put(line)
+        self.lines.put(None)  # the server exited: a waiting request fails now, not at its timeout
 
     def request(self, method, params, timeout):
+        if self.dead:
+            raise RuntimeError("FixFirst's server was stopped")
         self.next_id += 1
         self.proc.stdin.write(json.dumps({"jsonrpc": "2.0", "id": self.next_id, "method": method,
                                           "params": params}) + "\n")
@@ -322,7 +327,12 @@ class MCPClient:
             try:
                 if left <= 0:
                     raise queue.Empty
-                answer = json.loads(self.lines.get(timeout=left))
+                line = self.lines.get(timeout=left)
+                if line is None:
+                    self.dead = True
+                    raise RuntimeError(f"FixFirst's server exited (code {self.proc.wait(5)}) before it answered "
+                                       f"{method}; see mcp-server.log")
+                answer = json.loads(line)
             except queue.Empty:
                 self.stop()
                 raise ToolTimeout(f"FixFirst's server did not answer {method} in time") from None
@@ -484,7 +494,8 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
     stats = {"turns": 0, "tool_calls": 0, "pytest_runs": 0, "fixfirst_calls": 0, "prompt_tokens": 0,
              "completion_tokens": 0, "model_s": 0.0, "tool_s": 0.0, "end": "turn_cap", "bad_calls": 0,
              "first_green_turn": None, "first_green_s": None, "error": None, "mcp_arguments_filled": 0,
-             "mcp_arguments_overridden": 0, "fixfirst_reports": 0, "fixfirst_s": 0.0, "fixfirst_output_chars": 0}
+             "mcp_arguments_overridden": 0, "fixfirst_reports": 0, "fixfirst_s": 0.0, "fixfirst_output_chars": 0,
+             "usage_reported": False}
     budget = iso.Budget(settings.run_timeout)
     tools = BASIC_TOOLS + ([FIXFIRST_TOOL] if arm == "fixfirst" else [])
     system = system_prompt(run.network) + (FIXFIRST_INSTRUCTIONS if arm == "fixfirst" else "")
@@ -514,6 +525,9 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
             except ToolTimeout as error:
                 stats.update(end="time_cap", error=f"ToolTimeout: {error}"[:500])
                 return stats
+            except (OSError, RuntimeError) as error:
+                stats.update(end="mcp_start_failed", error=f"{type(error).__name__}: {error}"[:500])
+                return stats
             messages[-1]["content"] += "\n\nFixFirst checked the project before your first step:\n" + report
         with budget.pause():
             last = state_digest()
@@ -541,6 +555,8 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
                 stats["end"], stats["error"] = "model_error", "tool_calls is not a list"
                 break
             usage = usage if isinstance(usage, dict) else {}
+            # Tokens the server did not report are unknown, not zero.
+            stats["usage_reported"] |= any(key in usage for key in ("prompt_tokens", "completion_tokens"))
             stats["turns"] = turn
             stats["prompt_tokens"] += count(usage.get("prompt_tokens"))
             stats["completion_tokens"] += count(usage.get("completion_tokens"))
@@ -602,6 +618,8 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
                 except ToolTimeout:
                     stats["end"] = "time_cap"
                     break
+                except (OSError, RuntimeError) as error:  # the report says so; the run goes on
+                    report = f"FixFirst could not check the project: {type(error).__name__}: {error}"
                 messages.append({"role": "user", "content": "FixFirst checked the project again after your "
                                                             "changes:\n" + report})
     finally:
@@ -677,7 +695,11 @@ def run_tool(name, args, run: Run, stats, mcp, budget: iso.Budget, turn):
                 elif os.path.abspath(run.project / str(given)) != value:
                     stats["mcp_arguments_overridden"] += 1
             args = {**args, **forced}
-        text = mcp.call(name, args, budget.remaining())
+        started = time.monotonic()
+        try:
+            text = mcp.call(name, args, budget.remaining())
+        finally:  # FixFirst's cost, also when the call fails or runs out of time
+            stats["fixfirst_s"] = stats.get("fixfirst_s", 0) + time.monotonic() - started
         note_fixfirst_output(text, run, mcp, stats)
         stats["fixfirst_output_chars"] = stats.get("fixfirst_output_chars", 0) + len(clip(text))
         return clip(text)
@@ -716,9 +738,13 @@ def run_tool(name, args, run: Run, stats, mcp, budget: iso.Budget, turn):
         return f"wrote {len(str(args['content']))} characters to {target.relative_to(run.project.resolve())}"
     if name == "fixfirst_check":
         stats["fixfirst_calls"] += 1
-        code, output, stopped = run.execute([str(PYTHON), str(HERE / "ff_tool.py"), str(run.project),
-                                             str(run.state / "session.json"), str(PYTHON)], "ff",
-                                            min(600, budget.remaining()), env=run.env(PYTHON))
+        started = time.monotonic()
+        try:
+            code, output, stopped = run.execute([str(PYTHON), str(HERE / "ff_tool.py"), str(run.project),
+                                                 str(run.state / "session.json"), str(PYTHON)], "ff",
+                                                min(600, budget.remaining()), env=run.env(PYTHON))
+        finally:
+            stats["fixfirst_s"] = stats.get("fixfirst_s", 0) + time.monotonic() - started
         if stopped and budget.remaining() <= 0:
             raise ToolTimeout("FixFirst's check was stopped at the deadline")
         return clip(output) if code == 0 else f"fixfirst failed (exit {code}):\n{clip(output)}"

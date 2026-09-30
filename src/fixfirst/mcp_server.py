@@ -9,6 +9,8 @@ the fix with a real check.
 
 `fixfirst mcp --facts` serves the facts-only mode (facts.py) for the agent experiment: one tool,
 observe, that runs the same checks and returns what they showed, without a diagnosis or advice.
+Its sessions stay in the server's memory and are never written anywhere: the checks run the
+project's own code under the server's sandbox, and that code must not find a diagnosis on disk.
 """
 
 import contextlib
@@ -19,6 +21,7 @@ from pathlib import Path
 
 from . import __version__
 from .facts import render_facts
+from .models import Session
 from .processes import ProcessScope
 from .reasoning import infer_and_plan
 from .service import create_session, scan
@@ -166,7 +169,9 @@ class Server:
         if mode not in ("full", "facts"):
             raise ValueError(f"Unknown MCP mode {mode!r}")
         self.mode = mode
-        self.store = Store(store_root)
+        # Facts mode keeps its sessions in memory only (see the module docstring).
+        self.store = Store(store_root) if mode == "full" else None
+        self.memory: dict[str, Session] = {}
         self.sessions: dict[tuple, str] = {}  # (project, python, goal) -> session id
         self.latest: str | None = None
 
@@ -292,17 +297,11 @@ class Server:
         key = (folder["path"], interpreter, session.goal,
                session.execution.model_dump_json() if session.execution else "")
         if key in self.sessions:
-            session_id = self.sessions[key]
-            with self.store.lock(session_id):
-                session = self.store.load(session_id)
-                scan(session)
-                self.store.save(session)
+            session = self.memory[self.sessions[key]]
         else:
-            with self.store.lock(session.session_id):
-                infer_and_plan(session)
-                scan(session)
-                self.store.save(session)
+            self.memory[session.session_id] = session
             self.sessions[key] = session.session_id
+        scan(session)  # in memory: nothing about this session is written to disk
         self.latest = session.session_id
         return render_facts(session)
 
@@ -408,8 +407,8 @@ def serve(store_root, stdin=None, stdout=None, mode="full") -> int:
     scope = ProcessScope()
     if hasattr(signal, "SIGTERM"):
         signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
-    print(f"FixFirst MCP server {__version__} ({mode}) ready; sessions in {server.store.root}", file=sys.stderr,
-          flush=True)
+    where = f"sessions in {server.store.root}" if server.store else "sessions in memory only"
+    print(f"FixFirst MCP server {__version__} ({mode}) ready; {where}", file=sys.stderr, flush=True)
 
     def send(answer):
         stdout.write(json.dumps(answer, ensure_ascii=False).encode("utf-8") + b"\n")

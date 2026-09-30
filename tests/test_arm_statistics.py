@@ -3,6 +3,7 @@ whose answers are known."""
 
 import json
 from pathlib import Path
+import re
 import sys
 
 import pytest
@@ -55,6 +56,43 @@ def test_the_command_line_prints_tables_and_writes_the_numbers(tmp_path, capsys)
         row("mcp", "c1", True, attempt="other")]) + "\n")
     ca.main([str(results), "--attempt", "a", "--json", str(tmp_path / "out.json")])
     printed = capsys.readouterr().out
-    assert "| m | scheduled | facts | 1 | 1/1" in printed and "baseline → facts" in printed and "facts → mcp" in printed
+    assert re.search(r"\| m \| scheduled \| [0-9a-f]{8} \| facts \| 1 \| 1/1", printed)
+    assert "baseline → facts" in printed and "facts → mcp" in printed
     numbers = json.loads((tmp_path / "out.json").read_text())
     assert [s["arm"] for s in numbers["summary"]] == ["baseline", "facts", "mcp"] and len(numbers["paired"]) == 3
+
+
+def test_runs_under_different_protocols_are_neither_pooled_nor_paired():
+    """Codex's case: a 1-second and a 900-second budget, from different harness versions."""
+    short = row("baseline", "c", False, settings={"run_timeout": 1}, harness_commit="a")
+    long = row("mcp", "c", True, settings={"run_timeout": 900}, harness_commit="b")
+    summary = ca.summarise([short, long])
+    assert len({s["protocol"] for s in summary}) == 2 and ca.paired([short, long]) == []
+    same = row("mcp", "c", True, settings={"run_timeout": 1}, harness_commit="a")
+    [pair] = ca.paired([short, same])
+    assert pair["pairs"] == 1
+    dirty = {**same, "uncommitted_changes": [" M experiments/agent_baseline/agent_pilot.py"]}
+    assert ca.paired([short, dirty]) == []  # a harness with uncommitted changes is another version
+
+
+def test_the_same_run_read_twice_counts_once_and_conflicting_results_are_refused(tmp_path, capsys):
+    rows = [row("baseline", "c", False), row("mcp", "c", True)]
+    [baseline, mcp] = ca.summarise(rows + rows)
+    assert (baseline["runs"], mcp["runs"], mcp["fixed_ci95"]) == (1, 1, list(ca.wilson(1, 1)))
+    assert ca.paired(rows + rows)[0]["pairs"] == 1
+    with pytest.raises(ValueError, match="two different results for the same run"):
+        ca.summarise(rows + [row("mcp", "c", False)])
+    results = tmp_path / "results.jsonl"
+    results.write_text("\n".join(json.dumps(r) for r in rows + rows) + "\n")
+    ca.main([str(results)])
+    assert "2 duplicate rows (the same run read twice) were counted once." in capsys.readouterr().out
+
+
+def test_tokens_a_server_did_not_report_are_missing_not_zero():
+    reported = row("baseline", "c1", True, tokens=100, usage_reported=True)
+    unreported = row("baseline", "c2", True, usage_reported=False)
+    old_style = {k: v for k, v in row("baseline", "c3", True).items() if k not in ("prompt_tokens", "completion_tokens")}
+    [summary] = ca.summarise([reported, unreported, old_style])
+    assert (summary["mean_tokens"], summary["tokens_missing"]) == (100, 2)
+    [pair] = ca.paired([unreported, row("mcp", "c2", True, tokens=50, usage_reported=True)])
+    assert (pair["token_pairs"], pair["median_token_difference"]) == (0, None)

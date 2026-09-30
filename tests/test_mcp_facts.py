@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 import re
+import subprocess
 import sys
 
 try:
@@ -115,3 +116,21 @@ def test_diagnoses_knowledge_and_release_searches_never_reach_the_facts(tmp_path
     view = json.loads(text)
     assert [c["check"] for c in view["checks"]] == ["pytest_run"]  # the release search is not a fact here
     assert view["failures"][0]["exception"] == "AttributeError"
+
+
+def test_the_facts_server_starts_over_stdio_and_writes_no_store(tmp_path):
+    store = tmp_path / "store"
+    answer = subprocess.run(
+        [sys.executable, "-m", "fixfirst", "--store", str(store), "mcp", "--facts"],
+        input='{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}\n', capture_output=True, text=True, timeout=60)
+    assert json.loads(answer.stdout)["result"]["serverInfo"]["name"] == "fixfirst"
+    assert "sessions in memory only" in answer.stderr and not store.exists()
+
+
+def test_observe_keeps_its_sessions_in_memory_only(tmp_path):
+    project = missing_module_project(tmp_path)
+    server = Server(tmp_path / "store", mode="facts")
+    call(server, "observe", {"project": str(project), "python": sys.executable})
+    call(server, "observe", {"project": str(project), "python": sys.executable})
+    assert not (tmp_path / "store").exists() and len(server.memory) == 1  # the second call continues it
+    assert not list(tmp_path.rglob("session.json"))
