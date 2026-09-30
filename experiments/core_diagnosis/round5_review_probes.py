@@ -5,7 +5,9 @@ the current environment and the older one decide the true label (a version chang
 older release; an ordinary error fails there too). "expect" was written before any probe ran.
 Development material only; not held out, not a gold standard.
 
-  python experiments/core_diagnosis/round5_review_probes.py --runs RUNS --tag TAG
+  python experiments/core_diagnosis/round5_review_probes.py --runs RUNS --tag TAG [--only NAME ...]
+
+The packaging probes need RUNS/packaging-old/venv (packaging 21.3 and pytest).
 """
 
 import argparse
@@ -19,6 +21,7 @@ NUMPY = ("numpy_copy_false/venv", "numpy_copy_false/venv-old")  # numpy 2.2.6, 1
 PYDANTIC = ("pydantic_optional_required/venv", "pydantic_optional_required/venv-old")  # 2.11.9, 1.10.22
 DECLARE_NUMPY = {"requirements.txt": "numpy>=1.21\n"}
 DECLARE_PYDANTIC = {"requirements.txt": "pydantic>=1.8\n"}
+PACKAGING = ("numpy_copy_false/venv", "packaging-old/venv")  # packaging 26.3 (with pytest), 21.3
 UV_LOCK = 'version = 1\nrequires-python = ">=3.9"\n\n[[package]]\nname = "numpy"\nversion = "1.26.4"\n' \
           'source = { registry = "https://pypi.org/simple" }\n'
 
@@ -134,10 +137,24 @@ PROBES = [
                "test_app.py": "from app import big_endian_view\n\n\ndef test_view():\n"
                               "    assert big_endian_view([1, 2]) == [256, 512]\n"},
      "expect": "A real NumPy 2 removal with a documented replacement: expected the view(dtype.newbyteorder) step."},
+    {"name": "packaging_parse_legacy_label", "focus": "real positive", "env": PACKAGING,
+     "files": {"requirements.txt": "packaging>=20\n",
+               "app.py": "from packaging.version import parse\n\n\ndef newest(labels):\n"
+                         "    return str(max(parse(label) for label in labels))\n",
+               "test_app.py": "from app import newest\n\n\ndef test_newest():\n"
+                              "    assert newest([\"1.0\", \"nightly\", \"2.0\"]) == \"2.0\"\n"},
+     "expect": "packaging 22 removed LegacyVersion: expected the documented change (H10), not an input error."},
+    {"name": "packaging_version_strict", "focus": "real positive (counterexample)", "env": PACKAGING,
+     "files": {"requirements.txt": "packaging>=20\n",
+               "app.py": "from packaging.version import Version\n\n\ndef newest(labels):\n"
+                         "    return str(max(Version(label) for label in labels))\n",
+               "test_app.py": "from app import newest\n\n\ndef test_newest():\n"
+                              "    assert newest([\"1.0\", \"nightly\", \"2.0\"]) == \"2.0\"\n"},
+     "expect": "Version was always strict (fails on 21.3 too): expected the input contract (H12), not a version change."},
 ]
 
 
-def run(runs: Path, tag: str) -> None:
+def run(runs: Path, tag: str, only=()) -> None:
     from fixfirst.evidence import issue_evidence
     from fixfirst.service import create_session, scan
     from fixfirst.workspace import build_view
@@ -146,6 +163,8 @@ def run(runs: Path, tag: str) -> None:
     base.mkdir()
     record = {"implementation": rc.implementation(), "probes": []}
     for probe in PROBES:
+        if only and probe["name"] not in only:
+            continue
         folder = base / probe["name"]
         rc.write_project({"files": probe["files"]}, folder / "project")
         current, old = (runs / p for p in probe["env"])
@@ -186,8 +205,9 @@ def main(argv=None) -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--runs", type=Path, required=True, help="the RUNS folder of round5_cases.py build")
     parser.add_argument("--tag", required=True)
+    parser.add_argument("--only", nargs="+", default=(), help="run these probes only")
     args = parser.parse_args(argv)
-    run(args.runs.resolve(), args.tag)
+    run(args.runs.resolve(), args.tag, args.only)
 
 
 if __name__ == "__main__":
