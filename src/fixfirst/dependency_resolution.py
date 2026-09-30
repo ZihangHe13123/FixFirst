@@ -26,7 +26,7 @@ MAX_SECONDS = 300
 
 
 def fingerprint(environment, project):
-    value = {"trial_protocol": 2, "context": context(environment, project)["fingerprint"],
+    value = {"trial_protocol": 3, "context": context(environment, project)["fingerprint"],
              "files": project.get("files", []), "notes": project.get("notes", []),
              "conda": project.get("conda_declarations", []),
              "python_hints": project.get("python_hints", [])}
@@ -82,8 +82,12 @@ def inputs(environment, project, name, direction=""):
     own = set(project.get("own_names", []))
     for package in environment.get("packages", []):
         target = canonicalize_name(package.get("name", ""))
-        if target and target not in related | own | {"pip", "setuptools", "wheel"}:
-            requests.append(str(Requirement(target + "==" + package["version"])))
+        if target and target not in roots | own | {"pip", "setuptools", "wheel"}:
+            # pip install does not remove old, now-unused transitive packages.
+            # Keep them present in the trial, permitting a related package to
+            # update, so an orphan cannot silently disappear from the proof.
+            request = target if target in related else target + "==" + package["version"]
+            requests.append(str(Requirement(request)))
     if len(requests) + len(constraints) > MAX_REQUIREMENTS:
         raise ValueError(f"More than {MAX_REQUIREMENTS} requirements; use the project's environment manager")
     for row in project.get("requires_python", []):

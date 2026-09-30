@@ -118,6 +118,25 @@ def test_transitive_dependency_can_update_but_unrelated_package_stays_pinned(tmp
     assert "ff-trial-other==1.0" in result["install_requests"]
 
 
+def test_obsolete_installed_dependency_cannot_disappear_from_installation_trial(tmp_path, offline_resolver):
+    session, _ = fixture_session(tmp_path / "project", "ff-trial-base==1.0\nff-trial-ext\n")
+    session.environment["packages"][0]["requires"] = ["ff-trial-obsolete"]
+    session.environment["packages"] += [
+        {"name": "ff-trial-obsolete", "version": "1.0", "requires": ["ff-trial-helper<2"]},
+        {"name": "ff-trial-helper", "version": "1.0", "requires": []},
+    ]
+    wheels = offline_resolver[2]
+    for version in ("1.0", "2.0"):
+        wheel(wheels, "ff-trial-helper", version)
+    wheel(wheels, "ff-trial-obsolete", "1.0", ["ff-trial-helper<2"])
+    wheel(wheels, "ff-trial-base", "2.0", ["ff-trial-helper>=2"])
+    result = json.loads(collect(session, ["ff-trial-base", ">1.0"], 20).stdout)
+    # An in-place pip install leaves obsolete packages installed. Omitting one
+    # from the temporary environment would falsely validate a conflicting set.
+    assert result["status"] == "not_resolved", result
+    assert "install_requests" not in result
+
+
 @pytest.mark.parametrize("requirements", ["ff-trial-base==1.0\nother @ https://example.org/other.whl\n",
                                           "ff-trial-base==1.0\n-e .\n"])
 def test_incomplete_declarations_never_become_complete_installation_proof(tmp_path, requirements):
