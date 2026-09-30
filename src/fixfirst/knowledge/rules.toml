@@ -171,6 +171,7 @@ description = "A library call passes a keyword argument that the installed libra
 source = "knowledge: removed keyword arguments"
 when = [
   ["?i", "kwarg", "?x"],
+  ["?i", "callee", "?c"], ["?x", "removed_callable", "?c"],
   ["not", "?i", "owner_is_local", "yes"],
   ["?x", "removed_from", "?d"], ["?x", "removed_in_version", "?v"],
   ["?d", "installed_version", "?iv"], ["test", "version_gte", "?iv", "?v"],
@@ -1002,6 +1003,24 @@ cost = 2
 title = "Check the name {?x}: the older releases checked did not provide it"
 explanation = "None of the older releases checked in a temporary environment provided {?x}. Check the spelling and the library's documentation; the name may belong to a newer release, another package, or a release without a compatible wheel for this Python."
 verification = "Re-run the tests with the same interpreter"
+
+[[rule]]
+id = "P66"
+phase = "plan"
+description = "An inconclusive bounded search is not proof that an API never existed or a reason to repeat the same search."
+when = [
+  ["?i", "likely", "version_incompatibility"], ["?i", "api", "?x"],
+  ["?x", "release_search", "?d"], ["?x", "search_inconclusive", "yes"],
+]
+[rule.action]
+id = "review-search-{?x}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 2
+title = "Review compatibility for {?x}: the release search was inconclusive"
+explanation = "The bounded search could not verify a usable {?d} release. Some versions may not have been checked, may have failed installation or import, or the network may have been unavailable. Check the recorded trials and the upstream migration guide before choosing a release or changing the call. This is not evidence that the API never existed."
+verification = "Validate the chosen change in a separate environment, then rerun the affected tests"
 
 [[rule]]
 id = "P61"

@@ -112,7 +112,7 @@ def scope_bindings(statements, module, package, arguments=None):
 
 
 def index_source_context(root: Path, files: list[str], max_bytes: int):
-    calls, bases = {}, defaultdict(list)
+    calls, bindings_at, bases, members = {}, {}, defaultdict(list), defaultdict(list)
     root = root.resolve()
     for relative in files:
         if len(calls) >= MAX_SITES:
@@ -146,6 +146,8 @@ def index_source_context(root: Path, files: list[str], max_bytes: int):
                 return
             if isinstance(node, ast.ClassDef):
                 bases[node.name].append([resolve(base, bindings) for base in node.bases])
+                members[node.name].append(sorted({item.name for item in node.body
+                    if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef))}))
                 local = {**bindings, **scope_bindings(node.body, module, package)}
                 if "*" in local:
                     local = {name: "" for name in local}
@@ -163,6 +165,7 @@ def index_source_context(root: Path, files: list[str], max_bytes: int):
                         if len(calls) >= MAX_SITES and key not in calls:
                             break
                         calls.setdefault(key, set()).add(target)
+                        bindings_at.setdefault(key, set()).add((dotted(node.func), target))
             for child in ast.iter_child_nodes(node):
                 visit(child, bindings, function_parent, depth + 1)
 
@@ -170,7 +173,10 @@ def index_source_context(root: Path, files: list[str], max_bytes: int):
             visit(node, global_names)
     return {
         "calls": {key: sorted(value) for key, value in calls.items()},
+        "call_bindings": {key: [{"name": name, "target": target} for name, target in sorted(value)]
+                          for key, value in bindings_at.items()},
         "class_bases": {name: values[0] for name, values in bases.items() if len(values) == 1},
+        "class_members": {name: values[0] for name, values in members.items() if len(values) == 1},
     }
 
 
@@ -194,8 +200,14 @@ def assertion_operands(message):
 def resolved_calls(evidence, project, legacy=False):
     """Only call sites matching the function named by the argument error."""
     if "source_context" in project:
-        sites = project["source_context"].get("calls", {}).get(evidence.get("where", ""), [])
+        context = project["source_context"]
+        location = evidence.get("where", "")
+        sites = context.get("calls", {}).get(location, [])
         callees = {c.rsplit(".", 1)[-1] for c in evidence.get("callees", [])}
+        if "call_bindings" in context:
+            return sorted({site["target"] for site in context["call_bindings"].get(location, [])
+                           if site["target"].rsplit(".", 1)[-1] in callees
+                           or site["name"].rsplit(".", 1)[-1] in callees})
         return [target for target in sites if target.rsplit(".", 1)[-1] in callees]
     if not legacy:
         return []

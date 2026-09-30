@@ -17,7 +17,7 @@ import sys
 from fixfirst.classification import train_tree
 from fixfirst.diagnosis_cases import load_session
 from fixfirst.evaluation import load_rows, predict, score
-from fixfirst.evidence import FEATURE_NAMES, V4_FEATURE_NAMES
+from fixfirst.evidence import V5_FEATURE_NAMES as FEATURE_NAMES, V4_FEATURE_NAMES
 from fixfirst.reasoning import infer_and_plan
 from fixfirst.workspace import build_view
 

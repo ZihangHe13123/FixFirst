@@ -99,6 +99,8 @@ def facts_for(entities) -> list[Fact]:
                 knowledge(entity, "removed_in_version", entry["version"], source),
                 knowledge(entity, "replacement", entry["replacement"], source),
             ]
+            result += [knowledge(entity, "removed_callable", "callable:" + target, source)
+                       for target in entry.get("callables", [])]
         entry = kb["deprecated_index"].get(entity)
         if entry:
             source = entry["source"]

@@ -74,7 +74,7 @@ def base_facts(session: Session, active, knowledge=True) -> tuple[list[Fact], di
         facts.append(
             observed("project", "declarations", "available", [f"{project_run.run_id}:stdout:1"])
         )
-    evidence_facts, details = observations(session, active)
+    evidence_facts, details = observations(session, active, interface_history=knowledge)
     facts += evidence_facts
     mentioned = {
         f.value for f in evidence_facts

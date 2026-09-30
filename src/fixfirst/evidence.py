@@ -19,6 +19,7 @@ from .behavior import observed_changes
 from .models import Fact, Issue, Run, Session
 from .runner import environment_id
 from .source_context import FEATURE_NAMES as SOURCE_FEATURE_NAMES, feature_values, resolved_calls
+from .interface_history import FEATURE_NAMES as HISTORY_FEATURE_NAMES, feature_values as history_features
 
 MODULE_MISSING = re.compile(r"No module named '([\w.]+)'")
 CANNOT_IMPORT = re.compile(
@@ -124,8 +125,9 @@ CONTEXT_FEATURE_NAMES = [
     "context_data_operation",
 ]
 V4_FEATURE_NAMES = LEGACY_FEATURE_NAMES + CONTEXT_FEATURE_NAMES
-FEATURE_NAMES = V4_FEATURE_NAMES + SOURCE_FEATURE_NAMES
-FEATURE_LAYOUTS = {3: LEGACY_FEATURE_NAMES, 4: V4_FEATURE_NAMES, 5: FEATURE_NAMES}
+V5_FEATURE_NAMES = V4_FEATURE_NAMES + SOURCE_FEATURE_NAMES
+FEATURE_NAMES = V5_FEATURE_NAMES + HISTORY_FEATURE_NAMES
+FEATURE_LAYOUTS = {3: LEGACY_FEATURE_NAMES, 4: V4_FEATURE_NAMES, 5: V5_FEATURE_NAMES, 6: FEATURE_NAMES}
 
 
 WINDOWS_ABSOLUTE = re.compile(r"^[A-Za-z]:/")
@@ -584,7 +586,7 @@ def module_context(session: Session, module: str, project: dict) -> dict:
     }
 
 
-def features(evidence: dict, contexts: dict, project: dict, environment=None) -> list[float]:
+def features(evidence: dict, contexts: dict, project: dict, environment=None, *, interface_history=True) -> list[float]:
     """Numeric evidence features for the decision tree, in FEATURE_NAMES order."""
     module = evidence["missing_module"] or (evidence["modules"][0] if evidence["modules"] else None)
     context = contexts.get(module, {}) if module else {}
@@ -625,6 +627,7 @@ def features(evidence: dict, contexts: dict, project: dict, environment=None) ->
         "KeyError", "ValueError", "NameError", "SyntaxError", "IndexError", "ZeroDivisionError",
     )
     values.update(feature_values(evidence, values, project, environment or {}))
+    values.update(history_features(evidence, values, project, environment or {}, use_history=interface_history))
     return [float(values[name]) for name in FEATURE_NAMES]
 
 
@@ -638,7 +641,7 @@ def observed(subject, predicate, value, refs) -> Fact:
     )
 
 
-def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dict]:
+def observations(session: Session, issues: list[Issue], *, interface_history=True) -> tuple[list[Fact], dict]:
     """Observed facts for the rule base plus per-issue evidence and feature vectors."""
     facts: list[Fact] = []
     details = {}
@@ -810,15 +813,25 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
     # Release searches (versions.py): which releases still provide a name.
     searches = {}
     for run in session.runs:
-        if run.tool == "version_search" and run.verified_pass and run.environment_id == environment_id(session.target_python):
+        if (run.tool == "version_search" and run.source == "executed" and run.status == "completed"
+                and run.exit_code == 0 and run.environment_id == environment_id(session.target_python)):
             try:
                 data = json.loads(run.stdout)
             except ValueError:
                 continue
+            if not isinstance(data, dict) or not data.get("api") or not data.get("dist"):
+                continue
+            current_version = next((p.get("version") for p in environment.get("packages", [])
+                                    if canonicalize_name(p.get("name", "")) == canonicalize_name(data["dist"])), None)
+            if environment and data.get("installed") != current_version:
+                continue  # A later environment change needs a new search.
             searches[data.get("api", "")] = (run, data)
     for api, (run, data) in searches.items():
         name, ref = "api:" + api, [f"{run.run_id}:stdout:1"]
         facts.append(observed(name, "release_search", "dist:" + canonicalize_name(data["dist"]), ref))
+        if not run.verified_pass:
+            facts.append(observed(name, "search_inconclusive", "yes", ref))
+            continue
         if data.get("provides"):
             facts.append(observed(name, "provided_until_release", data["provides"], ref))
         if data.get("below"):
@@ -833,7 +846,7 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
             )
     for issue in diagnosable:
         evidence = details[issue.issue_id]
-        evidence["features"] = features(evidence, contexts, project, environment)
+        evidence["features"] = features(evidence, contexts, project, environment, interface_history=interface_history)
     return facts, details
 
 

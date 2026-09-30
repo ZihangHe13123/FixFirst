@@ -57,6 +57,35 @@ def test_a_private_name_moved_inside_a_library_is_a_likely_version_change(tmp_pa
     assert session.actions[0].action_id.startswith("find-release-")
 
 
+@pytest.mark.parametrize("status", ["not_judged", "offline"])
+def test_inconclusive_release_search_does_not_repeat_or_claim_absence(tmp_path, status):
+    from fixfirst.models import Run
+    from fixfirst.reasoning import infer_and_plan
+    from fixfirst.runner import environment_id
+    from packaging.utils import canonicalize_name
+
+    session, issue = run_scenario(tmp_path, "vi_private_moved")
+    first = session.actions[0]
+    dist, api = first.targets
+    installed = next(p["version"] for p in session.environment["packages"]
+                     if canonicalize_name(p["name"]) == dist)
+    session.runs.append(Run(tool="version_search", exit_code=0,
+                            environment_id=environment_id(session.target_python),
+                            stdout=json.dumps({"dist": dist, "api": api, "installed": installed,
+                                               "checked": [], "status": status, "provides": None})))
+    infer_and_plan(session)
+    assert any(a.action_id.startswith("review-search-") for a in session.actions)
+    assert not any(a.action_id.startswith(("find-release-", "check-name-", "use-release-")) for a in session.actions)
+    assert issue.diagnosis == "version_incompatibility"
+
+    # The attempt is tied to the installed version it actually examined.
+    saved = json.loads(session.runs[-1].stdout)
+    saved["installed"] = "0.0"
+    session.runs[-1].stdout = json.dumps(saved)
+    infer_and_plan(session)
+    assert any(a.action_id.startswith("find-release-") for a in session.actions)
+
+
 def test_a_missing_submodule_of_the_project_is_not_blamed_on_a_library(tmp_path):
     root = tmp_path / "shopkit"
     (root / "shop").mkdir(parents=True)
