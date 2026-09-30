@@ -47,6 +47,13 @@ def check(future: bool) -> dict:
         found["iterate_ddl"] = attempt(lambda: list(result))
         second = ddl("t2")
         found["keys_ddl"] = attempt(lambda: list(second.keys()))
+        # Creating an iterator or a generator over the result, without consuming it, is all that
+        # records' Connection.query does for a statement unless fetchall=True.
+        created = ddl("t5")
+        found["iter_created_ddl"] = attempt(lambda: type(iter(created)).__name__)
+        lazy = ddl("t6")
+        found["records_like_generator_created"] = attempt(
+            lambda: type((dict(zip(lazy.keys(), row)) for row in lazy)).__name__)
         third = ddl("t3")
         found["guarded_by_returns_rows"] = attempt(lambda: list(third) if third.returns_rows else [])
         # Counterexamples: these fail whatever the version.
