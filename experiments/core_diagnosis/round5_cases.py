@@ -14,6 +14,7 @@ This is development material, not a held-out set and not a human gold standard.
   python experiments/core_diagnosis/round5_cases.py build --out RUNS
   python experiments/core_diagnosis/round5_cases.py reference --out RUNS
   python experiments/core_diagnosis/round5_cases.py diagnose --out RUNS --tag before [--model TREE]
+  python experiments/core_diagnosis/round5_cases.py first-step --out RUNS --tag before
 
 RUNS must be outside any project (pytest looks for settings in parent folders).
 """
@@ -375,9 +376,43 @@ def diagnose(out: Path, tag: str, model: Path | None) -> None:
     (out / f"diagnose-{tag}.json").write_text(text + "\n")
 
 
+def first_step(out: Path, tag: str) -> None:
+    """Run the system's first step as given, when it is a command, in a fresh copy of the environment
+    and project (the case environment itself is never changed), then the same tests."""
+    import shlex
+
+    record = json.loads((out / f"diagnose-{tag}.json").read_text())
+    results = []
+    for row in record["cases"]:
+        case = next(c for c in CASES if c["name"] == row["name"])
+        step = row["steps"][0] if row["steps"] else None
+        entry = {"name": case["name"], "first_step": step and step["title"], "command": step and step["command"]}
+        if not step or not step["command"]:
+            entry["executed"] = False
+            results.append(entry)
+            continue
+        folder = out / case["name"]
+        venv = folder / f"venv-step-{tag}"
+        if venv.exists():
+            raise SystemExit(f"{venv} exists; use a new tag")
+        make_venv(venv, case["python"], case["install"])
+        argv = shlex.split(step["command"].replace("<runs>", str(out)))
+        argv[0] = str(venv / "bin/python")  # the same command, in the copy
+        install = subprocess.run(argv, capture_output=True, text=True, env=clean_env(), timeout=600)
+        tests = pytest(copy(case, folder / "project", folder / f"step-{tag}"), venv)
+        entry.update(executed=True, command_exit=install.returncode,
+                     command_tail=(install.stdout + install.stderr)[-700:],
+                     tests_exit=tests["exit_code"],
+                     target_error_left=bool(case["error"]) and case["error"] in tests["output"],
+                     tests_tail=tests["output"][-500:])
+        results.append(entry)
+        print(json.dumps({k: entry[k] for k in entry if not k.endswith("_tail")}), flush=True)
+    (out / f"first-step-{tag}.json").write_text(json.dumps(results, indent=1).replace(str(out), "<runs>") + "\n")
+
+
 def main(argv=None) -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    parser.add_argument("command", choices=("build", "reference", "diagnose", "list"))
+    parser.add_argument("command", choices=("build", "reference", "diagnose", "first-step", "list"))
     parser.add_argument("--out", type=Path)
     parser.add_argument("--tag", default="before")
     parser.add_argument("--model", type=Path, help="a decision tree to use instead of the bundled one")
@@ -391,6 +426,8 @@ def main(argv=None) -> None:
         build(out)
     elif args.command == "reference":
         reference(out)
+    elif args.command == "first-step":
+        first_step(out, args.tag)
     else:
         diagnose(out, args.tag, args.model.resolve() if args.model else None)
 
