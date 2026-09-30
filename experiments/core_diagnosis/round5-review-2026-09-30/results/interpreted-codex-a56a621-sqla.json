@@ -1,0 +1,38 @@
+[
+ {
+  "probe": "sqla_star_unpacking",
+  "env": "sqla20/venv",
+  "tests_exit": 0,
+  "tests_unchanged": true
+ },
+ {
+  "probe": "sqla_star_unpacking",
+  "env": "sqla13/venv",
+  "tests_exit": 0,
+  "tests_unchanged": true
+ },
+ {
+  "probe": "sqla_join_consumption",
+  "env": "sqla20/venv",
+  "tests_exit": 0,
+  "tests_unchanged": true
+ },
+ {
+  "probe": "sqla_join_consumption",
+  "env": "sqla13/venv",
+  "tests_exit": 0,
+  "tests_unchanged": true
+ },
+ {
+  "probe": "sqla_nested_consumer",
+  "env": "sqla20/venv",
+  "tests_exit": 0,
+  "tests_unchanged": true
+ },
+ {
+  "probe": "sqla_nested_consumer",
+  "env": "sqla13/venv",
+  "tests_exit": 0,
+  "tests_unchanged": true
+ }
+]

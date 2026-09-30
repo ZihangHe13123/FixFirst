@@ -77,6 +77,14 @@ P4 的位置只列了导入行；如果只改那一行，第 5 行会报 NameErr
 - **保留的边界**：solve 不报错只改形状、Pydantic 别名或 validator 正例、子类 ptp、属性链接收者。
 - 结果文件：`results/*-codex-ba52e22*.json`。
 
+## 最后有界复核（`a56a621`，与 PR #46 head `a0056b5` 的 src 相同）
+
+- **上一轮的问题已关闭**：`sqla_generator_then_consumed` 现在是 H12 code_defect。原 5 个 SQLAlchemy 探针，以及别名后 `list`、`for` 循环、records 式包装的正例，结果都正确。
+- **这次改动范围内仍有 3 个具体复现**：`[*rows]`、`sep.join(… for row in rows)`、在嵌套函数里消费。它们在 1.3 下同样失败，却仍被判为 H10 版本变化。影响只在标签和解释：`returns_rows` 这一步在 2.0.44 和 1.3.24 下都能修好。
+  - 原因：`generator_consumption` 没有处理 Starred，没有处理派生生成器作为参数的情况，也没有看嵌套函数。
+- **lambda 里构造的生成器**：缺少上下文，不作推断。这是预期中的漏判，不算误报。
+- 结果文件：`results/review-codex-a56a621.json`、`results/interpreted-codex-a56a621-sqla.json`。
+
 ## 复现
 
 先用 `round5_cases.py build` 建好环境。packaging 的两个探针还需要另建 `RUNS/packaging-old/venv`（packaging 21.3 + pytest）。`RUNS` 不能放在任何项目目录里。
