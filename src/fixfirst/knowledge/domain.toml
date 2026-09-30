@@ -81,7 +81,7 @@ distribution = "pydantic"
 version = "2.0"
 summary = "Pydantic V2 requires an Optional field when its declaration has no default. The actual missing field is nullable without a default and the supplied input has no unknown field names."
 action_title = "Give the optional model field an explicit None default"
-replacement = "At the reported Optional field declaration, add = None if omitting that field is intended (for example email: Optional[str] = None). Keep other required fields and validation intact. Optional controls whether None is allowed; the explicit default controls omission."
+replacement = "Locate the missing Optional field in the model declaration, and add = None if omitting that field is intended (for example email: Optional[str] = None). Keep other required fields and validation intact. Optional controls whether None is allowed; the explicit default controls omission."
 source = "pydantic-optional-2.0"
 
 [[behavior]]
