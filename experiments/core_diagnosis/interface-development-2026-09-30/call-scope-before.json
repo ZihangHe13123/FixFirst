@@ -1,0 +1,38 @@
+[
+  {
+    "case": "numpy_unrelated_squared",
+    "source": "import numpy\ndef convert():\n    return numpy.array([1], squared=False)\n",
+    "diagnoses": [
+      {
+        "label": "version_incompatibility",
+        "rule": "D04",
+        "source": "rule"
+      }
+    ],
+    "first_step": "Replace squared: removed in scikit-learn 1.6"
+  },
+  {
+    "case": "sklearn_unrelated_squared",
+    "source": "from sklearn.preprocessing import StandardScaler\ndef convert():\n    return StandardScaler(squared=False)\n",
+    "diagnoses": [
+      {
+        "label": "version_incompatibility",
+        "rule": "D04",
+        "source": "rule"
+      }
+    ],
+    "first_step": "Replace squared: removed in scikit-learn 1.6"
+  },
+  {
+    "case": "sklearn_removed_alias",
+    "source": "from sklearn.metrics import mean_squared_error as error\ndef convert():\n    return error([1], [2], squared=False)\n",
+    "diagnoses": [
+      {
+        "label": "version_incompatibility",
+        "rule": "D04",
+        "source": "rule"
+      }
+    ],
+    "first_step": "Replace squared: removed in scikit-learn 1.6"
+  }
+]

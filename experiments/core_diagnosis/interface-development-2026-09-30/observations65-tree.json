@@ -1,0 +1,416 @@
+{
+  "schema_version": 6,
+  "task": "root_cause",
+  "feature_names": [
+    "exception_ModuleNotFoundError",
+    "exception_ImportError",
+    "exception_AttributeError",
+    "exception_KeyError",
+    "exception_FileNotFoundError",
+    "exception_TypeError",
+    "exception_AssertionError",
+    "exception_RuntimeError",
+    "exception_ValueError",
+    "exception_NameError",
+    "exception_SyntaxError",
+    "exception_other",
+    "stage_collect",
+    "stage_setup",
+    "stage_call",
+    "stage_teardown",
+    "raised_in_project",
+    "raised_in_test",
+    "raised_in_third_party",
+    "raised_in_stdlib",
+    "raised_in_unknown",
+    "third_party_frame_ratio",
+    "module_mentioned",
+    "module_installed",
+    "module_stdlib",
+    "module_local",
+    "module_similar_local",
+    "module_declared",
+    "missing_module_dotted",
+    "api_mentioned",
+    "owner_defined_locally",
+    "signal_no_attribute",
+    "signal_cannot_import_name",
+    "signal_unexpected_kwarg",
+    "signal_environ_lookup",
+    "signal_getenv",
+    "signal_nonetype",
+    "signal_config_words",
+    "signal_config_file",
+    "signal_config_context",
+    "signal_file_missing",
+    "signal_partially_initialized",
+    "signal_relative_import",
+    "signal_removed_hint",
+    "context_configuration",
+    "context_project_names",
+    "context_import_operation",
+    "context_external_provider",
+    "context_data_operation",
+    "context_project_resolution",
+    "context_external_api",
+    "call_signature_mismatch",
+    "callee_project",
+    "callee_external",
+    "assertion_text_difference",
+    "assertion_numeric_difference",
+    "assertion_scalar_representation",
+    "relevant_lock_series_changed",
+    "relevant_requirement_conflict",
+    "library_exception_type",
+    "source_context_available",
+    "interface_history_match",
+    "context_local_symbol",
+    "context_local_cycle",
+    "external_call_without_history"
+  ],
+  "classes": [
+    "code_defect",
+    "config_missing",
+    "local_module",
+    "missing_dependency",
+    "version_incompatibility"
+  ],
+  "training_examples": 430,
+  "training_groups": [
+    "cd_assertion",
+    "cd_attribute_typo",
+    "cd_dict_key",
+    "cd_fixture_bug",
+    "cd_index_error",
+    "cd_local_kwarg",
+    "cd_missing_name",
+    "cd_name_error",
+    "cd_syntax_error",
+    "cd_value_error",
+    "cd_wrong_arguments",
+    "cd_zero_division",
+    "cm_config_file",
+    "cm_environ",
+    "cm_explicit",
+    "cm_fixture_env",
+    "cm_getenv_none",
+    "cm_settings_key",
+    "lm_circular",
+    "lm_relative",
+    "lm_renamed",
+    "lm_shadow_library",
+    "lm_shadow_stdlib",
+    "lm_src_layout",
+    "md_declared",
+    "md_declared_alias",
+    "md_known_import",
+    "md_known_runtime",
+    "md_unknown_runtime",
+    "md_unknown_test",
+    "vi_asyncio_coroutine",
+    "vi_collections_abc",
+    "vi_jinja2",
+    "vi_library_import",
+    "vi_library_runtime",
+    "vi_numpy2",
+    "vi_numpy_alias",
+    "vi_removed_kwarg",
+    "vi_stdlib_module",
+    "vi_unittest_alias",
+    "vi_unknown_attribute",
+    "vi_unknown_import",
+    "vi_unknown_submodule"
+  ],
+  "training_weight": 430.0,
+  "hyperparameters": {
+    "max_depth": 6,
+    "min_samples_leaf": 2
+  },
+  "description": "Gini decision tree over observed evidence features; suggestions only.",
+  "feature_importances": {
+    "stage_collect": 0.0036,
+    "raised_in_project": 0.0287,
+    "module_mentioned": 0.2205,
+    "api_mentioned": 0.0158,
+    "owner_defined_locally": 0.0165,
+    "context_configuration": 0.2038,
+    "context_project_names": 0.1667,
+    "context_external_api": 0.2904,
+    "context_local_symbol": 0.0541
+  },
+  "nodes": [
+    {
+      "left": 1,
+      "right": 20,
+      "feature": 50,
+      "threshold": 0.5,
+      "values": [
+        0.27906976744186046,
+        0.13953488372093023,
+        0.13953488372093023,
+        0.13953488372093023,
+        0.3023255813953488
+      ]
+    },
+    {
+      "left": 2,
+      "right": 19,
+      "feature": 44,
+      "threshold": 0.5,
+      "values": [
+        0.375,
+        0.1875,
+        0.1875,
+        0.1875,
+        0.0625
+      ]
+    },
+    {
+      "left": 3,
+      "right": 10,
+      "feature": 22,
+      "threshold": 0.5,
+      "values": [
+        0.46153846153846156,
+        0.0,
+        0.23076923076923078,
+        0.23076923076923078,
+        0.07692307692307693
+      ]
+    },
+    {
+      "left": 4,
+      "right": 5,
+      "feature": 29,
+      "threshold": 0.5,
+      "values": [
+        0.9166666666666666,
+        0.0,
+        0.0,
+        0.0,
+        0.08333333333333333
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "left": 6,
+      "right": 7,
+      "feature": 16,
+      "threshold": 0.5,
+      "values": [
+        0.6666666666666666,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "left": 8,
+      "right": 9,
+      "feature": 30,
+      "threshold": 0.5,
+      "values": [
+        0.8695652173913043,
+        0.0,
+        0.0,
+        0.0,
+        0.13043478260869565
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "left": 11,
+      "right": 16,
+      "feature": 45,
+      "threshold": 0.5,
+      "values": [
+        0.07142857142857142,
+        0.0,
+        0.42857142857142855,
+        0.42857142857142855,
+        0.07142857142857142
+      ]
+    },
+    {
+      "left": 12,
+      "right": 13,
+      "feature": 12,
+      "threshold": 0.5,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.8571428571428571,
+        0.14285714285714285
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ]
+    },
+    {
+      "left": 14,
+      "right": 15,
+      "feature": 16,
+      "threshold": 0.5,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.8,
+        0.2
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.75,
+        0.25
+      ]
+    },
+    {
+      "left": 17,
+      "right": 18,
+      "feature": 62,
+      "threshold": 0.5,
+      "values": [
+        0.14285714285714285,
+        0.0,
+        0.8571428571428571,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "left": -1,
+      "right": -1,
+      "feature": -2,
+      "threshold": -2.0,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  ]
+}

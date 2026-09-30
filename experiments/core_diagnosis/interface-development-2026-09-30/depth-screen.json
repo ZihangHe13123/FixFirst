@@ -1,0 +1,162 @@
+[
+  {
+    "history": false,
+    "usage": false,
+    "depth": 4,
+    "cv": 195,
+    "hard": 15,
+    "previous_hard": 5,
+    "counterexamples": 11,
+    "real": 5
+  },
+  {
+    "history": false,
+    "usage": false,
+    "depth": 6,
+    "cv": 195,
+    "hard": 15,
+    "previous_hard": 10,
+    "counterexamples": 11,
+    "real": 5
+  },
+  {
+    "history": false,
+    "usage": false,
+    "depth": 8,
+    "cv": 190,
+    "hard": 15,
+    "previous_hard": 10,
+    "counterexamples": 11,
+    "real": 5
+  },
+  {
+    "history": false,
+    "usage": false,
+    "depth": 10,
+    "cv": 195,
+    "hard": 15,
+    "previous_hard": 10,
+    "counterexamples": 11,
+    "real": 5
+  },
+  {
+    "history": false,
+    "usage": true,
+    "depth": 4,
+    "cv": 185,
+    "hard": 5,
+    "previous_hard": 5,
+    "counterexamples": 14,
+    "real": 5
+  },
+  {
+    "history": false,
+    "usage": true,
+    "depth": 6,
+    "cv": 190,
+    "hard": 5,
+    "previous_hard": 10,
+    "counterexamples": 14,
+    "real": 5
+  },
+  {
+    "history": false,
+    "usage": true,
+    "depth": 8,
+    "cv": 190,
+    "hard": 5,
+    "previous_hard": 10,
+    "counterexamples": 14,
+    "real": 4
+  },
+  {
+    "history": false,
+    "usage": true,
+    "depth": 10,
+    "cv": 190,
+    "hard": 5,
+    "previous_hard": 10,
+    "counterexamples": 14,
+    "real": 4
+  },
+  {
+    "history": true,
+    "usage": false,
+    "depth": 4,
+    "cv": 195,
+    "hard": 15,
+    "previous_hard": 5,
+    "counterexamples": 11,
+    "real": 5
+  },
+  {
+    "history": true,
+    "usage": false,
+    "depth": 6,
+    "cv": 190,
+    "hard": 15,
+    "previous_hard": 10,
+    "counterexamples": 11,
+    "real": 5
+  },
+  {
+    "history": true,
+    "usage": false,
+    "depth": 8,
+    "cv": 190,
+    "hard": 15,
+    "previous_hard": 10,
+    "counterexamples": 11,
+    "real": 5
+  },
+  {
+    "history": true,
+    "usage": false,
+    "depth": 10,
+    "cv": 190,
+    "hard": 15,
+    "previous_hard": 10,
+    "counterexamples": 11,
+    "real": 5
+  },
+  {
+    "history": true,
+    "usage": true,
+    "depth": 4,
+    "cv": 190,
+    "hard": 5,
+    "previous_hard": 5,
+    "counterexamples": 14,
+    "real": 5
+  },
+  {
+    "history": true,
+    "usage": true,
+    "depth": 6,
+    "cv": 195,
+    "hard": 5,
+    "previous_hard": 5,
+    "counterexamples": 14,
+    "real": 4
+  },
+  {
+    "history": true,
+    "usage": true,
+    "depth": 8,
+    "cv": 195,
+    "hard": 5,
+    "previous_hard": 10,
+    "counterexamples": 14,
+    "real": 5
+  },
+  {
+    "history": true,
+    "usage": true,
+    "depth": 10,
+    "cv": 195,
+    "hard": 5,
+    "previous_hard": 10,
+    "counterexamples": 14,
+    "real": 5
+  }
+]
