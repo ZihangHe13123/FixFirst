@@ -6,6 +6,11 @@ The tools use the same service functions, the same plain-language view (workspac
 and the same session store as the web interface, so `fixfirst serve` shows what an agent did.
 FixFirst still never edits code: the agent changes the code, FixFirst diagnoses and confirms
 the fix with a real check.
+
+`fixfirst mcp --facts` serves the facts-only mode (facts.py) for the agent experiment: one tool,
+observe, that runs the same checks and returns what they showed, without a diagnosis or advice.
+Its sessions stay in the server's memory and are never written anywhere: the checks run the
+project's own code under the server's sandbox, and that code must not find a diagnosis on disk.
 """
 
 import contextlib
@@ -15,6 +20,8 @@ import sys
 from pathlib import Path
 
 from . import __version__
+from .facts import render_facts
+from .models import Session
 from .processes import ProcessScope
 from .reasoning import infer_and_plan
 from .service import create_session, scan
@@ -113,12 +120,35 @@ TOOLS = [
 ]
 
 
+FACTS_INSTRUCTIONS = (
+    "FixFirst runs a Python project's checks and reports what they showed: the interpreter, how each "
+    "check ended, each failure's exception and where it was raised, and what the environment says "
+    "about the modules involved. It gives no diagnosis and no advice. Calling observe again runs the "
+    "checks again. FixFirst runs the project's checks (tests execute project code) but never edits files."
+)
+
+FACTS_TOOLS = [
+    {
+        "name": "observe",
+        "title": "Observe a Python project",
+        "description": (
+            "Run the project's program or existing tests, plus available environment checks, and "
+            "return what they showed as JSON: the checks and how they ended, each failure's exception, "
+            "message and location, and the installed, standard-library, local and declared status of "
+            "the modules involved. No diagnosis or advice. Call it again to re-run the checks."
+        ),
+        "inputSchema": TOOLS[0]["inputSchema"],
+        "annotations": {"readOnlyHint": False, "destructiveHint": False, "openWorldHint": False},
+    },
+]
+
+
 class ToolError(Exception):
     """A problem the agent can act on; reported in the tool result, not as a protocol error."""
 
 
 def _check_arguments(name, arguments):
-    schema = next(t["inputSchema"] for t in TOOLS if t["name"] == name)
+    schema = next(t["inputSchema"] for t in TOOLS + FACTS_TOOLS if t["name"] == name)
     if not isinstance(arguments, dict):
         raise ToolError(f"{name} expects an object of arguments")
     unknown = sorted(set(arguments) - set(schema["properties"]))
@@ -135,8 +165,13 @@ def _check_arguments(name, arguments):
 
 
 class Server:
-    def __init__(self, store_root):
-        self.store = Store(store_root)
+    def __init__(self, store_root, mode="full"):
+        if mode not in ("full", "facts"):
+            raise ValueError(f"Unknown MCP mode {mode!r}")
+        self.mode = mode
+        # Facts mode keeps its sessions in memory only (see the module docstring).
+        self.store = Store(store_root) if mode == "full" else None
+        self.memory: dict[str, Session] = {}
         self.sessions: dict[tuple, str] = {}  # (project, python, goal) -> session id
         self.latest: str | None = None
 
@@ -155,15 +190,17 @@ class Server:
                 "protocolVersion": asked if asked in PROTOCOL_VERSIONS else PROTOCOL_VERSIONS[0],
                 "capabilities": {"tools": {"listChanged": False}},
                 "serverInfo": {"name": "fixfirst", "title": "FixFirst", "version": __version__},
-                "instructions": INSTRUCTIONS,
+                "instructions": FACTS_INSTRUCTIONS if self.mode == "facts" else INSTRUCTIONS,
             })
         if method == "ping":
             return _result(request_id, {})
         if method == "tools/list":
-            return _result(request_id, {"tools": TOOLS})
+            return _result(request_id, {"tools": FACTS_TOOLS if self.mode == "facts" else TOOLS})
         if method == "tools/call":
             name, arguments = params.get("name"), params.get("arguments") or {}
-            tool = {"diagnose": self.diagnose, "check_again": self.check_again, "explain": self.explain}.get(name)
+            tools = ({"observe": self.observe} if self.mode == "facts" else
+                     {"diagnose": self.diagnose, "check_again": self.check_again, "explain": self.explain})
+            tool = tools.get(name)
             if tool is None:
                 return _error(request_id, -32602, f"Unknown tool: {name}")
             try:
@@ -246,6 +283,27 @@ class Server:
             counts = ", ".join(f"{v} {k}" for k, v in summary.items() if isinstance(v, int) and v)
             lines.append(f"   {run.tool}: {run.status}" + (f" ({counts})" if counts else ""))
         return "\n".join(lines)
+
+    def observe(self, project, python=None, goal="auto", execution=None):
+        """Facts mode: run the checks (again, for the same project and settings) and return only
+        what they showed."""
+        if goal not in ["auto", *GOALS]:
+            raise ToolError(f"Unknown goal {goal!r}; use one of {', '.join(GOALS)}")
+        folder = inspect_folder(str(project), python or None)
+        if not folder["ok"]:
+            raise ToolError(folder.get("error") or "; ".join(folder["warnings"]))
+        interpreter = folder["python"]["path"]
+        session = create_session(folder["path"], interpreter, goal=goal, execution=execution)
+        key = (folder["path"], interpreter, session.goal,
+               session.execution.model_dump_json() if session.execution else "")
+        if key in self.sessions:
+            session = self.memory[self.sessions[key]]
+        else:
+            self.memory[session.session_id] = session
+            self.sessions[key] = session.session_id
+        scan(session)  # in memory: nothing about this session is written to disk
+        self.latest = session.session_id
+        return render_facts(session)
 
     def _session_id(self, session_id):
         session_id = session_id or self.latest
@@ -341,15 +399,16 @@ def _error(request_id, code, message) -> dict:
     return {"jsonrpc": "2.0", "id": request_id, "error": {"code": code, "message": message}}
 
 
-def serve(store_root, stdin=None, stdout=None) -> int:
+def serve(store_root, stdin=None, stdout=None, mode="full") -> int:
     """Read JSON-RPC messages from stdin until it closes; answer each on stdout."""
     stdin = stdin or sys.stdin.buffer
     stdout = stdout or sys.stdout.buffer
-    server = Server(Path(store_root))
+    server = Server(Path(store_root), mode)
     scope = ProcessScope()
     if hasattr(signal, "SIGTERM"):
         signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
-    print(f"FixFirst MCP server {__version__} ready; sessions in {server.store.root}", file=sys.stderr, flush=True)
+    where = f"sessions in {server.store.root}" if server.store else "sessions in memory only"
+    print(f"FixFirst MCP server {__version__} ({mode}) ready; {where}", file=sys.stderr, flush=True)
 
     def send(answer):
         stdout.write(json.dumps(answer, ensure_ascii=False).encode("utf-8") + b"\n")

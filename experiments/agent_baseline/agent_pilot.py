@@ -64,6 +64,8 @@ from xml.etree.ElementTree import ParseError
 import httpx
 
 from fixfirst import diagnosis_cases as dc
+from fixfirst.facts import TOP_LEVEL_KEYS as FACTS_KEYS
+from fixfirst.storage import Store
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -120,6 +122,15 @@ FIXFIRST_INSTRUCTIONS = (
     "and call it again after each change to confirm the fix."
 )
 
+# Arms with FixFirst over MCP: the tool called first, and the one called after a change.
+FIXFIRST_ARMS = {"facts": ("observe", "observe"), "mcp": ("diagnose", "check_again")}
+# How the FixFirst arms call it. server: the tools and the server's own instructions, as an MCP
+# client would add them (B7's protocol). scheduled: the harness calls FixFirst before the first
+# turn and after every turn that changed the project, the same way in both FixFirst arms, and the
+# model gets the report (not the tools). required: the tools, and the same instruction to call them
+# in both arms. on_demand: the tools, and only that they are available.
+CALL_POLICIES = ("server", "scheduled", "required", "on_demand")
+
 FIXFIRST_TOOL = {"type": "function", "function": {
     "name": "fixfirst_check",
     "description": (
@@ -137,6 +148,7 @@ class Settings:
     temperature: float = 0.2
     max_tokens: int = 4096
     seed: int = 20261001
+    call_policy: str = "server"
 
 
 class ModelError(Exception):
@@ -201,6 +213,8 @@ class Run:
     state = property(lambda self: self.folder / "state")
     tmp = property(lambda self: self.folder / "tmp")
     transcript = property(lambda self: self.folder / "transcript.json")
+    # FixFirst's sessions (its diagnoses too) stay out of the agent's reach: only its server writes here.
+    fixfirst_store = property(lambda self: self.folder / "fixfirst-store")
     commands_log = property(lambda self: self.folder / "commands.jsonl")
 
     def policy(self, kind: str) -> iso.Policy:
@@ -212,8 +226,10 @@ class Run:
             uv = shutil.which("uv")
             return iso.Policy(agent.writable, agent.readable, True, (Path(os.path.realpath(uv)),) if uv else (),
                               owner=self.mark)
-        if kind == "mcp":
-            return agent.extended(readable=fixfirst_readable())
+        if kind in ("mcp", "mcp_facts"):  # the facts server keeps no store, so it gets none
+            store = (self.fixfirst_store,) if kind == "mcp" else ()
+            return iso.Policy((*agent.writable, *store), (*agent.readable, *fixfirst_readable()),
+                              agent.network, owner=self.mark)
         if kind == "ff":
             return agent.extended(readable=fixfirst_readable(), readable_files=(HERE / "ff_tool.py",))
         raise ValueError(kind)
@@ -270,10 +286,12 @@ class Run:
 class MCPClient:
     """Minimal MCP stdio client: starts `fixfirst mcp` in the sandbox and relays tool calls."""
 
-    def __init__(self, run: Run, budget: iso.Budget):
-        argv = ["sandbox-exec", "-f", str(run.profile("mcp")), str(PYTHON), "-m", "fixfirst",
-                "--store", str(run.state / "store"), "mcp"]
-        self.owner = run.mark
+    def __init__(self, run: Run, budget: iso.Budget, facts: bool = False):
+        if not facts:  # the facts server keeps its sessions in memory and writes no store
+            run.fixfirst_store.mkdir(exist_ok=True)
+        argv = ["sandbox-exec", "-f", str(run.profile("mcp_facts" if facts else "mcp")), str(PYTHON), "-m", "fixfirst",
+                "--store", str(run.fixfirst_store), "mcp", *(["--facts"] if facts else [])]
+        self.owner, self.facts = run.mark, facts
         self.log = (run.folder / "mcp-server.log").open("w")
         self.dead = False
         self.proc = subprocess.Popen(argv, cwd=run.project, env=rc.clean_env(PYTHON, run.state, run.tmp),
@@ -294,8 +312,11 @@ class MCPClient:
     def _read(self):
         for line in self.proc.stdout:
             self.lines.put(line)
+        self.lines.put(None)  # the server exited: a waiting request fails now, not at its timeout
 
     def request(self, method, params, timeout):
+        if self.dead:
+            raise RuntimeError("FixFirst's server was stopped")
         self.next_id += 1
         self.proc.stdin.write(json.dumps({"jsonrpc": "2.0", "id": self.next_id, "method": method,
                                           "params": params}) + "\n")
@@ -306,7 +327,12 @@ class MCPClient:
             try:
                 if left <= 0:
                     raise queue.Empty
-                answer = json.loads(self.lines.get(timeout=left))
+                line = self.lines.get(timeout=left)
+                if line is None:
+                    self.dead = True
+                    raise RuntimeError(f"FixFirst's server exited (code {self.proc.wait(5)}) before it answered "
+                                       f"{method}; see mcp-server.log")
+                answer = json.loads(line)
             except queue.Empty:
                 self.stop()
                 raise ToolTimeout(f"FixFirst's server did not answer {method} in time") from None
@@ -355,11 +381,15 @@ class FakeModel:
     """Scripted replies, to check the harness without a model. The script is a JSON list; each step
     is {"call": name, "arguments": {...}}, {"calls": [...]} for several, {"say": text} for an answer
     without a tool call, {"fail": text} for a failed request or {"raw": message} for a message sent as
-    it is (to test malformed replies). "delay": seconds makes the reply take that long."""
+    it is (to test malformed replies). "delay": seconds makes the reply take that long. The call names
+    "fixfirst:first" and "fixfirst:again" stand for the arm's FixFirst tools (with the harness's
+    default arguments when the step gives none); in an arm that offers none, such calls are left out
+    (and a step with nothing left is skipped)."""
 
-    def __init__(self, path: Path):
+    def __init__(self, path: Path, aliases: dict | None = None):
         self.steps = json.loads(Path(path).read_text(encoding="utf-8"))
         self.index = 0
+        self.aliases = aliases or {}
 
     def reply(self, timeout: float):
         if self.index >= len(self.steps):
@@ -377,7 +407,16 @@ class FakeModel:
             return step["raw"], step.get("usage", {})
         if "say" in step:
             return {"content": step["say"]}, {}
-        calls = step.get("calls") or [step]
+        calls = []
+        for c in step.get("calls") or [step]:
+            if str(c.get("call", "")).startswith("fixfirst:"):
+                if c["call"] not in self.aliases:
+                    continue
+                name, defaults = self.aliases[c["call"]]
+                c = {**c, "call": name, "arguments": c.get("arguments") or defaults}
+            calls.append(c)
+        if not calls:
+            return self.reply(timeout)
         return {"content": "", "tool_calls": [
             {"id": f"call-{self.index}-{n}", "type": "function",
              "function": {"name": c["call"], "arguments": json.dumps(c.get("arguments", {}))}}
@@ -454,28 +493,42 @@ def count(value) -> int:
 def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest) -> dict:
     stats = {"turns": 0, "tool_calls": 0, "pytest_runs": 0, "fixfirst_calls": 0, "prompt_tokens": 0,
              "completion_tokens": 0, "model_s": 0.0, "tool_s": 0.0, "end": "turn_cap", "bad_calls": 0,
-             "first_green_turn": None, "error": None, "mcp_arguments_filled": 0, "mcp_arguments_overridden": 0}
+             "first_green_turn": None, "first_green_s": None, "error": None, "mcp_arguments_filled": 0,
+             "mcp_arguments_overridden": 0, "fixfirst_reports": 0, "fixfirst_s": 0.0, "fixfirst_output_chars": 0,
+             "usage_reported": False}
     budget = iso.Budget(settings.run_timeout)
     tools = BASIC_TOOLS + ([FIXFIRST_TOOL] if arm == "fixfirst" else [])
     system = system_prompt(run.network) + (FIXFIRST_INSTRUCTIONS if arm == "fixfirst" else "")
     messages = []
     mcp = None
+    first_tool, again_tool = FIXFIRST_ARMS.get(arm, (None, None))
+    scheduled = bool(first_tool) and settings.call_policy == "scheduled"
 
     def save():
         run.transcript.write_text(json.dumps(messages, ensure_ascii=False, indent=1), encoding="utf-8")
 
     try:
-        if arm == "mcp":
+        if first_tool:
             try:
-                mcp = MCPClient(run, budget)
+                mcp = MCPClient(run, budget, facts=arm == "facts")
             except (OSError, RuntimeError, ValueError, KeyError, ToolTimeout) as error:
                 stats.update(end="mcp_start_failed", error=f"{type(error).__name__}: {error}"[:500])
                 return stats
-            tools = tools + mcp.openai_tools()
-            if mcp.instructions:
-                system += "\n\n" + mcp.instructions  # what an MCP client adds from the server
+            if not scheduled:
+                tools = tools + mcp.openai_tools()
+            system += policy_text(settings.call_policy, mcp, first_tool, again_tool)
         messages += [{"role": "system", "content": system},
                      {"role": "user", "content": f"The project is in {run.project}. Its tests fail. Fix it."}]
+        if scheduled:
+            try:
+                report = fixfirst_report(first_tool, run, mcp, budget, stats)
+            except ToolTimeout as error:
+                stats.update(end="time_cap", error=f"ToolTimeout: {error}"[:500])
+                return stats
+            except (OSError, RuntimeError) as error:
+                stats.update(end="mcp_start_failed", error=f"{type(error).__name__}: {error}"[:500])
+                return stats
+            messages[-1]["content"] += "\n\nFixFirst checked the project before your first step:\n" + report
         with budget.pause():
             last = state_digest()
         for turn in range(1, settings.max_turns + 1):
@@ -502,6 +555,8 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
                 stats["end"], stats["error"] = "model_error", "tool_calls is not a list"
                 break
             usage = usage if isinstance(usage, dict) else {}
+            # Tokens the server did not report are unknown, not zero.
+            stats["usage_reported"] |= any(key in usage for key in ("prompt_tokens", "completion_tokens"))
             stats["turns"] = turn
             stats["prompt_tokens"] += count(usage.get("prompt_tokens"))
             stats["completion_tokens"] += count(usage.get("completion_tokens"))
@@ -545,25 +600,83 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
             if timed_out or budget.remaining() <= 0:
                 stats["end"] = "time_cap"
                 break
+            newly_green = False
             with budget.pause():
                 current = state_digest()
-                if current != last:
+                changed = current != last
+                if changed:
                     last = current
-                    if stats["first_green_turn"] is None and green():
-                        stats["first_green_turn"] = turn
+                    newly_green = stats["first_green_turn"] is None and green()
+            if newly_green:
+                stats["first_green_turn"], stats["first_green_s"] = turn, round(budget.used(), 2)
             if finished:
                 stats["end"] = "finish"
                 break
+            if scheduled and changed:
+                try:
+                    report = fixfirst_report(again_tool, run, mcp, budget, stats)
+                except ToolTimeout:
+                    stats["end"] = "time_cap"
+                    break
+                except (OSError, RuntimeError) as error:  # the report says so; the run goes on
+                    report = f"FixFirst could not check the project: {type(error).__name__}: {error}"
+                messages.append({"role": "user", "content": "FixFirst checked the project again after your "
+                                                            "changes:\n" + report})
     finally:
         save()
         if mcp:
             mcp.close()
         stats["agent_s"] = round(budget.used(), 2)
         stats["harness_s"] = round(budget.paused, 2)
+        stats["fixfirst_s"] = round(stats["fixfirst_s"], 2)
         # Every process of the run ends with the episode, before anything is read or graded.
         run.end_processes("end of the episode")
         stats["processes_stopped_at_end"] = len(run.stopped)
     return stats
+
+
+def policy_text(policy: str, mcp, first_tool: str, again_tool: str) -> str:
+    """What the system prompt says about FixFirst: the same wording in both FixFirst arms, except
+    under the server policy, where each arm gets its server's own instructions."""
+    if policy == "server":
+        return "\n\n" + mcp.instructions if mcp.instructions else ""  # what an MCP client adds from the server
+    if policy == "scheduled":
+        return ("\n\nFixFirst checks the project for you: its report comes with the task and again after "
+                "each turn that changed the project.")
+    if policy == "required":
+        return f"\n\nCall {first_tool} before changing anything, and {again_tool} after each change."
+    return f"\n\nFixFirst's tools ({', '.join(t['name'] for t in mcp.tools)}) are available; use them when they help."
+
+
+def fixfirst_report(tool: str, run: Run, mcp, budget: iso.Budget, stats) -> str:
+    """A FixFirst call the harness makes itself (scheduled policy): the same arguments in both arms,
+    and its time counts against the agent's budget like a tool call's."""
+    arguments = {} if tool == "check_again" else {"project": str(run.project), "python": str(run.python)}
+    started = time.monotonic()
+    try:
+        text = mcp.call(tool, arguments, budget.remaining())
+    finally:
+        stats["fixfirst_s"] += time.monotonic() - started
+    stats["fixfirst_reports"] += 1
+    note_fixfirst_output(text, run, mcp, stats)
+    stats["fixfirst_output_chars"] += len(clip(text))
+    return clip(text)
+
+
+def note_fixfirst_output(text: str, run: Run, mcp, stats):
+    """For the comparison: in the facts arm, whether every report held only facts' fields; in the
+    full arm, the cause of the first step FixFirst listed (read from its own session store)."""
+    if getattr(mcp, "facts", False):
+        try:
+            ok = set(json.loads(text)) <= set(FACTS_KEYS)
+        except (ValueError, TypeError):
+            ok = text.startswith("Error: ")  # a tool error, not a report
+        stats["facts_only_verified"] = stats.get("facts_only_verified", True) and ok
+    elif stats.get("fixfirst_first_cause") is None and not text.startswith("Error: "):
+        found = re.match(r"FixFirst session (session-[0-9a-f]+)", text)
+        if found:
+            session = Store(run.fixfirst_store).load(found[1])
+            stats["fixfirst_first_cause"] = next((a.cause for a in session.actions if a.cause), "none")
 
 
 def run_tool(name, args, run: Run, stats, mcp, budget: iso.Budget, turn):
@@ -571,7 +684,7 @@ def run_tool(name, args, run: Run, stats, mcp, budget: iso.Budget, turn):
         if mcp.dead:
             return "error: FixFirst's server was stopped"
         stats["fixfirst_calls"] += 1
-        if name == "diagnose" and run.real:
+        if name in ("diagnose", "observe") and run.real:
             # The case's project and interpreter, whatever the model passed: a missing value is
             # filled in, a different one is overridden.
             forced = {"project": str(run.project), "python": str(run.python)}
@@ -582,7 +695,14 @@ def run_tool(name, args, run: Run, stats, mcp, budget: iso.Budget, turn):
                 elif os.path.abspath(run.project / str(given)) != value:
                     stats["mcp_arguments_overridden"] += 1
             args = {**args, **forced}
-        return clip(mcp.call(name, args, budget.remaining()))
+        started = time.monotonic()
+        try:
+            text = mcp.call(name, args, budget.remaining())
+        finally:  # FixFirst's cost, also when the call fails or runs out of time
+            stats["fixfirst_s"] = stats.get("fixfirst_s", 0) + time.monotonic() - started
+        note_fixfirst_output(text, run, mcp, stats)
+        stats["fixfirst_output_chars"] = stats.get("fixfirst_output_chars", 0) + len(clip(text))
+        return clip(text)
     if name == "run_command":
         command = args["command"]
         if not isinstance(command, str):
@@ -618,9 +738,13 @@ def run_tool(name, args, run: Run, stats, mcp, budget: iso.Budget, turn):
         return f"wrote {len(str(args['content']))} characters to {target.relative_to(run.project.resolve())}"
     if name == "fixfirst_check":
         stats["fixfirst_calls"] += 1
-        code, output, stopped = run.execute([str(PYTHON), str(HERE / "ff_tool.py"), str(run.project),
-                                             str(run.state / "session.json"), str(PYTHON)], "ff",
-                                            min(600, budget.remaining()), env=run.env(PYTHON))
+        started = time.monotonic()
+        try:
+            code, output, stopped = run.execute([str(PYTHON), str(HERE / "ff_tool.py"), str(run.project),
+                                                 str(run.state / "session.json"), str(PYTHON)], "ff",
+                                                min(600, budget.remaining()), env=run.env(PYTHON))
+        finally:
+            stats["fixfirst_s"] = stats.get("fixfirst_s", 0) + time.monotonic() - started
         if stopped and budget.remaining() <= 0:
             raise ToolTimeout("FixFirst's check was stopped at the deadline")
         return clip(output) if code == 0 else f"fixfirst failed (exit {code}):\n{clip(output)}"
@@ -730,7 +854,13 @@ def file_hashes(project_dir: Path) -> dict:
 
 def play(model, arm, run: Run, settings, fake_path, reference, row, state_digest):
     """The episode, then the grade; a run whose episode never started is not graded."""
-    fake = FakeModel(fake_path) if fake_path else None
+    first_tool, again_tool = FIXFIRST_ARMS.get(arm, (None, None))
+    aliases = {}
+    if first_tool and settings.call_policy != "scheduled":  # the model is offered FixFirst's tools
+        start = {"project": str(run.project)}
+        aliases = {"fixfirst:first": (first_tool, start),
+                   "fixfirst:again": (again_tool, {} if again_tool == "check_again" else start)}
+    fake = FakeModel(fake_path, aliases) if fake_path else None
     files_before = file_hashes(run.project)
 
     def green():
@@ -745,6 +875,8 @@ def play(model, arm, run: Run, settings, fake_path, reference, row, state_digest
     started = time.monotonic()
     stats = episode(model, arm, run, settings, fake, green, state_digest)
     stats["total_s"] = round(time.monotonic() - started, 1)
+    if stats.get("fixfirst_first_cause") and row.get("cause"):  # generated cases know their cause
+        stats["wrong_first_cause"] = stats["fixfirst_first_cause"] != row["cause"]
     row.update({k: round(v, 2) if isinstance(v, float) else v for k, v in stats.items()})
     if run.cleanup_problems:
         row.update(grading="not_graded", fixed=None)  # close_run records why; nothing is graded
@@ -835,8 +967,9 @@ def prepare_and_play_generated(ctx: Context, run: Run, row: dict, settings, t, s
 
 
 def arm_order(arms: list[str], case_index: int, run_index: int) -> list[str]:
-    """Alternate which arm goes first, per case and run."""
-    return list(arms) if (case_index + run_index) % 2 == 0 else list(reversed(arms))
+    """Rotate which arm goes first, per case and run (with two arms: alternate)."""
+    shift = (case_index + run_index) % len(arms)
+    return list(arms[shift:]) + list(arms[:shift])
 
 
 def check_output_folder(out: Path) -> str | None:
@@ -870,7 +1003,10 @@ def main(argv=None):
                         help="folder with a git clone of each project at its release")
     parser.add_argument("--repairs", default=str(HERE / "reference_repairs.toml"),
                         help="known repairs, used only to compute the grader's reference outcome")
-    parser.add_argument("--arms", nargs="+", default=["baseline", "mcp"], choices=["baseline", "fixfirst", "mcp"])
+    parser.add_argument("--arms", nargs="+", default=["baseline", "mcp"], choices=["baseline", "fixfirst", "facts", "mcp"],
+                        help="facts: FixFirst's observations only; mcp: its full diagnosis (both over MCP)")
+    parser.add_argument("--call-policy", choices=CALL_POLICIES, default="server",
+                        help="how the facts and mcp arms call FixFirst (see CALL_POLICIES)")
     parser.add_argument("--runs", type=int, default=1)
     parser.add_argument("--network", choices=["off", "on"], default="off")
     parser.add_argument("--max-turns", type=int, default=20)
@@ -899,7 +1035,8 @@ def main(argv=None):
     identity = f"fake-{fake_path.stem}-{iso.slug(str(fake_path))[-8:]}" if fake_path else args.model
     ctx = Context(out, identity, attempt, args.network == "on",
                   denied=(Path(HOME), out, FIXFIRST, *iso.SYSTEM_TEMP))
-    settings = Settings(args.max_turns, args.run_timeout, args.temperature, args.max_tokens, args.seed)
+    settings = Settings(args.max_turns, args.run_timeout, args.temperature, args.max_tokens, args.seed,
+                        args.call_policy)
     manifest_path = Path(args.manifest).resolve()
     manifest = rc.load_manifest(manifest_path) if args.projects else {}
     repairs = rc.tomllib.loads(Path(args.repairs).read_text(encoding="utf-8")) if args.projects else {}
@@ -928,7 +1065,8 @@ def main(argv=None):
         for run_index in range(1, args.runs + 1):
             for order, arm in enumerate(arm_order(args.arms, case_index, run_index - 1), start=1):
                 row = {"model": args.model, "model_slug": iso.slug(identity), "attempt": attempt, "case": name,
-                       "kind": kind, "arm": arm, "run": run_index, "order": order, "seed": args.seed,
+                       "kind": kind, "arm": arm, "call_policy": args.call_policy, "run": run_index, "order": order,
+                       "seed": args.seed,
                        "network": "on" if (ctx.network and kind == "real") else "off", "settings": vars(settings),
                        "harness_commit": harness, "uncommitted_changes": dirty, "end": None, "error": None,
                        "grading": None, "fixed": None}
