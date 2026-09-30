@@ -17,7 +17,7 @@ MAX_OUTPUT = 1_000_000
 # Real test suites can take minutes; a check that runs longer is stopped and reported.
 DEFAULT_TIMEOUT = 600
 DEFAULT_CHECKS = ("environment", "pip_check", "pytest", "ruff", "project")
-TOOLS = (*DEFAULT_CHECKS, "pytest_run", "version_search")
+TOOLS = (*DEFAULT_CHECKS, "pytest_run", "version_search", "python_run", "unittest_run")
 SEARCH_TARGET = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$")
 
 
@@ -104,6 +104,7 @@ def execute(
     timeout: float = 30,
     max_output: int = MAX_OUTPUT,
     extra_env: dict | None = None,
+    input_text: str | None = None,
 ) -> Run:
     if timeout <= 0 or max_output <= 0:
         raise ValueError("Timeout and output limit must be greater than zero")
@@ -120,14 +121,21 @@ def execute(
             "PYTHONIOENCODING": "utf-8",
         }
     )
-    env.pop("RUFF_OUTPUT_FILE", None)
-    env.pop("PYTEST_ADDOPTS", None)
+    if tool == "ruff":
+        env.pop("RUFF_OUTPUT_FILE", None)
+    if tool in ("pytest", "pytest_run"):
+        env.pop("PYTEST_ADDOPTS", None)
     env.pop("PYTHONHOME", None)
     env.update(activation_env(python))
     if extra_env:
         env.update(extra_env)
     # A new process group/session lets a timeout stop the whole tree, and keeps a Ctrl+C in
     # the terminal from reaching the check directly.
+    input_file = None
+    if input_text is not None:
+        input_file = tempfile.TemporaryFile()
+        input_file.write(input_text.encode("utf-8"))
+        input_file.seek(0)
     try:
         proc = ManagedProcess(
             argv,
@@ -135,12 +143,15 @@ def execute(
             env=env,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            stdin=subprocess.DEVNULL,
+            stdin=input_file if input_file is not None else subprocess.DEVNULL,
         )
     except OSError as exc:
         run.status = "cancelled" if isinstance(exc, ProcessCancelled) else "launch_failed"
         run.stderr = redact(str(exc))
         return run
+    finally:
+        if input_file is not None:
+            input_file.close()
     buffers = {"stdout": bytearray(), "stderr": bytearray()}
     total = [0]
     lock = threading.Lock()
@@ -318,6 +329,12 @@ def validate_targets(session: Session, targets: list[str]):
 
 
 def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targets=None) -> Run:
+    if tool in ("python_run", "unittest_run"):
+        from .execution import collect_execution
+
+        if targets:
+            raise ValueError("Program and unittest checks use the saved execution configuration")
+        return collect_execution(session, tool, timeout)
     if tool not in TOOLS:
         raise ValueError("Unsupported check")
     targets = list(targets or [])

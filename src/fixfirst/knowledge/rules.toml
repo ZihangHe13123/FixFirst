@@ -579,7 +579,7 @@ check = "environment"
 issue = "?i"
 cost = 1
 impact = 2
-impact_goals = ["collect_tests", "pass_tests"]
+impact_goals = ["collect_tests", "pass_tests", "run_project", "pass_unittest"]
 title = "Record the current Python environment first"
 explanation = "Import or dependency checks failed. FixFirst needs the interpreter and its installed packages before it can tell a missing package from a local module or a removed API. Nothing is installed or changed."
 verification = "Review the snapshot: interpreter path, Python version and installed packages"
@@ -1274,6 +1274,64 @@ explanation = "Set the configuration key named in the error, following the proje
 verification = "Re-run the checks for the affected scope"
 
 [[rule]]
+id = "G12"
+phase = "derive"
+description = "A native program execution failure prevents the program-run goal."
+when = [["?i", "tool", "python_run"]]
+then = [["?i", "affects", "run_project"], ["?i", "blocks", "run_project"]]
+
+[[rule]]
+id = "G13"
+phase = "derive"
+description = "A unittest failure prevents the unittest goal."
+when = [["?i", "tool", "unittest_run"]]
+then = [["?i", "affects", "pass_unittest"], ["?i", "blocks", "pass_unittest"]]
+
+[[rule]]
+id = "RUN-P1"
+phase = "plan"
+description = "A native program cannot open an input or data file."
+when = [["?i", "tool", "python_run"], ["?i", "exception", "FileNotFoundError"],
+        ["not", "?i", "remedy", "?_"]]
+[rule.action]
+id = "restore-input-file"
+kind = "manual_fix"
+issue = "?i"
+cost = 1
+title = "Check the input file path and the project working directory"
+explanation = "The program could not find the file named in the original exception. Relative paths are resolved from the project folder. Put the required input file there, correct the path or pass the intended path as an argument."
+verification = "Re-run the same program with the same input"
+
+[[rule]]
+id = "RUN-P2"
+phase = "plan"
+description = "An exception occurred in a native program or unittest without a more specific remedy."
+when = [["?i", "kind", "runtime_error"], ["not", "?i", "remedy", "?_"],
+        ["not", "?i", "exception", "FileNotFoundError"], ["not", "?i", "exception", "EOFError"]]
+[rule.action]
+id = "review-runtime-error"
+kind = "manual_fix"
+issue = "?i"
+cost = 2
+title = "Correct the operation at the reported source location"
+explanation = "Start from the last project location in the traceback. Check the named variable, input type, index or operation against the exception message, then change that code or its input. The original output shows the exact failing operation."
+verification = "Re-run the same program or unittest suite"
+
+[[rule]]
+id = "RUN-P3"
+phase = "plan"
+description = "A program ended with a nonzero exit status without an exception traceback."
+when = [["?i", "kind", "runtime_exit"]]
+[rule.action]
+id = "review-exit-status"
+kind = "manual_fix"
+issue = "?i"
+cost = 2
+title = "Read the program output and the condition that caused it to exit"
+explanation = "The process ended unsuccessfully but did not provide an exception traceback. Review its output, required arguments and exit conditions. A nonzero exit status alone does not establish a particular root cause."
+verification = "Re-run the same program"
+
+[[rule]]
 id = "P45"
 phase = "plan"
 description = "Installation log failure."
@@ -1291,7 +1349,8 @@ verification = "Repeat the installation and import the log again"
 id = "P46"
 phase = "plan"
 description = "A check did not produce a usable result."
-when = [["?i", "kind", "tool_failure"]]
+when = [["?i", "kind", "tool_failure"], ["not", "?i", "component", "notebook_driver"],
+        ["not", "?i", "component", "ipykernel"]]
 [rule.action]
 id = "review-tool_failure"
 kind = "manual_fix"
@@ -1300,6 +1359,51 @@ cost = 2
 title = "Check that the tool is available and ran to completion"
 explanation = "This check produced no valid result. Confirm the tool is installed in the target interpreter and read its original output before running it again."
 verification = "Run the same check again"
+
+[[rule]]
+id = "RUN-P4"
+phase = "plan"
+description = "The program requests more standard input than this run provided."
+when = [["?i", "tool", "python_run"], ["?i", "exception", "EOFError"]]
+[rule.action]
+id = "provide-program-input"
+kind = "manual_fix"
+issue = "?i"
+cost = 1
+title = "Provide the values read by input()"
+explanation = "The program reached the end of standard input while requesting a value. Enter the required lines in Python and run settings, or use --stdin-file in the CLI, then run again."
+verification = "Run with the intended input; the new input is a distinct execution scope"
+
+[[rule]]
+id = "RUN-P5"
+phase = "plan"
+description = "The target Python cannot start a notebook kernel."
+when = [["?i", "kind", "tool_failure"], ["?i", "component", "ipykernel"]]
+[rule.action]
+id = "install-notebook-kernel"
+kind = "manual_fix"
+issue = "?i"
+cost = 1
+title = "Install ipykernel in the project's selected Python"
+explanation = "Notebook execution needs a kernel in the project environment. Install ipykernel there, then run the notebook again with that same interpreter."
+pip_install = "ipykernel"
+verification = "Re-run the notebook"
+
+[[rule]]
+id = "RUN-P6"
+phase = "plan"
+description = "FixFirst's own Python is missing the optional notebook execution driver."
+when = [["?i", "kind", "tool_failure"], ["?i", "component", "notebook_driver"]]
+[rule.action]
+id = "install-notebook-driver"
+kind = "manual_fix"
+issue = "?i"
+cost = 1
+title = "Install the notebook driver in FixFirst's environment"
+explanation = "nbclient supplies the notebook executor and depends on nbformat. This command targets the Python running FixFirst. The project's kernel remains a separate environment."
+pip_install = "nbclient>=0.10,<1"
+pip_environment = "fixfirst"
+verification = "Re-run the notebook with the selected project Python"
 
 [[rule]]
 id = "P47"

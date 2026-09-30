@@ -18,6 +18,8 @@ GOALS = {
     "collect_tests": "Restore test collection",
     "check_style": "Pass the code check",
     "pass_tests": "Pass the test suite",
+    "run_project": "Run the program successfully",
+    "pass_unittest": "Pass the unittest suite",
 }
 STATES = {
     "open": "Still failing",
@@ -34,6 +36,8 @@ TOOL_NAMES = {
     "pytest": "Test collection",
     "pytest_run": "Test run",
     "ruff": "Code check",
+    "python_run": "Program execution",
+    "unittest_run": "Unittest run",
 }
 DEPENDENCY_STATES = {
     "satisfied": "Satisfied",
@@ -195,6 +199,8 @@ def public_data(session: Session):
         return value
 
     data = clean(session.model_dump())
+    if data.get("execution"):
+        data["execution"]["stdin"] = "[input omitted]" if session.execution.stdin else ""
     data["model_path"] = "<local-model>" if session.model_path else None
     data["sbert_model"] = "<local-model>" if session.sbert_model else None
     return data

@@ -52,6 +52,8 @@ GOAL_NAMES = {
     "collect_tests": "Restore test collection",
     "check_style": "Pass the code check",
     "pass_tests": "Pass the test suite",
+    "run_project": "Run the program successfully",
+    "pass_unittest": "Pass the unittest suite",
 }
 
 

@@ -44,7 +44,7 @@ EXPLICIT_CONFIG = re.compile(
 EXCEPTION_LINE = re.compile(r"^E\s+([A-Za-z_][\w.]*(?:Error|Exception|Exit|Warning)):?\s?(.*)$", re.M)
 FRAME = re.compile(r"^(\S.*?\.py|<[^>]+>):(\d+):? (?:in \S+|\w+(?:Error|Exception))?\s*$", re.M)
 # Plain Python tracebacks, printed when pytest or a plugin fails before pytest can format them.
-PLAIN_FRAME = re.compile(r'^\s*File "([^"]+)", line (\d+), in \S+', re.M)
+PLAIN_FRAME = re.compile(r'^\s*File "([^"]+)", line (\d+)(?:, in \S+)?', re.M)
 IMPORT_STATEMENT = re.compile(r"^(?:from ([\w.]+) import ([\w, ()]+)|import ([\w.]+))")
 NUMPY_REMOVED = re.compile(r"`(?:np|numpy)\.(\w+)` was removed")
 FIXTURE_MISSING = re.compile(r"fixture '(\w+)' not found")
@@ -307,6 +307,8 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
     environment = current_environment(session)
 
     located = frames_in(traceback)
+    if not located and exception_record.get("source_file"):
+        located = [(exception_record["source_file"], str(exception_record.get("source_line") or 1))]
     frames = [path for path, _ in located]
     source_file = str(exception_record.get("source_file") or "")
     last = source_file if source_file and exception_record.get("stage") != "collect" else ""
@@ -334,6 +336,8 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
         for path, line in REQUEST_LOCATION.findall(traceback):
             if classify_path(path, session.project_root, environment) in ("project", "test"):
                 where = f"{shown_path(path, session.project_root)}:{line}"
+    if exception_record.get("cell") and source_file:
+        where = f"{shown_path(source_file, session.project_root)} · cell {exception_record['cell']}"
     warnings = [
         describe_warning(w, session.project_root, environment)
         for w in exception_record.get("warnings") or []
@@ -597,7 +601,8 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
     # Root causes are for failing tests; a check that could not run is a tool problem.
     diagnosable = [
         i for i in issues
-        if i.tool in ("pytest", "pytest_run") and i.kind != "tool_failure" and i.stage != "verification"
+        if i.tool in ("pytest", "pytest_run", "python_run", "unittest_run")
+        and i.kind != "tool_failure" and i.stage != "verification"
     ]
     modules = set()
     for issue in diagnosable:

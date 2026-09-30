@@ -16,7 +16,6 @@ import os
 from pathlib import Path
 import re
 import secrets
-import sys
 import webbrowser
 
 from .knowledge_graph import build_graph, query_graph
@@ -63,10 +62,17 @@ class App:
         return html(session, self.store.root, public=True)[0], f"fixfirst-{name}.html"
 
     def create(self, body: dict) -> Session:
+        python = body.get("python")
+        if not python:
+            folder = inspect_folder(body.get("project", ""))
+            if not folder["ok"]:
+                raise ValueError(folder.get("error", "Choose a working Python interpreter"))
+            python = folder["python"]["path"]
         session = create_session(
             body.get("project", ""),
-            body.get("python") or sys.executable,
-            goal=body.get("goal") if body.get("goal") in GOALS else "collect_tests",
+            python,
+            goal=body.get("goal") or "auto",
+            execution=body.get("execution"),
         )
         with self.store.lock(session.session_id):
             infer_and_plan(session)
@@ -110,8 +116,22 @@ class App:
             elif op == "goal":
                 if body.get("goal") not in GOALS:
                     raise ValueError("Unknown goal")
-                session.goal = body["goal"]
+                from .execution import choose_execution
+
+                session.goal, session.execution = choose_execution(
+                    Path(session.project_root), body["goal"],
+                    session.execution if body["goal"] == session.goal else None)
                 session.history.append({"time": now(), "kind": "goal_change"})
+                infer_and_plan(session)
+                session.goal_status = "unknown"
+            elif op == "configure":
+                updated = create_session(
+                    session.project_root, body.get("python") or session.target_python,
+                    goal=body.get("goal") or session.goal, execution=body.get("execution"))
+                session.target_python = updated.target_python
+                session.goal, session.execution = updated.goal, updated.execution
+                session.environment = {}
+                session.history.append({"time": now(), "kind": "execution_change"})
                 infer_and_plan(session)
                 session.goal_status = "unknown"
             else:

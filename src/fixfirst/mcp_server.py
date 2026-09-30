@@ -41,7 +41,7 @@ TOOLS = [
         "name": "diagnose",
         "title": "Diagnose a Python project",
         "description": (
-            "Run the project's checks (environment, declared dependencies, pytest, Ruff) and explain "
+            "Run the project's program or existing tests, plus available environment checks, and explain "
             "each failure: the root cause, where it is and the next steps, most important first. "
             "Call it before changing code."
         ),
@@ -56,9 +56,22 @@ TOOLS = [
                 },
                 "goal": {
                     "type": "string",
-                    "enum": GOALS,
-                    "description": "pass_tests (default): the full test suite passes; collect_tests: "
-                    "the tests load; check_style: the Ruff code check passes.",
+                    "enum": ["auto", *GOALS],
+                    "description": "auto (default): suggest existing tests or a program entry; run_project: "
+                    "run a script/module/notebook; pass_tests: pytest; pass_unittest: unittest; "
+                    "collect_tests: pytest collection; check_style: Ruff.",
+                },
+                "execution": {
+                    "type": "object",
+                    "description": "Program entry or unittest settings. No shell command parsing.",
+                    "properties": {
+                        "kind": {"type": "string", "enum": ["script", "module", "notebook", "unittest"]},
+                        "entry": {"type": "string"},
+                        "args": {"type": "array", "items": {"type": "string"}},
+                        "stdin": {"type": "string"},
+                        "pattern": {"type": "string"},
+                    },
+                    "required": ["kind", "entry"], "additionalProperties": False,
                 },
             },
             "required": ["project"],
@@ -167,20 +180,21 @@ class Server:
 
     # ----- tools ------------------------------------------------------------------------------
 
-    def diagnose(self, project, python=None, goal="pass_tests"):
-        if goal not in GOALS:
+    def diagnose(self, project, python=None, goal="auto", execution=None):
+        if goal not in ["auto", *GOALS]:
             raise ToolError(f"Unknown goal {goal!r}; use one of {', '.join(GOALS)}")
         folder = inspect_folder(str(project), python or None)
         if not folder["ok"]:
             raise ToolError(folder.get("error") or "; ".join(folder["warnings"]))
         interpreter = folder["python"]["path"]
-        key = (folder["path"], interpreter, goal)
+        session = create_session(folder["path"], interpreter, goal=goal, execution=execution)
+        key = (folder["path"], interpreter, session.goal,
+               session.execution.model_dump_json() if session.execution else "")
         notes = [f"Python: {interpreter} ({folder['python']['origin']})", *folder["warnings"]]
         if key in self.sessions:
             # A second diagnose continues the session, so earlier fixes stay verified.
             notes.insert(0, "Continuing the session started earlier; this is the same as check_again.")
             return self.check_again(self.sessions[key], notes)
-        session = create_session(folder["path"], interpreter, goal=goal)
         with self.store.lock(session.session_id):
             infer_and_plan(session)
             scan(session)
