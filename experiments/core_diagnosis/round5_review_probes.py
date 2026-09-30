@@ -175,6 +175,14 @@ D1_PATTERNS = {
     "second_of_two_locals": ("def spread(values, floor=0):\n    return max(floor, int(values.ptp()))\n",
                              "np.array([1, 5, 3])", {"3.12": "found", "3.13": "missed (LOAD_FAST_LOAD_FAST)",
                                                      "3.14": "missed (LOAD_FAST_BORROW_LOAD_FAST_BORROW)"}),
+    # Added after the first D1 run showed that wrapping in int(...) keeps the loads apart: these two
+    # put the receiver load right after a store or another local load, which 3.13 fuses.
+    "fused_store_load": ("def spread(values):\n    array = np.asarray(values)\n    return array.ptp()\n",
+                         "[1, 5, 3]", {"3.12": "found", "3.13": "missed (STORE_FAST_LOAD_FAST)",
+                                       "3.14": "missed (STORE_FAST_LOAD_FAST)"}),
+    "fused_two_locals": ("def spread(values, floor=0):\n    return max(floor, values.ptp())\n",
+                         "np.array([1, 5, 3])", {"3.12": "found", "3.13": "missed (LOAD_FAST_LOAD_FAST)",
+                                                 "3.14": "missed (LOAD_FAST_BORROW_LOAD_FAST_BORROW)"}),
     "attribute_chain": ("class Holder:\n    def __init__(self, values):\n        self.data = np.asarray(values)\n\n\n"
                         "def spread(values):\n    return int(Holder(values).data.ptp())\n",
                         "[1, 5, 3]", {"3.12": "not inferred (by design)", "3.13": "not inferred (by design)",
