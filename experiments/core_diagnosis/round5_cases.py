@@ -241,7 +241,8 @@ def write_project(case: dict, folder: Path) -> None:
 
 
 def make_venv(folder: Path, python: str, packages: list) -> dict:
-    subprocess.run(["uv", "venv", "-q", "--python", python, str(folder)], check=True)
+    # Seeded with pip, like `python -m venv`: FixFirst runs pip check in it.
+    subprocess.run(["uv", "venv", "-q", "--seed", "--python", python, str(folder)], check=True)
     subprocess.run(["uv", "pip", "install", "-q", "--python", str(folder / "bin/python"), TEST, *packages],
                    check=True)
     freeze = subprocess.run(["uv", "pip", "freeze", "--python", str(folder / "bin/python")],
