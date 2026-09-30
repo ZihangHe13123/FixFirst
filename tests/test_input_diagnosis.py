@@ -59,7 +59,8 @@ def test_attribute_context_is_not_guessed_from_text_or_an_unrelated_array(source
 
 def inspect_project(root, source, test, requirement, *, unit=False):
     (root / "app.py").write_text(source)
-    (root / "requirements.txt").write_text(requirement + "\n")
+    if requirement is not None:
+        (root / "requirements.txt").write_text(requirement + "\n")
     (root / "pytest.ini").write_text("[pytest]\n")
     if unit:
         test_source = "import unittest\nfrom app import convert\nclass Test(unittest.TestCase):\n    def test_convert(self):\n        "
@@ -161,13 +162,14 @@ def test_project_exceptions_do_not_become_library_input_contracts(tmp_path):
     assert not any(a.action_id.startswith("input-") for a in session.actions)
 
 
-def test_numpy_copy_error_keeps_the_c_call_site_and_executes_the_migration(tmp_path):
+@pytest.mark.parametrize("requirement", ["numpy>=1.21", None])
+def test_numpy_copy_error_keeps_the_c_call_site_and_executes_the_migration(tmp_path, requirement):
     import numpy as np
     if int(np.__version__.split(".")[0]) < 2:
         pytest.skip("copy=False became strict in NumPy 2")
     source = ('import numpy as np\ndef convert():\n'
               '    return np.array([1,2], dtype=float, copy=False).tolist()\n')
-    session, issue, check = inspect_project(tmp_path, source, "assert convert() == [1.,2.]", "numpy>=1.21")
+    session, issue, check = inspect_project(tmp_path, source, "assert convert() == [1.,2.]", requirement)
     assert issue.diagnosis_rule == "H10"
     assert issue_evidence(session, issue)["raised_in"] == "project"  # do not invent a library Python frame
     assert "numpy.asarray" in session.actions[0].explanation
@@ -207,12 +209,13 @@ def test_solve_history_requires_observed_shapes_that_worked_as_batched_vectors(t
 
 
 @pytest.mark.parametrize("unit", [False, True])
-def test_optional_field_migration_with_dynamic_inputs_preserves_required_fields(tmp_path, unit):
+@pytest.mark.parametrize("requirement", ["pydantic>=1.8", None])
+def test_optional_field_migration_with_dynamic_inputs_preserves_required_fields(tmp_path, unit, requirement):
     source = ('from typing import Optional\nfrom pydantic import BaseModel\n'
               'class Contact(BaseModel):\n    name: str\n    email: Optional[str]\n'
               'def make(record):\n    return Contact(**record)\n'
               'def convert():\n    return make({"name": "Ada"})\n')
-    session, issue, check = inspect_project(tmp_path, source, "assert convert().email is None", "pydantic>=1.8", unit=unit)
+    session, issue, check = inspect_project(tmp_path, source, "assert convert().email is None", requirement, unit=unit)
     assert issue.diagnosis_rule == "H10"
     assert "explicit None default" in session.actions[0].title
     before = (tmp_path / "test_app.py").read_bytes()
@@ -233,6 +236,34 @@ def test_missing_fields_are_not_automatically_optional_migrations(tmp_path, fiel
     session, issue, _ = inspect_project(tmp_path, source, "convert()", requirement)
     assert issue.diagnosis_rule != "H10"
     assert not any("None default" in a.title for a in session.actions)
+
+
+@pytest.mark.parametrize("other", ["backup_email", "nickname"])
+def test_value_sent_to_another_nullable_field_requires_checking_the_call(tmp_path, other):
+    source = ('from typing import Optional\nfrom pydantic import BaseModel\n'
+              'class Contact(BaseModel):\n    name: str\n    email: Optional[str]\n'
+              f'    {other}: Optional[str] = None\n'
+              f'def from_form(form):\n    return Contact(name=form["name"], {other}=form["email"])\n'
+              'def convert():\n    return from_form({"name":"Ada", "email":"ada@example.org"}).email\n')
+    session, issue, check = inspect_project(tmp_path, source, 'assert convert() == "ada@example.org"', "pydantic>=1.8")
+    assert issue.diagnosis == "code_defect" and issue.diagnosis_rule == "H12"
+    assert "keys actually supplied" in build_view(session)["steps"][0]["title"]
+    assert not any("explicit None default" in a.title for a in session.actions)
+    before = (tmp_path / "test_app.py").read_bytes()
+    (tmp_path / "app.py").write_text(source.replace(f'{other}=form["email"]', 'email=form["email"]'))
+    scan(session, [check], timeout=30)
+    assert session.goal_status == "achieved" and (tmp_path / "test_app.py").read_bytes() == before
+
+
+def test_a_singular_matrix_does_not_become_a_version_failure_because_of_a_lock(tmp_path):
+    (tmp_path / "uv.lock").write_text('[[package]]\nname="numpy"\nversion="1.26.4"\n')
+    source = 'import numpy as np\ndef convert():\n    return np.linalg.inv([[1,2],[1,2]]).tolist()\n'
+    session, issue, check = inspect_project(tmp_path, source, "assert convert() == [[1.,0.],[0.,1.]]", "numpy>=1.21")
+    assert issue.diagnosis == "code_defect" and issue.diagnosis_rule != "H06"
+    assert not any(a.command for a in session.actions)
+    (tmp_path / "app.py").write_text(source.replace("[[1,2],[1,2]]", "[[1,0],[0,1]]"))
+    scan(session, [check], timeout=30)
+    assert session.goal_status == "achieved"
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="SafeConfigParser was removed in Python 3.12")

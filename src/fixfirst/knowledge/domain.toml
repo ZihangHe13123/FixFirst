@@ -45,6 +45,13 @@ action_title = "Handle the non-standard version label before comparing versions"
 guidance = "Version accepts PEP 440 version strings. Validate values before comparing them, handle InvalidVersion explicitly, and separate non-standard labels from release versions according to the intended ordering. Preserve the tests and input meaning."
 source = "packaging-version"
 
+[[input_error]]
+id = "pydantic-missing"
+distribution = "pydantic"
+action_title = "Check the missing model field against the keys actually supplied"
+guidance = "Compare each missing field named in the validation error with the arguments or mapping passed at the reported call. Check whether its value was sent to a different field or a misspelt key. Keep required-field validation. Only if omission is intended and the field permits None should an explicit None default be considered; adding that default does not repair a value sent to the wrong field."
+source = "pydantic-optional-2.0"
+
 [[behavior]]
 id = "packaging-legacy-parse"
 distribution = "packaging"
@@ -61,6 +68,7 @@ source = "packaging-22.0"
 id = "numpy-copy-false"
 distribution = "numpy"
 version = "2.0"
+without_version_record = true
 summary = "NumPy 2 makes array(..., copy=False) reject inputs that require a copy; the observed numpy.array call raises that specific error."
 action_title = "Use numpy.asarray when copying the input is allowed"
 replacement = "Replace numpy.array(values, copy=False, ...) with numpy.asarray(values, ...), keeping the dtype and other needed options. If the program truly requires zero copying, keep that requirement and provide a compatible array buffer instead. Do not change the expected values."
@@ -70,6 +78,7 @@ source = "numpy-2.0"
 id = "numpy-solve-vector"
 distribution = "numpy"
 version = "2.0"
+without_version_record = true
 summary = "NumPy 2 treats a non-1D b as matrices in linalg.solve. The captured a and b shapes fit the previous batched-vector contract but the call now reports a core-dimension mismatch."
 action_title = "Pass the batch of right-hand vectors as explicit column vectors"
 replacement = "For the observed batched-vector call, replace numpy.linalg.solve(a, b) with numpy.linalg.solve(a, b[..., None])[..., 0]. Preserve a, b and the expected numeric result; the extra dimension makes the vector interpretation explicit."
@@ -79,6 +88,7 @@ source = "numpy-solve-2.0"
 id = "pydantic-optional-required"
 distribution = "pydantic"
 version = "2.0"
+without_version_record = true
 summary = "Pydantic V2 requires an Optional field when its declaration has no default. The actual missing field is nullable without a default and the supplied input has no unknown field names."
 action_title = "Give the optional model field an explicit None default"
 replacement = "Locate the missing Optional field in the model declaration, and add = None if omitting that field is intended (for example email: Optional[str] = None). Keep other required fields and validation intact. Optional controls whether None is allowed; the explicit default controls omission."
@@ -339,7 +349,7 @@ module = "configparser"
 names = ["SafeConfigParser"]
 distribution = "python"
 version = "3.12"
-replacement = "configparser.ConfigParser instead of configparser.SafeConfigParser"
+replacement = "configparser.ConfigParser instead of configparser.SafeConfigParser; update the import and every SafeConfigParser constructor or reference in the project"
 source = "python-3.12"
 
 [[removed]]

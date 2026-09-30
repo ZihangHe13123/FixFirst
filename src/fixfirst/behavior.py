@@ -200,7 +200,8 @@ def index_behavior_context(root: Path, files: list[str], imports: dict, max_byte
                             and any(isinstance(v, ast.Constant) and v.value is None
                                     for v in (annotation.left, annotation.right))
                         )
-                        fields[field.target.id] = {"nullable_without_default": nullable and field.value is None,
+                        fields[field.target.id] = {"nullable": nullable,
+                                                  "nullable_without_default": nullable and field.value is None,
                                                   "location": f"{relative}:{field.lineno}"}
                     optional_models[f"{module}.{node.name}"] = {"name": node.name, "fields": fields}
             if isinstance(node, ast.keyword) and node.arg in custom_names:
@@ -290,9 +291,14 @@ def observed_changes(evidence: dict, project: dict) -> list[tuple[str, str]]:
         if definition.get("name") == model[1]:
             fields = definition["fields"]
             for rejected in evidence.get("validation_errors", []):
+                if not isinstance(rejected, dict):
+                    continue
+                missing, supplied = rejected.get("field", ""), set(rejected.get("input_keys", []))
                 if (isinstance(rejected, dict) and rejected.get("type") == "missing"
-                        and fields.get(rejected.get("field"), {}).get("nullable_without_default")
-                        and set(rejected.get("input_keys", [])) <= set(fields)):
+                        and fields.get(missing, {}).get("nullable_without_default")
+                        and supplied <= set(fields)
+                        and not any(fields[key].get("nullable") is not False or missing.casefold() in key.casefold()
+                                    for key in supplied)):
                     found.append(("pydantic-optional-required", "pydantic"))
                     break
     if (
@@ -329,4 +335,8 @@ def observed_input_errors(evidence: dict) -> list[tuple[str, str]]:
         return [("click-value", "click")]
     if library == "packaging" and (module, error) == ("packaging.version", "InvalidVersion"):
         return [("version-string", "packaging")]
+    if (library == "pydantic" and error == "ValidationError"
+            and module.split(".")[0] in ("pydantic", "pydantic_core")
+            and evidence.get("validation_errors")):
+        return [("pydantic-missing", "pydantic")]
     return []

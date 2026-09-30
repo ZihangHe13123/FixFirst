@@ -101,6 +101,18 @@ when = [
 then = [["?i", "documented_behavior", "?b"]]
 
 [[rule]]
+id = "G16"
+phase = "derive"
+description = "A narrowly matched version-specific behavior can support migration guidance even when the project records no minimum or locked version."
+when = [
+  ["?i", "behavior_symptom", "?b"], ["?b", "changed_in", "?d"], ["?b", "changed_in_version", "?v"],
+  ["?b", "without_version_record", "yes"], ["?d", "installed_version", "?iv"],
+  ["test", "version_gte", "?iv", "?v"],
+  ["not", "?d", "declared_minimum", "?_"], ["not", "?d", "tested_version", "?_"],
+]
+then = [["?i", "documented_behavior", "?b"]]
+
+[[rule]]
 id = "G15"
 phase = "derive"
 description = "A matching documented change postdates the project's recorded tested version, when no minimum declaration is available."
@@ -514,9 +526,10 @@ then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?
 id = "H06"
 phase = "heuristic"
 status = "hypothesis"
-description = "The failure is raised inside a library newer than the project's locked major version; with no more specific input or migration evidence, investigate that version difference."
+description = "An import, attribute or call-signature failure occurs inside a library newer than the project's locked major version; with no specific explanation, investigate that API difference."
 when = [
   ["?i", "raised_by_library", "?d"], ["?d", "tested_version", "?tv"], ["?d", "installed_version", "?iv"],
+  ["?i", "signal", "?shape"], ["test", "in", "?shape", "cannot_import_name,no_attribute,call_signature"],
   ["test", "major_gt", "?iv", "?tv"], ["not", "?i", "diagnosis", "?_"],
   ["not", "?i", "exception", "ValidationError"], ["not", "?i", "documented_behavior", "?_"],
   ["not", "?i", "input_symptom", "?_"],

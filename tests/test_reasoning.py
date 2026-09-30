@@ -568,11 +568,14 @@ def test_a_failure_inside_a_library_newer_than_the_lock_file_suggests_the_tested
         fact("dist:sqlalchemy", "tested_version", "1.2.6"),
         fact("dist:sqlalchemy", "tested_in", "Pipfile.lock"),
         fact("dist:sqlalchemy", "tested_series_below", "1.3"),
+        fact("issue-1", "signal", "call_signature"),
     ]
     base = engine.run(rule_base(), facts)
     assert ("issue-1", "likely", "version_incompatibility") in base.keys
     action = next(p for p in engine.propose(rule_base(), base) if p.action_id == "tested-sqlalchemy")
     assert engine.render(action.template["pip_install"], action.bindings) == "sqlalchemy<1.3"
+    # A lock version without any API-shape failure does not imply a downgrade.
+    assert ("issue-1", "likely", "version_incompatibility") not in engine.run(rule_base(), facts[:-1]).keys
     # A patch or minor difference alone is not suspicious.
     facts[1] = fact("dist:sqlalchemy", "installed_version", "1.4.54")
     assert ("issue-1", "likely", "version_incompatibility") not in engine.run(rule_base(), facts).keys

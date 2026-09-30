@@ -98,6 +98,8 @@ def facts_for(entities) -> list[Fact]:
             ]
         entry = kb["behavior_index"].get(entity)
         if entry:
+            if entry.get("without_version_record"):
+                result.append(knowledge(entity, "without_version_record", "yes", entry["source"]))
             result += [
                 knowledge(entity, "changed_in", dist_id(entry["distribution"]), entry["source"]),
                 knowledge(entity, "changed_in_version", entry["version"], entry["source"]),
