@@ -19,7 +19,7 @@ E       AssertionError: {'dist': 'ff-trial-base', 'direction': '>1.0', 'status':
 E               can conclude that your requirements are unsatisfiable.
 E         '}], ...}
 E       assert 'not_resolved' == 'resolved'
-E         
+E
 E         - resolved
 E         + not_resolved
 E         ? ++++
