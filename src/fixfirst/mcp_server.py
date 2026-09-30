@@ -309,7 +309,7 @@ def render(session, view, notes=()) -> str:
     ]
     if status["kind"] == "done":
         lines.append("The goal is reached and verified by a real check. Nothing else is needed for it.")
-    if status["kind"] == "baseline_changed":
+    if status["kind"] in ("baseline_changed", "baseline_unverifiable"):
         lines.append("Only a person can accept changed tests as the new baseline (FixFirst's web page or "
                      "`fixfirst accept-baseline`); restore them, or ask the user.")
     lines += notes

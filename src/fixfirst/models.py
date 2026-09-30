@@ -126,7 +126,7 @@ class Issue(Record):
     note: str = ""
     targets: list[str] = Field(default_factory=list)
     # Whether a pass verified the original problem against the baseline tests (integrity.py).
-    verification: Literal["comparable", "not_comparable"] | None = None
+    verification: Literal["comparable", "not_comparable", "unverifiable"] | None = None
 
 
 class Fact(Record):

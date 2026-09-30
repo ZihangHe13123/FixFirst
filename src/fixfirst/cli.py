@@ -335,10 +335,12 @@ def main(argv=None):
             elif args.command == "accept-baseline":
                 from .integrity import accept, describe
 
-                changed = accept(session)
+                result = accept(session)
                 print("New baseline accepted"
-                      + (f"; changed since the previous one: {describe(changed)}" if changed else
-                         "; nothing had changed since the previous one")
+                      + (f"; changed since the previous one: {describe(result['changed'])}" if result["changed"]
+                         else "; nothing had changed since the previous one")
+                      + (f"; could not be compared: {describe(result['unverifiable'], 2)}"
+                         if result["unverifiable"] else "")
                       + ". Check again to verify against it.")
             elif args.command == "configure":
                 configured = execution_settings(

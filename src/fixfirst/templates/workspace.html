@@ -47,7 +47,7 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
   </div>
   <div class="act">
     <button class="primary big" id="check">{{ 'Run the first check' if not view.checked else 'Check again' }}</button>
-    {% if view.status.kind == 'baseline_changed' %}<button id="accept-baseline">Accept the changes as the new baseline</button>{% endif %}
+    {% if view.status.kind in ('baseline_changed', 'baseline_unverifiable') %}<button id="accept-baseline">Accept the changes as the new baseline</button>{% endif %}
     {% if view.last_checked %}<span class="small">Last checked <span data-time="{{ view.last_checked }}"></span></span>{% endif %}
   </div>
 </section>
