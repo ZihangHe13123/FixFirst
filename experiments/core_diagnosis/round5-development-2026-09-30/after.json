@@ -1,8 +1,8 @@
 {
   "implementation": {
-    "head": "35c9246e7b87cedcef68bbf124b92572f6fe5e29",
+    "head": "ba52e224e782bf9743608b4f88e09b3a61b8b67a",
     "src_uncommitted": false,
-    "source_sha256": "ffc5d20dae152424a8b27dce4d5e9850a0b82ac01b2ca8f044dfae78bf189cff",
+    "source_sha256": "8a1f76fc1340d82fa35fdd15e348db7aa505d408972d186c72e4c688b44cd262",
     "python": "3.12.14",
     "scikit-learn": "1.9.0"
   },
@@ -238,7 +238,7 @@
       "steps": [
         {
           "title": "Replace configparser.SafeConfigParser: removed in Python 3.12",
-          "explanation": "The target interpreter has Python 3.12.13, which no longer provides configparser.SafeConfigParser (removed in 3.12). Change the code to use configparser.ConfigParser instead of configparser.SafeConfigParser, or pin Python below 3.12 if the project must keep the old API.",
+          "explanation": "The target interpreter has Python 3.12.13, which no longer provides configparser.SafeConfigParser (removed in 3.12). Change the code to use configparser.ConfigParser instead of configparser.SafeConfigParser; update the import and every SafeConfigParser constructor or reference in the project, or pin Python below 3.12 if the project must keep the old API.",
           "command": null,
           "cause": "Version incompatibility",
           "possible": null,
@@ -454,8 +454,8 @@
           "tool": "pytest_run",
           "title": "ValidationError · test_app.py::test_from_form",
           "diagnosis": "code_defect",
-          "rule": "F01",
-          "source": "model",
+          "rule": "H12",
+          "source": "heuristic",
           "tree": "code_defect",
           "tree_confidence": 1.0,
           "evidence": {
@@ -485,8 +485,8 @@
       ],
       "steps": [
         {
-          "title": "Inspect the exception raised while running the test",
-          "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+          "title": "Check the missing model field against the keys actually supplied",
+          "explanation": "Compare each missing field named in the validation error with the arguments or mapping passed at the reported call. Check whether its value was sent to a different field or a misspelt key. Keep required-field validation. Only if omission is intended and the field permits None should an explicit None default be considered; adding that default does not repair a value sent to the wrong field. The recorded exception shows a rejected input; verify the intended correction with the original checks.",
           "command": null,
           "cause": null,
           "possible": "Defect in project code or tests",
@@ -494,7 +494,7 @@
             "app.py:10"
           ],
           "rules": [
-            "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+            "H12: The raising library rejected input under a documented validation contract; inspect that value before changing dependencies."
           ],
           "suspected": false,
           "gather": false,
@@ -503,7 +503,7 @@
       ],
       "optional": [],
       "first_diagnosis": "code_defect",
-      "first_step": "Inspect the exception raised while running the test"
+      "first_step": "Check the missing model field against the keys actually supplied"
     },
     {
       "name": "healthy_deprecations",

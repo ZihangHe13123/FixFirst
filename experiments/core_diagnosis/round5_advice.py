@@ -1,8 +1,8 @@
 """Execute the recorded manual interpretations of round-five system advice.
 
-This is an audit of six specific suggestions, NOT an autonomous repair agent or
+This is an audit of seven specific suggestions, NOT an autonomous repair agent or
 an automatic first-step accuracy metric. The interpretation was written after
-reading the output and project. Two generic suggestions remain unexecuted.
+reading the output and project. The generic Click suggestion remains unexecuted.
 The pre-registered reference repairs in round5_cases.py are not read here.
 """
 
@@ -46,6 +46,13 @@ INTERPRETATIONS = {
         "reason": "Inspect the requested (2,4) shape for six elements and the expected 2-by-3 grid. "
                   "Remove the extra one from width. The advice does not generate this edit.",
         "edits": [("app.py", "(height, width + 1)", "(height, width)")],
+    },
+    "pydantic_field_name_typo": {
+        "title": "Check the missing model field against the keys actually supplied",
+        "reason": "Compare the missing name field with the supplied nmae keyword in the call. "
+                  "The exact spelling correction comes from reading the error and source; the system "
+                  "suggests this comparison but does not generate the edit.",
+        "edits": [("app.py", "nmae=", "name=")],
     },
 }
 

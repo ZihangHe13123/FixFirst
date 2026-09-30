@@ -1,8 +1,8 @@
 {
   "kind": "fixed_model_recorded_development_comparison",
-  "limits": "Fixed models on existing development observations, including fitting data. Old snapshots lack the new runtime metadata. This is regression replay, not independent evaluation, cross-validation, or fresh project execution.",
+  "limits": "Fixed models on existing development observations, including fitting data. Old snapshots lack the new runtime metadata. This is regression replay, not independent evaluation, cross-validation, or fresh project execution. The real-records snapshot lacks generator-consumption context; it now gets input guidance and misses the original version label (6/6 to 5/6 in either full system). No data or labels were changed.",
   "before_head": "39244136ec06ff1d3a714cdb9a3a11c213b189ea",
-  "after_head": "35c9246",
+  "after_head": "a56a621",
   "before_source_sha256": {
     "__init__.py": "7042a3ae28ec8b6423586c61b0ab382b541447cb17be5c5c412cbb0d4a7426c8",
     "__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
@@ -59,18 +59,18 @@
     "__init__.py": "7042a3ae28ec8b6423586c61b0ab382b541447cb17be5c5c412cbb0d4a7426c8",
     "__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
     "_notebook_runner.py": "9a16e715352f07284c9952b1b7027920f82691b55fcda1699a64be5c2b5ec154",
-    "_runtime_evidence.py": "5b3c3b5546236f24f6bafc145442ec965e6d1f4b1617fa711a43d5f46c46d66a",
+    "_runtime_evidence.py": "406480fea2a622fd111e63ba3af5281585f69e880806129d9048667bca61dfd0",
     "_unittest_runner.py": "abb94b5f4852a575ecdd0bc8702ce3758724bd55fca00c6e806055a483053356",
     "_winprocess.py": "a57855d492192b3ac29004d1212f135721ac930c6b2bfba30dce1496840ad1b4",
-    "behavior.py": "5fff14aff68a2f11540d54b8ceeed2b863ad91f29c2714e5cfdaa9ecc254f0dd",
+    "behavior.py": "795042a1705cedb473fd0651270d0538d7b384f95970ea662a231afaf9e6fe2a",
     "cases.py": "f4e25213b6902b081bdda50ab896903f91a23280496ff23cc3f587f4809c170d",
     "classification.py": "bfa74a12e35c72a93928a80913108a72e9d791c4f6ac9261570804707d099980",
     "cli.py": "8bc63822fddf8a06221c47a4d045c81c522d2c4df7e69b9c80ff94ca73a545e6",
     "diagnosis_cases.py": "e2dc754c8c7396d35edadd2b10165200f346512f5b2d5faaf788987a3417b9f7",
-    "domain.py": "4c82b9cf785be116fa9a0bf004247cab29e591a4871308c78465640580a036d4",
+    "domain.py": "ca0dfb3323a7a927b73dd1e2a19588d0d22b81a0e18b001b3e85549a6c566698",
     "engine.py": "2af0f39c39db97f95d50662a971a0a47a3a6ebc5af517d5c49515de0a289105e",
     "evaluation.py": "d005b91fe3eb0fa8f69afa0068c1164c5180de1b2391a744bb9a2109d9dd5932",
-    "evidence.py": "9d46c8167e7feb37e100d243e91ce25bdd45b16d439247350752918b99691177",
+    "evidence.py": "4bf7d6d6631f34efd74e7c01a02ac574f0d126cef6377b7b4045aadbe03137a4",
     "execution.py": "f83c009c6ea21d252bfd17fb66adf04e0631ca8b6571f45873d96c519bf29e2f",
     "execution_cases.py": "49d0f5f4d1ac3158101046d205c17602a00cc5f35e9da59c99c9cf71d75f556c",
     "execution_parsers.py": "8486f3065a6c8321c631b32b8945d5217d4f83a62145a0d2ec7ec6121ef36af9",
@@ -82,8 +82,8 @@
     "interactive.py": "5308cb305bf117546f51ee7796accb1515c426f165cd8e823db6024d175dd01a",
     "interface_history.py": "14a7f36f742e08827eeb288af2c88e9b465b858c988c0dcb9b15506095fe7ade",
     "knowledge/diagnosis_tree.json": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3",
-    "knowledge/domain.toml": "223ec3bd4c9bad28337a74613107a153ddb4a73c5c8874dab73e92d11fd6ff8e",
-    "knowledge/rules.toml": "8c95780c1d44d62ddf5d3275d45178a8735b9e32d214a3c13fd0e941ce2842e9",
+    "knowledge/domain.toml": "037c8a304420a31d0a2f74bc21498369329239bf395c6515ffd7a9131e8ffd6f",
+    "knowledge/rules.toml": "7158b63796984ef61f142e36047afdec00ce04c2494302a06df91170202ff144",
     "knowledge_graph.py": "ea7b0c3f9f0b1e834f353bc459b48eabd8843a273aa8097718a14b4c413af03d",
     "mcp_server.py": "a507925d1f0ac7d1ea1dd1e5ff0e37ca32e9e23c957d6946e4f487da384d4377",
     "models.py": "6f9a4d50de1c0e554669587a7947fba5f7fc45781c1a9afc77f0cc086803067b",
@@ -297,12 +297,25 @@
               "total": 6
             },
             "hybrid": {
-              "correct": 6,
+              "correct": 5,
               "total": 6
             }
           },
-          "hybrid_changes": [],
-          "remaining_hybrid_misses": []
+          "hybrid_changes": [
+            {
+              "case": "real-records",
+              "truth": "version_incompatibility",
+              "before": "version_incompatibility",
+              "after": "code_defect"
+            }
+          ],
+          "remaining_hybrid_misses": [
+            {
+              "case": "real-records",
+              "truth": "version_incompatibility",
+              "prediction": "code_defect"
+            }
+          ]
         },
         "candidate61": {
           "before": {
@@ -321,12 +334,25 @@
               "total": 6
             },
             "hybrid": {
-              "correct": 6,
+              "correct": 5,
               "total": 6
             }
           },
-          "hybrid_changes": [],
-          "remaining_hybrid_misses": []
+          "hybrid_changes": [
+            {
+              "case": "real-records",
+              "truth": "version_incompatibility",
+              "before": "version_incompatibility",
+              "after": "code_defect"
+            }
+          ],
+          "remaining_hybrid_misses": [
+            {
+              "case": "real-records",
+              "truth": "version_incompatibility",
+              "prediction": "code_defect"
+            }
+          ]
         }
       }
     },

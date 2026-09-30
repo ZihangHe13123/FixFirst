@@ -1,5 +1,5 @@
 {
-  "redactions": "Host-specific directories and username replaced by placeholders; case definitions, actions and outcomes unchanged. Claude collected original before/reference records; Codex collected same-host baseline and final diagnosis/manual interpretations. Final independent cross-review is pending.",
+  "redactions": "Host-specific directories and username replaced by placeholders. Original observations and review findings are retained. Claude reviewed ba52e22; the final consumption guard a56a621 has Codex execution evidence and awaits Claude closing review.",
   "files": {
     "environments.json": {
       "raw_sha256": "086f7e413cbe8da464f4606cc0a12d5a265179a354847bd0d787261c760cb97e",
@@ -22,16 +22,24 @@
       "published_sha256": "967b7c190da7359672032d2cf998b2a9ac6de9688ed2b5d6d83bd868df1f9aec"
     },
     "after.json": {
-      "raw_sha256": "5aec282deb5f84fd2436ffc59a42a48ae13aac2932a3b5d9333d6ddc7b964f70",
-      "published_sha256": "fc0a5f2f306315d8a48cf92759e006e9d7edbb11dda479a5120e52ffb48e8da4"
+      "raw_sha256": "15c3261e2d008aa548e4d4bfe64a89545d780383585b0acbb5249162c705f92b",
+      "published_sha256": "92b8c915c063335225f7fdb0a9a9d0b0e9e1f66a9edaf35a8816bb368b9b2ebf"
     },
     "after-manual-execution.json": {
-      "raw_sha256": "43eae9d0b63fdc8de549069f0955bec9ca456d9bc00ba11da29d1fa9ee1f9124",
-      "published_sha256": "43eae9d0b63fdc8de549069f0955bec9ca456d9bc00ba11da29d1fa9ee1f9124"
+      "raw_sha256": "767514e185f7655930687bf476b586870c4499952d0e640f229285ca071062df",
+      "published_sha256": "767514e185f7655930687bf476b586870c4499952d0e640f229285ca071062df"
     },
     "before-same-host.json": {
       "raw_sha256": "39192efe404d916cba9ee933fccacba789f753456318b8fa315e5c53aee1ccdb",
       "published_sha256": "67bbf531eda41cdb8a2cf97cbb4ade73bf7a20f81dce3c57013bf8ae5df2dcea"
+    },
+    "final-sqlalchemy-probes.json": {
+      "raw_sha256": "7c22853d098c16d0a127033bd37ac812a7bf8987c931e0210a57592e070d40e3",
+      "published_sha256": "67c061a1c979ac00e97339e6df4d4e8ba9d7c6cb4b27807ab1fc184370a63bfb"
+    },
+    "receiver-probes-ba52e22.json": {
+      "raw_sha256": "596094159aa9dd0b8a1e2d57a717a6c5e1c9e0686cbe3f3d23a6d6ef8ea51d23",
+      "published_sha256": "ad6c567821c7575387ca25520ef859e5aaf9f8935f96b86aaae634aa5c1bf926"
     }
   }
 }
