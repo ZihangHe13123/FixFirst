@@ -1,0 +1,493 @@
+{
+  "kind": "fresh_disposable_execution_mode_comparison",
+  "parents": [
+    "5e240ef8e175d1c0ba06f4b5a810b7e78256db79",
+    "9fdf48d9025e732b5a24d0088b9e8befbbd358a8"
+  ],
+  "before_state": "Uncommitted merge with evidence.py conflict resolved and duplicate derivation IDs corrected; before runtime provenance fixes.",
+  "limits": "Four development faults/controls repeated across four execution modes, not 16 independent faults. No learned-model retraining or independent evaluation.",
+  "fixtures": {
+    "pydantic_number": [
+      "pydantic>=1.8",
+      "from pydantic import BaseModel\nclass Record(BaseModel):\n    code: str\ndef convert():\n    return Record(code=17).code\n"
+    ],
+    "pydantic_bad_dict": [
+      "pydantic>=1.8",
+      "from pydantic import BaseModel\nclass Record(BaseModel):\n    code: str\ndef convert():\n    return Record(code={\"x\": 17}).code\n"
+    ],
+    "yaml_loader": [
+      "PyYAML>=5",
+      "from yaml import load as parse\ndef convert():\n    return parse(\"value: 3\")\n"
+    ],
+    "numpy_promotion": [
+      "numpy>=1.21",
+      "from numpy import float32 as scalar\nimport json\ndef convert():\n    return json.dumps({\"amount\": scalar(2.5) + 0.25})\n"
+    ]
+  },
+  "source_sha256_before": {
+    "src/fixfirst/evidence.py": "ddb312928f704604bb251b437c547ab3c70c858d01bed627cc16e0b714e83caa",
+    "src/fixfirst/execution_parsers.py": "9e0a77cf8d90c49385ac30fb3745f2af9834e59b63cf745ecd161950c5ced3c4",
+    "src/fixfirst/_notebook_runner.py": "8b5d1e855316b74d81c6bbf778317440b03a4941493a86f2c96e46dc8de8d162",
+    "src/fixfirst/_unittest_runner.py": "e79af34e0340ceef5ce53099c300e79eede0e111efb6c49177cfe75681425d15",
+    "src/fixfirst/source_context.py": "80a55ac383c9c8bce9b5155ee2ef075b743654aee7ce18a7a8a00f0761fa7b37",
+    "src/fixfirst/knowledge/rules.toml": "3fbbef3164969db3ca256807b1ee42d2a7d2c97621a36493bafdca91f585eb01"
+  },
+  "source_sha256_after": {
+    "src/fixfirst/evidence.py": "dda69ca3895b30a638785f92f9b3b4f644681833cea912dfad5ad3c3f3d73be0",
+    "src/fixfirst/execution_parsers.py": "8486f3065a6c8321c631b32b8945d5217d4f83a62145a0d2ec7ec6121ef36af9",
+    "src/fixfirst/_notebook_runner.py": "9a16e715352f07284c9952b1b7027920f82691b55fcda1699a64be5c2b5ec154",
+    "src/fixfirst/_unittest_runner.py": "d3355279df8bcb486b968177fbfc0881e974eb602f83118c3a194ce70bd08f17",
+    "src/fixfirst/source_context.py": "051e4f6a532676d5028ba45f2d1814bb1845d638802dca97a9dc3cea2935055a",
+    "src/fixfirst/knowledge/rules.toml": "3fbbef3164969db3ca256807b1ee42d2a7d2c97621a36493bafdca91f585eb01"
+  },
+  "cases": [
+    {
+      "mode": "script",
+      "case": "pydantic_number",
+      "before": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H08",
+          "exception": "code",
+          "exception_module": "",
+          "where": "app.py:5",
+          "library": "pydantic",
+          "raised_in": "third_party"
+        }
+      ],
+      "after": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H10",
+          "exception": "ValidationError",
+          "exception_module": "pydantic_core._pydantic_core",
+          "where": "app.py:5",
+          "library": "pydantic",
+          "raised_in": "third_party"
+        }
+      ],
+      "first_step_before": "Correct the operation at the reported source location",
+      "first_step_after": "Convert the numeric input to text before validating the string field"
+    },
+    {
+      "mode": "script",
+      "case": "pydantic_bad_dict",
+      "before": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H08",
+          "exception": "code",
+          "exception_module": "",
+          "where": "app.py:5",
+          "library": "pydantic",
+          "raised_in": "third_party"
+        }
+      ],
+      "after": [
+        {
+          "diagnosis": null,
+          "rule": null,
+          "exception": "ValidationError",
+          "exception_module": "pydantic_core._pydantic_core",
+          "where": "app.py:5",
+          "library": "pydantic",
+          "raised_in": "third_party"
+        }
+      ],
+      "first_step_before": "Correct the operation at the reported source location",
+      "first_step_after": "Correct the operation at the reported source location"
+    },
+    {
+      "mode": "script",
+      "case": "yaml_loader",
+      "before": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H10",
+          "exception": "TypeError",
+          "exception_module": "",
+          "where": "app.py:3",
+          "library": "",
+          "raised_in": "project"
+        }
+      ],
+      "after": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H10",
+          "exception": "TypeError",
+          "exception_module": "",
+          "where": "app.py:3",
+          "library": "",
+          "raised_in": "project"
+        }
+      ],
+      "first_step_before": "Choose an explicit safe YAML loader",
+      "first_step_after": "Choose an explicit safe YAML loader"
+    },
+    {
+      "mode": "script",
+      "case": "numpy_promotion",
+      "before": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H10",
+          "exception": "TypeError",
+          "exception_module": "",
+          "where": "app.py:4",
+          "library": "",
+          "raised_in": "stdlib"
+        }
+      ],
+      "after": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H10",
+          "exception": "TypeError",
+          "exception_module": "",
+          "where": "app.py:4",
+          "library": "",
+          "raised_in": "stdlib"
+        }
+      ],
+      "first_step_before": "Convert the computed NumPy scalar to a Python float before JSON encoding",
+      "first_step_after": "Convert the computed NumPy scalar to a Python float before JSON encoding"
+    },
+    {
+      "mode": "module",
+      "case": "pydantic_number",
+      "before": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H08",
+          "exception": "code",
+          "exception_module": "",
+          "where": "app.py:5",
+          "library": "pydantic",
+          "raised_in": "third_party"
+        }
+      ],
+      "after": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H10",
+          "exception": "ValidationError",
+          "exception_module": "pydantic_core._pydantic_core",
+          "where": "app.py:5",
+          "library": "pydantic",
+          "raised_in": "third_party"
+        }
+      ],
+      "first_step_before": "Correct the operation at the reported source location",
+      "first_step_after": "Convert the numeric input to text before validating the string field"
+    },
+    {
+      "mode": "module",
+      "case": "pydantic_bad_dict",
+      "before": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H08",
+          "exception": "code",
+          "exception_module": "",
+          "where": "app.py:5",
+          "library": "pydantic",
+          "raised_in": "third_party"
+        }
+      ],
+      "after": [
+        {
+          "diagnosis": null,
+          "rule": null,
+          "exception": "ValidationError",
+          "exception_module": "pydantic_core._pydantic_core",
+          "where": "app.py:5",
+          "library": "pydantic",
+          "raised_in": "third_party"
+        }
+      ],
+      "first_step_before": "Correct the operation at the reported source location",
+      "first_step_after": "Correct the operation at the reported source location"
+    },
+    {
+      "mode": "module",
+      "case": "yaml_loader",
+      "before": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H10",
+          "exception": "TypeError",
+          "exception_module": "",
+          "where": "app.py:3",
+          "library": "",
+          "raised_in": "project"
+        }
+      ],
+      "after": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H10",
+          "exception": "TypeError",
+          "exception_module": "",
+          "where": "app.py:3",
+          "library": "",
+          "raised_in": "project"
+        }
+      ],
+      "first_step_before": "Choose an explicit safe YAML loader",
+      "first_step_after": "Choose an explicit safe YAML loader"
+    },
+    {
+      "mode": "module",
+      "case": "numpy_promotion",
+      "before": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H10",
+          "exception": "TypeError",
+          "exception_module": "",
+          "where": "app.py:4",
+          "library": "",
+          "raised_in": "stdlib"
+        }
+      ],
+      "after": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H10",
+          "exception": "TypeError",
+          "exception_module": "",
+          "where": "app.py:4",
+          "library": "",
+          "raised_in": "stdlib"
+        }
+      ],
+      "first_step_before": "Convert the computed NumPy scalar to a Python float before JSON encoding",
+      "first_step_after": "Convert the computed NumPy scalar to a Python float before JSON encoding"
+    },
+    {
+      "mode": "unittest",
+      "case": "pydantic_number",
+      "before": [
+        {
+          "diagnosis": null,
+          "rule": null,
+          "exception": "ValidationError",
+          "exception_module": "",
+          "where": "app.py:5",
+          "library": "pydantic",
+          "raised_in": "third_party"
+        }
+      ],
+      "after": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H10",
+          "exception": "ValidationError",
+          "exception_module": "pydantic_core._pydantic_core",
+          "where": "app.py:5",
+          "library": "pydantic",
+          "raised_in": "third_party"
+        }
+      ],
+      "first_step_before": "Correct the operation at the reported source location",
+      "first_step_after": "Convert the numeric input to text before validating the string field"
+    },
+    {
+      "mode": "unittest",
+      "case": "pydantic_bad_dict",
+      "before": [
+        {
+          "diagnosis": null,
+          "rule": null,
+          "exception": "ValidationError",
+          "exception_module": "",
+          "where": "app.py:5",
+          "library": "pydantic",
+          "raised_in": "third_party"
+        }
+      ],
+      "after": [
+        {
+          "diagnosis": null,
+          "rule": null,
+          "exception": "ValidationError",
+          "exception_module": "pydantic_core._pydantic_core",
+          "where": "app.py:5",
+          "library": "pydantic",
+          "raised_in": "third_party"
+        }
+      ],
+      "first_step_before": "Correct the operation at the reported source location",
+      "first_step_after": "Correct the operation at the reported source location"
+    },
+    {
+      "mode": "unittest",
+      "case": "yaml_loader",
+      "before": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H10",
+          "exception": "TypeError",
+          "exception_module": "",
+          "where": "app.py:3",
+          "library": "",
+          "raised_in": "project"
+        }
+      ],
+      "after": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H10",
+          "exception": "TypeError",
+          "exception_module": "builtins",
+          "where": "app.py:3",
+          "library": "",
+          "raised_in": "project"
+        }
+      ],
+      "first_step_before": "Choose an explicit safe YAML loader",
+      "first_step_after": "Choose an explicit safe YAML loader"
+    },
+    {
+      "mode": "unittest",
+      "case": "numpy_promotion",
+      "before": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H10",
+          "exception": "TypeError",
+          "exception_module": "",
+          "where": "app.py:4",
+          "library": "",
+          "raised_in": "stdlib"
+        }
+      ],
+      "after": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H10",
+          "exception": "TypeError",
+          "exception_module": "builtins",
+          "where": "app.py:4",
+          "library": "",
+          "raised_in": "stdlib"
+        }
+      ],
+      "first_step_before": "Convert the computed NumPy scalar to a Python float before JSON encoding",
+      "first_step_after": "Convert the computed NumPy scalar to a Python float before JSON encoding"
+    },
+    {
+      "mode": "notebook",
+      "case": "pydantic_number",
+      "before": [
+        {
+          "diagnosis": null,
+          "rule": null,
+          "exception": "ValidationError",
+          "exception_module": "",
+          "where": "work.ipynb · cell 1",
+          "library": "",
+          "raised_in": "project"
+        }
+      ],
+      "after": [
+        {
+          "diagnosis": null,
+          "rule": null,
+          "exception": "ValidationError",
+          "exception_module": "",
+          "where": "work.ipynb · cell 1",
+          "library": "pydantic",
+          "raised_in": "third_party"
+        }
+      ],
+      "first_step_before": "Correct the operation at the reported source location",
+      "first_step_after": "Correct the operation at the reported source location"
+    },
+    {
+      "mode": "notebook",
+      "case": "pydantic_bad_dict",
+      "before": [
+        {
+          "diagnosis": null,
+          "rule": null,
+          "exception": "ValidationError",
+          "exception_module": "",
+          "where": "work.ipynb · cell 1",
+          "library": "",
+          "raised_in": "project"
+        }
+      ],
+      "after": [
+        {
+          "diagnosis": null,
+          "rule": null,
+          "exception": "ValidationError",
+          "exception_module": "",
+          "where": "work.ipynb · cell 1",
+          "library": "pydantic",
+          "raised_in": "third_party"
+        }
+      ],
+      "first_step_before": "Correct the operation at the reported source location",
+      "first_step_after": "Correct the operation at the reported source location"
+    },
+    {
+      "mode": "notebook",
+      "case": "yaml_loader",
+      "before": [
+        {
+          "diagnosis": null,
+          "rule": null,
+          "exception": "TypeError",
+          "exception_module": "",
+          "where": "work.ipynb · cell 1",
+          "library": "",
+          "raised_in": "project"
+        }
+      ],
+      "after": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H10",
+          "exception": "TypeError",
+          "exception_module": "",
+          "where": "work.ipynb · cell 1",
+          "library": "",
+          "raised_in": "project"
+        }
+      ],
+      "first_step_before": "Correct the operation at the reported source location",
+      "first_step_after": "Choose an explicit safe YAML loader"
+    },
+    {
+      "mode": "notebook",
+      "case": "numpy_promotion",
+      "before": [
+        {
+          "diagnosis": null,
+          "rule": null,
+          "exception": "TypeError",
+          "exception_module": "",
+          "where": "work.ipynb · cell 1",
+          "library": "",
+          "raised_in": "project"
+        }
+      ],
+      "after": [
+        {
+          "diagnosis": "version_incompatibility",
+          "rule": "H10",
+          "exception": "TypeError",
+          "exception_module": "",
+          "where": "work.ipynb · cell 1",
+          "library": "",
+          "raised_in": "stdlib"
+        }
+      ],
+      "first_step_before": "Correct the operation at the reported source location",
+      "first_step_after": "Convert the computed NumPy scalar to a Python float before JSON encoding"
+    }
+  ]
+}
