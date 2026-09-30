@@ -1,0 +1,56 @@
+[
+ {
+  "name": "numpy_copy_false",
+  "first_step": "Use numpy.asarray when copying the input is allowed",
+  "command": null,
+  "executed": false
+ },
+ {
+  "name": "pydantic_optional_required",
+  "first_step": "Give the optional model field an explicit None default",
+  "command": null,
+  "executed": false
+ },
+ {
+  "name": "numpy_solve_batched_vector",
+  "first_step": "Pass the batch of right-hand vectors as explicit column vectors",
+  "command": null,
+  "executed": false
+ },
+ {
+  "name": "stdlib_safeconfigparser_removed",
+  "first_step": "Replace configparser.SafeConfigParser: removed in Python 3.12",
+  "command": null,
+  "executed": false
+ },
+ {
+  "name": "yaml_tab_indentation",
+  "first_step": "Correct the YAML syntax at the reported line and column",
+  "command": null,
+  "executed": false
+ },
+ {
+  "name": "numpy_reshape_off_by_one",
+  "first_step": "Correct the reshape dimensions for the actual array size",
+  "command": null,
+  "executed": false
+ },
+ {
+  "name": "click_option_typo",
+  "first_step": "Compare the failed assertion's expected and actual values",
+  "command": null,
+  "executed": false
+ },
+ {
+  "name": "pydantic_field_name_typo",
+  "first_step": "Check the missing model field against the keys actually supplied",
+  "command": null,
+  "executed": false
+ },
+ {
+  "name": "healthy_deprecations",
+  "first_step": null,
+  "command": null,
+  "executed": false
+ }
+]

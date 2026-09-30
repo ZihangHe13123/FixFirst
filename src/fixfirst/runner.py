@@ -396,6 +396,8 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
         with tempfile.TemporaryDirectory(prefix="fixfirst-probe-", ignore_cleanup_errors=True) as directory:
             probe = Path(directory) / "_fixfirst_probe.py"
             probe.write_text(Path(__file__).with_name("probe.py").read_text(encoding="utf-8"), encoding="utf-8")
+            (Path(directory) / "_runtime_evidence.py").write_text(
+                Path(__file__).with_name("_runtime_evidence.py").read_text(encoding="utf-8"), encoding="utf-8")
             records_file = Path(directory) / "events.jsonl"
             extra = {
                 "PYTHONPATH": os.pathsep.join([directory, *[

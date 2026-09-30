@@ -445,8 +445,8 @@ def collect_project(session, env_id: str) -> Run:
 def tested_versions(root: Path) -> list[dict]:
     """Versions the project was last locked to (Pipfile.lock, poetry.lock, uv.lock).
 
-    A lock file records a set of versions the project worked with; when a failure is raised
-    inside a library that is now a major version newer, that difference is a likely cause.
+    A lock records chosen versions, not proof that this input or test suite passed.
+    The historical tested_versions field name is retained for session compatibility.
     """
     found = []
 

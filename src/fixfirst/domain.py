@@ -55,6 +55,13 @@ def load() -> dict:
             raise ValueError(f"invalid behavior entry {key}")
         behaviors[key] = entry
     data["behavior_index"] = behaviors
+    inputs = {}
+    for entry in data.get("input_error", []):
+        key = "input:" + entry["id"]
+        if key in inputs or entry["source"] not in data["sources"]:
+            raise ValueError(f"invalid input contract {key}")
+        inputs[key] = entry
+    data["input_index"] = inputs
     data["unmaintained_index"] = {dist_id(e["distribution"]): e for e in data.get("unmaintained", [])}
     # Fixtures are cited by the plugin's PyPI page unless the entry names another source.
     lint = data.setdefault("lint", {"likely_bug": [], "categories": {}})
@@ -82,8 +89,17 @@ def facts_for(entities) -> list[Fact]:
     kb = load()
     result = []
     for entity in sorted(set(entities)):
+        entry = kb["input_index"].get(entity)
+        if entry:
+            result += [
+                knowledge(entity, "input_rejected_by", dist_id(entry["distribution"]), entry["source"]),
+                knowledge(entity, "action_title", entry["action_title"], entry["source"]),
+                knowledge(entity, "input_guidance", entry["guidance"], entry["source"]),
+            ]
         entry = kb["behavior_index"].get(entity)
         if entry:
+            if entry.get("without_version_record"):
+                result.append(knowledge(entity, "without_version_record", "yes", entry["source"]))
             result += [
                 knowledge(entity, "changed_in", dist_id(entry["distribution"]), entry["source"]),
                 knowledge(entity, "changed_in_version", entry["version"], entry["source"]),
@@ -240,6 +256,13 @@ def graph() -> dict:
         node(dist_id(row["distribution"]), "Distribution", row["distribution"])
         edges += [
             {"source": key, "relation": "changed_in", "target": dist_id(row["distribution"])},
+            {"source": key, "relation": "documented_in", "target": "source:" + row["source"]},
+        ]
+    for key, row in kb["input_index"].items():
+        node(key, "InputContract", row["action_title"], guidance=row["guidance"])
+        node(dist_id(row["distribution"]), "Distribution", row["distribution"])
+        edges += [
+            {"source": key, "relation": "validated_by", "target": dist_id(row["distribution"])},
             {"source": key, "relation": "documented_in", "target": "source:" + row["source"]},
         ]
     return {

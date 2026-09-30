@@ -1,0 +1,718 @@
+{
+ "implementation": {
+  "head": "a56a62161ab304adbf2d574c3c42b12a136749be",
+  "src_uncommitted": false,
+  "source_sha256": "6144b5a33f7342ee2005a14dd1365d6a265f67cb1b699e6eac697848d4eb3d5a",
+  "python": "3.12.13",
+  "scikit-learn": "1.9.1"
+ },
+ "probes": [
+  {
+   "name": "sqla_lazy_generator",
+   "focus": "sqlalchemy history",
+   "expect": "Real 1.4 change (1.3 builds the generator lazily and never consumes it): expected the eager iterator history and the returns_rows step.",
+   "truth": "version change",
+   "old_tail": "uled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.fromtimestamp(timestamp, datetime.UTC).\n    epoch = dt.datetime.utcfromtimestamp(0)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n1 passed, 1 warning in 0.04s\n",
+   "current_tail": "ject does not return rows. \"\n            \"It has been closed automatically.\"\n        ) from err\nE       sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically.\n\n../../../sqla20/venv/lib/python3.12/site-packages/sqlalchemy/engine/cursor.py:1346: ResourceClosedError\n=========================== short test summary info ============================\nFAILED test_app.py::test_query - sqlalchemy.exc.ResourceClosedError: This res...\n1 failed in 0.13s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "H10",
+     "source": "heuristic",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "ResourceClosedError",
+      "raised_in": "third_party",
+      "where": "app.py:6",
+      "library": "sqlalchemy",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call",
+       "sqlalchemy.engine.result.__iter__",
+       "sqlalchemy.engine.result._iter_impl",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._iterator_getter",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._row_getter",
+       "sqlalchemy.engine.cursor._key_to_index",
+       "sqlalchemy.engine.cursor._we_dont_return_rows"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Check returns_rows before constructing the result iterator",
+     "explanation": "SQLAlchemy 1.4 changed result iterator creation from the lazy 1.3 implementation to eager metadata access. The observed generator is being constructed over a result with no rows; iteration now fails immediately. Consuming such a result already failed on older releases. This environment has sqlalchemy 2.0.44. Check cursor.returns_rows before building the generator. For a statement that produces no rows, return an empty iterator or collection according to the caller's contract; otherwise keep the original row mapping. For example, use (convert(row) for row in cursor) if cursor.returns_rows else iter(()). Keep SQL effects and row values unchanged. The compatibility diagnosis is a hypothesis supported by this symptom and version context; verify the result with the original test suite.",
+     "command": null,
+     "where": [
+      "app.py:6"
+     ],
+     "rules": [
+      "H10: A specific documented behavior change fits the observed failure and the project's version context. Confirm the intended behavior by applying the narrow remedy and rerunning unchanged tests."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sqla_generator_then_consumed",
+   "focus": "sqlalchemy history",
+   "expect": "The generator is consumed in the same function, so 1.3 fails too (at list): not a version change. Risk: the error line is the generator construction, so the history may still be borrowed.",
+   "truth": "fails on the older release too",
+   "old_tail": "h = dt.datetime.utcfromtimestamp(0)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_app.py::test_query_all - sqlalchemy.exc.ResourceClosedError: This...\n1 failed, 1 warning in 0.06s\n",
+   "current_tail": "ject does not return rows. \"\n            \"It has been closed automatically.\"\n        ) from err\nE       sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically.\n\n../../../sqla20/venv/lib/python3.12/site-packages/sqlalchemy/engine/cursor.py:1346: ResourceClosedError\n=========================== short test summary info ============================\nFAILED test_app.py::test_query_all - sqlalchemy.exc.ResourceClosedError: This...\n1 failed in 0.10s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "code_defect",
+     "rule": "H12",
+     "source": "heuristic",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "ResourceClosedError",
+      "raised_in": "third_party",
+      "where": "app.py:6",
+      "library": "sqlalchemy",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call",
+       "sqlalchemy.engine.result.__iter__",
+       "sqlalchemy.engine.result._iter_impl",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._iterator_getter",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._row_getter",
+       "sqlalchemy.engine.cursor._key_to_index",
+       "sqlalchemy.engine.cursor._we_dont_return_rows"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Check whether the SQL result returns rows before reading it",
+     "explanation": "Check result.returns_rows before constructing an iterator or fetching rows. DDL and statements without returning rows need an empty result or another return value appropriate to the caller; preserve their SQL effects. A no-row result cannot supply rows on an older release either. The error alone does not establish an upgrade cause. The recorded exception shows a rejected input; verify the intended correction with the original checks.",
+     "command": null,
+     "where": [
+      "app.py:6"
+     ],
+     "rules": [
+      "H12: The raising library rejected input under a documented validation contract; inspect that value before changing dependencies."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sqla_list_consumption",
+   "focus": "sqlalchemy history",
+   "expect": "Consumption fails on 1.3 too: must not be called the 1.4 change.",
+   "truth": "fails on the older release too",
+   "old_tail": "h = dt.datetime.utcfromtimestamp(0)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_app.py::test_query_all - sqlalchemy.exc.ResourceClosedError: This...\n1 failed, 1 warning in 0.06s\n",
+   "current_tail": "ject does not return rows. \"\n            \"It has been closed automatically.\"\n        ) from err\nE       sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically.\n\n../../../sqla20/venv/lib/python3.12/site-packages/sqlalchemy/engine/cursor.py:1346: ResourceClosedError\n=========================== short test summary info ============================\nFAILED test_app.py::test_query_all - sqlalchemy.exc.ResourceClosedError: This...\n1 failed in 0.10s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "code_defect",
+     "rule": "H12",
+     "source": "heuristic",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "ResourceClosedError",
+      "raised_in": "third_party",
+      "where": "app.py:6",
+      "library": "sqlalchemy",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call",
+       "sqlalchemy.engine.result.__iter__",
+       "sqlalchemy.engine.result._iter_impl",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._iterator_getter",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._row_getter",
+       "sqlalchemy.engine.cursor._key_to_index",
+       "sqlalchemy.engine.cursor._we_dont_return_rows"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Check whether the SQL result returns rows before reading it",
+     "explanation": "Check result.returns_rows before constructing an iterator or fetching rows. DDL and statements without returning rows need an empty result or another return value appropriate to the caller; preserve their SQL effects. A no-row result cannot supply rows on an older release either. The error alone does not establish an upgrade cause. The recorded exception shows a rejected input; verify the intended correction with the original checks.",
+     "command": null,
+     "where": [
+      "app.py:6"
+     ],
+     "rules": [
+      "H12: The raising library rejected input under a documented validation contract; inspect that value before changing dependencies."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sqla_fetchall",
+   "focus": "sqlalchemy history",
+   "expect": "fetchall fails on 1.3 too: must not be called the 1.4 change.",
+   "truth": "fails on the older release too",
+   "old_tail": "h = dt.datetime.utcfromtimestamp(0)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_app.py::test_query_all - sqlalchemy.exc.ResourceClosedError: This...\n1 failed, 1 warning in 0.06s\n",
+   "current_tail": "ject does not return rows. \"\n            \"It has been closed automatically.\"\n        ) from err\nE       sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically.\n\n../../../sqla20/venv/lib/python3.12/site-packages/sqlalchemy/engine/cursor.py:1346: ResourceClosedError\n=========================== short test summary info ============================\nFAILED test_app.py::test_query_all - sqlalchemy.exc.ResourceClosedError: This...\n1 failed in 0.09s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "code_defect",
+     "rule": "H12",
+     "source": "heuristic",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "ResourceClosedError",
+      "raised_in": "third_party",
+      "where": "app.py:6",
+      "library": "sqlalchemy",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call",
+       "sqlalchemy.engine.result.fetchall",
+       "sqlalchemy.engine.result._allrows",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._row_getter",
+       "sqlalchemy.engine.cursor._key_to_index",
+       "sqlalchemy.engine.cursor._we_dont_return_rows"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Check whether the SQL result returns rows before reading it",
+     "explanation": "Check result.returns_rows before constructing an iterator or fetching rows. DDL and statements without returning rows need an empty result or another return value appropriate to the caller; preserve their SQL effects. A no-row result cannot supply rows on an older release either. The error alone does not establish an upgrade cause. The recorded exception shows a rejected input; verify the intended correction with the original checks.",
+     "command": null,
+     "where": [
+      "app.py:6"
+     ],
+     "rules": [
+      "H12: The raising library rejected input under a documented validation contract; inspect that value before changing dependencies."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sqla_closed_then_generator",
+   "focus": "sqlalchemy history",
+   "expect": "A result closed on purpose fails on 1.3 too (at consumption): must not be called the 1.4 change.",
+   "truth": "fails on the older release too",
+   "old_tail": "h = dt.datetime.utcfromtimestamp(0)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_app.py::test_query - sqlalchemy.exc.ResourceClosedError: This res...\n1 failed, 1 warning in 0.06s\n",
+   "current_tail": "     if result.closed:\n>           raise exc.ResourceClosedError(\n                \"This result object is closed.\"\n            ) from err\nE           sqlalchemy.exc.ResourceClosedError: This result object is closed.\n\n../../../sqla20/venv/lib/python3.12/site-packages/sqlalchemy/engine/cursor.py:1027: ResourceClosedError\n=========================== short test summary info ============================\nFAILED test_app.py::test_query - sqlalchemy.exc.ResourceClosedError: This res...\n1 failed in 0.08s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "code_defect",
+     "rule": "F01",
+     "source": "model",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "ResourceClosedError",
+      "raised_in": "third_party",
+      "where": "app.py:7",
+      "library": "sqlalchemy",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call",
+       "sqlalchemy.engine.result.iterrows",
+       "sqlalchemy.engine.cursor._fetchiter_impl",
+       "sqlalchemy.engine.cursor.fetchone",
+       "sqlalchemy.engine.cursor._non_result"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Inspect the exception raised while running the test",
+     "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+     "command": null,
+     "where": [
+      "app.py:7"
+     ],
+     "rules": [
+      "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sqla_alias_then_list",
+   "focus": "generator consumption",
+   "expect": "Alias then list: 1.3 fails too; the alias is recorded, so no version change expected.",
+   "truth": "fails on the older release too",
+   "old_tail": "h = dt.datetime.utcfromtimestamp(0)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_app.py::test_query_all - sqlalchemy.exc.ResourceClosedError: This...\n1 failed, 1 warning in 0.06s\n",
+   "current_tail": "ject does not return rows. \"\n            \"It has been closed automatically.\"\n        ) from err\nE       sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically.\n\n../../../sqla20/venv/lib/python3.12/site-packages/sqlalchemy/engine/cursor.py:1346: ResourceClosedError\n=========================== short test summary info ============================\nFAILED test_app.py::test_query_all - sqlalchemy.exc.ResourceClosedError: This...\n1 failed in 0.10s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "code_defect",
+     "rule": "H12",
+     "source": "heuristic",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "ResourceClosedError",
+      "raised_in": "third_party",
+      "where": "app.py:6",
+      "library": "sqlalchemy",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call",
+       "sqlalchemy.engine.result.__iter__",
+       "sqlalchemy.engine.result._iter_impl",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._iterator_getter",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._row_getter",
+       "sqlalchemy.engine.cursor._key_to_index",
+       "sqlalchemy.engine.cursor._we_dont_return_rows"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Check whether the SQL result returns rows before reading it",
+     "explanation": "Check result.returns_rows before constructing an iterator or fetching rows. DDL and statements without returning rows need an empty result or another return value appropriate to the caller; preserve their SQL effects. A no-row result cannot supply rows on an older release either. The error alone does not establish an upgrade cause. The recorded exception shows a rejected input; verify the intended correction with the original checks.",
+     "command": null,
+     "where": [
+      "app.py:6"
+     ],
+     "rules": [
+      "H12: The raising library rejected input under a documented validation contract; inspect that value before changing dependencies."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sqla_for_loop_consumption",
+   "focus": "generator consumption",
+   "expect": "A for loop consumes it: 1.3 fails too; no version change expected.",
+   "truth": "fails on the older release too",
+   "old_tail": "h = dt.datetime.utcfromtimestamp(0)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_app.py::test_query_all - sqlalchemy.exc.ResourceClosedError: This...\n1 failed, 1 warning in 0.06s\n",
+   "current_tail": "ject does not return rows. \"\n            \"It has been closed automatically.\"\n        ) from err\nE       sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically.\n\n../../../sqla20/venv/lib/python3.12/site-packages/sqlalchemy/engine/cursor.py:1346: ResourceClosedError\n=========================== short test summary info ============================\nFAILED test_app.py::test_query_all - sqlalchemy.exc.ResourceClosedError: This...\n1 failed in 0.10s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "code_defect",
+     "rule": "H12",
+     "source": "heuristic",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "ResourceClosedError",
+      "raised_in": "third_party",
+      "where": "app.py:6",
+      "library": "sqlalchemy",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call",
+       "sqlalchemy.engine.result.__iter__",
+       "sqlalchemy.engine.result._iter_impl",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._iterator_getter",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._row_getter",
+       "sqlalchemy.engine.cursor._key_to_index",
+       "sqlalchemy.engine.cursor._we_dont_return_rows"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Check whether the SQL result returns rows before reading it",
+     "explanation": "Check result.returns_rows before constructing an iterator or fetching rows. DDL and statements without returning rows need an empty result or another return value appropriate to the caller; preserve their SQL effects. A no-row result cannot supply rows on an older release either. The error alone does not establish an upgrade cause. The recorded exception shows a rejected input; verify the intended correction with the original checks.",
+     "command": null,
+     "where": [
+      "app.py:6"
+     ],
+     "rules": [
+      "H12: The raising library rejected input under a documented validation contract; inspect that value before changing dependencies."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sqla_star_unpacking",
+   "focus": "generator consumption",
+   "expect": "[*rows] consumes it (1.3 fails too). Predicted: not a listed consumer, so the 1.4 history may still be borrowed.",
+   "truth": "fails on the older release too",
+   "old_tail": "h = dt.datetime.utcfromtimestamp(0)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_app.py::test_query_all - sqlalchemy.exc.ResourceClosedError: This...\n1 failed, 1 warning in 0.06s\n",
+   "current_tail": "ject does not return rows. \"\n            \"It has been closed automatically.\"\n        ) from err\nE       sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically.\n\n../../../sqla20/venv/lib/python3.12/site-packages/sqlalchemy/engine/cursor.py:1346: ResourceClosedError\n=========================== short test summary info ============================\nFAILED test_app.py::test_query_all - sqlalchemy.exc.ResourceClosedError: This...\n1 failed in 0.10s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "H10",
+     "source": "heuristic",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "ResourceClosedError",
+      "raised_in": "third_party",
+      "where": "app.py:6",
+      "library": "sqlalchemy",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call",
+       "sqlalchemy.engine.result.__iter__",
+       "sqlalchemy.engine.result._iter_impl",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._iterator_getter",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._row_getter",
+       "sqlalchemy.engine.cursor._key_to_index",
+       "sqlalchemy.engine.cursor._we_dont_return_rows"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Check returns_rows before constructing the result iterator",
+     "explanation": "SQLAlchemy 1.4 changed result iterator creation from the lazy 1.3 implementation to eager metadata access. The observed generator is being constructed over a result with no rows; iteration now fails immediately. Consuming such a result already failed on older releases. This environment has sqlalchemy 2.0.44. Check cursor.returns_rows before building the generator. For a statement that produces no rows, return an empty iterator or collection according to the caller's contract; otherwise keep the original row mapping. For example, use (convert(row) for row in cursor) if cursor.returns_rows else iter(()). Keep SQL effects and row values unchanged. The compatibility diagnosis is a hypothesis supported by this symptom and version context; verify the result with the original test suite.",
+     "command": null,
+     "where": [
+      "app.py:6"
+     ],
+     "rules": [
+      "H10: A specific documented behavior change fits the observed failure and the project's version context. Confirm the intended behavior by applying the narrow remedy and rerunning unchanged tests."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sqla_join_consumption",
+   "focus": "generator consumption",
+   "expect": "join over a generator of rows consumes it (1.3 fails too). Predicted: not recognised.",
+   "truth": "fails on the older release too",
+   "old_tail": "h = dt.datetime.utcfromtimestamp(0)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_app.py::test_query_all - sqlalchemy.exc.ResourceClosedError: This...\n1 failed, 1 warning in 0.06s\n",
+   "current_tail": "ject does not return rows. \"\n            \"It has been closed automatically.\"\n        ) from err\nE       sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically.\n\n../../../sqla20/venv/lib/python3.12/site-packages/sqlalchemy/engine/cursor.py:1346: ResourceClosedError\n=========================== short test summary info ============================\nFAILED test_app.py::test_query_all - sqlalchemy.exc.ResourceClosedError: This...\n1 failed in 0.10s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "H10",
+     "source": "heuristic",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "ResourceClosedError",
+      "raised_in": "third_party",
+      "where": "app.py:6",
+      "library": "sqlalchemy",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call",
+       "sqlalchemy.engine.result.__iter__",
+       "sqlalchemy.engine.result._iter_impl",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._iterator_getter",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._row_getter",
+       "sqlalchemy.engine.cursor._key_to_index",
+       "sqlalchemy.engine.cursor._we_dont_return_rows"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Check returns_rows before constructing the result iterator",
+     "explanation": "SQLAlchemy 1.4 changed result iterator creation from the lazy 1.3 implementation to eager metadata access. The observed generator is being constructed over a result with no rows; iteration now fails immediately. Consuming such a result already failed on older releases. This environment has sqlalchemy 2.0.44. Check cursor.returns_rows before building the generator. For a statement that produces no rows, return an empty iterator or collection according to the caller's contract; otherwise keep the original row mapping. For example, use (convert(row) for row in cursor) if cursor.returns_rows else iter(()). Keep SQL effects and row values unchanged. The compatibility diagnosis is a hypothesis supported by this symptom and version context; verify the result with the original test suite.",
+     "command": null,
+     "where": [
+      "app.py:6"
+     ],
+     "rules": [
+      "H10: A specific documented behavior change fits the observed failure and the project's version context. Confirm the intended behavior by applying the narrow remedy and rerunning unchanged tests."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sqla_nested_consumer",
+   "focus": "generator consumption",
+   "expect": "Consumed in a nested function (1.3 fails too). Predicted: nested bodies are not searched, so not recognised.",
+   "truth": "fails on the older release too",
+   "old_tail": "h = dt.datetime.utcfromtimestamp(0)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_app.py::test_query_all - sqlalchemy.exc.ResourceClosedError: This...\n1 failed, 1 warning in 0.06s\n",
+   "current_tail": "ject does not return rows. \"\n            \"It has been closed automatically.\"\n        ) from err\nE       sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically.\n\n../../../sqla20/venv/lib/python3.12/site-packages/sqlalchemy/engine/cursor.py:1346: ResourceClosedError\n=========================== short test summary info ============================\nFAILED test_app.py::test_query_all - sqlalchemy.exc.ResourceClosedError: This...\n1 failed in 0.10s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "H10",
+     "source": "heuristic",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "ResourceClosedError",
+      "raised_in": "third_party",
+      "where": "app.py:6",
+      "library": "sqlalchemy",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call",
+       "sqlalchemy.engine.result.__iter__",
+       "sqlalchemy.engine.result._iter_impl",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._iterator_getter",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._row_getter",
+       "sqlalchemy.engine.cursor._key_to_index",
+       "sqlalchemy.engine.cursor._we_dont_return_rows"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Check returns_rows before constructing the result iterator",
+     "explanation": "SQLAlchemy 1.4 changed result iterator creation from the lazy 1.3 implementation to eager metadata access. The observed generator is being constructed over a result with no rows; iteration now fails immediately. Consuming such a result already failed on older releases. This environment has sqlalchemy 2.0.44. Check cursor.returns_rows before building the generator. For a statement that produces no rows, return an empty iterator or collection according to the caller's contract; otherwise keep the original row mapping. For example, use (convert(row) for row in cursor) if cursor.returns_rows else iter(()). Keep SQL effects and row values unchanged. The compatibility diagnosis is a hypothesis supported by this symptom and version context; verify the result with the original test suite.",
+     "command": null,
+     "where": [
+      "app.py:6"
+     ],
+     "rules": [
+      "H10: A specific documented behavior change fits the observed failure and the project's version context. Confirm the intended behavior by applying the narrow remedy and rerunning unchanged tests."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sqla_generator_in_lambda",
+   "focus": "generator consumption",
+   "expect": "A real 1.4 change, but the generator is built in a lambda (no recorded context): expected no version inference (a missed positive, not a false claim).",
+   "truth": "version change",
+   "old_tail": "uled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.fromtimestamp(timestamp, datetime.UTC).\n    epoch = dt.datetime.utcfromtimestamp(0)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n1 passed, 1 warning in 0.03s\n",
+   "current_tail": "ject does not return rows. \"\n            \"It has been closed automatically.\"\n        ) from err\nE       sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically.\n\n../../../sqla20/venv/lib/python3.12/site-packages/sqlalchemy/engine/cursor.py:1346: ResourceClosedError\n=========================== short test summary info ============================\nFAILED test_app.py::test_query - sqlalchemy.exc.ResourceClosedError: This res...\n1 failed in 0.10s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "code_defect",
+     "rule": "H12",
+     "source": "heuristic",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "ResourceClosedError",
+      "raised_in": "third_party",
+      "where": "app.py:3",
+      "library": "sqlalchemy",
+      "attributes": [],
+      "library_calls": [
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call",
+       "sqlalchemy.engine.result.__iter__",
+       "sqlalchemy.engine.result._iter_impl",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._iterator_getter",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._row_getter",
+       "sqlalchemy.engine.cursor._key_to_index",
+       "sqlalchemy.engine.cursor._we_dont_return_rows"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Check whether the SQL result returns rows before reading it",
+     "explanation": "Check result.returns_rows before constructing an iterator or fetching rows. DDL and statements without returning rows need an empty result or another return value appropriate to the caller; preserve their SQL effects. A no-row result cannot supply rows on an older release either. The error alone does not establish an upgrade cause. The recorded exception shows a rejected input; verify the intended correction with the original checks.",
+     "command": null,
+     "where": [
+      "app.py:3"
+     ],
+     "rules": [
+      "H12: The raising library rejected input under a documented validation contract; inspect that value before changing dependencies."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sqla_wrapped_not_consumed",
+   "focus": "generator consumption",
+   "expect": "records-like: the generator is handed to a wrapper and not consumed here (1.3 passes): expected the 1.4 history and the returns_rows step.",
+   "truth": "version change",
+   "old_tail": "uled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.fromtimestamp(timestamp, datetime.UTC).\n    epoch = dt.datetime.utcfromtimestamp(0)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n1 passed, 1 warning in 0.03s\n",
+   "current_tail": "ject does not return rows. \"\n            \"It has been closed automatically.\"\n        ) from err\nE       sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically.\n\n../../../sqla20/venv/lib/python3.12/site-packages/sqlalchemy/engine/cursor.py:1346: ResourceClosedError\n=========================== short test summary info ============================\nFAILED test_app.py::test_query - sqlalchemy.exc.ResourceClosedError: This res...\n1 failed in 0.10s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "H10",
+     "source": "heuristic",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "ResourceClosedError",
+      "raised_in": "third_party",
+      "where": "app.py:14",
+      "library": "sqlalchemy",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call",
+       "sqlalchemy.engine.result.__iter__",
+       "sqlalchemy.engine.result._iter_impl",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._iterator_getter",
+       "sqlalchemy.util.langhelpers.__get__",
+       "sqlalchemy.engine.result._row_getter",
+       "sqlalchemy.engine.cursor._key_to_index",
+       "sqlalchemy.engine.cursor._we_dont_return_rows"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Check returns_rows before constructing the result iterator",
+     "explanation": "SQLAlchemy 1.4 changed result iterator creation from the lazy 1.3 implementation to eager metadata access. The observed generator is being constructed over a result with no rows; iteration now fails immediately. Consuming such a result already failed on older releases. This environment has sqlalchemy 2.0.44. Check cursor.returns_rows before building the generator. For a statement that produces no rows, return an empty iterator or collection according to the caller's contract; otherwise keep the original row mapping. For example, use (convert(row) for row in cursor) if cursor.returns_rows else iter(()). Keep SQL effects and row values unchanged. The compatibility diagnosis is a hypothesis supported by this symptom and version context; verify the result with the original test suite.",
+     "command": null,
+     "where": [
+      "app.py:14"
+     ],
+     "rules": [
+      "H10: A specific documented behavior change fits the observed failure and the project's version context. Confirm the intended behavior by applying the narrow remedy and rerunning unchanged tests."
+     ]
+    }
+   ]
+  }
+ ]
+}

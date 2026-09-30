@@ -1,0 +1,504 @@
+{
+  "implementation": {
+    "head": "8e58b0e6b83296a7a8bca19e8bba158078cfb929",
+    "src_uncommitted": false,
+    "source_sha256": "86952f2996999cbeaabad18c697f2ea991f373383817ccb384ba431cbbfd8588",
+    "python": "3.12.13",
+    "scikit-learn": "1.9.1"
+  },
+  "model": "<claude-scratch>/-Users-zhihang-Project---Projec/e66f1aef-c19e-4e37-a161-1aa5d23f594e/scratchpad/wt-core5/experiments/core_diagnosis/observation-development-2026-09-30/results/paired61-tree.json",
+  "model_sha256": "e32b5d6a4ff043afc48a80718b5ec9e95668b82895be58011394772c6723153a",
+  "cases": [
+    {
+      "name": "numpy_copy_false",
+      "kind": "positive",
+      "label": "version_incompatibility",
+      "status": "todo",
+      "headline": "1 problem to fix",
+      "issues": [
+        {
+          "tool": "pytest_run",
+          "title": "ValueError · test_app.py::test_shares",
+          "diagnosis": "code_defect",
+          "rule": "F01",
+          "source": "model",
+          "evidence": {
+            "exception": "ValueError",
+            "raised_in": "project",
+            "where": "app.py:6",
+            "source_location": "app.py:6",
+            "library": ""
+          }
+        },
+        {
+          "tool": "ruff",
+          "title": "Could not start ruff in the target environment: <runs>/numpy_copy_false/venv/bin/python: No ",
+          "diagnosis": null,
+          "rule": null,
+          "source": null,
+          "evidence": {
+            "exception": "",
+            "raised_in": "unknown",
+            "where": "",
+            "source_location": "",
+            "library": ""
+          }
+        }
+      ],
+      "steps": [
+        {
+          "title": "Inspect the exception raised while running the test",
+          "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+          "command": null,
+          "cause": null,
+          "possible": "Defect in project code or tests",
+          "where": [
+            "app.py:6"
+          ],
+          "rules": [
+            "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+          ],
+          "suspected": false,
+          "gather": false,
+          "search": false
+        }
+      ],
+      "optional": [],
+      "first_diagnosis": "code_defect",
+      "first_step": "Inspect the exception raised while running the test"
+    },
+    {
+      "name": "pydantic_optional_required",
+      "kind": "positive",
+      "label": "version_incompatibility",
+      "status": "todo",
+      "headline": "1 problem to fix",
+      "issues": [
+        {
+          "tool": "pytest_run",
+          "title": "ValidationError · test_app.py::test_email_is_optional",
+          "diagnosis": "code_defect",
+          "rule": "F01",
+          "source": "model",
+          "evidence": {
+            "exception": "ValidationError",
+            "raised_in": "third_party",
+            "where": "app.py:12",
+            "source_location": "app.py:12",
+            "library": "pydantic"
+          }
+        },
+        {
+          "tool": "ruff",
+          "title": "Could not start ruff in the target environment: <runs>/pydantic_optional_required/venv/bin/p",
+          "diagnosis": null,
+          "rule": null,
+          "source": null,
+          "evidence": {
+            "exception": "",
+            "raised_in": "unknown",
+            "where": "",
+            "source_location": "",
+            "library": ""
+          }
+        }
+      ],
+      "steps": [
+        {
+          "title": "Inspect the exception raised while running the test",
+          "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+          "command": null,
+          "cause": null,
+          "possible": "Defect in project code or tests",
+          "where": [
+            "app.py:12"
+          ],
+          "rules": [
+            "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+          ],
+          "suspected": false,
+          "gather": false,
+          "search": false
+        }
+      ],
+      "optional": [],
+      "first_diagnosis": "code_defect",
+      "first_step": "Inspect the exception raised while running the test"
+    },
+    {
+      "name": "numpy_solve_batched_vector",
+      "kind": "positive",
+      "label": "version_incompatibility",
+      "status": "todo",
+      "headline": "1 problem to fix",
+      "issues": [
+        {
+          "tool": "pytest_run",
+          "title": "ValueError · test_app.py::test_solve_all",
+          "diagnosis": "version_incompatibility",
+          "rule": "H08",
+          "source": "heuristic",
+          "evidence": {
+            "exception": "ValueError",
+            "raised_in": "third_party",
+            "where": "app.py:8",
+            "source_location": "app.py:8",
+            "library": "numpy"
+          }
+        },
+        {
+          "tool": "ruff",
+          "title": "Could not start ruff in the target environment: <runs>/numpy_solve_batched_vector/venv/bin/p",
+          "diagnosis": null,
+          "rule": null,
+          "source": null,
+          "evidence": {
+            "exception": "",
+            "raised_in": "unknown",
+            "where": "",
+            "source_location": "",
+            "library": ""
+          }
+        }
+      ],
+      "steps": [
+        {
+          "title": "Try numpy below 2: the project declares numpy>=1.21, this environment has 2.2.6",
+          "explanation": "requirements.txt:1 declares numpy>=1.21, whose minimum is 1.21; this alone does not establish which version the project was written or tested with. The observed failure suggests a compatibility check against installed numpy 2.2.6. In a disposable environment, test a compatible older release while preserving the project's other dependency constraints, or update the affected call using the migration guide. The suggested bound has not been verified to fix this project.",
+          "command": "<runs>/numpy_solve_batched_vector/venv/bin/python -m pip install 'numpy<2'",
+          "cause": null,
+          "possible": "Version incompatibility",
+          "where": [
+            "app.py:8"
+          ],
+          "rules": [
+            "H08: The failure is raised inside a library that the project's code calls, and the installed library is a major version newer than the lowest version the project declares: code written for the older version may not behave the same."
+          ],
+          "suspected": false,
+          "gather": false,
+          "search": false
+        }
+      ],
+      "optional": [],
+      "first_diagnosis": "version_incompatibility",
+      "first_step": "Try numpy below 2: the project declares numpy>=1.21, this environment has 2.2.6"
+    },
+    {
+      "name": "stdlib_safeconfigparser_removed",
+      "kind": "positive",
+      "label": "version_incompatibility",
+      "status": "todo",
+      "headline": "1 problem to fix",
+      "issues": [
+        {
+          "tool": "pytest_run",
+          "title": "ImportError: cannot import name 'SafeConfigParser' from 'configparser' (<home>/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/configparser.py). Did you mean: 'RawConf",
+          "diagnosis": "version_incompatibility",
+          "rule": "F01",
+          "source": "model",
+          "evidence": {
+            "exception": "ImportError",
+            "raised_in": "project",
+            "where": "settings.py:1",
+            "source_location": "settings.py:1",
+            "library": ""
+          }
+        },
+        {
+          "tool": "ruff",
+          "title": "Could not start ruff in the target environment: <runs>/stdlib_safeconfigparser_removed/venv/",
+          "diagnosis": null,
+          "rule": null,
+          "source": null,
+          "evidence": {
+            "exception": "",
+            "raised_in": "unknown",
+            "where": "",
+            "source_location": "",
+            "library": ""
+          }
+        }
+      ],
+      "steps": [
+        {
+          "title": "Check the import path and dependency declarations",
+          "explanation": "The import failed and the recorded evidence does not identify one cause. Compare the failing import with the project layout, the declarations and the installed packages. Do not install a package based on the import name alone.",
+          "command": null,
+          "cause": null,
+          "possible": "Version incompatibility",
+          "where": [
+            "settings.py:1"
+          ],
+          "rules": [
+            "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+          ],
+          "suspected": false,
+          "gather": false,
+          "search": false
+        }
+      ],
+      "optional": [],
+      "first_diagnosis": "version_incompatibility",
+      "first_step": "Check the import path and dependency declarations"
+    },
+    {
+      "name": "yaml_tab_indentation",
+      "kind": "counterexample",
+      "label": "code_defect",
+      "status": "todo",
+      "headline": "1 problem to fix",
+      "issues": [
+        {
+          "tool": "pytest_run",
+          "title": "ScannerError · test_app.py::test_limits",
+          "diagnosis": "version_incompatibility",
+          "rule": "H08",
+          "source": "heuristic",
+          "evidence": {
+            "exception": "ScannerError",
+            "raised_in": "third_party",
+            "where": "app.py:8",
+            "source_location": "app.py:8",
+            "library": "yaml"
+          }
+        },
+        {
+          "tool": "ruff",
+          "title": "Could not start ruff in the target environment: <runs>/yaml_tab_indentation/venv/bin/python:",
+          "diagnosis": null,
+          "rule": null,
+          "source": null,
+          "evidence": {
+            "exception": "",
+            "raised_in": "unknown",
+            "where": "",
+            "source_location": "",
+            "library": ""
+          }
+        }
+      ],
+      "steps": [
+        {
+          "title": "Try pyyaml below 6: the project declares pyyaml>=5.1, this environment has 6.0.2",
+          "explanation": "requirements.txt:1 declares pyyaml>=5.1, whose minimum is 5.1; this alone does not establish which version the project was written or tested with. The observed failure suggests a compatibility check against installed pyyaml 6.0.2. In a disposable environment, test a compatible older release while preserving the project's other dependency constraints, or update the affected call using the migration guide. The suggested bound has not been verified to fix this project.",
+          "command": "<runs>/yaml_tab_indentation/venv/bin/python -m pip install 'pyyaml<6'",
+          "cause": null,
+          "possible": "Version incompatibility",
+          "where": [
+            "app.py:8"
+          ],
+          "rules": [
+            "H08: The failure is raised inside a library that the project's code calls, and the installed library is a major version newer than the lowest version the project declares: code written for the older version may not behave the same."
+          ],
+          "suspected": false,
+          "gather": false,
+          "search": false
+        }
+      ],
+      "optional": [],
+      "first_diagnosis": "version_incompatibility",
+      "first_step": "Try pyyaml below 6: the project declares pyyaml>=5.1, this environment has 6.0.2"
+    },
+    {
+      "name": "numpy_reshape_off_by_one",
+      "kind": "counterexample",
+      "label": "code_defect",
+      "status": "todo",
+      "headline": "1 problem to fix",
+      "issues": [
+        {
+          "tool": "pytest_run",
+          "title": "ValueError · test_app.py::test_to_grid",
+          "diagnosis": "version_incompatibility",
+          "rule": "H08",
+          "source": "heuristic",
+          "evidence": {
+            "exception": "ValueError",
+            "raised_in": "third_party",
+            "where": "app.py:6",
+            "source_location": "app.py:6",
+            "library": "numpy"
+          }
+        },
+        {
+          "tool": "ruff",
+          "title": "Could not start ruff in the target environment: <runs>/numpy_reshape_off_by_one/venv/bin/pyt",
+          "diagnosis": null,
+          "rule": null,
+          "source": null,
+          "evidence": {
+            "exception": "",
+            "raised_in": "unknown",
+            "where": "",
+            "source_location": "",
+            "library": ""
+          }
+        }
+      ],
+      "steps": [
+        {
+          "title": "Try numpy below 2: the project declares numpy>=1.21, this environment has 2.2.6",
+          "explanation": "requirements.txt:1 declares numpy>=1.21, whose minimum is 1.21; this alone does not establish which version the project was written or tested with. The observed failure suggests a compatibility check against installed numpy 2.2.6. In a disposable environment, test a compatible older release while preserving the project's other dependency constraints, or update the affected call using the migration guide. The suggested bound has not been verified to fix this project.",
+          "command": "<runs>/numpy_reshape_off_by_one/venv/bin/python -m pip install 'numpy<2'",
+          "cause": null,
+          "possible": "Version incompatibility",
+          "where": [
+            "app.py:6"
+          ],
+          "rules": [
+            "H08: The failure is raised inside a library that the project's code calls, and the installed library is a major version newer than the lowest version the project declares: code written for the older version may not behave the same."
+          ],
+          "suspected": false,
+          "gather": false,
+          "search": false
+        }
+      ],
+      "optional": [],
+      "first_diagnosis": "version_incompatibility",
+      "first_step": "Try numpy below 2: the project declares numpy>=1.21, this environment has 2.2.6"
+    },
+    {
+      "name": "click_option_typo",
+      "kind": "counterexample",
+      "label": "code_defect",
+      "status": "todo",
+      "headline": "1 problem to fix",
+      "issues": [
+        {
+          "tool": "pytest_run",
+          "title": "Assertion failed · test_cli.py::test_hello_by_name",
+          "diagnosis": "code_defect",
+          "rule": "D40",
+          "source": "rule",
+          "evidence": {
+            "exception": "AssertionError",
+            "raised_in": "test",
+            "where": "test_cli.py:8",
+            "source_location": "test_cli.py:8",
+            "library": ""
+          }
+        },
+        {
+          "tool": "ruff",
+          "title": "Could not start ruff in the target environment: <runs>/click_option_typo/venv/bin/python: No",
+          "diagnosis": null,
+          "rule": null,
+          "source": null,
+          "evidence": {
+            "exception": "",
+            "raised_in": "unknown",
+            "where": "",
+            "source_location": "",
+            "library": ""
+          }
+        }
+      ],
+      "steps": [
+        {
+          "title": "Compare the failed assertion's expected and actual values",
+          "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+          "command": null,
+          "cause": "Defect in project code or tests",
+          "possible": null,
+          "where": [
+            "test_cli.py:8"
+          ],
+          "rules": [
+            "D40: A test assertion failed: the observed behaviour differs from the test's expectation."
+          ],
+          "suspected": false,
+          "gather": false,
+          "search": false
+        }
+      ],
+      "optional": [],
+      "first_diagnosis": "code_defect",
+      "first_step": "Compare the failed assertion's expected and actual values"
+    },
+    {
+      "name": "pydantic_field_name_typo",
+      "kind": "counterexample",
+      "label": "code_defect",
+      "status": "todo",
+      "headline": "1 problem to fix",
+      "issues": [
+        {
+          "tool": "pytest_run",
+          "title": "ValidationError · test_app.py::test_from_form",
+          "diagnosis": "code_defect",
+          "rule": "F01",
+          "source": "model",
+          "evidence": {
+            "exception": "ValidationError",
+            "raised_in": "third_party",
+            "where": "app.py:10",
+            "source_location": "app.py:10",
+            "library": "pydantic"
+          }
+        },
+        {
+          "tool": "ruff",
+          "title": "Could not start ruff in the target environment: <runs>/pydantic_field_name_typo/venv/bin/pyt",
+          "diagnosis": null,
+          "rule": null,
+          "source": null,
+          "evidence": {
+            "exception": "",
+            "raised_in": "unknown",
+            "where": "",
+            "source_location": "",
+            "library": ""
+          }
+        }
+      ],
+      "steps": [
+        {
+          "title": "Inspect the exception raised while running the test",
+          "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+          "command": null,
+          "cause": null,
+          "possible": "Defect in project code or tests",
+          "where": [
+            "app.py:10"
+          ],
+          "rules": [
+            "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+          ],
+          "suspected": false,
+          "gather": false,
+          "search": false
+        }
+      ],
+      "optional": [],
+      "first_diagnosis": "code_defect",
+      "first_step": "Inspect the exception raised while running the test"
+    },
+    {
+      "name": "healthy_deprecations",
+      "kind": "control",
+      "label": null,
+      "status": "done",
+      "headline": "All tests pass",
+      "issues": [
+        {
+          "tool": "ruff",
+          "title": "Could not start ruff in the target environment: <runs>/healthy_deprecations/venv/bin/python:",
+          "diagnosis": null,
+          "rule": null,
+          "source": null,
+          "evidence": {
+            "exception": "",
+            "raised_in": "unknown",
+            "where": "",
+            "source_location": "",
+            "library": ""
+          }
+        }
+      ],
+      "steps": [],
+      "optional": [],
+      "first_diagnosis": null,
+      "first_step": null
+    }
+  ]
+}

@@ -101,6 +101,18 @@ when = [
 then = [["?i", "documented_behavior", "?b"]]
 
 [[rule]]
+id = "G16"
+phase = "derive"
+description = "A narrowly matched version-specific behavior can support migration guidance even when the project records no minimum or locked version."
+when = [
+  ["?i", "behavior_symptom", "?b"], ["?b", "changed_in", "?d"], ["?b", "changed_in_version", "?v"],
+  ["?b", "without_version_record", "yes"], ["?d", "installed_version", "?iv"],
+  ["test", "version_gte", "?iv", "?v"],
+  ["not", "?d", "declared_minimum", "?_"], ["not", "?d", "tested_version", "?_"],
+]
+then = [["?i", "documented_behavior", "?b"]]
+
+[[rule]]
 id = "G15"
 phase = "derive"
 description = "A matching documented change postdates the project's recorded tested version, when no minimum declaration is available."
@@ -143,7 +155,7 @@ then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "replac
 [[rule]]
 id = "D03"
 phase = "diagnose"
-description = "The code calls a method name that the installed Python version removed (for example unittest aliases)."
+description = "The code calls a method name that the installed Python or library version removed (for example unittest aliases or NumPy ndarray methods)."
 source = "knowledge: removed attributes"
 when = [
   ["?i", "attribute", "?x"],
@@ -514,11 +526,13 @@ then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?
 id = "H06"
 phase = "heuristic"
 status = "hypothesis"
-description = "The failure is raised inside a library that is a major version newer than the one the project's lock file records: behaviour changed between those versions."
+description = "An import, attribute or call-signature failure occurs inside a library newer than the project's locked major version; with no specific explanation, investigate that API difference."
 when = [
   ["?i", "raised_by_library", "?d"], ["?d", "tested_version", "?tv"], ["?d", "installed_version", "?iv"],
+  ["?i", "signal", "?shape"], ["test", "in", "?shape", "cannot_import_name,no_attribute,call_signature"],
   ["test", "major_gt", "?iv", "?tv"], ["not", "?i", "diagnosis", "?_"],
   ["not", "?i", "exception", "ValidationError"], ["not", "?i", "documented_behavior", "?_"],
+  ["not", "?i", "input_symptom", "?_"],
 ]
 then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
 
@@ -547,19 +561,20 @@ when = [
 ]
 then = [["?i", "likely", "code_defect"], ["?i", "likely_because", "?m"]]
 
+# H08 retired: a declared minimum is a supported bound, not a record of a
+# successful older run. It cannot by itself justify a compatibility diagnosis.
+# Specific recorded changes use H10; a tested-version difference uses H06.
+
 [[rule]]
-id = "H08"
+id = "H12"
 phase = "heuristic"
 status = "hypothesis"
-description = "The failure is raised inside a library that the project's code calls, and the installed library is a major version newer than the lowest version the project declares: code written for the older version may not behave the same."
+description = "The raising library rejected input under a documented validation contract; inspect that value before changing dependencies."
 when = [
-  ["?i", "raised_by_library", "?d"], ["?i", "project_calls", "?d"], ["?d", "declared_minimum", "?mv"],
-  ["?d", "installed_version", "?iv"], ["test", "major_gt", "?iv", "?mv"],
-  ["not", "?d", "is_test_runner", "yes"], ["not", "?d", "tested_version", "?_"],
-  ["not", "?i", "diagnosis", "?_"],
-  ["not", "?i", "exception", "ValidationError"], ["not", "?i", "documented_behavior", "?_"],
+  ["?i", "input_symptom", "?s"], ["?i", "input_provider", "?d"], ["?s", "input_rejected_by", "?d"],
+  ["not", "?i", "diagnosis", "?_"], ["not", "?i", "documented_behavior", "?_"],
 ]
-then = [["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"]]
+then = [["?i", "likely", "code_defect"], ["?i", "likely_because", "?s"]]
 
 [[rule]]
 id = "H10"
@@ -1037,31 +1052,30 @@ kind = "manual_fix"
 cause = "version_incompatibility"
 issue = "?i"
 cost = 1
-title = "Try {?d} below {?b}: the project was tested with {?d} {?tv}, this environment has {?iv}"
-explanation = "The failure is raised inside {?d}, and {?src} records that the project worked with {?d} {?tv}; the installed {?iv} is a newer major version, which usually changes behaviour. Install {?d} below {?b} to return to the release series the project was tested with, or update the project for the new version."
+title = "Check the locked {?d} {?tv} series below {?b}; this environment has {?iv}"
+explanation = "The failure is raised inside {?d}, and {?src} locks {?d} {?tv}, while the installed {?iv} is a newer major version. The lock file alone does not prove that these inputs passed on the older version. In a disposable environment, check the locked series below {?b} while preserving the project's other constraints, or investigate a specific migration. The suggested bound has not been verified to fix this failure."
 pip_install = "{?d}<{?b}"
 verification = "Re-run the tests with the same interpreter"
 
+# P62 retired together with H08: do not manufacture a downgrade bound from >=.
+
 [[rule]]
-id = "P62"
+id = "P67"
 phase = "plan"
-description = "Go back to the major version of the library that the project declares."
+description = "Explain the input rejected by the actual library without recommending an unrelated downgrade."
 when = [
-  ["?i", "likely", "version_incompatibility"], ["?i", "likely_because", "?d"],
-  ["?d", "declared_spec", "?spec"], ["?d", "declared_in_file", "?src"], ["?d", "declared_minimum", "?mv"],
-  ["?d", "declared_major_below", "?b"], ["?d", "installed_version", "?iv"],
-  ["test", "major_gt", "?iv", "?mv"], ["not", "?d", "tested_version", "?_"],
+  ["?i", "likely", "code_defect"], ["?i", "likely_because", "?s"], ["?s", "input_rejected_by", "?d"],
+  ["?s", "action_title", "?title"], ["?s", "input_guidance", "?guide"],
 ]
 [rule.action]
-id = "declared-{?d}"
+id = "input-{?s}"
 kind = "manual_fix"
-cause = "version_incompatibility"
+cause = "code_defect"
 issue = "?i"
-cost = 2
-title = "Try {?d} below {?b}: the project declares {?spec}, this environment has {?iv}"
-explanation = "{?src} declares {?spec}, whose minimum is {?mv}; this alone does not establish which version the project was written or tested with. The observed failure suggests a compatibility check against installed {?d} {?iv}. In a disposable environment, test a compatible older release while preserving the project's other dependency constraints, or update the affected call using the migration guide. The suggested bound has not been verified to fix this project."
-pip_install = "{?d}<{?b}"
-verification = "Re-run the tests with the same interpreter"
+cost = 1
+title = "{?title}"
+explanation = "{?guide} The recorded exception shows a rejected input; verify the intended correction with the original checks."
+verification = "Rerun the affected program or tests without weakening the test expectations"
 
 [[rule]]
 id = "P63"

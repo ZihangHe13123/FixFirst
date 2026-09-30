@@ -1,0 +1,494 @@
+{
+  "kind": "fixed_model_recorded_development_comparison",
+  "limits": "Fixed models on existing development observations, including fitting data. Old snapshots lack the new runtime metadata. This is regression replay, not independent evaluation, cross-validation, or fresh project execution. The real-records snapshot lacks generator-consumption context; it now gets input guidance and misses the original version label (6/6 to 5/6 in either full system). No data or labels were changed.",
+  "before_head": "39244136ec06ff1d3a714cdb9a3a11c213b189ea",
+  "after_head": "18f2875",
+  "before_source_sha256": {
+    "__init__.py": "7042a3ae28ec8b6423586c61b0ab382b541447cb17be5c5c412cbb0d4a7426c8",
+    "__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+    "_notebook_runner.py": "9a16e715352f07284c9952b1b7027920f82691b55fcda1699a64be5c2b5ec154",
+    "_unittest_runner.py": "d3355279df8bcb486b968177fbfc0881e974eb602f83118c3a194ce70bd08f17",
+    "_winprocess.py": "a57855d492192b3ac29004d1212f135721ac930c6b2bfba30dce1496840ad1b4",
+    "behavior.py": "c6be940266fca26e382ab0cfe4c10cc3ec51e56008dbbce80614b19d77847a76",
+    "cases.py": "f4e25213b6902b081bdda50ab896903f91a23280496ff23cc3f587f4809c170d",
+    "classification.py": "bfa74a12e35c72a93928a80913108a72e9d791c4f6ac9261570804707d099980",
+    "cli.py": "8bc63822fddf8a06221c47a4d045c81c522d2c4df7e69b9c80ff94ca73a545e6",
+    "diagnosis_cases.py": "e2dc754c8c7396d35edadd2b10165200f346512f5b2d5faaf788987a3417b9f7",
+    "domain.py": "4c37f4e01a476961528a85433e4c6fb0f32a670fb66bb0bab5b45ed1acc6b6fc",
+    "engine.py": "2af0f39c39db97f95d50662a971a0a47a3a6ebc5af517d5c49515de0a289105e",
+    "evaluation.py": "d005b91fe3eb0fa8f69afa0068c1164c5180de1b2391a744bb9a2109d9dd5932",
+    "evidence.py": "dda69ca3895b30a638785f92f9b3b4f644681833cea912dfad5ad3c3f3d73be0",
+    "execution.py": "f83c009c6ea21d252bfd17fb66adf04e0631ca8b6571f45873d96c519bf29e2f",
+    "execution_cases.py": "49d0f5f4d1ac3158101046d205c17602a00cc5f35e9da59c99c9cf71d75f556c",
+    "execution_parsers.py": "8486f3065a6c8321c631b32b8945d5217d4f83a62145a0d2ec7ec6121ef36af9",
+    "facts.py": "b29760f3b776c94a624269a05316e75baac6905972679a0d3c052039a795cb5d",
+    "grouping.py": "b432e844d5c6add7c36b24057c7ce3a9dff8b5855d0efb3e5703121848aeed0f",
+    "hard_cases.py": "e729c1476e9b8bb4adf3e18f2d419c68173a2cb3bf512539c47224f70daa7833",
+    "historical_cases.py": "5d0ed255be14aae2f91dd5bed04ebe92723e46294abd1b6f94d4c20d098cbb90",
+    "integrity.py": "bf8611264df5695dfc379fe0b657c5560cba82e2057d3cd4d2ecac368e4b3344",
+    "interactive.py": "5308cb305bf117546f51ee7796accb1515c426f165cd8e823db6024d175dd01a",
+    "interface_history.py": "14a7f36f742e08827eeb288af2c88e9b465b858c988c0dcb9b15506095fe7ade",
+    "knowledge/diagnosis_tree.json": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3",
+    "knowledge/domain.toml": "d7bdf8abeaed6a9f9fab4963dc5f9a10b39dfbf44fa11ddb431562b3468dc631",
+    "knowledge/rules.toml": "3fbbef3164969db3ca256807b1ee42d2a7d2c97621a36493bafdca91f585eb01",
+    "knowledge_graph.py": "ea7b0c3f9f0b1e834f353bc459b48eabd8843a273aa8097718a14b4c413af03d",
+    "mcp_server.py": "a507925d1f0ac7d1ea1dd1e5ff0e37ca32e9e23c957d6946e4f487da384d4377",
+    "models.py": "6f9a4d50de1c0e554669587a7947fba5f7fc45781c1a9afc77f0cc086803067b",
+    "multi_cases.py": "43d6f7cca66c4056d293a26f4d6fd924c07a55bef03fc074e613cfe6ff36733d",
+    "parsers.py": "89adc1de9e4df84d9fd9b79826dea2a71dc27061cfbd0ad2c3489b4d4e5ca2c5",
+    "playground.py": "f813c09dc4708672778f53dd6b7c87827121f6f2e11093524a0e9a30d568322d",
+    "probe.py": "be077167074b7d83fced2168b029befa02200881fda3ee852d46614ae2d2a98a",
+    "processes.py": "f86b783afb16e189c385fbf53f728b0151d6ebce88c38ac8cc1586c628412f0e",
+    "project.py": "13899ce72ebb758b8ad2b0b1bf74de60af8894d6f52ff520c600ab4e722b3f96",
+    "reasoning.py": "f58edb8f289928278767b4b4311cf40848e1fc90253a051933188fa0c02d0392",
+    "report.py": "15dc24d68df2746eb2b61f4791e634ff38f8ca80128fe3d6f718c6c12d785789",
+    "runner.py": "0be0423cf01a7eddf7a6c2f407782941a9257818d520a50041e68bc22709c54a",
+    "service.py": "d216d699c54d61ede7ba3ddea744c811c6b71f710c05cb8a7bf68c7602cc0856",
+    "source_context.py": "051e4f6a532676d5028ba45f2d1814bb1845d638802dca97a9dc3cea2935055a",
+    "storage.py": "590f5dc772005a97d7f16db8772fe23745d2b5d35329c3030e86e003fa08d1cf",
+    "templates/base.html": "b724f3c367b1ad1fb5a4be708f921c55523cab221fe5687ae914500e48ec0328",
+    "templates/index.html": "fd909dff619acc1182c00dda308c061da804e1cb343ad4048e82331641d4db0d",
+    "templates/report.html": "c9d338cc53c28ac50791927393ec054168e788d26a521f5ca08914c38f88ba24",
+    "templates/workspace.html": "0f9f5c6f3bb9b5d9f531d0398a12573fa277b319f87c7543ae95c0b60a14fcf5",
+    "test_results.py": "13f15b576756e7adb8928e1f1a587c8a47d5ececafbf240bdec57ea52de6cde2",
+    "versions.py": "0665aae34b72493cc277ea0cc0abb7db991b1795dd08525c4c97b6a9596b4180",
+    "web.py": "c440b25c10f3fb0c880812e400fd479cab8c6b4f9b68cae3b5a731601be353e8",
+    "workspace.py": "ff9c1ee73903c3fb2bb135ef88ca7f63524430370b81fc8de638a4c8a6488fab"
+  },
+  "after_source_sha256": {
+    "__init__.py": "7042a3ae28ec8b6423586c61b0ab382b541447cb17be5c5c412cbb0d4a7426c8",
+    "__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+    "_notebook_runner.py": "9a16e715352f07284c9952b1b7027920f82691b55fcda1699a64be5c2b5ec154",
+    "_runtime_evidence.py": "406480fea2a622fd111e63ba3af5281585f69e880806129d9048667bca61dfd0",
+    "_unittest_runner.py": "abb94b5f4852a575ecdd0bc8702ce3758724bd55fca00c6e806055a483053356",
+    "_winprocess.py": "a57855d492192b3ac29004d1212f135721ac930c6b2bfba30dce1496840ad1b4",
+    "behavior.py": "4c308ec9b93854d877dce8d79e8f590916730f64153e7abdf98493c6c50d53d0",
+    "cases.py": "f4e25213b6902b081bdda50ab896903f91a23280496ff23cc3f587f4809c170d",
+    "classification.py": "bfa74a12e35c72a93928a80913108a72e9d791c4f6ac9261570804707d099980",
+    "cli.py": "8bc63822fddf8a06221c47a4d045c81c522d2c4df7e69b9c80ff94ca73a545e6",
+    "diagnosis_cases.py": "e2dc754c8c7396d35edadd2b10165200f346512f5b2d5faaf788987a3417b9f7",
+    "domain.py": "ca0dfb3323a7a927b73dd1e2a19588d0d22b81a0e18b001b3e85549a6c566698",
+    "engine.py": "2af0f39c39db97f95d50662a971a0a47a3a6ebc5af517d5c49515de0a289105e",
+    "evaluation.py": "d005b91fe3eb0fa8f69afa0068c1164c5180de1b2391a744bb9a2109d9dd5932",
+    "evidence.py": "4bf7d6d6631f34efd74e7c01a02ac574f0d126cef6377b7b4045aadbe03137a4",
+    "execution.py": "f83c009c6ea21d252bfd17fb66adf04e0631ca8b6571f45873d96c519bf29e2f",
+    "execution_cases.py": "49d0f5f4d1ac3158101046d205c17602a00cc5f35e9da59c99c9cf71d75f556c",
+    "execution_parsers.py": "8486f3065a6c8321c631b32b8945d5217d4f83a62145a0d2ec7ec6121ef36af9",
+    "facts.py": "b29760f3b776c94a624269a05316e75baac6905972679a0d3c052039a795cb5d",
+    "grouping.py": "b432e844d5c6add7c36b24057c7ce3a9dff8b5855d0efb3e5703121848aeed0f",
+    "hard_cases.py": "e729c1476e9b8bb4adf3e18f2d419c68173a2cb3bf512539c47224f70daa7833",
+    "historical_cases.py": "5d0ed255be14aae2f91dd5bed04ebe92723e46294abd1b6f94d4c20d098cbb90",
+    "integrity.py": "bf8611264df5695dfc379fe0b657c5560cba82e2057d3cd4d2ecac368e4b3344",
+    "interactive.py": "5308cb305bf117546f51ee7796accb1515c426f165cd8e823db6024d175dd01a",
+    "interface_history.py": "14a7f36f742e08827eeb288af2c88e9b465b858c988c0dcb9b15506095fe7ade",
+    "knowledge/diagnosis_tree.json": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3",
+    "knowledge/domain.toml": "037c8a304420a31d0a2f74bc21498369329239bf395c6515ffd7a9131e8ffd6f",
+    "knowledge/rules.toml": "7158b63796984ef61f142e36047afdec00ce04c2494302a06df91170202ff144",
+    "knowledge_graph.py": "ea7b0c3f9f0b1e834f353bc459b48eabd8843a273aa8097718a14b4c413af03d",
+    "mcp_server.py": "a507925d1f0ac7d1ea1dd1e5ff0e37ca32e9e23c957d6946e4f487da384d4377",
+    "models.py": "6f9a4d50de1c0e554669587a7947fba5f7fc45781c1a9afc77f0cc086803067b",
+    "multi_cases.py": "43d6f7cca66c4056d293a26f4d6fd924c07a55bef03fc074e613cfe6ff36733d",
+    "parsers.py": "89adc1de9e4df84d9fd9b79826dea2a71dc27061cfbd0ad2c3489b4d4e5ca2c5",
+    "playground.py": "f813c09dc4708672778f53dd6b7c87827121f6f2e11093524a0e9a30d568322d",
+    "probe.py": "41b8ae2ac43bda89221e934f39ce306e965c1836d148ea3976c2e0272e7c35d3",
+    "processes.py": "f86b783afb16e189c385fbf53f728b0151d6ebce88c38ac8cc1586c628412f0e",
+    "project.py": "d8cc6a60a0ba238b263b4fed7e6098f781464faae2128edbe5801f4fc8501d9a",
+    "reasoning.py": "79f8cda62d4100f3374ab94d1828499af7176d0f78e0ac70cf16addd02cea1be",
+    "report.py": "15dc24d68df2746eb2b61f4791e634ff38f8ca80128fe3d6f718c6c12d785789",
+    "runner.py": "ce016fd1c32699a5d37a75bf900abc265431ba25f6c1f71f29633579188e4764",
+    "service.py": "d216d699c54d61ede7ba3ddea744c811c6b71f710c05cb8a7bf68c7602cc0856",
+    "source_context.py": "051e4f6a532676d5028ba45f2d1814bb1845d638802dca97a9dc3cea2935055a",
+    "storage.py": "590f5dc772005a97d7f16db8772fe23745d2b5d35329c3030e86e003fa08d1cf",
+    "templates/base.html": "b724f3c367b1ad1fb5a4be708f921c55523cab221fe5687ae914500e48ec0328",
+    "templates/index.html": "fd909dff619acc1182c00dda308c061da804e1cb343ad4048e82331641d4db0d",
+    "templates/report.html": "c9d338cc53c28ac50791927393ec054168e788d26a521f5ca08914c38f88ba24",
+    "templates/workspace.html": "0f9f5c6f3bb9b5d9f531d0398a12573fa277b319f87c7543ae95c0b60a14fcf5",
+    "test_results.py": "13f15b576756e7adb8928e1f1a587c8a47d5ececafbf240bdec57ea52de6cde2",
+    "versions.py": "0665aae34b72493cc277ea0cc0abb7db991b1795dd08525c4c97b6a9596b4180",
+    "web.py": "c440b25c10f3fb0c880812e400fd479cab8c6b4f9b68cae3b5a731601be353e8",
+    "workspace.py": "ff9c1ee73903c3fb2bb135ef88ca7f63524430370b81fc8de638a4c8a6488fab"
+  },
+  "models_unchanged": true,
+  "model_sha256": {
+    "default44": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3",
+    "candidate61": "e32b5d6a4ff043afc48a80718b5ec9e95668b82895be58011394772c6723153a"
+  },
+  "sets": {
+    "generated": {
+      "input": "experiments/core_diagnosis/observation-development-2026-09-30/data/generated",
+      "data_sha256": "eb0a649b57ce99beb41f661ecea436fb3b71bac9ce7df1ffa7eafdaeb0ce3d8f",
+      "models": {
+        "default44": {
+          "before": {
+            "tree": {
+              "correct": 200,
+              "total": 215
+            },
+            "hybrid": {
+              "correct": 215,
+              "total": 215
+            }
+          },
+          "after": {
+            "tree": {
+              "correct": 200,
+              "total": 215
+            },
+            "hybrid": {
+              "correct": 215,
+              "total": 215
+            }
+          },
+          "hybrid_changes": [],
+          "remaining_hybrid_misses": []
+        },
+        "candidate61": {
+          "before": {
+            "tree": {
+              "correct": 210,
+              "total": 215
+            },
+            "hybrid": {
+              "correct": 215,
+              "total": 215
+            }
+          },
+          "after": {
+            "tree": {
+              "correct": 210,
+              "total": 215
+            },
+            "hybrid": {
+              "correct": 215,
+              "total": 215
+            }
+          },
+          "hybrid_changes": [],
+          "remaining_hybrid_misses": []
+        }
+      }
+    },
+    "hard": {
+      "input": "experiments/core_diagnosis/observation-development-2026-09-30/data/hard",
+      "data_sha256": "8cae1460b240432555290af05304660940c3bef5e1176d5c24473448571722c9",
+      "models": {
+        "default44": {
+          "before": {
+            "tree": {
+              "correct": 5,
+              "total": 30
+            },
+            "hybrid": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "after": {
+            "tree": {
+              "correct": 5,
+              "total": 30
+            },
+            "hybrid": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "hybrid_changes": [],
+          "remaining_hybrid_misses": []
+        },
+        "candidate61": {
+          "before": {
+            "tree": {
+              "correct": 15,
+              "total": 30
+            },
+            "hybrid": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "after": {
+            "tree": {
+              "correct": 15,
+              "total": 30
+            },
+            "hybrid": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "hybrid_changes": [],
+          "remaining_hybrid_misses": []
+        }
+      }
+    },
+    "controls": {
+      "input": "experiments/core_diagnosis/observation-development-2026-09-30/data/counterexamples",
+      "data_sha256": "7d68e0f7821bea20ba7030325fd943821dc5b12f7f6f6b63c15ea122189b5ad6",
+      "models": {
+        "default44": {
+          "before": {
+            "tree": {
+              "correct": 14,
+              "total": 14
+            },
+            "hybrid": {
+              "correct": 14,
+              "total": 14
+            }
+          },
+          "after": {
+            "tree": {
+              "correct": 14,
+              "total": 14
+            },
+            "hybrid": {
+              "correct": 14,
+              "total": 14
+            }
+          },
+          "hybrid_changes": [],
+          "remaining_hybrid_misses": []
+        },
+        "candidate61": {
+          "before": {
+            "tree": {
+              "correct": 11,
+              "total": 14
+            },
+            "hybrid": {
+              "correct": 14,
+              "total": 14
+            }
+          },
+          "after": {
+            "tree": {
+              "correct": 11,
+              "total": 14
+            },
+            "hybrid": {
+              "correct": 14,
+              "total": 14
+            }
+          },
+          "hybrid_changes": [],
+          "remaining_hybrid_misses": []
+        }
+      }
+    },
+    "real": {
+      "input": "experiments/core_diagnosis/observation-development-2026-09-30/data/real",
+      "data_sha256": "818652d67ec8c97b6b4dd402e6269ba96065d5386312596c092dc10ea0e8ea92",
+      "models": {
+        "default44": {
+          "before": {
+            "tree": {
+              "correct": 3,
+              "total": 6
+            },
+            "hybrid": {
+              "correct": 6,
+              "total": 6
+            }
+          },
+          "after": {
+            "tree": {
+              "correct": 3,
+              "total": 6
+            },
+            "hybrid": {
+              "correct": 5,
+              "total": 6
+            }
+          },
+          "hybrid_changes": [
+            {
+              "case": "real-records",
+              "truth": "version_incompatibility",
+              "before": "version_incompatibility",
+              "after": "code_defect"
+            }
+          ],
+          "remaining_hybrid_misses": [
+            {
+              "case": "real-records",
+              "truth": "version_incompatibility",
+              "prediction": "code_defect"
+            }
+          ]
+        },
+        "candidate61": {
+          "before": {
+            "tree": {
+              "correct": 5,
+              "total": 6
+            },
+            "hybrid": {
+              "correct": 6,
+              "total": 6
+            }
+          },
+          "after": {
+            "tree": {
+              "correct": 5,
+              "total": 6
+            },
+            "hybrid": {
+              "correct": 5,
+              "total": 6
+            }
+          },
+          "hybrid_changes": [
+            {
+              "case": "real-records",
+              "truth": "version_incompatibility",
+              "before": "version_incompatibility",
+              "after": "code_defect"
+            }
+          ],
+          "remaining_hybrid_misses": [
+            {
+              "case": "real-records",
+              "truth": "version_incompatibility",
+              "prediction": "code_defect"
+            }
+          ]
+        }
+      }
+    },
+    "legacy_generated": {
+      "input": "examples/diagnosis-dataset",
+      "data_sha256": "24b5392de44c4359621bd9f5f1600070d30491e1e42d74d7602482f3c9c50173",
+      "models": {
+        "default44": {
+          "before": {
+            "tree": {
+              "correct": 200,
+              "total": 215
+            },
+            "hybrid": {
+              "correct": 210,
+              "total": 215
+            }
+          },
+          "after": {
+            "tree": {
+              "correct": 200,
+              "total": 215
+            },
+            "hybrid": {
+              "correct": 210,
+              "total": 215
+            }
+          },
+          "hybrid_changes": [],
+          "remaining_hybrid_misses": [
+            {
+              "case": "flat-shop--vi_removed_kwarg",
+              "truth": "version_incompatibility",
+              "prediction": null
+            },
+            {
+              "case": "src-billing--vi_removed_kwarg",
+              "truth": "version_incompatibility",
+              "prediction": null
+            },
+            {
+              "case": "pkg-inventory--vi_removed_kwarg",
+              "truth": "version_incompatibility",
+              "prediction": null
+            },
+            {
+              "case": "unittest-grades--vi_removed_kwarg",
+              "truth": "version_incompatibility",
+              "prediction": null
+            },
+            {
+              "case": "fixture-orders--vi_removed_kwarg",
+              "truth": "version_incompatibility",
+              "prediction": null
+            }
+          ]
+        },
+        "candidate61": {
+          "before": {
+            "tree": {
+              "correct": 210,
+              "total": 215
+            },
+            "hybrid": {
+              "correct": 215,
+              "total": 215
+            }
+          },
+          "after": {
+            "tree": {
+              "correct": 210,
+              "total": 215
+            },
+            "hybrid": {
+              "correct": 215,
+              "total": 215
+            }
+          },
+          "hybrid_changes": [],
+          "remaining_hybrid_misses": []
+        }
+      }
+    },
+    "legacy_hard": {
+      "input": "experiments/core_diagnosis/development-2026-09-30/data",
+      "data_sha256": "831b6a61b26da4a776a74ecebe4faf4e32df4da8dc35eabb5ad4ce4fdd55d860",
+      "models": {
+        "default44": {
+          "before": {
+            "tree": {
+              "correct": 5,
+              "total": 30
+            },
+            "hybrid": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "after": {
+            "tree": {
+              "correct": 5,
+              "total": 30
+            },
+            "hybrid": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "hybrid_changes": [],
+          "remaining_hybrid_misses": []
+        },
+        "candidate61": {
+          "before": {
+            "tree": {
+              "correct": 10,
+              "total": 30
+            },
+            "hybrid": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "after": {
+            "tree": {
+              "correct": 10,
+              "total": 30
+            },
+            "hybrid": {
+              "correct": 30,
+              "total": 30
+            }
+          },
+          "hybrid_changes": [],
+          "remaining_hybrid_misses": []
+        }
+      }
+    }
+  }
+}

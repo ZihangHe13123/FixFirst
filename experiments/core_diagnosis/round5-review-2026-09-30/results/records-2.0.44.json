@@ -1,0 +1,54 @@
+{
+ "python": "3.12.13",
+ "sqlalchemy": "2.0.44",
+ "legacy": {
+  "result_class": "CursorResult",
+  "returns_rows": {
+   "ok": true,
+   "value": "False"
+  },
+  "iterate_ddl": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically."
+  },
+  "keys_ddl": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically."
+  },
+  "iter_created_ddl": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically."
+  },
+  "records_like_generator_created": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically."
+  },
+  "guarded_by_returns_rows": {
+   "ok": true,
+   "value": "[]"
+  },
+  "fetchall_ddl": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically."
+  },
+  "iterate_closed_select": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object is closed."
+  }
+ },
+ "records": {
+  "records_file": "records.py",
+  "query_create_table_not_consumed": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically."
+  },
+  "query_insert_not_consumed": {
+   "ok": false,
+   "error": "sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically."
+  },
+  "query_select_all": {
+   "ok": true,
+   "value": "0"
+  }
+ }
+}

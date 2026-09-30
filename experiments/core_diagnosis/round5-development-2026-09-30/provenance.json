@@ -1,0 +1,49 @@
+{
+  "redactions": "Host-specific directories and username replaced by placeholders. Original observations, expectations and review findings are retained. Claude closed the final 18f2875 production delta in ff2d9f0, with 12 SQL probes and interpreted repairs of both conservative misses. The simple lazy positive remains covered; lambda and unknown wrappers retain input guidance without the migration label.",
+  "files": {
+    "environments.json": {
+      "raw_sha256": "086f7e413cbe8da464f4606cc0a12d5a265179a354847bd0d787261c760cb97e",
+      "published_sha256": "7b0c272dc2e2114948dae8c01ac1ed28e9b42e3786184f533125e27a1fe75075"
+    },
+    "reference.json": {
+      "raw_sha256": "62614eabb2e120f2ea4febb09efa510bb04689c9ae4070370f20eb04fbd713f8",
+      "published_sha256": "11b026911654d1335f376499b116d25ec7bc5338c707574405e23a949cd62506"
+    },
+    "before.json": {
+      "raw_sha256": "a07e41b8cd41cbdee001856a631271e43dbffe01afcbc5e36cbd9d5407cf6c32",
+      "published_sha256": "4a7b29c64ff341040a4836d915e4f1a2cbf1f2509c7f435619c918bb4e1138a7"
+    },
+    "before-candidate61.json": {
+      "raw_sha256": "2c4543f33fe2357229ca658c9ceebfdbc70743efa9b30722ef225bd36ce65e9b",
+      "published_sha256": "eb16661544434ea82ee6cc0f6beeb8364337e4633207f1bcc5c95f53b9f6df3a"
+    },
+    "before-command-execution.json": {
+      "raw_sha256": "3e86b1085264dd454a9119286c9116f4fc6836980f51427d567f9f8c4308dd3f",
+      "published_sha256": "967b7c190da7359672032d2cf998b2a9ac6de9688ed2b5d6d83bd868df1f9aec"
+    },
+    "after.json": {
+      "raw_sha256": "15c3261e2d008aa548e4d4bfe64a89545d780383585b0acbb5249162c705f92b",
+      "published_sha256": "92b8c915c063335225f7fdb0a9a9d0b0e9e1f66a9edaf35a8816bb368b9b2ebf"
+    },
+    "after-manual-execution.json": {
+      "raw_sha256": "767514e185f7655930687bf476b586870c4499952d0e640f229285ca071062df",
+      "published_sha256": "767514e185f7655930687bf476b586870c4499952d0e640f229285ca071062df"
+    },
+    "before-same-host.json": {
+      "raw_sha256": "39192efe404d916cba9ee933fccacba789f753456318b8fa315e5c53aee1ccdb",
+      "published_sha256": "67bbf531eda41cdb8a2cf97cbb4ade73bf7a20f81dce3c57013bf8ae5df2dcea"
+    },
+    "final-sqlalchemy-probes.json": {
+      "raw_sha256": "7c22853d098c16d0a127033bd37ac812a7bf8987c931e0210a57592e070d40e3",
+      "published_sha256": "67c061a1c979ac00e97339e6df4d4e8ba9d7c6cb4b27807ab1fc184370a63bfb"
+    },
+    "receiver-probes-ba52e22.json": {
+      "raw_sha256": "596094159aa9dd0b8a1e2d57a717a6c5e1c9e0686cbe3f3d23a6d6ef8ea51d23",
+      "published_sha256": "ad6c567821c7575387ca25520ef859e5aaf9f8935f96b86aaae634aa5c1bf926"
+    },
+    "final-consumption-probes.json": {
+      "raw_sha256": "9c2dde1c3846de0f552bb703e10b59f7fb78d143fa8eeb3f37cbca112364720b",
+      "published_sha256": "9c2dde1c3846de0f552bb703e10b59f7fb78d143fa8eeb3f37cbca112364720b"
+    }
+  }
+}

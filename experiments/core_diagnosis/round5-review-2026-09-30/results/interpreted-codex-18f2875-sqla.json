@@ -1,0 +1,42 @@
+[
+ {
+  "probe": "sqla_wrapped_not_consumed",
+  "env": "sqla20/venv",
+  "edit": [
+   "rows = (tuple(row) for row in cursor)",
+   "rows = (tuple(row) for row in cursor) if cursor.returns_rows else iter(())"
+  ],
+  "tests_exit": 0,
+  "tests_unchanged": true
+ },
+ {
+  "probe": "sqla_wrapped_not_consumed",
+  "env": "sqla13/venv",
+  "edit": [
+   "rows = (tuple(row) for row in cursor)",
+   "rows = (tuple(row) for row in cursor) if cursor.returns_rows else iter(())"
+  ],
+  "tests_exit": 0,
+  "tests_unchanged": true
+ },
+ {
+  "probe": "sqla_generator_in_lambda",
+  "env": "sqla20/venv",
+  "edit": [
+   "rows_of = lambda cursor: (tuple(row) for row in cursor)",
+   "rows_of = lambda cursor: (tuple(row) for row in cursor) if cursor.returns_rows else iter(())"
+  ],
+  "tests_exit": 0,
+  "tests_unchanged": true
+ },
+ {
+  "probe": "sqla_generator_in_lambda",
+  "env": "sqla13/venv",
+  "edit": [
+   "rows_of = lambda cursor: (tuple(row) for row in cursor)",
+   "rows_of = lambda cursor: (tuple(row) for row in cursor) if cursor.returns_rows else iter(())"
+  ],
+  "tests_exit": 0,
+  "tests_unchanged": true
+ }
+]

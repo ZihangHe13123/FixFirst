@@ -1,0 +1,127 @@
+{
+ "implementation": {
+  "head": "35c9246e7b87cedcef68bbf124b92572f6fe5e29",
+  "src_uncommitted": false,
+  "source_sha256": "ffc5d20dae152424a8b27dce4d5e9850a0b82ac01b2ca8f044dfae78bf189cff",
+  "python": "3.12.13",
+  "scikit-learn": "1.9.1"
+ },
+ "probes": [
+  {
+   "name": "packaging_parse_legacy_label",
+   "focus": "real positive",
+   "expect": "packaging 22 removed LegacyVersion: expected the documented change (H10), not an input error.",
+   "truth": "version change",
+   "old_tail": "ing-old/venv/lib/python3.12/site-packages/packaging/version.py:111: DeprecationWarning: Creating a LegacyVersion has been deprecated and will be removed in the next major release\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n1 passed, 1 warning in 0.00s\n",
+   "current_tail": "nvalidVersion(f\"Invalid version: {version!r}\") from None\n        if not match:\n>           raise InvalidVersion(f\"Invalid version: {version!r}\")\nE           packaging.version.InvalidVersion: Invalid version: 'nightly'\n\n../../../numpy_copy_false/venv/lib/python3.12/site-packages/packaging/version.py:452: InvalidVersion\n=========================== short test summary info ============================\nFAILED test_app.py::test_newest - packaging.version.InvalidVersion: Invalid v...\n1 failed in 0.02s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "version_incompatibility",
+     "rule": "H10",
+     "source": "heuristic",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "InvalidVersion",
+      "raised_in": "third_party",
+      "where": "app.py:5",
+      "library": "packaging",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call",
+       "packaging.version.parse",
+       "packaging.version.__init__"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Handle legacy version labels before using packaging.version.parse",
+     "explanation": "packaging 22 removed LegacyVersion: the observed packaging.version.parse call now raises InvalidVersion for a non-standard label instead of returning a legacy comparison object. This environment has packaging 26.3. Handle InvalidVersion explicitly. If only release versions should participate in comparison, validate with Version and filter non-standard labels before applying max or sorting; if those labels have meaning, give them an explicit ordering separately. Keep the original tests and input values. Version itself was already strict before this change. The compatibility diagnosis is a hypothesis supported by this symptom and version context; verify the result with the original test suite.",
+     "command": null,
+     "where": [
+      "app.py:5"
+     ],
+     "rules": [
+      "H10: A specific documented behavior change fits the observed failure and the project's version context. Confirm the intended behavior by applying the narrow remedy and rerunning unchanged tests."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "packaging_version_strict",
+   "focus": "real positive (counterexample)",
+   "expect": "Version was always strict (fails on 21.3 too): expected the input contract (H12), not a version change.",
+   "truth": "fails on the older release too",
+   "old_tail": "d version: 'nightly'\n\n../../../packaging-old/venv/lib/python3.12/site-packages/packaging/version.py:266: InvalidVersion\n=========================== short test summary info ============================\nFAILED test_app.py::test_newest - packaging.version.InvalidVersion: Invalid v...\n1 failed in 0.01s\n",
+   "current_tail": "nvalidVersion(f\"Invalid version: {version!r}\") from None\n        if not match:\n>           raise InvalidVersion(f\"Invalid version: {version!r}\")\nE           packaging.version.InvalidVersion: Invalid version: 'nightly'\n\n../../../numpy_copy_false/venv/lib/python3.12/site-packages/packaging/version.py:452: InvalidVersion\n=========================== short test summary info ============================\nFAILED test_app.py::test_newest - packaging.version.InvalidVersion: Invalid v...\n1 failed in 0.02s\n",
+   "status": "todo",
+   "issues": [
+    {
+     "tool": "pytest_run",
+     "diagnosis": "code_defect",
+     "rule": "H12",
+     "source": "heuristic",
+     "tree": "code_defect",
+     "evidence": {
+      "exception": "InvalidVersion",
+      "raised_in": "third_party",
+      "where": "app.py:5",
+      "library": "packaging",
+      "attributes": [],
+      "library_calls": [
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.logging.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.capture.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.skipping.pytest_runtest_call",
+       "pluggy._callers._multicall",
+       "_pytest.runner.pytest_runtest_call",
+       "_pytest.python.runtest",
+       "pluggy._hooks.__call__",
+       "pluggy._manager._hookexec",
+       "pluggy._callers._multicall",
+       "pluggy._callers._multicall",
+       "_pytest.python.pytest_pyfunc_call",
+       "packaging.version.__init__"
+      ],
+      "validation_errors": []
+     }
+    }
+   ],
+   "steps": [
+    {
+     "title": "Handle the non-standard version label before comparing versions",
+     "explanation": "Version accepts PEP 440 version strings. Validate values before comparing them, handle InvalidVersion explicitly, and separate non-standard labels from release versions according to the intended ordering. Preserve the tests and input meaning. The recorded exception shows a rejected input; verify the intended correction with the original checks.",
+     "command": null,
+     "where": [
+      "app.py:5"
+     ],
+     "rules": [
+      "H12: The raising library rejected input under a documented validation contract; inspect that value before changing dependencies."
+     ]
+    }
+   ]
+  }
+ ]
+}

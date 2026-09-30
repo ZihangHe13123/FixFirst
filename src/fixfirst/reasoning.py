@@ -85,6 +85,7 @@ def base_facts(session: Session, active, knowledge=True) -> tuple[list[Fact], di
             "module", "api", "attribute", "kwarg", "usage", "missing_fixture", "extra_warning", "lint_rule",
             "raised_by_library",
             "behavior_symptom",
+            "input_symptom",
         )
     }
     known = domain.facts_for(mentioned) if knowledge else []
