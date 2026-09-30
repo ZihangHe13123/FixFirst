@@ -1,0 +1,8 @@
+{"cases": [
+ {"requests": ["extras"], "output": "  ╰─▶ Because foo[bar]==1.0 has no usable wheels and you require foo[bar]==1.0, we can\n      conclude that your requirements are unsatisfiable."},
+ {"requests": ["version list"], "output": "  ╰─▶ Because only the following versions of foo are available:\n          foo<=1.0\n          foo==2.0\n      and foo<=1.0 has no usable wheels, we can conclude that foo<=1.0 cannot be used."},
+ {"requests": ["prerelease bound"], "output": "  ╰─▶ Because foo>6.0.dev0,<=6.5.0 has no usable wheels and you require foo, we can conclude that"},
+ {"requests": ["local version"], "output": "  ╰─▶ Because foo==1.0+cpu has no usable wheels and you require foo==1.0+cpu"},
+ {"requests": ["dotted name wrapped"], "output": "  ╰─▶ Because only zope.interface==4.0.0 is available and zope.interface==4.0.0 has no\n      usable wheels, we can conclude that all versions of zope.interface cannot be used."},
+ {"requests": ["no phrase"], "output": "  ╰─▶ Because foo==2.0 depends on bar>=2 and you require bar<2, we can conclude that your requirements are unsatisfiable."}
+]}

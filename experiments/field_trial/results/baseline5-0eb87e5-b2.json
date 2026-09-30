@@ -1,0 +1,25 @@
+{
+ "fixfirst": "<scratch>/field/fixfirst-venv/bin/fixfirst",
+ "head": "0eb87e51fc7d13740c63573a6bd9cac87328c3ac",
+ "cases": {
+  "B2": {
+   "title": "Same case as B, with a corrected direction check",
+   "expect": "Same expectation as B. B's checker read any 'sqlalchemy<' in the command as a downgrade, so an upgrade bounded above (sqlalchemy<3,>=2.0.16) failed. B2 fails only if the command's range admits no release >= 2.0.16 or the text searches older releases; B and its results are kept unchanged.",
+   "notes": [
+    "setup pip install Flask-SQLAlchemy==3.1.1 flask -> exit 0",
+    "setup pip install SQLAlchemy==1.4.54 -> exit 0"
+   ],
+   "verdict": "FAIL",
+   "why": "the first step searches or installs a SQLAlchemy range without any release >= 2.0.16",
+   "step": {
+    "id": "find-release-sqlalchemy.orm.declarativebase",
+    "title": "Find an older sqlalchemy that provides sqlalchemy.orm.DeclarativeBase",
+    "explanation": "sqlalchemy 1.4.54 no longer provides sqlalchemy.orm.DeclarativeBase. FixFirst can try older sqlalchemy releases in a temporary environment with this Python and tell you exactly which one to install. It downloads prebuilt packages from PyPI, runs no build scripts and does not change your environment; it takes up to a few minutes.",
+    "command": null,
+    "issue_ids": [
+     "issue-9167227593c79b"
+    ]
+   }
+  }
+ }
+}

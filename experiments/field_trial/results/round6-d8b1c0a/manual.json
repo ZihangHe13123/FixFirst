@@ -1,0 +1,18 @@
+{
+ "build": "d8b1c0a",
+ "rule": "Run the step's own trial first, then apply exactly the edits and command it returns; automatic REVIEW verdicts stay REVIEW.",
+ "cases": {
+  "A2": {"returned": "requirements.txt:1 SQLAlchemy==1.1.9 -> SQLAlchemy==2.1.1; exact install of the resolved set (alembic 1.20.0, sqlalchemy 2.1.1, ...); states tests have NOT run; notes that pip/uv config files are ignored",
+         "operator_choices": [], "install": 0, "pip_check": 0, "tests": "1 passed", "fixfirst_rescan": "goal achieved",
+         "grade": "complete (two steps)",
+         "note": "The resolved set no longer carries python-editor/python-dateutil pins, which only the old alembic needed: packages in the project's dependency graph now resolve together."},
+  "D2b": {"returned": "requirements.txt:1 pandas==1.1.0 -> pandas==3.0.6; exact install of the resolved set",
+          "operator_choices": [], "install": 0, "pip_check": 0, "tests": "1 passed", "fixfirst_rescan": "goal achieved",
+          "grade": "complete (two steps)"},
+  "C": {"returned": "title 'The wheel-only trial stopped at django-cors-middleware==1.3.1'; says the result establishes no version conflict or unsupported Python and justifies no other pin change; README.md:15 Python 3.5.2 kept as a documentation hint with uv's 'Python <3.6 is not supported'",
+        "operator_choices": ["not continued: no installable candidate or interpreter is given"],
+        "grade": "partial; cannot continue from the step alone (reported as such, not forced)"},
+  "docopt_probe": {"returned": "title 'The wheel-only trial stopped at docopt'; same wording; pandas is not blamed",
+                   "grade": "wording fixed"}
+ }
+}

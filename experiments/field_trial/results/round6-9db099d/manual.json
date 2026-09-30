@@ -1,0 +1,34 @@
+{
+ "build": "9db099d",
+ "rule": "Follow only what the step says. Any version, interpreter or edit the step leaves open is the operator's decision, recorded here; such a step is at best 'partial', and REVIEW is never counted as PASS.",
+ "cases": {
+  "A2": {
+   "step": "Resolve the sqlalchemy version constraints before changing it (no command)",
+   "identifies": "requirements.txt:1 SQLAlchemy==1.1.9 conflicts with the upgrade; names alembic 1.4.3 as a dependent",
+   "left_to_user": ["the new SQLAlchemy requirement (no target given)", "whether to change alembic too"],
+   "operator_decisions": ["relaxed SQLAlchemy==1.1.9 to an unpinned SQLAlchemy", "resolved the whole set in a new venv (the step's 'separate environment')"],
+   "commands": ["pip install -r requirements.txt (new venv)", "pip check", "pytest"],
+   "result": "SQLAlchemy 2.1.1 + alembic 1.20.0; pip check exit 0; tests pass",
+   "grade": "partial",
+   "note": "The step's sentence 'An unconstrained upgrade or a further downgrade would not resolve this conflict' contradicts this result: relaxing the pin and resolving the set together worked."
+  },
+  "C": {
+   "step": "Review the django requirement and Python version before searching older releases (no command)",
+   "identifies": "requirements.txt:1 Django==1.10.5 rules out older releases; Python 3.12.13 named; two routes (documented older Python, or revise the declaration with its dependents)",
+   "left_to_user": ["which Python version (it says 'documented for that dependency set' without naming it; the README says 3.5.2)", "or which new Django and dependent-package versions, plus code changes"],
+   "operator_decisions": [],
+   "commands": ["uv python list --all-versions: no CPython 3.5, 3.6 or 3.7 build available on this macOS arm64 machine"],
+   "result": "Route 1 cannot be followed here; route 2 needs version choices and code migration the step does not give. Not attempted beyond this point (it would be operator fallback).",
+   "grade": "partial (cannot continue from the step alone)"
+  },
+  "D2b": {
+   "step": "Review the failed installation of pandas before retrying the dependency set (no command)",
+   "identifies": "pandas build failure from the imported log, requirements.txt:1 pandas==1.1.0, Python 3.12.13; gives the install command to run after the change",
+   "left_to_user": ["the new pandas requirement (it says 'a release compatible with the selected Python and the project's API usage')"],
+   "operator_decisions": ["changed pandas==1.1.0 to an unpinned pandas"],
+   "commands": ["python -m pip install --only-binary=:all: -r requirements.txt (the step's own command)", "pip check", "pytest"],
+   "result": "pandas 3.0.6 + rich 15.0.0; pip check exit 0; tests pass",
+   "grade": "partial"
+  }
+ }
+}

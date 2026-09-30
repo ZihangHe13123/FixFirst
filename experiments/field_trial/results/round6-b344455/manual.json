@@ -1,0 +1,20 @@
+{
+ "build": "b344455",
+ "rule": "Run the step's own trial first (fixfirst run SESSION ACTION), then apply exactly the edits and command it returns. Any choice the tool leaves open is recorded as the operator's; the automatic REVIEW verdicts stay REVIEW.",
+ "cases": {
+  "A2": {"trial": "fixfirst run <session> upgrade-sqlalchemy: resolved in a temporary env (about 1 s, cached wheels); original env unchanged (SQLAlchemy 1.1.9, alembic 1.4.3)",
+         "returned": "edit requirements.txt:1 SQLAlchemy==1.1.9 -> SQLAlchemy==2.1.1; command: pip install --only-binary=:all: with every resolved version pinned (alembic 1.20.0, sqlalchemy 2.1.1, ...); states the application and tests have NOT run",
+         "operator_choices": [], "pip_check": 0, "tests": "1 passed", "fixfirst_rescan": "goal achieved; MutableMapping issue Verified fixed",
+         "grade": "complete (two steps: the trial command, then the exact edit and command)"},
+  "D2b": {"trial": "fixfirst run <session> review-install-pandas: resolved",
+          "returned": "edit requirements.txt:1 pandas==1.1.0 -> pandas==3.0.6; command installs the resolved set (numpy 2.5.3, pandas 3.0.6, rich 15.0.0, ...) pinned; states tests have NOT run",
+          "operator_choices": [], "pip_check": 0, "tests": "1 passed", "fixfirst_rescan": "goal achieved",
+          "grade": "complete (two steps)", "note": "After the edit, the old 'requirements.txt:1 declares pandas==1.1.0' issue is shown as 'Not checked this round' instead of no longer present."},
+  "C": {"trial": "fixfirst run <session> review-release-constraints-django: not_resolved",
+        "cause_in_record": "django-cors-middleware==1.3.1 has no usable wheels; the trial disables building from source (uv hint says so)",
+        "returned": "'Review the unresolved django dependency set and interpreter': different interpreter or coordinated declaration/code migration; README.md:15 Python 3.5.2 as a documentation hint; uv: 'Python <3.6 is not supported'",
+        "operator_choices": ["not continued: no concrete edit, interpreter or version is given"],
+        "grade": "partial; cannot continue from the step alone",
+        "note": "Honest about 3.5.2 not being available and about installation != application. But the headline blames django/interpreter while the recorded blocker is a sdist-only pinned package under the wheel-only policy."}
+ }
+}

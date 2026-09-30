@@ -1,0 +1,147 @@
+{
+ "fixfirst": "<scratch>/r6/ff-d8b/bin/fixfirst",
+ "head": "d8b1c0a7fb8f1f004db6e40e3249198b99e953bf",
+ "cases": {
+  "A2": {
+   "title": "Upgrade must not overshoot into a release that breaks a co-installed package (corrected A)",
+   "expect": "First failure: SQLAlchemy 1.1.9 uses collections.MutableMapping. pip paired it with alembic 1.4.3, which needs SQLAlchemy's pre-2.0 _BindParamClause (the trial's C2 mechanism). After running the first step's command the tests must pass: the upgrade stays below the release that breaks alembic, or upgrades alembic with it. A first step without a command is reviewed by hand.",
+   "notes": [
+    "setup pip install SQLAlchemy==1.1.9 alembic -> exit 0"
+   ],
+   "verdict": "REVIEW",
+   "why": "first step has no command; read whether it bounds the upgrade or names alembic",
+   "step": {
+    "id": "upgrade-sqlalchemy",
+    "title": "Resolve the sqlalchemy version constraints before changing it",
+    "explanation": "The proposed sqlalchemy>1.1.9 conflicts with the recorded requirements: alembic 1.4.3 Requires-Dist requires SQLAlchemy>=1.1.0; requirements.txt:1 requires SQLAlchemy==1.1.9. Adjust the conflicting project pin or dependent package together, then resolve the complete dependency set in a separate environment. If the fixed legacy versions must remain, use a separate Python environment compatible with their documented requirements. Keeping this fixed requirement while changing only sqlalchemy cannot satisfy both requirements; a coordinated declaration and dependency update may work. Use Try a dependency set (CLI: fixfirst run session-578036a67118 upgrade-sqlalchemy) to propose replacing only the sqlalchemy version constraint. This explicitly tries a changed declaration in a temporary environment; it does not accept or edit that declaration. The other required project constraints stay in force, declared dependencies resolve together, and unrelated installed packages stay at their current versions. Downloads wheels; at most 5 minutes. Installation success is separate from running the original program/tests. The trial does not change your project or environment. The trial ignores pip/uv configuration files; environment index settings still apply.",
+    "command": null,
+    "issue_ids": [
+     "issue-190d1d3037d778"
+    ]
+   }
+  },
+  "B2": {
+   "title": "Same case as B, with a corrected direction check",
+   "expect": "Same expectation as B. B's checker read any 'sqlalchemy<' in the command as a downgrade, so an upgrade bounded above (sqlalchemy<3,>=2.0.16) failed. B2 fails only if the command's range admits no release >= 2.0.16 or the text searches older releases; B and its results are kept unchanged.",
+   "notes": [
+    "setup pip install Flask-SQLAlchemy==3.1.1 flask -> exit 0",
+    "setup pip install SQLAlchemy==1.4.54 -> exit 0"
+   ],
+   "verdict": "PASS",
+   "why": "pip check clean and tests pass",
+   "step": {
+    "id": "align-sqlalchemy",
+    "title": "Install the sqlalchemy version that flask-sqlalchemy 3.1.1 Requires-Dist requires (>=2.0.16)",
+    "explanation": "flask-sqlalchemy 3.1.1 Requires-Dist requires sqlalchemy>=2.0.16, but this environment has sqlalchemy 1.4.54. Align the installed version with the recorded requirement, or revise the dependent packages together. A missing name does not by itself show whether it was removed or has not yet been introduced. Recorded constraints: flask-sqlalchemy 3.1.1 Requires-Dist requires sqlalchemy>=2.0.16. This command requests wheels and lets the resolver check the requirements; a satisfiable range is not proof that the application works. Check pip output, run pip check, and rerun the original failing check.",
+    "command": "<scratch>/accept/r6-d8b1c0a/B2/venv/bin/python -m pip install --only-binary=:all: 'sqlalchemy<3,>=2.0.16'",
+    "issue_ids": [
+     "issue-9167227593c79b"
+    ]
+   },
+   "pip_check": "No broken requirements found.\n",
+   "tests_tail": ".                                                                        [100%]\n1 passed in 0.91s\n"
+  },
+  "C": {
+   "title": "Release search must respect the project's declared version and other constraints",
+   "expect": "Django 1.10.5 (declared ==1.10.5) cannot import django.utils.six.moves on Python 3.12. Neither the first step's command nor a release search it offers may install a Django older than the declared 1.10.5 (the trial got 1.5.12, then an unbounded upgrade). An interpreter route or an explicit 'no release fits the declaration on this Python' passes.",
+   "notes": [
+    "setup pip install -r requirements.txt -> exit 0"
+   ],
+   "verdict": "REVIEW",
+   "why": "no older Django offered; read whether an interpreter route or an explicit 'no release fits' is given",
+   "step": {
+    "id": "review-release-constraints-django",
+    "title": "Review the django requirement and Python version before searching older releases",
+    "explanation": "No version below the installed django 1.10.5 can satisfy these recorded constraints: requirements.txt:1 requires Django==1.10.5. The current failure was observed with Python 3.12.13. Do not repeatedly downgrade and then upgrade. If the legacy pin must stay, create a separate environment using the Python version documented for that dependency set. Otherwise revise the conflicting declaration and its dependent packages together, then check installation and rerun the original failure. This rules out this constrained older-version search; it does not prove that no other repair or interpreter combination exists. README.md:15 mentions Python 3.5.2; this is a documentation hint, not a verified or currently available environment. Use Try a dependency set (CLI: fixfirst run session-3370713cf6a9 review-release-constraints-django) to propose replacing only the django version constraint. This explicitly tries a changed declaration in a temporary environment; it does not accept or edit that declaration. The other required project constraints stay in force, declared dependencies resolve together, and unrelated installed packages stay at their current versions. Downloads wheels; at most 5 minutes. Installation success is separate from running the original program/tests. The trial does not change your project or environment. The trial ignores pip/uv configuration files; environment index settings still apply.",
+    "command": null,
+    "issue_ids": [
+     "issue-cf3c027899528c"
+    ]
+   }
+  },
+  "D1": {
+   "title": "Several missing declared dependencies are installed by one step",
+   "expect": "None of the five declared packages is installed. Running the first step's command once must leave no missing declared dependency (the trial needed one round per package).",
+   "notes": [],
+   "verdict": "PASS",
+   "why": "one step installed every declared dependency",
+   "step": {
+    "id": "install-attrs",
+    "title": "Install the declared dependency set together (5 missing)",
+    "explanation": "Several required dependencies are missing. Install the declared set in one resolver operation, preserving its version requirements, instead of installing one import per round. Read any installation failure before retrying; a failed batch may leave every dependency missing. Optional groups, direct references and unsupported declarations are not included.",
+    "command": "<scratch>/accept/r6-d8b1c0a/D1/venv/bin/python -m pip install --only-binary=:all: PyYAML attrs click rich tabulate",
+    "issue_ids": [
+     "issue-7e3709e131ee00"
+    ]
+   }
+  },
+  "D2b": {
+   "title": "A failed pip install names the pin that cannot build, without silently bypassing it (corrected D2)",
+   "expect": "Same state as D2 (pandas==1.1.0 cannot build on Python 3.12; nothing installed; the pip log is imported). The first step must identify the blocker: pandas, the pinned 1.1.0, requirements.txt and build/interpreter evidence. FAIL: a command installing another pandas without telling the user to change the pin (silent bypass), or a command after which pandas or rich is still missing. REVIEW (never an automatic success, reported apart): the step asks to change the declaration, or has no command; the operator then follows the steps literally (edit the declaration as instructed, run the install plan given) and records the real result. PASS needs identification, pandas and rich importable, tests passing and no pandas==1.1.0 left in requirements.txt.",
+   "notes": [
+    "pip install -r requirements.txt -> exit 1"
+   ],
+   "verdict": "REVIEW",
+   "why": "the step asks to change the declaration or has no command; identifies the blocker: True. Operator follows it by hand and records the real result; never counted as an automatic success",
+   "identifies": true,
+   "step": {
+    "id": "review-install-pandas",
+    "title": "Review the failed installation of pandas before retrying the dependency set",
+    "explanation": "The imported pip log records an installation/build failure for pandas: ERROR: Failed to build 'pandas' when installing build dependencies for pandas. Requested requirement: pandas==1.1.0. The current declaration is requirements.txt:1: pandas==1.1.0; the selected Python is 3.12.13. First review and change that fixed requirement to a release compatible with the selected Python and the project's API usage, or create a separate environment using the Python version supported by the fixed dependencies. Keep the remaining requirements. Then install the complete declared set with python -m pip install --only-binary=:all: -r requirements.txt if that is its source, and rerun pip check and the original failing check. Do not install a newer package while leaving a contradictory pin in the project. An imported log may come from another environment; it does not prove every release is incompatible with the current interpreter. Use Try a dependency set (CLI: fixfirst run session-bb576b728e38 review-install-pandas) to propose replacing only the pandas version constraint. This explicitly tries a changed declaration in a temporary environment; it does not accept or edit that declaration. The other required project constraints stay in force, declared dependencies resolve together, and unrelated installed packages stay at their current versions. Downloads wheels; at most 5 minutes. Installation success is separate from running the original program/tests. The trial does not change your project or environment. The trial ignores pip/uv configuration files; environment index settings still apply.",
+    "command": null,
+    "issue_ids": [
+     "issue-c386dd8f507872"
+    ]
+   },
+   "manual_followthrough": null
+  },
+  "E": {
+   "title": "environment.yml is a declaration source",
+   "expect": "imageio is declared in environment.yml but not installed. The first step must give a command that installs imageio; running it must make the tests pass.",
+   "notes": [
+    "setup pip install numpy -> exit 0"
+   ],
+   "verdict": "PASS",
+   "why": "tests pass after the step",
+   "step": {
+    "id": "install-imageio",
+    "title": "Install the declared dependency that provides imageio",
+    "explanation": "environment.yml dependencies[1] (Conda declaration; documented PyPI alternative) declares it, but the target interpreter cannot import imageio. Install it into this interpreter, or install all of the project's declared dependencies at once. FixFirst does not install anything itself. This command requests wheels and lets the resolver check the requirements; a satisfiable range is not proof that the application works. Check pip output, run pip check, and rerun the original failing check.",
+    "command": "<scratch>/accept/r6-d8b1c0a/E/venv/bin/python -m pip install --only-binary=:all: imageio",
+    "issue_ids": [
+     "issue-f56428bedef76b"
+    ]
+   },
+   "tests_tail": ".                                                                        [100%]\n1 passed in 0.28s\n"
+  },
+  "F": {
+   "title": "No alternative that cannot be installed on the current Python",
+   "expect": "pandas 2 removed DataFrame.append. The first step may advise pandas.concat, but must not offer pinning pandas below 2.0 (pandas 1.5.3 has no build for Python 3.12) unless it says that pin cannot be installed on this interpreter.",
+   "notes": [
+    "setup pip install pandas -> exit 0"
+   ],
+   "verdict": "PASS",
+   "why": "no uninstallable pandas<2 alternative offered",
+   "step": {
+    "id": "update-dataframe.append",
+    "title": "Replace DataFrame.append: removed in pandas 2.0",
+    "explanation": "The target interpreter has pandas 3.0.6, which no longer provides DataFrame.append (removed in 2.0). Change the code to use pandas.concat. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+    "command": null,
+    "issue_ids": [
+     "issue-7087c777e3a10c"
+    ]
+   }
+  },
+  "G": {
+   "title": "The CLI lists no stale action for an issue the latest run did not reach",
+   "expect": "Scan with SQLAlchemy 1.1.9 (MutableMapping issue), install SQLAlchemy 2.0.44, scan again: the MutableMapping issue is no longer observed. 'fixfirst show' must not list an action for it (the trial showed 'sqlalchemy 2.x still uses collections.MutableMapping'), and its first step must equal the web view's first step.",
+   "notes": [
+    "setup pip install SQLAlchemy==1.1.9 Flask_SQLAlchemy==2.2 flask -> exit 0"
+   ],
+   "verdict": "PASS",
+   "why": "stale MutableMapping action listed: False; CLI first step equals web first step: True",
+   "cli_steps": " (manual fixes are never run for you):\n  1. find-release-flask._app_ctx_stack — Find a compatible flask release that provides flask._app_ctx_stack\n     flask._app_ctx_stack is unavailable in flask 3.1.3; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole application.\n     Run check: fixfirst run session-6017edf2e6b6 find-release-flask._app_ctx_stack\n  2. check-api-flask._app_ctx_stack — Check the required version and spelling of flask._app_ctx_stack\n     flask._app_ctx_stack is unavailable in the installed flask 3.1.3. Check the project's requirements and the upstream API history: the name may have been introduced later",
+   "web_first": "find-release-flask._app_ctx_stack"
+  }
+ }
+}

@@ -1,0 +1,72 @@
+{
+ "purpose": "Check 365aa84's rule (installed packages in the project's dependency graph stay as unpinned requests) on its counterexample and two neighbours.",
+ "how": "probes/test_orphans.py with each checkout's offline_resolver fixture (local wheels/sdists, real uv, --no-index).",
+ "cases": {
+  "test_codex_counterexample": {
+   "setup": "365aa84's own counterexample: base1 -> obsolete1 -> helper<2, base2 -> helper>=2, helper 1.0 installed. An in-place install would leave obsolete1 and fail pip check. Expected: not_resolved.",
+   "27afb06": {
+    "status": "resolved",
+    "blocked": null,
+    "install_requests": [
+     "ff-trial-base==2.0",
+     "ff-trial-ext==2.0",
+     "ff-trial-helper==2.0",
+     "ff-trial-other==1.0"
+    ],
+    "error": null
+   },
+   "365aa84": {
+    "status": "not_resolved",
+    "blocked": null,
+    "install_requests": null,
+    "error": "install declared set did not complete successfully; see the recorded output"
+   }
+  },
+  "test_harmless_orphan_with_wheel": {
+   "setup": "base1 -> obsolete1 (no requirements; wheels 1.0 and 2.0), base2 -> helper>=2 (not installed). An in-place install stays consistent. Expected: resolved.",
+   "27afb06": {
+    "status": "resolved",
+    "blocked": null,
+    "install_requests": [
+     "ff-trial-base==2.0",
+     "ff-trial-ext==2.0",
+     "ff-trial-helper==2.0",
+     "ff-trial-other==1.0"
+    ],
+    "error": null
+   },
+   "365aa84": {
+    "status": "resolved",
+    "blocked": null,
+    "install_requests": [
+     "ff-trial-base==2.0",
+     "ff-trial-ext==2.0",
+     "ff-trial-helper==2.0",
+     "ff-trial-obsolete==2.0",
+     "ff-trial-other==1.0"
+    ],
+    "error": null
+   }
+  },
+  "test_harmless_orphan_sdist_only": {
+   "setup": "Same harmless orphan, but obsolete1 exists only as an sdist (as for packages that never shipped wheels). An in-place install stays consistent. Expected: resolved.",
+   "27afb06": {
+    "status": "resolved",
+    "blocked": null,
+    "install_requests": [
+     "ff-trial-base==2.0",
+     "ff-trial-ext==2.0",
+     "ff-trial-helper==2.0",
+     "ff-trial-other==1.0"
+    ],
+    "error": null
+   },
+   "365aa84": {
+    "status": "not_resolved",
+    "blocked": "ff-trial-obsolete==1.0",
+    "install_requests": null,
+    "error": "The wheel-only trial cannot install ff-trial-obsolete==1.0"
+   }
+  }
+ }
+}

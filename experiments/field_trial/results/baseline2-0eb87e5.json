@@ -1,0 +1,152 @@
+{
+ "fixfirst": "<scratch>/field/fixfirst-venv/bin/fixfirst",
+ "head": "0eb87e51fc7d13740c63573a6bd9cac87328c3ac",
+ "cases": {
+  "A": {
+   "title": "Upgrade must not overshoot into a release that breaks a declared, co-installed pin",
+   "expect": "First failure: SQLAlchemy 1.1.9 uses collections.MutableMapping (removed in Python 3.10). After running the first step's command, the MutableMapping error is gone and the next failure is not the overshoot symptom (flask_sqlalchemy 2.2 unable to import _BindParamClause from SQLAlchemy >= 2). A first step without a command must say which pin to relax (reviewed by hand).",
+   "notes": [
+    "setup pip install SQLAlchemy==1.1.9 Flask_SQLAlchemy==2.2 flask -> exit 0"
+   ],
+   "verdict": "PASS",
+   "why": "after the step: MutableMapping gone and no _BindParamClause overshoot",
+   "step": {
+    "id": "upgrade-sqlalchemy",
+    "title": "Upgrade sqlalchemy: sqlalchemy 1.1.9 still uses collections.MutableMapping, which Python 3.10 removed",
+    "explanation": "The installed sqlalchemy 1.1.9 (not your code) uses collections.MutableMapping, which Python removed in 3.10; this environment has Python 3.12.13. Install a newer sqlalchemy; if the project pins sqlalchemy to an old version, relax that pin. Using Python older than 3.10 also works.",
+    "command": "<scratch>/accept/baseline2-0eb87e5/A/venv/bin/python -m pip install 'sqlalchemy>1.1.9'",
+    "issue_ids": [
+     "issue-190d1d3037d778"
+    ]
+   },
+   "tests_tail": "ame[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntest_app.py:1: in <module>\n    import app\napp.py:1: in <module>\n    from flask_sqlalchemy import SQLAlchemy\n../venv/lib/python3.12/site-packages/flask_sqlalchemy/__init__.py:24: in <module>\n    from flask import _app_ctx_stack, abort, current_app, g, request\nE   ImportError: cannot import name '_app_ctx_stack' from 'flask' (<scratch>/accept/baseline2-0eb87e5/A/venv/lib/python3.12/site-packages/flask/__init__.py)\n=========================== short test summary info ============================\nERROR test_app.py\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.15s\n"
+  },
+  "B": {
+   "title": "A name the newer release introduced must lead to an upgrade, never an older search",
+   "expect": "Flask-SQLAlchemy 3.1.1 requires SQLAlchemy>=2.0.16 (pip check says so); SQLAlchemy 1.4.54 lacks sqlalchemy.orm.DeclarativeBase. The first step must not search or install an older SQLAlchemy; running its command must leave pip check clean and the tests passing.",
+   "notes": [
+    "setup pip install Flask-SQLAlchemy==3.1.1 flask -> exit 0",
+    "setup pip install SQLAlchemy==1.4.54 -> exit 0"
+   ],
+   "verdict": "FAIL",
+   "why": "the first step searches or installs an older SQLAlchemy / says 'no longer provides'",
+   "step": {
+    "id": "find-release-sqlalchemy.orm.declarativebase",
+    "title": "Find an older sqlalchemy that provides sqlalchemy.orm.DeclarativeBase",
+    "explanation": "sqlalchemy 1.4.54 no longer provides sqlalchemy.orm.DeclarativeBase. FixFirst can try older sqlalchemy releases in a temporary environment with this Python and tell you exactly which one to install. It downloads prebuilt packages from PyPI, runs no build scripts and does not change your environment; it takes up to a few minutes.",
+    "command": null,
+    "issue_ids": [
+     "issue-9167227593c79b"
+    ]
+   }
+  },
+  "C": {
+   "title": "Release search must respect the project's declared version and other constraints",
+   "expect": "Django 1.10.5 (declared ==1.10.5) cannot import django.utils.six.moves on Python 3.12. Neither the first step's command nor a release search it offers may install a Django older than the declared 1.10.5 (the trial got 1.5.12, then an unbounded upgrade). An interpreter route or an explicit 'no release fits the declaration on this Python' passes.",
+   "notes": [
+    "setup pip install -r requirements.txt -> exit 0"
+   ],
+   "verdict": "FAIL",
+   "why": "the release search recommends Django (1, 5, 12), older than the declared 1.10.5",
+   "step": {
+    "id": "find-release-django.utils.six.moves.urllib.parse.quote",
+    "title": "Find an older django that provides django.utils.six.moves.urllib.parse.quote",
+    "explanation": "django 1.10.5 no longer provides django.utils.six.moves.urllib.parse.quote. FixFirst can try older django releases in a temporary environment with this Python and tell you exactly which one to install. It downloads prebuilt packages from PyPI, runs no build scripts and does not change your environment; it takes up to a few minutes.",
+    "command": null,
+    "issue_ids": [
+     "issue-cf3c027899528c"
+    ]
+   },
+   "after_search": {
+    "id": "use-release-django.utils.six.moves.urllib.parse.quote",
+    "title": "Install django 1.5.12: this release was verified to provide django.utils.six.moves.urllib.parse.quote",
+    "explanation": "FixFirst installed django 1.5.12 in a temporary environment with this Python and confirmed that it provides django.utils.six.moves.urllib.parse.quote. The command pins that exact version. Re-run the project's tests to check the full environment, or update the code that imports the name. The bounded search may not have checked every newer release.",
+    "command": "<scratch>/accept/baseline2-0eb87e5/C/venv/bin/python -m pip install django==1.5.12",
+    "issue_ids": [
+     "issue-cf3c027899528c"
+    ]
+   }
+  },
+  "D1": {
+   "title": "Several missing declared dependencies are installed by one step",
+   "expect": "None of the five declared packages is installed. Running the first step's command once must leave no missing declared dependency (the trial needed one round per package).",
+   "notes": [],
+   "verdict": "FAIL",
+   "why": "still missing after one step: [\"ModuleNotFoundError: No module named 'click'\", 'Could not start ruff in the target environment: <scratch>/accept/baseline2-0eb87e5/D1/venv/bin/python: No module named ruff', 'requirements.txt:2 declares click; installed: not in snapshot. Required dependency missing', 'requirements.txt:3 declares PyYAML; installed: not in snapshot. Required dependency missing', 'requirements.txt:1 declares rich; installed: not in snapshot. Required dependency missing']",
+   "step": {
+    "id": "install-attrs",
+    "title": "Install attrs, which provides the import attr",
+    "explanation": "The import attr comes from the PyPI distribution attrs, which is not installed in the target interpreter. Install it there and declare it in the project's dependencies.",
+    "command": "<scratch>/accept/baseline2-0eb87e5/D1/venv/bin/python -m pip install attrs",
+    "issue_ids": [
+     "issue-7e3709e131ee00"
+    ]
+   }
+  },
+  "D2": {
+   "title": "A failed pip install log names the pin that cannot build",
+   "expect": "pip install -r requirements.txt fails because pandas==1.1.0 cannot build on Python 3.12, so nothing is installed; the log is imported with fixfirst import --tool pip_install. The first step must name pandas 1.1.0 (or its build failure) as the blocker, and running its command must leave pandas and rich importable.",
+   "notes": [
+    "pip install -r requirements.txt -> exit 1"
+   ],
+   "verdict": "FAIL",
+   "why": "names the blocker: False; pandas and rich importable after the step: False",
+   "step": {
+    "id": "install-pandas",
+    "title": "Install the declared dependency that provides pandas",
+    "explanation": "requirements.txt:1 declares it, but the target interpreter cannot import pandas. Install it into this interpreter, or install all of the project's declared dependencies at once. FixFirst does not install anything itself.",
+    "command": "<scratch>/accept/baseline2-0eb87e5/D2/venv/bin/python -m pip install pandas",
+    "issue_ids": [
+     "issue-8da8d61e3e492d"
+    ]
+   }
+  },
+  "E": {
+   "title": "environment.yml is a declaration source",
+   "expect": "imageio is declared in environment.yml but not installed. The first step must give a command that installs imageio; running it must make the tests pass.",
+   "notes": [
+    "setup pip install numpy -> exit 0"
+   ],
+   "verdict": "FAIL",
+   "why": "the first step gives no command installing imageio",
+   "step": {
+    "id": "review-import",
+    "title": "Check the import path and dependency declarations",
+    "explanation": "The import failed and the recorded evidence does not identify one cause. Compare the failing import with the project layout, the declarations and the installed packages. Do not install a package based on the import name alone.",
+    "command": null,
+    "issue_ids": [
+     "issue-f56428bedef76b"
+    ]
+   }
+  },
+  "F": {
+   "title": "No alternative that cannot be installed on the current Python",
+   "expect": "pandas 2 removed DataFrame.append. The first step may advise pandas.concat, but must not offer pinning pandas below 2.0 (pandas 1.5.3 has no build for Python 3.12) unless it says that pin cannot be installed on this interpreter.",
+   "notes": [
+    "setup pip install pandas -> exit 0"
+   ],
+   "verdict": "FAIL",
+   "why": "offers pinning pandas below 2.0 without saying it cannot be installed on Python 3.12",
+   "step": {
+    "id": "update-dataframe.append",
+    "title": "Replace DataFrame.append: removed in pandas 2.0",
+    "explanation": "The target interpreter has pandas 3.0.6, which no longer provides DataFrame.append (removed in 2.0). Change the code to use pandas.concat, or pin pandas below 2.0 if the project must keep the old API.",
+    "command": null,
+    "issue_ids": [
+     "issue-7087c777e3a10c"
+    ]
+   }
+  },
+  "G": {
+   "title": "The CLI lists no stale action for an issue the latest run did not reach",
+   "expect": "Scan with SQLAlchemy 1.1.9 (MutableMapping issue), install SQLAlchemy 2.0.44, scan again: the MutableMapping issue is no longer observed. 'fixfirst show' must not list an action for it (the trial showed 'sqlalchemy 2.x still uses collections.MutableMapping'), and its first step must equal the web view's first step.",
+   "notes": [
+    "setup pip install SQLAlchemy==1.1.9 Flask_SQLAlchemy==2.2 flask -> exit 0"
+   ],
+   "verdict": "FAIL",
+   "why": "stale MutableMapping action listed: True; CLI first step equals web first step: False",
+   "cli_steps": " (manual fixes are never run for you):\n  1. upgrade-sqlalchemy — Upgrade sqlalchemy: sqlalchemy 2.0.44 still uses collections.MutableMapping, which Python 3.10 removed\n  2. find-release-flask._app_ctx_stack — Find an older flask that provides flask._app_ctx_stack\n  3. check-api-flask._app_ctx_stack — Try an older flask: flask 3.1.3 no longer provides flask._app_ctx_stack\n  4. check-pytest_run — Run the full test suite\n  5. review-issue-56e840f3e72aec — Check the declaration and installed version of sqlalchemy\n",
+   "web_first": "find-release-flask._app_ctx_stack"
+  }
+ }
+}
