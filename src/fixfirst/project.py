@@ -262,6 +262,7 @@ def read_project(root: Path) -> dict:
             add(requirement, source)
         result["requires_python"].extend(conda["python"])
         result.setdefault("conda_declarations", []).extend(conda["conda"])
+        result.setdefault("conda_mappings", []).extend(conda["mappings"])
         for message in conda["notes"]:
             note(message)
     if not result["files"]:

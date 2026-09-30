@@ -26,6 +26,38 @@ def refine(session, actions, by_id, facts):
             if fact.fact_id not in action.reason_refs:
                 action.reason_refs.append(fact.fact_id)
 
+    excluded_searches = {}
+    for action in actions:
+        if action.check != "version_search" or len(action.targets) != 2:
+            continue
+        name = canonicalize_name(action.targets[0])
+        installed = data["installed"].get(name)
+        rows = requirements_for(data, name)
+        if not installed or not contradicts(combined_specifier(data, name, f"<{installed}")):
+            continue
+        evidence(action, rows)
+        action.action_id = "review-release-constraints-" + name
+        action.kind, action.check, action.targets = "manual_fix", None, []
+        action.title = f"Review the {name} requirement and Python version before searching older releases"
+        action.explanation = (
+            f"No version below the installed {name} {installed} can satisfy these recorded constraints: "
+            + "; ".join(f"{r['source']} requires {r['requirement']}" for r in rows)
+            + f". The current failure was observed with Python {environment.get('python_version', 'unknown')}. "
+            "Do not repeatedly downgrade and then upgrade. If the legacy pin must stay, create a separate "
+            "environment using the Python version documented for that dependency set. Otherwise revise the "
+            "conflicting declaration and its dependent packages together, then check installation and rerun "
+            "the original failure. This rules out this constrained older-version search; it does not prove "
+            "that no other repair or interpreter combination exists.")
+        if name in excluded_searches:
+            first = excluded_searches[name]
+            first.issue_ids = sorted(set(first.issue_ids + action.issue_ids))
+            first.reason_refs = sorted(set(first.reason_refs + action.reason_refs))
+        else:
+            excluded_searches[name] = action
+    if excluded_searches:
+        actions = [a for a in actions if not a.action_id.startswith("review-release-constraints-")
+                   or any(a is first for first in excluded_searches.values())]
+
     for action in actions:
         if action.command[:4] != [session.target_python, "-m", "pip", "install"]:
             continue
@@ -96,14 +128,16 @@ def refine(session, actions, by_id, facts):
     if len(missing) > 1 and hosts:
         host = hosts[0]
         rows = [r for r in data["requirements"] if r["owner"] == "project"]
-        requested = {}
+        requested, extras_by_name = {}, {}
         for row in project.get("declarations", []):
             if (row.get("constraint") or row.get("group") != "required"
                     or row.get("status") not in ("missing", "satisfied", "version_mismatch")
                     or row.get("installer", "pip") != "pip"):
                 continue
             requirement = Requirement(row["requirement"])
-            extras = "[" + ",".join(sorted(requirement.extras)) + "]" if requirement.extras else ""
+            combined_extras = extras_by_name.setdefault(row["name"], set())
+            combined_extras.update(requirement.extras)
+            extras = "[" + ",".join(sorted(combined_extras)) + "]" if combined_extras else ""
             requested[row["name"]] = requirement.name + extras + combined_specifier(data, row["name"])
         if requested and len(requested) <= 100 and not any(
                 contradicts(str(Requirement(text).specifier)) for text in requested.values()):
@@ -132,7 +166,7 @@ def refine(session, actions, by_id, facts):
         if not failed:
             continue
         name = canonicalize_name(failed.component)
-        rows = [r for r in requirements_for(data, name) if r["owner"] == "project"]
+        rows = [r for r in data["requirements"] if r["name"] == name and r["owner"] == "project"]
         if not rows:
             continue
         installed = data["installed"].get(name)
@@ -149,12 +183,14 @@ def refine(session, actions, by_id, facts):
                 pins = [s.version for s in recorded.specifier if s.operator == "==" and "*" not in s.version]
             except InvalidRequirement:
                 pins = []
-            if pins and not SpecifierSet(combined_specifier(data, name)).contains(pins[0]):
+            still_pinned = any(s.operator == "==" and s.version in pins
+                               for row in rows for s in SpecifierSet(row["specifier"]))
+            if pins and not still_pinned:
                 historical.add(issue.issue_id)
                 continue  # The recorded failed pin has already been changed.
         requirements = "; ".join(f"{r['source']}: {r['requirement']}" for r in rows)
         blocker = Action(
-            action_id="review-install-" + name, kind="manual_fix", cause="version_incompatibility",
+            action_id="review-install-" + name, kind="manual_fix",
             title=f"Review the failed installation of {name} before retrying the dependency set",
             explanation=(
                 f"The imported pip log records an installation/build failure for {name}: {failed.message.strip()}. "

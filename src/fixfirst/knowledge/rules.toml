@@ -193,10 +193,11 @@ then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "replac
 [[rule]]
 id = "D06"
 phase = "diagnose"
-description = "A name cannot be imported from an installed library whose version does not satisfy what another installed package requires (pip check)."
-source = "pip check"
+description = "A library import or attribute is unavailable and the installed version conflicts with an installed package's requirement."
+source = "target environment Requires-Dist and pip check"
 when = [
-  ["?i", "signal", "cannot_import_name"], ["?i", "module", "?m"], ["?m", "provided_by", "?d"],
+  ["?i", "signal", "?s"], ["test", "in", "?s", "cannot_import_name,no_attribute"],
+  ["?i", "module", "?m"], ["?m", "provided_by", "?d"],
   ["?d", "required_spec", "?spec"],
 ]
 then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "align_required"], ["?i", "because", "?d"]]

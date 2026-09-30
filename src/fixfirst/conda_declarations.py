@@ -15,7 +15,7 @@ SOURCES = {
 
 
 def read(text: str, source: str, limit: int = 2000) -> dict:
-    result = {"pip": [], "python": [], "notes": [], "conda": []}
+    result = {"pip": [], "python": [], "notes": [], "conda": [], "mappings": []}
     try:
         value = yaml.safe_load(text)
     except (yaml.YAMLError, RecursionError, ValueError):
@@ -27,15 +27,22 @@ def read(text: str, source: str, limit: int = 2000) -> dict:
     dependencies = value["dependencies"]
     if len(dependencies) > limit:
         result["notes"].append(f"{source}: dependency list exceeds the limit")
+    budget = limit
     for index, item in enumerate(dependencies[:limit]):
+        if budget <= 0:
+            result["notes"].append(f"{source}: total dependency limit reached")
+            break
+        budget -= 1
         location = f"{source} dependencies[{index}]"
         if isinstance(item, dict):
             if set(item) != {"pip"} or not isinstance(item["pip"], list):
                 result["notes"].append(f"{location}: unsupported installer section")
                 continue
-            if len(item["pip"]) > limit:
+            entries = item["pip"][:budget]
+            if len(item["pip"]) > budget:
                 result["notes"].append(f"{location}: pip list exceeds the limit")
-            for line, requirement in enumerate(item["pip"][:limit]):
+            budget -= len(entries)
+            for line, requirement in enumerate(entries):
                 if isinstance(requirement, str):
                     result["pip"].append((requirement, f"{location}.pip[{line}]"))
                 else:
@@ -63,6 +70,8 @@ def read(text: str, source: str, limit: int = 2000) -> dict:
         elif name in PYPI_EQUIVALENTS:
             result["pip"].append((PYPI_EQUIVALENTS[name] + spec,
                                   f"{location} (Conda declaration; documented PyPI alternative)"))
+            result["mappings"].append({"declaration": location, "distribution": PYPI_EQUIVALENTS[name],
+                                       "source": SOURCES[name]})
         elif name != "pip":
             result["conda"].append({"requirement": item, "source": location})
             result["notes"].append(f"{location}: {name} is a Conda requirement; no PyPI name is assumed")

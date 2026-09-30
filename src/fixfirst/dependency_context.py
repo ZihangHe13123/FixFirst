@@ -13,13 +13,13 @@ from packaging.version import InvalidVersion, Version
 MARKER_KEYS = frozenset(default_environment())
 
 
-def active_requirement(text: str, markers: dict) -> Requirement | None:
+def active_requirement(text: str, markers: dict, extras=()) -> Requirement | None:
     """Never evaluate a target marker using implicit host-machine values."""
     requirement = Requirement(text)
     if requirement.marker:
         if not MARKER_KEYS.issubset(markers):
             raise ValueError("Target environment markers are incomplete")
-        if not requirement.marker.evaluate({**markers, "extra": ""}):
+        if not any(requirement.marker.evaluate({**markers, "extra": extra}) for extra in {"", *extras}):
             return None
     return requirement
 
@@ -27,10 +27,42 @@ def active_requirement(text: str, markers: dict) -> Requirement | None:
 def context(environment: dict, project: dict) -> dict:
     records, notes, installed = [], [], {}
     markers = environment.get("markers", {})
+    selected = {}
+    packages = {canonicalize_name(p.get("name", "")): p for p in environment.get("packages", [])}
+    for row in project.get("declarations", []):
+        if row.get("group", "required") != "required" or row.get("constraint"):
+            continue
+        try:
+            requirement = active_requirement(row.get("requirement", ""), markers)
+        except (InvalidRequirement, ValueError, KeyError, TypeError):
+            continue
+        if requirement and requirement.extras:
+            selected.setdefault(canonicalize_name(requirement.name), set()).update(requirement.extras)
+    pending, visited = list(packages), set()
+    while pending and len(visited) < 5000:
+        owner = pending.pop()
+        key = owner, tuple(sorted(selected.get(owner, ())))
+        if key in visited:
+            continue
+        visited.add(key)
+        for text in packages.get(owner, {}).get("requires", []) or []:
+            try:
+                requirement = active_requirement(text, markers, selected.get(owner, ()))
+            except (InvalidRequirement, ValueError, KeyError, TypeError):
+                continue
+            if not requirement or not requirement.extras:
+                continue
+            target = canonicalize_name(requirement.name)
+            current = selected.setdefault(target, set())
+            if not requirement.extras <= current:
+                current.update(requirement.extras)
+                pending.append(target)
+    if pending:
+        notes.append("Explicit extra dependency traversal exceeded its limit")
 
     def add(text, source, refs, owner):
         try:
-            requirement = active_requirement(text, markers)
+            requirement = active_requirement(text, markers, selected.get(owner, ()))
         except (InvalidRequirement, ValueError, KeyError, TypeError):
             notes.append(f"{source}: requirement could not be evaluated")
             return
@@ -68,7 +100,9 @@ def context(environment: dict, project: dict) -> dict:
                 "installed": installed,
                 "requirements": [{k: r[k] for k in ("name", "requirement", "source", "owner")}
                                  for r in records],
-                "requires_python": project.get("requires_python", []), "notes": sorted(set(notes))}
+                "requires_python": project.get("requires_python", []),
+                "selected_extras": {name: sorted(extras) for name, extras in selected.items()},
+                "notes": sorted(set(notes))}
     digest = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
     return {"installed": installed, "requirements": records, "notes": sorted(set(notes)),
             "fingerprint": digest}
