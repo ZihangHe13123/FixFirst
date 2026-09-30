@@ -8,7 +8,37 @@
 
 [meta]
 title = "FixFirst Python troubleshooting knowledge"
-updated = "2026-09-24"
+updated = "2026-09-30"
+
+# Behavior changes are matched using observed values/calls and version context.
+# They are compatibility hypotheses, not proof that every failure inside a library
+# was caused by an upgrade.
+[[behavior]]
+id = "numpy-scalar-repr"
+distribution = "numpy"
+version = "2.0"
+summary = "NumPy 2 includes the scalar type in repr output; the compared strings differ only by that wrapper."
+action_title = "Format the NumPy scalar explicitly when building the output"
+replacement = 'Use str(value), or !s instead of !r in the scalar format, when the required output is the plain numeric text. Keep the expected numeric value and the tests unchanged; avoid replacing all numeric values with strings.'
+source = "numpy-scalar-representation"
+
+[[behavior]]
+id = "numpy-scalar-promotion"
+distribution = "numpy"
+version = "2.0"
+summary = "NumPy 2 preserves a NumPy float scalar when it is combined with a Python float; the observed JSON call rejects the resulting scalar."
+action_title = "Convert the computed NumPy scalar to a Python float before JSON encoding"
+replacement = "Convert the computed numeric result with float(result) at the JSON boundary, preserving the numeric JSON value. Do not stringify it or use default=str; check the required precision and run the unchanged tests."
+source = "numpy-scalar-promotion"
+
+[[behavior]]
+id = "pydantic-number-to-string"
+distribution = "pydantic"
+version = "2.0"
+summary = "Pydantic 2 no longer coerces numeric input into a str field by default; this field rejects a numeric value."
+action_title = "Convert the numeric input to text before validating the string field"
+replacement = "If the field is intended to accept that number as text, pass str(value) for the affected field before validation. Otherwise correct the input to a string. Preserve other field validation and run the unchanged tests; do not downgrade the whole environment just to suppress validation."
+source = "pydantic-number-coercion"
 
 # --------------------------------------------------------------------------------------
 # Root causes (diagnosis classes)
@@ -638,6 +668,18 @@ url = "https://numpy.org/doc/stable/release/1.24.0-notes.html"
 [sources."numpy-2.0"]
 title = "NumPy 2.0 migration guide (NEP 52 namespace cleanup)"
 url = "https://numpy.org/doc/stable/numpy_2_0_migration_guide.html"
+
+[sources."numpy-scalar-representation"]
+title = "NumPy 2.0 release notes: representation of NumPy scalars changed"
+url = "https://numpy.org/doc/stable/release/2.0.0-notes.html#representation-of-numpy-scalars-changed"
+
+[sources."numpy-scalar-promotion"]
+title = "NumPy 2.0 migration guide: changes to data type promotion"
+url = "https://numpy.org/doc/stable/numpy_2_0_migration_guide.html#changes-to-numpy-data-type-promotion"
+
+[sources."pydantic-number-coercion"]
+title = "Pydantic V2 migration guide: validator behavior changes"
+url = "https://pydantic.dev/docs/validation/latest/get-started/migration/#validator-behavior-changes"
 
 [sources."sklearn-1.2"]
 title = "scikit-learn 1.2 release highlights and changelog"

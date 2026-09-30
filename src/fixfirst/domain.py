@@ -48,6 +48,13 @@ def load() -> dict:
             key = f"api:{entry['module']}.{name}"
             deprecated[key] = {**entry, "name": name, "id": key}
     data["deprecated_index"] = deprecated
+    behaviors = {}
+    for entry in data.get("behavior", []):
+        key = "behavior:" + entry["id"]
+        if key in behaviors or entry["source"] not in data["sources"]:
+            raise ValueError(f"invalid behavior entry {key}")
+        behaviors[key] = entry
+    data["behavior_index"] = behaviors
     data["unmaintained_index"] = {dist_id(e["distribution"]): e for e in data.get("unmaintained", [])}
     # Fixtures are cited by the plugin's PyPI page unless the entry names another source.
     lint = data.setdefault("lint", {"likely_bug": [], "categories": {}})
@@ -75,6 +82,15 @@ def facts_for(entities) -> list[Fact]:
     kb = load()
     result = []
     for entity in sorted(set(entities)):
+        entry = kb["behavior_index"].get(entity)
+        if entry:
+            result += [
+                knowledge(entity, "changed_in", dist_id(entry["distribution"]), entry["source"]),
+                knowledge(entity, "changed_in_version", entry["version"], entry["source"]),
+                knowledge(entity, "change_summary", entry["summary"], entry["source"]),
+                knowledge(entity, "replacement", entry["replacement"], entry["source"]),
+                knowledge(entity, "action_title", entry["action_title"], entry["source"]),
+            ]
         entry = kb["removed_index"].get(entity)
         if entry:
             source = entry["source"]
@@ -217,6 +233,13 @@ def graph() -> dict:
         edges.append(
             {"source": key, "relation": "provided_by_plugin", "target": dist_id(row["distribution"])}
         )
+    for key, row in kb["behavior_index"].items():
+        node(key, "BehaviorChange", row["summary"], version=row["version"], replacement=row["replacement"])
+        node(dist_id(row["distribution"]), "Distribution", row["distribution"])
+        edges += [
+            {"source": key, "relation": "changed_in", "target": dist_id(row["distribution"])},
+            {"source": key, "relation": "documented_in", "target": "source:" + row["source"]},
+        ]
     return {
         "schema_version": 1,
         "title": kb["meta"]["title"],

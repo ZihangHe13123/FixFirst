@@ -15,6 +15,7 @@ from packaging.requirements import InvalidRequirement, Requirement
 from packaging.utils import canonicalize_name
 from packaging.version import InvalidVersion, Version
 
+from .behavior import observed_changes
 from .models import Fact, Issue, Run, Session
 from .runner import environment_id
 
@@ -307,20 +308,34 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
     environment = current_environment(session)
 
     located = frames_in(traceback)
-    frames = [path for path, _ in located]
     source_file = str(exception_record.get("source_file") or "")
+
+    def frame_key(path):
+        value = path.replace("\\", "/")
+        if not value.startswith(("/", "<")) and not WINDOWS_ABSOLUTE.match(value):
+            value = posixpath.normpath(session.project_root.replace("\\", "/") + "/" + value)
+        return value.casefold() if WINDOWS_ABSOLUTE.match(value) else value
+
+    # pytest may hide a library frame in longrepr. The probe still records the
+    # innermost frame of the actual exception; preserve it for provenance/call flow.
+    if source_file and exception_record.get("stage") != "collect":
+        source_line = str(exception_record.get("source_line") or "")
+        if located and frame_key(located[-1][0]) == frame_key(source_file):
+            located[-1] = (source_file, source_line or located[-1][1])
+        else:
+            located.append((source_file, source_line))
+    frames = [path for path, _ in located]
     last = source_file if source_file and exception_record.get("stage") != "collect" else ""
     if not last and frames:
         last = frames[-1]
     raised_in = classify_path(last, session.project_root, environment)
     kinds = [classify_path(f, session.project_root, environment) for f in frames]
-    # The installed library whose code raised (for example jinja2 importing a removed name).
+    # Attribute the raising frame, not an outer library which called user code.
     library = ""
-    for path, kind in zip(frames, kinds):
-        if kind == "third_party":
-            inside = re.split(r"(?:site|dist)-packages[\\/]", path.replace("\\", "/"), maxsplit=1)
-            if len(inside) == 2:
-                library = re.split(r"[/.]", inside[1], maxsplit=1)[0]
+    if raised_in == "third_party":
+        inside = re.split(r"(?:site|dist)-packages[\\/]", last.replace("\\", "/"), maxsplit=1)
+        if len(inside) == 2:
+            library = re.split(r"[/.]", inside[1], maxsplit=1)[0]
     # The last frame in the user's own code is where they should look.
     root = session.project_root.replace("\\", "/").rstrip("/") + "/"
     where = ""
@@ -353,7 +368,9 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
     evidence = {
         "issue_id": issue.issue_id,
         "exception": exception,
+        "exception_module": str(exception_record.get("exception_module") or ""),
         "message": message[:2000],
+        "executed_lines": executed_lines(traceback)[:80],
         "stage": issue.stage,
         "raised_in": raised_in,
         "where": where,
@@ -658,6 +675,9 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
                 facts.append(observed(subject, "project_calls", dist, refs))
             if dist == "dist:pytest" or dist.startswith("dist:pytest-"):
                 facts.append(observed(dist, "is_test_runner", "yes", refs))
+        for change, distribution in observed_changes(evidence, project):
+            facts.append(observed(subject, "behavior_symptom", "behavior:" + change, refs + project_ref))
+            facts.append(observed(subject, "behavior_provider", "dist:" + distribution, refs + project_ref))
         if evidence.get("call_signature"):
             facts.append(observed(subject, "signal", "call_signature", refs))
             # Resolve what was called through the project's own imports (read statically).
@@ -720,7 +740,7 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
         if lint.get("other"):
             facts.append(observed("project", "other_linter", lint["other"], project_ref))
     # Versions the project was locked to, for the libraries that raised a failure.
-    raising = {f.value for f in facts if f.predicate == "raised_by_library"}
+    raising = {f.value for f in facts if f.predicate in ("raised_by_library", "behavior_provider")}
     for index, row in enumerate(project.get("tested_versions", [])):
         dist = "dist:" + row["name"]
         if dist not in raising:
@@ -737,7 +757,7 @@ def observations(session: Session, issues: list[Issue]) -> tuple[list[Fact], dic
         facts.append(observed(dist, "tested_series_below", f"{tested.major}.{tested.minor + 1}", ref))
     # The lowest version the project declares, for the libraries involved in a failure: code
     # written for 1.x may not behave the same on 2.x.
-    involved = {f.value for f in facts if f.predicate in ("raised_by_library", "provided_by")}
+    involved = {f.value for f in facts if f.predicate in ("raised_by_library", "provided_by", "behavior_provider")}
     for row in project.get("declarations", []):
         dist = "dist:" + row["name"]
         if dist not in involved:
