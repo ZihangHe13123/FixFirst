@@ -1,0 +1,37 @@
+{
+  "redactions": "Host-specific directories and username replaced by placeholders; case definitions, actions and outcomes unchanged. Claude collected original before/reference records; Codex collected same-host baseline and final diagnosis/manual interpretations. Final independent cross-review is pending.",
+  "files": {
+    "environments.json": {
+      "raw_sha256": "086f7e413cbe8da464f4606cc0a12d5a265179a354847bd0d787261c760cb97e",
+      "published_sha256": "7b0c272dc2e2114948dae8c01ac1ed28e9b42e3786184f533125e27a1fe75075"
+    },
+    "reference.json": {
+      "raw_sha256": "62614eabb2e120f2ea4febb09efa510bb04689c9ae4070370f20eb04fbd713f8",
+      "published_sha256": "11b026911654d1335f376499b116d25ec7bc5338c707574405e23a949cd62506"
+    },
+    "before.json": {
+      "raw_sha256": "a07e41b8cd41cbdee001856a631271e43dbffe01afcbc5e36cbd9d5407cf6c32",
+      "published_sha256": "4a7b29c64ff341040a4836d915e4f1a2cbf1f2509c7f435619c918bb4e1138a7"
+    },
+    "before-candidate61.json": {
+      "raw_sha256": "2c4543f33fe2357229ca658c9ceebfdbc70743efa9b30722ef225bd36ce65e9b",
+      "published_sha256": "eb16661544434ea82ee6cc0f6beeb8364337e4633207f1bcc5c95f53b9f6df3a"
+    },
+    "before-command-execution.json": {
+      "raw_sha256": "3e86b1085264dd454a9119286c9116f4fc6836980f51427d567f9f8c4308dd3f",
+      "published_sha256": "967b7c190da7359672032d2cf998b2a9ac6de9688ed2b5d6d83bd868df1f9aec"
+    },
+    "after.json": {
+      "raw_sha256": "5aec282deb5f84fd2436ffc59a42a48ae13aac2932a3b5d9333d6ddc7b964f70",
+      "published_sha256": "fc0a5f2f306315d8a48cf92759e006e9d7edbb11dda479a5120e52ffb48e8da4"
+    },
+    "after-manual-execution.json": {
+      "raw_sha256": "43eae9d0b63fdc8de549069f0955bec9ca456d9bc00ba11da29d1fa9ee1f9124",
+      "published_sha256": "43eae9d0b63fdc8de549069f0955bec9ca456d9bc00ba11da29d1fa9ee1f9124"
+    },
+    "before-same-host.json": {
+      "raw_sha256": "39192efe404d916cba9ee933fccacba789f753456318b8fa315e5c53aee1ccdb",
+      "published_sha256": "67bbf531eda41cdb8a2cf97cbb4ade73bf7a20f81dce3c57013bf8ae5df2dcea"
+    }
+  }
+}

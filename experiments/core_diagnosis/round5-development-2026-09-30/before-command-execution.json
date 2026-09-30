@@ -1,0 +1,71 @@
+[
+  {
+    "name": "numpy_copy_false",
+    "first_step": "Inspect the exception raised while running the test",
+    "command": null,
+    "executed": false
+  },
+  {
+    "name": "pydantic_optional_required",
+    "first_step": "Inspect the exception raised while running the test",
+    "command": null,
+    "executed": false
+  },
+  {
+    "name": "numpy_solve_batched_vector",
+    "first_step": "Try numpy below 2: the project declares numpy>=1.21, this environment has 2.2.6",
+    "command": "<runs>/numpy_solve_batched_vector/venv/bin/python -m pip install 'numpy<2'",
+    "executed": true,
+    "command_exit": 0,
+    "command_tail": "Collecting numpy<2\n  Downloading numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl.metadata (61 kB)\nDownloading numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl (13.7 MB)\n   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.7/13.7 MB 31.4 MB/s  0:00:00\nInstalling collected packages: numpy\n  Attempting uninstall: numpy\n    Found existing installation: numpy 2.2.6\n    Uninstalling numpy-2.2.6:\n      Successfully uninstalled numpy-2.2.6\nSuccessfully installed numpy-1.26.4\n",
+    "tests_exit": 0,
+    "target_error_left": false,
+    "tests_tail": ".                                                                        [100%]\n1 passed in 1.92s\n"
+  },
+  {
+    "name": "stdlib_safeconfigparser_removed",
+    "first_step": "Check the import path and dependency declarations",
+    "command": null,
+    "executed": false
+  },
+  {
+    "name": "yaml_tab_indentation",
+    "first_step": "Try pyyaml below 6: the project declares pyyaml>=5.1, this environment has 6.0.2",
+    "command": "<runs>/yaml_tab_indentation/venv/bin/python -m pip install 'pyyaml<6'",
+    "executed": true,
+    "command_exit": 1,
+    "command_tail": "line 256, in add_defaults\n          self._add_defaults_ext()\n        File \"/private<temp>\", line 341, in _add_defaults_ext\n          self.filelist.extend(build_ext.get_source_files())\n                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"<string>\", line 201, in get_source_files\n      AttributeError: 'build_ext' object has no attribute 'cython_sources'\n      [end of output]\n  \n  note: This error originates from a subprocess, and is likely not a problem with pip.\nERROR: Failed to build 'pyyaml' when getting requirements to build wheel\n",
+    "tests_exit": 1,
+    "target_error_left": true,
+    "tests_tail": "aracter '\\t' that cannot start any token\nE         in \"<runs>/yaml_tab_indentation/step-before/settings.yaml\", line 3, column 1\n\n../venv-step-before/lib/python3.12/site-packages/yaml/scanner.py:258: ScannerError\n=========================== short test summary info ============================\nFAILED test_app.py::test_limits - yaml.scanner.ScannerError: while scanning f...\n1 failed in 0.17s\n"
+  },
+  {
+    "name": "numpy_reshape_off_by_one",
+    "first_step": "Try numpy below 2: the project declares numpy>=1.21, this environment has 2.2.6",
+    "command": "<runs>/numpy_reshape_off_by_one/venv/bin/python -m pip install 'numpy<2'",
+    "executed": true,
+    "command_exit": 0,
+    "command_tail": "Collecting numpy<2\n  Using cached numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl.metadata (61 kB)\nUsing cached numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl (13.7 MB)\nInstalling collected packages: numpy\n  Attempting uninstall: numpy\n    Found existing installation: numpy 2.2.6\n    Uninstalling numpy-2.2.6:\n      Successfully uninstalled numpy-2.2.6\nSuccessfully installed numpy-1.26.4\n",
+    "tests_exit": 1,
+    "target_error_left": true,
+    "tests_tail": "ributeError:\n            wrap = None\n>       result = getattr(asarray(obj), method)(*args, **kwds)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       ValueError: cannot reshape array of size 6 into shape (2,4)\n\n../venv-step-before/lib/python3.12/site-packages/numpy/core/fromnumeric.py:45: ValueError\n=========================== short test summary info ============================\nFAILED test_app.py::test_to_grid - ValueError: cannot reshape array of size 6...\n1 failed in 1.84s\n"
+  },
+  {
+    "name": "click_option_typo",
+    "first_step": "Compare the failed assertion's expected and actual values",
+    "command": null,
+    "executed": false
+  },
+  {
+    "name": "pydantic_field_name_typo",
+    "first_step": "Inspect the exception raised while running the test",
+    "command": null,
+    "executed": false
+  },
+  {
+    "name": "healthy_deprecations",
+    "first_step": null,
+    "command": null,
+    "executed": false
+  }
+]
