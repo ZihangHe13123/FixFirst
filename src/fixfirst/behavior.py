@@ -144,10 +144,12 @@ def calls_numpy_formatter(lines: list[str], imports: dict, functions: list[str])
     return False
 
 
-def generator_consumption(tree: ast.AST) -> dict[int, bool]:
-    """Record visible eager uses after a named generator's creation in its function.
+def generator_consumption(tree: ast.AST) -> dict[int, bool | None]:
+    """Record eager, unknown, or simple lazy uses of a named generator.
 
     This is a bounded static guard, not proof about consumers in other functions.
+    Only direct aliases and bare returns are known lazy uses. Passing the value
+    to an unrecognised callable or capturing it in a nested scope is unknown.
     Missing/oversized contexts are absent, not marked safe.
     """
     result = {}
@@ -161,18 +163,24 @@ def generator_consumption(tree: ast.AST) -> dict[int, bool]:
             nodes.append(node)
             if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda, ast.ClassDef)):
                 pending.extend(ast.iter_child_nodes(node))
-        if pending:
+        if pending or len(nodes) > 2000:
             continue
+        parents = {child: node for node in nodes for child in ast.iter_child_nodes(node)}
         nodes.sort(key=lambda n: (getattr(n, "lineno", 0), getattr(n, "col_offset", 0)))
         for at, node in enumerate(nodes):
             targets = node.targets if isinstance(node, ast.Assign) else [node.target] if isinstance(node, ast.AnnAssign) else []
             if (len(targets) != 1 or not isinstance(targets[0], ast.Name)
                     or not isinstance(node.value, ast.GeneratorExp)):
                 continue
-            aliases, consumed = {targets[0].id}, False
+            aliases, consumed, unknown = {targets[0].id}, False, False
+            creation_nodes = set(ast.walk(node))
             for later in nodes[at + 1:]:
-                if isinstance(later, ast.Assign) and isinstance(later.value, ast.Name) and later.value.id in aliases:
-                    aliases.update(t.id for t in later.targets if isinstance(t, ast.Name))
+                if later in creation_nodes:
+                    continue
+                assigned = later.targets if isinstance(later, ast.Assign) else [later.target] if isinstance(later, ast.AnnAssign) else []
+                if (assigned and all(isinstance(t, ast.Name) for t in assigned)
+                        and isinstance(later.value, ast.Name) and later.value.id in aliases):
+                    aliases.update(t.id for t in assigned)
                 if isinstance(later, ast.Call):
                     name = later.func.id if isinstance(later.func, ast.Name) else getattr(later.func, "attr", "")
                     consumes = name in consumers or name in {"__next__", "send"}
@@ -180,9 +188,44 @@ def generator_consumption(tree: ast.AST) -> dict[int, bool]:
                     consumed |= consumes and uses
                 elif isinstance(later, (ast.For, ast.AsyncFor)):
                     consumed |= any(isinstance(n, ast.Name) and n.id in aliases for n in ast.walk(later.iter))
-                elif isinstance(later, (ast.ListComp, ast.SetComp, ast.DictComp, ast.YieldFrom)):
+                elif isinstance(later, (ast.ListComp, ast.SetComp, ast.DictComp, ast.YieldFrom, ast.Starred)):
                     consumed |= any(isinstance(n, ast.Name) and n.id in aliases for n in ast.walk(later))
-            result[node.lineno] = consumed
+                elif isinstance(later, ast.Name) and isinstance(later.ctx, ast.Load) and later.id in aliases:
+                    parent = parents.get(later)
+                    direct_return = isinstance(parent, ast.Return) and parent.value is later
+                    direct_alias = (isinstance(parent, ast.Assign) and parent.value is later
+                                    and all(isinstance(t, ast.Name) for t in parent.targets))
+                    annotated_alias = (isinstance(parent, ast.AnnAssign) and parent.value is later
+                                       and isinstance(parent.target, ast.Name))
+                    unknown |= not (direct_return or direct_alias or annotated_alias)
+            for scope in nodes:
+                if not isinstance(scope, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda, ast.ClassDef)):
+                    continue
+                # A nested function may be declared before the assignment and
+                # called afterwards. Do not mistake its captured value for an
+                # unused generator. Parameter names shadow the outer aliases.
+                pending = [scope]
+                captured, count = [], 0
+                while pending and count < 2000:
+                    child = pending.pop()
+                    captured.append(child)
+                    pending.extend(ast.iter_child_nodes(child))
+                    count += 1
+                if pending:
+                    unknown = True
+                    continue
+                arguments = getattr(scope, "args", None)
+                bound = set()
+                headers = list(getattr(scope, "decorator_list", []))
+                if arguments:
+                    bound = {a.arg for a in arguments.posonlyargs + arguments.args + arguments.kwonlyargs}
+                    bound.update(a.arg for a in (arguments.vararg, arguments.kwarg) if a is not None)
+                    headers += list(arguments.defaults) + [d for d in arguments.kw_defaults if d is not None]
+                unknown |= any(isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load) and n.id in aliases
+                               for header in headers for n in ast.walk(header))
+                unknown |= any(isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load) and n.id in aliases - bound
+                               for n in captured)
+            result[node.lineno] = True if consumed else None if unknown else False
     return result
 
 

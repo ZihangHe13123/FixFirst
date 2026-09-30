@@ -323,6 +323,46 @@ def test_generator_consumption_tracks_aliases_and_keeps_nested_scopes_separate()
     assert generator_consumption(tree) == {2: False, 7: True, 11: True}
 
 
+@pytest.mark.parametrize("tail,expected", [
+    ("return [*rows]", True),
+    ('return "".join(str(row) for row in rows)', None),
+    ("def materialise():\n    return list(rows)\nreturn materialise()", None),
+    ("return third_party_consumer(rows)", None),
+    ("return LazyWrapper(rows)", None),  # a callable's name does not prove its behaviour
+    ("alias: object = rows\nreturn alias", False),
+    ("alias = rows\nreturn third_party_consumer(alias)", None),
+    ("self.saved = rows\nreturn self.saved", None),
+    ("def unrelated(rows):\n    return list(rows)\nreturn rows", False),
+    ("def deferred(rows=rows):\n    return list(rows)\nreturn deferred()", None),
+])
+def test_generator_uses_that_are_not_proven_lazy_cannot_borrow_migration_history(tail, expected):
+    from fixfirst.behavior import generator_consumption, observed_changes
+
+    source = "def query(cursor):\n    rows = (row for row in cursor)\n"
+    source += "\n".join("    " + line for line in tail.splitlines()) + "\n"
+    context = generator_consumption(ast.parse(source))
+    assert context[2] is expected
+    evidence = {"exception": "ResourceClosedError", "library": "sqlalchemy",
+                "exception_module": "sqlalchemy.exc",
+                "message": "This result object does not return rows. It has been closed automatically.",
+                "source_location": "app.py:2", "source_statement": "rows = (row for row in cursor)",
+                "executed_lines": ["return self._iter_impl()"], "call_signature": False}
+    # The observed history is gated by the recorded context, not the spelling
+    # of an unknown consumer or wrapper.
+    project = {"generator_consumption": {"app.py:2": context[2]},
+               "imported_names": {"text": "sqlalchemy.text"}}
+    changes = observed_changes(evidence, project)
+    assert changes == ([("sqlalchemy-eager-result-iterator", "sqlalchemy")] if expected is False else [])
+
+
+def test_generator_captured_before_its_assignment_is_unknown():
+    from fixfirst.behavior import generator_consumption
+
+    source = ("def query(cursor):\n    def materialise():\n        return list(rows)\n"
+              "    rows = (row for row in cursor)\n    return materialise()\n")
+    assert generator_consumption(ast.parse(source))[4] is None
+
+
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="SafeConfigParser was removed in Python 3.12")
 def test_removed_configparser_name_gets_a_concrete_replacement(tmp_path):
     source = 'from configparser import SafeConfigParser\ndef convert():\n    return SafeConfigParser().sections()\n'
