@@ -106,6 +106,10 @@ def parse(run: Run) -> list[Event]:
             )
         ]
     text = run.stdout + "\n" + run.stderr
+    if run.tool in ("python_run", "unittest_run"):
+        from .execution_parsers import parse_execution
+
+        return parse_execution(run)
     missing_tool = re.search(r"No module named ['\"]?(pytest|ruff|pip)\b", text)
     if missing_tool and run.tool != "pip_install":
         # A project's own import failure is not necessarily a missing runner.

@@ -19,7 +19,8 @@ from .runner import (
 
 
 def create_session(
-    project, python, name=None, goal="collect_tests", grouping="tfidf", model=None, sbert_model=None
+    project, python, name=None, goal="collect_tests", grouping="tfidf", model=None, sbert_model=None,
+    execution=None,
 ):
     root = Path(project).expanduser().resolve()
     interpreter = Path(os.path.abspath(os.path.expanduser(python)))
@@ -29,6 +30,9 @@ def create_session(
         raise ValueError("Project directory does not exist")
     if not interpreter.is_file() or not os.access(interpreter, os.X_OK):
         raise ValueError("Python interpreter does not exist or is not executable")
+    from .execution import choose_execution
+
+    goal, execution = choose_execution(root, goal, execution)
     if grouping == "sbert" and not sbert_model:
         raise ValueError("SBERT grouping needs a local model path")
     if model:
@@ -44,6 +48,7 @@ def create_session(
         project_root=str(root),
         target_python=str(interpreter),
         goal=goal,
+        execution=execution,
         grouping=grouping,
         model_path=model,
         sbert_model=sbert_model,
@@ -65,9 +70,12 @@ def ingest(session: Session, runs: list[Run]):
     claimed = set()
     for issue in fresh:
         # The same text in different interpreters must not overwrite the prior environment.
-        if issue.issue_id in by_id and by_id[issue.issue_id].environment_id != issue.environment_id:
-            issue.issue_id = "issue-" + digest(issue.fingerprint + issue.environment_id)
-        if issue.tool != "pytest_run" or not issue.targets:
+        if issue.issue_id in by_id and (
+            by_id[issue.issue_id].environment_id != issue.environment_id
+            or (issue.tool in ("python_run", "unittest_run") and by_id[issue.issue_id].scope != issue.scope)
+        ):
+            issue.issue_id = "issue-" + digest(issue.fingerprint + issue.environment_id + issue.scope)
+        if issue.tool not in ("pytest_run", "unittest_run") or not issue.targets:
             continue
         candidates = [
             old
@@ -76,6 +84,7 @@ def ingest(session: Session, runs: list[Run]):
             and (old.tool, old.environment_id, old.kind, old.stage, old.component)
             == (issue.tool, issue.environment_id, issue.kind, issue.stage, issue.component)
             and set(old.targets) & set(issue.targets)
+            and (issue.tool != "unittest_run" or old.scope == issue.scope)
         ]
         if len(candidates) != 1:
             continue
@@ -160,11 +169,12 @@ def ingest(session: Session, runs: list[Run]):
                 and r.coverage_complete
                 for r in runs
             )
-        if old.tool == "pytest_run" and old.targets:
+        if old.tool in ("pytest_run", "unittest_run") and old.targets:
             passed = any(
                 r.tool == old.tool
                 and r.environment_id == old.environment_id
                 and r.source == "executed"
+                and (old.tool != "unittest_run" or r.scope == old.scope)
                 and r.coverage_complete
                 and set(old.targets).issubset(r.passed_nodes)
                 for r in runs
@@ -206,10 +216,18 @@ def scan(session, checks=None, timeout=DEFAULT_TIMEOUT, targets=None):
     if session.stopped:
         raise ValueError("This session is stopped; use resume before running checks")
     if checks is None:
-        checks = [
-            "pytest_run" if c == "pytest" and session.goal == "pass_tests" else c
-            for c in DEFAULT_CHECKS
-        ]
+        if session.goal in ("run_project", "pass_unittest", "check_style"):
+            checks = ["environment", "project", GOAL_CHECKS[session.goal], "pip_check"]
+            if session.goal != "check_style":
+                checks.append("ruff")
+        else:
+            checks = [
+                "pytest_run" if c == "pytest" and session.goal == "pass_tests" else c
+                for c in DEFAULT_CHECKS
+            ]
+        optional_tools = session.goal in ("run_project", "pass_unittest")
+    else:
+        optional_tools = False
     if targets:
         if list(checks) not in (["pytest_run"], ["version_search"]):
             raise ValueError("--nodes must be used on its own with --checks pytest_run")
@@ -219,6 +237,11 @@ def scan(session, checks=None, timeout=DEFAULT_TIMEOUT, targets=None):
         raise ValueError("The same check cannot appear twice in one batch")
     runs = []
     for check in checks:
+        if optional_tools and check in ("pip_check", "ruff"):
+            package = "pip" if check == "pip_check" else "ruff"
+            if not any(p.get("name", "").lower() == package
+                       for p in session.environment.get("packages", [])):
+                continue
         # Declaration checks compare installed metadata. Always refresh that metadata as part
         # of this operation, including when a user runs the single project action after a fix.
         if check == "project" and not any(r.tool == "environment" for r in runs):

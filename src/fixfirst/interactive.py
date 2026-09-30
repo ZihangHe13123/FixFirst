@@ -2,11 +2,23 @@
 
 from datetime import datetime
 from pathlib import Path
-import sys
 
 from .storage import Store
 
-GOALS = {"1": "collect_tests", "2": "check_style", "3": "pass_tests"}
+GOALS = {"0": "auto", "1": "collect_tests", "2": "check_style", "3": "pass_tests",
+         "4": "run_project", "5": "pass_unittest"}
+
+
+def entry_arguments(goal):
+    if goal == "run_project":
+        kind = input("Entry type: 1 script / 2 module / 3 notebook (Enter = 1): ").strip() or "1"
+        option = {"1": "--script", "2": "--module", "3": "--notebook"}.get(kind)
+        if not option:
+            raise ValueError("Unknown entry type")
+        return [option, input("Entry path or module name: ").strip().strip("'\"")]
+    if goal == "pass_unittest":
+        return ["--unittest-dir", input("Test directory (Enter = .): ").strip() or "."]
+    return []
 
 
 def menu(store_root):
@@ -46,20 +58,25 @@ def menu(store_root):
         if choice == "2":
             project = input("Project directory (full path): ").strip().strip("'\"")
             python = (
-                input(f"Project's Python interpreter (Enter for {sys.executable}): ")
+                input("Project's Python interpreter (Enter to auto-detect): ")
                 .strip()
                 .strip("'\"")
-                or sys.executable
             )
             goal = (
-                input("Goal: 1 test collection / 2 code check / 3 test run (runs tests; Enter = 1): ")
+                input("Goal: 0 auto / 1 test collection / 2 code check / 3 pytest / 4 program / 5 unittest (Enter = 0): ")
                 .strip()
-                or "1"
+                or "0"
             )
             if goal not in GOALS:
                 print("Unknown goal")
                 continue
-            if main(prefix + ["init", project, "--python", python, "--goal", GOALS[goal]]) != 0:
+            try:
+                entry = entry_arguments(GOALS[goal])
+            except ValueError as exc:
+                print(exc)
+                continue
+            python_args = ["--python", python] if python else []
+            if main(prefix + ["init", project, *python_args, "--goal", GOALS[goal], *entry]) != 0:
                 continue
         if choice not in ("2", "3"):
             continue
@@ -98,17 +115,21 @@ def menu(store_root):
             if action in ("1", "2"):
                 print("Test collection imports project code; only check projects you trust.")
             if action == "5":
-                tool = input("Source: pip_install / pip_check / pytest / pytest_run / ruff: ").strip()
-                if tool not in ("pip_install", "pip_check", "pytest", "pytest_run", "ruff"):
+                tool = input("Source: pip_install / pip_check / pytest / pytest_run / ruff / python_run: ").strip()
+                if tool not in ("pip_install", "pip_check", "pytest", "pytest_run", "ruff", "python_run"):
                     print("Unsupported source")
                     continue
                 file = input("Log file path: ").strip().strip("'\"")
                 command = ["import", session_id, "--tool", tool, "--file", file]
             elif action == "6":
-                goal = input("1 Restore test collection / 2 Pass the code check / 3 Pass the tests: ").strip()
+                goal = input("0 auto / 1 test collection / 2 code check / 3 pytest / 4 program / 5 unittest: ").strip()
                 if goal not in GOALS:
                     continue
-                command = ["configure", session_id, "--goal", GOALS[goal]]
+                try:
+                    command = ["configure", session_id, "--goal", GOALS[goal], *entry_arguments(GOALS[goal])]
+                except ValueError as exc:
+                    print(exc)
+                    continue
             elif action == "7":
                 main(prefix + ["show", session_id])
                 issue = input("Issue id (starts with issue-): ").strip()

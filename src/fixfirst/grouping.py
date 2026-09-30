@@ -126,9 +126,9 @@ def group_events(
                             {
                                 m.location
                                 for m in members
-                                if m.tool == "pytest_run"
+                                if m.tool in ("pytest_run", "unittest_run")
                                 and m.stage in ("setup", "call", "teardown")
-                                and "::" in m.location
+                                and ("::" in m.location or m.tool == "unittest_run")
                             }
                         ),
                     )
