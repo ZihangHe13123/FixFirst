@@ -1,0 +1,46 @@
+|--- context_external_api <= 0.50
+|   |--- module_mentioned <= 0.50
+|   |   |--- context_configuration <= 0.50
+|   |   |   |--- library_exception_type <= 0.50
+|   |   |   |   |--- api_mentioned <= 0.50
+|   |   |   |   |   |--- class: code_defect
+|   |   |   |   |--- api_mentioned >  0.50
+|   |   |   |   |   |--- raised_in_project <= 0.50
+|   |   |   |   |   |   |--- class: version_incompatibility
+|   |   |   |   |   |--- raised_in_project >  0.50
+|   |   |   |   |   |   |--- class: code_defect
+|   |   |   |--- library_exception_type >  0.50
+|   |   |   |   |--- class: code_defect
+|   |   |--- context_configuration >  0.50
+|   |   |   |--- class: config_missing
+|   |--- module_mentioned >  0.50
+|   |   |--- context_project_resolution <= 0.50
+|   |   |   |--- module_declared <= 0.50
+|   |   |   |   |--- stage_call <= 0.50
+|   |   |   |   |   |--- raised_in_project <= 0.50
+|   |   |   |   |   |   |--- class: missing_dependency
+|   |   |   |   |   |--- raised_in_project >  0.50
+|   |   |   |   |   |   |--- class: missing_dependency
+|   |   |   |   |--- stage_call >  0.50
+|   |   |   |   |   |--- class: missing_dependency
+|   |   |   |--- module_declared >  0.50
+|   |   |   |   |--- class: missing_dependency
+|   |   |--- context_project_resolution >  0.50
+|   |   |   |--- signal_cannot_import_name <= 0.50
+|   |   |   |   |--- class: local_module
+|   |   |   |--- signal_cannot_import_name >  0.50
+|   |   |   |   |--- signal_partially_initialized <= 0.50
+|   |   |   |   |   |--- class: code_defect
+|   |   |   |   |--- signal_partially_initialized >  0.50
+|   |   |   |   |   |--- class: local_module
+|--- context_external_api >  0.50
+|   |--- call_signature_mismatch <= 0.50
+|   |   |--- class: version_incompatibility
+|   |--- call_signature_mismatch >  0.50
+|   |   |--- third_party_frame_ratio <= 0.10
+|   |   |   |--- api_mentioned <= 0.50
+|   |   |   |   |--- class: code_defect
+|   |   |   |--- api_mentioned >  0.50
+|   |   |   |   |--- class: code_defect
+|   |   |--- third_party_frame_ratio >  0.10
+|   |   |   |--- class: version_incompatibility
