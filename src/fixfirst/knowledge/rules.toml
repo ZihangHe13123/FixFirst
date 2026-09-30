@@ -143,7 +143,7 @@ then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "replac
 [[rule]]
 id = "D03"
 phase = "diagnose"
-description = "The code calls a method name that the installed Python version removed (for example unittest aliases)."
+description = "The code calls a method name that the installed Python or library version removed (for example unittest aliases or NumPy ndarray methods)."
 source = "knowledge: removed attributes"
 when = [
   ["?i", "attribute", "?x"],

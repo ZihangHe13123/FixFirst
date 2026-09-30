@@ -10,6 +10,53 @@ from fixfirst.service import create_session, scan
 from fixfirst.workspace import build_view
 
 
+def array_ptp(data):
+    return data.ptp()
+
+
+def array_byteorder(data):
+    return data.newbyteorder(">")
+
+
+@pytest.mark.parametrize("operation,method", [(array_ptp, "ptp"), (array_byteorder, "newbyteorder")])
+def test_attribute_without_context_uses_the_actual_failed_name_load(operation, method):
+    import numpy as np
+    from fixfirst._runtime_evidence import exception_metadata
+
+    if int(np.__version__.split(".")[0]) < 2:
+        pytest.skip("these ndarray methods were removed in NumPy 2")
+    with pytest.raises(AttributeError) as caught:
+        operation(np.array([1, 4]))
+    error = caught.value
+    # NumPy 2.2 leaves these unset; newer releases expose them. Retain the real
+    # traceback, so the fallback must recover the specific failing instruction.
+    error.name = error.obj = None
+    metadata = exception_metadata(error, error.__traceback__)["attribute_access"]
+    assert metadata == {"name": method, "owner_module": "numpy", "owner_name": "ndarray",
+                        "source": "traceback_instruction"}
+
+
+@pytest.mark.parametrize("source", [
+    "def fail(data):\n    raise AttributeError('ptp was removed from numpy.ndarray')\n",
+    "def fail(data):\n    return data.copy().ptp()\n",  # complex receiver cannot be read without re-execution
+    "def fake():\n    raise AttributeError('ptp was removed from numpy.ndarray')\n"
+    "def fail(data):\n    return fake()\n",  # the failing operation is a call, not attribute lookup
+])
+def test_attribute_context_is_not_guessed_from_text_or_an_unrelated_array(source):
+    import numpy as np
+    from fixfirst._runtime_evidence import exception_metadata
+
+    if int(np.__version__.split(".")[0]) < 2:
+        pytest.skip("these ndarray methods were removed in NumPy 2")
+    namespace = {}
+    exec(source, namespace)
+    with pytest.raises(AttributeError) as caught:
+        namespace["fail"](np.array([1, 4]))
+    error = caught.value
+    error.name = error.obj = None
+    assert exception_metadata(error, error.__traceback__)["attribute_access"] == {}
+
+
 def inspect_project(root, source, test, requirement, *, unit=False):
     (root / "app.py").write_text(source)
     (root / "requirements.txt").write_text(requirement + "\n")
