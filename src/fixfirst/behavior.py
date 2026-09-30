@@ -144,6 +144,48 @@ def calls_numpy_formatter(lines: list[str], imports: dict, functions: list[str])
     return False
 
 
+def generator_consumption(tree: ast.AST) -> dict[int, bool]:
+    """Record visible eager uses after a named generator's creation in its function.
+
+    This is a bounded static guard, not proof about consumers in other functions.
+    Missing/oversized contexts are absent, not marked safe.
+    """
+    result = {}
+    consumers = {"list", "tuple", "set", "dict", "next", "sum", "min", "max", "sorted", "any", "all", "deque"}
+    for function in ast.walk(tree):
+        if not isinstance(function, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        pending, nodes = list(function.body), []
+        while pending and len(nodes) <= 2000:
+            node = pending.pop()
+            nodes.append(node)
+            if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda, ast.ClassDef)):
+                pending.extend(ast.iter_child_nodes(node))
+        if pending:
+            continue
+        nodes.sort(key=lambda n: (getattr(n, "lineno", 0), getattr(n, "col_offset", 0)))
+        for at, node in enumerate(nodes):
+            targets = node.targets if isinstance(node, ast.Assign) else [node.target] if isinstance(node, ast.AnnAssign) else []
+            if (len(targets) != 1 or not isinstance(targets[0], ast.Name)
+                    or not isinstance(node.value, ast.GeneratorExp)):
+                continue
+            aliases, consumed = {targets[0].id}, False
+            for later in nodes[at + 1:]:
+                if isinstance(later, ast.Assign) and isinstance(later.value, ast.Name) and later.value.id in aliases:
+                    aliases.update(t.id for t in later.targets if isinstance(t, ast.Name))
+                if isinstance(later, ast.Call):
+                    name = later.func.id if isinstance(later.func, ast.Name) else getattr(later.func, "attr", "")
+                    consumes = name in consumers or name in {"__next__", "send"}
+                    uses = any(isinstance(n, ast.Name) and n.id in aliases for n in ast.walk(later))
+                    consumed |= consumes and uses
+                elif isinstance(later, (ast.For, ast.AsyncFor)):
+                    consumed |= any(isinstance(n, ast.Name) and n.id in aliases for n in ast.walk(later.iter))
+                elif isinstance(later, (ast.ListComp, ast.SetComp, ast.DictComp, ast.YieldFrom)):
+                    consumed |= any(isinstance(n, ast.Name) and n.id in aliases for n in ast.walk(later))
+            result[node.lineno] = consumed
+    return result
+
+
 def index_behavior_context(root: Path, files: list[str], imports: dict, max_bytes: int, max_files: int) -> dict:
     """Conservatively detect custom/strict validation without importing project code.
 
@@ -154,7 +196,7 @@ def index_behavior_context(root: Path, files: list[str], imports: dict, max_byte
     customized = False
     formatters = []
     model_names, definitions = set(), Counter()
-    optional_models = {}
+    optional_models, generator_uses = {}, {}
     custom_names = {
         "strict", "model_config", "coerce_numbers_to_str", "validation_alias", "validator", "root_validator",
         "field_validator", "model_validator", "BeforeValidator", "AfterValidator",
@@ -172,6 +214,7 @@ def index_behavior_context(root: Path, files: list[str], imports: dict, max_byte
             continue
         module = relative.removeprefix("src/").removesuffix(".py").replace("/", ".")
         module = module.removesuffix(".__init__")
+        generator_uses.update({f"{relative}:{line}": value for line, value in generator_consumption(tree).items()})
         from .source_context import scope_bindings
 
         bindings = scope_bindings(tree.body, module, module.rpartition(".")[0])
@@ -224,6 +267,7 @@ def index_behavior_context(root: Path, files: list[str], imports: dict, max_byte
         "numpy_repr_functions": sorted(set(formatters)),
         "pydantic_default_models": sorted(n for n in model_names if definitions[n] == 1),
         "pydantic_optional_models": {k: v for k, v in optional_models.items() if definitions[v["name"]] == 1},
+        "generator_consumption": generator_uses,
     }
 
 
@@ -237,6 +281,7 @@ def observed_changes(evidence: dict, project: dict) -> list[tuple[str, str]]:
     if (evidence["exception"] == "ResourceClosedError" and evidence["library"] == "sqlalchemy"
             and evidence["exception_module"] == "sqlalchemy.exc" and "sqlalchemy" in providers
             and evidence["message"] == "This result object does not return rows. It has been closed automatically."
+            and project.get("generator_consumption", {}).get(evidence.get("source_location")) is False
             and "return self._iter_impl()" in evidence.get("executed_lines", [])):
         # 1.4 made iterator creation eager. Only a standalone lazy generator
         # construction fits that change; list/fetchall consumption already failed
@@ -352,6 +397,9 @@ def observed_input_errors(evidence: dict) -> list[tuple[str, str]]:
         return [("click-value", "click")]
     if library == "packaging" and (module, error) == ("packaging.version", "InvalidVersion"):
         return [("version-string", "packaging")]
+    if (library == "sqlalchemy" and (module, error) == ("sqlalchemy.exc", "ResourceClosedError")
+            and message == "This result object does not return rows. It has been closed automatically."):
+        return [("sqlalchemy-no-rows", "sqlalchemy")]
     if (library == "pydantic" and error == "ValidationError"
             and module.split(".")[0] in ("pydantic", "pydantic_core")
             and evidence.get("validation_errors")):

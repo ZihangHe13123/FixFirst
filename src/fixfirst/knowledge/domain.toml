@@ -52,6 +52,13 @@ action_title = "Check the missing model field against the keys actually supplied
 guidance = "Compare each missing field named in the validation error with the arguments or mapping passed at the reported call. Check whether its value was sent to a different field or a misspelt key. Keep required-field validation. Only if omission is intended and the field permits None should an explicit None default be considered; adding that default does not repair a value sent to the wrong field."
 source = "pydantic-optional-2.0"
 
+[[input_error]]
+id = "sqlalchemy-no-rows"
+distribution = "sqlalchemy"
+action_title = "Check whether the SQL result returns rows before reading it"
+guidance = "Check result.returns_rows before constructing an iterator or fetching rows. DDL and statements without returning rows need an empty result or another return value appropriate to the caller; preserve their SQL effects. A no-row result cannot supply rows on an older release either. The error alone does not establish an upgrade cause."
+source = "sqlalchemy-result-1.4-source"
+
 [[behavior]]
 id = "packaging-legacy-parse"
 distribution = "packaging"

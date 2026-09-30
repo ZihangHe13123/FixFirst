@@ -1,5 +1,6 @@
 """Run real library failures: bad input is not evidence for a dependency downgrade."""
 
+import ast
 import hashlib
 import json
 from pathlib import Path
@@ -295,18 +296,31 @@ def test_a_singular_matrix_does_not_become_a_version_failure_because_of_a_lock(t
     assert session.goal_status == "achieved"
 
 
-def test_recorded_records_failure_uses_the_specific_14_iterator_history():
+def test_old_records_snapshot_without_consumption_context_keeps_input_guidance():
     from fixfirst.diagnosis_cases import load_session
     from fixfirst.reasoning import diagnose
 
     dataset = Path(__file__).parents[1] / "experiments/core_diagnosis/observation-development-2026-09-30/data/real"
-    cases = [json.loads(line) for line in (dataset / "cases.jsonl").read_text().splitlines()]
+    cases = [json.loads(line) for line in (dataset / "cases.jsonl").read_text(encoding="utf-8").splitlines()]
     case = next(c for c in cases if c["case_id"] == "real-records")
     session = load_session(dataset, case["session"])
     issue = next(i for i in session.issues if i.tool == "pytest_run")
     result = diagnose(session)[issue.issue_id]
-    assert result["likely"] == "version_incompatibility" and result["likely_rule_id"] == "H10"
+    assert result["likely"] == "code_defect" and result["likely_rule_id"] == "H12"
     assert result["evidence"]["source_statement"].startswith("row_gen = (")
+
+
+def test_generator_consumption_tracks_aliases_and_keeps_nested_scopes_separate():
+    from fixfirst.behavior import generator_consumption
+
+    tree = ast.parse(
+        "def keep(cursor):\n    rows = (row for row in cursor)\n"
+        "    def unrelated(rows):\n        return list(rows)\n    return rows\n"
+        "def consume(cursor):\n    rows = (row for row in cursor)\n"
+        "    alias = rows\n    return list(alias)\n"
+        "def loop(cursor):\n    rows = (row for row in cursor)\n"
+        "    for row in rows: pass\n    return None\n")
+    assert generator_consumption(tree) == {2: False, 7: True, 11: True}
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="SafeConfigParser was removed in Python 3.12")

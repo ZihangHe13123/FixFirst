@@ -24,6 +24,8 @@ def main():
     report = {"code_head": args.code_head, "cases": []}
     for name, query, operation in (
         ("lazy_generator", "create table t (n integer)", "rows = (tuple(row) for row in result)"),
+        ("generator_consumed_later", "create table t (n integer)",
+         "rows = (tuple(row) for row in result)\n        rows = list(rows)"),
         ("consume_list", "create table t (n integer)", "rows = list(result)"),
         ("fetchall", "create table t (n integer)", "rows = result.fetchall()"),
         ("explicit_close", "select 1", "result.close(); rows = list(result)"),
