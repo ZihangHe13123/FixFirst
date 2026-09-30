@@ -85,6 +85,16 @@ P4 的位置只列了导入行；如果只改那一行，第 5 行会报 NameErr
 - **lambda 里构造的生成器**：缺少上下文，不作推断。这是预期中的漏判，不算误报。
 - 结果文件：`results/review-codex-a56a621.json`、`results/interpreted-codex-a56a621-sqla.json`。
 
+## 闭环复查（`18f2875`）
+
+- **已消除**：3 个残余误报（`[*rows]`、`join`、嵌套函数消费）现在都判为 H12。12 个 SQL 探针里，凡是在 1.3 下同样失败的，都不再被判为 1.4 的变化。
+- **保留**：构造后裸 `return` 的正例仍判为 H10。
+- **wrapper 取舍**：`return Wrapper(rows)` 无法证明不会消费，所以不再推断版本。
+  - `sqla_wrapped_not_consumed` 因此成为新的保守漏判，原预期不改；lambda 漏判同样保留。
+  - 这两例按 H12 的 `returns_rows` 这一步修改后，在 2.0.44 和 1.3.24 下都能通过，所以只影响标签。
+- **已知边界，不是本次差异引入的**：裸 `return` 之后调用方是否消费，看不到（docstring 已写明）。
+- 结果文件：`results/review-codex-18f2875.json`、`results/interpreted-codex-18f2875-sqla.json`。
+
 ## 复现
 
 先用 `round5_cases.py build` 建好环境。packaging 的两个探针还需要另建 `RUNS/packaging-old/venv`（packaging 21.3 + pytest）。`RUNS` 不能放在任何项目目录里。
