@@ -26,7 +26,7 @@ def refine(session, actions, by_id, facts):
             if fact.fact_id not in action.reason_refs:
                 action.reason_refs.append(fact.fact_id)
 
-    excluded_searches = {}
+    excluded_searches, trials = {}, {}
     for action in actions:
         if action.check != "version_search" or len(action.targets) != 2:
             continue
@@ -54,6 +54,7 @@ def refine(session, actions, by_id, facts):
             first.reason_refs = sorted(set(first.reason_refs + action.reason_refs))
         else:
             excluded_searches[name] = action
+            trials[action.action_id] = (name, "")
     if excluded_searches:
         actions = [a for a in actions if not a.action_id.startswith("review-release-constraints-")
                    or any(a is first for first in excluded_searches.values())]
@@ -92,7 +93,9 @@ def refine(session, actions, by_id, facts):
                 "Adjust the conflicting project pin or dependent package together, then resolve the complete "
                 "dependency set in a separate environment. If the fixed legacy versions must remain, use "
                 "a separate Python environment compatible with their documented requirements. "
-                "An unconstrained upgrade or a further downgrade would not resolve this conflict.")
+                f"Keeping this fixed requirement while changing only {name} cannot satisfy both requirements; "
+                "a coordinated declaration and dependency update may work.")
+            trials[action.action_id] = (name, str(Requirement(requested).specifier))
         elif changed:
             action.command = [session.target_python, "-m", "pip", "install", "--only-binary=:all:", *changed]
             if sources:
@@ -209,6 +212,7 @@ def refine(session, actions, by_id, facts):
         evidence(blocker, rows)
         if not any(b.action_id == blocker.action_id for b in blockers):
             blockers.append(blocker)
+            trials[blocker.action_id] = (name, "")
         historical.add(issue.issue_id)
     actions = [a for a in actions if a.kind == "rerun" or not a.issue_ids
                or not set(a.issue_ids) <= historical]
@@ -228,4 +232,24 @@ def refine(session, actions, by_id, facts):
                     action.title = "Install the dependency set after reviewing the failed requirement"
                     action.explanation = "Resolve the named installation blocker first, keeping the project declarations and environment consistent."
                     break
-    return [*blockers, *actions]
+    result = [*blockers, *actions]
+    from .dependency_resolution import advise
+
+    for action in result:
+        if action.action_id in trials:
+            name, direction = trials[action.action_id]
+            trial_run = advise(session, action, environment, project, name, direction)
+            if trial_run:
+                fact = observed("dist:" + name, "dependency_trial", trial_run.run_id,
+                                [f"{trial_run.run_id}:stdout:1"])
+                facts.append(fact)
+                action.reason_refs.append(fact.fact_id)
+        if (project.get("conda_declarations") and action.kind != "rerun"
+                and action.cause in (None, "missing_dependency") and action.goal_impact > 0):
+            unresolved = "; ".join(f"{r['source']}: {r['requirement']}" for r in project["conda_declarations"][:8])
+            action.explanation += (
+                " Also declared in the Conda environment file, without an assumed PyPI equivalent: "
+                + unresolved + ". Use the project's Conda environment instructions, or confirm each PyPI "
+                "distribution name before installing into this interpreter. These entries are not included "
+                "in a pip installation command.")
+    return result

@@ -123,6 +123,16 @@ def parse(run: Run) -> list[Event]:
                     component=missing_tool.group(1),
                 )
             ]
+    if run.tool == "dependency_resolve":
+        try:
+            data = json.loads(run.stdout)
+        except ValueError:
+            data = {}
+        # This has its own scope. Even a successful installation cannot close a
+        # pytest/program issue or claim that the goal has been reached.
+        run.verified_pass = run.exit_code == 0 and data.get("status") == "resolved"
+        run.coverage_complete = run.verified_pass
+        return []
     if run.tool == "version_search":
         try:
             data = json.loads(run.stdout)

@@ -113,9 +113,10 @@ def build_view(session: Session) -> dict:
                     (i.diagnosis for i in related if i.diagnosis and i.diagnosis_source == "rule"), None
                 )),
                 "suspected": suspected,
-                "gather": action.kind == "inspect" and not suspected and action.check != "version_search",
+                "gather": action.kind == "inspect" and not suspected and action.check not in ("version_search", "dependency_resolve"),
                 # A release search downloads packages, so it runs only when the user asks.
                 "search": action.check == "version_search",
+                "resolve": action.check == "dependency_resolve",
                 "where": where,
                 "errors": list(dict.fromkeys(errors)),
                 "rules": list(dict.fromkeys(rules)),

@@ -68,3 +68,15 @@ Codex 只在第六轮分支改生产实现；Claude 管理验收脚本、原试�
 - pip 的 resolver 会同时考虑本次安装请求的依赖；这不等于任意单包安装命令保证原项目全部兼容：[Dependency resolution](https://pip.pypa.io/en/stable/topics/dependency-resolution/)。
 - requirement 的名称、范围、marker 和 extras 按标准解析：[Dependency specifiers](https://packaging.python.org/en/latest/specifications/dependency-specifiers/)。
 - environment.yml 区分 Conda dependencies 和 pip 子列表：[Conda environments](https://docs.conda.io/projects/conda/en/stable/user-guide/tasks/manage-environments.html)。imageio 的两种安装名由其官方说明支持：[imageio installation](https://imageio.readthedocs.io/en/stable/user_guide/installation.html)。
+
+## 交叉验收后的具体化（9db099d 之后）
+
+Claude 将 A2、C、D2b 分别评为需要操作者选择版本的部分建议，不能计为成功。补充的核心诊断步骤如下：
+
+- 提供显式 `dependency_resolve` 检查。用户主动选择后，使用目标 Python 新建临时环境，试着放宽**被点名的一个包**的版本声明；其余项目要求和未声明为项目根依赖的已安装包版本保留。让声明中的依赖共同解析，旧版依赖自身的元数据不阻止它被一起更新。
+- 只安装 wheel；总预算不超过 300 秒；完整记录安装失败/超时与依赖一致性检查。未知、动态或 Conda 专有声明不被静默遗漏。
+- 成功仅表示安装与 metadata 一致性已验证。输出具体声明位置、原要求、建议精确版本、整组安装版本；清楚标注原程序/测试尚未验证。用户先审阅修改声明，再手动安装和运行原检查。FixFirst 不修改原文件或环境。
+- 失败保留 resolver 输出，不重复同一轮降级/升级。README、.python-version、runtime.txt 中的 Python 版本只作为带行号的文档线索；可用性只引用实际查询的 uv 本地目录，不承诺下载一定成功。
+- `environment.yml` 的映射扩展到 SciPy、scikit-learn、matplotlib、pandas、Pillow、joblib，来源为各项目安装文档及 Conda feedstock；不支持的管理器项仍明确展示。
+
+新增检查仍属于已有的受用户触发的安装试验，CLI 和网页共用动作。暂不扩大 MCP 工具协议；完整诊断仍能展示步骤，facts 模式保持不含建议。

@@ -7,11 +7,21 @@ import yaml
 
 # These upstreams document the same package name for pip and Conda. This is an
 # explicit PyPI alternative, not a general conversion of Conda channel packages.
-PYPI_EQUIVALENTS = {"imageio": "imageio", "numpy": "numpy"}
 SOURCES = {
     "imageio": "https://imageio.readthedocs.io/en/stable/user_guide/installation.html",
     "numpy": "https://numpy.org/install/",
+    "scipy": "https://scipy.org/install/",
+    "scikit-learn": "https://scikit-learn.org/stable/install.html",
+    "matplotlib": "https://matplotlib.org/stable/install/index.html",
+    "pandas": "https://pandas.pydata.org/docs/getting_started/install.html",
+    "pillow": "https://pillow.readthedocs.io/en/stable/installation/basic-installation.html",
+    "joblib": "https://joblib.readthedocs.io/en/latest/user_guide/installing.html",
 }
+CONDA_SOURCES = {
+    "pillow": "https://github.com/conda-forge/pillow-feedstock",
+    "joblib": "https://github.com/conda-forge/joblib-feedstock",
+}
+PYPI_EQUIVALENTS = {name: name for name in SOURCES}
 
 
 def read(text: str, source: str, limit: int = 2000) -> dict:
@@ -62,6 +72,7 @@ def read(text: str, source: str, limit: int = 2000) -> dict:
             version = spec[1:]
             if not re.fullmatch(r"\d+(?:\.\d+)*(?:\.\*)?", version):
                 result["notes"].append(f"{location}: Conda build/version syntax is not converted to pip")
+                result["conda"].append({"requirement": item, "source": location})
                 continue
             spec = "==" + version + ("" if version.endswith(".*") else ".*")
         if name == "python":
@@ -71,7 +82,7 @@ def read(text: str, source: str, limit: int = 2000) -> dict:
             result["pip"].append((PYPI_EQUIVALENTS[name] + spec,
                                   f"{location} (Conda declaration; documented PyPI alternative)"))
             result["mappings"].append({"declaration": location, "distribution": PYPI_EQUIVALENTS[name],
-                                       "source": SOURCES[name]})
+                                       "source": SOURCES[name], "conda_source": CONDA_SOURCES.get(name, SOURCES[name])})
         elif name != "pip":
             result["conda"].append({"requirement": item, "source": location})
             result["notes"].append(f"{location}: {name} is a Conda requirement; no PyPI name is assumed")

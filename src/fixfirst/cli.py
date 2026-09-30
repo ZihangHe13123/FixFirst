@@ -177,6 +177,9 @@ def show(session):
         print(f"     {step['explanation']}")
         if step["command"]:
             print(f"     {step['command']}")
+        action = next(a for a in session.actions if a.action_id == step["id"])
+        if action.check:
+            print(f"     Run check: fixfirst run {session.session_id} {action.action_id}")
     print(f"Check again: fixfirst scan {session.session_id}")
 
 

@@ -267,6 +267,22 @@ def read_project(root: Path) -> dict:
             note(message)
     if not result["files"]:
         note("No supported static declaration file was found")
+    # Documentation is a hint, not an enforceable requirement or proof of support.
+    result["python_hints"] = []
+    for name in (".python-version", "runtime.txt", "README.md", "README.rst", "README.txt"):
+        path = root / name
+        if not path.exists():
+            continue
+        text = read(path)
+        if text is None:
+            continue
+        for line, value in enumerate(text.splitlines(), 1):
+            if name in (".python-version", "runtime.txt"):
+                match = re.fullmatch(r"\s*(?:python-)?(\d+\.\d+(?:\.\d+)?)\s*", value)
+            else:
+                match = re.search(r"\bPython\s*[`:*]*\s*(\d+\.\d+(?:\.\d+)?)\b", value, re.I)
+            if match and len(result["python_hints"]) < 20:
+                result["python_hints"].append({"version": match[1], "source": f"{name}:{line}"})
     return result
 
 

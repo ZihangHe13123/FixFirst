@@ -17,7 +17,7 @@ MAX_OUTPUT = 1_000_000
 # Real test suites can take minutes; a check that runs longer is stopped and reported.
 DEFAULT_TIMEOUT = 600
 DEFAULT_CHECKS = ("environment", "pip_check", "pytest", "ruff", "project")
-TOOLS = (*DEFAULT_CHECKS, "pytest_run", "version_search", "python_run", "unittest_run")
+TOOLS = (*DEFAULT_CHECKS, "pytest_run", "version_search", "python_run", "unittest_run", "dependency_resolve")
 SEARCH_TARGET = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$")
 
 
@@ -337,6 +337,10 @@ def validate_targets(session: Session, targets: list[str]):
 
 
 def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targets=None) -> Run:
+    if tool == "dependency_resolve":
+        from .dependency_resolution import collect as resolve_dependencies
+
+        return resolve_dependencies(session, list(targets or []), timeout)
     if tool in ("python_run", "unittest_run"):
         from .execution import collect_execution
 
