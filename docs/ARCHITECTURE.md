@@ -1,7 +1,36 @@
 # FixFirst architecture
 
 FixFirst turns the output of real checks into a diagnosed, ranked and verifiable plan. This
-page describes the code as of v0.6. `models.py` holds the shared Pydantic records.
+page includes the native execution extension to v0.6. `models.py` holds the shared Pydantic records.
+
+## Native program execution
+
+Web, CLI and MCP can select an ordinary program or an existing test suite. `execution.py`
+performs bounded static discovery and validates an `Execution` configuration: script,
+module, notebook or unittest directory, arguments, standard input and the test filename
+pattern. It does not import code while discovering entries. A configuration or an empty
+test folder alone is not evidence of test cases.
+
+Scripts and modules are launched directly by the selected Python through the existing
+process manager. `_unittest_runner.py` is a standalone standard-library adapter; the target
+needs neither pytest nor FixFirst. `_notebook_runner.py` uses optional host NBClient/nbformat
+dependencies and a temporary kernel specification pointing to the selected target Python.
+The target needs ipykernel. It executes fresh cells, records cell failures and streams text
+output without overwriting the notebook.
+
+`execution_parsers.py` turns native tracebacks and adapter records into the same events and
+evidence consumed by the existing knowledge and rule engine. The pytest-trained classifier
+is retained for pytest evidence; it is not applied to native runs without an evaluation on
+that new input distribution. Program errors use program-specific advice and verification.
+
+`run_project` and `pass_unittest` are additional goals. Their execution scope hashes the
+project and saved execution configuration; interpreter identity is tracked separately.
+Only complete, comparable real runs resolve earlier errors. Changing an entry, arguments,
+input or interpreter does not resolve another scope's issues. Native unittest additionally
+tracks test identities so deletion, skipping and incomplete execution cannot count as a fix.
+For programs, a successful run means exit code 0 for that entry and input, not independently
+verified business correctness. Missing optional pytest/pip/Ruff tools do not block a native
+program run. Existing sessions preserve their explicit pytest or code-check goal.
 
 ```
  project + interpreter + goal
@@ -75,7 +104,7 @@ page describes the code as of v0.6. `models.py` holds the shared Pydantic record
    - `fallback`: the tree's suggestion, only when neither matched (F01);
    - `plan`: actions (P01–P51), merged by action id across issues.
 
-   104 rules in total: 10 derive, 34 diagnose, 9 heuristic, 1 fallback, 50 plan.
+   112 rules in total: 12 derive, 34 diagnose, 9 heuristic, 1 fallback, 56 plan.
 
    The web page shows steps for issues concluded `affects_running = no` as optional and
    leaves them out of the problem count.

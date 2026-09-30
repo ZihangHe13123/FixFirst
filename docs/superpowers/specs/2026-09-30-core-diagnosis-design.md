@@ -143,3 +143,23 @@ error is not success when execution was blocked earlier. Preserve failed attempt
 and later failure layers. Improve a confirmed first-step defect with a general
 evidence-supported change, then rerun the affected copy; do not silently substitute
 the previous reference repair. Keep A1/C1, B5 and unrelated tasks unchanged.
+
+## Execution-mode integration and collaboration
+
+The user approved continuing with Claude after the proposed division of work.
+Integrate main `9fdf48d` (PR #43) into PR #42 without rewriting its published
+history. Retain both bounded call/provenance evidence and the new script, module,
+notebook and unittest execution contracts. Preserve the restriction that the
+pytest-trained classifier does not silently supply predictions for other modes.
+Exercise actual positive and negative diagnosis examples across the new modes,
+including source locations and the first suggested repair. Fix demonstrated
+integration defects, then run the combined regressions and replay the existing
+development controls; no new independent-performance claim follows from a merge.
+
+Claude owns separate branches for the three-arm experiment/facts-only MCP and
+ordinary-session verification integrity. Those changes must distinguish an
+execution passing from verification remaining comparable to its original baseline.
+Share additive interface changes and results through untracked workbench notes.
+Encoding, SSL and permission diagnoses follow a coverage check. No paid model
+experiment, held-out data access, formal experiment, freeze or automatic PR merge
+is part of this integration.

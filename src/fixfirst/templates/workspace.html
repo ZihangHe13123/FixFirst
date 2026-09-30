@@ -26,6 +26,7 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
 .hint{margin:22px 0 0;font-size:14px;color:var(--muted)}
 .breakdown{border-collapse:collapse;margin:8px 0 10px;font-size:15px}.breakdown td{padding:3px 10px 3px 0;vertical-align:top}.breakdown td.n{text-align:right;font-weight:700;color:var(--ink);min-width:3ch}
 .section-note{margin:-6px 0 12px;color:var(--muted);font-size:14px}
+.label{display:block;font-weight:650;margin:12px 0 6px}
 .step.optional{border-style:dashed;background:#fbfcfb}.step.optional .num{background:#eef1ee;color:var(--muted);font-size:15px}
 .tag.optional{background:#eef1ee;color:#55665c}
 .impact{background:var(--blue-soft);border-radius:8px;padding:8px 12px;font-size:15px}.impact b{color:var(--blue)}
@@ -50,11 +51,39 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
   </div>
 </section>
 <p id="error" role="alert"></p>
+<details class="card" id="run-settings">
+  <summary>Python and run settings</summary>
+  <label class="label" for="settings-python">Python interpreter</label>
+  <input id="settings-python" value="{{ view.python }}" spellcheck="false">
+  <div id="settings-execution">
+    <label class="label" for="settings-kind">Run as</label>
+    <select id="settings-kind">
+      {% for key, label in [('script','Python script'),('module','Python module (-m)'),('notebook','Notebook'),('unittest','Unittest discovery')] %}
+      <option value="{{ key }}" {{ 'selected' if view.execution and view.execution.kind == key }}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <label class="label" for="settings-entry">Entry file, module or test directory</label>
+    <input id="settings-entry" value="{{ view.execution.entry if view.execution else '' }}" spellcheck="false">
+    <div id="settings-program">
+      <label class="label" for="settings-args">Arguments (one per line)</label>
+      <textarea id="settings-args" rows="3">{{ view.execution.args|join('\n') if view.execution else '' }}</textarea>
+      <label class="label" for="settings-stdin">Standard input</label>
+      <textarea id="settings-stdin" rows="3">{{ view.execution.stdin if view.execution else '' }}</textarea>
+    </div>
+    <div id="settings-unit">
+      <label class="label" for="settings-pattern">Test filename pattern</label>
+      <input id="settings-pattern" value="{{ view.execution.pattern if view.execution else 'test*.py' }}">
+    </div>
+  </div>
+  <p class="small muted">Save settings, then check again. Earlier results remain tied to their original entry, arguments and Python.</p>
+  <button id="save-settings" type="button">Save settings</button>
+</details>
 
 {% macro card(step, number, first) %}
   <li class="step {{ 'first' if first }} {{ 'optional' if step.optional }}">
     <div class="num">{{ number }}</div>
     <div class="body">
+      {% if view.goal == 'run_project' and step.errors %}<p><code>{{ step.errors[0] }}</code></p>{% endif %}
       <div class="tags">
         {% if first %}<span class="tag first">Start here</span>{% endif %}
         {% if step.optional %}<span class="tag optional">Optional</span>{% endif %}
@@ -124,14 +153,35 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
 <script>
 const SESSION={{ session_id|tojson }};
 document.getElementById('check').onclick=async()=>{
-  busy('Checking your project…','Running the environment, dependency and test checks. Large test suites take longer.');
+  busy('Checking your project…','Running the saved program or tests with the selected Python.');
   try{await post(`/api/sessions/${SESSION}/scan`,{});location.reload()}catch(err){showError(err.message)}};
 document.querySelectorAll('.copy').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent='Copied'}catch{b.textContent='Select and copy'}setTimeout(()=>b.textContent='Copy',2000)});
 document.querySelectorAll('.search').forEach(b=>b.onclick=async()=>{
   busy('Trying older releases…','FixFirst installs them one by one into a temporary environment. This can take a few minutes.');
   try{await post(`/api/sessions/${SESSION}/run`,{action_id:b.dataset.action});location.reload()}catch(err){showError(err.message)}});
-document.getElementById('goal').onchange=async e=>{
-  busy('Changing the goal…','');
-  try{await post(`/api/sessions/${SESSION}/goal`,{goal:e.target.value});location.reload()}catch(err){showError(err.message)}};
+const get=id=>document.getElementById(id);
+function settingsVisibility(){
+  const g=get('goal').value,k=get('settings-kind');
+  get('settings-execution').hidden=!['run_project','pass_unittest'].includes(g);
+  if(g==='pass_unittest')k.value='unittest';
+  else if(g==='run_project'&&k.value==='unittest')k.value='script';
+  k.disabled=g==='pass_unittest';
+  get('settings-program').hidden=!['script','module'].includes(k.value);
+  get('settings-unit').hidden=k.value!=='unittest';
+}
+function settingsChanged(){get('run-settings').open=true;get('check').disabled=true;settingsVisibility()}
+get('goal').onchange=settingsChanged;
+get('run-settings').addEventListener('input',settingsChanged);
+get('save-settings').onclick=async()=>{
+  const goal=get('goal').value,body={goal,python:get('settings-python').value.trim()};
+  if(['run_project','pass_unittest'].includes(goal)){
+    const kind=goal==='pass_unittest'?'unittest':get('settings-kind').value;
+    body.execution={kind,entry:get('settings-entry').value.trim(),pattern:get('settings-pattern').value||'test*.py'};
+    if(['script','module'].includes(kind)){body.execution.args=get('settings-args').value.split(/\r?\n/).filter(v=>v!=='');body.execution.stdin=get('settings-stdin').value}
+  }
+  busy('Saving run settings…','');
+  try{await post('/api/sessions/'+SESSION+'/configure',body);location.reload()}catch(err){showError(err.message)}
+};
+settingsVisibility();
 </script>
 {% endblock %}

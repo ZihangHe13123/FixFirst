@@ -14,6 +14,41 @@ from .service import create_session, scan, import_log, mark_fixed
 from .storage import Store
 
 
+def execution_arguments(command):
+    entry = command.add_mutually_exclusive_group()
+    entry.add_argument("--script", help="Python script inside the project")
+    entry.add_argument("--module", help="Python module, as in python -m package")
+    entry.add_argument("--notebook", help="Notebook inside the project")
+    entry.add_argument("--unittest-dir", help="unittest discovery directory")
+    command.add_argument("--arg", action="append", help="One program argument; use --arg=--flag for flags")
+    command.add_argument("--stdin-file", help="UTF-8 file containing standard input for the program")
+    command.add_argument("--test-pattern", help="unittest filename pattern (default test*.py)")
+
+
+def execution_settings(args, previous=None):
+    entry = next(((kind, getattr(args, name)) for name, kind in (
+        ("script", "script"), ("module", "module"), ("notebook", "notebook"),
+        ("unittest_dir", "unittest")) if getattr(args, name, None)), None)
+    configured = entry or args.arg is not None or args.stdin_file or args.test_pattern
+    if not configured:
+        return previous
+    value = previous.model_dump() if previous else {}
+    if entry:
+        value.update(kind=entry[0], entry=entry[1])
+    if args.arg is not None:
+        value["args"] = args.arg
+    if args.stdin_file:
+        file = Path(args.stdin_file)
+        if file.stat().st_size > 64_000:
+            raise ValueError("Standard input is limited to 64 KB")
+        value["stdin"] = file.read_text(encoding="utf-8")
+    if args.test_pattern:
+        value["pattern"] = args.test_pattern
+    if "entry" not in value:
+        raise ValueError("Choose --script, --module, --notebook or --unittest-dir with these settings")
+    return value
+
+
 def parser():
     cli = argparse.ArgumentParser(
         prog="fixfirst", description="FixFirst: local, evidence-based Python troubleshooting"
@@ -26,9 +61,10 @@ def parser():
     sub = cli.add_subparsers(dest="command", required=True)
     init = sub.add_parser("init", help="create a session (does not run the project)")
     init.add_argument("project")
-    init.add_argument("--python", default=sys.executable)
+    init.add_argument("--python", help="Project Python; default: discover the project's environment")
     init.add_argument("--name")
-    init.add_argument("--goal", choices=list(GOALS), default="collect_tests")
+    init.add_argument("--goal", choices=["auto", *GOALS], default="auto")
+    execution_arguments(init)
     init.add_argument("--grouping", choices=["exact", "tfidf", "sbert"], default="tfidf")
     init.add_argument("--model", help="root-cause decision tree JSON (default: bundled model)")
     init.add_argument("--no-classifier", action="store_true", help="use rules and knowledge only")
@@ -71,7 +107,7 @@ def parser():
             command.add_argument(
                 "--tool",
                 required=True,
-                choices=["pip_install", "pip_check", "pytest", "pytest_run", "ruff"],
+                choices=["pip_install", "pip_check", "pytest", "pytest_run", "ruff", "python_run"],
             )
             command.add_argument("--file", required=True)
             command.add_argument("--exit-code", type=int)
@@ -86,8 +122,9 @@ def parser():
         if name == "delete":
             command.add_argument("--yes", action="store_true", help="confirm deletion")
         if name == "configure":
-            command.add_argument("--goal", choices=list(GOALS))
+            command.add_argument("--goal", choices=["auto", *GOALS])
             command.add_argument("--python")
+            execution_arguments(command)
         if name == "graph":
             command.add_argument("--output", required=True)
         if name == "ask":
@@ -230,14 +267,20 @@ def main(argv=None):
             print(json.dumps(store.list(), ensure_ascii=True, indent=2))
             return 0
         if args.command == "init":
+            from .workspace import inspect_folder
+
+            folder = inspect_folder(args.project, args.python)
+            if not folder["ok"]:
+                raise ValueError(folder.get("error") or "; ".join(folder["warnings"]))
             session = create_session(
                 args.project,
-                args.python,
+                folder["python"]["path"],
                 args.name,
                 args.goal,
                 args.grouping,
                 args.model,
                 args.sbert_model,
+                execution=execution_settings(args),
             )
             session.use_classifier = not args.no_classifier
             with store.lock(session.session_id):
@@ -289,13 +332,15 @@ def main(argv=None):
             elif args.command == "mark-fixed":
                 mark_fixed(session, args.issue)
             elif args.command == "configure":
-                if args.goal:
-                    session.goal = args.goal
-                if args.python:
-                    validated = create_session(session.project_root, args.python)
-                    session.target_python = validated.target_python
-                    session.environment = {}
-                session.history.append({"time": now(), "kind": "goal_change"})
+                configured = execution_settings(
+                    args, session.execution if not args.goal or args.goal == session.goal else None)
+                validated = create_session(
+                    session.project_root, args.python or session.target_python,
+                    goal=args.goal or session.goal, execution=configured)
+                session.goal, session.execution = validated.goal, validated.execution
+                session.target_python = validated.target_python
+                session.environment = {}
+                session.history.append({"time": now(), "kind": "execution_change"})
                 infer_and_plan(session)
                 session.goal_status = "unknown"
             elif args.command in ("stop", "resume"):

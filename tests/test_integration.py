@@ -60,7 +60,7 @@ def test_real_config_failure_and_tool_missing(tmp_path):
 def test_cli_create_import_export_stop_delete(tmp_path):
     project, store = tmp_path / "project", tmp_path / "store"
     create_project(project, "CLI")
-    result = cli(store, "init", str(project), "--python", sys.executable)
+    result = cli(store, "init", str(project), "--python", sys.executable, "--goal", "collect_tests")
     assert result.returncode == 0, result.stderr
     sid = result.stdout.splitlines()[0]
     assert cli(store, "scan", sid, "--checks", "pytest").returncode == 0

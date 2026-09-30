@@ -1,6 +1,8 @@
 """Versioned records shared by all modules; unknown is never a successful check."""
 
 from datetime import datetime, timezone
+import hashlib
+import json
 from typing import Literal
 from uuid import uuid4
 
@@ -21,15 +23,34 @@ class Record(BaseModel):
 
 
 Tool = Literal[
-    "environment", "project", "pip_check", "pip_install", "pytest", "pytest_run", "ruff", "version_search"
+    "environment", "project", "pip_check", "pip_install", "pytest", "pytest_run", "ruff", "version_search",
+    "python_run", "unittest_run",
 ]
-Goal = Literal["collect_tests", "check_style", "pass_tests"]
-GOAL_CHECKS = {"collect_tests": "pytest", "check_style": "ruff", "pass_tests": "pytest_run"}
+Goal = Literal["collect_tests", "check_style", "pass_tests", "run_project", "pass_unittest"]
+GOAL_CHECKS = {"collect_tests": "pytest", "check_style": "ruff", "pass_tests": "pytest_run",
+               "run_project": "python_run", "pass_unittest": "unittest_run"}
 PROJECT_SCOPES = {
     "pytest": "collect:project",
     "ruff": "lint:project",
     "pytest_run": "tests:project",
 }
+
+
+class Execution(Record):
+    kind: Literal["script", "module", "notebook", "unittest"] = "script"
+    entry: str = Field(min_length=1, max_length=4096)
+    args: list[str] = Field(default_factory=list, max_length=200)
+    stdin: str = Field(default="", max_length=64_000)
+    pattern: str = Field(default="test*.py", max_length=200)
+
+
+def check_scope(session, tool):
+    if tool not in ("python_run", "unittest_run"):
+        return PROJECT_SCOPES.get(tool)
+    payload = {"project": session.project_root,
+               "execution": session.execution.model_dump() if session.execution else None}
+    digest = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()[:24]
+    return f"{tool}:{digest}"
 
 
 class Run(Record):
@@ -58,6 +79,7 @@ class Run(Record):
     targets: list[str] = Field(default_factory=list)
     passed_nodes: list[str] = Field(default_factory=list)
     test_summary: dict[str, int] = Field(default_factory=dict)
+    execution_kind: str = ""
 
 
 class Event(Record):
@@ -145,6 +167,7 @@ class Session(Record):
     target_python: str
     created_at: str = Field(default_factory=now)
     goal: Goal = "collect_tests"
+    execution: Execution | None = None
     grouping: Literal["exact", "tfidf", "sbert"] = "tfidf"
     threshold: float = Field(default=0.82, ge=0, le=1)
     model_path: str | None = None

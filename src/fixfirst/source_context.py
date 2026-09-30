@@ -201,7 +201,7 @@ def resolved_calls(evidence, project, legacy=False):
     """Only call sites matching the function named by the argument error."""
     if "source_context" in project:
         context = project["source_context"]
-        location = evidence.get("where", "")
+        location = evidence.get("source_location") or evidence.get("where", "")
         sites = context.get("calls", {}).get(location, [])
         callees = {c.rsplit(".", 1)[-1] for c in evidence.get("callees", [])}
         if "call_bindings" in context:

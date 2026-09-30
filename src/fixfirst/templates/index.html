@@ -26,7 +26,7 @@
 {% endblock %}
 {% block main %}
 <h1>Why is my Python project failing?</h1>
-<p class="lead">FixFirst runs your project's own checks, finds the cause of each failure and tells you what to fix first. It never edits your files or installs anything.</p>
+<p class="lead">FixFirst runs your project's own checks, finds the cause of each failure and tells you what to fix first. Choose a program to run, or use the project's existing tests.</p>
 
 <section class="card">
   <div class="field">
@@ -37,17 +37,38 @@
       <ul id="folders"></ul>
     </div>
     <div id="folder-info" class="info" hidden></div>
-    <div id="other-python" hidden style="margin-top:10px"><label class="small muted" for="python">Python interpreter to use</label><input type="text" id="python" placeholder="/path/to/project/.venv/bin/python" spellcheck="false"></div>
+    <div style="margin-top:14px"><label class="label" for="python">Python interpreter</label>
+      <div class="row"><input type="text" id="python" placeholder="Automatically detect the project environment" spellcheck="false"><button id="auto-python" type="button">Auto-detect</button></div>
+      <p class="small muted">Use the Python belonging to this project. You can enter a venv or Conda interpreter path.</p>
+    </div>
   </div>
 
   <div class="field">
     <span class="label"><span class="n">2</span>What do you want?</span>
     <div class="choices">
-      {% for key, title, hint in choices %}<label class="choice"><input type="radio" name="goal" value="{{ key }}" {{ 'checked' if loop.first }}><div><b>{{ title }}</b><span>{{ hint }}</span></div></label>{% endfor %}
+      <label class="choice"><input type="radio" name="goal" value="auto" checked><div><b>Choose for this project</b><span>Use existing tests when found; otherwise run a program.</span></div></label>
+      {% for key, title, hint in choices %}<label class="choice"><input type="radio" name="goal" value="{{ key }}"><div><b>{{ title }}</b><span>{{ hint }}</span></div></label>{% endfor %}
     </div>
   </div>
 
-  <div class="start"><button class="primary big" id="start" disabled>Check my project</button><span class="muted small">Your project's code runs locally, the same as running its tests yourself.</span></div>
+  <div class="field" id="execution-fields" hidden>
+    <p id="discovery-note" class="small muted"></p>
+    <label class="label" for="entry-pick">Suggested entries</label>
+    <select id="entry-pick"><option value="">Choose an entry or enter one below</option></select>
+    <label class="label" for="entry-kind" style="margin-top:12px">Run as</label>
+    <select id="entry-kind"><option value="script">Python script</option><option value="module">Python module (-m)</option><option value="notebook">Notebook</option><option value="unittest">Unittest discovery</option></select>
+    <label class="label" for="entry" style="margin-top:12px">Entry file, module or test directory</label>
+    <input id="entry" type="text" placeholder="main.py, package.main, assignment.ipynb or tests" spellcheck="false">
+    <div id="program-inputs">
+      <label class="label" for="args" style="margin-top:12px">Arguments (optional, one per line)</label>
+      <textarea id="args" rows="3" placeholder="--data&#10;data/input.csv"></textarea>
+      <label class="label" for="stdin" style="margin-top:12px">Standard input (optional, for input())</label>
+      <textarea id="stdin" rows="3" placeholder="Values your program reads, one line at a time"></textarea>
+    </div>
+    <div id="unit-inputs" hidden><label class="label" for="pattern">Test filename pattern</label><input id="pattern" value="test*.py"></div>
+    <p id="notebook-note" class="small muted" hidden>Runs cells in order in a fresh kernel using the selected Python. Requires the FixFirst notebooks extra and ipykernel in the project environment. The original notebook is preserved.</p>
+  </div>
+  <div class="start"><button class="primary big" id="start" disabled>Check my project</button><span class="muted small">Runs locally with the selected Python and the project folder as the working directory.</span></div>
   <p id="error" role="alert"></p>
 </section>
 
@@ -61,44 +82,82 @@
 {% endblock %}
 {% block script %}
 <script>
-const folder=document.getElementById('folder'),info=document.getElementById('folder-info'),start=document.getElementById('start'),python=document.getElementById('python');
-let checked=null,timer=null;
+const el=id=>document.getElementById(id);
+const folder=el('folder'),info=el('folder-info'),start=el('start'),python=el('python');
+let checked=null,timer=null,revision=0,overridePython=false,entryEdited=false,lastPath=null;
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function goal(){const selected=document.querySelector('input[name=goal]:checked').value;return selected==='auto'?(checked?.discovery.suggested_goal||'run_project'):selected}
+function updateControls(){
+  const g=goal(),active=g==='run_project'||g==='pass_unittest';
+  el('execution-fields').hidden=!active;
+  if(g==='pass_unittest'){el('entry-kind').value='unittest';if(!entryEdited)el('entry').value=checked?.discovery.unittest_entry||'.'}
+  else if(el('entry-kind').value==='unittest'){el('entry-kind').value='script';if(!entryEdited)el('entry').value=checked?.discovery.default_entry?.entry||''}
+  el('entry-kind').disabled=g==='pass_unittest';
+  const k=el('entry-kind').value;
+  el('program-inputs').hidden=k==='notebook'||k==='unittest';
+  el('unit-inputs').hidden=k!=='unittest';el('notebook-note').hidden=k!=='notebook';
+  start.disabled=!checked||(active&&!el('entry').value.trim());
+  if(checked){
+    const r=checked,py=r.python,d=r.discovery;
+    const warnings=r.warnings.filter(w=>!w.startsWith('pytest is not installed')||['pass_tests','collect_tests'].includes(g));
+    info.className='info'+(warnings.length?' warn':'');
+    info.innerHTML='<b>'+esc(r.name)+'</b><div class="py">Python '+esc(py.version||'unavailable')+' · '+esc(py.origin)+'</div>'
+      +'<div>'+d.test_count+' test file(s) found · '+(py.pytest?'pytest available':'pytest not installed — ordinary programs and unittest can still run')+'</div>'
+      +(warnings.length?'<ul>'+warnings.map(w=>'<li>'+esc(w)+'</li>').join('')+'</ul>':'');
+    el('discovery-note').textContent=d.test_count?'Existing tests were found. You can also run a program directly.':'No test cases were found. Select the program you normally run.';
+    if(d.limited)el('discovery-note').textContent+=' Discovery reached its limit; enter the intended entry if it is not listed.';
+  }
+}
 async function inspect(){
-  const path=folder.value.trim();checked=null;start.disabled=true;document.getElementById('error').textContent='';
+  const request=++revision,path=folder.value.trim();checked=null;start.disabled=true;el('error').textContent='';
   if(!path){info.hidden=true;return}
   info.hidden=false;info.className='info';info.textContent='Looking at this folder…';
   try{
-    const r=await post('/api/folder',{path,python:python.value.trim()||null});
-    if(!r.path){info.className='info warn';info.textContent=r.error;return}
-    const py=r.python;
-    const found=r.markers.length?'Python project ('+r.markers.map(esc).join(', ')+')':'Folder '+esc(r.name);
-    const pyline=py.version?`Python ${esc(py.version)} · ${esc(py.origin)} · pytest ${py.pytest?'✓':'✗'} · Ruff ${py.ruff?'✓':'✗'}`:'Python could not be started';
-    info.className='info'+(r.warnings.length?' warn':'');
-    info.innerHTML=`<b>${r.warnings.length?'':'✓ '}${found}</b><div class="py">${pyline} <button class="linkish" id="change-python" type="button">use another Python</button></div>`+(r.warnings.length?'<ul>'+r.warnings.map(w=>'<li>'+esc(w)+'</li>').join('')+'</ul>':'');
-    document.getElementById('change-python').onclick=()=>{document.getElementById('other-python').hidden=false;python.value=python.value||py.path;python.focus()};
-    if(r.ok){checked={project:r.path,python:py.path};start.disabled=false}
-  }catch(err){info.className='info warn';info.textContent=err.message}
+    const r=await post('/api/folder',{path,python:overridePython?python.value.trim()||null:null});
+    if(request!==revision)return;
+    if(!r.ok){info.className='info warn';info.textContent=r.error||(r.warnings||[]).join(' ');return}
+    checked=r;if(!overridePython)python.value=r.python.path;
+    if(lastPath!==r.path){entryEdited=false;lastPath=r.path}
+    const pick=el('entry-pick');pick.innerHTML='<option value="">Choose an entry or enter one below</option>';
+    r.discovery.entries.forEach((e,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=e.entry+' ('+e.kind+')';pick.append(o)});
+    if(!entryEdited){
+      const e=r.discovery.default_entry;
+      el('entry-kind').value=e?.kind||'script';el('entry').value=e?.entry||'';
+      el('args').value='';el('stdin').value='';
+    }
+    updateControls();
+  }catch(err){if(request===revision){info.className='info warn';info.textContent=err.message}}
 }
-folder.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(inspect,450)});
-python.addEventListener('change',inspect);
-// Folder browser
-const browser=document.getElementById('browser'),list=document.getElementById('folders');let here=null,parent=null;
+function schedule(){revision++;checked=null;start.disabled=true;clearTimeout(timer);timer=setTimeout(inspect,450)}
+folder.addEventListener('input',schedule);
+python.addEventListener('input',()=>{overridePython=true;schedule()});
+el('auto-python').onclick=()=>{overridePython=false;inspect()};
+el('entry-pick').onchange=()=>{const e=checked?.discovery.entries[Number(el('entry-pick').value)];if(el('entry-pick').value!==''&&e){entryEdited=true;el('entry-kind').value=e.kind;el('entry').value=e.entry;document.querySelector('input[name=goal][value=run_project]').checked=true;updateControls()}};
+['entry','entry-kind'].forEach(id=>el(id).addEventListener('input',()=>{entryEdited=true;updateControls()}));
+document.querySelectorAll('input[name=goal]').forEach(r=>r.addEventListener('change',()=>{entryEdited=false;const e=checked?.discovery.default_entry;if(goal()==='run_project'&&e){el('entry-kind').value=e.kind;el('entry').value=e.entry}updateControls()}));
+const browser=el('browser'),list=el('folders');let here=null,parent=null;
 async function openFolder(path){
-  const r=await post('/api/browse',{path});here=r.path;parent=r.parent;document.getElementById('where').textContent='\u200e'+r.path;
-  document.getElementById('up').disabled=!parent;list.innerHTML='';
-  if(!r.entries.length){list.innerHTML='<li class="empty">No sub-folders here.</li>'}
-  for(const e of r.entries){const li=document.createElement('li');li.innerHTML=`<span aria-hidden="true">📁</span><span class="name">${esc(e.name)}</span>`+(e.project?'<span class="tag cause">Python project</span><button type="button">Choose</button>':'');
-    li.onclick=ev=>{if(ev.target.tagName==='BUTTON'){choose(e.path)}else{openFolder(e.path)}};list.append(li)}
+  try{
+    const r=await post('/api/browse',{path});here=r.path;parent=r.parent;el('where').textContent=r.path;
+    el('up').disabled=!parent;list.innerHTML='';
+    if(!r.entries.length)list.innerHTML='<li class="empty">No sub-folders here.</li>';
+    for(const e of r.entries){const li=document.createElement('li');li.innerHTML='<span aria-hidden="true">📁</span><span class="name">'+esc(e.name)+'</span><button type="button">Choose</button>';li.onclick=ev=>ev.target.tagName==='BUTTON'?choose(e.path):openFolder(e.path);list.append(li)}
+  }catch(err){el('error').textContent=err.message}
 }
 function choose(path){folder.value=path;browser.hidden=true;inspect()}
-document.getElementById('browse').onclick=()=>{if(browser.hidden){browser.hidden=false;openFolder(folder.value.trim()||null)}else{browser.hidden=true}};
-document.getElementById('up').onclick=()=>parent&&openFolder(parent);
-document.getElementById('choose-here').onclick=()=>choose(here);
-start.onclick=async()=>{if(!checked)return;const goal=document.querySelector('input[name=goal]:checked').value;
-  busy('Checking your project…','FixFirst runs your environment, dependency and test checks. This can take a little while for large test suites.');
-  try{const r=await post('/api/start',{...checked,goal});location.href='/sessions/'+r.session_id}catch(err){showError(err.message)}};
-document.querySelectorAll('[data-sample]').forEach(b=>b.onclick=async()=>{busy('Creating the sample project…','A small project with four problems, checked for the first time.');
-  try{const r=await post('/api/sample',{});location.href='/sessions/'+r.session_id}catch(err){showError(err.message)}});
+el('browse').onclick=()=>{if(browser.hidden){browser.hidden=false;openFolder(folder.value.trim()||null)}else browser.hidden=true};
+el('up').onclick=()=>parent&&openFolder(parent);el('choose-here').onclick=()=>choose(here);
+start.onclick=async()=>{
+  if(!checked)return;
+  const g=goal(),body={project:checked.path,python:checked.python.path,goal:g};
+  if(g==='run_project'||g==='pass_unittest'){
+    const kind=g==='pass_unittest'?'unittest':el('entry-kind').value;
+    body.execution={kind,entry:el('entry').value.trim(),pattern:el('pattern').value||'test*.py'};
+    if(['script','module'].includes(kind)){body.execution.args=el('args').value.split(/\r?\n/).filter(v=>v!=='');body.execution.stdin=el('stdin').value}
+  }
+  busy('Checking your project…','Running the selected program or tests and collecting the evidence for diagnosis.');
+  try{const r=await post('/api/start',body);location.href='/sessions/'+r.session_id}catch(err){showError(err.message)}
+};
+document.querySelectorAll('[data-sample]').forEach(b=>b.onclick=async()=>{busy('Creating the sample project…','Checking a small project with four common problems.');try{const r=await post('/api/sample',{});location.href='/sessions/'+r.session_id}catch(err){showError(err.message)}});
 </script>
 {% endblock %}

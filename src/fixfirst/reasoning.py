@@ -10,6 +10,7 @@
 
 from functools import lru_cache
 from importlib import resources
+import sys
 
 try:
     import tomllib
@@ -19,7 +20,7 @@ except ModuleNotFoundError:  # Python 3.10
 from . import domain, engine
 from .classification import MIN_CONFIDENCE, default_model, load_model, suggest
 from .evidence import environment_facts, observations, observed, project_index
-from .models import GOAL_CHECKS, PROJECT_SCOPES, Action, Fact, Session
+from .models import GOAL_CHECKS, Action, Fact, Session, check_scope
 from .runner import environment_id
 
 KIND_ORDER = {"inspect": 0, "manual_fix": 1, "rerun": 2}
@@ -29,6 +30,8 @@ VERIFY = (
     ("pytest", "Re-run test collection"),
     ("ruff", "Re-run the code check"),
     ("pytest_run", "Run the full test suite"),
+    ("python_run", "Re-run the same program"),
+    ("unittest_run", "Re-run the unittest suite"),
 )
 
 
@@ -130,7 +133,10 @@ def diagnose(session: Session, knowledge=True, skip=()) -> dict:
 
 
 def apply_classifier(session: Session, active, details) -> list[Fact]:
-    suggestions = suggest(details, classifier(session))
+    # The bundled classifier was evaluated on pytest cases, not native program executions.
+    tested_ids = {i.issue_id for i in active if i.tool in ("pytest", "pytest_run")}
+    suggestions = (suggest({k: v for k, v in details.items() if k in tested_ids}, classifier(session))
+                   if tested_ids else {})
     facts = []
     for issue in active:
         issue.prediction, issue.prediction_confidence = suggestions.get(issue.issue_id, (None, None))
@@ -225,13 +231,29 @@ def rule_actions(session: Session, base: engine.FactBase, by_id) -> list[Action]
                 cost=template.get("cost", 2),
                 cause=engine.resolve(template.get("cause"), bindings) if template.get("cause") else None,
                 rule_ids=proposal.rule_ids,
-                # Always the project's own interpreter, so the package lands where the checks run.
-                command=[session.target_python, "-m", "pip", "install",
+                # Project dependencies use the target; the optional notebook driver uses the host.
+                command=[sys.executable if template.get("pip_environment") == "fixfirst" else session.target_python,
+                         "-m", "pip", "install",
                          engine.render(template["pip_install"], bindings)]
                 if template.get("pip_install") else [],
                 targets=[engine.render(t, bindings) for t in template.get("targets", [])],
             )
         )
+    if session.goal == "run_project":
+        for action in actions:
+            if any(by_id[i].tool == "python_run" for i in action.issue_ids if i in by_id):
+                if action.action_id != "provide-program-input":
+                    action.verification = "Re-run the same program with the same Python, arguments and input"
+                if "P12" in action.rule_ids:
+                    action.explanation = (
+                        "The module exists in this project but the selected Python cannot import it. "
+                        "For a src layout, install the project into that environment with pip install -e .; "
+                        "for a package entry, use its Python module name instead of running its file directly. "
+                        "Check the package location and __init__.py.")
+                elif "P15" in action.rule_ids:
+                    action.explanation = (
+                        "A relative import was executed outside its package. Choose Python module mode "
+                        "and enter the package.module name, or correct the import and package structure.")
     return actions
 
 
@@ -326,13 +348,13 @@ def goal_status(session: Session, active) -> str:
     eligible = bool(
         last
         and last.source == "executed"
-        and last.scope == PROJECT_SCOPES[target]
+        and last.scope == check_scope(session, target)
         and last.environment_id == current
     )
     status = "unknown" if not eligible else "achieved" if last.verified_pass else "blocked"
     if any(i.status == "awaiting_verification" and i.tool == target for i in active):
         status = "unknown"
-    if session.goal == "pass_tests":
+    if session.goal in ("pass_tests", "pass_unittest"):
         if last and last.coverage_complete and last.exit_code == 0 and not last.verified_pass:
             status = "unknown"
         if status == "achieved" and any(
@@ -356,6 +378,8 @@ def infer_and_plan(session: Session):
         i
         for i in session.issues
         if i.status != "resolved" and i.environment_id in (current, "unknown")
+        and (i.tool not in ("python_run", "unittest_run") or i.environment_id == "unknown"
+             or i.scope == check_scope(session, i.tool))
     ]
     facts, details = base_facts(session, active)
     facts += apply_classifier(session, active, details)

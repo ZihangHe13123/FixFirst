@@ -13,7 +13,7 @@ import tempfile
 
 from . import domain, engine
 from .evidence import issue_evidence
-from .models import Session
+from .models import Session, GOAL_CHECKS, check_scope
 from .processes import ManagedProcess
 from .report import GOALS, TOOL_NAMES, shell
 
@@ -21,9 +21,13 @@ GOAL_DONE = {
     "collect_tests": "All tests load",
     "check_style": "The code check passes",
     "pass_tests": "All tests pass",
+    "run_project": "Program completed successfully",
+    "pass_unittest": "All tests pass",
 }
 GOAL_CHOICES = [
+    ("run_project", "Run my program", "Run a Python script, module or notebook and explain its errors."),
     ("pass_tests", "Make my tests pass", "Runs your tests to see whether the code works, and explains every failure."),
+    ("pass_unittest", "Run unittest tests", "Run standard-library unittest tests; pytest is not required."),
     ("collect_tests", "Just get the tests to load", "Stops before running test code; for import and setup errors."),
     ("check_style", "Clean up code-check warnings",
      "Reads your code without running it (Ruff): likely bugs must be fixed, style suggestions are optional."),
@@ -66,7 +70,8 @@ def build_view(session: Session) -> dict:
             continue
         where, errors, rules = [], [], []
         for issue in related:
-            location = issue_evidence(session, issue).get("where") if issue.tool in ("pytest", "pytest_run") else ""
+            location = issue_evidence(session, issue).get("where") if issue.tool in (
+                "pytest", "pytest_run", "python_run", "unittest_run") else ""
             if not location:
                 event = next((events[e] for e in issue.event_ids if e in events), None)
                 location = _relative(event.location, session.project_root) if event else ""
@@ -128,7 +133,9 @@ def build_view(session: Session) -> dict:
         for i in session.issues
         if i.status == "resolved"
     ]
-    pending = [i.title for i in session.issues if i.status in ("not_observed", "unknown")]
+    pending = [i.title for i in session.issues if i.status in ("not_observed", "unknown")
+               and (i.tool not in ("python_run", "unittest_run")
+                    or i.scope == check_scope(session, i.tool))]
     # Only problems that stand between the user and the chosen goal count in the headline.
     blocking = {f.subject for f in session.facts if f.predicate == "affects" and f.value == session.goal}
     open_issues = [
@@ -142,6 +149,7 @@ def build_view(session: Session) -> dict:
         "project_root": session.project_root,
         "python": session.target_python,
         "goal": session.goal,
+        "execution": session.execution.model_dump() if session.execution else None,
         "goal_name": GOALS[session.goal],
         "goal_note": next(note for key, _, note in GOAL_CHOICES if key == session.goal),
         "status": _status(session, steps, must, optional_issues),
@@ -245,12 +253,14 @@ def _status(session: Session, steps, open_issues, optional_issues=()) -> dict:
             "Nothing is changed or installed.",
         }
     if session.goal_status == "achieved":
-        target = {"collect_tests": "pytest", "check_style": "ruff", "pass_tests": "pytest_run"}[session.goal]
+        target = GOAL_CHECKS[session.goal]
         run = next((r for r in reversed(session.runs) if r.tool == target), None)
         summary = run.test_summary if run else {}
         detail = f"Verified by {TOOL_NAMES[target].lower()}"
         if summary.get("passed"):
             detail += f": {summary['passed']} test{'s' if summary['passed'] != 1 else ''} passed"
+        if session.goal == "run_project":
+            detail += ". The selected entry completed with exit code 0 using the saved arguments and input"
         return {"kind": "done", "headline": GOAL_DONE[session.goal], "detail": detail + "."}
     # Count problems, not steps: steps merge issues that share a remedy, and one problem can
     # have a step that gathers evidence as well as one that fixes it.
@@ -341,7 +351,7 @@ def inspect_folder(path: str, python: str | None = None) -> dict:
     if (root / "tests").is_dir():
         markers.append("tests/")
     has_python = bool(markers) or any(
-        entry.suffix == ".py" for _, entry in zip(range(300), root.iterdir())
+        entry.suffix in (".py", ".ipynb") for _, entry in zip(range(300), root.iterdir())
     )
     candidates = []
     for name in ENV_DIRS:
@@ -350,7 +360,8 @@ def inspect_folder(path: str, python: str | None = None) -> dict:
             if candidate.is_file():
                 candidates.append((str(candidate), f"the project's {name} environment"))
     if python:
-        chosen, origin = python, "chosen by you"
+        chosen = os.path.abspath(os.path.expanduser(python.strip().strip("'\"")))
+        origin = "chosen by you"
     elif candidates:
         chosen, origin = candidates[0]
     else:
@@ -361,7 +372,10 @@ def inspect_folder(path: str, python: str | None = None) -> dict:
         warnings.append("No Python files or project files were found in this folder.")
     if interpreter["version"] is None:
         warnings.append("This Python interpreter could not be started.")
-    elif not interpreter["pytest"]:
+    from .execution import discover
+
+    discovery = discover(root)
+    if interpreter["version"] and not interpreter["pytest"] and discovery["suggested_goal"] == "pass_tests":
         warnings.append(
             "pytest is not installed in this Python, so tests cannot run. Install it in your "
             f"project's environment ({shell([chosen, '-m', 'pip', 'install', 'pytest'])}) "
@@ -374,6 +388,7 @@ def inspect_folder(path: str, python: str | None = None) -> dict:
         "markers": markers,
         "python": interpreter,
         "warnings": warnings,
+        "discovery": discovery,
     }
 
 

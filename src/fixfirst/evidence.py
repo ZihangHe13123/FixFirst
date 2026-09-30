@@ -47,7 +47,10 @@ EXPLICIT_CONFIG = re.compile(
 EXCEPTION_LINE = re.compile(r"^E\s+([A-Za-z_][\w.]*(?:Error|Exception|Exit|Warning)):?\s?(.*)$", re.M)
 FRAME = re.compile(r"^(\S.*?\.py|<[^>]+>):(\d+):? (?:in \S+|\w+(?:Error|Exception))?\s*$", re.M)
 # Plain Python tracebacks, printed when pytest or a plugin fails before pytest can format them.
-PLAIN_FRAME = re.compile(r'^\s*File "([^"]+)", line (\d+), in \S+', re.M)
+PLAIN_FRAME = re.compile(r'^\s*File "([^"]+)", line (\d+)(?:, in \S+)?', re.M)
+# IPython supplies file frames and arrow-marked executed lines in notebook errors.
+NOTEBOOK_FRAME = re.compile(r"^File (.+?\.py):(\d+)(?:, in .*)?$", re.M)
+NOTEBOOK_EXECUTED = re.compile(r"^\s*-+>\s*\d+\s+(.*)$")
 IMPORT_STATEMENT = re.compile(r"^(?:from ([\w.]+) import ([\w, ()]+)|import ([\w.]+))")
 NUMPY_REMOVED = re.compile(r"`(?:np|numpy)\.(\w+)` was removed")
 FIXTURE_MISSING = re.compile(r"fixture '(\w+)' not found")
@@ -177,7 +180,7 @@ def frames_in(traceback: str) -> list[tuple[str, str]]:
     """(path, line) of every traceback frame, in pytest's format or Python's own."""
     found = []
     for line in traceback.splitlines():
-        match = FRAME.match(line) or PLAIN_FRAME.match(line)
+        match = FRAME.match(line) or PLAIN_FRAME.match(line) or NOTEBOOK_FRAME.match(line)
         if match:
             found.append((match[1], match[2]))
     return found
@@ -196,7 +199,10 @@ def executed_lines(traceback: str) -> list[str]:
     lines = traceback.splitlines()
     executed = []
     for index, line in enumerate(lines):
-        if line.startswith(">"):
+        notebook_line = NOTEBOOK_EXECUTED.match(line)
+        if notebook_line:
+            executed.append(notebook_line[1].strip())
+        elif line.startswith(">"):
             executed.append(line[1:].strip())
         elif ((FRAME.match(line) and " in " in line) or PLAIN_FRAME.match(line)) and index + 1 < len(lines):
             following = lines[index + 1]
@@ -325,6 +331,7 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
 
     located = frames_in(traceback)
     source_file = str(exception_record.get("source_file") or "")
+    notebook = bool(exception_record.get("cell") and source_file)
 
     def frame_key(path):
         value = path.replace("\\", "/")
@@ -334,16 +341,18 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
 
     # pytest may hide a library frame in longrepr. The probe still records the
     # innermost frame of the actual exception; preserve it for provenance/call flow.
-    if source_file and exception_record.get("stage") != "collect":
+    if source_file and exception_record.get("stage") != "collect" and not notebook:
         source_line = str(exception_record.get("source_line") or "")
         if located and frame_key(located[-1][0]) == frame_key(source_file):
             located[-1] = (source_file, source_line or located[-1][1])
         else:
             located.append((source_file, source_line))
     frames = [path for path, _ in located]
-    last = source_file if source_file and exception_record.get("stage") != "collect" else ""
+    last = source_file if source_file and exception_record.get("stage") != "collect" and not notebook else ""
     if not last and frames:
         last = frames[-1]
+    if not last and notebook:
+        last = source_file
     raised_in = classify_path(last, session.project_root, environment)
     kinds = [classify_path(f, session.project_root, environment) for f in frames]
     # Attribute the raising frame, not an outer library which called user code.
@@ -365,6 +374,9 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
         for path, line in REQUEST_LOCATION.findall(traceback):
             if classify_path(path, session.project_root, environment) in ("project", "test"):
                 where = f"{shown_path(path, session.project_root)}:{line}"
+    source_location = where
+    if notebook:
+        where = f"{shown_path(source_file, session.project_root)} · cell {exception_record['cell']}"
     warnings = [
         describe_warning(w, session.project_root, environment)
         for w in exception_record.get("warnings") or []
@@ -391,6 +403,9 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
         "stage": issue.stage,
         "raised_in": raised_in,
         "where": where,
+        # The notebook cell is the user-facing location; static callable matching
+        # must use the actual Python file/line when that cell calls a module.
+        "source_location": source_location,
         "library": library,
         "third_party_frame_ratio": round(kinds.count("third_party") / len(kinds), 3) if kinds else 0.0,
         "missing_module": None,
@@ -652,7 +667,8 @@ def observations(session: Session, issues: list[Issue], *, interface_history=Tru
     # Root causes are for failing tests; a check that could not run is a tool problem.
     diagnosable = [
         i for i in issues
-        if i.tool in ("pytest", "pytest_run") and i.kind != "tool_failure" and i.stage != "verification"
+        if i.tool in ("pytest", "pytest_run", "python_run", "unittest_run")
+        and i.kind != "tool_failure" and i.stage != "verification"
     ]
     modules = set()
     for issue in diagnosable:

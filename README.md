@@ -1,9 +1,9 @@
 # FixFirst
 
-**Find the root cause of Python test failures from real evidence, then verify every fix.**
+**Find the root cause of Python errors from real evidence, then verify the next run.**
 
 FixFirst runs your project's own checks (environment snapshot, dependency declarations,
-`pip check`, pytest collection and runs, Ruff), groups repeated errors, diagnoses the root
+`pip check`, native programs, unittest, optional notebooks, pytest and Ruff), groups repeated errors, diagnoses the root
 cause of each failure, ranks what to do next for your goal, and closes an issue only when a
 completed check of the same scope proves it fixed. It runs locally, never edits your code and
 never installs anything into your environment (it gives you the command instead).
@@ -42,9 +42,12 @@ supported. See [Windows adaptation and validation](docs/WINDOWS_ADAPTATION.md).
 
 The browser opens the local interface:
 
-1. Choose your project folder (type it or press *Browse…*). FixFirst finds the project's own
-   `.venv` and tells you if pytest is missing there.
-2. Pick a goal (*Make my tests pass* by default) and press **Check my project**.
+1. Choose your project folder (type it or press *Browse…*). The Python interpreter is shown
+   directly; FixFirst finds the project's `.venv`, or you can enter another interpreter path.
+2. Leave **Choose for this project** selected, or choose a mode. Existing test files suggest
+   pytest or native unittest. Without tests, select the script, module or notebook you
+   normally run. Arguments are entered one per line; standard input supports ordinary `input()`
+   assignments. Press **Check my project**.
 3. Follow the numbered steps under **Must fix**. Each says which file and line to change, why,
    and how to confirm; install steps come with a command to copy. After changing your code,
    press **Check again**; a step only counts as fixed when a real check passes.
@@ -52,6 +55,28 @@ The browser opens the local interface:
    or a test that only counts warnings); they are not counted as problems.
 5. When a library no longer provides a name your code uses, **Find it** tries older releases
    in a throwaway environment and tells you exactly which version to install.
+
+**Projects without tests do not need pytest.** FixFirst runs the selected program with its
+own Python and the project folder as the working directory, interprets its traceback and
+reuses the same root-cause rules and repair advice. After a change, **Check again** repeats
+that entry, arguments and input. A complete run with exit code 0 is labelled **Program
+completed successfully**. This verifies that run, not the correctness of every possible
+input or the assignment's expected answer.
+
+Pure unittest projects run with the standard library, without pytest. Projects with pytest
+configuration or pytest features retain pytest. Empty test directories and configuration
+files alone do not count as test cases; discovery is a bounded static suggestion and can be
+overridden. Use **Python and run settings** on a session to change the entry or interpreter;
+the changed configuration needs a fresh check and does not close issues from another run scope.
+
+Notebook execution is optional. Install its driver into FixFirst's environment with
+`python -m pip install -e '.[notebooks]'` from this checkout, and install `ipykernel` into the
+selected project environment if it is missing. FixFirst starts a fresh kernel with that
+Python, executes cells in order, records cell failures, and preserves the source notebook.
+Notebook execution uses [NBClient](https://nbclient.readthedocs.io/en/latest/client.html)
+and an explicit [kernel specification](https://jupyter-client.readthedocs.io/en/stable/kernels.html#kernel-specs).
+Interactive notebook input, GUI interaction and indefinitely running services require a
+different execution workflow; a timeout or cancelled run never counts as success.
 
 No project at hand? Press *Open a sample project* on the start page: four faults across three
 root-cause categories, with the changes listed in its `FIXES.md`. You can also double-click
@@ -79,14 +104,14 @@ until a real check shows it.
  your project + its Python interpreter + a goal (e.g. "make my tests pass")
       │
   1  Check       run the project's own checks: environment snapshot, declared dependencies,
-      │          pip check, pytest (collect and run), Ruff
+      │          a program or tests, plus available pip/Ruff checks
   2  Group       put repeated messages together (same tool, stage and place; text similarity)
       │
   3  Evidence    what actually happened: the real exception, where it was raised, and whether
       │          each module is installed, in the standard library, a local file or declared
   4  Knowledge   look up only the names in the evidence: what was removed, in which release,
       │          what replaces it, which package provides it (from official documentation)
-  5  Reason      104 rules, forward chaining in five phases:
+  5  Reason      112 rules, forward chaining in five phases:
       │          derive → diagnose → heuristic → fallback (decision tree) → plan
   6  Plan        order the actions: blocked or not, effect on the goal, strength of evidence,
       │          kind of action, cost
@@ -187,6 +212,11 @@ today's libraries from "no test can run" to 525 passing tests. No user study has
 ```bash
 source .venv/bin/activate
 fixfirst init /path/to/project --python /path/to/project/.venv/bin/python --goal pass_tests
+fixfirst init /path/to/homework --python /path/to/homework/.venv/bin/python --script main.py
+fixfirst init /path/to/project --module package.main --arg=--data --arg=input.csv
+fixfirst init /path/to/project --script main.py --stdin-file answers.txt
+fixfirst init /path/to/project --notebook assignment.ipynb
+fixfirst init /path/to/project --unittest-dir tests
 fixfirst scan SESSION_ID                       # all checks for the goal
 fixfirst scan SESSION_ID --checks pytest_run --nodes 'tests/test_a.py::test_x'
 fixfirst show SESSION_ID                       # issues, causes, next steps
@@ -200,7 +230,10 @@ fixfirst knowledge --output kg.json            # domain knowledge graph + rules
 fixfirst interactive                           # terminal menu
 ```
 
-Goals: `collect_tests` (default), `check_style`, `pass_tests`. Sessions live in `.fixfirst/`
+New CLI and MCP sessions default to `auto`: existing tests or a program entry. Explicit goals
+are `run_project`, `pass_unittest`, `collect_tests`, `check_style`, and `pass_tests`.
+For collection-only CLI workflows, pass `--goal collect_tests` explicitly.
+Sessions live in `.fixfirst/`
 under the current directory (`--store` or `FIXFIRST_STORE` changes it). `--no-classifier` uses
 rules and knowledge only; `--model` loads another decision tree.
 
@@ -253,7 +286,8 @@ reads `mcpServers` (for example a project's `.mcp.json`):
 ## Scope and safety
 
 - Supported: small Python projects on macOS, Linux and Windows; target interpreters Python
-  3.9–3.14, tested (venv, uv or conda); pytest, Ruff, pip. Declarations are read statically from
+  3.9–3.14 (venv, uv or conda); native scripts/modules, unittest, optional notebooks, pytest,
+  Ruff and pip. Declarations are read statically from
   `pyproject.toml` (PEP 621, dependency groups, flit), `requirements*.txt`, `setup.cfg` and
   literal lists in `setup.py` (never executed); lock files give the versions a project was
   tested with. Windows support is new and is being validated on real machines.
