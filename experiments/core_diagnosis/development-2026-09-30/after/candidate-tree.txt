@@ -1,0 +1,49 @@
+|--- module_mentioned <= 0.50
+|   |--- signal_config_context <= 0.50
+|   |   |--- signal_nonetype <= 0.50
+|   |   |   |--- signal_environ_lookup <= 0.50
+|   |   |   |   |--- signal_config_file <= 0.50
+|   |   |   |   |   |--- api_mentioned <= 0.50
+|   |   |   |   |   |   |--- class: code_defect
+|   |   |   |   |   |--- api_mentioned >  0.50
+|   |   |   |   |   |   |--- class: code_defect
+|   |   |   |   |--- signal_config_file >  0.50
+|   |   |   |   |   |--- class: config_missing
+|   |   |   |--- signal_environ_lookup >  0.50
+|   |   |   |   |--- class: config_missing
+|   |   |--- signal_nonetype >  0.50
+|   |   |   |--- class: config_missing
+|   |--- signal_config_context >  0.50
+|   |   |--- class: config_missing
+|--- module_mentioned >  0.50
+|   |--- api_mentioned <= 0.50
+|   |   |--- missing_module_dotted <= 0.50
+|   |   |   |--- stage_call <= 0.50
+|   |   |   |   |--- module_declared <= 0.50
+|   |   |   |   |   |--- raised_in_test <= 0.50
+|   |   |   |   |   |   |--- class: missing_dependency
+|   |   |   |   |   |--- raised_in_test >  0.50
+|   |   |   |   |   |   |--- class: missing_dependency
+|   |   |   |   |--- module_declared >  0.50
+|   |   |   |   |   |--- class: missing_dependency
+|   |   |   |--- stage_call >  0.50
+|   |   |   |   |--- class: missing_dependency
+|   |   |--- missing_module_dotted >  0.50
+|   |   |   |--- class: version_incompatibility
+|   |--- api_mentioned >  0.50
+|   |   |--- module_local <= 0.50
+|   |   |   |--- raised_in_test <= 0.50
+|   |   |   |   |--- module_similar_local <= 0.50
+|   |   |   |   |   |--- class: version_incompatibility
+|   |   |   |   |--- module_similar_local >  0.50
+|   |   |   |   |   |--- class: local_module
+|   |   |   |--- raised_in_test >  0.50
+|   |   |   |   |--- class: local_module
+|   |   |--- module_local >  0.50
+|   |   |   |--- signal_cannot_import_name <= 0.50
+|   |   |   |   |--- class: local_module
+|   |   |   |--- signal_cannot_import_name >  0.50
+|   |   |   |   |--- raised_in_project <= 0.50
+|   |   |   |   |   |--- class: code_defect
+|   |   |   |   |--- raised_in_project >  0.50
+|   |   |   |   |   |--- class: local_module

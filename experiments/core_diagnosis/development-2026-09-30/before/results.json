@@ -1,0 +1,434 @@
+{
+  "kind": "development_replay",
+  "head": "11bbe7edb74fe9571bd8c816f4aa0a8126445021",
+  "source_sha256": {
+    "src/fixfirst/__init__.py": "7042a3ae28ec8b6423586c61b0ab382b541447cb17be5c5c412cbb0d4a7426c8",
+    "src/fixfirst/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+    "src/fixfirst/_winprocess.py": "a57855d492192b3ac29004d1212f135721ac930c6b2bfba30dce1496840ad1b4",
+    "src/fixfirst/cases.py": "f4e25213b6902b081bdda50ab896903f91a23280496ff23cc3f587f4809c170d",
+    "src/fixfirst/classification.py": "f29b61d7cb74ffd4d506ba03a050a61ad3945379591c5fee8f0af5c6c2a2856a",
+    "src/fixfirst/cli.py": "e54970cac2807d6a9b2f685b8b10798dce51024d4cd075fad3f16e7414950e4f",
+    "src/fixfirst/diagnosis_cases.py": "d10b36d2a2bbc403f0d3f9a4d2ef174b197363fe3eec78714c68d13be6a4f7f3",
+    "src/fixfirst/domain.py": "df012bb818da0559da3a188ff5d7c8fbd9d701c5463c2dc1db6797687f339843",
+    "src/fixfirst/engine.py": "2af0f39c39db97f95d50662a971a0a47a3a6ebc5af517d5c49515de0a289105e",
+    "src/fixfirst/evaluation.py": "cddaadf5813e98a0f0d31cd76e40d0fa21cf8893120178a4652ed9b183165fd1",
+    "src/fixfirst/evidence.py": "2a7b246f62c030c83c706f86c95ceffc994e585a38756c9fba7eba794779c23b",
+    "src/fixfirst/execution_cases.py": "49d0f5f4d1ac3158101046d205c17602a00cc5f35e9da59c99c9cf71d75f556c",
+    "src/fixfirst/grouping.py": "c50af96288ed20dfc3d00b0d8ab4ef0f1f13fc9cb5984296307dc0ab9f449a00",
+    "src/fixfirst/hard_cases.py": "a4b9256f3b24bafc897e8beb48ea0a6cd58ef1722defaeb3ed18b745dbbe9e58",
+    "src/fixfirst/historical_cases.py": "5d0ed255be14aae2f91dd5bed04ebe92723e46294abd1b6f94d4c20d098cbb90",
+    "src/fixfirst/interactive.py": "765c3b26e1ea6a60723761db7afc3532d2cc64bd55a8eaa9fbb6ee20703717ec",
+    "src/fixfirst/knowledge_graph.py": "b87e0f769c73c208b01e636b778df7003ecfedd73a8fba7e26e6a369b3a9a29a",
+    "src/fixfirst/mcp_server.py": "569763e7709bd06877ef9af34d258850cb9ef9dd57611a6cff8936f8494afcec",
+    "src/fixfirst/models.py": "0e7bfd631087319509449375bd9051518aa3257840a56984155138715a908631",
+    "src/fixfirst/multi_cases.py": "43d6f7cca66c4056d293a26f4d6fd924c07a55bef03fc074e613cfe6ff36733d",
+    "src/fixfirst/parsers.py": "58ae70dc650511c832ea70d6085f15d99fc791f89466089d0b29d7f30f4280a0",
+    "src/fixfirst/playground.py": "f813c09dc4708672778f53dd6b7c87827121f6f2e11093524a0e9a30d568322d",
+    "src/fixfirst/probe.py": "be077167074b7d83fced2168b029befa02200881fda3ee852d46614ae2d2a98a",
+    "src/fixfirst/processes.py": "f86b783afb16e189c385fbf53f728b0151d6ebce88c38ac8cc1586c628412f0e",
+    "src/fixfirst/project.py": "f5313b3362112f88f9ae73cce4ff7f1545d756c69c5dcffc2d0073abd1322986",
+    "src/fixfirst/reasoning.py": "7a1f049d987cf11a6b489cb7ae8c3a26fb7c3abf2c57e60854a67868af578494",
+    "src/fixfirst/report.py": "a671e568cea5b806df135d18a74fef32083f8bb513988b4f06fcc72e5b698fe5",
+    "src/fixfirst/runner.py": "f89ee4246806480a7c798f59b0fb526e5cb6ce3ec4de1c3bf67e9caef6890170",
+    "src/fixfirst/service.py": "b9df0da246c6e9e529079f9ba874ed4943a7085a9d7179f5d389875651e74c2c",
+    "src/fixfirst/storage.py": "590f5dc772005a97d7f16db8772fe23745d2b5d35329c3030e86e003fa08d1cf",
+    "src/fixfirst/test_results.py": "13f15b576756e7adb8928e1f1a587c8a47d5ececafbf240bdec57ea52de6cde2",
+    "src/fixfirst/versions.py": "5a86009ec5f982c2a6cc4b67a8eda0e132e16dd06b83dc79cf7c268f7f9bb2aa",
+    "src/fixfirst/web.py": "a5d291a1b227af5ba100256a0a46e07a948384ee9d2470e96703ab51409b8af1",
+    "src/fixfirst/workspace.py": "3a4ab40efe82cfd1cba4f70a9e60fe1da030efb2e644f48abbb2540bede54eae",
+    "src/fixfirst/knowledge/diagnosis_tree.json": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3",
+    "src/fixfirst/knowledge/domain.toml": "d1bd7894531996aaa4541d797a757f746f870b1aad9ce7ae3a6c13dd168d7c74",
+    "src/fixfirst/knowledge/rules.toml": "0a5c10397da725469625404da925395138ddae00b46a7628a2a44854c7094401"
+  },
+  "python": "3.12.14",
+  "packages": {
+    "numpy": "2.5.3",
+    "pydantic": "2.13.5",
+    "scikit-learn": "1.9.0",
+    "pytest": "9.1.1"
+  },
+  "dataset_sha256": "831b6a61b26da4a776a74ecebe4faf4e32df4da8dc35eabb5ad4ce4fdd55d860",
+  "environment_sha256": "684c37874bc6fbb1864699d2b8b086b291d2a5823625d8c5775d07508f13a763",
+  "train_sha256": "24b5392de44c4359621bd9f5f1600070d30491e1e42d74d7602482f3c9c50173",
+  "training_rows": 215,
+  "test_rows": 30,
+  "fault_families": 6,
+  "scores": {
+    "bundled": {
+      "tree": {
+        "n": 30,
+        "accuracy": 0.1667,
+        "macro_f1": 0.2,
+        "coverage": 1.0,
+        "precision_when_answered": 0.1667
+      },
+      "hybrid": {
+        "n": 30,
+        "accuracy": 0.5,
+        "macro_f1": 0.3143,
+        "coverage": 1.0,
+        "precision_when_answered": 0.5
+      },
+      "rules_heur": {
+        "n": 30,
+        "accuracy": 0.5,
+        "macro_f1": 0.3143,
+        "coverage": 0.6667,
+        "precision_when_answered": 0.75
+      }
+    },
+    "retrained_same_data": {
+      "tree": {
+        "n": 30,
+        "accuracy": 0.1667,
+        "macro_f1": 0.2,
+        "coverage": 1.0,
+        "precision_when_answered": 0.1667
+      },
+      "hybrid": {
+        "n": 30,
+        "accuracy": 0.5,
+        "macro_f1": 0.3143,
+        "coverage": 1.0,
+        "precision_when_answered": 0.5
+      },
+      "rules_heur": {
+        "n": 30,
+        "accuracy": 0.5,
+        "macro_f1": 0.3143,
+        "coverage": 0.6667,
+        "precision_when_answered": 0.75
+      }
+    }
+  },
+  "scenarios": {
+    "bundled": {
+      "ml_renamed_then_alias": {
+        "local_module": 5
+      },
+      "vb_click_mix_stderr": {
+        "version_incompatibility": 5
+      },
+      "vb_numpy_promotion": {
+        "code_defect": 5
+      },
+      "vb_numpy_repr": {
+        "code_defect": 5
+      },
+      "vb_pydantic_coercion": {
+        "code_defect": 5
+      },
+      "vb_yaml_loader": {
+        "version_incompatibility": 5
+      }
+    },
+    "retrained_same_data": {
+      "ml_renamed_then_alias": {
+        "local_module": 5
+      },
+      "vb_click_mix_stderr": {
+        "version_incompatibility": 5
+      },
+      "vb_numpy_promotion": {
+        "code_defect": 5
+      },
+      "vb_numpy_repr": {
+        "code_defect": 5
+      },
+      "vb_pydantic_coercion": {
+        "code_defect": 5
+      },
+      "vb_yaml_loader": {
+        "version_incompatibility": 5
+      }
+    }
+  },
+  "first_steps": [
+    {
+      "case_id": "flat-shop--vb_numpy_repr",
+      "scenario": "vb_numpy_repr",
+      "title": "Compare the failed assertion's expected and actual values",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "diagnoses": [
+        "code_defect"
+      ]
+    },
+    {
+      "case_id": "flat-shop--vb_numpy_promotion",
+      "scenario": "vb_numpy_promotion",
+      "title": "Inspect the exception raised while running the test",
+      "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+      "diagnoses": [
+        "code_defect"
+      ]
+    },
+    {
+      "case_id": "flat-shop--vb_yaml_loader",
+      "scenario": "vb_yaml_loader",
+      "title": "Update the call to yaml.load for pyyaml 6.0.3",
+      "explanation": "yaml.load comes from pyyaml 6.0.3 and rejects the arguments the code passes. Libraries add, rename and remove parameters between versions, so the code was probably written for another pyyaml release. Check yaml.load in the documentation or changelog of pyyaml 6.0.3 and update the call; if the project must keep the old call, install the pyyaml release it was written for.",
+      "diagnoses": [
+        "version_incompatibility"
+      ]
+    },
+    {
+      "case_id": "flat-shop--vb_pydantic_coercion",
+      "scenario": "vb_pydantic_coercion",
+      "title": "Inspect the exception raised while running the test",
+      "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+      "diagnoses": [
+        "code_defect"
+      ]
+    },
+    {
+      "case_id": "flat-shop--vb_click_mix_stderr",
+      "scenario": "vb_click_mix_stderr",
+      "title": "Update the call to click.testing.CliRunner for click 8.5.0",
+      "explanation": "click.testing.CliRunner comes from click 8.5.0 and rejects the arguments the code passes. Libraries add, rename and remove parameters between versions, so the code was probably written for another click release. Check click.testing.CliRunner in the documentation or changelog of click 8.5.0 and update the call; if the project must keep the old call, install the click release it was written for.",
+      "diagnoses": [
+        "version_incompatibility"
+      ]
+    },
+    {
+      "case_id": "flat-shop--ml_renamed_then_alias",
+      "scenario": "ml_renamed_then_alias",
+      "title": "Update imports of helper: the project has helpers.py",
+      "explanation": "No installed package, standard module or known distribution is called helper, but the project contains helpers.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+      "diagnoses": [
+        "local_module"
+      ]
+    },
+    {
+      "case_id": "src-billing--vb_numpy_repr",
+      "scenario": "vb_numpy_repr",
+      "title": "Compare the failed assertion's expected and actual values",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "diagnoses": [
+        "code_defect"
+      ]
+    },
+    {
+      "case_id": "src-billing--vb_numpy_promotion",
+      "scenario": "vb_numpy_promotion",
+      "title": "Inspect the exception raised while running the test",
+      "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+      "diagnoses": [
+        "code_defect"
+      ]
+    },
+    {
+      "case_id": "src-billing--vb_yaml_loader",
+      "scenario": "vb_yaml_loader",
+      "title": "Update the call to yaml.load for pyyaml 6.0.3",
+      "explanation": "yaml.load comes from pyyaml 6.0.3 and rejects the arguments the code passes. Libraries add, rename and remove parameters between versions, so the code was probably written for another pyyaml release. Check yaml.load in the documentation or changelog of pyyaml 6.0.3 and update the call; if the project must keep the old call, install the pyyaml release it was written for.",
+      "diagnoses": [
+        "version_incompatibility"
+      ]
+    },
+    {
+      "case_id": "src-billing--vb_pydantic_coercion",
+      "scenario": "vb_pydantic_coercion",
+      "title": "Inspect the exception raised while running the test",
+      "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+      "diagnoses": [
+        "code_defect"
+      ]
+    },
+    {
+      "case_id": "src-billing--vb_click_mix_stderr",
+      "scenario": "vb_click_mix_stderr",
+      "title": "Update the call to click.testing.CliRunner for click 8.5.0",
+      "explanation": "click.testing.CliRunner comes from click 8.5.0 and rejects the arguments the code passes. Libraries add, rename and remove parameters between versions, so the code was probably written for another click release. Check click.testing.CliRunner in the documentation or changelog of click 8.5.0 and update the call; if the project must keep the old call, install the click release it was written for.",
+      "diagnoses": [
+        "version_incompatibility"
+      ]
+    },
+    {
+      "case_id": "src-billing--ml_renamed_then_alias",
+      "scenario": "ml_renamed_then_alias",
+      "title": "Update imports of billing.rates: the project has src/billing/rate.py",
+      "explanation": "No installed package, standard module or known distribution is called billing.rates, but the project contains src/billing/rate.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+      "diagnoses": [
+        "local_module"
+      ]
+    },
+    {
+      "case_id": "pkg-inventory--vb_numpy_repr",
+      "scenario": "vb_numpy_repr",
+      "title": "Compare the failed assertion's expected and actual values",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "diagnoses": [
+        "code_defect"
+      ]
+    },
+    {
+      "case_id": "pkg-inventory--vb_numpy_promotion",
+      "scenario": "vb_numpy_promotion",
+      "title": "Inspect the exception raised while running the test",
+      "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+      "diagnoses": [
+        "code_defect"
+      ]
+    },
+    {
+      "case_id": "pkg-inventory--vb_yaml_loader",
+      "scenario": "vb_yaml_loader",
+      "title": "Update the call to yaml.load for pyyaml 6.0.3",
+      "explanation": "yaml.load comes from pyyaml 6.0.3 and rejects the arguments the code passes. Libraries add, rename and remove parameters between versions, so the code was probably written for another pyyaml release. Check yaml.load in the documentation or changelog of pyyaml 6.0.3 and update the call; if the project must keep the old call, install the pyyaml release it was written for.",
+      "diagnoses": [
+        "version_incompatibility"
+      ]
+    },
+    {
+      "case_id": "pkg-inventory--vb_pydantic_coercion",
+      "scenario": "vb_pydantic_coercion",
+      "title": "Inspect the exception raised while running the test",
+      "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+      "diagnoses": [
+        "code_defect"
+      ]
+    },
+    {
+      "case_id": "pkg-inventory--vb_click_mix_stderr",
+      "scenario": "vb_click_mix_stderr",
+      "title": "Update the call to click.testing.CliRunner for click 8.5.0",
+      "explanation": "click.testing.CliRunner comes from click 8.5.0 and rejects the arguments the code passes. Libraries add, rename and remove parameters between versions, so the code was probably written for another click release. Check click.testing.CliRunner in the documentation or changelog of click 8.5.0 and update the call; if the project must keep the old call, install the click release it was written for.",
+      "diagnoses": [
+        "version_incompatibility"
+      ]
+    },
+    {
+      "case_id": "pkg-inventory--ml_renamed_then_alias",
+      "scenario": "ml_renamed_then_alias",
+      "title": "Update imports of inventory.utils.numbers: the project has inventory/utils/number.py",
+      "explanation": "No installed package, standard module or known distribution is called inventory.utils.numbers, but the project contains inventory/utils/number.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+      "diagnoses": [
+        "local_module"
+      ]
+    },
+    {
+      "case_id": "unittest-grades--vb_numpy_repr",
+      "scenario": "vb_numpy_repr",
+      "title": "Compare the failed assertion's expected and actual values",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "diagnoses": [
+        "code_defect"
+      ]
+    },
+    {
+      "case_id": "unittest-grades--vb_numpy_promotion",
+      "scenario": "vb_numpy_promotion",
+      "title": "Inspect the exception raised while running the test",
+      "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+      "diagnoses": [
+        "code_defect"
+      ]
+    },
+    {
+      "case_id": "unittest-grades--vb_yaml_loader",
+      "scenario": "vb_yaml_loader",
+      "title": "Update the call to yaml.load for pyyaml 6.0.3",
+      "explanation": "yaml.load comes from pyyaml 6.0.3 and rejects the arguments the code passes. Libraries add, rename and remove parameters between versions, so the code was probably written for another pyyaml release. Check yaml.load in the documentation or changelog of pyyaml 6.0.3 and update the call; if the project must keep the old call, install the pyyaml release it was written for.",
+      "diagnoses": [
+        "version_incompatibility"
+      ]
+    },
+    {
+      "case_id": "unittest-grades--vb_pydantic_coercion",
+      "scenario": "vb_pydantic_coercion",
+      "title": "Inspect the exception raised while running the test",
+      "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+      "diagnoses": [
+        "code_defect"
+      ]
+    },
+    {
+      "case_id": "unittest-grades--vb_click_mix_stderr",
+      "scenario": "vb_click_mix_stderr",
+      "title": "Update the call to click.testing.CliRunner for click 8.5.0",
+      "explanation": "click.testing.CliRunner comes from click 8.5.0 and rejects the arguments the code passes. Libraries add, rename and remove parameters between versions, so the code was probably written for another click release. Check click.testing.CliRunner in the documentation or changelog of click 8.5.0 and update the call; if the project must keep the old call, install the click release it was written for.",
+      "diagnoses": [
+        "version_incompatibility"
+      ]
+    },
+    {
+      "case_id": "unittest-grades--ml_renamed_then_alias",
+      "scenario": "ml_renamed_then_alias",
+      "title": "Update imports of grading_helpers: the project has grading_helper.py",
+      "explanation": "No installed package, standard module or known distribution is called grading_helpers, but the project contains grading_helper.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+      "diagnoses": [
+        "local_module"
+      ]
+    },
+    {
+      "case_id": "fixture-orders--vb_numpy_repr",
+      "scenario": "vb_numpy_repr",
+      "title": "Compare the failed assertion's expected and actual values",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "diagnoses": [
+        "code_defect"
+      ]
+    },
+    {
+      "case_id": "fixture-orders--vb_numpy_promotion",
+      "scenario": "vb_numpy_promotion",
+      "title": "Inspect the exception raised while running the test",
+      "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+      "diagnoses": [
+        "code_defect"
+      ]
+    },
+    {
+      "case_id": "fixture-orders--vb_yaml_loader",
+      "scenario": "vb_yaml_loader",
+      "title": "Update the call to yaml.load for pyyaml 6.0.3",
+      "explanation": "yaml.load comes from pyyaml 6.0.3 and rejects the arguments the code passes. Libraries add, rename and remove parameters between versions, so the code was probably written for another pyyaml release. Check yaml.load in the documentation or changelog of pyyaml 6.0.3 and update the call; if the project must keep the old call, install the pyyaml release it was written for.",
+      "diagnoses": [
+        "version_incompatibility"
+      ]
+    },
+    {
+      "case_id": "fixture-orders--vb_pydantic_coercion",
+      "scenario": "vb_pydantic_coercion",
+      "title": "Inspect the exception raised while running the test",
+      "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+      "diagnoses": [
+        "code_defect"
+      ]
+    },
+    {
+      "case_id": "fixture-orders--vb_click_mix_stderr",
+      "scenario": "vb_click_mix_stderr",
+      "title": "Update the call to click.testing.CliRunner for click 8.5.0",
+      "explanation": "click.testing.CliRunner comes from click 8.5.0 and rejects the arguments the code passes. Libraries add, rename and remove parameters between versions, so the code was probably written for another click release. Check click.testing.CliRunner in the documentation or changelog of click 8.5.0 and update the call; if the project must keep the old call, install the click release it was written for.",
+      "diagnoses": [
+        "version_incompatibility"
+      ]
+    },
+    {
+      "case_id": "fixture-orders--ml_renamed_then_alias",
+      "scenario": "ml_renamed_then_alias",
+      "title": "Update imports of orders.tax: the project has orders/taxes.py",
+      "explanation": "No installed package, standard module or known distribution is called orders.tax, but the project contains orders/taxes.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+      "diagnoses": [
+        "local_module"
+      ]
+    }
+  ],
+  "training_loso": {
+    "tree": {
+      "n": 215,
+      "accuracy": 0.6093,
+      "macro_f1": 0.5711,
+      "coverage": 1.0,
+      "precision_when_answered": 0.6093
+    },
+    "hybrid": {
+      "n": 215,
+      "accuracy": 0.9535,
+      "macro_f1": 0.9532,
+      "coverage": 1.0,
+      "precision_when_answered": 0.9535
+    }
+  }
+}

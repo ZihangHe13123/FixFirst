@@ -1,0 +1,314 @@
+{
+  "head": "11bbe7edb74fe9571bd8c816f4aa0a8126445021",
+  "source": "Replay saved development sessions using current code; no project test commands or model services started.",
+  "dataset_sha256": {
+    "examples/diagnosis-dataset/cases.jsonl": "24b5392de44c4359621bd9f5f1600070d30491e1e42d74d7602482f3c9c50173",
+    "examples/diagnosis-dataset/environment.json": "9effd03c80332748374a175f15c2c23db2e3ca7f41473362c64ca0f4ac016851",
+    "examples/hard-dataset/cases.jsonl": "90191d35352a25249957ded0b92825004da4d87e168856755d0633004f3b8aaf",
+    "examples/hard-dataset/environment.json": "1e8747d32369c6bb99581e8643d83941fa0e3322da8a7c6b0d386713c0327dc8",
+    "src/fixfirst/knowledge/diagnosis_tree.json": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3"
+  },
+  "baseline": {
+    "leave_one_template_out": {
+      "naive_v03": {
+        "n": 215,
+        "accuracy": 0.4186,
+        "macro_f1": 0.2795,
+        "coverage": 1.0,
+        "precision_when_answered": 0.4186
+      },
+      "rules_no_kg": {
+        "n": 215,
+        "accuracy": 0.4884,
+        "macro_f1": 0.6026,
+        "coverage": 0.5116,
+        "precision_when_answered": 0.9545
+      },
+      "rules": {
+        "n": 215,
+        "accuracy": 0.7907,
+        "macro_f1": 0.8872,
+        "coverage": 0.7907,
+        "precision_when_answered": 1.0
+      },
+      "rules_heur": {
+        "n": 215,
+        "accuracy": 0.8512,
+        "macro_f1": 0.9101,
+        "coverage": 0.8512,
+        "precision_when_answered": 1.0
+      },
+      "tree": {
+        "n": 215,
+        "accuracy": 0.9581,
+        "macro_f1": 0.9633,
+        "coverage": 1.0,
+        "precision_when_answered": 0.9581
+      },
+      "hybrid_no_kg": {
+        "n": 215,
+        "accuracy": 0.9395,
+        "macro_f1": 0.9514,
+        "coverage": 0.9953,
+        "precision_when_answered": 0.9439
+      },
+      "hybrid": {
+        "n": 215,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "coverage": 1.0,
+        "precision_when_answered": 1.0
+      }
+    },
+    "leave_one_scenario_out": {
+      "naive_v03": {
+        "n": 215,
+        "accuracy": 0.4186,
+        "macro_f1": 0.2795,
+        "coverage": 1.0,
+        "precision_when_answered": 0.4186
+      },
+      "rules_no_kg": {
+        "n": 215,
+        "accuracy": 0.4884,
+        "macro_f1": 0.6026,
+        "coverage": 0.5116,
+        "precision_when_answered": 0.9545
+      },
+      "rules": {
+        "n": 215,
+        "accuracy": 0.7907,
+        "macro_f1": 0.8872,
+        "coverage": 0.7907,
+        "precision_when_answered": 1.0
+      },
+      "rules_heur": {
+        "n": 215,
+        "accuracy": 0.8512,
+        "macro_f1": 0.9101,
+        "coverage": 0.8512,
+        "precision_when_answered": 1.0
+      },
+      "tree": {
+        "n": 215,
+        "accuracy": 0.6093,
+        "macro_f1": 0.5711,
+        "coverage": 1.0,
+        "precision_when_answered": 0.6093
+      },
+      "hybrid_no_kg": {
+        "n": 215,
+        "accuracy": 0.8372,
+        "macro_f1": 0.8465,
+        "coverage": 1.0,
+        "precision_when_answered": 0.8372
+      },
+      "hybrid": {
+        "n": 215,
+        "accuracy": 0.9535,
+        "macro_f1": 0.9532,
+        "coverage": 1.0,
+        "precision_when_answered": 0.9535
+      }
+    },
+    "diagnosis_bundled_model": {
+      "naive_v03": {
+        "n": 215,
+        "accuracy": 0.4186,
+        "macro_f1": 0.2795,
+        "coverage": 1.0,
+        "precision_when_answered": 0.4186
+      },
+      "rules_no_kg": {
+        "n": 215,
+        "accuracy": 0.4884,
+        "macro_f1": 0.6026,
+        "coverage": 0.5116,
+        "precision_when_answered": 0.9545
+      },
+      "rules": {
+        "n": 215,
+        "accuracy": 0.7907,
+        "macro_f1": 0.8872,
+        "coverage": 0.7907,
+        "precision_when_answered": 1.0
+      },
+      "rules_heur": {
+        "n": 215,
+        "accuracy": 0.8512,
+        "macro_f1": 0.9101,
+        "coverage": 0.8512,
+        "precision_when_answered": 1.0
+      },
+      "tree": {
+        "n": 215,
+        "accuracy": 0.9302,
+        "macro_f1": 0.9431,
+        "coverage": 1.0,
+        "precision_when_answered": 0.9302
+      },
+      "hybrid_no_kg": {
+        "n": 215,
+        "accuracy": 0.9302,
+        "macro_f1": 0.9505,
+        "coverage": 0.9767,
+        "precision_when_answered": 0.9524
+      },
+      "hybrid": {
+        "n": 215,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "coverage": 1.0,
+        "precision_when_answered": 1.0
+      }
+    },
+    "hard_bundled_model": {
+      "naive_v03": {
+        "n": 30,
+        "accuracy": 0.0,
+        "macro_f1": 0.0,
+        "coverage": 1.0,
+        "precision_when_answered": 0.0
+      },
+      "rules_no_kg": {
+        "n": 30,
+        "accuracy": 0.1667,
+        "macro_f1": 0.2,
+        "coverage": 0.3333,
+        "precision_when_answered": 0.5
+      },
+      "rules": {
+        "n": 30,
+        "accuracy": 0.1667,
+        "macro_f1": 0.2,
+        "coverage": 0.3333,
+        "precision_when_answered": 0.5
+      },
+      "rules_heur": {
+        "n": 30,
+        "accuracy": 0.5,
+        "macro_f1": 0.3143,
+        "coverage": 0.6667,
+        "precision_when_answered": 0.75
+      },
+      "tree": {
+        "n": 30,
+        "accuracy": 0.1667,
+        "macro_f1": 0.2,
+        "coverage": 1.0,
+        "precision_when_answered": 0.1667
+      },
+      "hybrid_no_kg": {
+        "n": 30,
+        "accuracy": 0.5,
+        "macro_f1": 0.3143,
+        "coverage": 1.0,
+        "precision_when_answered": 0.5
+      },
+      "hybrid": {
+        "n": 30,
+        "accuracy": 0.5,
+        "macro_f1": 0.3143,
+        "coverage": 1.0,
+        "precision_when_answered": 0.5
+      }
+    }
+  },
+  "hard_by_scenario": [
+    {
+      "scenario": "ml_renamed_then_alias",
+      "cases": 5,
+      "truth": "local_module",
+      "tree_correct": 5,
+      "hybrid_correct": 5,
+      "predictions": {
+        "local_module": 5
+      }
+    },
+    {
+      "scenario": "vb_click_mix_stderr",
+      "cases": 5,
+      "truth": "version_incompatibility",
+      "tree_correct": 0,
+      "hybrid_correct": 5,
+      "predictions": {
+        "version_incompatibility": 5
+      }
+    },
+    {
+      "scenario": "vb_numpy_promotion",
+      "cases": 5,
+      "truth": "version_incompatibility",
+      "tree_correct": 0,
+      "hybrid_correct": 0,
+      "predictions": {
+        "code_defect": 5
+      }
+    },
+    {
+      "scenario": "vb_numpy_repr",
+      "cases": 5,
+      "truth": "version_incompatibility",
+      "tree_correct": 0,
+      "hybrid_correct": 0,
+      "predictions": {
+        "code_defect": 5
+      }
+    },
+    {
+      "scenario": "vb_pydantic_coercion",
+      "cases": 5,
+      "truth": "version_incompatibility",
+      "tree_correct": 0,
+      "hybrid_correct": 0,
+      "predictions": {
+        "code_defect": 5
+      }
+    },
+    {
+      "scenario": "vb_yaml_loader",
+      "cases": 5,
+      "truth": "version_incompatibility",
+      "tree_correct": 0,
+      "hybrid_correct": 5,
+      "predictions": {
+        "version_incompatibility": 5
+      }
+    }
+  ],
+  "contradictory_feature_vectors": [
+    {
+      "labels": {
+        "missing_dependency": 10,
+        "version_incompatibility": 5
+      },
+      "scenarios": [
+        "md_declared_alias",
+        "md_known_import",
+        "vi_stdlib_module"
+      ],
+      "features": {
+        "exception_ModuleNotFoundError": 1.0,
+        "stage_collect": 1.0,
+        "raised_in_project": 1.0,
+        "module_mentioned": 1.0
+      }
+    },
+    {
+      "labels": {
+        "code_defect": 4,
+        "version_incompatibility": 5
+      },
+      "scenarios": [
+        "cd_assertion",
+        "vb_numpy_repr"
+      ],
+      "features": {
+        "exception_AssertionError": 1.0,
+        "stage_call": 1.0,
+        "raised_in_test": 1.0
+      }
+    }
+  ],
+  "elapsed_seconds": 0.83
+}
