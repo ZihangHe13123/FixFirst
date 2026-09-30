@@ -1,9 +1,9 @@
 {
-  "production_sha": "27afb0619ee5f72740d269f79612c298030705ee",
+  "production_sha": "365aa8468c243efaba293a58dafb044b6339015c",
   "main_suite": {
-    "passed": 587,
+    "passed": 588,
     "skipped": 1,
-    "seconds": 107.28
+    "seconds": 108.08
   },
   "mac_harness": {
     "sha": "b344455",
@@ -20,6 +20,6 @@
     "C remained unresolved; the temporary trial was blocked by a wheel-only limitation",
     "No classifier weights were trained or changed in round 6"
   ],
-  "strict_follow_through_sha": "d8b1c0a7fb8f1f004db6e40e3249198b99e953bf",
-  "final_delta": "Only folds uv output whitespace/tree prefixes before classifying a wheel restriction; adds one wrapped-message test."
+  "strict_follow_through_sha": "365aa8468c243efaba293a58dafb044b6339015c",
+  "final_delta": "Installed related dependencies remain unpinned requests, including obsolete ones that an in-place pip install would not remove. Current-source A2/D2b exact follow-through passed; C last checked at d8b1c0a remains unresolved."
 }
