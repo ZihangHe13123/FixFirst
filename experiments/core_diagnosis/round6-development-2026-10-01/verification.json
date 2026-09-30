@@ -1,0 +1,23 @@
+{
+  "production_sha": "d8b1c0a7fb8f1f004db6e40e3249198b99e953bf",
+  "main_suite": {
+    "passed": 586,
+    "skipped": 1,
+    "seconds": 117.6
+  },
+  "mac_harness": {
+    "sha": "b344455",
+    "passed": 58,
+    "seconds": 83.78
+  },
+  "ruff": "passed (src tests scripts experiments)",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "uv": "uv 0.11.27 (19fc8b03b 2026-07-06 aarch64-apple-darwin)",
+  "limits": [
+    "Public development cases; not an independent held-out test",
+    "Automatic REVIEW results remain REVIEW; follow-through is recorded separately",
+    "A2 and D2b required two explicitly described steps, then a real original check",
+    "C remained unresolved; the temporary trial was blocked by a wheel-only limitation",
+    "No classifier weights were trained or changed in round 6"
+  ]
+}
