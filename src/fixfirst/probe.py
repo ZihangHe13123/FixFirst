@@ -2,6 +2,13 @@
 
 import json
 import os
+import importlib.util
+from pathlib import Path
+
+_runtime_spec = importlib.util.spec_from_file_location(
+    "_fixfirst_runtime_evidence", Path(__file__).with_name("_runtime_evidence.py"))
+_runtime = importlib.util.module_from_spec(_runtime_spec)
+_runtime_spec.loader.exec_module(_runtime)
 
 _dropped = False
 
@@ -86,6 +93,7 @@ def pytest_exception_interact(node, call, report):
                 "exception_module": call.excinfo.type.__module__,
                 "source_file": str(entry.path) if entry else "",
                 "source_line": entry.lineno + 1 if entry else None,
+                **_runtime.exception_metadata(call.excinfo.value, call.excinfo.value.__traceback__),
                 "warnings": recorded_warnings(call.excinfo.traceback),
             }
         )

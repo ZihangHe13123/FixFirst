@@ -15,7 +15,7 @@ from packaging.requirements import InvalidRequirement, Requirement
 from packaging.utils import canonicalize_name
 from packaging.version import InvalidVersion, Version
 
-from .behavior import observed_changes
+from .behavior import observed_changes, observed_input_errors
 from .models import Fact, Issue, Run, Session
 from .runner import environment_id
 from .source_context import FEATURE_NAMES as SOURCE_FEATURE_NAMES, feature_values, resolved_calls
@@ -26,7 +26,7 @@ CANNOT_IMPORT = re.compile(
     r"cannot import name '(\w+)' from (?:partially initialized module )?'([\w.]+)'"
 )
 MODULE_ATTR = re.compile(r"module '([\w.]+)' has no attribute '(\w+)'")
-OBJECT_ATTR = re.compile(r"'(\w+)' object has no attribute '(\w+)'")
+OBJECT_ATTR = re.compile(r"'([\w.]+)' object has no attribute '(\w+)'")
 KWARG = re.compile(r"(?:([\w.]+)\(\) )?got an unexpected keyword argument '(\w+)'")
 POSITIONAL = re.compile(r"([\w.]+)\(\) (?:takes|missing) \d+ (?:positional|required)")
 CALL_SIGNATURE = re.compile(
@@ -420,7 +420,27 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
         "warnings": warnings,
         "warning_assertion": warning_assertion,
         "signals": [],
+        "runtime_attribute": exception_record.get("attribute_access") or {},
+        "library_calls": [],
+        "call_arguments": [],
+        "validation_errors": exception_record.get("validation_errors") or [],
     }
+    for frame in exception_record.get("traceback_frames", [])[:20]:
+        if not isinstance(frame, dict):
+            continue
+        path, function = str(frame.get("file", "")), str(frame.get("function", ""))
+        if classify_path(path, session.project_root, environment) != "third_party":
+            continue
+        pieces = re.split(r"(?:site|dist)-packages[\\/]", path.replace("\\", "/"), maxsplit=1)
+        if len(pieces) == 2 and re.fullmatch(r"\w+", function):
+            module = pieces[1].removesuffix(".py").replace("/", ".").removesuffix(".__init__")
+            evidence["library_calls"].append(f"{module}.{function}")
+            shapes = frame.get("array_shapes")
+            if isinstance(shapes, dict) and all(
+                isinstance(shapes.get(k), list) and len(shapes[k]) <= 16
+                and all(type(v) is int and v >= 0 for v in shapes[k]) for k in ("a", "b")
+            ):
+                evidence["call_arguments"].append({"callee": f"{module}.{function}", "shapes": shapes})
 
     def add(key, value):
         if value and value not in evidence[key]:
@@ -439,8 +459,16 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
     for owner, name in OBJECT_ATTR.findall(message or text):
         add("attributes", name)
         add("owners", owner)
-        if owner != "NoneType":
+        if owner != "NoneType" and "." not in owner:
             add("apis", f"{owner}.{name}")
+    # Qualified object types in text alone are not enough to borrow an API's
+    # history. The target-side probe records the actual registered object's type.
+    attribute = evidence["runtime_attribute"]
+    if exception == "AttributeError" and isinstance(attribute, dict):
+        parts = [attribute.get(k, "") for k in ("owner_module", "owner_name", "name")]
+        if all(isinstance(p, str) and re.fullmatch(r"[A-Za-z_]\w*(?:\.\w+)*", p) for p in parts):
+            add("attributes", ".".join(parts))
+            add("modules", parts[0])
     for owner in POSITIONAL.findall(message):
         add("owners", owner.split(".")[0])
     for owner, name in KWARG.findall(message):
@@ -677,6 +705,8 @@ def observations(session: Session, issues: list[Issue], *, interface_history=Tru
         subject = issue.issue_id
         if evidence["exception"]:
             facts.append(observed(subject, "exception", evidence["exception"], refs))
+        if evidence["exception_module"]:
+            facts.append(observed(subject, "exception_module", evidence["exception_module"], refs))
         facts.append(observed(subject, "raised_in", evidence["raised_in"], refs))
         for module in evidence["modules"]:
             facts.append(observed(subject, "module", "module:" + module, refs))
@@ -732,6 +762,9 @@ def observations(session: Session, issues: list[Issue], *, interface_history=Tru
         for change, distribution in observed_changes(evidence, project):
             facts.append(observed(subject, "behavior_symptom", "behavior:" + change, refs + project_ref))
             facts.append(observed(subject, "behavior_provider", "dist:" + distribution, refs + project_ref))
+        for symptom, distribution in observed_input_errors(evidence):
+            facts.append(observed(subject, "input_symptom", "input:" + symptom, refs))
+            facts.append(observed(subject, "input_provider", "dist:" + distribution, refs))
         if evidence.get("call_signature"):
             facts.append(observed(subject, "signal", "call_signature", refs))
             # Resolve what was called through the project's own imports (read statically).

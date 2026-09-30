@@ -578,7 +578,7 @@ def test_a_failure_inside_a_library_newer_than_the_lock_file_suggests_the_tested
     assert ("issue-1", "likely", "version_incompatibility") not in engine.run(rule_base(), facts).keys
 
 
-def test_behaviour_change_heuristics_need_a_library_call_or_a_declared_older_major():
+def test_a_declared_minimum_does_not_establish_an_upgrade_cause():
     from fixfirst import engine
     from fixfirst.models import Fact
 
@@ -606,12 +606,12 @@ def test_behaviour_change_heuristics_need_a_library_call_or_a_declared_older_maj
     actions = {a.action_id: a for a in engine.propose(rule_base(), engine.run(rule_base(), declared))}
     assert "call-yaml.load" in actions and "declared-pyyaml" not in actions
 
-    # H08: raised inside a library the project calls, one major version past the declared bound.
+    # Even a library's own failure plus a declared lower bound is not a tested-version record.
     inside = [
         fact("issue-2", "raised_by_library", "dist:packaging"), fact("issue-2", "project_calls", "dist:packaging"),
         fact("dist:packaging", "installed_version", "26.3"), fact("dist:packaging", "declared_minimum", "20.0"),
     ]
-    assert ("issue-2", "likely", "version_incompatibility") in engine.run(rule_base(), inside).keys
+    assert ("issue-2", "likely", "version_incompatibility") not in engine.run(rule_base(), inside).keys
     # Not when only the library's own code is involved, not for the test runner, not within a major.
     assert ("issue-2", "likely", "version_incompatibility") not in engine.run(rule_base(), inside[:1] + inside[2:]).keys
     runner = [*inside, fact("dist:packaging", "is_test_runner", "yes")]
@@ -663,5 +663,6 @@ def test_bad_arguments_are_separate_from_a_library_failure_after_a_major_upgrade
     )
     session, issues = scan_project(raised)
     view = build_view(session)
-    assert len(issues) == 1 and issues[0].diagnosis_rule == "H08"
-    assert view["steps"][0]["title"].startswith("Try packaging below 21: the project declares packaging>=20.0")
+    assert len(issues) == 1 and issues[0].diagnosis_rule == "H10"
+    assert view["steps"][0]["title"].startswith("Handle legacy version labels before using packaging.version.parse")
+    assert not any(a.action_id.startswith("declared-") for a in session.actions)

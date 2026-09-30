@@ -10,9 +10,80 @@
 title = "FixFirst Python troubleshooting knowledge"
 updated = "2026-09-30"
 
+[[input_error]]
+id = "numpy-shape"
+distribution = "numpy"
+action_title = "Correct the reshape dimensions for the actual array size"
+guidance = "The requested shape must contain the same number of elements as the input array. Compare the size and shape in the error; adjust the requested dimensions to the required result, using one -1 dimension only when the remaining dimensions divide the size. Preserve the input values and the test's intended result."
+source = "numpy-reshape"
+
+[[input_error]]
+id = "numpy-axis"
+distribution = "numpy"
+action_title = "Choose an axis that exists in the input array"
+guidance = "Compare the requested axis with the number of dimensions shown in the error. For ndim dimensions valid axes range from -ndim to ndim-1. Choose the axis matching the intended operation; changing the library version does not add a missing dimension."
+source = "numpy-axis"
+
+[[input_error]]
+id = "yaml-syntax"
+distribution = "pyyaml"
+action_title = "Correct the YAML syntax at the reported line and column"
+guidance = "Inspect the YAML text or file at the parser's marked line and column. Correct the reported brackets, separators or indentation while preserving the required data. Keep safe_load or the selected safe loader; a parser syntax error is not evidence that an older PyYAML is needed."
+source = "pyyaml-input"
+
+[[input_error]]
+id = "click-value"
+distribution = "click"
+action_title = "Correct the value rejected by the Click parameter"
+guidance = "Compare the supplied value with the parameter's required type, choices or bounds reported in the error. Supply a valid value, or correct an incorrectly specified parameter constraint according to the program's requirements. Preserve validation and the tests; do not bypass validation just to make the check pass."
+source = "click-input"
+
+[[input_error]]
+id = "version-string"
+distribution = "packaging"
+action_title = "Handle the non-standard version label before comparing versions"
+guidance = "Version accepts PEP 440 version strings. Validate values before comparing them, handle InvalidVersion explicitly, and separate non-standard labels from release versions according to the intended ordering. Preserve the tests and input meaning."
+source = "packaging-version"
+
+[[behavior]]
+id = "packaging-legacy-parse"
+distribution = "packaging"
+version = "22.0"
+summary = "packaging 22 removed LegacyVersion: the observed packaging.version.parse call now raises InvalidVersion for a non-standard label instead of returning a legacy comparison object."
+action_title = "Handle legacy version labels before using packaging.version.parse"
+replacement = "Handle InvalidVersion explicitly. If only release versions should participate in comparison, validate with Version and filter non-standard labels before applying max or sorting; if those labels have meaning, give them an explicit ordering separately. Keep the original tests and input values. Version itself was already strict before this change."
+source = "packaging-22.0"
+
 # Behavior changes are matched using observed values/calls and version context.
 # They are compatibility hypotheses, not proof that every failure inside a library
 # was caused by an upgrade.
+[[behavior]]
+id = "numpy-copy-false"
+distribution = "numpy"
+version = "2.0"
+summary = "NumPy 2 makes array(..., copy=False) reject inputs that require a copy; the observed numpy.array call raises that specific error."
+action_title = "Use numpy.asarray when copying the input is allowed"
+replacement = "Replace numpy.array(values, copy=False, ...) with numpy.asarray(values, ...), keeping the dtype and other needed options. If the program truly requires zero copying, keep that requirement and provide a compatible array buffer instead. Do not change the expected values."
+source = "numpy-2.0"
+
+[[behavior]]
+id = "numpy-solve-vector"
+distribution = "numpy"
+version = "2.0"
+summary = "NumPy 2 treats a non-1D b as matrices in linalg.solve. The captured a and b shapes fit the previous batched-vector contract but the call now reports a core-dimension mismatch."
+action_title = "Pass the batch of right-hand vectors as explicit column vectors"
+replacement = "For the observed batched-vector call, replace numpy.linalg.solve(a, b) with numpy.linalg.solve(a, b[..., None])[..., 0]. Preserve a, b and the expected numeric result; the extra dimension makes the vector interpretation explicit."
+source = "numpy-solve-2.0"
+
+[[behavior]]
+id = "pydantic-optional-required"
+distribution = "pydantic"
+version = "2.0"
+summary = "Pydantic V2 requires an Optional field when its declaration has no default. The actual missing field is nullable without a default and the supplied input has no unknown field names."
+action_title = "Give the optional model field an explicit None default"
+replacement = "At the reported Optional field declaration, add = None if omitting that field is intended (for example email: Optional[str] = None). Keep other required fields and validation intact. Optional controls whether None is allowed; the explicit default controls omission."
+source = "pydantic-optional-2.0"
+
 [[behavior]]
 id = "numpy-scalar-repr"
 distribution = "numpy"
@@ -264,6 +335,15 @@ source = "python-3.12"
 
 [[removed]]
 kind = "api"
+module = "configparser"
+names = ["SafeConfigParser"]
+distribution = "python"
+version = "3.12"
+replacement = "configparser.ConfigParser instead of configparser.SafeConfigParser"
+source = "python-3.12"
+
+[[removed]]
+kind = "api"
 module = "numpy"
 names = ["float", "int", "object", "str", "complex", "long", "unicode"]
 distribution = "numpy"
@@ -279,6 +359,24 @@ distribution = "numpy"
 version = "1.23"
 replacement = "ndarray.item()"
 source = "numpy-1.23"
+
+[[removed]]
+kind = "attribute"
+owners = ["numpy.ndarray"]
+names = ["numpy.ndarray.ptp"]
+distribution = "numpy"
+version = "2.0"
+replacement = "numpy.ptp(array, ...) instead of array.ptp(...); preserve the existing axis, out and keepdims arguments"
+source = "numpy-2.0"
+
+[[removed]]
+kind = "attribute"
+owners = ["numpy.ndarray"]
+names = ["numpy.ndarray.newbyteorder"]
+distribution = "numpy"
+version = "2.0"
+replacement = "array.view(array.dtype.newbyteorder(order)) instead of array.newbyteorder(order), preserving the intended byte-order view semantics"
+source = "numpy-2.0"
 
 [[removed]]
 kind = "api"
@@ -689,6 +787,34 @@ url = "https://numpy.org/doc/stable/release/1.24.0-notes.html"
 [sources."numpy-2.0"]
 title = "NumPy 2.0 migration guide (NEP 52 namespace cleanup)"
 url = "https://numpy.org/doc/stable/numpy_2_0_migration_guide.html"
+
+[sources."numpy-reshape"]
+title = "NumPy reshape: the new shape must be compatible with the original shape"
+url = "https://numpy.org/doc/stable/reference/generated/numpy.reshape.html"
+
+[sources."numpy-solve-2.0"]
+title = "NumPy linalg.solve: b vector interpretation changed in 2.0"
+url = "https://numpy.org/doc/stable/reference/generated/numpy.linalg.solve.html"
+
+[sources."pydantic-optional-2.0"]
+title = "Pydantic V2 migration: required, optional and nullable fields"
+url = "https://docs.pydantic.dev/latest/migration/#required-optional-and-nullable-fields"
+
+[sources."numpy-axis"]
+title = "NumPy AxisError: an axis exceeds the array dimensions"
+url = "https://numpy.org/doc/stable/reference/generated/numpy.exceptions.AxisError.html"
+
+[sources."pyyaml-input"]
+title = "PyYAML error conditions and marked input locations"
+url = "https://pyyaml.org/wiki/PyYAMLDocumentation#yamlerror"
+
+[sources."click-input"]
+title = "Click parameter types, choices and integer/float ranges"
+url = "https://click.palletsprojects.com/en/stable/parameter-types/"
+
+[sources."packaging-version"]
+title = "Packaging Version and InvalidVersion"
+url = "https://packaging.pypa.io/en/stable/version.html"
 
 [sources."numpy-scalar-representation"]
 title = "NumPy 2.0 release notes: representation of NumPy scalars changed"
