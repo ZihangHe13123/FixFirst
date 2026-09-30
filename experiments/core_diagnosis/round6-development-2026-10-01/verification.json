@@ -1,9 +1,9 @@
 {
-  "production_sha": "d8b1c0a7fb8f1f004db6e40e3249198b99e953bf",
+  "production_sha": "27afb0619ee5f72740d269f79612c298030705ee",
   "main_suite": {
-    "passed": 586,
+    "passed": 587,
     "skipped": 1,
-    "seconds": 117.6
+    "seconds": 107.28
   },
   "mac_harness": {
     "sha": "b344455",
@@ -19,5 +19,7 @@
     "A2 and D2b required two explicitly described steps, then a real original check",
     "C remained unresolved; the temporary trial was blocked by a wheel-only limitation",
     "No classifier weights were trained or changed in round 6"
-  ]
+  ],
+  "strict_follow_through_sha": "d8b1c0a7fb8f1f004db6e40e3249198b99e953bf",
+  "final_delta": "Only folds uv output whitespace/tree prefixes before classifying a wheel restriction; adds one wrapped-message test."
 }
