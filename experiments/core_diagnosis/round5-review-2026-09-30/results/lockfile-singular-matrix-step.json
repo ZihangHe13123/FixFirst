@@ -1,0 +1,9 @@
+{
+ "command": "<runs>/numpy_copy_false/venv/bin/python -m pip install 'numpy<1.27'",
+ "command_exit": 0,
+ "numpy_after": [
+  "numpy==1.26.4"
+ ],
+ "tests_exit": 1,
+ "still_singular": true
+}

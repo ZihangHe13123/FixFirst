@@ -1,0 +1,7 @@
+{
+ "probe": "packaging_parse_legacy_label",
+ "grade": "partial",
+ "from": "Step text: handle InvalidVersion explicitly; if only release versions should be compared, validate with Version and filter non-standard labels before max. The exact loop is mine.",
+ "tests_exit": 0,
+ "tests_unchanged": true
+}

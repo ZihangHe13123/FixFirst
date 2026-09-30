@@ -1,0 +1,300 @@
+[
+ {
+  "name": "numpy_copy_false",
+  "environments": {
+   "current": {
+    "python": "3.12.13",
+    "packages": [
+     "iniconfig==2.3.0",
+     "numpy==2.2.6",
+     "packaging==26.3",
+     "pip==26.2.1",
+     "pluggy==1.6.0",
+     "pygments==2.21.0",
+     "pytest==8.4.2"
+    ]
+   },
+   "old": {
+    "python": "3.12.13",
+    "packages": [
+     "iniconfig==2.3.0",
+     "numpy==1.26.4",
+     "packaging==26.3",
+     "pip==26.2.1",
+     "pluggy==1.6.0",
+     "pygments==2.21.0",
+     "pytest==8.4.2"
+    ]
+   }
+  },
+  "files": {
+   "requirements.txt": "c6f8bc70b65508ef9f4ba126981126fff07d5e8bc17ad8ced50591d2a3760af4",
+   "app.py": "b032d4c13dabb709ffe1e95ebd85f69a8e0fb881d07842e0e0eb5f5dd49c192c",
+   "test_app.py": "e6dcff32097e282495060e257a8f7c67bc8741d75693289229e7ae5fadc33707"
+  }
+ },
+ {
+  "name": "pydantic_optional_required",
+  "environments": {
+   "current": {
+    "python": "3.12.13",
+    "packages": [
+     "annotated-types==0.8.0",
+     "iniconfig==2.3.0",
+     "packaging==26.3",
+     "pip==26.2.1",
+     "pluggy==1.6.0",
+     "pydantic-core==2.33.2",
+     "pydantic==2.11.9",
+     "pygments==2.21.0",
+     "pytest==8.4.2",
+     "typing-extensions==4.16.0",
+     "typing-inspection==0.4.4"
+    ]
+   },
+   "old": {
+    "python": "3.12.13",
+    "packages": [
+     "iniconfig==2.3.0",
+     "packaging==26.3",
+     "pip==26.2.1",
+     "pluggy==1.6.0",
+     "pydantic==1.10.22",
+     "pygments==2.21.0",
+     "pytest==8.4.2",
+     "typing-extensions==4.16.0"
+    ]
+   }
+  },
+  "files": {
+   "requirements.txt": "cc215a69933a65fa595dedf8304da1a0693a98da2d4a47b6b8c79883f8d6f29c",
+   "app.py": "6137cf1905eb6dfd300f1a7ff71e8f774076c7feb27a3b1c36553e1e3d1a8931",
+   "test_app.py": "87b29dda339ebe00c012fa10809d666059ab288ab5f65ff31158d8dfd5481466"
+  }
+ },
+ {
+  "name": "numpy_solve_batched_vector",
+  "environments": {
+   "current": {
+    "python": "3.12.13",
+    "packages": [
+     "iniconfig==2.3.0",
+     "numpy==2.2.6",
+     "packaging==26.3",
+     "pip==26.2.1",
+     "pluggy==1.6.0",
+     "pygments==2.21.0",
+     "pytest==8.4.2"
+    ]
+   },
+   "old": {
+    "python": "3.12.13",
+    "packages": [
+     "iniconfig==2.3.0",
+     "numpy==1.26.4",
+     "packaging==26.3",
+     "pip==26.2.1",
+     "pluggy==1.6.0",
+     "pygments==2.21.0",
+     "pytest==8.4.2"
+    ]
+   }
+  },
+  "files": {
+   "requirements.txt": "c6f8bc70b65508ef9f4ba126981126fff07d5e8bc17ad8ced50591d2a3760af4",
+   "app.py": "eb37f555065f2d46e5d0bafcadf523c14f5515d79a11261b3a4fe6aa79ee82b6",
+   "test_app.py": "3b6c95543dd8f0edbdc0b12ebb7d84e427b2596fa1ad706ae8484a81748e054a"
+  }
+ },
+ {
+  "name": "stdlib_safeconfigparser_removed",
+  "environments": {
+   "current": {
+    "python": "3.12.13",
+    "packages": [
+     "iniconfig==2.3.0",
+     "packaging==26.3",
+     "pip==26.2.1",
+     "pluggy==1.6.0",
+     "pygments==2.21.0",
+     "pytest==8.4.2"
+    ]
+   },
+   "old": {
+    "python": "3.11.15",
+    "packages": [
+     "iniconfig==2.3.0",
+     "packaging==26.3",
+     "pip==26.2.1",
+     "pluggy==1.6.0",
+     "pygments==2.21.0",
+     "pytest==8.4.2",
+     "setuptools==84.0.0",
+     "wheel==0.48.0"
+    ]
+   }
+  },
+  "files": {
+   "settings.py": "703d557c4d6528785d88999e02842b5cb27bf38e309edcfc52f97e2cd943e01b",
+   "app.ini": "44aefbac3c72206ae2d23ff1adf76f9e131f1d89e6a7e781a1d13627ed5c6727",
+   "test_settings.py": "f7224607ee402bfcfbad80e30efee28e047bab8d832a478d2da3be309d5a07ff"
+  }
+ },
+ {
+  "name": "yaml_tab_indentation",
+  "environments": {
+   "current": {
+    "python": "3.12.13",
+    "packages": [
+     "iniconfig==2.3.0",
+     "packaging==26.3",
+     "pip==26.2.1",
+     "pluggy==1.6.0",
+     "pygments==2.21.0",
+     "pytest==8.4.2",
+     "pyyaml==6.0.2"
+    ]
+   }
+  },
+  "files": {
+   "requirements.txt": "659a62bdf19cc7fd05054d2334026fabd02b7847fa1c0859e2979a47a74fa780",
+   "settings.yaml": "772a55d004c30192de7839e51b867339e866db660959e88ffc21d514176907ab",
+   "app.py": "5956d53a030c1df3a7a23cc77c5062bdf8fea549264822becd2d57231c3e1aa5",
+   "test_app.py": "5758843df6ee20c0fd8af88d27cf89ba70774312c3cb55b52923e8069f236c92"
+  }
+ },
+ {
+  "name": "numpy_reshape_off_by_one",
+  "environments": {
+   "current": {
+    "python": "3.12.13",
+    "packages": [
+     "iniconfig==2.3.0",
+     "numpy==2.2.6",
+     "packaging==26.3",
+     "pip==26.2.1",
+     "pluggy==1.6.0",
+     "pygments==2.21.0",
+     "pytest==8.4.2"
+    ]
+   },
+   "old": {
+    "python": "3.12.13",
+    "packages": [
+     "iniconfig==2.3.0",
+     "numpy==1.26.4",
+     "packaging==26.3",
+     "pip==26.2.1",
+     "pluggy==1.6.0",
+     "pygments==2.21.0",
+     "pytest==8.4.2"
+    ]
+   }
+  },
+  "files": {
+   "requirements.txt": "c6f8bc70b65508ef9f4ba126981126fff07d5e8bc17ad8ced50591d2a3760af4",
+   "app.py": "a2839ce200b30831f23200c22d97ba09a8617ad227588db92d701060c1516b09",
+   "test_app.py": "e9a8ec1e880dee1516230633fb0f0b72ccff3213f97aaffb17884bcf788bd554"
+  }
+ },
+ {
+  "name": "click_option_typo",
+  "environments": {
+   "current": {
+    "python": "3.12.13",
+    "packages": [
+     "click==8.2.1",
+     "iniconfig==2.3.0",
+     "packaging==26.3",
+     "pip==26.2.1",
+     "pluggy==1.6.0",
+     "pygments==2.21.0",
+     "pytest==8.4.2"
+    ]
+   },
+   "old": {
+    "python": "3.12.13",
+    "packages": [
+     "click==7.1.2",
+     "iniconfig==2.3.0",
+     "packaging==26.3",
+     "pip==26.2.1",
+     "pluggy==1.6.0",
+     "pygments==2.21.0",
+     "pytest==8.4.2"
+    ]
+   }
+  },
+  "files": {
+   "requirements.txt": "36088eb77758d1d30933efc4694cd02274a93392ecc3ec6b7be69635dbe3ff02",
+   "cli.py": "122cd67f01f68160169be02a901a944525b6c1352d71feb5004d1a6931632361",
+   "test_cli.py": "d867dff5f25de252e61b364e11e6adf7abd356b94ff24fbecc8e857cdaab9f06"
+  }
+ },
+ {
+  "name": "pydantic_field_name_typo",
+  "environments": {
+   "current": {
+    "python": "3.12.13",
+    "packages": [
+     "annotated-types==0.8.0",
+     "iniconfig==2.3.0",
+     "packaging==26.3",
+     "pip==26.2.1",
+     "pluggy==1.6.0",
+     "pydantic-core==2.33.2",
+     "pydantic==2.11.9",
+     "pygments==2.21.0",
+     "pytest==8.4.2",
+     "typing-extensions==4.16.0",
+     "typing-inspection==0.4.4"
+    ]
+   },
+   "old": {
+    "python": "3.12.13",
+    "packages": [
+     "iniconfig==2.3.0",
+     "packaging==26.3",
+     "pip==26.2.1",
+     "pluggy==1.6.0",
+     "pydantic==1.10.22",
+     "pygments==2.21.0",
+     "pytest==8.4.2",
+     "typing-extensions==4.16.0"
+    ]
+   }
+  },
+  "files": {
+   "requirements.txt": "cc215a69933a65fa595dedf8304da1a0693a98da2d4a47b6b8c79883f8d6f29c",
+   "app.py": "6ffdd879532c33c6a8f8675e9bd04d85b713a98d33e79094811c3162f5d34da6",
+   "test_app.py": "05948c24b5b19f4dcdac698666a4def687393530b911d1e528f2931beac289c2"
+  }
+ },
+ {
+  "name": "healthy_deprecations",
+  "environments": {
+   "current": {
+    "python": "3.12.13",
+    "packages": [
+     "annotated-types==0.8.0",
+     "iniconfig==2.3.0",
+     "numpy==2.2.6",
+     "packaging==26.3",
+     "pip==26.2.1",
+     "pluggy==1.6.0",
+     "pydantic-core==2.33.2",
+     "pydantic==2.11.9",
+     "pygments==2.21.0",
+     "pytest==8.4.2",
+     "typing-extensions==4.16.0",
+     "typing-inspection==0.4.4"
+    ]
+   }
+  },
+  "files": {
+   "requirements.txt": "4ca74aae32bcd59745fca0f94920748f89f365a474bc0cc4ba483fd46c1b9d8e",
+   "app.py": "eec9b9936c4c121679d622f5839a011b15a7108aea4eba3bfbb8d60f3cc79b11",
+   "test_app.py": "05a88f426f25018725f8b622d41ff19d56114d3e6fac203b5142b47c926ec116"
+  }
+ }
+]

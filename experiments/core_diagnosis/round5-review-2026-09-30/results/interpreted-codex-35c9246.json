@@ -1,0 +1,168 @@
+[
+ {
+  "case": "numpy_copy_false",
+  "variant": null,
+  "grade": "complete",
+  "from": "Step text: replace numpy.array(values, copy=False, ...) with numpy.asarray(values, ...), keep the dtype; place app.py:6.",
+  "edits": [
+   [
+    "app.py",
+    "np.array(values, dtype=float, copy=False)",
+    "np.asarray(values, dtype=float)"
+   ]
+  ],
+  "tests_exit": 0,
+  "target_error_left": false,
+  "tests_unchanged": true,
+  "tail": ".                                                                        [100%]\n1 passed in 0.02s\n"
+ },
+ {
+  "case": "pydantic_optional_required",
+  "variant": null,
+  "grade": "partial",
+  "from": "Step text: add = None to the missing Optional field in the model declaration. The place shown is the call app.py:12; the field name comes from the error ('email Field required') and its line (app.py:8) from reading the model. The text's example 'email' is a fixed template example.",
+  "edits": [
+   [
+    "app.py",
+    "    email: Optional[str]\n",
+    "    email: Optional[str] = None\n"
+   ]
+  ],
+  "tests_exit": 0,
+  "target_error_left": false,
+  "tests_unchanged": true,
+  "tail": ".                                                                        [100%]\n1 passed in 0.02s\n"
+ },
+ {
+  "case": "numpy_solve_batched_vector",
+  "variant": null,
+  "grade": "complete",
+  "from": "Step text: replace numpy.linalg.solve(a, b) with numpy.linalg.solve(a, b[..., None])[..., 0]; place app.py:8.",
+  "edits": [
+   [
+    "app.py",
+    "np.linalg.solve(a, b).tolist()",
+    "np.linalg.solve(a, b[..., None])[..., 0].tolist()"
+   ]
+  ],
+  "tests_exit": 0,
+  "target_error_left": false,
+  "tests_unchanged": true,
+  "tail": ".                                                                        [100%]\n1 passed in 0.02s\n"
+ },
+ {
+  "case": "stdlib_safeconfigparser_removed",
+  "variant": null,
+  "grade": "complete",
+  "from": "Step text: change the code to use configparser.ConfigParser instead of SafeConfigParser; place settings.py:1. Applied to every use in settings.py (the import and line 5).",
+  "edits": [
+   [
+    "settings.py",
+    "SafeConfigParser",
+    "ConfigParser"
+   ]
+  ],
+  "tests_exit": 0,
+  "target_error_left": false,
+  "tests_unchanged": true,
+  "tail": ".                                                                        [100%]\n1 passed in 0.00s\n"
+ },
+ {
+  "case": "stdlib_safeconfigparser_removed",
+  "variant": "import line only",
+  "grade": "complete",
+  "from": "Reading only the place shown (settings.py:1): the constructor on line 5 is left as it was.",
+  "edits": [
+   [
+    "settings.py",
+    "from configparser import SafeConfigParser",
+    "from configparser import ConfigParser"
+   ]
+  ],
+  "tests_exit": 1,
+  "target_error_left": false,
+  "tests_unchanged": true,
+  "tail": "-35c9246/import-line-only/app.ini')\n\n    def read_settings(path):\n>       parser = SafeConfigParser()\n                 ^^^^^^^^^^^^^^^^\nE       NameError: name 'SafeConfigParser' is not defined\n\nsettings.py:5: NameError\n=========================== short test summary info ============================\nFAILED test_settings.py::test_read_settings - NameError: name 'SafeConfigPars...\n1 failed in 0.01s\n"
+ },
+ {
+  "case": "yaml_tab_indentation",
+  "variant": null,
+  "grade": "partial",
+  "from": "Step text: correct the indentation at the parser's marked line and column. The place shown is the load call app.py:8; settings.yaml line 3 column 1 and the tab come from the error mark.",
+  "edits": [
+   [
+    "settings.yaml",
+    "\t",
+    "  "
+   ]
+  ],
+  "tests_exit": 0,
+  "target_error_left": false,
+  "tests_unchanged": true,
+  "tail": ".                                                                        [100%]\n1 passed in 0.01s\n"
+ },
+ {
+  "case": "numpy_reshape_off_by_one",
+  "variant": null,
+  "grade": "partial",
+  "from": "Step text: the shape must hold the array's size; adjust the dimensions to the required result; place app.py:6. The value (2, 3) comes from the error (size 6) and the test's expected grid.",
+  "edits": [
+   [
+    "app.py",
+    "(height, width + 1)",
+    "(height, width)"
+   ]
+  ],
+  "tests_exit": 0,
+  "target_error_left": false,
+  "tests_unchanged": true,
+  "tail": ".                                                                        [100%]\n1 passed in 0.02s\n"
+ },
+ {
+  "case": "click_option_typo",
+  "variant": null,
+  "grade": "generic",
+  "from": "Step text only says to compare the assertion's expected and actual values at test_cli.py:8. The misspelt option comes from the assertion message ('No such option: --name Did you mean --nmae?').",
+  "edits": [
+   [
+    "cli.py",
+    "nmae",
+    "name"
+   ]
+  ],
+  "tests_exit": 0,
+  "target_error_left": false,
+  "tests_unchanged": true,
+  "tail": ".                                                                        [100%]\n1 passed in 0.02s\n"
+ },
+ {
+  "case": "pydantic_field_name_typo",
+  "variant": null,
+  "grade": "generic",
+  "from": "Step text only says to inspect the exception, at app.py:10 (the right line). The keyword comes from the error (name missing, input {'nmae': 'Ada', ...}).",
+  "edits": [
+   [
+    "app.py",
+    "nmae=",
+    "name="
+   ]
+  ],
+  "tests_exit": 0,
+  "target_error_left": false,
+  "tests_unchanged": true,
+  "tail": ".                                                                        [100%]\n1 passed in 0.08s\n"
+ },
+ {
+  "probe": "optional_swapped_valid_key",
+  "from": "FixFirst's first step: give the missing Optional field (email) an explicit None default.",
+  "edits": [
+   [
+    "app.py",
+    "    email: Optional[str]\n",
+    "    email: Optional[str] = None\n"
+   ]
+  ],
+  "tests_exit": 1,
+  "tail": "ail=None, backup_email='ada@example.org').email\nE        +    where Contact(name='Ada', email=None, backup_email='ada@example.org') = from_form({'email': 'ada@example.org', 'name': 'Ada'})\n\ntest_app.py:6: AssertionError\n=========================== short test summary info ============================\nFAILED test_app.py::test_from_form - AssertionError: assert None == 'ada@exam...\n1 failed in 0.03s\n"
+ }
+]
