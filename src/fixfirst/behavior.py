@@ -234,6 +234,23 @@ def observed_changes(evidence: dict, project: dict) -> list[tuple[str, str]]:
     providers -= set(project.get("own_names", []))
     providers -= {row["name"] for row in project.get("local_modules", [])}
     found = []
+    if (evidence["exception"] == "ResourceClosedError" and evidence["library"] == "sqlalchemy"
+            and evidence["exception_module"] == "sqlalchemy.exc" and "sqlalchemy" in providers
+            and evidence["message"] == "This result object does not return rows. It has been closed automatically."
+            and "return self._iter_impl()" in evidence.get("executed_lines", [])):
+        # 1.4 made iterator creation eager. Only a standalone lazy generator
+        # construction fits that change; list/fetchall consumption already failed
+        # on 1.3 and must not borrow this history.
+        try:
+            statement = ast.parse(evidence.get("source_statement", "")).body
+            node = statement[0] if len(statement) == 1 else None
+            if (isinstance(node, (ast.Assign, ast.AnnAssign, ast.Return))
+                    and isinstance(node.value, ast.GeneratorExp)
+                    and len(node.value.generators) == 1
+                    and isinstance(node.value.generators[0].iter, ast.Name)):
+                found.append(("sqlalchemy-eager-result-iterator", "sqlalchemy"))
+        except (SyntaxError, ValueError):
+            pass
     # These are the statically resolved calls at the failure site, including C
     # APIs which cannot contribute their own Python traceback frame.
     location = evidence.get("source_location") or evidence.get("where", "")

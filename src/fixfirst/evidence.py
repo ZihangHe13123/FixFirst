@@ -375,6 +375,12 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
             if classify_path(path, session.project_root, environment) in ("project", "test"):
                 where = f"{shown_path(path, session.project_root)}:{line}"
     source_location = where
+    source_statement = ""
+    trace_lines = traceback.splitlines()
+    for index, line in enumerate(trace_lines[:-1]):
+        match = FRAME.match(line) or PLAIN_FRAME.match(line)
+        if match and f"{shown_path(match[1], session.project_root)}:{match[2]}" == source_location:
+            source_statement = trace_lines[index + 1].strip().removeprefix(">").strip()[:2000]
     if notebook:
         where = f"{shown_path(source_file, session.project_root)} · cell {exception_record['cell']}"
     warnings = [
@@ -406,6 +412,7 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
         # The notebook cell is the user-facing location; static callable matching
         # must use the actual Python file/line when that cell calls a module.
         "source_location": source_location,
+        "source_statement": source_statement,
         "library": library,
         "third_party_frame_ratio": round(kinds.count("third_party") / len(kinds), 3) if kinds else 0.0,
         "missing_module": None,

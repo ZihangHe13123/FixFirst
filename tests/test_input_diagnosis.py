@@ -1,6 +1,8 @@
 """Run real library failures: bad input is not evidence for a dependency downgrade."""
 
 import hashlib
+import json
+from pathlib import Path
 import sys
 
 import pytest
@@ -41,6 +43,10 @@ def test_attribute_without_context_uses_the_actual_failed_name_load(operation, m
     "def fail(data):\n    return data.copy().ptp()\n",  # complex receiver cannot be read without re-execution
     "def fake():\n    raise AttributeError('ptp was removed from numpy.ndarray')\n"
     "def fail(data):\n    return fake()\n",  # the failing operation is a call, not attribute lookup
+    "def fail(data):\n    value = object()\n    choose = True\n"
+    "    return (value if choose else data).ptp()\n",  # the last textual load was not the executed branch
+    "def fail(data):\n    value = object()\n    choose = True\n"
+    "    return (value if choose else data).ptp\n",
 ])
 def test_attribute_context_is_not_guessed_from_text_or_an_unrelated_array(source):
     import numpy as np
@@ -54,7 +60,30 @@ def test_attribute_context_is_not_guessed_from_text_or_an_unrelated_array(source
         namespace["fail"](np.array([1, 4]))
     error = caught.value
     error.name = error.obj = None
-    assert exception_metadata(error, error.__traceback__)["attribute_access"] == {}
+    metadata = exception_metadata(error, error.__traceback__)["attribute_access"]
+    # Some Python versions duplicate the attribute load across both branches;
+    # then the actual builtins.object is known. A shared join must remain unknown.
+    assert metadata.get("owner_module") != "numpy"
+    assert not metadata or metadata["owner_name"] == "object"
+
+
+def test_attribute_lookup_with_an_extended_argument_keeps_the_real_receiver():
+    import numpy as np
+    from fixfirst._runtime_evidence import exception_metadata
+
+    if int(np.__version__.split(".")[0]) < 2:
+        pytest.skip("ptp was removed in NumPy 2")
+    source = "def fail(data, unused=False):\n    if unused:\n"
+    source += "".join(f"        data.attribute_{n}\n" for n in range(300))
+    source += "    return data.ptp()\n"
+    namespace = {}
+    exec(source, namespace)
+    with pytest.raises(AttributeError) as caught:
+        namespace["fail"](np.array([1, 4]))
+    error = caught.value
+    error.name = error.obj = None
+    metadata = exception_metadata(error, error.__traceback__)["attribute_access"]
+    assert metadata["owner_module"] == "numpy" and metadata["name"] == "ptp"
 
 
 def inspect_project(root, source, test, requirement, *, unit=False):
@@ -264,6 +293,20 @@ def test_a_singular_matrix_does_not_become_a_version_failure_because_of_a_lock(t
     (tmp_path / "app.py").write_text(source.replace("[[1,2],[1,2]]", "[[1,0],[0,1]]"))
     scan(session, [check], timeout=30)
     assert session.goal_status == "achieved"
+
+
+def test_recorded_records_failure_uses_the_specific_14_iterator_history():
+    from fixfirst.diagnosis_cases import load_session
+    from fixfirst.reasoning import diagnose
+
+    dataset = Path(__file__).parents[1] / "experiments/core_diagnosis/observation-development-2026-09-30/data/real"
+    cases = [json.loads(line) for line in (dataset / "cases.jsonl").read_text().splitlines()]
+    case = next(c for c in cases if c["case_id"] == "real-records")
+    session = load_session(dataset, case["session"])
+    issue = next(i for i in session.issues if i.tool == "pytest_run")
+    result = diagnose(session)[issue.issue_id]
+    assert result["likely"] == "version_incompatibility" and result["likely_rule_id"] == "H10"
+    assert result["evidence"]["source_statement"].startswith("row_gen = (")
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="SafeConfigParser was removed in Python 3.12")

@@ -61,6 +61,15 @@ action_title = "Handle legacy version labels before using packaging.version.pars
 replacement = "Handle InvalidVersion explicitly. If only release versions should participate in comparison, validate with Version and filter non-standard labels before applying max or sorting; if those labels have meaning, give them an explicit ordering separately. Keep the original tests and input values. Version itself was already strict before this change."
 source = "packaging-22.0"
 
+[[behavior]]
+id = "sqlalchemy-eager-result-iterator"
+distribution = "sqlalchemy"
+version = "1.4"
+summary = "SQLAlchemy 1.4 changed result iterator creation from the lazy 1.3 implementation to eager metadata access. The observed generator is being constructed over a result with no rows; iteration now fails immediately. Consuming such a result already failed on older releases."
+action_title = "Check returns_rows before constructing the result iterator"
+replacement = "Check cursor.returns_rows before building the generator. For a statement that produces no rows, return an empty iterator or collection according to the caller's contract; otherwise keep the original row mapping. For example, use (convert(row) for row in cursor) if cursor.returns_rows else iter(()). Keep SQL effects and row values unchanged."
+source = "sqlalchemy-result-1.4-source"
+
 # Behavior changes are matched using observed values/calls and version context.
 # They are compatibility hypotheses, not proof that every failure inside a library
 # was caused by an upgrade.
@@ -801,6 +810,10 @@ url = "https://numpy.org/doc/stable/numpy_2_0_migration_guide.html"
 [sources."numpy-reshape"]
 title = "NumPy reshape: the new shape must be compatible with the original shape"
 url = "https://numpy.org/doc/stable/reference/generated/numpy.reshape.html"
+
+[sources."sqlalchemy-result-1.4-source"]
+title = "SQLAlchemy 1.4.54 Result.__iter__ and _iterator_getter source; contrasted with rel_1_3_24 and verified on SQLite"
+url = "https://github.com/sqlalchemy/sqlalchemy/blob/rel_1_4_54/lib/sqlalchemy/engine/result.py"
 
 [sources."numpy-solve-2.0"]
 title = "NumPy linalg.solve: b vector interpretation changed in 2.0"

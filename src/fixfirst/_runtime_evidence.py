@@ -30,18 +30,32 @@ def attribute_at_failure(tb):
     """
     if tb is None or len(tb.tb_frame.f_code.co_code) > 64_000:
         return {}
-    previous = None
+    previous, intervening_target = None, False
     try:
         for instruction in dis.get_instructions(tb.tb_frame.f_code):
             if instruction.offset > tb.tb_lasti:
                 break
+            if instruction.opname in ("EXTENDED_ARG", "CACHE"):
+                intervening_target |= instruction.is_jump_target
+                continue
             if instruction.offset == tb.tb_lasti:
                 if (instruction.opname not in ("LOAD_ATTR", "LOAD_METHOD")
                         or not isinstance(instruction.argval, str) or previous is None
-                        or not isinstance(previous.argval, str)):
+                        or instruction.is_jump_target or intervening_target):
                     return {}
                 frame, key = tb.tb_frame, previous.argval
-                if previous.opname in ("LOAD_FAST", "LOAD_FAST_CHECK", "LOAD_DEREF"):
+                if previous.opname in ("LOAD_FAST_LOAD_FAST", "STORE_FAST_LOAD_FAST",
+                                       "LOAD_FAST_BORROW_LOAD_FAST_BORROW"):
+                    # CPython 3.13/3.14 combines these loads. The low nibble
+                    # identifies the final (top-of-stack) loaded local.
+                    # https://docs.python.org/3.14/library/dis.html
+                    if not isinstance(previous.arg, int):
+                        return {}
+                    key = frame.f_code.co_varnames[previous.arg & 15]
+                    value = frame.f_locals.get(key)
+                elif not isinstance(key, str):
+                    return {}
+                elif previous.opname in ("LOAD_FAST", "LOAD_FAST_CHECK", "LOAD_FAST_BORROW", "LOAD_DEREF"):
                     value = frame.f_locals.get(key)
                 elif previous.opname == "LOAD_GLOBAL":
                     value = frame.f_globals.get(key)
@@ -55,6 +69,7 @@ def attribute_at_failure(tb):
                             "owner_name": name, "source": "traceback_instruction"}
                 return {}
             previous = instruction
+            intervening_target = False
     except Exception:
         pass
     return {}
