@@ -83,6 +83,7 @@ def parser():
         ("show", "show the current state"),
         ("run", "run a check action from the plan"),
         ("mark-fixed", "record a manual change and wait for verification"),
+        ("accept-baseline", "accept the changed tests and test settings as the new baseline"),
         ("report", "write the HTML and JSON report"),
         ("export", "write a redacted report for sharing"),
         ("configure", "change the goal or the interpreter"),
@@ -333,6 +334,16 @@ def main(argv=None):
                 scan(session, [action.check], args.timeout, targets=action.targets)
             elif args.command == "mark-fixed":
                 mark_fixed(session, args.issue)
+            elif args.command == "accept-baseline":
+                from .integrity import accept, describe
+
+                result = accept(session)
+                print("New baseline accepted"
+                      + (f"; changed since the previous one: {describe(result['changed'])}" if result["changed"]
+                         else "; nothing had changed since the previous one")
+                      + (f"; could not be compared: {describe(result['unverifiable'], 2)}"
+                         if result["unverifiable"] else "")
+                      + ". Check again to verify against it.")
             elif args.command == "configure":
                 configured = execution_settings(
                     args, session.execution if not args.goal or args.goal == session.goal else None)

@@ -160,8 +160,10 @@ def test_incomplete_execution_never_confirms_a_fix(tmp_path, bare_python, mode):
 
 def test_unittest_without_pytest_and_removed_test_not_verified(tmp_path, bare_python):
     file = tmp_path / "test_homework.py"
-    file.write_text("import unittest\nclass TestWork(unittest.TestCase):\n"
-                    " def test_value(self): self.assertEqual(1, 2)\n")
+    (tmp_path / "homework.py").write_text("VALUE = 2\n")
+    original_test = ("import unittest\nimport homework\nclass TestWork(unittest.TestCase):\n"
+                     " def test_value(self): self.assertEqual(homework.VALUE, 1)\n")
+    file.write_text(original_test)
     session = create_session(tmp_path, bare_python, goal="auto")
     assert session.goal == "pass_unittest"
     scan(session)
@@ -171,8 +173,8 @@ def test_unittest_without_pytest_and_removed_test_not_verified(tmp_path, bare_py
     scan(session)
     assert session.goal_status == "unknown"
     assert next(i for i in session.issues if i.issue_id == original).status != "resolved"
-    file.write_text("import unittest\nclass TestWork(unittest.TestCase):\n"
-                    " def test_value(self): self.assertEqual(1, 1)\n")
+    file.write_text(original_test)  # the test as it was; the fix is in the project
+    (tmp_path / "homework.py").write_text("VALUE = 1\n")
     scan(session)
     assert session.goal_status == "achieved"
     assert next(i for i in session.issues if i.issue_id == original).status == "resolved"

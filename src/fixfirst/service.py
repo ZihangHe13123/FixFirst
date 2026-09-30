@@ -6,6 +6,7 @@ import os
 from .grouping import group_events, digest, member_key
 from .models import Run, Session, now, GOAL_CHECKS
 from .parsers import parse
+from . import integrity
 from .reasoning import infer_and_plan
 from .runner import (
     DEFAULT_CHECKS,
@@ -179,8 +180,25 @@ def ingest(session: Session, runs: list[Run]):
                 and set(old.targets).issubset(r.passed_nodes)
                 for r in runs
             )
-        if passed:
-            copy.status = "resolved"
+        if passed and integrity.affects(session, old.tool):
+            # The run passed, but not against the tests the problem was found with, or FixFirst
+            # cannot tell whether they are the same.
+            check = session.baseline_check
+            if check["state"] == "changed":
+                copy.status, copy.verification = "awaiting_verification", "not_comparable"
+                copy.note = (
+                    "Passes now, but tests or their settings changed since the baseline ("
+                    + integrity.describe(check["changed"])
+                    + "): restore them, or accept the new baseline, to verify the original problem"
+                )
+            else:
+                copy.status, copy.verification = "awaiting_verification", "unverifiable"
+                copy.note = (
+                    "Passes now, but FixFirst cannot confirm that the tests are the ones of the baseline ("
+                    + integrity.describe(check["unverifiable"], 2) + ")"
+                )
+        elif passed:
+            copy.status, copy.verification = "resolved", "comparable"
             copy.note = (
                 "All related test nodes passed in the same environment"
                 if old.targets
@@ -188,6 +206,11 @@ def ingest(session: Session, runs: list[Run]):
                 if old.tool == "project"
                 else "Passed for real in the same environment and check scope"
             )
+            baseline = integrity.current_baseline(session)
+            if baseline.get("reason") == "accepted by the user" and old.tool in integrity.tools_of(
+                    integrity.scope_of(session)):
+                copy.note += (" (against the tests and settings accepted as the new baseline on "
+                              + baseline["recorded_at"] + ")")
         elif old.status != "resolved" and old.tool in updated_tools:
             # Only a check of the same tool can fail to observe an issue; a round that ran
             # other checks (a release search, an environment snapshot) leaves it as it was.
@@ -205,6 +228,9 @@ def ingest(session: Session, runs: list[Run]):
         {"time": now(), "kind": "checks", "run_ids": [r.run_id for r in runs], "changes": changes}
     )
     infer_and_plan(session)
+    # A pass after the tests changed is a fact about that run, not a verified goal.
+    if session.goal_status == "achieved" and integrity.affects(session, GOAL_CHECKS[session.goal]):
+        session.goal_status = "unknown"
     # Prevent stale success after changing the target interpreter.
     target = GOAL_CHECKS[session.goal]
     last = next((r for r in reversed(session.runs) if r.tool == target), None)
@@ -236,6 +262,8 @@ def scan(session, checks=None, timeout=DEFAULT_TIMEOUT, targets=None):
     if len(checks) != len(set(checks)):
         raise ValueError("The same check cannot appear twice in one batch")
     runs = []
+    # The baseline is taken before any project code runs, and compared before and after the checks.
+    before = integrity.before_checks(session)
     for check in checks:
         if optional_tools and check in ("pip_check", "ruff"):
             package = "pip" if check == "pip_check" else "ruff"
@@ -250,6 +278,7 @@ def scan(session, checks=None, timeout=DEFAULT_TIMEOUT, targets=None):
         runs.append(run)
         if run.status == "cancelled":
             break
+    integrity.after_checks(session, before)
     ingest(session, runs)
 
 

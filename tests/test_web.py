@@ -37,7 +37,9 @@ def failing_project(tmp_path):
     project = tmp_path / "shop"
     project.mkdir()
     (project / "pyproject.toml").write_text('[project]\nname = "shop"\nversion = "0"\n')
-    (project / "test_app.py").write_text("def test_app():\n    assert 1 == 2\n")
+    # The defect is in the project, so fixing it leaves the tests as they were.
+    (project / "app.py").write_text("def ready():\n    return 1 == 2\n")
+    (project / "test_app.py").write_text("from app import ready\n\n\ndef test_app():\n    assert ready()\n")
     return project
 
 
@@ -70,7 +72,7 @@ def test_start_checks_the_project_and_shows_the_next_step(server, tmp_path):
     session = created["session_id"]
     status, page, _ = request(server, "GET", f"/sessions/{session}")
     assert status == 200 and "1 problem to fix" in page and "Check again" in page
-    assert "test_app.py:2" in page and "Defect in project code or tests" in page
+    assert "test_app.py:5" in page and "Defect in project code or tests" in page
     # Ruff's finding on `1 == 2` is listed, but it does not count against the test goal.
     assert "Other findings that do not block this goal (1)" in page
     status, answer = api(server, f"/api/sessions/{session}/ask", {"question": "what is the root cause"})
@@ -80,7 +82,7 @@ def test_start_checks_the_project_and_shows_the_next_step(server, tmp_path):
     status, exported, headers = request(server, "GET", f"/sessions/{session}/export")
     assert status == 200 and "attachment" in headers["Content-Disposition"]
     assert str(project) not in exported
-    (project / "test_app.py").write_text("def test_app():\n    assert 1 == 1\n")
+    (project / "app.py").write_text("def ready():\n    return 1 == 1\n")
     assert api(server, f"/api/sessions/{session}/scan", {})[0] == 200
     page = request(server, "GET", f"/sessions/{session}")[1]
     # The failing test is fixed, and Ruff's finding about `1 == 2` no longer appears in a

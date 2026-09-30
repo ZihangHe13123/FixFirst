@@ -18,7 +18,9 @@ def failing_project(tmp_path):
     project = tmp_path / "shop"
     project.mkdir()
     (project / "pyproject.toml").write_text('[project]\nname = "shop"\nversion = "0"\n')
-    (project / "test_app.py").write_text("def test_app():\n    assert 1 == 2\n")
+    # The defect is in the project, so fixing it leaves the tests as they were.
+    (project / "app.py").write_text("def ready():\n    return 1 == 2\n")
+    (project / "test_app.py").write_text("from app import ready\n\n\ndef test_app():\n    assert ready()\n")
     return project
 
 
@@ -61,7 +63,7 @@ def test_diagnose_check_again_and_explain_follow_one_fix(tmp_path):
     project = failing_project(tmp_path)
     text, failed = call(server, "diagnose", {"project": str(project), "python": sys.executable})
     assert not failed and "1 problem to fix" in text and "call check_again" in text
-    assert "1. " in text and "test_app.py:2" in text and "Defect in project code or tests" in text
+    assert "1. " in text and "test_app.py:5" in text and "Defect in project code or tests" in text
     # Ruff's finding on `1 == 2` is mentioned, but not as a step towards the test goal.
     assert "Other findings that do not block this goal (1)" in text
     session_id = text.split()[2]
@@ -69,7 +71,7 @@ def test_diagnose_check_again_and_explain_follow_one_fix(tmp_path):
     explained, failed = call(server, "explain", {"step": 1})
     assert not failed and "Error:" in explained and "pytest_run" in explained
     assert call(server, "explain", {"step": 9})[1]
-    (project / "test_app.py").write_text("def test_app():\n    assert 1 == 1\n")
+    (project / "app.py").write_text("def ready():\n    return 1 == 1\n")
     text, failed = call(server, "check_again", {"session_id": session_id})
     assert not failed and "All tests pass" in text and "Nothing else is needed" in text
     assert "Fixed since the last check" in text and "Fixed and verified (2)" in text
