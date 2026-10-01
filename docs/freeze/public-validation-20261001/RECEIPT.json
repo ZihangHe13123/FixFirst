@@ -1,0 +1,76 @@
+{
+  "source_commit": "4a7c470633bd087cc0bc3d899db190fb4bd07bba",
+  "branch": "codex/release-0.7.0-public",
+  "public_base": "39244136ec06ff1d3a714cdb9a3a11c213b189ea",
+  "old_unpublished_ancestry_included": false,
+  "package_version": "0.7.0",
+  "zip_sha256": "392736ba461d1979d110515400806a74ac985d3c74ebd0ad37783cd385b9baa4",
+  "zip_bytes": 809988,
+  "zip_files": 207,
+  "two_builds_byte_identical": true,
+  "model_sha256": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3",
+  "production_files": 62,
+  "regression_test_files": 37,
+  "local_pytest": {
+    "passed": 776,
+    "skipped": 1,
+    "failed": 0,
+    "seconds": 173.82,
+    "skip_reason": "Windows PowerShell quoting"
+  },
+  "ruff_final_passed": true,
+  "clean_install_exit_code": 0,
+  "entry_checks_exit_code": 0,
+  "sample_original_tests_passed": 4,
+  "sample_tests_unchanged": true,
+  "http_200_checks": 8,
+  "package_files_unchanged_after_install_and_checks": true,
+  "windows_human_acceptance": false,
+  "formal_freeze": false,
+  "formal_a2_or_b7": false,
+  "ci_note": "Separate GitHub Actions result belongs to the pushed branch commit; this receipt records local verification only.",
+  "source_test_manifest_sha256": "573a04550ed6e2160ac0ad67eb9297061d3e3ffca5f96ca408e001c1b9d992ef",
+  "original_raw_logs_retained_locally": true,
+  "derived_files": {
+    "development-summary.json": {
+      "original_sha256": "507df564f574365fca89978ee926119dc1f1fa1316b8c35b431472a97f867966",
+      "public_sha256": "4cc17c5aa4ccb1fccecfffacb4aa3d78b1fd112fb3e38cd94a528e7a5404a7e4",
+      "path_sanitized_or_json_reserialized": true
+    },
+    "package-summary.json": {
+      "original_sha256": "ea182a7ed65db7d0d4a597ff892d88bdc9dba8fcef48ee5a78d859a6f54eb45c",
+      "public_sha256": "ea182a7ed65db7d0d4a597ff892d88bdc9dba8fcef48ee5a78d859a6f54eb45c",
+      "path_sanitized_or_json_reserialized": false
+    },
+    "development-report.md": {
+      "original_sha256": "ff41130f46b6a35a8737417b360d192e3addf96b702ed361da85658337369a29",
+      "public_sha256": "ff41130f46b6a35a8737417b360d192e3addf96b702ed361da85658337369a29",
+      "path_sanitized_or_json_reserialized": false
+    },
+    "installation-report.md": {
+      "original_sha256": "a67a025a053a949bd87c03bbdb47d3d30c3f0a5f4e567946a4de9fce75e29614",
+      "public_sha256": "a67a025a053a949bd87c03bbdb47d3d30c3f0a5f4e567946a4de9fce75e29614",
+      "path_sanitized_or_json_reserialized": false
+    },
+    "pytest.log": {
+      "original_sha256": "4c6cb4761e40d7e4c65d39bb39d325e2b6b07e9176b22e45874348f6ce3ef757",
+      "public_sha256": "4c6cb4761e40d7e4c65d39bb39d325e2b6b07e9176b22e45874348f6ce3ef757",
+      "path_sanitized_or_json_reserialized": false
+    },
+    "ruff-final.log": {
+      "original_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "public_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "path_sanitized_or_json_reserialized": false
+    },
+    "source-zip.receipt.json": {
+      "original_sha256": "b15ec71176781ec94956bc56481df85a2328106d953238fb55b5eee54bb3d9e5",
+      "public_sha256": "4b96120cfd69fee35cb3056b4c6f17471d7d48ccc4f91eed1af8aba4ac938ab2",
+      "path_sanitized_or_json_reserialized": true
+    },
+    "package-dependency-comparison.json": {
+      "original_sha256": "8c004fd19d578a3fe32be34fd60310a18753d0a13b4c234124e2e590894434fa",
+      "public_sha256": "8c004fd19d578a3fe32be34fd60310a18753d0a13b4c234124e2e590894434fa",
+      "path_sanitized_or_json_reserialized": false
+    }
+  }
+}

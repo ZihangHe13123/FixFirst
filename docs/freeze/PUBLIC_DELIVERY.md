@@ -4,9 +4,27 @@
 
 ## 候选身份与取得方法
 
-这是发布准备分支，尚未正式冻结或发布tag。包内版本为0.7.0；固定源码提交和ZIP完整摘要由后续本次交付收据记录。在取得收据前，不把可变分支HEAD或应用版本号当成固定实验版本。
+这是发布准备分支，尚未正式冻结或发布tag。以下固定源码与包已经本地验证；后续文档提交不改此包，不能用可变HEAD代替固定源码。
 
-源码可以从[公开候选分支](https://github.com/ZihangHe13123/FixFirst/tree/codex/release-0.7.0-public)取得。固定提交确定后，在仓库中运行`python scripts/build_source_zip.py --revision 完整源码SHA --output 新目录/候选.zip`，同时保留生成的`.zip.receipt.json`。不要覆盖旧包。
+| 项目 | 已验证值 |
+|---|---|
+| 固定源码提交 | `4a7c470633bd087cc0bc3d899db190fb4bd07bba` |
+| 应用版本 | `0.7.0` |
+| 安装源码ZIP | `FixFirst-0.7.0-public-4a7c470.zip` |
+| ZIP SHA256 | `392736ba461d1979d110515400806a74ac985d3c74ebd0ad37783cd385b9baa4` |
+| 大小 / 文件数 | 809,988字节 / 207文件 |
+
+[本次收据](public-validation-20261001/RECEIPT.json)与[完整包成员收据](public-validation-20261001/source-zip.receipt.json)分别记录验证结果及文件摘要。旧d7ca505包的7452a000…摘要属于旧本地包，不是本次公开候选。
+
+源码可以从[公开候选分支](https://github.com/ZihangHe13123/FixFirst/tree/codex/release-0.7.0-public)取得。要重建上述精确安装包，用Git克隆仓库（构建器需要Git对象），然后用Python 3.11或更新版本运行：
+
+```bash
+git clone --branch codex/release-0.7.0-public https://github.com/ZihangHe13123/FixFirst.git
+cd FixFirst
+python3 scripts/build_source_zip.py --revision 4a7c470633bd087cc0bc3d899db190fb4bd07bba --output output/FixFirst-0.7.0-public-4a7c470.zip
+```
+
+Windows可将`python3`替换为`py -3.12`或实际Python完整路径。核对上述完整SHA256，并同时保留相邻`.zip.receipt.json`。输出路径已存在时请换新目录，不覆盖旧包。GitHub的“Download ZIP”是分支开发树快照，不能拿它的摘要与这个207文件安装包比较。
 
 安装与实际使用见[快速指南](CANDIDATE_QUICKSTART.md)，Windows执行及签收见[Windows交接](WINDOWS_HANDOFF.md)。首次安装需要联网。
 
@@ -14,7 +32,11 @@
 
 生产实现沿用已验第十一轮候选，不新增诊断行为；默认44特征模型保持SHA256 `4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3`。位置专用参数精确建议默认开启，仅经5个公开机制任务验证，没有该机制的独立保留验证。
 
-旧版的安装和776项主回归属于[历史本地交付记录](LOCAL_DELIVERY_20261001.md)所列提交。干净分支的新构建、干净安装、pytest和CI须按本次实际结果另记，不能直接沿用旧版本通过数。
+旧版的安装和主回归见[历史本地交付记录](LOCAL_DELIVERY_20261001.md)。本次在新公开树的独立环境重新执行：**776 passed、1 skipped**，唯一跳过项为Windows PowerShell quoting；同一完整范围Ruff通过。62个生产文件、37个测试按摘要绑定到本次固定源码；三份历史复现helper的机械格式修正保留原件和[前后摘要](evidence/PUBLIC_HELPER_STYLE_RECEIPT.json)，没有重跑私有复现或改动原结果。
+
+本次新ZIP连续构建两次逐字节一致；中文及空格路径下原样setup安装成功，CLI、无测试脚本、按文档修复的既有样例4个原测试、导出、Web HTTP与停止/重开均通过。26个共有依赖版本与完整回归环境一致。新包207个原文件在验证后全部未变。样例流程不是新模型收益，HTTP检查也不是浏览器视觉或Windows验收。详见[回归记录](public-validation-20261001/development-report.md)和[安装记录](public-validation-20261001/installation-report.md)。
+
+GitHub Actions会在公开分支push后运行源码回归；实际结果以对应提交的Checks为准，本地收据不冒称远端CI已完成。
 
 参考源码ZIP仍是白名单安装包，不含全部开发测试fixture；Git分支保留完整开发测试和必要已公开支持材料。公开源码CI跑完整pytest与Ruff，不启动模型、用户研究或正式评估。CI通过不代表Windows真人验收。
 

@@ -1,0 +1,184 @@
+{
+  "source_matches_legacy_current": true,
+  "source_files": 62,
+  "source_unchanged_since_start": true,
+  "test_files": 37,
+  "tests_unchanged_since_start": true,
+  "model_sha256": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3",
+  "pytest": {
+    "tests": "777",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "1",
+    "time": "173.796"
+  },
+  "skip_details": [
+    {
+      "classname": "tests.test_windows_adaptation",
+      "name": "test_powershell_exact_native_arguments",
+      "reason": "Windows PowerShell quoting",
+      "detail": "<public-checkout>/tests/test_windows_adaptation.py:265: Windows PowerShell quoting"
+    }
+  ],
+  "pytest_command": {
+    "argv": [
+      "<public-checkout>/.venv/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "-ra",
+      "--junitxml",
+      "<validation>/tests/pytest-junit.xml"
+    ],
+    "cwd": "<public-checkout>",
+    "started_utc": "2026-10-01T14:31:38.739848+00:00",
+    "exit_code": 0,
+    "seconds": 174.213
+  },
+  "ruff_command": {
+    "argv": [
+      "<public-checkout>/.venv/bin/ruff",
+      "check",
+      "src",
+      "tests",
+      "scripts",
+      "experiments"
+    ],
+    "cwd": "<public-checkout>",
+    "started_utc": "2026-10-01T14:31:38.739815+00:00",
+    "exit_code": 1,
+    "seconds": 0.47
+  },
+  "ruff_summary": {
+    "reported_errors": 13,
+    "parsed": 13,
+    "by_file": {
+      "experiments/field_trial/round9/harness/ml_replay9.py": 3,
+      "experiments/field_trial/round9/structure-check/failure_mix.py": 1,
+      "experiments/field_trial/round9/structure-check/structure_check.py": 9
+    },
+    "by_code": {
+      "E401": 4,
+      "F401": 1,
+      "E731": 4,
+      "E402": 2,
+      "E702": 2
+    },
+    "issues": [
+      {
+        "code": "E401",
+        "message": "[*] Multiple imports on one line",
+        "path": "experiments/field_trial/round9/harness/ml_replay9.py",
+        "line": 8,
+        "column": 1
+      },
+      {
+        "code": "F401",
+        "message": "[*] `fixfirst.classification.MIN_CONFIDENCE` imported but unused",
+        "path": "experiments/field_trial/round9/harness/ml_replay9.py",
+        "line": 15,
+        "column": 37
+      },
+      {
+        "code": "E731",
+        "message": "Do not assign a `lambda` expression, use a `def`",
+        "path": "experiments/field_trial/round9/harness/ml_replay9.py",
+        "line": 25,
+        "column": 1
+      },
+      {
+        "code": "E401",
+        "message": "[*] Multiple imports on one line",
+        "path": "experiments/field_trial/round9/structure-check/failure_mix.py",
+        "line": 7,
+        "column": 1
+      },
+      {
+        "code": "E401",
+        "message": "[*] Multiple imports on one line",
+        "path": "experiments/field_trial/round9/structure-check/structure_check.py",
+        "line": 7,
+        "column": 1
+      },
+      {
+        "code": "E401",
+        "message": "[*] Multiple imports on one line",
+        "path": "experiments/field_trial/round9/structure-check/structure_check.py",
+        "line": 28,
+        "column": 1
+      },
+      {
+        "code": "E402",
+        "message": "Module level import not at top of file",
+        "path": "experiments/field_trial/round9/structure-check/structure_check.py",
+        "line": 28,
+        "column": 1
+      },
+      {
+        "code": "E402",
+        "message": "Module level import not at top of file",
+        "path": "experiments/field_trial/round9/structure-check/structure_check.py",
+        "line": 29,
+        "column": 1
+      },
+      {
+        "code": "E731",
+        "message": "Do not assign a `lambda` expression, use a `def`",
+        "path": "experiments/field_trial/round9/structure-check/structure_check.py",
+        "line": 30,
+        "column": 1
+      },
+      {
+        "code": "E702",
+        "message": "Multiple statements on one line (semicolon)",
+        "path": "experiments/field_trial/round9/structure-check/structure_check.py",
+        "line": 58,
+        "column": 65
+      },
+      {
+        "code": "E702",
+        "message": "Multiple statements on one line (semicolon)",
+        "path": "experiments/field_trial/round9/structure-check/structure_check.py",
+        "line": 60,
+        "column": 27
+      },
+      {
+        "code": "E731",
+        "message": "Do not assign a `lambda` expression, use a `def`",
+        "path": "experiments/field_trial/round9/structure-check/structure_check.py",
+        "line": 66,
+        "column": 9
+      },
+      {
+        "code": "E731",
+        "message": "Do not assign a `lambda` expression, use a `def`",
+        "path": "experiments/field_trial/round9/structure-check/structure_check.py",
+        "line": 67,
+        "column": 9
+      }
+    ]
+  },
+  "head_at_end": "ba2f723d08a360d9dbbda91afaad051ea74b6054",
+  "branch": "codex/release-0.7.0-public",
+  "production_edits_by_reviewer": 0,
+  "fixture_copies_by_reviewer": 0,
+  "pushes_by_reviewer": 0,
+  "ruff_final_command": {
+    "argv": [
+      "<public-checkout>/.venv/bin/ruff",
+      "check",
+      "src",
+      "tests",
+      "scripts",
+      "experiments"
+    ],
+    "cwd": "<public-checkout>",
+    "started_utc": "2026-10-01T14:36:50.661098+00:00",
+    "reason": "root mechanically fixed three archived helper scripts after the first lint run; original failure log retained",
+    "exit_code": 0,
+    "seconds": 0.014
+  },
+  "style_receipt_sha256": "ec5a60bbe2dee60475750de15e7cc16bc046d501073a5b339350b9b8c135971b",
+  "head_at_final_lint": "4a7c470633bd087cc0bc3d899db190fb4bd07bba",
+  "source_and_tests_unchanged_after_final_lint": true
+}

@@ -1,0 +1,134 @@
+{
+  "source_commit": "4a7c470633bd087cc0bc3d899db190fb4bd07bba",
+  "archive_sha256": "392736ba461d1979d110515400806a74ac985d3c74ebd0ad37783cd385b9baa4",
+  "archive_bytes": 809988,
+  "archive_file_count": 207,
+  "archive_files_unchanged_after_install_and_entries": true,
+  "source_files_unchanged": 62,
+  "model_sha256": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3",
+  "entry_process_exit": 0,
+  "helper_command_count": 14,
+  "all_helper_commands_passed": true,
+  "sample_original_test_hash_checks": {
+    "test_pricing.py": true,
+    "test_reports.py": true,
+    "test_orders.py": true,
+    "test_stats.py": true
+  },
+  "sample_goal_before": "blocked",
+  "sample_goal_after": "achieved",
+  "sample_final_pytest": {
+    "source": "executed",
+    "exit_code": 0,
+    "verified_pass": true,
+    "scope": "tests:project",
+    "test_summary": {
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "xfail_or_xpass": 0,
+      "selected": 4,
+      "incomplete": 0
+    }
+  },
+  "script_goal": "achieved",
+  "http_checks": [
+    {
+      "start": 1,
+      "route": "/",
+      "status": 200
+    },
+    {
+      "start": 1,
+      "route": "sessions/session-ced13a0a9b55",
+      "status": 200
+    },
+    {
+      "start": 1,
+      "route": "sessions/session-ced13a0a9b55/details",
+      "status": 200
+    },
+    {
+      "start": 1,
+      "route": "sessions/session-ced13a0a9b55/export",
+      "status": 200
+    },
+    {
+      "start": 2,
+      "route": "/",
+      "status": 200
+    },
+    {
+      "start": 2,
+      "route": "sessions/session-ced13a0a9b55",
+      "status": 200
+    },
+    {
+      "start": 2,
+      "route": "sessions/session-ced13a0a9b55/details",
+      "status": 200
+    },
+    {
+      "start": 2,
+      "route": "sessions/session-ced13a0a9b55/export",
+      "status": 200
+    }
+  ],
+  "server_restart": true,
+  "session_reopened": true,
+  "html_and_json_export_exists": true,
+  "dependency_comparison": {
+    "shared_package_count": 26,
+    "shared_version_differences": {},
+    "package_install_only": [],
+    "development_only": [
+      "appnope",
+      "asttokens",
+      "attrs",
+      "comm",
+      "debugpy",
+      "executing",
+      "fastjsonschema",
+      "ipykernel",
+      "ipython",
+      "ipython-pygments-lexers",
+      "jedi",
+      "jsonschema",
+      "jsonschema-specifications",
+      "jupyter-client",
+      "jupyter-core",
+      "matplotlib-inline",
+      "nbclient",
+      "nbformat",
+      "nest-asyncio2",
+      "parso",
+      "pexpect",
+      "platformdirs",
+      "prompt-toolkit",
+      "psutil",
+      "ptyprocess",
+      "pure-eval",
+      "python-dateutil",
+      "pyzmq",
+      "referencing",
+      "rpds-py",
+      "six",
+      "stack-data",
+      "tornado",
+      "traitlets",
+      "uv",
+      "wcwidth"
+    ],
+    "installation_profiles": {
+      "development": "dev,notebooks plus uv",
+      "source_zip_setup": "dev, per unmodified setup.sh"
+    },
+    "interpretation": "Missing optional notebook and uv dependencies are expected profile differences; shared-package version differences would require risk review."
+  },
+  "browser_visual_test": false,
+  "windows_test": false,
+  "notebook_optional_install_test": false,
+  "full_pytest_repeated": false,
+  "model_training": false,
+  "push_by_reviewer": false
+}
