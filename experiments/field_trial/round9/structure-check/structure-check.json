@@ -1,0 +1,378 @@
+{
+ "rows": 227,
+ "originals": 219,
+ "families": 47,
+ "provenance": {
+  "fixfirst_source_commit": "a32c1950c2b8683455ae1078ed99870990c150ec",
+  "fixfirst_source_dirty_files": 0,
+  "python": "3.12.13",
+  "scikit_learn": "1.9.1",
+  "numpy": "2.5.3",
+  "inputs_sha256": {
+   "ablation/feature-rows.json": "b7cd7a972fb0052031cb7d8ecbf813db5f4a43c95fad8b67831d2fe7117d414c",
+   "collection/development.jsonl": "d588fed10de4de76b8b789afa4678d486c0141cb54d656313572edacea66818c",
+   "collection/generated/cases.jsonl": "0c80dcb2c864bb8d9611724249b6d0d5c154bdb3dbb98ce24ec598d76fff271c",
+   "candidate-80.json": "4ffd2f006fc98e9281f964e63192dba36ce55ede1dbf5d6fa26ab90b4db7db2b",
+   "builtin diagnosis_tree.json": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3",
+   "round-9 starting sessions": {
+    "HH1": "f6cc170d4806a6de918a572112cb18514260979b202f7690d2b7a1bfa95f4238",
+    "HI2": "6f975037822ad7a29145f03fe59ff30846f69c57257f68165834176121d2ea39",
+    "HM4": "59e955ed600fb47f62f47b4712ca6ee03e57520de872eb2b37a3df70964f8795",
+    "HM5": "ba42b536e5728604558b698baaadd369e26a7939c5417ab0d8468882a8f7df6d",
+    "HU3": "8f1d470fe39d746dc20a37e001811e88eb627dd7a6cf40d6c6f78fb5a438285d",
+    "HU6": "858336e653c442abb380bb412be9ebdd0e27a8024944351d4dc336cc3e34b7e0",
+    "httpx028-proxies": "ff1df6088e4f7b3d0ee308826819281a3fe554efb5aa3b50ef94f61b8f9a318e",
+    "own-valueerror-guard": "b14d80f0913a5395abd457c8a71b681ec9212db003b59e1b1afcc204ad4c5191",
+    "random-randint-case": "62c5e43453abd66daba8d3dc5dfb35da0880c961c0ee0ec9b75332375d4078f5",
+    "str-join-arity": "1f25c29c0032a27054d069f47e78416293188c47e22c0da59821ff63438c380f",
+    "toolz-frequencies": "1862094b1b9354dbdd50966b6c0c8ed6a02873c27eea2b303a2d888dff18d34e",
+    "wtforms3-textfield": "106e30eb201a5ec378b3295d3e097885506334670e068bd175230a531b08d949"
+   }
+  }
+ },
+ "learners_leave_one_family_out": {
+  "65 / tree (depth 6, leaf 2)": {
+   "raw_rows": "203/219",
+   "families_all_right": "43/47",
+   "fused_rows": "217/219",
+   "rule_uncovered_rows_right": "33/34",
+   "new_dev_families_raw": {
+    "httpx028-proxies-0": [
+     "version_inco",
+     1.0,
+     "version_inco"
+    ],
+    "random-randint-case-0": [
+     "version_inco",
+     1.0,
+     "code_defect"
+    ],
+    "str-join-arity-0": [
+     "code_defect",
+     1.0,
+     "code_defect"
+    ],
+    "wtforms3-textfield-0": [
+     "version_inco",
+     1.0,
+     "version_inco"
+    ]
+   }
+  },
+  "65 / random forest (300 trees)": {
+   "raw_rows": "198/219",
+   "families_all_right": "42/47",
+   "fused_rows": "217/219",
+   "rule_uncovered_rows_right": "33/34",
+   "new_dev_families_raw": {
+    "httpx028-proxies-0": [
+     "version_inco",
+     0.61,
+     "version_inco"
+    ],
+    "random-randint-case-0": [
+     "version_inco",
+     0.87,
+     "code_defect"
+    ],
+    "str-join-arity-0": [
+     "code_defect",
+     0.73,
+     "code_defect"
+    ],
+    "wtforms3-textfield-0": [
+     "version_inco",
+     0.94,
+     "version_inco"
+    ]
+   }
+  },
+  "65 / gradient boosting (hist, 200 iters)": {
+   "raw_rows": "192/219",
+   "families_all_right": "40/47",
+   "fused_rows": "215/219",
+   "rule_uncovered_rows_right": "31/34",
+   "new_dev_families_raw": {
+    "httpx028-proxies-0": [
+     "code_defect",
+     1.0,
+     "version_inco"
+    ],
+    "random-randint-case-0": [
+     "version_inco",
+     1.0,
+     "code_defect"
+    ],
+    "str-join-arity-0": [
+     "code_defect",
+     1.0,
+     "code_defect"
+    ],
+    "wtforms3-textfield-0": [
+     "version_inco",
+     1.0,
+     "version_inco"
+    ]
+   }
+  },
+  "80 / tree (depth 6, leaf 2)": {
+   "raw_rows": "213/219",
+   "families_all_right": "45/47",
+   "fused_rows": "217/219",
+   "rule_uncovered_rows_right": "33/34",
+   "new_dev_families_raw": {
+    "httpx028-proxies-0": [
+     "version_inco",
+     1.0,
+     "version_inco"
+    ],
+    "random-randint-case-0": [
+     "version_inco",
+     1.0,
+     "code_defect"
+    ],
+    "str-join-arity-0": [
+     "code_defect",
+     1.0,
+     "code_defect"
+    ],
+    "wtforms3-textfield-0": [
+     "version_inco",
+     1.0,
+     "version_inco"
+    ]
+   }
+  },
+  "80 / random forest (300 trees)": {
+   "raw_rows": "198/219",
+   "families_all_right": "42/47",
+   "fused_rows": "217/219",
+   "rule_uncovered_rows_right": "33/34",
+   "new_dev_families_raw": {
+    "httpx028-proxies-0": [
+     "version_inco",
+     0.6,
+     "version_inco"
+    ],
+    "random-randint-case-0": [
+     "version_inco",
+     0.81,
+     "code_defect"
+    ],
+    "str-join-arity-0": [
+     "code_defect",
+     0.6,
+     "code_defect"
+    ],
+    "wtforms3-textfield-0": [
+     "version_inco",
+     0.93,
+     "version_inco"
+    ]
+   }
+  },
+  "80 / gradient boosting (hist, 200 iters)": {
+   "raw_rows": "195/219",
+   "families_all_right": "40/47",
+   "fused_rows": "217/219",
+   "rule_uncovered_rows_right": "33/34",
+   "new_dev_families_raw": {
+    "httpx028-proxies-0": [
+     "code_defect",
+     0.99,
+     "version_inco"
+    ],
+    "random-randint-case-0": [
+     "version_inco",
+     1.0,
+     "code_defect"
+    ],
+    "str-join-arity-0": [
+     "code_defect",
+     1.0,
+     "code_defect"
+    ],
+    "wtforms3-textfield-0": [
+     "version_inco",
+     1.0,
+     "version_inco"
+    ]
+   }
+  }
+ },
+ "oracle_on_collection_originals": {
+  "sessions": 219,
+  "rules_only_executable": 30,
+  "oracle_changed": 2,
+  "oracle_executable": 32,
+  "oracle_newly_executable": 2,
+  "builtin44_changed": 1,
+  "builtin44_executable": 31,
+  "builtin44_newly_executable": 1,
+  "candidate80_changed": 2,
+  "candidate80_executable": 32,
+  "candidate80_newly_executable": 2
+ },
+ "oracle_on_round9_tasks": {
+  "HM4": {
+   "class": "M",
+   "rules_only_executable": true,
+   "oracle": {
+    "changed": false,
+    "executable": true,
+    "title": "Find a compatible markdown release that provides markdown.util.etree"
+   },
+   "builtin44": {
+    "changed": false,
+    "executable": true,
+    "title": "Find a compatible markdown release that provides markdown.util.etree"
+   },
+   "candidate80": {
+    "changed": false,
+    "executable": true,
+    "title": "Find a compatible markdown release that provides markdown.util.etree"
+   },
+   "rules_only_title": "Find a compatible markdown release that provides markdown.util.etree"
+  },
+  "HM5": {
+   "class": "M",
+   "rules_only_executable": true,
+   "oracle": {
+    "changed": false,
+    "executable": true,
+    "title": "Find a compatible mistune release that provides mistune.Renderer"
+   },
+   "builtin44": {
+    "changed": false,
+    "executable": true,
+    "title": "Find a compatible mistune release that provides mistune.Renderer"
+   },
+   "candidate80": {
+    "changed": false,
+    "executable": true,
+    "title": "Find a compatible mistune release that provides mistune.Renderer"
+   },
+   "rules_only_title": "Find a compatible mistune release that provides mistune.Renderer"
+  },
+  "HU3": {
+   "class": "U",
+   "rules_only_executable": false,
+   "oracle": {
+    "changed": false,
+    "executable": false,
+    "title": "Check the import path and dependency declarations"
+   },
+   "builtin44": {
+    "changed": false,
+    "executable": false,
+    "title": "Check the import path and dependency declarations"
+   },
+   "candidate80": {
+    "changed": false,
+    "executable": false,
+    "title": "Check the import path and dependency declarations"
+   },
+   "rules_only_title": "Check the import path and dependency declarations"
+  },
+  "HU6": {
+   "class": "U",
+   "rules_only_executable": false,
+   "oracle": {
+    "changed": false,
+    "executable": false,
+    "title": "Inspect the exception raised while running the test"
+   },
+   "builtin44": {
+    "changed": false,
+    "executable": false,
+    "title": "Inspect the exception raised while running the test"
+   },
+   "candidate80": {
+    "changed": false,
+    "executable": false,
+    "title": "Inspect the exception raised while running the test"
+   },
+   "rules_only_title": "Inspect the exception raised while running the test"
+  },
+  "httpx028-proxies": {
+   "class": "M",
+   "rules_only_executable": true,
+   "oracle": {
+    "changed": false,
+    "executable": true,
+    "title": "Replace proxies: removed in httpx 0.28"
+   },
+   "builtin44": {
+    "changed": false,
+    "executable": true,
+    "title": "Replace proxies: removed in httpx 0.28"
+   },
+   "candidate80": {
+    "changed": false,
+    "executable": true,
+    "title": "Replace proxies: removed in httpx 0.28"
+   },
+   "rules_only_title": "Replace proxies: removed in httpx 0.28"
+  },
+  "random-randint-case": {
+   "class": "U",
+   "rules_only_executable": false,
+   "oracle": {
+    "changed": true,
+    "executable": true,
+    "title": "Check the observed member spelling at app.py:6"
+   },
+   "builtin44": {
+    "changed": false,
+    "executable": false,
+    "title": "Inspect the exception raised while running the test"
+   },
+   "candidate80": {
+    "changed": true,
+    "executable": true,
+    "title": "Check the observed member spelling at app.py:6"
+   },
+   "rules_only_title": "Inspect the exception raised while running the test"
+  },
+  "str-join-arity": {
+   "class": "U",
+   "rules_only_executable": false,
+   "oracle": {
+    "changed": true,
+    "executable": true,
+    "title": "Correct the observed call at app.py:2"
+   },
+   "builtin44": {
+    "changed": true,
+    "executable": true,
+    "title": "Correct the observed call at app.py:2"
+   },
+   "candidate80": {
+    "changed": true,
+    "executable": true,
+    "title": "Correct the observed call at app.py:2"
+   },
+   "rules_only_title": "Inspect the exception raised while running the test"
+  },
+  "wtforms3-textfield": {
+   "class": "M",
+   "rules_only_executable": true,
+   "oracle": {
+    "changed": false,
+    "executable": true,
+    "title": "Find a compatible wtforms release that provides wtforms.TextField"
+   },
+   "builtin44": {
+    "changed": false,
+    "executable": true,
+    "title": "Find a compatible wtforms release that provides wtforms.TextField"
+   },
+   "candidate80": {
+    "changed": false,
+    "executable": true,
+    "title": "Find a compatible wtforms release that provides wtforms.TextField"
+   },
+   "rules_only_title": "Find a compatible wtforms release that provides wtforms.TextField"
+  }
+ }
+}

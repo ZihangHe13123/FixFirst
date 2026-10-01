@@ -349,7 +349,8 @@ def test_notebook_missing_kernel_is_actionable(tmp_path, bare_python):
     assert session.goal_status != "achieved"
     assert "ipykernel" in session.issues[0].title
     action = next(a for a in session.actions if a.action_id == "install-notebook-kernel")
-    assert action.command == [bare_python, "-m", "pip", "install", "ipykernel"]
+    assert action.command[:4] == [bare_python, "-m", "pip", "install"]
+    assert action.command[-2:] == ["--only-binary=:all:", "ipykernel"]
 
 
 def test_notebook_driver_install_command_targets_host_python(tmp_path, bare_python, monkeypatch):

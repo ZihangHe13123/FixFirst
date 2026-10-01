@@ -1,0 +1,51 @@
+{
+  "goal_created_at": 1790853851,
+  "production": "99c8086a2fb5445d05e3e7a9fb6e1ace8b2e9681",
+  "existing_evidence_commit": "ec58641",
+  "public_archive_files_verified": 19,
+  "observations": [
+    {
+      "case": "positional-only",
+      "refs": [
+        "run-19fa7b958704:probe:3",
+        "run-19fa7b958704:probe:2"
+      ],
+      "same_run_exception_and_failure": true
+    },
+    {
+      "case": "own-store-method",
+      "refs": [
+        "run-35cb82cbfe8a:probe:3",
+        "run-35cb82cbfe8a:probe:2"
+      ],
+      "same_run_exception_and_failure": true
+    },
+    {
+      "case": "regex-arity",
+      "refs": [
+        "run-d5a756e5cadb:probe:3",
+        "run-d5a756e5cadb:probe:2"
+      ],
+      "same_run_exception_and_failure": true
+    }
+  ],
+  "exact_edit_original_test_pass": true,
+  "healthy_and_ambiguous_controls_conservative": true,
+  "all_original_test_files_and_initial_files_verified": true,
+  "reused_main_suite": "776 passed, 1 skipped",
+  "reused_mac_harness": "58 passed",
+  "default_model_unchanged": true,
+  "new_product_runs": 0,
+  "new_training": false,
+  "new_independent_runs": 0,
+  "formal_evaluation_started": false,
+  "deliverables_present": true,
+  "formal_prerequisites": "waiting per readiness checklist, not executed for goal completion",
+  "status": "all narrowed goal requirements verified",
+  "report_cross_check": {
+    "reviewer": "independent read-only subagent",
+    "ab93951_numbers_and_limitations_complete": true,
+    "freeze_gap_and_formal_prerequisites_complete": true,
+    "original_experiments_rerun": false
+  }
+}

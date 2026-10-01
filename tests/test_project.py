@@ -9,6 +9,34 @@ from fixfirst.report import render
 from fixfirst.service import create_session, scan
 
 
+def test_unambiguous_nested_test_environment_follows_test_goal(tmp_path):
+    from fixfirst.project import select_goal_requirements
+    (tmp_path / "requirements").mkdir()
+    (tmp_path / "requirements/prod.txt").write_text("six==1.16.0\n")
+    (tmp_path / "requirements/dev.txt").write_text("-r prod.txt\npytest==8.3.3\n")
+    data = select_goal_requirements(read_project(tmp_path), "pass_tests")
+    selected = {r["requirement"] for r in data["declarations"] if r["group"] == "required"}
+    assert selected == {"six==1.16.0", "pytest==8.3.3"}
+    assert not any(r["group"] == "required" for r in select_goal_requirements(read_project(tmp_path), "run_project")["declarations"])
+    (tmp_path / "requirements/test.txt").write_text("pytest<8\n")
+    assert not any(r["group"] == "required" for r in select_goal_requirements(read_project(tmp_path), "pass_tests")["declarations"])
+
+
+def test_production_root_file_does_not_hide_the_unique_test_dependency_set(tmp_path):
+    from fixfirst.project import select_goal_requirements
+    (tmp_path / "requirements").mkdir()
+    (tmp_path / "requirements.txt").write_text("-r requirements/prod.txt\n")
+    (tmp_path / "requirements/prod.txt").write_text("Flask==3.1.3\n")
+    (tmp_path / "requirements/dev.txt").write_text("-r prod.txt\npytest\nWebTest\nfactory-boy\n")
+    data = select_goal_requirements(read_project(tmp_path), "pass_tests")
+    active = {r["requirement"] for r in data["declarations"] if r["group"] == "required"}
+    assert active == {"Flask==3.1.3", "pytest", "WebTest", "factory-boy"}
+    # A canonical test environment already specifying pytest stays authoritative.
+    (tmp_path / "requirements.txt").write_text("-r requirements/prod.txt\npytest>=8\n")
+    data = select_goal_requirements(read_project(tmp_path), "pass_tests")
+    assert not any(r["name"] == "webtest" and r["group"] == "required" for r in data["declarations"])
+
+
 def test_declarations_use_target_markers_and_keep_optional_separate(tmp_path):
     (tmp_path / "pyproject.toml").write_text("""[project]
 requires-python = ">=3.13"

@@ -49,6 +49,7 @@ input[type=search],input[type=text]{border:1px solid var(--line);border-radius:8
 <span class="badge {{ session.goal_status }}">{{ {'unknown':'Not yet verified','blocked':'Goal not reached','achieved':'Goal verified'}[session.goal_status] }}</span></div>
 <p class="note">{{ session.session_id }} · created {{ session.created_at }}</p>
 <div class="stats"><div class="stat"><b>{{ counts.open }}</b><span>Issue groups still failing</span></div><div class="stat"><b>{{ counts.resolved }}</b><span>Verified fixed</span></div><div class="stat"><b>{{ counts.not_observed + counts.awaiting_verification }}</b><span>Unchecked or awaiting verification</span></div><div class="stat"><b>{{ session.runs|length }}</b><span>Checks and imports</span></div></div>
+{% if installation_records %}<p class="note">{{ installation_records }} installation record(s) are retained below as history. They do not count as currently failing or verified fixed checks.</p>{% endif %}
 <div class="pipeline">Collect evidence → group symptoms → diagnose the cause → plan the next step → you change the code → verify with a real check</div>
 {% if session.goal_status == 'achieved' %}<div class="empty">The goal passed its most recent check. {% if session.goal == 'collect_tests' %}Passing collection does not mean every test passes.{% else %}The result covers only the recorded scope; skipped and expected failures are listed separately.{% endif %}</div>{% endif %}
 {% if not session.runs %}<div class="empty">Session created. Run the checks{% if not live %} with <code>fixfirst scan</code>{% endif %}, or import an existing log.</div>{% endif %}
@@ -73,8 +74,8 @@ input[type=search],input[type=text]{border:1px solid var(--line);border-radius:8
 </div><p class="note">FixFirst never edits your project or installs packages. Ranking reflects the goal, the evidence and cost; it is not a probability of cause.</p></section>
 
 <section id="issues" class="anchor"><div class="section-head"><h2>Issues and root causes</h2><input id="search" type="search" placeholder="Search messages, components, causes" aria-label="Search issues"></div>
-{% for issue in session.issues %}<article class="issue" data-search="{{ issue.title }} {{ issue.component }} {{ states[issue.status] }} {{ issue.diagnosis or '' }}">
-<div class="issue-top"><div class="issue-title">{{ issue.title }}</div><span class="badge {{ issue.status }}">{{ states[issue.status] }}</span></div>
+{% for issue in session.issues %}<article class="issue" data-search="{{ issue.title }} {{ issue.component }} {{ issue_state(issue.tool, issue.status) }} {{ issue.diagnosis or '' }}">
+<div class="issue-top"><div class="issue-title">{{ issue.title }}</div><span class="badge {{ 'unknown' if issue.tool == 'pip_install' else issue.status }}">{{ issue_state(issue.tool, issue.status) }}</span></div>
 <div class="meta">{{ tools[issue.tool] }} · {{ issue.stage }} · {{ issue.event_ids|length }} message(s) · {{ issue.issue_id }}</div>
 {% if issue.diagnosis %}<div class="diagnosis {{ 'model' if issue.diagnosis_source == 'model' }}"><span class="badge cause {{ 'model' if issue.diagnosis_source == 'model' }}">{{ causes[issue.diagnosis].label if issue.diagnosis in causes else issue.diagnosis }}</span>
 {% if issue.diagnosis_source == 'rule' %} concluded by rule <b>{{ issue.diagnosis_rule }}</b>: {{ rules[issue.diagnosis_rule].description if issue.diagnosis_rule in rules }}{% else %} suggested by the decision tree ({{ '%.0f'|format((issue.prediction_confidence or 0) * 100) }}% of similar training cases); not confirmed by a rule{% endif %}

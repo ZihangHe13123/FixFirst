@@ -1,0 +1,48 @@
+{
+  "branch": "codex/release-0.7.0-prep",
+  "base": "380fcbb5f5302f75fcc7b8dc017e288a49e80248",
+  "preparation_commit": "09b2a5d7f3553324a93efd0eead436bce7ab4a1b",
+  "cherry_picks": [
+    {
+      "source": "ab939519543d615b1fcce19c633d810bcd0c5da2",
+      "local": "a48a9f45c648cf28d43225fffe84cc17a19b3409"
+    },
+    {
+      "source": "3703ab51f449f9fc8a63a412743296eb59a842c9",
+      "local": "7ce5f6482fdb6ae0718bdb67188636f01345fb22"
+    }
+  ],
+  "files": [
+    {
+      "path": "experiments/field_trial/round9/structure-check/README.md",
+      "sha256": "d8e3b6cd18cebaa6b6251edc9d91113fc4fa33e8ca6d1df09ba5820efcd95b35",
+      "same_as_3703ab5": true
+    },
+    {
+      "path": "experiments/field_trial/round9/structure-check/failure-mix.json",
+      "sha256": "ed35d7004611e6cb454f6475e68bc80656c4da8151b11d05fefa192311cee595",
+      "same_as_3703ab5": true
+    },
+    {
+      "path": "experiments/field_trial/round9/structure-check/failure_mix.py",
+      "sha256": "2ab69c4162eb6bc749fc1f25be46f912a048ca94b4e8f895438bc6c27d537bf0",
+      "same_as_3703ab5": true
+    },
+    {
+      "path": "experiments/field_trial/round9/structure-check/structure-check.json",
+      "sha256": "3f5798536d245371d9923667225512ee61ad2ea6c70703217cb4953fb5cef571",
+      "same_as_3703ab5": true
+    },
+    {
+      "path": "experiments/field_trial/round9/structure-check/structure_check.py",
+      "sha256": "e4bce6b28dc82a4ea01abc618e67855b30acc9c5c96c810766913802c8d1a354",
+      "same_as_3703ab5": true
+    }
+  ],
+  "default_model_sha256": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3",
+  "conflicts": false,
+  "private_start_sessions_added": false,
+  "private_start_sessions_read": false,
+  "new_experiments": 0,
+  "push_merge_tag_publish": false
+}

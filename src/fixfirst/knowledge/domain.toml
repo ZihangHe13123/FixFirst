@@ -8,11 +8,108 @@
 
 [meta]
 title = "FixFirst Python troubleshooting knowledge"
-updated = "2026-09-30"
+updated = "2026-10-01"
+
+[[input_error]]
+id = "numpy-shape"
+distribution = "numpy"
+action_title = "Correct the reshape dimensions for the actual array size"
+guidance = "The requested shape must contain the same number of elements as the input array. Compare the size and shape in the error; adjust the requested dimensions to the required result, using one -1 dimension only when the remaining dimensions divide the size. Preserve the input values and the test's intended result."
+source = "numpy-reshape"
+
+[[input_error]]
+id = "numpy-axis"
+distribution = "numpy"
+action_title = "Choose an axis that exists in the input array"
+guidance = "Compare the requested axis with the number of dimensions shown in the error. For ndim dimensions valid axes range from -ndim to ndim-1. Choose the axis matching the intended operation; changing the library version does not add a missing dimension."
+source = "numpy-axis"
+
+[[input_error]]
+id = "yaml-syntax"
+distribution = "pyyaml"
+action_title = "Correct the YAML syntax at the reported line and column"
+guidance = "Inspect the YAML text or file at the parser's marked line and column. Correct the reported brackets, separators or indentation while preserving the required data. Keep safe_load or the selected safe loader; a parser syntax error is not evidence that an older PyYAML is needed."
+source = "pyyaml-input"
+
+[[input_error]]
+id = "click-value"
+distribution = "click"
+action_title = "Correct the value rejected by the Click parameter"
+guidance = "Compare the supplied value with the parameter's required type, choices or bounds reported in the error. Supply a valid value, or correct an incorrectly specified parameter constraint according to the program's requirements. Preserve validation and the tests; do not bypass validation just to make the check pass."
+source = "click-input"
+
+[[input_error]]
+id = "version-string"
+distribution = "packaging"
+action_title = "Handle the non-standard version label before comparing versions"
+guidance = "Version accepts PEP 440 version strings. Validate values before comparing them, handle InvalidVersion explicitly, and separate non-standard labels from release versions according to the intended ordering. Preserve the tests and input meaning."
+source = "packaging-version"
+
+[[input_error]]
+id = "pydantic-missing"
+distribution = "pydantic"
+action_title = "Check the missing model field against the keys actually supplied"
+guidance = "Compare each missing field named in the validation error with the arguments or mapping passed at the reported call. Check whether its value was sent to a different field or a misspelt key. Keep required-field validation. Only if omission is intended and the field permits None should an explicit None default be considered; adding that default does not repair a value sent to the wrong field."
+source = "pydantic-optional-2.0"
+
+[[input_error]]
+id = "sqlalchemy-no-rows"
+distribution = "sqlalchemy"
+action_title = "Check whether the SQL result returns rows before reading it"
+guidance = "Check result.returns_rows before constructing an iterator or fetching rows. DDL and statements without returning rows need an empty result or another return value appropriate to the caller; preserve their SQL effects. A no-row result cannot supply rows on an older release either. The error alone does not establish an upgrade cause."
+source = "sqlalchemy-result-1.4-source"
+
+[[behavior]]
+id = "packaging-legacy-parse"
+distribution = "packaging"
+version = "22.0"
+summary = "packaging 22 removed LegacyVersion: the observed packaging.version.parse call now raises InvalidVersion for a non-standard label instead of returning a legacy comparison object."
+action_title = "Handle legacy version labels before using packaging.version.parse"
+replacement = "Handle InvalidVersion explicitly. If only release versions should participate in comparison, validate with Version and filter non-standard labels before applying max or sorting; if those labels have meaning, give them an explicit ordering separately. Keep the original tests and input values. Version itself was already strict before this change."
+source = "packaging-22.0"
+
+[[behavior]]
+id = "sqlalchemy-eager-result-iterator"
+distribution = "sqlalchemy"
+version = "1.4"
+summary = "SQLAlchemy 1.4 changed result iterator creation from the lazy 1.3 implementation to eager metadata access. The observed generator is being constructed over a result with no rows; iteration now fails immediately. Consuming such a result already failed on older releases."
+action_title = "Check returns_rows before constructing the result iterator"
+replacement = "Check cursor.returns_rows before building the generator. For a statement that produces no rows, return an empty iterator or collection according to the caller's contract; otherwise keep the original row mapping. For example, use (convert(row) for row in cursor) if cursor.returns_rows else iter(()). Keep SQL effects and row values unchanged."
+source = "sqlalchemy-result-1.4-source"
 
 # Behavior changes are matched using observed values/calls and version context.
 # They are compatibility hypotheses, not proof that every failure inside a library
 # was caused by an upgrade.
+[[behavior]]
+id = "numpy-copy-false"
+distribution = "numpy"
+version = "2.0"
+without_version_record = true
+summary = "NumPy 2 makes array(..., copy=False) reject inputs that require a copy; the observed numpy.array call raises that specific error."
+action_title = "Use numpy.asarray when copying the input is allowed"
+replacement = "Replace numpy.array(values, copy=False, ...) with numpy.asarray(values, ...), keeping the dtype and other needed options. If the program truly requires zero copying, keep that requirement and provide a compatible array buffer instead. Do not change the expected values."
+source = "numpy-2.0"
+
+[[behavior]]
+id = "numpy-solve-vector"
+distribution = "numpy"
+version = "2.0"
+without_version_record = true
+summary = "NumPy 2 treats a non-1D b as matrices in linalg.solve. The captured a and b shapes fit the previous batched-vector contract but the call now reports a core-dimension mismatch."
+action_title = "Pass the batch of right-hand vectors as explicit column vectors"
+replacement = "For the observed batched-vector call, replace numpy.linalg.solve(a, b) with numpy.linalg.solve(a, b[..., None])[..., 0]. Preserve a, b and the expected numeric result; the extra dimension makes the vector interpretation explicit."
+source = "numpy-solve-2.0"
+
+[[behavior]]
+id = "pydantic-optional-required"
+distribution = "pydantic"
+version = "2.0"
+without_version_record = true
+summary = "Pydantic V2 requires an Optional field when its declaration has no default. The actual missing field is nullable without a default and the supplied input has no unknown field names."
+action_title = "Give the optional model field an explicit None default"
+replacement = "Locate the missing Optional field in the model declaration, and add = None if omitting that field is intended (for example email: Optional[str] = None). Keep other required fields and validation intact. Optional controls whether None is allowed; the explicit default controls omission."
+source = "pydantic-optional-2.0"
+
 [[behavior]]
 id = "numpy-scalar-repr"
 distribution = "numpy"
@@ -264,6 +361,15 @@ source = "python-3.12"
 
 [[removed]]
 kind = "api"
+module = "configparser"
+names = ["SafeConfigParser"]
+distribution = "python"
+version = "3.12"
+replacement = "configparser.ConfigParser instead of configparser.SafeConfigParser; update the import and every SafeConfigParser constructor or reference in the project"
+source = "python-3.12"
+
+[[removed]]
+kind = "api"
 module = "numpy"
 names = ["float", "int", "object", "str", "complex", "long", "unicode"]
 distribution = "numpy"
@@ -279,6 +385,24 @@ distribution = "numpy"
 version = "1.23"
 replacement = "ndarray.item()"
 source = "numpy-1.23"
+
+[[removed]]
+kind = "attribute"
+owners = ["numpy.ndarray"]
+names = ["numpy.ndarray.ptp"]
+distribution = "numpy"
+version = "2.0"
+replacement = "numpy.ptp(array, ...) instead of array.ptp(...); preserve the existing axis, out and keepdims arguments"
+source = "numpy-2.0"
+
+[[removed]]
+kind = "attribute"
+owners = ["numpy.ndarray"]
+names = ["numpy.ndarray.newbyteorder"]
+distribution = "numpy"
+version = "2.0"
+replacement = "array.view(array.dtype.newbyteorder(order)) instead of array.newbyteorder(order), preserving the intended byte-order view semantics"
+source = "numpy-2.0"
 
 [[removed]]
 kind = "api"
@@ -315,6 +439,17 @@ distribution = "scikit-learn"
 version = "1.4"
 replacement = "sparse_output"
 source = "sklearn-1.4"
+
+[[removed]]
+kind = "kwarg"
+names = ["proxies"]
+callables = ["httpx.Client", "httpx.AsyncClient"]
+distribution = "httpx"
+version = "0.28"
+replacement = "proxy= for one proxy URL, or mounts= with per-scheme transports for a proxy mapping"
+rename_to = "proxy"
+rename_value = "string_literal"
+source = "httpx-0.28-proxies"
 
 [[removed]]
 kind = "kwarg"
@@ -690,6 +825,38 @@ url = "https://numpy.org/doc/stable/release/1.24.0-notes.html"
 title = "NumPy 2.0 migration guide (NEP 52 namespace cleanup)"
 url = "https://numpy.org/doc/stable/numpy_2_0_migration_guide.html"
 
+[sources."numpy-reshape"]
+title = "NumPy reshape: the new shape must be compatible with the original shape"
+url = "https://numpy.org/doc/stable/reference/generated/numpy.reshape.html"
+
+[sources."sqlalchemy-result-1.4-source"]
+title = "SQLAlchemy 1.4.54 Result.__iter__ and _iterator_getter source; contrasted with rel_1_3_24 and verified on SQLite"
+url = "https://github.com/sqlalchemy/sqlalchemy/blob/rel_1_4_54/lib/sqlalchemy/engine/result.py"
+
+[sources."numpy-solve-2.0"]
+title = "NumPy linalg.solve: b vector interpretation changed in 2.0"
+url = "https://numpy.org/doc/stable/reference/generated/numpy.linalg.solve.html"
+
+[sources."pydantic-optional-2.0"]
+title = "Pydantic V2 migration: required, optional and nullable fields"
+url = "https://docs.pydantic.dev/latest/migration/#required-optional-and-nullable-fields"
+
+[sources."numpy-axis"]
+title = "NumPy AxisError: an axis exceeds the array dimensions"
+url = "https://numpy.org/doc/stable/reference/generated/numpy.exceptions.AxisError.html"
+
+[sources."pyyaml-input"]
+title = "PyYAML error conditions and marked input locations"
+url = "https://pyyaml.org/wiki/PyYAMLDocumentation#yamlerror"
+
+[sources."click-input"]
+title = "Click parameter types, choices and integer/float ranges"
+url = "https://click.palletsprojects.com/en/stable/parameter-types/"
+
+[sources."packaging-version"]
+title = "Packaging Version and InvalidVersion"
+url = "https://packaging.pypa.io/en/stable/version.html"
+
 [sources."numpy-scalar-representation"]
 title = "NumPy 2.0 release notes: representation of NumPy scalars changed"
 url = "https://numpy.org/doc/stable/release/2.0.0-notes.html#representation-of-numpy-scalars-changed"
@@ -709,6 +876,11 @@ url = "https://scikit-learn.org/stable/whats_new/v1.2.html"
 [sources."sklearn-1.4"]
 title = "scikit-learn OneHotEncoder 1.3 API: sparse removal in 1.4"
 url = "https://scikit-learn.org/1.3/modules/generated/sklearn.preprocessing.OneHotEncoder.html"
+
+[sources."httpx-0.28-proxies"]
+title = "HTTPX 0.28.0 removed proxies; proxy URL and mounts migration"
+url = "https://github.com/encode/httpx/releases/tag/0.28.0"
+guidance_url = "https://www.python-httpx.org/advanced/proxies/"
 
 [sources."sklearn-1.6"]
 title = "scikit-learn mean_squared_error 1.5 API: squared removal in 1.6"
@@ -769,3 +941,85 @@ url = "https://github.com/yaml/pyyaml/blob/main/CHANGES"
 [sources."click-8.2-streams"]
 title = "Click 8.2 changelog: CliRunner stream capture changes"
 url = "https://click.palletsprojects.com/en/stable/changes/#version-8-2-0"
+
+[[removed]]
+kind = "api"
+module = "flask"
+names = ["_app_ctx_stack", "_request_ctx_stack"]
+distribution = "Flask"
+version = "3.0"
+replacement = "Application code should use Flask's supported context APIs (current_app, request and g). If a traceback shows an installed extension importing the removed stack, migrate that extension and check its own application-facing API changes. Do not edit site-packages."
+source = "flask-context-3.0"
+
+[[consumer_migration]]
+api = "api:flask._app_ctx_stack"
+consumer = "Flask-SQLAlchemy"
+legacy_before = "3.0"
+target_minimum = "3.1"
+target_before = "4"
+source = "flask-sqlalchemy-3"
+
+[sources."flask-context-3.0"]
+title = "Flask 3.0 removed deprecated context stacks (PR 5223); 2.3 still retained top"
+url = "https://github.com/pallets/flask/pull/5223"
+
+[sources."flask-sqlalchemy-3"]
+title = "Flask-SQLAlchemy 3 context changes and SQLAlchemy 2 support"
+url = "https://flask-sqlalchemy.palletsprojects.com/en/stable/changes/"
+
+[[removed]]
+kind = "api"
+module = "flask_sqlalchemy"
+names = ["Model"]
+distribution = "Flask-SQLAlchemy"
+version = "3.0"
+replacement_import = "flask_sqlalchemy.model.Model"
+replacement = "from flask_sqlalchemy.model import Model instead of from flask_sqlalchemy import Model. Preserve an existing alias, and keep other imports such as SQLAlchemy in their original module. This imports the base class for model_class customization; ordinary application models still inherit from the application's db.Model."
+source = "flask-sqlalchemy-model"
+
+[[removed]]
+kind = "api"
+module = "flask_jwt_extended"
+names = ["jwt_optional"]
+distribution = "Flask-JWT-Extended"
+version = "4.0"
+replacement = "import jwt_required and change @jwt_optional to @jwt_required(optional=True). Preserve optional access; do not replace it with a required-token decorator. In the same 3.x-to-4.x migration, bare @jwt_required becomes @jwt_required(). Re-run authentication tests including absent, invalid and valid tokens."
+source = "flask-jwt-4"
+
+[[removed]]
+kind = "api"
+module = "flask_jwt_extended"
+names = ["get_jwt_claims", "get_raw_jwt"]
+distribution = "Flask-JWT-Extended"
+version = "4.0"
+replacement = "get_jwt(). Review the 4.0 token layout and callbacks together: additional claims are at the top level, and get_jwt_claims no longer returns a separate nested claims dictionary. Verify the intended claim keys and token compatibility before using the result."
+source = "flask-jwt-4"
+
+[[removed]]
+kind = "api"
+module = "pandas"
+names = ["Int64Index"]
+distribution = "pandas"
+version = "2.0"
+replacement = "pandas.Index(values, dtype='int64') in place of pandas.Int64Index(values). Preserve the existing pandas alias, input values and any name argument; check the index dtype and expected values with the original tests."
+source = "pandas-2.0"
+
+[[removed]]
+kind = "attribute"
+names = ["sqlalchemy.engine.base.Engine.execute"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "an explicit connection: import text from sqlalchemy; use with engine.connect() as connection: and execute connection.execute(text(sql), parameters) inside that block. Consume the result before closing the connection. For statements that must commit changes, use engine.begin() instead; preserve bound parameters rather than formatting values into SQL."
+source = "sqlalchemy-2-execute"
+
+[sources."flask-sqlalchemy-model"]
+title = "Flask-SQLAlchemy Model base class and model_class customization"
+url = "https://flask-sqlalchemy.palletsprojects.com/en/stable/api/#flask_sqlalchemy.model.Model"
+
+[sources."flask-jwt-4"]
+title = "Flask-JWT-Extended 4.0 API and token migration guide"
+url = "https://flask-jwt-extended.readthedocs.io/en/stable/v4_upgrade_guide.html"
+
+[sources."sqlalchemy-2-execute"]
+title = "SQLAlchemy 2.0 removal of connectionless Engine.execute"
+url = "https://docs.sqlalchemy.org/en/20/changelog/migration_20.html#implicit-and-connectionless-execution-bound-metadata-removed"

@@ -7,3 +7,6 @@ examples/historical-regressions/**/*.html -whitespace
 # Windows launchers need CRLF line endings.
 *.bat text eol=crlf
 *.ps1 text eol=crlf
+
+# Preserve whitespace in the captured HTML export used as delivery evidence.
+docs/freeze/validation-20261001/entry-checks/shared.html -whitespace

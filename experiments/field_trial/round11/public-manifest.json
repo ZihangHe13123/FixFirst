@@ -1,0 +1,67 @@
+{
+  "baseline": "40278e5be5bafbe4ac513f110d0d6178ff9f6cf7",
+  "cases": [
+    {
+      "id": "positional-only",
+      "role": "applicable_repair",
+      "provenance": "authored public mechanism fixture",
+      "reference": {
+        "file": "app.py",
+        "old": "adapt(value=value)",
+        "new": "adapt(value)"
+      },
+      "file_sha256": {
+        "core.py": "112a573cc4ac4adae3c7d406c1fc8c38ab99e323ef00af791b312e77e2fbf3e3",
+        "app.py": "6e559b978f24e72ff86ffa8797aa491344a48b4ad443b0b542823fc90d64f4fb",
+        "test_app.py": "688708efabbaadab8ddb2de4b74c636924afd02e10c2d1f8df95bf02b298d6eb",
+        "requirements.txt": "93c4ab5f175d24229e46ec70a8ecaeb6db8b36e3f54d8005808044c060acbc92"
+      }
+    },
+    {
+      "id": "healthy",
+      "role": "healthy_control",
+      "provenance": "healthy equivalent of mechanism fixture",
+      "file_sha256": {
+        "core.py": "112a573cc4ac4adae3c7d406c1fc8c38ab99e323ef00af791b312e77e2fbf3e3",
+        "app.py": "030d19086892d871708c00b3f771709d2afa8fab0fd3176a9e6d2c45fc8c3f21",
+        "test_app.py": "688708efabbaadab8ddb2de4b74c636924afd02e10c2d1f8df95bf02b298d6eb",
+        "requirements.txt": "93c4ab5f175d24229e46ec70a8ecaeb6db8b36e3f54d8005808044c060acbc92"
+      }
+    },
+    {
+      "id": "own-store-method",
+      "role": "observation_without_unique_repair",
+      "provenance": "unchanged released round10 development task",
+      "file_sha256": {
+        "app.py": "08052fdc866e164995f76ada2b63944cda93dc7dceddd5772ff2915983a2aeca",
+        "requirements.txt": "93c4ab5f175d24229e46ec70a8ecaeb6db8b36e3f54d8005808044c060acbc92",
+        "test_app.py": "6f86850c8a82cd46340fc42c4fe45e691ae4ffe9bc22a701eec7c1e5a13ab1bf"
+      }
+    },
+    {
+      "id": "regex-arity",
+      "role": "observation_without_unique_repair",
+      "provenance": "unchanged released round10 development task",
+      "file_sha256": {
+        "app.py": "56263ec1cee62ea9f1a74dc795bf945a4e97124998e824407241086d07d519dc",
+        "requirements.txt": "93c4ab5f175d24229e46ec70a8ecaeb6db8b36e3f54d8005808044c060acbc92",
+        "test_app.py": "35e18eaf807e584998a44cab6633979d4d1d3aaf0487eb79ccebebc7c5712e95"
+      }
+    },
+    {
+      "id": "opaque-business-check",
+      "role": "insufficient_evidence_control",
+      "provenance": "unchanged released round10 development task",
+      "file_sha256": {
+        "app.py": "ab52797d965ae3ed379c87d8071ff052ad826361ba10373ddbfc516459196a72",
+        "requirements.txt": "93c4ab5f175d24229e46ec70a8ecaeb6db8b36e3f54d8005808044c060acbc92",
+        "test_app.py": "40309ea255b89951a0c44455625523bf01909a336d0b1140437fd07b22479400"
+      }
+    }
+  ],
+  "max_rounds": 10,
+  "max_seconds_per_task": 3600,
+  "training": false,
+  "source_and_tests_frozen_before_production_edits": true,
+  "success_gate": "One real observed operation, reasonable diagnosis, exact first step and strict external edit verified by unchanged original tests; controls and ambiguous cases remain conservative"
+}

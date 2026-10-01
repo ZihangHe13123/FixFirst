@@ -21,7 +21,7 @@ DIAGNOSES = [
     "config_missing",
     "code_defect",
 ]
-SCHEMA_VERSION = 6
+SCHEMA_VERSION = 8
 MIN_CONFIDENCE = 0.6
 NAIVE = {
     "import_failure": "missing_dependency",

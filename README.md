@@ -8,7 +8,11 @@ cause of each failure, ranks what to do next for your goal, and closes an issue 
 completed check of the same scope proves it fixed. It runs locally, never edits your code and
 never installs anything into your environment (it gives you the command instead).
 
-NUS-ISS Intelligent Reasoning Systems practice module, Group 24 · version 0.6.1
+NUS-ISS Intelligent Reasoning Systems practice module, Group 24 · version 0.7.0
+
+See the [freeze and delivery record](docs/freeze/PUBLIC_DELIVERY.md) for the immutable
+`v0.7.0` identity, source ZIP recipe, actual validation and remaining evaluation gates.
+Freeze completion is recorded by the remote tag and B5 issue, not by this version string alone.
 
 Windows group testing: see [组员测试说明](docs/WINDOWS_TEAM_TEST.md). What was tested on
 each platform, and what is still open: [docs/WINDOWS_ADAPTATION.md](docs/WINDOWS_ADAPTATION.md).
@@ -303,11 +307,45 @@ environment says about the modules involved) as JSON, with no cause, ranking or 
   3.9–3.14 (venv, uv or conda); native scripts/modules, unittest, optional notebooks, pytest,
   Ruff and pip. Declarations are read statically from
   `pyproject.toml` (PEP 621, dependency groups, flit), `requirements*.txt`, `setup.cfg` and
-  literal lists in `setup.py` (never executed); lock files give the versions a project was
-  tested with. Windows support is new and is being validated on real machines.
+  literal lists in `setup.py` (never executed). A bounded `environment.yml` / `.yaml` reader
+  keeps pip entries and documented PyPI alternatives for eight common scientific packages;
+  unknown Conda names, channel and build syntax stay explicit. Lock files record selected
+  versions, not proof that the project's tests passed. Windows support is new and is being
+  validated on real machines.
 - Checks run as if the project's virtual environment were activated. The release search runs
   only when asked, installs prebuilt wheels only (no build scripts) into a throwaway
   environment and needs internet access.
+- Repair plans use current declarations and installed dependency metadata. Missing required
+  dependencies can be installed together. Imported pip failures identify the blocked package
+  and requirement; they do not prove a successful repair or silently override a project pin.
+  For pytest goals, a unique nested requirements file declaring pytest can add its other test
+  dependencies to a production-only root requirements file; the root constraints still apply.
+  Competing test environments are left for the user to select.
+- Tracebacks can identify an old extension as the caller of a removed API. Where documented
+  compatibility evidence exists, FixFirst proposes migrating that consumer with the project
+  constraints, and reports the actual package file and line. Known application API moves include
+  concrete import replacements; installation still requires the original tests to verify it.
+  A unique repeated-letter or adjacent-swap match in the actual loaded module can be shown as
+  a spelling lead. Similarity alone is not proof of a typo or proof that no older API existed.
+- Suggested pip commands save an installation log. After running one in your terminal, use
+  **Check again** (CLI: `fixfirst scan SESSION_ID`) to read its output and update the next step.
+  If a matching source archive has no usable wheel, a separate **Prepare a wheel** step may
+  be offered, including for an indirect dependency. This manual command runs the package's
+  build scripts and can download build dependencies; a normal scan never runs it for you.
+  Valid wheels are reused by the later trial and install command. Build failures return to
+  the plan instead of repeating the same install. Old installation output is labelled as
+  history, separate from the checks that establish whether the program or tests passed.
+  Logs and wheels remain in `.fixfirst/installation/` inside the project for later scans;
+  verbose pip logs can occupy tens of MB. These are local working files, not source files.
+- **Try a dependency set** is an explicit check for a blocked version requirement (CLI:
+  `fixfirst run SESSION_ID ACTION_ID`, using the action ID shown in the report). It tries
+  changing that requirement in a temporary environment while preserving the other project
+  constraints and unrelated installed packages. The recorded result includes exact proposed
+  declaration edits, installation versions and a dependency consistency check. Review and
+  make the edits before running the proposed installation, then rerun the original checks.
+  This trial never edits the project or target environment, and **does not run the application
+  or establish that it is repaired**. It is not run by a normal scan. Incomplete declarations,
+  resolver failures and timeouts remain unresolved; no retry loop is started automatically.
 - Checks run with timeouts, output limits and no shell. The environment snapshot runs outside
   the project so project files cannot shadow the standard library during the check.
 - Output is redacted before it is stored: credentials in URLs, token/password assignments,
@@ -326,11 +364,17 @@ environment says about the modules involved) as JSON, with no cause, ranking or 
 |---|---|
 | `src/fixfirst/` | the package (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)) |
 | `src/fixfirst/knowledge/` | rule base, domain knowledge, bundled decision tree |
-| `tests/` | 232 tests, most running real subprocesses; Windows runs all of them, macOS and Linux skip one PowerShell-only test |
+| `tests/` | Main regression suite. Candidate `99c8086`: **776 passed, 1 skipped on macOS**; see the [versioned Round 11 evidence](experiments/core_diagnosis/ROUND11.md) |
 | `experiments/` | agent baseline: local models fixing failures with and without FixFirst ([README](experiments/agent_baseline/README.md)) |
 | `examples/` | recorded runs, datasets, experiment reports and the real-world check ([overview](examples/README.md)) |
 | `docs/` | architecture, data sources, generalisation check, real-project case studies, course alignment, team plan and task cards (`后续计划.md`, `tasks/`), a technical study guide in Chinese (`技术原理详解.md`), team notes (`队友说明.md`), optimisation log; `docs/history/` keeps earlier versions' records |
 | `scripts/` | setup (macOS/Linux/Windows), real-project set-up and batch runs, demo recording |
+
+The separate macOS real-process harness recorded **58 passed** for candidate
+`99c8086a2fb5445d05e3e7a9fb6e1ace8b2e9681`. These are recorded results for that
+candidate, not a Windows acceptance result. Its Windows execution and sign-off are
+pending: [candidate handoff](docs/freeze/WINDOWS_HANDOFF.md) and
+[blank acceptance receipt](docs/freeze/ACCEPTANCE_RECEIPT_TEMPLATE.md).
 
 ```bash
 .venv/bin/ruff check src tests scripts experiments
@@ -347,6 +391,13 @@ environment says about the modules involved) as JSON, with no cause, ranking or 
   trials. It may miss a working release or leave newer releases unchecked. An unfinished or
   failed trial does not prove that no older version works; a verified import still needs the
   project's tests to confirm the full environment.
+- Dependency-set trials use wheels only and stop within a 300-second execution budget.
+  They can use validated wheels prepared by the session's explicit manual build steps.
+  Packages with no usable wheel remain blocked when that build is unavailable or fails.
+  Ruling out older releases under a project pin does not justify upgrading to the latest
+  release. A successful resolver result may still require API or application changes.
+  Python versions mentioned in README files are documentation hints; they are not necessarily
+  supported by the current machine or downloadable by its environment manager.
 - Behaviour changes that raise no "name is missing" error (a library returning different
   results) are only recognised through a lock file; otherwise they look like code defects.
 - The only held-out real-world measurement is round 1 of the generalisation check (2 of 13);

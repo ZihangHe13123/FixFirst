@@ -4,6 +4,7 @@ import sys
 
 import pytest
 
+from fixfirst.classification import SCHEMA_VERSION
 from fixfirst.grouping import group_events, normalize
 from fixfirst.historical_cases import verify_assets
 from fixfirst.models import Event, Run
@@ -133,7 +134,7 @@ def test_historical_assets_reject_tampered_files(tmp_path):
 def single_leaf_model(tmp_path, label):
     path = tmp_path / "model.json"
     model = {
-        "schema_version": 6,
+        "schema_version": SCHEMA_VERSION,
         "task": "root_cause",
         "feature_names": FEATURE_NAMES,
         "classes": [label],

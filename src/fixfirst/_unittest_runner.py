@@ -7,6 +7,8 @@ import sys
 import traceback
 import unittest
 
+from _runtime_evidence import exception_metadata
+
 record_path = Path(os.environ["FIXFIRST_EXECUTION_RECORDS"])
 written = 0
 dropped = False
@@ -42,6 +44,7 @@ class Result(unittest.TextTestResult):
         emit({"type": "exception", "nodeid": test.id(), "stage": stage,
               "exception_type": err[0].__name__, "exception_module": err[0].__module__,
               "exception_message": str(err[1])[:4000],
+              **exception_metadata(err[1], err[2]),
               "source_file": source.filename if source else "",
               "source_line": source.lineno if source else None})
 

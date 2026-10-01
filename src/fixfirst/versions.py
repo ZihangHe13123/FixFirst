@@ -77,17 +77,19 @@ def series(version: Version) -> str:
     return f"{version.major}.{version.minor}"
 
 
-def candidates(data: dict, installed: str, python_version: str, markers: dict) -> list[str]:
+def candidates(data: dict, installed: str, python_version: str, markers: dict,
+               specifier: str = "") -> list[str]:
     """Every usable release older than the installed version, including earlier patches."""
     python = Version(python_version)
     ceiling = Version(installed)
+    allowed = SpecifierSet(specifier)
     found = set()
     for text, files in (data.get("releases") or {}).items():
         try:
             version = Version(text)
         except InvalidVersion:
             continue
-        if version.is_prerelease or version.is_devrelease or version >= ceiling:
+        if version.is_prerelease or version.is_devrelease or version >= ceiling or version not in allowed:
             continue
         for item in files:
             if item.get("yanked") or item.get("packagetype") != "bdist_wheel":
@@ -97,7 +99,7 @@ def candidates(data: dict, installed: str, python_version: str, markers: dict) -
                 if spec and python not in SpecifierSet(spec):
                     continue
             except InvalidSpecifier:
-                pass
+                continue
             if wheel_fits(item.get("filename", ""), python, markers):
                 found.add(version)
                 break
@@ -110,13 +112,19 @@ class Sandbox:
     def __init__(self, python: str, timeout: float = 180):
         self.folder = Path(tempfile.mkdtemp(prefix="fixfirst-versions-"))
         self.timeout = timeout
+        self.base_python = python
+        self.last_error = ""
         self.uv = shutil.which("uv")
-        env_dir = self.folder / "env"
+        self.env_dir = self.folder / "env"
+        self.python = str(self.env_dir / ("Scripts/python.exe" if os.name == "nt" else "bin/python"))
+        self._reset()
+
+    def _reset(self):
+        # A failed previous candidate must not leave packages in the next trial.
         if self.uv:
-            self._run([self.uv, "venv", "-q", "-p", python, str(env_dir)])
+            return self._run([self.uv, "venv", "-q", "--clear", "-p", self.base_python, str(self.env_dir)])
         else:
-            self._run([python, "-m", "venv", str(env_dir)])
-        self.python = str(env_dir / ("Scripts/python.exe" if os.name == "nt" else "bin/python"))
+            return self._run([self.base_python, "-m", "venv", "--clear", str(self.env_dir)])
 
     def _run(self, argv) -> int:
         env = {k: v for k, v in os.environ.items() if k not in ("PYTHONPATH", "PYTHONHOME", "VIRTUAL_ENV")}
@@ -128,14 +136,18 @@ class Sandbox:
             return -1
         return done.returncode
 
-    def provides(self, dist: str, version: str, module: str, name: str) -> str:
+    def provides(self, dist: str, version: str, module: str, name: str, *, constraints=()) -> str:
         """'provides', 'missing' (module imports, name absent) or 'failed' (cannot tell)."""
+        if self._reset() != 0:
+            return "failed"
+        constraint_file = self.folder / "constraints.txt"
+        constraint_file.write_text("\n".join(constraints) + "\n", encoding="utf-8")
         if self.uv:
             install = [self.uv, "pip", "install", "-q", "--python", self.python, "--only-binary", ":all:",
-                       f"{dist}=={version}"]
+                       "-c", str(constraint_file), f"{dist}=={version}"]
         else:
             install = [self.python, "-m", "pip", "install", "-q", "--disable-pip-version-check",
-                       "--only-binary=:all:", f"{dist}=={version}"]
+                       "--only-binary=:all:", "-c", str(constraint_file), f"{dist}=={version}"]
         if self._run(install) != 0:
             return "failed"
         code = self._run([self.python, "-c", CHECK, module, name])
@@ -146,17 +158,22 @@ class Sandbox:
 
 
 def search(python: str, python_version: str, markers: dict, dist: str, installed: str, api: str,
-           fetch=fetch_json, sandbox=Sandbox) -> dict:
+           fetch=fetch_json, sandbox=Sandbox, *, specifier="", constraints=(), context_fingerprint=None) -> dict:
     """Find a verified release of `dist` providing `api` (module.name) within a trial budget."""
     module, _, name = api.rpartition(".")
     result = {"dist": dist, "api": api, "installed": installed, "python": python_version,
-              "checked": [], "provides": None, "below": None, "first_without": None, "status": "not_judged"}
+              "checked": [], "provides": None, "below": None, "first_without": None, "status": "not_judged",
+              "specifier": specifier, "context_fingerprint": context_fingerprint,
+              "constraints": list(constraints)}
     try:
-        available = candidates(fetch(PYPI.format(dist)), installed, python_version, markers)
+        data = fetch(PYPI.format(dist))
+        available = candidates(data, installed, python_version, markers, specifier)
     except (OSError, ValueError) as error:
         return {**result, "status": "offline", "error": str(error)[:300]}
     if not available or not module:
-        return {**result, "status": "no_candidates"}
+        status = "constraints_exclude_candidates" if specifier and candidates(
+            data, installed, python_version, markers) else "no_candidates"
+        return {**result, "status": status}
     # Include every patch before the installed release, then the newest of each older
     # series. The remaining patches stay available for a fallback if this search fails.
     current_series = series(Version(installed))
@@ -172,7 +189,8 @@ def search(python: str, python_version: str, markers: dict, dist: str, installed
 
         def check_release(release):
             if release not in outcomes:
-                outcome = box.provides(dist, release, module, name)
+                outcome = (box.provides(dist, release, module, name, constraints=constraints) if constraints
+                           else box.provides(dist, release, module, name))
                 outcomes[release] = outcome
                 result["checked"].append({"version": release, "result": outcome})
             return outcomes[release]

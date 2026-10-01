@@ -24,7 +24,7 @@ class Record(BaseModel):
 
 Tool = Literal[
     "environment", "project", "pip_check", "pip_install", "pytest", "pytest_run", "ruff", "version_search",
-    "python_run", "unittest_run",
+    "python_run", "unittest_run", "dependency_resolve",
 ]
 Goal = Literal["collect_tests", "check_style", "pass_tests", "run_project", "pass_unittest"]
 GOAL_CHECKS = {"collect_tests": "pytest", "check_style": "ruff", "pass_tests": "pytest_run",
@@ -160,6 +160,8 @@ class Action(Record):
     rule_ids: list[str] = Field(default_factory=list)
     # A command the user can run themselves (argv); FixFirst never runs it.
     command: list[str] = Field(default_factory=list)
+    # Exact declaration changes preceding a manually applied installation candidate.
+    declaration_edits: list[dict] = Field(default_factory=list)
 
 
 class Session(Record):
@@ -174,6 +176,10 @@ class Session(Record):
     threshold: float = Field(default=0.82, ge=0, le=1)
     model_path: str | None = None
     use_classifier: bool = True
+    # Explicit experimental factors; old sessions and ordinary entry points keep both off.
+    structured_evidence: bool = False
+    bounded_actions: bool = False
+    inference_trace: dict = Field(default_factory=dict)
     sbert_model: str | None = None
     runs: list[Run] = Field(default_factory=list)
     events: list[Event] = Field(default_factory=list)
@@ -184,6 +190,8 @@ class Session(Record):
     goal_status: Literal["unknown", "blocked", "achieved"] = "unknown"
     stopped: bool = False
     environment: dict = Field(default_factory=dict)
+    # Manually executed pip commands and their bounded, non-verifying feedback.
+    installation_attempts: list[dict] = Field(default_factory=list)
     # The tests and settings a verification is measured against, and the latest comparison (integrity.py).
     verification_baseline: dict = Field(default_factory=dict)
     baseline_check: dict = Field(default_factory=dict)

@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "session_id": "session-cfa8770bbee1",
+  "name": "script project 中文",
+  "project_root": "<entry-checks>/script project 中文",
+  "target_python": "<clean-source>/.venv/bin/python",
+  "created_at": "2026-10-01T12:19:18+00:00",
+  "goal": "run_project",
+  "execution": {
+    "schema_version": 1,
+    "kind": "script",
+    "entry": "main.py",
+    "args": [
+      "hello"
+    ],
+    "stdin": "",
+    "pattern": "test*.py"
+  },
+  "grouping": "tfidf",
+  "threshold": 0.82,
+  "model_path": null,
+  "use_classifier": true,
+  "structured_evidence": false,
+  "bounded_actions": false,
+  "inference_trace": {
+    "structured_evidence": false,
+    "bounded_actions": false,
+    "issues": [],
+    "issues_omitted": 0,
+    "first_action_scope": "raw_ordered_plan",
+    "global_first_action_id": "check-python_run"
+  },
+  "sbert_model": null,
+  "runs": [
+    {
+      "schema_version": 1,
+      "run_id": "run-0a33118cd031",
+      "tool": "python_run",
+      "started_at": "2026-10-01T12:19:18+00:00",
+      "argv": [
+        "<clean-source>/.venv/bin/python",
+        "<entry-checks>/script project 中文/main.py",
+        "hello"
+      ],
+      "cwd": "<entry-checks>/script project 中文",
+      "environment_id": "629c6d84b9e0cc4e",
+      "tool_version": "unknown",
+      "scope": "python_run:14d3d2f4118e5101b0ac1974",
+      "status": "completed",
+      "source": "executed",
+      "exit_code": 0,
+      "stdout": "entry-ok ['hello']\n",
+      "stderr": "",
+      "duration_s": 0.015,
+      "truncated": false,
+      "verified_pass": true,
+      "coverage_complete": true,
+      "notes": [],
+      "records": [],
+      "targets": [],
+      "passed_nodes": [],
+      "test_summary": {},
+      "execution_kind": "script"
+    }
+  ],
+  "events": [],
+  "issues": [],
+  "facts": [
+    {
+      "schema_version": 1,
+      "fact_id": "session:goal:run_project",
+      "subject": "session",
+      "predicate": "goal",
+      "value": "run_project",
+      "status": "observed",
+      "rule_id": null,
+      "inputs": [],
+      "evidence_refs": []
+    },
+    {
+      "schema_version": 1,
+      "fact_id": "session:goal_check:python_run",
+      "subject": "session",
+      "predicate": "goal_check",
+      "value": "python_run",
+      "status": "observed",
+      "rule_id": null,
+      "inputs": [],
+      "evidence_refs": []
+    }
+  ],
+  "actions": [
+    {
+      "schema_version": 1,
+      "action_id": "check-python_run",
+      "kind": "rerun",
+      "title": "Re-run the same program",
+      "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+      "verification": "Review the new check record and the status changes",
+      "check": "python_run",
+      "issue_ids": [],
+      "reason_refs": [],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 1,
+      "cost": 3,
+      "priority": 1,
+      "targets": [],
+      "cause": null,
+      "rule_ids": [],
+      "command": [],
+      "declaration_edits": []
+    }
+  ],
+  "history": [
+    {
+      "time": "2026-10-01T12:19:18+00:00",
+      "kind": "checks",
+      "run_ids": [
+        "run-0a33118cd031"
+      ],
+      "changes": []
+    }
+  ],
+  "goal_status": "achieved",
+  "stopped": false,
+  "environment": {},
+  "installation_attempts": [],
+  "verification_baseline": {},
+  "baseline_check": {
+    "scope": null,
+    "state": "not_applicable",
+    "changed": [],
+    "unverifiable": []
+  }
+}

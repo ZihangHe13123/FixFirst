@@ -1,0 +1,16 @@
+{
+  "status": "local_candidate_not_formally_frozen",
+  "source_commit": "d7ca5052805410a74b5dda8bc02c0a30125c90f2",
+  "package_version": "0.7.0",
+  "archive": "FixFirst-0.7.0-candidate-d7ca505.zip",
+  "archive_sha256": "7452a000893d7bd6d78463dc6d828085822a9142b167df25343318bf70390748",
+  "archive_bytes": 675274,
+  "allowlist_sha256": "28bc68ca33ff7b4f81bd4d34ec42c6a89963c41889ac2a05d70fbdca666667dc",
+  "gitattributes_sha256": "8b9cb77f9926664b657e07f2889e8cadce37d2ef2c753322db2fff54396a4ade",
+  "default_model_sha256": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3",
+  "file_count": 169,
+  "private_start_sessions_included": false,
+  "full_development_regression_fixtures_included": false,
+  "reproducibility": "git archive of the same commit and allowlist, with repository-declared CRLF for Windows scripts; no working-tree files",
+  "repeat_build_byte_identical": true
+}

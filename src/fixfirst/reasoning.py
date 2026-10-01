@@ -85,6 +85,7 @@ def base_facts(session: Session, active, knowledge=True) -> tuple[list[Fact], di
             "module", "api", "attribute", "kwarg", "usage", "missing_fixture", "extra_warning", "lint_rule",
             "raised_by_library",
             "behavior_symptom",
+            "input_symptom",
         )
     }
     known = domain.facts_for(mentioned) if knowledge else []
@@ -113,7 +114,9 @@ def diagnose(session: Session, knowledge=True, skip=()) -> dict:
     ]
     facts, details = base_facts(session, active, knowledge)
     rules = [r for r in rule_base() if r.rule_id not in skip]
-    base = engine.run(rules, facts, phases=("derive", "diagnose", "heuristic"))
+    from .binding_advice import run_with_contract
+
+    base = run_with_contract(rules, facts, details, phases=("derive", "diagnose", "heuristic"))
     result = {}
     for issue_id, evidence in details.items():
         found = next(
@@ -140,7 +143,17 @@ def apply_classifier(session: Session, active, details) -> list[Fact]:
     facts = []
     for issue in active:
         issue.prediction, issue.prediction_confidence = suggestions.get(issue.issue_id, (None, None))
+        issue.prediction_note = ""
         if issue.prediction and issue.prediction_confidence >= MIN_CONFIDENCE:
+            from .symbol_advice import unsupported_version_claim
+
+            if unsupported_version_claim(issue.prediction, details.get(issue.issue_id, {})):
+                issue.prediction_note = (
+                    "The classifier suggested a version incompatibility, but the observed nearby member "
+                    "does not distinguish a spelling error from an API change. No matching version-history "
+                    "evidence supports adopting that prediction; the cause remains unconfirmed."
+                )
+                continue
             facts.append(
                 Fact(
                     fact_id=f"{issue.issue_id}:model_suggests:{issue.prediction}",
@@ -158,7 +171,6 @@ def apply_classifier(session: Session, active, details) -> list[Fact]:
 def summarise_diagnoses(session: Session, active, facts: list[Fact]):
     for issue in active:
         issue.diagnosis = issue.diagnosis_source = issue.diagnosis_rule = None
-        issue.prediction_note = ""
         derived = next(
             (f for f in facts if f.subject == issue.issue_id and f.predicate == "diagnosis"), None
         )
@@ -177,6 +189,11 @@ def summarise_diagnoses(session: Session, active, facts: list[Fact]):
         elif suspected:
             issue.diagnosis, issue.diagnosis_source = suspected.value, "model"
             issue.diagnosis_rule = suspected.rule_id
+        if (derived or likely) and issue.prediction_note:
+            issue.prediction_note = (
+                "The classifier prediction was withheld because the symbol evidence is ambiguous; "
+                f"{issue.diagnosis_rule} supplies the displayed {issue.diagnosis_source} diagnosis separately."
+            )
         if derived and issue.prediction and issue.prediction != derived.value:
             issue.prediction_note = (
                 f"The classifier suggested {cause_label(issue.prediction)}, but rule "
@@ -381,12 +398,36 @@ def infer_and_plan(session: Session):
         and (i.tool not in ("python_run", "unittest_run") or i.environment_id == "unknown"
              or i.scope == check_scope(session, i.tool))
     ]
-    facts, details = base_facts(session, active)
-    facts += apply_classifier(session, active, details)
-    base = engine.run(rule_base(), facts)
+    observed_active = [i for i in active if i.status in ("open", "awaiting_verification")]
+    facts, details = base_facts(session, observed_active)
+    facts += apply_classifier(session, observed_active, details)
+    from .binding_advice import run_with_contract
+
+    base = run_with_contract(rule_base(), facts, details)
     session.facts = base.facts
-    summarise_diagnoses(session, active, base.facts)
-    by_id = {i.issue_id: i for i in active}
+    summarise_diagnoses(session, observed_active, base.facts)
+    by_id = {i.issue_id: i for i in observed_active}
     actions = rule_actions(session, base, by_id) + verification_actions(session, active, base.facts)
-    session.actions = order_actions(actions, base.facts)
+    from . import observed_operations
+
+    generic_actions = observed_operations.generic_snapshots(actions)
+    from .migration_advice import refine as refine_migrations
+
+    actions = refine_migrations(actions, details)
+    from .binding_advice import refine as refine_bindings
+
+    actions = refine_bindings(actions, details)
+    from .symbol_advice import refine as refine_symbols
+
+    actions = refine_symbols(actions, details, by_id)
+    from .dependency_advice import refine
+
+    actions = refine(session, actions, by_id, base.facts)
+    from .install_feedback import bind_commands
+    from .evidence import project_index
+
+    bind_commands(session, actions, project_index(session)[1])
+    outcomes = observed_operations.refine(session, actions, details, by_id, generic_actions)
+    session.actions = order_actions(actions, session.facts)
+    session.inference_trace = observed_operations.trace(session, by_id, details, outcomes)
     session.goal_status = goal_status(session, active)
