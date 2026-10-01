@@ -246,4 +246,4 @@ def test_wheel_restriction_names_actual_blocker_without_blaming_changed_package(
     assert blocker in action.title and "ff-trial-base" not in action.title
     assert "does not establish a version conflict" in action.explanation
     assert "Change the Python version" not in action.explanation
-    assert not action.command and not action.check
+    assert action.command[3] == "wheel" and not action.check

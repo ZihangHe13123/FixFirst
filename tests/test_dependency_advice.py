@@ -91,7 +91,8 @@ def test_missing_required_dependencies_form_one_constrained_request(tmp_path):
                                "ModuleNotFoundError: No module named 'rich'")
     first = build_view(session)["steps"][0]
     action = next(a for a in session.actions if a.action_id == first["id"])
-    assert set(action.command[5:]) == {"rich>=13", "click<9", "attrs"}
+    assert set(action.command[8:]) == {"rich>=13", "click<9", "attrs"}
+    assert action.command[4] == "--log"
     assert "3 missing" in action.title
 
 
@@ -178,7 +179,7 @@ def test_batch_keeps_both_explicit_extras_for_the_same_package(tmp_path):
     session = recorded_session(tmp_path, "demo[a]\ndemo[b]\nrich\n", [],
                                "ModuleNotFoundError: No module named 'rich'")
     action = next(a for a in session.actions if a.action_id == build_view(session)["steps"][0]["id"])
-    assert set(action.command[5:]) == {"demo[a,b]", "rich"}
+    assert set(action.command[8:]) == {"demo[a,b]", "rich"}
 
 
 def test_yaml_aliases_cannot_expand_the_total_dependency_budget():

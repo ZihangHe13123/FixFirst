@@ -20,13 +20,15 @@ from packaging.utils import canonicalize_name
 
 from .dependency_context import active_requirement, context
 from .models import Run
+from .install_feedback import prepared_wheels, offer_build
 
 MAX_REQUIREMENTS = 100
 MAX_SECONDS = 300
 
 
-def fingerprint(environment, project):
-    value = {"trial_protocol": 4, "context": context(environment, project)["fingerprint"],
+def fingerprint(environment, project, wheels=()):
+    value = {"trial_protocol": 5, "context": context(environment, project)["fingerprint"],
+             "prepared_wheels": list(wheels),
              "files": project.get("files", []), "notes": project.get("notes", []),
              "conda": project.get("conda_declarations", []),
              "python_hints": project.get("python_hints", [])}
@@ -100,7 +102,7 @@ def inputs(environment, project, name, direction=""):
 def latest(session, environment, project, name, direction=""):
     from .runner import environment_id
 
-    identity = fingerprint(environment, project)
+    identity = fingerprint(environment, project, prepared_wheels(session))
     for run in reversed(session.runs):
         if (run.tool != "dependency_resolve" or run.source != "executed"
                 or run.environment_id != environment_id(session.target_python)):
@@ -132,8 +134,9 @@ def collect(session, targets, timeout):
         run.status, run.stderr = "launch_failed", "Take a current environment snapshot first"
         return run
     _, project = project_index(session)
+    wheels, wheel_files = prepared_wheels(session, contents=True)
     result = {"dist": name, "direction": direction, "status": "not_resolved", "checks": [],
-              "context_fingerprint": fingerprint(environment, project),
+              "context_fingerprint": fingerprint(environment, project, wheels), "prepared_wheels": wheels,
               "python": environment.get("python_version"), "application_verified": False,
               "python_hints": project.get("python_hints", [])}
     started = time.monotonic()
@@ -168,7 +171,15 @@ def collect(session, targets, timeout):
             constraint_file.write_text("\n".join(plan["constraints"]) + "\n", encoding="utf-8")
             install = ([uv, "pip", "install", "--no-config", "--python", python] if uv else
                        [python, "-I", "-m", "pip", "install", "--disable-pip-version-check"])
-            step("install declared set", [*install, "--only-binary=:all:", "-r", str(req_file), "-c", str(constraint_file)])
+            links = []
+            if wheel_files:
+                wheel_dir = Path(folder) / "prepared-wheels"
+                wheel_dir.mkdir()
+                for filename, content in wheel_files.items():
+                    (wheel_dir / filename).write_bytes(content)
+                links = ["--find-links", str(wheel_dir)]
+            step("install declared set", [*install, "--only-binary=:all:", *links,
+                                          "-r", str(req_file), "-c", str(constraint_file)])
             check = ([uv, "pip", "check", "--no-config", "--python", python] if uv else [python, "-I", "-m", "pip", "check"])
             step("check installed requirements", check)
             listing = ([uv, "pip", "list", "--no-config", "--python", python, "--format=json"] if uv else
@@ -245,6 +256,7 @@ def advise(session, action, environment, project, name, direction=""):
     if result:
         action.kind, action.check, action.targets, action.command = "manual_fix", None, [], []
         if result.get("status") == "resolved":
+            action.declaration_edits = result["edits"]
             edits = "; ".join(f"{e['source']}: replace {e['before']} with {e['after']}" for e in result["edits"])
             action.title = f"Review the tried {name} requirement change, then install the resolved set"
             action.explanation = (
@@ -285,6 +297,24 @@ def advise(session, action, environment, project, name, direction=""):
                     "or an unsupported Python, and does not justify changing another package's pin. "
                     "Review that dependency's documented source-build or Conda installation route in a separate "
                     "environment, or obtain a supported wheel, before retrying the complete project setup.")
+                blocked_name = canonicalize_name(Requirement(blocked).name)
+                # Keep the blocked package's own declared requirement. A wheel
+                # restriction does not authorize dropping its pin to get past it.
+                declared = [r["requirement"] for r in project.get("declarations", [])
+                            if r.get("name") == blocked_name and r.get("group", "required") == "required"
+                            and not r.get("constraint") and r.get("installer", "pip") == "pip"]
+                build_request = None
+                if len(set(declared)) == 1:
+                    request = Requirement(declared[0])
+                    if not request.url:
+                        request.specifier = SpecifierSet(",".join(filter(None, (
+                            str(request.specifier), str(Requirement(blocked).specifier)))))
+                        build_request = str(request)
+                if build_request and offer_build(session, action, build_request, action.explanation):
+                    action.explanation += (
+                        f" After preparing the wheel, Check again will offer the {name} dependency trial "
+                        "with the new wheel available. The current failed trial is not an installation candidate.")
+                    return trial_run
             for hint in result.get("python_hints", []):
                 action.explanation += f" {hint['source']} mentions Python {hint['version']} (a documentation hint, not a verified environment)."
                 if hint.get("uv_available") is False:

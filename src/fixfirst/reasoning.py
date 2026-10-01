@@ -393,5 +393,9 @@ def infer_and_plan(session: Session):
     from .dependency_advice import refine
 
     actions = refine(session, actions, by_id, base.facts)
+    from .install_feedback import bind_commands
+    from .evidence import project_index
+
+    bind_commands(session, actions, project_index(session)[1])
     session.actions = order_actions(actions, base.facts)
     session.goal_status = goal_status(session, active)
