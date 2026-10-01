@@ -1,0 +1,66 @@
+{
+ "fixfirst": "<scratch>/r6/ff-5d6/bin/fixfirst",
+ "head": "5d661e654bc5acb27d1997b2351c28873125966a",
+ "cases": {
+  "R7-CONFLICTFLOW": {
+   "title": "Counterexample through FixFirst's own commands: a real conflict is read as a conflict",
+   "expect": "Literal following: FixFirst's install command fails with ResolutionImpossible (requests 2.31.0 needs urllib3>=1.21.1). FAIL on an unchanged repeat or if the next step calls it a missing wheel, a source build or a system tool problem. PASS only if literal following reaches passing tests (e.g. an exact edit of one pin from a verified trial). REVIEW if it names the pair but leaves the choice to a human.",
+   "notes": [],
+   "verdict": "FAIL",
+   "why": "round 2: the step is repeated unchanged after its command failed",
+   "rounds": [
+    {
+     "round": 1,
+     "title": "Install the declared dependency set together (2 missing)",
+     "command": "<runs>/baseline-5d661e6-flow/R7-CONFLICTFLOW/venv/bin/python -m pip install --only-binary=:all: requests==2.31.0 urllib3==1.20",
+     "claim": "install the declared dependency set together (2 missing) several required dependencies are missing. install the declared set in one resolver operation, preserving its version requirements, instead of installing one import per round. read any installation failure before retrying; a failed batch may leave every dependency missing. optional groups, direct references and unsupported declarations are not included.",
+     "action": "command",
+     "exit": 1,
+     "output_tail": "Collecting requests==2.31.0\n  Using cached requests-2.31.0-py3-none-any.whl.metadata (4.6 kB)\nCollecting urllib3==1.20\n  Using cached urllib3-1.20-py2.py3-none-any.whl.metadata (29 kB)\nCollecting charset-normalizer<4,>=2 (from requests==2.31.0)\n  Using cached charset_normalizer-3.5.2-cp312-cp312-macosx_10_13_universal2.whl.metadata (46 kB)\nCollecting idna<4,>=2.5 (from requests==2.31.0)\n  Using cached idna-3.20-py3-none-any.whl.metadata (7.2 kB)\nINFO: pip is looking at multiple versions of requests to determine which version is compatible with other requirements. This could take a while.\n\nThe conflict is caused by:\n    The user requested urllib3==1.20\n    requests 2.31.0 depends on urllib3<3 and >=1.21.1\n\nAdditionally, some packages in these conflicts have no matching distributions available for your environment:\n    urllib3\n\nTo fix this you could try to:\n1. loosen the range of package versions you've specified\n2. remove package versions to allow pip to attempt to solve the dependency conflict\n\nERROR: Cannot install requests==2.31.0 and urllib3==1.20 because these package versions have conflicting dependencies.\nERROR: ResolutionImpossible: for help visit https://pip.pypa.io/en/latest/topics/dependency-resolution/#dealing-with-dependency-conflicts\n"
+    },
+    {
+     "round": 2,
+     "title": "Install the declared dependency set together (2 missing)",
+     "command": "<runs>/baseline-5d661e6-flow/R7-CONFLICTFLOW/venv/bin/python -m pip install --only-binary=:all: requests==2.31.0 urllib3==1.20",
+     "claim": "install the declared dependency set together (2 missing) several required dependencies are missing. install the declared set in one resolver operation, preserving its version requirements, instead of installing one import per round. read any installation failure before retrying; a failed batch may leave every dependency missing. optional groups, direct references and unsupported declarations are not included.",
+     "action": "stopped: unchanged repeat"
+    }
+   ],
+   "outcome": "repeat",
+   "tests_pass": false,
+   "declaration_changes": {},
+   "fixfirst_edits": [],
+   "tests_tail": "<runs>/baseline-5d661e6-flow/R7-CONFLICTFLOW/project/test_req.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n<home>/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntest_req.py:1: in <module>\n    import requests\nE   ModuleNotFoundError: No module named 'requests'\n=========================== short test summary info ============================\nERROR test_req.py\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 0.03s\n"
+  },
+  "R7-LEGACYFLOW": {
+   "title": "Counterexample through the source-build route: a legacy setup.py failure ends the route honestly",
+   "expect": "Literal following: anyjson 0.3.3 has no wheel; if FixFirst proposes building it (e.g. pip wheel into a session wheelhouse), the build fails with 'use_2to3 is invalid'. FAIL on an unchanged repeat (including repeating the failed build), or if a later step calls it a version conflict or routes to another Python. REVIEW otherwise (no automatic PASS expected: the fix needs an older setuptools in the build environment or replacing the package, both human decisions).",
+   "notes": [],
+   "verdict": "FAIL",
+   "why": "round 2: the step is repeated unchanged after its command failed",
+   "rounds": [
+    {
+     "round": 1,
+     "title": "Install the declared dependency that provides anyjson",
+     "command": "<runs>/baseline-5d661e6-flow/R7-LEGACYFLOW/venv/bin/python -m pip install --only-binary=:all: anyjson==0.3.3",
+     "claim": "install the declared dependency that provides anyjson requirements.txt:1 declares it, but the target interpreter cannot import anyjson. install it into this interpreter, or install all of the project's declared dependencies at once. fixfirst does not install anything itself. recorded constraints: requirements.txt:1 requires anyjson==0.3.3. this command requests wheels and lets the resolver check the requirements; a satisfiable range is not proof that the application works. check pip output, run pip check, and rerun the original failing check.",
+     "action": "command",
+     "exit": 1,
+     "output_tail": "ERROR: Could not find a version that satisfies the requirement anyjson==0.3.3 (from versions: none)\nERROR: No matching distribution found for anyjson==0.3.3\n"
+    },
+    {
+     "round": 2,
+     "title": "Install the declared dependency that provides anyjson",
+     "command": "<runs>/baseline-5d661e6-flow/R7-LEGACYFLOW/venv/bin/python -m pip install --only-binary=:all: anyjson==0.3.3",
+     "claim": "install the declared dependency that provides anyjson requirements.txt:1 declares it, but the target interpreter cannot import anyjson. install it into this interpreter, or install all of the project's declared dependencies at once. fixfirst does not install anything itself. recorded constraints: requirements.txt:1 requires anyjson==0.3.3. this command requests wheels and lets the resolver check the requirements; a satisfiable range is not proof that the application works. check pip output, run pip check, and rerun the original failing check.",
+     "action": "stopped: unchanged repeat"
+    }
+   ],
+   "outcome": "repeat",
+   "tests_pass": false,
+   "declaration_changes": {},
+   "fixfirst_edits": [],
+   "tests_tail": "<runs>/baseline-5d661e6-flow/R7-LEGACYFLOW/project/test_any.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n<home>/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntest_any.py:1: in <module>\n    import anyjson\nE   ModuleNotFoundError: No module named 'anyjson'\n=========================== short test summary info ============================\nERROR test_any.py\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 0.03s\n"
+  }
+ }
+}
