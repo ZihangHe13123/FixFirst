@@ -19,6 +19,30 @@ def test_pytest_summary_line_drops_the_timing():
     assert heldout.outcome(first) == heldout.outcome(second)
 
 
+def test_pytest_summary_line_reads_output_a_project_coloured():
+    """A project with `addopts = --color=yes` must not look like two different runs.
+
+    pytest colours every piece of the banner, so `=+ ... =+` never matched it and
+    the fallback handed back a line that still carried the timing; two runs of an
+    unchanged project then compared as different and the project was dropped.
+    """
+    def run(counts: str, seconds: str) -> str:
+        # The shape pytest really emits with --color=yes, escape codes included.
+        return (
+            "\x1b[1m============================= test session starts =============================\x1b[0m\n"
+            f"\x1b[31m======================== \x1b[31m{counts}\x1b[0m\x1b[31m in {seconds}s\x1b[0m"
+            "\x1b[31m ========================\x1b[0m\n"
+        )
+
+    assert heldout.summary_line(run("\x1b[1m111 passed", "2.25")) == "111 passed"
+    assert heldout.summary_line(run("\x1b[1m7 failed\x1b[0m, \x1b[32m124 passed", "2.02")) == (
+        "7 failed, 124 passed"
+    )
+    slow = {"exit_code": 0, "summary": heldout.summary_line(run("\x1b[1m111 passed", "2.25"))}
+    quick = {"exit_code": 0, "summary": heldout.summary_line(run("\x1b[1m111 passed", "1.67"))}
+    assert heldout.outcome(slow) == heldout.outcome(quick)
+
+
 def test_home_folders_are_written_as_home():
     home = Path.home()
     text = f"{home / 'p' / 'x.py'}:1 and pkg @ {(home / 'p').as_uri()}"
