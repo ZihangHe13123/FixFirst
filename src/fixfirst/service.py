@@ -211,7 +211,8 @@ def ingest(session: Session, runs: list[Run]):
                     integrity.scope_of(session)):
                 copy.note += (" (against the tests and settings accepted as the new baseline on "
                               + baseline["recorded_at"] + ")")
-        elif old.status != "resolved" and old.tool in updated_tools:
+        elif (old.status != "resolved" and old.tool in updated_tools
+              and (old.tool != "pip_install" or matching)):
             # Only a check of the same tool can fail to observe an issue; a round that ran
             # other checks (a release search, an environment snapshot) leaves it as it was.
             copy.status = "not_observed" if old.status != "awaiting_verification" else old.status
@@ -283,6 +284,21 @@ def scan(session, checks=None, timeout=DEFAULT_TIMEOUT, targets=None):
         runs.append(run)
         if run.status == "cancelled":
             break
+    from .install_feedback import collect_feedback
+    from .evidence import project_index
+
+    # Read only logs bound to suggested manual commands. Environment and project
+    # checks above have refreshed the context; imported output cannot verify a goal.
+    project_run = next((r for r in reversed(runs) if r.tool == "project"), None)
+    if project_run:
+        import json
+        try:
+            project = json.loads(project_run.stdout)
+        except ValueError:
+            project = {}
+    else:
+        _, project = project_index(session)
+    runs.extend(collect_feedback(session, project))
     integrity.after_checks(session, before)
     ingest(session, runs)
 

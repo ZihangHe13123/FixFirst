@@ -160,6 +160,8 @@ class Action(Record):
     rule_ids: list[str] = Field(default_factory=list)
     # A command the user can run themselves (argv); FixFirst never runs it.
     command: list[str] = Field(default_factory=list)
+    # Exact declaration changes preceding a manually applied installation candidate.
+    declaration_edits: list[dict] = Field(default_factory=list)
 
 
 class Session(Record):
@@ -184,6 +186,8 @@ class Session(Record):
     goal_status: Literal["unknown", "blocked", "achieved"] = "unknown"
     stopped: bool = False
     environment: dict = Field(default_factory=dict)
+    # Manually executed pip commands and their bounded, non-verifying feedback.
+    installation_attempts: list[dict] = Field(default_factory=list)
     # The tests and settings a verification is measured against, and the latest comparison (integrity.py).
     verification_baseline: dict = Field(default_factory=dict)
     baseline_check: dict = Field(default_factory=dict)

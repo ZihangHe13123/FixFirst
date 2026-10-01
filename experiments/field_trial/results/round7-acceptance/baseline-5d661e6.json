@@ -1,0 +1,244 @@
+{
+ "fixfirst": "<scratch>/r6/ff-5d6/bin/fixfirst",
+ "head": "5d661e654bc5acb27d1997b2351c28873125966a",
+ "cases": {
+  "R7-A": {
+   "title": "C1 from its original initial state: a failed batch install is read, not repeated",
+   "expect": "Initial state = the first batch's C1: the pinned install fails building multidict 6.0.4, the venv is empty. Follow FixFirst literally. FAIL if a step is repeated unchanged after its command failed; if Flask-Mail 0.9.1 or langdetect 1.0.9 (sdist only, pure Python, both build) is called a version conflict or a Python problem; or if a command installs the declared packages with their pins removed. PASS needs: unittest suite passes; reached only by commands, exact edits and FixFirst actions; Flask-Mail==0.9.1 and langdetect==1.0.9 still declared; every other declaration change was an exact FixFirst edit. Reference (operator check, not given to the tool): changing only multidict to a release with a cp312 wheel and letting pip build the two pure-Python sdists makes all 4 tests pass. Anything else is REVIEW for the manual M1/M2/H protocol.",
+   "notes": [
+    "README install -> exit 1 (expected to fail as in the first batch)"
+   ],
+   "verdict": "FAIL",
+   "why": "round 2: the step is repeated unchanged after its command failed",
+   "rounds": [
+    {
+     "round": 1,
+     "title": "Install the declared dependency set together (54 missing)",
+     "command": "<runs>/baseline-5d661e6/R7-A/venv/bin/python -m pip install --only-binary=:all: Babel==2.13.1 Flask-HTTPAuth==4.8.0 Flask-Login==0.6.3 Flask-Mail==0.9.1 Flask-Migrate==4.0.5 Flask-Moment==1.0.5 Flask-SQLAlchemy==3.1.1 Flask-WTF==1.2.1 Flask==3.0.0 Jinja2==3.1.2 Mako==1.3.0 MarkupSafe==2.1.3 PyJWT==2.8.0 PySocks==1.7.1 Pygments==2.17.1 SQLAlchemy==2.0.23 WTForms==3.1.1 Werkzeug==3.0.1 aiosmtpd==1.4.4.post2 alembic==1.12.1 atpublic==4.0 attrs==23.1.0 blinker==1.7.0 certifi==2023.11.17 charset-normalizer==3.3.2 click==8.1.7 defusedxml==0.7.1 dnspython==2.4.2 elastic-transport==8.10.0 elasticsearch==8.11.0 email-validator==2.1.0.post1 flask-babel==4.0.0 greenlet==3.0.1 gunicorn==21.2.0 httpie==3.2.2 idna==3.4 itsdangerous==2.1.2 langdetect==1.0.9 markdown-it-py==3.0.0 mdurl==0.1.2 multidict==6.0.4 packaging==23.2 psycopg2-binary==2.9.9 python-dotenv==1.0.0 pytz==2023.3.post1 redis==5.0.1 requests-toolbelt==1.0.0 requests==2.31.0 rich==13.7.0 rq==1.15.1 setuptools==68.2.2 six==1.16.0 typing_extensions==4.8.0 urllib3==2.1.0",
+     "claim": "install the declared dependency set together (54 missing) several required dependencies are missing. install the declared set in one resolver operation, preserving its version requirements, instead of installing one import per round. read any installation failure before retrying; a failed batch may leave every dependency missing. optional groups, direct references and unsupported declarations are not included.",
+     "action": "command",
+     "exit": 1,
+     "output_tail": "Collecting Babel==2.13.1\n  Using cached Babel-2.13.1-py3-none-any.whl.metadata (1.6 kB)\nCollecting Flask-HTTPAuth==4.8.0\n  Using cached Flask_HTTPAuth-4.8.0-py3-none-any.whl.metadata (2.9 kB)\nCollecting Flask-Login==0.6.3\n  Using cached Flask_Login-0.6.3-py3-none-any.whl.metadata (5.8 kB)\nERROR: Could not find a version that satisfies the requirement Flask-Mail==0.9.1 (from versions: 0.10.0)\nERROR: No matching distribution found for Flask-Mail==0.9.1\n"
+    },
+    {
+     "round": 2,
+     "title": "Install the declared dependency set together (54 missing)",
+     "command": "<runs>/baseline-5d661e6/R7-A/venv/bin/python -m pip install --only-binary=:all: Babel==2.13.1 Flask-HTTPAuth==4.8.0 Flask-Login==0.6.3 Flask-Mail==0.9.1 Flask-Migrate==4.0.5 Flask-Moment==1.0.5 Flask-SQLAlchemy==3.1.1 Flask-WTF==1.2.1 Flask==3.0.0 Jinja2==3.1.2 Mako==1.3.0 MarkupSafe==2.1.3 PyJWT==2.8.0 PySocks==1.7.1 Pygments==2.17.1 SQLAlchemy==2.0.23 WTForms==3.1.1 Werkzeug==3.0.1 aiosmtpd==1.4.4.post2 alembic==1.12.1 atpublic==4.0 attrs==23.1.0 blinker==1.7.0 certifi==2023.11.17 charset-normalizer==3.3.2 click==8.1.7 defusedxml==0.7.1 dnspython==2.4.2 elastic-transport==8.10.0 elasticsearch==8.11.0 email-validator==2.1.0.post1 flask-babel==4.0.0 greenlet==3.0.1 gunicorn==21.2.0 httpie==3.2.2 idna==3.4 itsdangerous==2.1.2 langdetect==1.0.9 markdown-it-py==3.0.0 mdurl==0.1.2 multidict==6.0.4 packaging==23.2 psycopg2-binary==2.9.9 python-dotenv==1.0.0 pytz==2023.3.post1 redis==5.0.1 requests-toolbelt==1.0.0 requests==2.31.0 rich==13.7.0 rq==1.15.1 setuptools==68.2.2 six==1.16.0 typing_extensions==4.8.0 urllib3==2.1.0",
+     "claim": "install the declared dependency set together (54 missing) several required dependencies are missing. install the declared set in one resolver operation, preserving its version requirements, instead of installing one import per round. read any installation failure before retrying; a failed batch may leave every dependency missing. optional groups, direct references and unsupported declarations are not included.",
+     "action": "stopped: unchanged repeat"
+    }
+   ],
+   "outcome": "repeat",
+   "tests_pass": false,
+   "declaration_changes": {},
+   "fixfirst_edits": [],
+   "tests_tail": "Traceback (most recent call last):\n  File \"<runs>/baseline-5d661e6/R7-A/project/tests.py\", line 4, in <module>\n    from app import create_app, db\n  File \"<runs>/baseline-5d661e6/R7-A/project/app/__init__.py\", line 4, in <module>\n    from flask import Flask, request, current_app\nModuleNotFoundError: No module named 'flask'\n"
+  },
+  "R7-SDIST": {
+   "title": "An sdist-only pure-Python pin is a missing wheel, not a version conflict",
+   "expect": "Flask-Mail 0.9.1 exists only as an sdist (pure Python; pip builds it into a py3-none-any wheel). FAIL on an unchanged repeat after a failed command, on version-conflict or Python-change claims about it, or on a command that drops its pin. PASS: tests pass by literal following with Flask-Mail==0.9.1 still declared and installed.",
+   "notes": [],
+   "verdict": "FAIL",
+   "why": "round 2: the step is repeated unchanged after its command failed",
+   "rounds": [
+    {
+     "round": 1,
+     "title": "Install the declared dependency set together (2 missing)",
+     "command": "<runs>/baseline-5d661e6/R7-SDIST/venv/bin/python -m pip install --only-binary=:all: Flask-Mail==0.9.1 Flask==3.0.0",
+     "claim": "install the declared dependency set together (2 missing) several required dependencies are missing. install the declared set in one resolver operation, preserving its version requirements, instead of installing one import per round. read any installation failure before retrying; a failed batch may leave every dependency missing. optional groups, direct references and unsupported declarations are not included.",
+     "action": "command",
+     "exit": 1,
+     "output_tail": "ERROR: Could not find a version that satisfies the requirement Flask-Mail==0.9.1 (from versions: 0.10.0)\nERROR: No matching distribution found for Flask-Mail==0.9.1\n"
+    },
+    {
+     "round": 2,
+     "title": "Install the declared dependency set together (2 missing)",
+     "command": "<runs>/baseline-5d661e6/R7-SDIST/venv/bin/python -m pip install --only-binary=:all: Flask-Mail==0.9.1 Flask==3.0.0",
+     "claim": "install the declared dependency set together (2 missing) several required dependencies are missing. install the declared set in one resolver operation, preserving its version requirements, instead of installing one import per round. read any installation failure before retrying; a failed batch may leave every dependency missing. optional groups, direct references and unsupported declarations are not included.",
+     "action": "stopped: unchanged repeat"
+    }
+   ],
+   "outcome": "repeat",
+   "tests_pass": false,
+   "declaration_changes": {},
+   "fixfirst_edits": [],
+   "tests_tail": " '<runs>/baseline-5d661e6/R7-SDIST/project/test_app.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n<home>/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntest_app.py:1: in <module>\n    import flask_mail\nE   ModuleNotFoundError: No module named 'flask_mail'\n=========================== short test summary info ============================\nERROR test_app.py\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 0.04s\n"
+  },
+  "R7-NOTFOUND": {
+   "title": "Counterexample: a name that does not exist is not an sdist-only package",
+   "expect": "Under --only-binary pip prints the same 'from versions: none' for an sdist-only package and for a missing one (checked with docopt 0.6.2). FAIL if FixFirst proposes a source build/wheelhouse for this name or calls it sdist-only, or repeats unchanged after the failure. PASS if it says the distribution was not found (name or index) without a build route. Otherwise REVIEW.",
+   "notes": [],
+   "verdict": "FAIL",
+   "why": "round 2: the step is repeated unchanged after its command failed",
+   "rounds": [
+    {
+     "round": 1,
+     "title": "Install the declared dependency set together (2 missing)",
+     "command": "<runs>/baseline-5d661e6/R7-NOTFOUND/venv/bin/python -m pip install --only-binary=:all: fixfirst-nonexistent-package-xyz==1.0 six==1.16.0",
+     "claim": "install the declared dependency set together (2 missing) several required dependencies are missing. install the declared set in one resolver operation, preserving its version requirements, instead of installing one import per round. read any installation failure before retrying; a failed batch may leave every dependency missing. optional groups, direct references and unsupported declarations are not included.",
+     "action": "command",
+     "exit": 1,
+     "output_tail": "ERROR: Could not find a version that satisfies the requirement fixfirst-nonexistent-package-xyz==1.0 (from versions: none)\nERROR: No matching distribution found for fixfirst-nonexistent-package-xyz==1.0\n"
+    },
+    {
+     "round": 2,
+     "title": "Install the declared dependency set together (2 missing)",
+     "command": "<runs>/baseline-5d661e6/R7-NOTFOUND/venv/bin/python -m pip install --only-binary=:all: fixfirst-nonexistent-package-xyz==1.0 six==1.16.0",
+     "claim": "install the declared dependency set together (2 missing) several required dependencies are missing. install the declared set in one resolver operation, preserving its version requirements, instead of installing one import per round. read any installation failure before retrying; a failed batch may leave every dependency missing. optional groups, direct references and unsupported declarations are not included.",
+     "action": "stopped: unchanged repeat"
+    }
+   ],
+   "outcome": "repeat",
+   "tests_pass": false,
+   "declaration_changes": {},
+   "fixfirst_edits": [],
+   "tests_tail": "test module '<runs>/baseline-5d661e6/R7-NOTFOUND/project/test_six.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n<home>/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntest_six.py:1: in <module>\n    import six\nE   ModuleNotFoundError: No module named 'six'\n=========================== short test summary info ============================\nERROR test_six.py\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 0.03s\n"
+  },
+  "R7-PGCONFIG": {
+   "title": "A missing system build tool (pg_config) is not a Python-version problem",
+   "expect": "The user's README install fails: 'pg_config executable not found' (psycopg2, unpinned, needs the PostgreSQL client tools). The log is imported. FAIL if the first step routes to an older/other Python or a version change, or does not mention pg_config / PostgreSQL / libpq. PASS if it names the missing tool and gives an executable route (a command, or an explicit, explained declaration change such as psycopg2 -> psycopg2-binary). REVIEW if it names the tool without a route.",
+   "notes": [
+    "README install -> exit 1; log imported"
+   ],
+   "verdict": "FAIL",
+   "why": "a missing pg_config is routed to a Python or version change",
+   "step": {
+    "title": "Review the failed installation of psycopg2 before retrying the dependency set",
+    "command": null
+   },
+   "claim": "review the failed installation of psycopg2 before retrying the dependency set the imported pip log records an installation/build failure for psycopg2: error: failed to build 'psycopg2' when getting requirements to build wheel. requested requirement: psycopg2. the current declaration is requirements.txt:1: psycopg2; the selected python is 3.12.13. first review and change that fixed requirement to a release compatible with the selected python and the project's api usage, or create a separate environment using the python version supported by the fixed dependencies. keep the remaining requirements. then install the complete declared set with python -m pip install --only-binary=:all: -r requirements.txt if that is its source, and rerun pip check and the original failing check. do not install a newer package while leaving a contradictory pin in the project. an imported log may come from another environment; it does not prove every release is incompatible with the current interpreter. an automatic dependency trial is unavailable: the named distribution must have an active, versioned, required project declaration."
+  },
+  "R7-PGFLOW": {
+   "title": "Following FixFirst into a source build of psycopg2 ends at pg_config, not at Python",
+   "expect": "Same project, but nothing imported: FixFirst's own commands are followed. psycopg2 has no wheel (sdist only) and its build needs pg_config, so a source-build route must fail. FAIL on an unchanged repeat, on a Python-change route after the pg_config failure, or on repeating the failed source build. PASS if tests pass by literal following with a stated, explicit psycopg2 route. Else REVIEW.",
+   "notes": [],
+   "verdict": "FAIL",
+   "why": "round 2: the step is repeated unchanged after its command failed",
+   "rounds": [
+    {
+     "round": 1,
+     "title": "Install the declared dependency that provides psycopg2",
+     "command": "<runs>/baseline-5d661e6/R7-PGFLOW/venv/bin/python -m pip install --only-binary=:all: psycopg2",
+     "claim": "install the declared dependency that provides psycopg2 requirements.txt:1 declares it, but the target interpreter cannot import psycopg2. install it into this interpreter, or install all of the project's declared dependencies at once. fixfirst does not install anything itself. this command requests wheels and lets the resolver check the requirements; a satisfiable range is not proof that the application works. check pip output, run pip check, and rerun the original failing check.",
+     "action": "command",
+     "exit": 1,
+     "output_tail": "ERROR: Could not find a version that satisfies the requirement psycopg2 (from versions: none)\nERROR: No matching distribution found for psycopg2\n"
+    },
+    {
+     "round": 2,
+     "title": "Install the declared dependency that provides psycopg2",
+     "command": "<runs>/baseline-5d661e6/R7-PGFLOW/venv/bin/python -m pip install --only-binary=:all: psycopg2",
+     "claim": "install the declared dependency that provides psycopg2 requirements.txt:1 declares it, but the target interpreter cannot import psycopg2. install it into this interpreter, or install all of the project's declared dependencies at once. fixfirst does not install anything itself. this command requests wheels and lets the resolver check the requirements; a satisfiable range is not proof that the application works. check pip output, run pip check, and rerun the original failing check.",
+     "action": "stopped: unchanged repeat"
+    }
+   ],
+   "outcome": "repeat",
+   "tests_pass": false,
+   "declaration_changes": {},
+   "fixfirst_edits": [],
+   "tests_tail": "module '<runs>/baseline-5d661e6/R7-PGFLOW/project/test_db.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n<home>/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntest_db.py:1: in <module>\n    import psycopg2\nE   ModuleNotFoundError: No module named 'psycopg2'\n=========================== short test summary info ============================\nERROR test_db.py\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 0.03s\n"
+  },
+  "R7-PYTEST": {
+   "title": "A missing test runner still leads to installing the project's declared set",
+   "expect": "The venv is empty; pytest is declared only in requirements/dev.txt, which includes prod.txt with -r (the C2 layout). FAIL if the first step is a generic 'check that the tool is available' without a command. PASS if literal following installs the declared set (pytest==8.3.3, six==1.16.0) and the tests pass. Otherwise REVIEW.",
+   "notes": [],
+   "verdict": "FAIL",
+   "why": "the first step is generic: no command, exact edit or FixFirst action",
+   "rounds": [
+    {
+     "round": 1,
+     "title": "Check that the tool is available and ran to completion",
+     "command": null,
+     "claim": "check that the tool is available and ran to completion this check produced no valid result. confirm the tool is installed in the target interpreter and read its original output before running it again.",
+     "action": "stopped: no command, exact edit or FixFirst action"
+    }
+   ],
+   "outcome": "needs human",
+   "tests_pass": false,
+   "declaration_changes": {},
+   "fixfirst_edits": [],
+   "tests_tail": "<runs>/baseline-5d661e6/R7-PYTEST/venv/bin/python: No module named pytest\n"
+  },
+  "R7-SUBST": {
+   "title": "A psycopg2-binary installed in place of the declared psycopg2 is explained, not ignored",
+   "expect": "The environment uses psycopg2-binary (the operator's C2 substitution) while requirements.txt declares psycopg2; SQLAlchemy 1.1.9 fails on Python 3.12 (MutableMapping). FAIL if a dependency trial or step stops at psycopg2 without mentioning psycopg2-binary / the substitution. PASS if literal following reaches passing tests and every psycopg2 declaration change was an explicit, explained FixFirst edit. REVIEW if the substitution is explained but a human must choose.",
+   "notes": [
+    "setup pip install psycopg2-binary SQLAlchemy==1.1.9 -> exit 0"
+   ],
+   "verdict": "FAIL",
+   "why": "steps never mention psycopg2-binary although it replaces the declared psycopg2",
+   "rounds": [
+    {
+     "round": 1,
+     "title": "Resolve the sqlalchemy version constraints before changing it",
+     "command": null,
+     "claim": "resolve the sqlalchemy version constraints before changing it the proposed sqlalchemy>1.1.9 conflicts with the recorded requirements: requirements.txt:2 requires sqlalchemy==1.1.9. adjust the conflicting project pin or dependent package together, then resolve the complete dependency set in a separate environment. if the fixed legacy versions must remain, use a separate python environment compatible with their documented requirements. keeping this fixed requirement while changing only sqlalchemy cannot satisfy both requirements; a coordinated declaration and dependency update may work. use try a dependency set (cli: fixfirst run session-734849fa9dc7 upgrade-sqlalchemy) to propose replacing only the sqlalchemy version constraint. this explicitly tries a changed declaration in a temporary environment; it does not accept or edit that declaration. the other required project constraints stay in force, declared dependencies resolve together, and unrelated installed packages stay at their current versions. downloads wheels; at most 5 minutes. installation success is separate from running the original program/tests. the trial does not change your project or environment. the trial ignores pip/uv configuration files; environment index settings still apply.",
+     "action": "fixfirst run upgrade-sqlalchemy",
+     "exit": 0,
+     "output_tail": " result does not establish a version conflict or an unsupported Python, and does not justify changing another package's pin. Review that dependency's documented source-build or Conda installation route in a separate environment, or obtain a supported wheel, before retrying the complete project setup. Resolver output: warning: Requirements file `<tmp>/fixfirst-resolve-7mz04265/constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: <tmp>/fixfirst-resolve-7mz04265/env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because all versions of psycopg2 have no usable wheels and you require\n      psycopg2, we can conclude that your requirements are unsatisfiable.\n\nhint: Wheels are required for `psycopg2` because building from source is disabled for all packages (i.e., with `--no-build`) No declaration changes or installation command have been verified by this trial. Keep the original requirements until a reviewed alternative is available; do not repeat the same unresolved trial. The trial ignores pip/uv configuration files (environment index settings still apply); a configured private index or mirror may give a different result.\nCheck again: fixfirst scan session-734849fa9dc7\n\nReport: <runs>/baseline-5d661e6/R7-SUBST/store/session-734849fa9dc7/report.html\n"
+    },
+    {
+     "round": 2,
+     "title": "The wheel-only trial stopped at psycopg2",
+     "command": null,
+     "claim": "the wheel-only trial stopped at psycopg2 the temporary trial did not produce an installation candidate: the wheel-only trial cannot install psycopg2. the immediate blocker is psycopg2, which has no usable wheel in the resolver output. fixfirst's trial disables source builds. this result does not establish a version conflict or an unsupported python, and does not justify changing another package's pin. review that dependency's documented source-build or conda installation route in a separate environment, or obtain a supported wheel, before retrying the complete project setup. ",
+     "action": "stopped: no command, exact edit or FixFirst action"
+    }
+   ],
+   "outcome": "needs human",
+   "tests_pass": false,
+   "declaration_changes": {},
+   "fixfirst_edits": [],
+   "tests_tail": "qltypes.py:17: in <module>\n    from . import elements\n../venv/lib/python3.12/site-packages/sqlalchemy/sql/elements.py:16: in <module>\n    from . import type_api\n../venv/lib/python3.12/site-packages/sqlalchemy/sql/type_api.py:16: in <module>\n    from .base import SchemaEventTarget\n../venv/lib/python3.12/site-packages/sqlalchemy/sql/base.py:49: in <module>\n    class _DialectArgView(collections.MutableMapping):\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^\nE   AttributeError: module 'collections' has no attribute 'MutableMapping'\n=========================== short test summary info ============================\nERROR test_app.py - AttributeError: module 'collections' has no attribute 'Mu...\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 0.06s\n"
+  },
+  "R7-CONFLICT": {
+   "title": "Counterexample: a genuine version conflict stays a version conflict",
+   "expect": "requests 2.31.0 requires urllib3>=1.21.1,<3; the README install fails with ResolutionImpossible and the log is imported. FAIL if the first step calls it a missing wheel, a source build or a system tool problem. PASS if it names the conflicting pair (requests and urllib3). Otherwise REVIEW.",
+   "notes": [
+    "README install -> exit 1; log imported"
+   ],
+   "verdict": "REVIEW",
+   "why": "read the step by hand",
+   "step": {
+    "title": "Install the declared dependency set together (2 missing)",
+    "command": "<runs>/baseline-5d661e6/R7-CONFLICT/venv/bin/python -m pip install --only-binary=:all: requests==2.31.0 urllib3==1.20"
+   },
+   "claim": "install the declared dependency set together (2 missing) several required dependencies are missing. install the declared set in one resolver operation, preserving its version requirements, instead of installing one import per round. read any installation failure before retrying; a failed batch may leave every dependency missing. optional groups, direct references and unsupported declarations are not included."
+  },
+  "R7-LEGACY": {
+   "title": "Counterexample: a pure-Python sdist can still fail to build (legacy setup.py)",
+   "expect": "anyjson 0.3.3 is pure Python and sdist only, but its setup.py uses use_2to3, which current setuptools rejects ('use_2to3 is invalid'), so 'pure Python sdist => buildable' is false. The README install log is imported. FAIL if the first step calls it a version conflict or routes to an older Python (build isolation fetches the newest setuptools for any Python). PASS if it names the build failure (setup.py / use_2to3 / setuptools) with an executable route. Otherwise REVIEW.",
+   "notes": [
+    "README install -> exit 1; log imported"
+   ],
+   "verdict": "FAIL",
+   "why": "a legacy setup.py build failure is called a conflict or a Python problem",
+   "step": {
+    "title": "Review the failed installation of anyjson before retrying the dependency set",
+    "command": null
+   },
+   "claim": "review the failed installation of anyjson before retrying the dependency set the imported pip log records an installation/build failure for anyjson: error: failed to build 'anyjson' when getting requirements to build wheel. requested requirement: anyjson==0.3.3. the current declaration is requirements.txt:1: anyjson==0.3.3; the selected python is 3.12.13. first review and change that fixed requirement to a release compatible with the selected python and the project's api usage, or create a separate environment using the python version supported by the fixed dependencies. keep the remaining requirements. then install the complete declared set with python -m pip install --only-binary=:all: -r requirements.txt if that is its source, and rerun pip check and the original failing check. do not install a newer package while leaving a contradictory pin in the project. an imported log may come from another environment; it does not prove every release is incompatible with the current interpreter. use try a dependency set (cli: fixfirst run session-7617622bf76e review-install-anyjson) to propose replacing only the anyjson version constraint. this explicitly tries a changed declaration in a temporary environment; it does not accept or edit that declaration. the other required project constraints stay in force, declared dependencies resolve together, and unrelated installed packages stay at their current versions. downloads wheels; at most 5 minutes. installation success is separate from "
+  },
+  "R7-STALE": {
+   "title": "After the user changes the declarations, an old failure log is not reported as current",
+   "expect": "Round 1 follows FixFirst's first command (which may fail at Flask-Mail). Then the user (scripted, not a fix judgement) removes Flask-Mail from requirements.txt and installs six==1.16.0. The next scan must be done (tests pass) and no step may cite the Flask-Mail failure as current. FAIL otherwise.",
+   "notes": [
+    "scripted user action: removed Flask-Mail from requirements.txt, installed six==1.16.0"
+   ],
+   "verdict": "PASS",
+   "why": "the old failure is not reported once the declarations changed",
+   "rounds": [
+    {
+     "round": 1,
+     "title": "Install the declared dependency set together (2 missing)",
+     "command": "<runs>/baseline-5d661e6/R7-STALE/venv/bin/python -m pip install --only-binary=:all: Flask-Mail==0.9.1 six==1.16.0",
+     "claim": "install the declared dependency set together (2 missing) several required dependencies are missing. install the declared set in one resolver operation, preserving its version requirements, instead of installing one import per round. read any installation failure before retrying; a failed batch may leave every dependency missing. optional groups, direct references and unsupported declarations are not included.",
+     "action": "command",
+     "exit": 1,
+     "output_tail": "ERROR: Could not find a version that satisfies the requirement Flask-Mail==0.9.1 (from versions: 0.10.0)\nERROR: No matching distribution found for Flask-Mail==0.9.1\n"
+    }
+   ],
+   "status": "done"
+  }
+ }
+}

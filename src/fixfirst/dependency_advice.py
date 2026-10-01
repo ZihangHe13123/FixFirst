@@ -8,6 +8,7 @@ import re
 
 from .dependency_context import bounded_adjustment, combined_specifier, context, contradicts, requirements_for
 from .models import Action
+from .install_feedback import declarations_key, has_prepared_wheel, offer_build
 
 
 def refine(session, actions, by_id, facts):
@@ -54,7 +55,8 @@ def refine(session, actions, by_id, facts):
             first.reason_refs = sorted(set(first.reason_refs + action.reason_refs))
         else:
             excluded_searches[name] = action
-            trials[action.action_id] = (name, "")
+            # An impossible downgrade under a pin supplies no evidence for an
+            # upgrade. Old consumers may omit upper bounds yet break at runtime.
     if excluded_searches:
         actions = [a for a in actions if not a.action_id.startswith("review-release-constraints-")
                    or any(a is first for first in excluded_searches.values())]
@@ -112,6 +114,20 @@ def refine(session, actions, by_id, facts):
     missing = {row["name"] for row in project.get("declarations", [])
                if row.get("status") == "missing" and row.get("group") == "required"
                and row.get("installer", "pip") == "pip"}
+    # A missing test runner can prevent collection before any project import is
+    # observed. The selected goal itself supplies evidence that this tool is needed.
+    goal_tool = {"pass_tests": "pytest", "collect_tests": "pytest", "check_style": "ruff"}.get(session.goal)
+    tool_issues = [i for i in by_id.values() if i.stage == "tool" and i.component == goal_tool
+                   and i.kind == "tool_failure"] if goal_tool else []
+    if tool_issues and goal_tool not in data["installed"]:
+        actions = [a for a in actions if a.kind == "rerun" or not set(a.issue_ids) & {i.issue_id for i in tool_issues}]
+        actions.append(Action(action_id="install-runner-" + goal_tool, kind="manual_fix",
+            title=f"Install {goal_tool} for the selected check",
+            explanation=f"The selected check could not start because {goal_tool} is absent in its interpreter.",
+            verification="Run the original check with the same interpreter",
+            command=[session.target_python, "-m", "pip", "install", goal_tool],
+            issue_ids=[i.issue_id for i in tool_issues], cause="missing_dependency", goal_impact=2, evidence_rank=3))
+        missing.add(goal_tool)
     hosts = []
     for action in actions:
         if action.goal_impact <= 0 or action.cause != "missing_dependency":
@@ -144,6 +160,8 @@ def refine(session, actions, by_id, facts):
             requested[row["name"]] = requirement.name + extras + combined_specifier(data, row["name"])
         if requested and len(requested) <= 100 and not any(
                 contradicts(str(Requirement(text).specifier)) for text in requested.values()):
+            if tool_issues and goal_tool not in requested:
+                requested[goal_tool] = goal_tool
             host.title = f"Install the declared dependency set together ({len(missing)} missing)"
             host.explanation = (
                 "Several required dependencies are missing. Install the declared set in one resolver operation, "
@@ -159,63 +177,162 @@ def refine(session, actions, by_id, facts):
     # target-environment check. Connect a named failed request to its current
     # declaration instead of silently dropping the pin and installing latest.
     blockers, historical = [], set()
+    indirect_blocker = False
     events = {event.event_id: event for event in session.events}
-    for issue in by_id.values():
+    # Read the latest named failure per package first. A failed manual source
+    # build supersedes the older wheel-only miss that led to that build.
+    seen_blockers, conflict_ids = set(), set()
+    run_order = {r.run_id: n for n, r in enumerate(session.runs)}
+    for issue in sorted(by_id.values(), key=lambda i: max(
+            (run_order.get(events[e].run_id, -1) for e in i.event_ids if e in events), default=-1), reverse=True):
         if issue.tool != "pip_install":
             continue
         members = [events[e] for e in issue.event_ids if e in events]
-        failed = next((e for e in members if e.code in ("build_failure", "no_distribution", "python_requires")
+        source_runs = [r for r in session.runs if r.run_id in {e.run_id for e in members}]
+        if source_runs and any((rec.get("declarations") != declarations_key(project)
+                or rec.get("environment_id") != source_runs[-1].environment_id
+                or rec.get("python_version") != environment.get("python_version"))
+                for rec in source_runs[-1].records if rec.get("type") == "installation_context"):
+            historical.add(issue.issue_id)
+            continue
+        if issue.kind == "dependency_conflict":
+            raw = (source_runs[-1].stdout + "\n" + source_runs[-1].stderr) if source_runs else issue.title
+            lines = raw.splitlines()
+            details = []
+            for n, text in enumerate(lines):
+                if re.search(r"conflict is caused|Cannot install|ResolutionImpossible|depends on", text, re.I):
+                    details.extend(lines[n:n + 5])
+            blockers.append(Action(action_id="review-install-conflict", kind="manual_fix",
+                title="Resolve the conflicting requirements reported by pip",
+                explanation="The recorded resolver found incompatible requests: " + "\n".join(dict.fromkeys(details))[:2500]
+                    + ". Review the named requirements and their declaration locations together before retrying. "
+                    "This is a version-constraint conflict; building a source package or changing build tools "
+                    "does not resolve it. The failed installation command must not be repeated unchanged.",
+                verification="Resolve the named requirements, then check dependencies and the original goal",
+                issue_ids=[issue.issue_id], goal_impact=2, evidence_rank=3, cost=0))
+            conflict_ids.add(issue.issue_id)
+            historical.add(issue.issue_id)
+            continue
+        failed = next((e for e in members if e.code in ("build_failure", "no_distribution", "no_wheel", "python_requires",
+                                                       "missing_build_tool", "legacy_build_config")
                        and e.component), None)
         if not failed:
             continue
         name = canonicalize_name(failed.component)
+        if name in seen_blockers:
+            historical.add(issue.issue_id)
+            continue
+        seen_blockers.add(name)
         rows = [r for r in data["requirements"] if r["name"] == name and r["owner"] == "project"]
-        if not rows:
+        bound_log = source_runs and any(rec.get("type") == "installation_context"
+                                       for rec in source_runs[-1].records)
+        if not rows and not bound_log:
+            continue
+        request = (re.search(r"Requested requirement: (\S+)", failed.message)
+                   or re.search(r"No matching distribution found for (\S+)", failed.message, re.I))
+        recorded = None
+        if request:
+            try:
+                recorded = Requirement(request[1].rstrip("."))
+                if recorded.url or canonicalize_name(recorded.name) != name:
+                    recorded = None
+            except InvalidRequirement:
+                pass
+        requested_range = str(recorded.specifier) if recorded and not rows else ""
+        requirement = name + combined_specifier(data, name, requested_range)
+        if (failed.code == "no_wheel"
+                and has_prepared_wheel(session, requirement)):
+            historical.add(issue.issue_id)
             continue
         installed = data["installed"].get(name)
         try:
-            if installed and SpecifierSet(combined_specifier(data, name)).contains(installed):
+            if installed and Requirement(requirement).specifier.contains(installed):
                 historical.add(issue.issue_id)
                 continue
         except InvalidVersion:
             pass
-        request = re.search(r"Requested requirement: (\S+)", failed.message)
-        if request:
-            try:
-                recorded = Requirement(request[1])
-                pins = [s.version for s in recorded.specifier if s.operator == "==" and "*" not in s.version]
-            except InvalidRequirement:
-                pins = []
+        if recorded and rows:
+            pins = [s.version for s in recorded.specifier if s.operator == "==" and "*" not in s.version]
             still_pinned = any(s.operator == "==" and s.version in pins
                                for row in rows for s in SpecifierSet(row["specifier"]))
             if pins and not still_pinned:
                 historical.add(issue.issue_id)
                 continue  # The recorded failed pin has already been changed.
         requirements = "; ".join(f"{r['source']}: {r['requirement']}" for r in rows)
+        if not rows:
+            requirements = requirement + " (requested by pip in this session's recorded command)"
+            indirect_blocker = True
         blocker = Action(
             action_id="review-install-" + name, kind="manual_fix",
             title=f"Review the failed installation of {name} before retrying the dependency set",
             explanation=(
                 f"The imported pip log records an installation/build failure for {name}: {failed.message.strip()}. "
                 f"The current declaration is {requirements}; the selected Python is {environment.get('python_version', 'unknown')}. "
-                "First review and change that fixed requirement to a release compatible with the selected Python "
-                "and the project's API usage, or create a separate environment using the Python version supported "
-                "by the fixed dependencies. Keep the remaining requirements. Then install the complete declared "
-                "set with python -m pip install --only-binary=:all: -r requirements.txt if that is its source, "
-                "and rerun pip check and the original failing check. Do not install a newer package while leaving "
-                "a contradictory pin in the project. An imported log may come from another environment; it does "
-                "not prove every release is incompatible with the current interpreter."),
+                "Use the build output to decide the next change. An explicit dependency trial can propose "
+                "a replacement for a versioned declaration while preserving the other requirements; it "
+                "must record the chosen set before recommending an installation. Keep declarations and "
+                "installed versions consistent, then rerun pip check and the original failing check. "
+                "An imported log may come from another environment; this failure alone does not establish "
+                "that the selected Python is unsupported or that all releases of this package are incompatible."),
             verification="Check installation output, declared versions and the original failing check",
             issue_ids=[issue.issue_id], goal_impact=2, evidence_rank=3, cost=0,
             reason_refs=[f.fact_id for f in facts if f.subject == issue.issue_id and f.predicate == "kind"],
         )
         evidence(blocker, rows)
+        trial = bool(rows)
+        if failed.code == "legacy_build_config":
+            trial = False
+            blocker.title = f"Update the legacy build configuration of {name}"
+            blocker.explanation = (
+                f"The build reports: {failed.message.strip()}. This is a build-backend/configuration failure. "
+                "Changing the project Python alone will not change the backend selected in pip's isolated "
+                "build environment. Use the package's documented supported build-backend version in a separate "
+                "build environment, or migrate the dependency; keep this failure log. Do not repeat the "
+                "same source build. No compatible build or alternative release has been verified.")
+        elif failed.code == "missing_build_tool":
+            trial = False
+            blocker.title = f"Provide the build prerequisite reported while installing {name}"
+            blocker.explanation = (
+                f"The installation log reports: {failed.message.strip()}. Current declaration: {requirements}. "
+                "This is evidence of a missing build prerequisite, not evidence that another Python or "
+                "package version is required. Provide the named tool/header in the environment used to build, "
+                "then retry the declared installation and Check again.")
+            if name in ("psycopg2", "psycopg2-binary") and "pg_config" in failed.message:
+                blocker.explanation += (
+                    " pg_config comes from the PostgreSQL client development tools and must be on PATH "
+                    "during a source build. For a local development environment, the upstream psycopg2-binary "
+                    "distribution is an alternative providing the same psycopg2 import. If choosing that "
+                    "route, change the psycopg2 declaration to psycopg2-binary, retaining any version range, "
+                    "before installing; do not install both distributions. The binary route still needs "
+                    "a wheel compatible with this interpreter. Source: https://www.psycopg.org/docs/install/")
+        elif failed.code == "no_distribution":
+            trial = False
+            blocker.title = f"Check the requested {name} release and package index"
+            blocker.explanation = (
+                f"pip reports: {failed.message.strip()}. Current declaration: {requirements}. "
+                "The recorded output does not establish that a matching source archive is available. "
+                "Check the package spelling, configured index, version and interpreter compatibility. "
+                "No source-build command or replacement version is justified yet; do not repeat the same request.")
+        elif failed.code == "no_wheel":
+            offered = offer_build(session, blocker, requirement,
+                "The wheel-only installation request found no matching distribution. This may be a "
+                "missing wheel or an unavailable version; it does not establish a Python incompatibility.")
+            trial = bool(rows) and not offered
+        if not rows:
+            blocker.explanation += (
+                f" The logged requirement {requirement} is an indirect dependency, not a direct project declaration. "
+                "Its failure came from this session's proposed pip command with unchanged declarations. "
+                "Preserve the project's direct requirements; no change to this indirect dependency's "
+                "version range or application compatibility has been verified.")
         if not any(b.action_id == blocker.action_id for b in blockers):
             blockers.append(blocker)
-            trials[blocker.action_id] = (name, "")
+            if trial:
+                trials[blocker.action_id] = (name, "")
         historical.add(issue.issue_id)
     actions = [a for a in actions if a.kind == "rerun" or not a.issue_ids
                or not set(a.issue_ids) <= historical]
+    if conflict_ids or indirect_blocker:
+        actions = [a for a in actions if a.command[:4] != [session.target_python, "-m", "pip", "install"]]
     if blockers:
         blocked_names = {b.action_id.removeprefix("review-install-") for b in blockers}
         # Do not leave the known failing installation as an alternative step.
@@ -233,6 +350,29 @@ def refine(session, actions, by_id, facts):
                     action.explanation = "Resolve the named installation blocker first, keeping the project declarations and environment consistent."
                     break
     result = [*blockers, *actions]
+    # A known alternative distribution can supply the import without satisfying
+    # the project's differently named requirement. Resolve the visible mismatch
+    # before a trial blindly reinstalls the original distribution.
+    binary = data["installed"].get("psycopg2-binary")
+    source_rows = [r for r in data["requirements"] if r["name"] == "psycopg2" and r["owner"] == "project"]
+    providers = {canonicalize_name(n) for n in environment.get("import_distributions", {}).get("psycopg2", [])}
+    if binary and "psycopg2" not in data["installed"] and source_rows and providers == {"psycopg2-binary"} and trials:
+        for action in result:
+            if action.action_id in trials:
+                action.kind, action.check, action.targets, action.command = "manual_fix", None, [], []
+                places = "; ".join(f"{r['source']}: {r['requirement']}" for r in source_rows)
+                action.title = "Align the psycopg2 declaration with the installed binary distribution"
+                action.explanation = (
+                    f"The selected environment has psycopg2-binary {binary} providing the psycopg2 import, "
+                    f"but the project still declares {places}. The resolver treats these as distinct "
+                    "distributions and would install psycopg2 again. If this local development setup "
+                    "intentionally uses the binary distribution, replace psycopg2 with psycopg2-binary "
+                    "at those declaration locations, keeping its version range, then Check again. "
+                    "Otherwise restore the source distribution and its documented build prerequisites. "
+                    "Do not install both together. This is a declaration change requiring review; "
+                    "no code/test success is implied. Source: https://www.psycopg.org/docs/install/")
+                evidence(action, source_rows)
+        trials = {}
     from .dependency_resolution import advise
 
     for action in result:
@@ -252,4 +392,15 @@ def refine(session, actions, by_id, facts):
                 + unresolved + ". Use the project's Conda environment instructions, or confirm each PyPI "
                 "distribution name before installing into this interpreter. These entries are not included "
                 "in a pip installation command.")
+    if any("hash-checked requirements" in n for n in project.get("notes", [])):
+        for action in result:
+            if action.command[:4] in ([session.target_python, "-m", "pip", "install"],
+                                     [session.target_python, "-m", "pip", "wheel"]):
+                action.command = []
+                action.title = "Preserve the project's hash-checked installation requirements"
+                action.explanation = (
+                    "This project pins distribution archive hashes. Use its original requirements or lock "
+                    "file and documented installer; rebuilding a wheel changes the archive hash. "
+                    "FixFirst cannot generate a replacement installation/build command that preserves those "
+                    "checks. Review the failed artifact and update the lock through the project's workflow.")
     return result

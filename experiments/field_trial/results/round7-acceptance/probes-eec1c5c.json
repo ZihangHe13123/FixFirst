@@ -1,0 +1,72 @@
+{
+ "P5": {
+  "outcome": "done",
+  "problems": [],
+  "tests_pass": true,
+  "pip_check": 0,
+  "requirements_unchanged": true,
+  "test_unchanged": true,
+  "rounds": [
+   {
+    "round": 1,
+    "title": "Install the declared dependency that provides num2words",
+    "action": "command",
+    "exit": 1
+   },
+   {
+    "round": 2,
+    "title": "Prepare a wheel for docopt>=0.6.2 before retrying the dependency set",
+    "action": "command",
+    "exit": 0
+   },
+   {
+    "round": 3,
+    "title": "Install the declared dependency that provides num2words",
+    "action": "command",
+    "exit": 0
+   }
+  ],
+  "claims": [
+   "install the declared dependency that provides num2words requirements.txt:1 declares it, but the target interpreter cannot import num2words. install it into this interpreter, or install all of the project's declared dependencies at once. fixfirst does not install anything itself. recorded constraints: requirements.txt:1 requires num2words==0.5.13. this command requests wheels and lets the resolver check the requirements; a satisfiable range is not proof that the application works. check pip output, run pip check, and rerun the original failing check. this manual command saves pip output for thi",
+   "prepare a wheel for docopt>=0.6.2 before retrying the dependency set the wheel-only installation request found no matching distribution. this may be a missing wheel or an unavailable version; it does not establish a python incompatibility. run the following pip wheel command for docopt>=0.6.2. it downloads or builds just this requested package into this session's wheel directory, without installing it into the project. building from source executes the package's build scripts; this is a manual operation, not something check again runs for you. build dependencies may be downloaded into a tempor",
+   "install the declared dependency that provides num2words requirements.txt:1 declares it, but the target interpreter cannot import num2words. install it into this interpreter, or install all of the project's declared dependencies at once. fixfirst does not install anything itself. recorded constraints: requirements.txt:1 requires num2words==0.5.13. this command requests wheels and lets the resolver check the requirements; a satisfiable range is not proof that the application works. check pip output, run pip check, and rerun the original failing check. this manual command saves pip output for thi"
+  ]
+ },
+ "P5-NEG-IMPORT": {
+  "external_install_exit": 1,
+  "external_mentions_docopt": true,
+  "steps": [
+   {
+    "title": "Install the declared dependency that provides num2words",
+    "command": true,
+    "builds_docopt": false
+   }
+  ]
+ },
+ "P5-NEG-FOREIGN": {
+  "stray_log": ".fixfirst/installation/000000000000000000000000.log",
+  "steps": [
+   {
+    "title": "Install the declared dependency that provides num2words",
+    "command": true,
+    "builds_docopt": false
+   }
+  ],
+  "note": "SETUP ERROR, proves nothing: the session's installation folder did not exist yet (FixFirst creates it only through a suggested command), so the stray file landed one level too high; redone as P5-NEG-FOREIGN2"
+ },
+ "P5-NEG-FOREIGN2": {
+  "stray_log": ".fixfirst/installation/session-b33e901cbbb3/d6be2c5c1e40f119/abcdefabcdefabcdefabcdef.log",
+  "in_session_folder": true,
+  "steps": [
+   {
+    "title": "Install the declared dependency that provides num2words",
+    "builds_docopt": false
+   }
+  ],
+  "docopt_issue_titles": []
+ },
+ "labels": {
+  "cli_C1_final": "14 [Installation record], 54 [Verified fixed], 1 [Not checked this round] (the pre-edit 'requirements.txt:35 declares multidict==6.0.4' declaration line)",
+  "report_html_C1_final": "'14 installation record(s) are retained below as history. They do not count as currently failing or verified fixed checks.'; 0 issue groups still failing"
+ }
+}

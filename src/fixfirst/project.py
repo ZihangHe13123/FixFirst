@@ -148,6 +148,8 @@ def read_project(root: Path) -> dict:
                 note(f"{source}: pip options, editable paths and variable substitution are not parsed")
                 continue
             value = re.split(r"\s+#", value, maxsplit=1)[0]
+            if re.search(r"\s+--hash=", value):
+                note(f"{source}: hash-checked requirements need the original installation file; generated replacements cannot preserve archive hashes")
             value = re.sub(r"\s+--hash=\S+", "", value)
             add(value, source, group, constraint)
         if logical:
@@ -211,6 +213,8 @@ def read_project(root: Path) -> dict:
     for path in paths:
         if path.exists():
             requirements(path, "required" if os.path.normcase(path.name) == "requirements.txt" else path.stem)
+    for path in sorted(islice((root / "requirements").glob("*.txt"), MAX_FILES + 1)):
+        requirements(path, "requirements/" + path.stem)
     setup = root / "setup.cfg"
     if setup.exists():
         text = read(setup)
@@ -421,6 +425,26 @@ def assess_project(data: dict, environment: dict) -> dict:
     return data
 
 
+def select_goal_requirements(data, goal):
+    """An unambiguous nested test requirements file follows the chosen test goal.
+
+    Other optional groups remain opt-in. Do not combine several competing dev
+    environments or override a project's canonical requirements.txt.
+    """
+    if goal not in ("pass_tests", "collect_tests") or any(r.get("path") == "requirements.txt" for r in data["files"]):
+        return data
+    groups = {r["group"] for r in data["declarations"] if r.get("name") == "pytest"
+              and r.get("group", "").startswith("requirements/") and not r.get("constraint")}
+    if len(groups) == 1:
+        selected = next(iter(groups))
+        data["selected_requirement_group"] = selected
+        for row in data["declarations"]:
+            if row["group"] == selected:
+                row["selected_from"] = selected
+                row["group"] = "required"
+    return data
+
+
 def collect_project(session, env_id: str) -> Run:
     from .runner import redact_data
 
@@ -434,7 +458,7 @@ def collect_project(session, env_id: str) -> Run:
     environment = session.environment
     if environment.get("_environment_id") != env_id:
         environment = {}
-    data = assess_project(read_project(Path(session.project_root)), environment)
+    data = assess_project(select_goal_requirements(read_project(Path(session.project_root)), session.goal), environment)
     data["environment_run_id"] = environment.get("_run_id")
     # Paths checked are only root/src; presence does not prove that importing them succeeds.
     data["local_modules"] = []

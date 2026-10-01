@@ -1,0 +1,67 @@
+{
+  "scope": "Known public development cases, not an independent held-out evaluation",
+  "C1": {
+    "tested_production_sha": "9b74c2a15dd807a2d8991312e40985ada52ff060",
+    "repository": "https://github.com/miguelgrinberg/microblog",
+    "commit": "a975ef64864354867c88e0ed3a17ba7d17dca752",
+    "python": "3.12.13",
+    "initial_packages": [
+      {
+        "name": "pip",
+        "version": "26.2.1"
+      }
+    ],
+    "guided_actions": 8,
+    "operator_invented_fixes": 0,
+    "goal": "achieved",
+    "test_summary": {
+      "selected": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "xfail_or_xpass": 0
+    },
+    "test_exit_code": 0,
+    "test_hash_sha256": "15a002635f20396831bd523365f0939220fd958c72c48f1c0d3d05ae221aabcc",
+    "original_test_hash_sha256": "15a002635f20396831bd523365f0939220fd958c72c48f1c0d3d05ae221aabcc",
+    "pip_check_exit_code": 0,
+    "project_diff": "diff --git a/requirements.txt b/requirements.txt\nindex 18a0682..50c55ab 100644\n--- a/requirements.txt\n+++ b/requirements.txt\n@@ -32,7 +32,7 @@ Mako==1.3.0\n markdown-it-py==3.0.0\n MarkupSafe==2.1.3\n mdurl==0.1.2\n-multidict==6.0.4\n+multidict==7.0.0\n packaging==23.2\n psycopg2-binary==2.9.9\n Pygments==2.17.1\n"
+  },
+  "transitive": {
+    "implementation_commit": "eec1c5c686a010cb215f9fb70b550163d3692814",
+    "timing": "Development probe run before committing this patch; final independent replay recorded separately",
+    "declaration": "num2words==0.5.13\n",
+    "blocked_indirect_requirement": "docopt>=0.6.2",
+    "guided_actions": 3,
+    "operator_invented_fixes": 0,
+    "final_goal": "achieved",
+    "original_hash": "64c22dab3caee6943f4d877b6c47b46e2da4ad1a56669e28d3e86ed366db6240",
+    "final_hash": "64c22dab3caee6943f4d877b6c47b46e2da4ad1a56669e28d3e86ed366db6240",
+    "pip_check": 0,
+    "pip_output": "No broken requirements found.\n"
+  },
+  "tests": {
+    "tested_production_sha": "eec1c5c686a010cb215f9fb70b550163d3692814",
+    "main": {
+      "passed": 617,
+      "skipped": 1,
+      "seconds": 112.21
+    },
+    "mac_harness": {
+      "passed": 58,
+      "seconds": 85.06
+    },
+    "ruff": "passed",
+    "diff_check": "passed"
+  },
+  "classifier": {
+    "weights_changed": false,
+    "sha256": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3"
+  },
+  "limits": [
+    "C1 is a known development case used for these changes.",
+    "No full new-project success rate is measured here.",
+    "Successful dependency resolution does not establish application compatibility.",
+    "Manual source builds still execute package build scripts only when the proposed command is run."
+  ]
+}

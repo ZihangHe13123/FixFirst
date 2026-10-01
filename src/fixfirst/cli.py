@@ -8,7 +8,7 @@ import webbrowser
 
 from .models import now
 from .reasoning import infer_and_plan
-from .report import render, GOALS, STATES, shell
+from .report import render, GOALS, issue_state, shell
 from .runner import DEFAULT_TIMEOUT, TOOLS
 from .service import create_session, scan, import_log, mark_fixed
 from .storage import Store
@@ -170,7 +170,7 @@ def show(session):
     print(f"Goal: {GOALS[session.goal]} | {session.goal_status}")
     for issue in session.issues:
         cause = f"  → {issue.diagnosis} ({issue.diagnosis_source})" if issue.diagnosis else ""
-        print(f"  [{STATES[issue.status]}] {issue.issue_id}  {issue.title[:110]}{cause}")
+        print(f"  [{issue_state(issue.tool, issue.status)}] {issue.issue_id}  {issue.title[:110]}{cause}")
     print("\nNext steps (manual fixes are never run for you):")
     for rank, step in enumerate(build_view(session)["steps"][:5], 1):
         print(f"  {rank}. {step['id']} — {step['title']}")
