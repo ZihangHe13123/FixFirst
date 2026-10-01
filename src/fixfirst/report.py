@@ -28,6 +28,14 @@ STATES = {
     "awaiting_verification": "Awaiting verification",
     "unknown": "Not enough information",
 }
+
+
+def issue_state(tool, status):
+    # Imported installation output records an earlier command, whose execution
+    # and success FixFirst did not observe. Keep it distinct from live checks.
+    return "Installation record" if tool == "pip_install" else STATES[status]
+
+
 TOOL_NAMES = {
     "environment": "Environment snapshot",
     "project": "Project declarations",
@@ -219,7 +227,7 @@ def html(session: Session, store_root: Path, public=False, live: dict | None = N
         for n in graph["nodes"]
         if n["type"] in ("Goal", "Action", "Issue")
     ]
-    counts = {state: sum(i.status == state for i in session.issues) for state in STATES}
+    counts = {state: sum(i.status == state and i.tool != "pip_install" for i in session.issues) for state in STATES}
     command_prefix = shell([sys.executable, "-m", "fixfirst", "--store", str(store_root)])
     commands = {}
     for action in session.actions:
@@ -246,9 +254,10 @@ def html(session: Session, store_root: Path, public=False, live: dict | None = N
         session=data,
         goal_name=GOALS[session.goal],
         goals=GOALS,
-        states=STATES,
+        issue_state=issue_state,
         tools=TOOL_NAMES,
         counts=counts,
+        installation_records=sum(i.tool == "pip_install" for i in session.issues),
         commands=commands,
         latest=latest,
         public=public,

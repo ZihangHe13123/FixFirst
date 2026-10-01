@@ -59,6 +59,72 @@ def test_new_successful_invocation_does_not_reuse_appended_failure(tmp_path):
     assert not any(e.code == "no_distribution" for e in session.events)
 
 
+def test_transitive_source_only_requirement_gets_build_then_releases_original_install(tmp_path):
+    session = recorded_session(tmp_path, "num2words==0.5.13\n", [],
+                               "ModuleNotFoundError: No module named 'num2words'")
+    install = first_action(session)
+    write_log(install, "Using pip 26.2.1\nCollecting docopt>=0.6.2 (from num2words==0.5.13)\n"
+        "Skipping link: No sources permitted for docopt: https://files.pythonhosted.org/docopt-0.6.2.tar.gz\n"
+        "ERROR: No matching distribution found for docopt>=0.6.2\n")
+    ingest(session, collect_feedback(session, project_index(session)[1]))
+    build = first_action(session)
+    assert build.command[:4] == [session.target_python, "-m", "pip", "wheel"]
+    assert build.command[-1] == "docopt>=0.6.2"
+    assert "not a direct project declaration" in build.explanation
+    assert not any(a.command[:4] == install.command[:4] for a in session.actions)
+    folder = directory(session) / "wheels"
+    folder.mkdir()
+    wheel(folder, "docopt", "0.6.2")
+    from fixfirst.reasoning import infer_and_plan
+    infer_and_plan(session)
+    retry = first_action(session)
+    assert retry.command[:4] == install.command[:4] and "--find-links" in retry.command
+    assert "num2words==0.5.13" in retry.command
+    assert session.goal_status != "achieved"
+
+
+def test_unbound_transitive_failure_does_not_offer_a_source_build(tmp_path):
+    session = recorded_session(tmp_path, "num2words==0.5.13\n", [],
+                               "ModuleNotFoundError: No module named 'num2words'")
+    ingest(session, [Run(tool="pip_install", source="imported", stdout=(
+        "Skipping link: No sources permitted for unrelated: https://files.pythonhosted.org/unrelated-1.0.tar.gz\n"
+        "ERROR: No matching distribution found for unrelated==1.0\n"))])
+    assert not any(a.command[3:4] == ["wheel"] for a in session.actions)
+
+
+def test_failed_indirect_build_blocks_repeating_the_build_or_parent_install(tmp_path):
+    session = recorded_session(tmp_path, "num2words==0.5.13\n", [],
+                               "ModuleNotFoundError: No module named 'num2words'")
+    write_log(first_action(session),
+        "Skipping link: No sources permitted for docopt: https://files.pythonhosted.org/docopt-0.6.2.tar.gz\n"
+        "ERROR: No matching distribution found for docopt>=0.6.2\n")
+    ingest(session, collect_feedback(session, project_index(session)[1]))
+    write_log(first_action(session), "Collecting docopt>=0.6.2\nerror: use_2to3 is invalid\n"
+              "ERROR: Failed to build 'docopt' when getting requirements to build wheel\n")
+    ingest(session, collect_feedback(session, project_index(session)[1]))
+    assert "legacy build configuration" in first_action(session).title
+    assert not any(a.command or a.check == "dependency_resolve" for a in session.actions)
+    assert (tmp_path / "requirements.txt").read_text() == "num2words==0.5.13\n"
+
+
+def test_installation_history_is_not_presented_as_a_current_verified_failure(tmp_path, capsys):
+    import sys
+    from fixfirst import cli
+    from fixfirst.report import html
+    from fixfirst.service import create_session
+    session = create_session(tmp_path, sys.executable)
+    ingest(session, [Run(tool="pip_install", source="imported", stdout="ERROR: No matching distribution found for old-package\n")])
+    issue = next(i for i in session.issues if i.tool == "pip_install")
+    status = issue.status
+    cli.show(session)
+    line = next(line for line in capsys.readouterr().out.splitlines() if issue.issue_id in line)
+    assert "[Installation record]" in line and "Still failing" not in line
+    text, _, _ = html(session, tmp_path / "store")
+    assert '>Installation record</span>' in text
+    assert '<b>0</b><span>Issue groups still failing' in text
+    assert issue.status == status and session.goal_status != "achieved"
+
+
 @pytest.mark.parametrize("changed", ["declaration", "interpreter"])
 def test_feedback_does_not_cross_changed_context(tmp_path, changed):
     session = recorded_session(tmp_path, "rich\nclick\n", [], "ModuleNotFoundError: No module named 'rich'")

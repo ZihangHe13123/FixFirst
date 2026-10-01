@@ -55,7 +55,8 @@ def refine(session, actions, by_id, facts):
             first.reason_refs = sorted(set(first.reason_refs + action.reason_refs))
         else:
             excluded_searches[name] = action
-            trials[action.action_id] = (name, "")
+            # An impossible downgrade under a pin supplies no evidence for an
+            # upgrade. Old consumers may omit upper bounds yet break at runtime.
     if excluded_searches:
         actions = [a for a in actions if not a.action_id.startswith("review-release-constraints-")
                    or any(a is first for first in excluded_searches.values())]
@@ -176,6 +177,7 @@ def refine(session, actions, by_id, facts):
     # target-environment check. Connect a named failed request to its current
     # declaration instead of silently dropping the pin and installing latest.
     blockers, historical = [], set()
+    indirect_blocker = False
     events = {event.event_id: event for event in session.events}
     # Read the latest named failure per package first. A failed manual source
     # build supersedes the older wheel-only miss that led to that build.
@@ -222,33 +224,44 @@ def refine(session, actions, by_id, facts):
             continue
         seen_blockers.add(name)
         rows = [r for r in data["requirements"] if r["name"] == name and r["owner"] == "project"]
-        if not rows:
+        bound_log = source_runs and any(rec.get("type") == "installation_context"
+                                       for rec in source_runs[-1].records)
+        if not rows and not bound_log:
             continue
-        requirement = name + combined_specifier(data, name)
+        request = (re.search(r"Requested requirement: (\S+)", failed.message)
+                   or re.search(r"No matching distribution found for (\S+)", failed.message, re.I))
+        recorded = None
+        if request:
+            try:
+                recorded = Requirement(request[1].rstrip("."))
+                if recorded.url or canonicalize_name(recorded.name) != name:
+                    recorded = None
+            except InvalidRequirement:
+                pass
+        requested_range = str(recorded.specifier) if recorded and not rows else ""
+        requirement = name + combined_specifier(data, name, requested_range)
         if (failed.code == "no_wheel"
                 and has_prepared_wheel(session, requirement)):
             historical.add(issue.issue_id)
             continue
         installed = data["installed"].get(name)
         try:
-            if installed and SpecifierSet(combined_specifier(data, name)).contains(installed):
+            if installed and Requirement(requirement).specifier.contains(installed):
                 historical.add(issue.issue_id)
                 continue
         except InvalidVersion:
             pass
-        request = re.search(r"Requested requirement: (\S+)", failed.message)
-        if request:
-            try:
-                recorded = Requirement(request[1])
-                pins = [s.version for s in recorded.specifier if s.operator == "==" and "*" not in s.version]
-            except InvalidRequirement:
-                pins = []
+        if recorded and rows:
+            pins = [s.version for s in recorded.specifier if s.operator == "==" and "*" not in s.version]
             still_pinned = any(s.operator == "==" and s.version in pins
                                for row in rows for s in SpecifierSet(row["specifier"]))
             if pins and not still_pinned:
                 historical.add(issue.issue_id)
                 continue  # The recorded failed pin has already been changed.
         requirements = "; ".join(f"{r['source']}: {r['requirement']}" for r in rows)
+        if not rows:
+            requirements = requirement + " (requested by pip in this session's recorded command)"
+            indirect_blocker = True
         blocker = Action(
             action_id="review-install-" + name, kind="manual_fix",
             title=f"Review the failed installation of {name} before retrying the dependency set",
@@ -266,7 +279,7 @@ def refine(session, actions, by_id, facts):
             reason_refs=[f.fact_id for f in facts if f.subject == issue.issue_id and f.predicate == "kind"],
         )
         evidence(blocker, rows)
-        trial = True
+        trial = bool(rows)
         if failed.code == "legacy_build_config":
             trial = False
             blocker.title = f"Update the legacy build configuration of {name}"
@@ -301,9 +314,16 @@ def refine(session, actions, by_id, facts):
                 "Check the package spelling, configured index, version and interpreter compatibility. "
                 "No source-build command or replacement version is justified yet; do not repeat the same request.")
         elif failed.code == "no_wheel":
-            trial = not offer_build(session, blocker, requirement,
+            offered = offer_build(session, blocker, requirement,
                 "The wheel-only installation request found no matching distribution. This may be a "
                 "missing wheel or an unavailable version; it does not establish a Python incompatibility.")
+            trial = bool(rows) and not offered
+        if not rows:
+            blocker.explanation += (
+                f" The logged requirement {requirement} is an indirect dependency, not a direct project declaration. "
+                "Its failure came from this session's proposed pip command with unchanged declarations. "
+                "Preserve the project's direct requirements; no change to this indirect dependency's "
+                "version range or application compatibility has been verified.")
         if not any(b.action_id == blocker.action_id for b in blockers):
             blockers.append(blocker)
             if trial:
@@ -311,7 +331,7 @@ def refine(session, actions, by_id, facts):
         historical.add(issue.issue_id)
     actions = [a for a in actions if a.kind == "rerun" or not a.issue_ids
                or not set(a.issue_ids) <= historical]
-    if conflict_ids:
+    if conflict_ids or indirect_blocker:
         actions = [a for a in actions if a.command[:4] != [session.target_python, "-m", "pip", "install"]]
     if blockers:
         blocked_names = {b.action_id.removeprefix("review-install-") for b in blockers}

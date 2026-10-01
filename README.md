@@ -314,6 +314,16 @@ environment says about the modules involved) as JSON, with no cause, ranking or 
 - Repair plans use current declarations and installed dependency metadata. Missing required
   dependencies can be installed together. Imported pip failures identify the blocked package
   and requirement; they do not prove a successful repair or silently override a project pin.
+- Suggested pip commands save an installation log. After running one in your terminal, use
+  **Check again** (CLI: `fixfirst scan SESSION_ID`) to read its output and update the next step.
+  If a matching source archive has no usable wheel, a separate **Prepare a wheel** step may
+  be offered, including for an indirect dependency. This manual command runs the package's
+  build scripts and can download build dependencies; a normal scan never runs it for you.
+  Valid wheels are reused by the later trial and install command. Build failures return to
+  the plan instead of repeating the same install. Old installation output is labelled as
+  history, separate from the checks that establish whether the program or tests passed.
+  Logs and wheels remain in `.fixfirst/installation/` inside the project for later scans;
+  verbose pip logs can occupy tens of MB. These are local working files, not source files.
 - **Try a dependency set** is an explicit check for a blocked version requirement (CLI:
   `fixfirst run SESSION_ID ACTION_ID`, using the action ID shown in the report). It tries
   changing that requirement in a temporary environment while preserving the other project
@@ -363,8 +373,10 @@ environment says about the modules involved) as JSON, with no cause, ranking or 
   failed trial does not prove that no older version works; a verified import still needs the
   project's tests to confirm the full environment.
 - Dependency-set trials use wheels only and stop within a 300-second execution budget.
-  Packages available only as source distributions may be excluded even when a manual build
-  could work. A successful resolver result may still require API or application changes.
+  They can use validated wheels prepared by the session's explicit manual build steps.
+  Packages with no usable wheel remain blocked when that build is unavailable or fails.
+  Ruling out older releases under a project pin does not justify upgrading to the latest
+  release. A successful resolver result may still require API or application changes.
   Python versions mentioned in README files are documentation hints; they are not necessarily
   supported by the current machine or downloadable by its environment manager.
 - Behaviour changes that raise no "name is missing" error (a library returning different

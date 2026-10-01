@@ -150,7 +150,7 @@ def offer_build(session, action, requirement, reason):
     action.title = f"Prepare a wheel for {req} before retrying the dependency set"
     action.explanation = (
         reason + f" Run the following pip wheel command for {req}. It downloads or builds just this "
-        "declared package into this session's wheel directory, without installing it into the project. "
+        "requested package into this session's wheel directory, without installing it into the project. "
         "Building from source executes the package's build scripts; this is a manual operation, not "
         "something Check again runs for you. Build dependencies may be downloaded into a temporary "
         "build environment. After it finishes, Check again reads the log and any valid wheel. "

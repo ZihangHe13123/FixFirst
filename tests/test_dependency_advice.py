@@ -84,6 +84,9 @@ def test_fixed_project_pin_blocks_all_older_searches_for_the_same_distribution(t
     step = build_view(session)["steps"][0]
     assert "requirements.txt:1" in step["explanation"] and "Django==1.10.5" in step["explanation"]
     assert "Python" in step["title"] and not step["command"]
+    # Excluding older providers does not establish that upgrading the provider
+    # across major versions will support its unchanged, old consumers.
+    assert not any(a.check == "dependency_resolve" for a in session.actions)
 
 
 def test_missing_required_dependencies_form_one_constrained_request(tmp_path):
