@@ -1,0 +1,27 @@
+{
+ "fixfirst": "<scratch>/r6/ff-9db/bin/fixfirst",
+ "head": "9db099d8114728341c41636d61d4864b0ddfa6da",
+ "cases": {
+  "B2": {
+   "title": "Same case as B, with a corrected direction check",
+   "expect": "Same expectation as B. B's checker read any 'sqlalchemy<' in the command as a downgrade, so an upgrade bounded above (sqlalchemy<3,>=2.0.16) failed. B2 fails only if the command's range admits no release >= 2.0.16 or the text searches older releases; B and its results are kept unchanged.",
+   "notes": [
+    "setup pip install Flask-SQLAlchemy==3.1.1 flask -> exit 0",
+    "setup pip install SQLAlchemy==1.4.54 -> exit 0"
+   ],
+   "verdict": "PASS",
+   "why": "pip check clean and tests pass",
+   "step": {
+    "id": "align-sqlalchemy",
+    "title": "Install the sqlalchemy version that flask-sqlalchemy 3.1.1 Requires-Dist requires (>=2.0.16)",
+    "explanation": "flask-sqlalchemy 3.1.1 Requires-Dist requires sqlalchemy>=2.0.16, but this environment has sqlalchemy 1.4.54. Align the installed version with the recorded requirement, or revise the dependent packages together. A missing name does not by itself show whether it was removed or has not yet been introduced. Recorded constraints: flask-sqlalchemy 3.1.1 Requires-Dist requires sqlalchemy>=2.0.16. This command requests wheels and lets the resolver check the requirements; a satisfiable range is not proof that the application works. Check pip output, run pip check, and rerun the original failing check.",
+    "command": "<scratch>/accept/r6-9db099d-b2/B2/venv/bin/python -m pip install --only-binary=:all: 'sqlalchemy<3,>=2.0.16'",
+    "issue_ids": [
+     "issue-9167227593c79b"
+    ]
+   },
+   "pip_check": "No broken requirements found.\n",
+   "tests_tail": ".                                                                        [100%]\n1 passed in 0.95s\n"
+  }
+ }
+}

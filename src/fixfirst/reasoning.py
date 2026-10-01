@@ -382,12 +382,16 @@ def infer_and_plan(session: Session):
         and (i.tool not in ("python_run", "unittest_run") or i.environment_id == "unknown"
              or i.scope == check_scope(session, i.tool))
     ]
-    facts, details = base_facts(session, active)
-    facts += apply_classifier(session, active, details)
+    observed_active = [i for i in active if i.status in ("open", "awaiting_verification")]
+    facts, details = base_facts(session, observed_active)
+    facts += apply_classifier(session, observed_active, details)
     base = engine.run(rule_base(), facts)
     session.facts = base.facts
-    summarise_diagnoses(session, active, base.facts)
-    by_id = {i.issue_id: i for i in active}
+    summarise_diagnoses(session, observed_active, base.facts)
+    by_id = {i.issue_id: i for i in observed_active}
     actions = rule_actions(session, base, by_id) + verification_actions(session, active, base.facts)
+    from .dependency_advice import refine
+
+    actions = refine(session, actions, by_id, base.facts)
     session.actions = order_actions(actions, base.facts)
     session.goal_status = goal_status(session, active)

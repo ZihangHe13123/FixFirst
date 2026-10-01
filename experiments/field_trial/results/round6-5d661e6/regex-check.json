@@ -1,0 +1,179 @@
+{
+ "build": "5d661e6 (parent 439e8f2, on 365aa84)",
+ "scope": "Only the wheel-restriction matching changed in src/ (dependency_resolution.collect; trial_protocol 3 -> 4) plus two range tests.",
+ "tests": "tests/test_dependency_resolution.py: 15 passed in this checkout",
+ "real_outputs": {
+  "source": "results/round6-365aa84/probe-wheel-messages.json (same 14 captured uv outputs)",
+  "named_correctly": 14,
+  "total": 14,
+  "rows": [
+   {
+    "requests": [
+     "docopt==0.6.2"
+    ],
+    "blocked_requirement": "docopt==0.6.2",
+    "title": "The wheel-only trial stopped at docopt==0.6.2",
+    "uv_hint_names": "docopt",
+    "names_uv_hint_package": true
+   },
+   {
+    "requests": [
+     "django-cors-middleware==1.3.1"
+    ],
+    "blocked_requirement": "django-cors-middleware==1.3.1",
+    "title": "The wheel-only trial stopped at django-cors-middleware==1.3.1",
+    "uv_hint_names": "django-cors-middleware",
+    "names_uv_hint_package": true
+   },
+   {
+    "requests": [
+     "docopt>=0.6"
+    ],
+    "blocked_requirement": "docopt>=0.6.0",
+    "title": "The wheel-only trial stopped at docopt>=0.6.0",
+    "uv_hint_names": "docopt",
+    "names_uv_hint_package": true
+   },
+   {
+    "requests": [
+     "termcolor<2"
+    ],
+    "blocked_requirement": "termcolor<=1.1.0",
+    "title": "The wheel-only trial stopped at termcolor<=1.1.0",
+    "uv_hint_names": "termcolor",
+    "names_uv_hint_package": true
+   },
+   {
+    "requests": [
+     "feedparser==6.0.11"
+    ],
+    "blocked_requirement": "sgmllib3k==1.0.0",
+    "title": "The wheel-only trial stopped at sgmllib3k==1.0.0",
+    "uv_hint_names": "sgmllib3k",
+    "names_uv_hint_package": true
+   },
+   {
+    "requests": [
+     "num2words==0.5.13"
+    ],
+    "blocked_requirement": "docopt==0.6.2",
+    "title": "The wheel-only trial stopped at docopt==0.6.2",
+    "uv_hint_names": "docopt",
+    "names_uv_hint_package": true
+   },
+   {
+    "requests": [
+     "pipreqs==0.4.13"
+    ],
+    "blocked_requirement": "docopt",
+    "title": "The wheel-only trial stopped at docopt",
+    "uv_hint_names": "docopt",
+    "names_uv_hint_package": true
+   },
+   {
+    "requests": [
+     "coveralls==3.3.1"
+    ],
+    "blocked_requirement": "coverage<=6.5.0,>=6.1.2",
+    "title": "The wheel-only trial stopped at coverage<=6.5.0,>=6.1.2",
+    "uv_hint_names": "coverage",
+    "names_uv_hint_package": true
+   },
+   {
+    "requests": [
+     "Flask-Migrate==2.0.3"
+    ],
+    "blocked_requirement": "flask-migrate==2.0.3",
+    "title": "The wheel-only trial stopped at flask-migrate==2.0.3",
+    "uv_hint_names": "flask-migrate",
+    "names_uv_hint_package": true
+   },
+   {
+    "requests": [
+     "backports.ssl_match_hostname==3.7.0.1"
+    ],
+    "blocked_requirement": "backports-ssl-match-hostname==3.7.0.1",
+    "title": "The wheel-only trial stopped at backports-ssl-match-hostname==3.7.0.1",
+    "uv_hint_names": "backports-ssl-match-hostname",
+    "names_uv_hint_package": true
+   },
+   {
+    "requests": [
+     "SQLAlchemy==1.1.9"
+    ],
+    "blocked_requirement": "sqlalchemy==1.1.9",
+    "title": "The wheel-only trial stopped at sqlalchemy==1.1.9",
+    "uv_hint_names": "sqlalchemy",
+    "names_uv_hint_package": true
+   },
+   {
+    "requests": [
+     "alembic==0.9.1",
+     "SQLAlchemy==1.1.9"
+    ],
+    "blocked_requirement": "alembic==0.9.1",
+    "title": "The wheel-only trial stopped at alembic==0.9.1",
+    "uv_hint_names": "alembic",
+    "names_uv_hint_package": true
+   },
+   {
+    "requests": [
+     "Django==1.10.5",
+     "django-cors-middleware==1.3.1"
+    ],
+    "blocked_requirement": "django-cors-middleware==1.3.1",
+    "title": "The wheel-only trial stopped at django-cors-middleware==1.3.1",
+    "uv_hint_names": "django-cors-middleware",
+    "names_uv_hint_package": true
+   },
+   {
+    "requests": [
+     "pyperclip",
+     "termcolor<2",
+     "docopt"
+    ],
+    "blocked_requirement": "termcolor<=1.1.0",
+    "title": "The wheel-only trial stopped at termcolor<=1.1.0",
+    "uv_hint_names": "termcolor",
+    "names_uv_hint_package": true
+   }
+  ],
+  "note": "coveralls==3.3.1: uv lists two coverage ranges under 'all of'; the title names the second one. The package is right and the statement is true, but partial."
+ },
+ "synthetic_shapes": {
+  "source": "synthetic-messages.json",
+  "rows": [
+   {
+    "shape": "extras",
+    "blocked_requirement": "foo[bar]==1.0",
+    "title": "The wheel-only trial stopped at foo[bar]==1.0"
+   },
+   {
+    "shape": "version list",
+    "blocked_requirement": "foo<=1.0",
+    "title": "The wheel-only trial stopped at foo<=1.0"
+   },
+   {
+    "shape": "prerelease bound",
+    "blocked_requirement": "foo<=6.5.0,>6.0.dev0",
+    "title": "The wheel-only trial stopped at foo<=6.5.0,>6.0.dev0"
+   },
+   {
+    "shape": "local version",
+    "blocked_requirement": "foo==1.0+cpu",
+    "title": "The wheel-only trial stopped at foo==1.0+cpu"
+   },
+   {
+    "shape": "dotted name wrapped",
+    "blocked_requirement": "zope.interface==4.0.0",
+    "title": "The wheel-only trial stopped at zope.interface==4.0.0"
+   },
+   {
+    "shape": "no phrase",
+    "blocked_requirement": null,
+    "title": "Review why the ff-trial-base dependency trial did not complete"
+   }
+  ]
+ },
+ "verdict": "No clear error in the final matching. 5d661e6 is fixed as the production SHA of the round-6 retest."
+}

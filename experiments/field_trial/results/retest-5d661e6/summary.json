@@ -1,0 +1,157 @@
+{
+ "production_sha": "5d661e654bc5acb27d1997b2351c28873125966a",
+ "seed": 1566973541,
+ "denominator": 9,
+ "U": 0,
+ "faulty": {
+  "count": 1,
+  "M1": 0,
+  "M1+M2": 0,
+  "M1+M2+H": 1,
+  "N": 0
+ },
+ "healthy": {
+  "count": 8,
+  "false_alarms": 1,
+  "missed_obstacles": 1
+ },
+ "fault_layer_first_steps": {
+  "complete": 0,
+  "partial": 0,
+  "generic": 2,
+  "wrong": 0,
+  "side_effect": 0
+ },
+ "other_steps": {
+  "fixfirst_setup_complete": 1,
+  "false_alarm_generic": 1
+ },
+ "not_done": "first-batch regression rerun (RETEST.md reporting item)",
+ "tasks": [
+  {
+   "id": "R-N1",
+   "healthy": true,
+   "false_alarm": true,
+   "missed": false,
+   "outcome": "healthy, false alarm",
+   "guided_rounds": 2,
+   "first_steps": [
+    {
+     "layer": "FixFirst's own notebook driver",
+     "grade": "complete"
+    },
+    {
+     "layer": "intended SyntaxError cell (not a fault)",
+     "grade": "generic",
+     "false_alarm": true
+    }
+   ],
+   "minutes": 3.1
+  },
+  {
+   "id": "R-N2",
+   "healthy": true,
+   "false_alarm": false,
+   "missed": false,
+   "outcome": "healthy, no false alarm",
+   "guided_rounds": 0,
+   "first_steps": [],
+   "minutes": 1.1,
+   "noise": [
+    "requirements.txt pin mismatches",
+    "environment.yml Python ==3.5.*"
+   ]
+  },
+  {
+   "id": "R-N3",
+   "healthy": true,
+   "false_alarm": false,
+   "missed": true,
+   "outcome": "healthy code, no false alarm; kernel metadata obstacle not mentioned",
+   "guided_rounds": 0,
+   "first_steps": [],
+   "minutes": 1.8,
+   "noise": [
+    "environment.yml imageio",
+    "SyntaxWarning lines during scan"
+   ]
+  },
+  {
+   "id": "R-S1",
+   "healthy": true,
+   "false_alarm": false,
+   "missed": false,
+   "outcome": "healthy, no false alarm",
+   "guided_rounds": 0,
+   "first_steps": [],
+   "minutes": 1.0
+  },
+  {
+   "id": "R-S2",
+   "healthy": true,
+   "false_alarm": false,
+   "missed": false,
+   "outcome": "healthy, no false alarm",
+   "guided_rounds": 0,
+   "first_steps": [],
+   "minutes": 0.3
+  },
+  {
+   "id": "R-S3",
+   "healthy": false,
+   "outcome": "H",
+   "guided_rounds": 2,
+   "first_steps": [
+    {
+     "layer": "NLTK twitter_samples missing",
+     "grade": "generic"
+    },
+    {
+     "layer": "NLTK stopwords missing",
+     "grade": "generic"
+    }
+   ],
+   "operator_fixes": [
+    "nltk.download('twitter_samples') into the venv's nltk_data",
+    "nltk.download('stopwords') into the venv's nltk_data"
+   ],
+   "minutes": 1.2,
+   "noise": [
+    "about 90 requirements.txt entries of the collection listed as missing"
+   ]
+  },
+  {
+   "id": "R-C1",
+   "healthy": true,
+   "false_alarm": false,
+   "missed": false,
+   "outcome": "healthy, no false alarm",
+   "guided_rounds": 0,
+   "first_steps": [],
+   "minutes": 0.7
+  },
+  {
+   "id": "R-C2",
+   "healthy": true,
+   "false_alarm": false,
+   "missed": false,
+   "outcome": "healthy, no false alarm",
+   "guided_rounds": 0,
+   "first_steps": [],
+   "minutes": 0.4,
+   "noise": [
+    "Could not start ruff in the target environment"
+   ]
+  },
+  {
+   "id": "R-C3",
+   "healthy": true,
+   "false_alarm": false,
+   "missed": false,
+   "outcome": "healthy, no false alarm",
+   "guided_rounds": 0,
+   "first_steps": [],
+   "minutes": 0.9
+  }
+ ]
+}

@@ -1,0 +1,41 @@
+{
+ "fixfirst": "<scratch>/field/fixfirst-venv/bin/fixfirst",
+ "head": "0eb87e51fc7d13740c63573a6bd9cac87328c3ac",
+ "cases": {
+  "A2": {
+   "title": "Upgrade must not overshoot into a release that breaks a co-installed package (corrected A)",
+   "expect": "First failure: SQLAlchemy 1.1.9 uses collections.MutableMapping. pip paired it with alembic 1.4.3, which needs SQLAlchemy's pre-2.0 _BindParamClause (the trial's C2 mechanism). After running the first step's command the tests must pass: the upgrade stays below the release that breaks alembic, or upgrades alembic with it. A first step without a command is reviewed by hand.",
+   "notes": [
+    "setup pip install SQLAlchemy==1.1.9 alembic -> exit 0"
+   ],
+   "verdict": "FAIL",
+   "why": "after the step sqlalchemy or alembic still fails to import (overshoot or original error)",
+   "step": {
+    "id": "upgrade-sqlalchemy",
+    "title": "Upgrade sqlalchemy: sqlalchemy 1.1.9 still uses collections.MutableMapping, which Python 3.10 removed",
+    "explanation": "The installed sqlalchemy 1.1.9 (not your code) uses collections.MutableMapping, which Python removed in 3.10; this environment has Python 3.12.13. Install a newer sqlalchemy; if the project pins sqlalchemy to an old version, relax that pin. Using Python older than 3.10 also works.",
+    "command": "<scratch>/accept/baseline3-0eb87e5/A2/venv/bin/python -m pip install 'sqlalchemy>1.1.9'",
+    "issue_ids": [
+     "issue-190d1d3037d778"
+    ]
+   },
+   "tests_tail": "_compat\n../venv/lib/python3.12/site-packages/alembic/util/__init__.py:26: in <module>\n    from .sqla_compat import has_computed  # noqa\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n../venv/lib/python3.12/site-packages/alembic/util/sqla_compat.py:14: in <module>\n    from sqlalchemy.sql.expression import _BindParamClause\nE   ImportError: cannot import name '_BindParamClause' from 'sqlalchemy.sql.expression' (<scratch>/accept/baseline3-0eb87e5/A2/venv/lib/python3.12/site-packages/sqlalchemy/sql/expression.py)\n=========================== short test summary info ============================\nERROR test_app.py\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.17s\n"
+  },
+  "D1": {
+   "title": "Several missing declared dependencies are installed by one step",
+   "expect": "None of the five declared packages is installed. Running the first step's command once must leave no missing declared dependency (the trial needed one round per package).",
+   "notes": [],
+   "verdict": "FAIL",
+   "why": "still missing after one step: [\"ModuleNotFoundError: No module named 'click'\", 'requirements.txt:2 declares click; installed: not in snapshot. Required dependency missing', 'requirements.txt:3 declares PyYAML; installed: not in snapshot. Required dependency missing', 'requirements.txt:1 declares rich; installed: not in snapshot. Required dependency missing', 'requirements.txt:5 declares tabulate; installed: not in snapshot. Required dependency missing']",
+   "step": {
+    "id": "install-attrs",
+    "title": "Install attrs, which provides the import attr",
+    "explanation": "The import attr comes from the PyPI distribution attrs, which is not installed in the target interpreter. Install it there and declare it in the project's dependencies.",
+    "command": "<scratch>/accept/baseline3-0eb87e5/D1/venv/bin/python -m pip install attrs",
+    "issue_ids": [
+     "issue-7e3709e131ee00"
+    ]
+   }
+  }
+ }
+}

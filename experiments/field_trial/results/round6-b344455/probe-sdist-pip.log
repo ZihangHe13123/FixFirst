@@ -1,0 +1,73 @@
+Collecting pandas==1.1.0 (from -r requirements.txt (line 1))
+  Using cached pandas-1.1.0.tar.gz (5.2 MB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'error'
+  error: subprocess-exited-with-error
+
+  × installing build dependencies for pandas did not run successfully.
+  │ exit code: 1
+  ╰─> [60 lines of output]
+      Ignoring numpy: markers 'python_version == "3.6" and platform_system != "AIX"' don't match your environment
+      Ignoring numpy: markers 'python_version == "3.7" and platform_system != "AIX"' don't match your environment
+      Ignoring numpy: markers 'python_version == "3.6" and platform_system == "AIX"' don't match your environment
+      Ignoring numpy: markers 'python_version == "3.7" and platform_system == "AIX"' don't match your environment
+      Ignoring numpy: markers 'python_version >= "3.8" and platform_system == "AIX"' don't match your environment
+      Collecting setuptools
+        Using cached setuptools-84.0.0-py3-none-any.whl.metadata (6.6 kB)
+      Collecting wheel
+        Using cached wheel-0.48.0-py3-none-any.whl.metadata (2.3 kB)
+      Collecting Cython<3,>=0.29.16
+        Using cached Cython-0.29.37-py2.py3-none-any.whl.metadata (3.1 kB)
+      Collecting numpy==1.17.3
+        Using cached numpy-1.17.3.zip (6.4 MB)
+        Installing build dependencies: started
+        Installing build dependencies: finished with status 'done'
+        Getting requirements to build wheel: started
+        Getting requirements to build wheel: finished with status 'done'
+        Preparing metadata (pyproject.toml): started
+        Preparing metadata (pyproject.toml): finished with status 'error'
+        error: subprocess-exited-with-error
+
+        × Preparing metadata (pyproject.toml) did not run successfully.
+        │ exit code: 1
+        ╰─> [26 lines of output]
+            Running from numpy source directory.
+            <string>:418: UserWarning: Unrecognized setuptools command, proceeding with generating Cython sources and expanding templates
+            Traceback (most recent call last):
+              File "<scratch>/r6/probe-sdist/venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 389, in <module>
+                main()
+              File "<scratch>/r6/probe-sdist/venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 373, in main
+                json_out["return_val"] = hook(**hook_input["kwargs"])
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              File "<scratch>/r6/probe-sdist/venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 175, in prepare_metadata_for_build_wheel
+                return hook(metadata_directory, config_settings)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              File "<tmp>", line 380, in prepare_metadata_for_build_wheel
+                self.run_setup()
+              File "<tmp>", line 520, in run_setup
+                super().run_setup(setup_script=setup_script)
+              File "<tmp>", line 317, in run_setup
+                exec(code, locals())  # noqa: S102 # exec is intentional here
+                ^^^^^^^^^^^^^^^^^^^^
+              File "<string>", line 443, in <module>
+              File "<string>", line 422, in setup_package
+              File "<tmp>", line 6, in <module>
+                from . import ccompiler
+              File "<tmp>", line 111, in <module>
+                replace_method(CCompiler, 'find_executables', CCompiler_find_executables)
+                               ^^^^^^^^^
+            NameError: name 'CCompiler' is not defined. Did you mean: 'ccompiler'?
+            [end of output]
+
+        note: This error originates from a subprocess, and is likely not a problem with pip.
+      error: metadata-generation-failed
+
+      × Encountered error while generating package metadata.
+      ╰─> numpy
+
+      note: This is an issue with the package mentioned above, not pip.
+      hint: See above for details.
+      [end of output]
+
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+ERROR: Failed to build 'pandas' when installing build dependencies for pandas

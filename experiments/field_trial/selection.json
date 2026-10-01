@@ -1,0 +1,30 @@
+{
+ "seed": 20260930,
+ "note": "Drawn by sample.py (af819c0). Manual exclusions a static scan could not see are listed with the next candidate in the same seeded order taking the place.",
+ "manual_exclusions": [
+  {"source": "Python-World/python-mini-projects", "path": "projects/Web_page_summation/app.py",
+   "reason": "summarises live web pages (newspaper, wget) and pins tensorflow==2.3.0: network service"},
+  {"source": "geekcomputers/Python", "path": "Polyline.py", "reason": "GUI: CodeSkulptor simplegui"},
+  {"source": "geekcomputers/Python", "path": "fastapi.py", "reason": "a web server application, no finite run"},
+  {"source": "geekcomputers/Python", "path": "Guess_the_number_game.py", "reason": "GUI: CodeSkulptor simplegui"},
+  {"source": "geekcomputers/Python", "path": "blackJackGUI.py", "reason": "GUI"},
+  {"source": "geekcomputers/Python", "path": "serial_scanner.py", "reason": "hardware: serial ports"},
+  {"source": "geekcomputers/Python", "path": "ReadFromCSV.py",
+   "reason": "opens a plot window (plt.show) and its data file ..\\SalesData.csv is not in the repository"}
+ ],
+ "projects": [
+  {"id": "N1", "kind": "notebook", "repo": "jakevdp/PythonDataScienceHandbook", "entry": "notebooks/01.07-Timing-and-Profiling.ipynb"},
+  {"id": "N2", "kind": "notebook", "repo": "jakevdp/PythonDataScienceHandbook", "entry": "notebooks/05.12-Gaussian-Mixtures.ipynb"},
+  {"id": "N3", "kind": "notebook", "repo": "amueller/introduction_to_ml_with_python", "entry": "07-working-with-text-data.ipynb",
+   "note": "needs the aclImdb data (84 MB download, under the 100 MB limit) as the book describes"},
+  {"id": "S1", "kind": "script", "repo": "Python-World/python-mini-projects", "entry": "projects/Diff_Util/diff.py",
+   "run": "python diff.py v1 v2 with the two files from the README example"},
+  {"id": "S2", "kind": "script", "repo": "Python-World/python-mini-projects", "entry": "projects/Split_File/split_files.py",
+   "run": "python split_files.py <csv> <line number> with a small CSV the user supplies"},
+  {"id": "S3", "kind": "script", "repo": "geekcomputers/Python", "entry": "NumPy Array Exponentiation.py",
+   "run": "python the script"},
+  {"id": "C1", "kind": "app", "repo": "miguelgrinberg/microblog", "entry": "README test instructions"},
+  {"id": "C2", "kind": "app", "repo": "gothinkster/flask-realworld-example-app", "entry": "README test instructions"},
+  {"id": "C3", "kind": "app", "repo": "gothinkster/django-realworld-example-app", "entry": "README setup and a finite check"}
+ ]
+}

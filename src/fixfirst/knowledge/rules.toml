@@ -193,10 +193,11 @@ then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "replac
 [[rule]]
 id = "D06"
 phase = "diagnose"
-description = "A name cannot be imported from an installed library whose version does not satisfy what another installed package requires (pip check)."
-source = "pip check"
+description = "A library import or attribute is unavailable and the installed version conflicts with an installed package's requirement."
+source = "target environment Requires-Dist and pip check"
 when = [
-  ["?i", "signal", "cannot_import_name"], ["?i", "module", "?m"], ["?m", "provided_by", "?d"],
+  ["?i", "signal", "?s"], ["test", "in", "?s", "cannot_import_name,no_attribute"],
+  ["?i", "module", "?m"], ["?m", "provided_by", "?d"],
   ["?d", "required_spec", "?spec"],
 ]
 then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "align_required"], ["?i", "because", "?d"]]
@@ -786,7 +787,7 @@ cause = "version_incompatibility"
 issue = "?i"
 cost = 1
 title = "Install the {?d} version that {?who} requires ({?spec})"
-explanation = "{?who} requires {?d}{?spec}, but this environment has {?d} {?iv}, and the import fails inside that newer {?d}. Install the version {?who} requires, or upgrade {?who} to a release that supports the newer {?d}."
+explanation = "{?who} requires {?d}{?spec}, but this environment has {?d} {?iv}. Align the installed version with the recorded requirement, or revise the dependent packages together. A missing name does not by itself show whether it was removed or has not yet been introduced."
 pip_install = "{?d}{?spec}"
 verification = "Re-run the dependency check and the tests with the same interpreter"
 
@@ -807,7 +808,7 @@ cause = "version_incompatibility"
 issue = "?i"
 cost = 2
 title = "Replace {?x}: removed in {?d} {?v}"
-explanation = "The target interpreter has {?d} {?iv}, which no longer provides {?x} (removed in {?v}). Change the code to use {?r}, or pin {?d} below {?v} if the project must keep the old API."
+explanation = "The target interpreter has {?d} {?iv}, which no longer provides {?x} (removed in {?v}). Change the code to use {?r}. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
 verification = "Re-run the affected tests with the same interpreter"
 
 [[rule]]
@@ -981,8 +982,8 @@ check = "version_search"
 targets = ["{?d}", "{?x}"]
 issue = "?i"
 cost = 1
-title = "Find an older {?d} that provides {?x}"
-explanation = "{?d} {?iv} no longer provides {?x}. FixFirst can try older {?d} releases in a temporary environment with this Python and tell you exactly which one to install. It downloads prebuilt packages from PyPI, runs no build scripts and does not change your environment; it takes up to a few minutes."
+title = "Find a compatible {?d} release that provides {?x}"
+explanation = "{?x} is unavailable in {?d} {?iv}; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole application."
 verification = "The search result appears as the next step"
 
 [[rule]]
@@ -1146,9 +1147,8 @@ kind = "manual_fix"
 cause = "version_incompatibility"
 issue = "?i"
 cost = 2
-title = "Try an older {?d}: {?d} {?iv} no longer provides {?x}"
-explanation = "{?x} is not available in the installed {?d} {?iv}. Libraries rename or remove names between versions, so a version difference is the most likely cause; a misspelt name is the other possibility. The command tries the previous release series of {?d}; if the name is still missing, FixFirst suggests going back further. If {?d}'s changelog shows the name was renamed, updating the code is the lasting fix."
-pip_install = "{?d}<{?b}"
+title = "Check the required version and spelling of {?x}"
+explanation = "{?x} is unavailable in the installed {?d} {?iv}. Check the project's requirements and the upstream API history: the name may have been introduced later, removed, renamed or misspelt. Use the constrained release search where applicable; do not repeatedly downgrade without evidence."
 verification = "Re-run the tests with the same interpreter"
 
 [[rule]]

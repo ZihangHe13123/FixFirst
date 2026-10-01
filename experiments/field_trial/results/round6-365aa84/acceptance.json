@@ -1,0 +1,62 @@
+{
+ "fixfirst": "<scratch>/r6/ff-365/bin/fixfirst",
+ "head": "365aa8468c243efaba293a58dafb044b6339015c",
+ "cases": {
+  "A2": {
+   "title": "Upgrade must not overshoot into a release that breaks a co-installed package (corrected A)",
+   "expect": "First failure: SQLAlchemy 1.1.9 uses collections.MutableMapping. pip paired it with alembic 1.4.3, which needs SQLAlchemy's pre-2.0 _BindParamClause (the trial's C2 mechanism). After running the first step's command the tests must pass: the upgrade stays below the release that breaks alembic, or upgrades alembic with it. A first step without a command is reviewed by hand.",
+   "notes": [
+    "setup pip install SQLAlchemy==1.1.9 alembic -> exit 0"
+   ],
+   "verdict": "REVIEW",
+   "why": "first step has no command; read whether it bounds the upgrade or names alembic",
+   "step": {
+    "id": "upgrade-sqlalchemy",
+    "title": "Resolve the sqlalchemy version constraints before changing it",
+    "explanation": "The proposed sqlalchemy>1.1.9 conflicts with the recorded requirements: alembic 1.4.3 Requires-Dist requires SQLAlchemy>=1.1.0; requirements.txt:1 requires SQLAlchemy==1.1.9. Adjust the conflicting project pin or dependent package together, then resolve the complete dependency set in a separate environment. If the fixed legacy versions must remain, use a separate Python environment compatible with their documented requirements. Keeping this fixed requirement while changing only sqlalchemy cannot satisfy both requirements; a coordinated declaration and dependency update may work. Use Try a dependency set (CLI: fixfirst run session-a20993009db3 upgrade-sqlalchemy) to propose replacing only the sqlalchemy version constraint. This explicitly tries a changed declaration in a temporary environment; it does not accept or edit that declaration. The other required project constraints stay in force, declared dependencies resolve together, and unrelated installed packages stay at their current versions. Downloads wheels; at most 5 minutes. Installation success is separate from running the original program/tests. The trial does not change your project or environment. The trial ignores pip/uv configuration files; environment index settings still apply.",
+    "command": null,
+    "issue_ids": [
+     "issue-190d1d3037d778"
+    ]
+   }
+  },
+  "C": {
+   "title": "Release search must respect the project's declared version and other constraints",
+   "expect": "Django 1.10.5 (declared ==1.10.5) cannot import django.utils.six.moves on Python 3.12. Neither the first step's command nor a release search it offers may install a Django older than the declared 1.10.5 (the trial got 1.5.12, then an unbounded upgrade). An interpreter route or an explicit 'no release fits the declaration on this Python' passes.",
+   "notes": [
+    "setup pip install -r requirements.txt -> exit 0"
+   ],
+   "verdict": "REVIEW",
+   "why": "no older Django offered; read whether an interpreter route or an explicit 'no release fits' is given",
+   "step": {
+    "id": "review-release-constraints-django",
+    "title": "Review the django requirement and Python version before searching older releases",
+    "explanation": "No version below the installed django 1.10.5 can satisfy these recorded constraints: requirements.txt:1 requires Django==1.10.5. The current failure was observed with Python 3.12.13. Do not repeatedly downgrade and then upgrade. If the legacy pin must stay, create a separate environment using the Python version documented for that dependency set. Otherwise revise the conflicting declaration and its dependent packages together, then check installation and rerun the original failure. This rules out this constrained older-version search; it does not prove that no other repair or interpreter combination exists. README.md:15 mentions Python 3.5.2; this is a documentation hint, not a verified or currently available environment. Use Try a dependency set (CLI: fixfirst run session-067441b36da5 review-release-constraints-django) to propose replacing only the django version constraint. This explicitly tries a changed declaration in a temporary environment; it does not accept or edit that declaration. The other required project constraints stay in force, declared dependencies resolve together, and unrelated installed packages stay at their current versions. Downloads wheels; at most 5 minutes. Installation success is separate from running the original program/tests. The trial does not change your project or environment. The trial ignores pip/uv configuration files; environment index settings still apply.",
+    "command": null,
+    "issue_ids": [
+     "issue-cf3c027899528c"
+    ]
+   }
+  },
+  "D2b": {
+   "title": "A failed pip install names the pin that cannot build, without silently bypassing it (corrected D2)",
+   "expect": "Same state as D2 (pandas==1.1.0 cannot build on Python 3.12; nothing installed; the pip log is imported). The first step must identify the blocker: pandas, the pinned 1.1.0, requirements.txt and build/interpreter evidence. FAIL: a command installing another pandas without telling the user to change the pin (silent bypass), or a command after which pandas or rich is still missing. REVIEW (never an automatic success, reported apart): the step asks to change the declaration, or has no command; the operator then follows the steps literally (edit the declaration as instructed, run the install plan given) and records the real result. PASS needs identification, pandas and rich importable, tests passing and no pandas==1.1.0 left in requirements.txt.",
+   "notes": [
+    "pip install -r requirements.txt -> exit 1"
+   ],
+   "verdict": "REVIEW",
+   "why": "the step asks to change the declaration or has no command; identifies the blocker: True. Operator follows it by hand and records the real result; never counted as an automatic success",
+   "identifies": true,
+   "step": {
+    "id": "review-install-pandas",
+    "title": "Review the failed installation of pandas before retrying the dependency set",
+    "explanation": "The imported pip log records an installation/build failure for pandas: ERROR: Failed to build 'pandas' when installing build dependencies for pandas. Requested requirement: pandas==1.1.0. The current declaration is requirements.txt:1: pandas==1.1.0; the selected Python is 3.12.13. First review and change that fixed requirement to a release compatible with the selected Python and the project's API usage, or create a separate environment using the Python version supported by the fixed dependencies. Keep the remaining requirements. Then install the complete declared set with python -m pip install --only-binary=:all: -r requirements.txt if that is its source, and rerun pip check and the original failing check. Do not install a newer package while leaving a contradictory pin in the project. An imported log may come from another environment; it does not prove every release is incompatible with the current interpreter. Use Try a dependency set (CLI: fixfirst run session-7951be44640d review-install-pandas) to propose replacing only the pandas version constraint. This explicitly tries a changed declaration in a temporary environment; it does not accept or edit that declaration. The other required project constraints stay in force, declared dependencies resolve together, and unrelated installed packages stay at their current versions. Downloads wheels; at most 5 minutes. Installation success is separate from running the original program/tests. The trial does not change your project or environment. The trial ignores pip/uv configuration files; environment index settings still apply.",
+    "command": null,
+    "issue_ids": [
+     "issue-c386dd8f507872"
+    ]
+   },
+   "manual_followthrough": null
+  }
+ }
+}

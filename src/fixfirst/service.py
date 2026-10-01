@@ -255,7 +255,7 @@ def scan(session, checks=None, timeout=DEFAULT_TIMEOUT, targets=None):
     else:
         optional_tools = False
     if targets:
-        if list(checks) not in (["pytest_run"], ["version_search"]):
+        if list(checks) not in (["pytest_run"], ["version_search"], ["dependency_resolve"]):
             raise ValueError("--nodes must be used on its own with --checks pytest_run")
         if checks == ["pytest_run"]:
             validate_targets(session, targets)
@@ -265,6 +265,11 @@ def scan(session, checks=None, timeout=DEFAULT_TIMEOUT, targets=None):
     # The baseline is taken before any project code runs, and compared before and after the checks.
     before = integrity.before_checks(session)
     for check in checks:
+        if check == "dependency_resolve":
+            # The explicit trial must use today's declarations and interpreter,
+            # even if it was selected from yesterday's report.
+            refresh = [collect(session, "environment", timeout), collect(session, "project", timeout)]
+            ingest(session, refresh)
         if optional_tools and check in ("pip_check", "ruff"):
             package = "pip" if check == "pip_check" else "ruff"
             if not any(p.get("name", "").lower() == package

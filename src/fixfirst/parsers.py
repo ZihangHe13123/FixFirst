@@ -123,6 +123,16 @@ def parse(run: Run) -> list[Event]:
                     component=missing_tool.group(1),
                 )
             ]
+    if run.tool == "dependency_resolve":
+        try:
+            data = json.loads(run.stdout)
+        except ValueError:
+            data = {}
+        # This has its own scope. Even a successful installation cannot close a
+        # pytest/program issue or claim that the goal has been reached.
+        run.verified_pass = run.exit_code == 0 and data.get("status") == "resolved"
+        run.coverage_complete = run.verified_pass
+        return []
     if run.tool == "version_search":
         try:
             data = json.loads(run.stdout)
@@ -135,6 +145,7 @@ def parse(run: Run) -> list[Event]:
         reason = {
             "offline": "PyPI could not be reached",
             "no_candidates": "no older release has a wheel for this Python",
+            "constraints_exclude_candidates": "available older wheels are excluded by the project's or installed packages' requirements",
             "not_judged": "the search budget ended or some older releases could not be installed or imported here",
         }
         return [
@@ -286,11 +297,23 @@ def parse(run: Run) -> list[Event]:
         ]
     if run.tool == "pip_install":
         results = []
+        requests = {}
         for stream in ("stdout", "stderr"):
             for line, value in enumerate(getattr(run, stream).splitlines(), 1):
+                found = re.search(r"\bCollecting ([A-Za-z0-9_.-]+(?:\[[^\]]+\])?(?:[<>=!~][^\s(]+)?)", value)
+                if found:
+                    name = re.split(r"[\[<>=!~]", found[1], 1)[0].lower().replace("_", "-")
+                    requests[name] = (found[1], f"{run.run_id}:{stream}:{line}")
+        for stream in ("stdout", "stderr"):
+            for line, value in enumerate(getattr(run, stream).splitlines(), 1):
+                build = (re.search(r"Failed building wheel for ['\"]?([A-Za-z0-9_.-]+)", value, re.I)
+                         or re.search(r"Failed to build ['\"]([A-Za-z0-9_.-]+)['\"]", value, re.I)
+                         or re.search(r"installing build dependencies for ([A-Za-z0-9_.-]+) did not run", value, re.I))
+                unavailable = re.search(r"No matching distribution found for ([^\s]+)", value, re.I)
+                python_mismatch = re.search(r"Package ['\"]([^'\"]+)['\"] requires a different Python", value, re.I)
                 if "ERROR" not in value and not re.search(
                     r"ResolutionImpossible|Could not find|Failed building", value
-                ):
+                ) and not (build or unavailable or python_mismatch):
                     continue
                 conflict = bool(
                     re.search(
@@ -299,16 +322,23 @@ def parse(run: Run) -> list[Event]:
                         re.I,
                     )
                 )
-                results.append(
-                    event(
+                failure = build or unavailable or python_mismatch
+                component = re.split(r"[\[<>=!~]", failure[1], 1)[0].lower().replace("_", "-") if failure else ""
+                request = requests.get(component)
+                item = event(
                         run,
-                        value,
+                        value + (f". Requested requirement: {request[0]}" if request else ""),
                         stage="install",
                         kind="dependency_conflict" if conflict else "install_failure",
+                        component=component,
+                        code="build_failure" if build else "no_distribution" if unavailable
+                        else "python_requires" if python_mismatch else "",
                         line=line,
                         stream=stream,
                     )
-                )
+                if request:
+                    item.evidence_refs.append(request[1])
+                results.append(item)
         # Installation input is historical evidence; an empty log does not prove installation.
         return results or [
             event(

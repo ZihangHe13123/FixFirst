@@ -1,0 +1,441 @@
+{
+ "purpose": "Real uv wheel-only failure messages fed through the production collect()/advise() path of each build.",
+ "uv": "uv 0.11.27",
+ "python": "3.12.13",
+ "how": [
+  "probes/capture_wheel_messages.py runs the trial's own install argv shape (uv pip install --no-config --only-binary=:all: -r requirements.txt -c constraints.txt in a fresh uv venv) with runner.execute's child setup (environment copy + NO_COLOR, stdin DEVNULL, new session, piped output).",
+  "probes/test_wheel_messages.py feeds each captured output to collect() and advise() with the same monkeypatch as tests/test_dependency_resolution.py::test_wheel_restriction_names_actual_blocker_without_blaming_changed_package; only the uv output differs.",
+  "The requirement sets were chosen by hand to reach different uv message shapes; they are probes, not a sample, so no rate is implied."
+ ],
+ "width_check": {
+  "finding": "Output is wrapped at a fixed width near 80 columns without a terminal; COLUMNS=40 and COLUMNS=200 give the same text as no COLUMNS.",
+  "runs": [
+   {
+    "requests": [
+     "django-cors-middleware==1.3.1"
+    ],
+    "COLUMNS": null,
+    "output": "warning: Requirements file `constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because django-cors-middleware==1.3.1 has no usable wheels and you\n      require django-cors-middleware==1.3.1, we can conclude that your\n      requirements are unsatisfiable.\n\nhint: Wheels are required for `django-cors-middleware` because building from source is disabled for all packages (i.e., with `--no-build`)"
+   },
+   {
+    "requests": [
+     "django-cors-middleware==1.3.1"
+    ],
+    "COLUMNS": 40,
+    "output": "warning: Requirements file `constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because django-cors-middleware==1.3.1 has no usable wheels and you\n      require django-cors-middleware==1.3.1, we can conclude that your\n      requirements are unsatisfiable.\n\nhint: Wheels are required for `django-cors-middleware` because building from source is disabled for all packages (i.e., with `--no-build`)"
+   },
+   {
+    "requests": [
+     "django-cors-middleware==1.3.1"
+    ],
+    "COLUMNS": 200,
+    "output": "warning: Requirements file `constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because django-cors-middleware==1.3.1 has no usable wheels and you\n      require django-cors-middleware==1.3.1, we can conclude that your\n      requirements are unsatisfiable.\n\nhint: Wheels are required for `django-cors-middleware` because building from source is disabled for all packages (i.e., with `--no-build`)"
+   }
+  ]
+ },
+ "summary": {
+  "d8b1c0a": {
+   "named_correctly": 8,
+   "named_wrongly": [
+    "0.6.0",
+    "1.1.0",
+    "6.5.0",
+    "1.1.0"
+   ],
+   "not_recognised": [
+    "feedparser==6.0.11",
+    "num2words==0.5.13"
+   ]
+  },
+  "27afb06": {
+   "named_correctly": 10,
+   "named_wrongly": [
+    "0.6.0",
+    "1.1.0",
+    "6.5.0",
+    "1.1.0"
+   ],
+   "not_recognised": []
+  },
+  "365aa84": {
+   "named_correctly": 10,
+   "named_wrongly": [
+    "0.6.0",
+    "1.1.0",
+    "6.5.0",
+    "1.1.0"
+   ],
+   "not_recognised": []
+  }
+ },
+ "cases": [
+  {
+   "requests": [
+    "docopt==0.6.2"
+   ],
+   "exit_code": 1,
+   "output": "warning: Requirements file `constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because docopt==0.6.2 has no usable wheels and you require\n      docopt==0.6.2, we can conclude that your requirements are unsatisfiable.\n\nhint: Wheels are required for `docopt` because building from source is disabled for all packages (i.e., with `--no-build`)",
+   "phrase_wrapped_across_lines": false,
+   "uv_hint_names": "docopt",
+   "extracted": {
+    "d8b1c0a": {
+     "blocked_requirement": "docopt==0.6.2",
+     "title": "The wheel-only trial stopped at docopt==0.6.2",
+     "names_uv_hint_package": true
+    },
+    "27afb06": {
+     "blocked_requirement": "docopt==0.6.2",
+     "title": "The wheel-only trial stopped at docopt==0.6.2",
+     "names_uv_hint_package": true
+    },
+    "365aa84": {
+     "blocked_requirement": "docopt==0.6.2",
+     "title": "The wheel-only trial stopped at docopt==0.6.2",
+     "names_uv_hint_package": true
+    }
+   }
+  },
+  {
+   "requests": [
+    "django-cors-middleware==1.3.1"
+   ],
+   "exit_code": 1,
+   "output": "warning: Requirements file `constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because django-cors-middleware==1.3.1 has no usable wheels and you\n      require django-cors-middleware==1.3.1, we can conclude that your\n      requirements are unsatisfiable.\n\nhint: Wheels are required for `django-cors-middleware` because building from source is disabled for all packages (i.e., with `--no-build`)",
+   "phrase_wrapped_across_lines": false,
+   "uv_hint_names": "django-cors-middleware",
+   "extracted": {
+    "d8b1c0a": {
+     "blocked_requirement": "django-cors-middleware==1.3.1",
+     "title": "The wheel-only trial stopped at django-cors-middleware==1.3.1",
+     "names_uv_hint_package": true
+    },
+    "27afb06": {
+     "blocked_requirement": "django-cors-middleware==1.3.1",
+     "title": "The wheel-only trial stopped at django-cors-middleware==1.3.1",
+     "names_uv_hint_package": true
+    },
+    "365aa84": {
+     "blocked_requirement": "django-cors-middleware==1.3.1",
+     "title": "The wheel-only trial stopped at django-cors-middleware==1.3.1",
+     "names_uv_hint_package": true
+    }
+   }
+  },
+  {
+   "requests": [
+    "docopt>=0.6"
+   ],
+   "exit_code": 1,
+   "output": "warning: Requirements file `constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because only the following versions of docopt are available:\n          docopt<=0.6.0\n          docopt==0.6.1\n          docopt==0.6.2\n      and docopt>=0.6.0 has no usable wheels, we can conclude that\n      docopt>=0.6.0 cannot be used.\n      And because you require docopt>=0.6, we can conclude that your\n      requirements are unsatisfiable.\n\nhint: Wheels are required for `docopt` because building from source is disabled for all packages (i.e., with `--no-build`)",
+   "phrase_wrapped_across_lines": false,
+   "uv_hint_names": "docopt",
+   "extracted": {
+    "d8b1c0a": {
+     "blocked_requirement": "0.6.0",
+     "title": "The wheel-only trial stopped at 0.6.0",
+     "names_uv_hint_package": false
+    },
+    "27afb06": {
+     "blocked_requirement": "0.6.0",
+     "title": "The wheel-only trial stopped at 0.6.0",
+     "names_uv_hint_package": false
+    },
+    "365aa84": {
+     "blocked_requirement": "0.6.0",
+     "title": "The wheel-only trial stopped at 0.6.0",
+     "names_uv_hint_package": false
+    }
+   }
+  },
+  {
+   "requests": [
+    "termcolor<2"
+   ],
+   "exit_code": 1,
+   "output": "warning: Requirements file `constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because only the following versions of termcolor are available:\n          termcolor==0.1\n          termcolor==0.1.1\n          termcolor==0.1.2\n          termcolor==0.2\n          termcolor==1.0.0\n          termcolor==1.0.1\n          termcolor==1.1.0\n          termcolor>=2\n      and termcolor<=1.1.0 has no usable wheels, we can conclude that\n      termcolor<=1.1.0 cannot be used.\n      And because you require termcolor<2, we can conclude that your\n      requirements are unsatisfiable.\n\nhint: Wheels are required for `termcolor` because building from source is disabled for all packages (i.e., with `--no-build`)",
+   "phrase_wrapped_across_lines": false,
+   "uv_hint_names": "termcolor",
+   "extracted": {
+    "d8b1c0a": {
+     "blocked_requirement": "1.1.0",
+     "title": "The wheel-only trial stopped at 1.1.0",
+     "names_uv_hint_package": false
+    },
+    "27afb06": {
+     "blocked_requirement": "1.1.0",
+     "title": "The wheel-only trial stopped at 1.1.0",
+     "names_uv_hint_package": false
+    },
+    "365aa84": {
+     "blocked_requirement": "1.1.0",
+     "title": "The wheel-only trial stopped at 1.1.0",
+     "names_uv_hint_package": false
+    }
+   }
+  },
+  {
+   "requests": [
+    "feedparser==6.0.11"
+   ],
+   "exit_code": 1,
+   "output": "warning: Requirements file `constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because only sgmllib3k==1.0.0 is available and sgmllib3k==1.0.0 has no\n      usable wheels, we can conclude that all versions of sgmllib3k cannot\n      be used.\n      And because feedparser==6.0.11 depends on sgmllib3k and you require\n      feedparser==6.0.11, we can conclude that your requirements are\n      unsatisfiable.\n\nhint: Wheels are required for `sgmllib3k` because building from source is disabled for all packages (i.e., with `--no-build`)",
+   "phrase_wrapped_across_lines": true,
+   "uv_hint_names": "sgmllib3k",
+   "extracted": {
+    "d8b1c0a": {
+     "blocked_requirement": null,
+     "title": "Review why the ff-trial-base dependency trial did not complete",
+     "names_uv_hint_package": null
+    },
+    "27afb06": {
+     "blocked_requirement": "sgmllib3k==1.0.0",
+     "title": "The wheel-only trial stopped at sgmllib3k==1.0.0",
+     "names_uv_hint_package": true
+    },
+    "365aa84": {
+     "blocked_requirement": "sgmllib3k==1.0.0",
+     "title": "The wheel-only trial stopped at sgmllib3k==1.0.0",
+     "names_uv_hint_package": true
+    }
+   }
+  },
+  {
+   "requests": [
+    "num2words==0.5.13"
+   ],
+   "exit_code": 1,
+   "output": "warning: Requirements file `constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because only docopt<=0.6.2 is available and docopt==0.6.2 has no usable\n      wheels, we can conclude that docopt>=0.6.2 cannot be used.\n      And because num2words==0.5.13 depends on docopt>=0.6.2 and you\n      require num2words==0.5.13, we can conclude that your requirements are\n      unsatisfiable.\n\nhint: Wheels are required for `docopt` because building from source is disabled for all packages (i.e., with `--no-build`)",
+   "phrase_wrapped_across_lines": true,
+   "uv_hint_names": "docopt",
+   "extracted": {
+    "d8b1c0a": {
+     "blocked_requirement": null,
+     "title": "Review why the ff-trial-base dependency trial did not complete",
+     "names_uv_hint_package": null
+    },
+    "27afb06": {
+     "blocked_requirement": "docopt==0.6.2",
+     "title": "The wheel-only trial stopped at docopt==0.6.2",
+     "names_uv_hint_package": true
+    },
+    "365aa84": {
+     "blocked_requirement": "docopt==0.6.2",
+     "title": "The wheel-only trial stopped at docopt==0.6.2",
+     "names_uv_hint_package": true
+    }
+   }
+  },
+  {
+   "requests": [
+    "pipreqs==0.4.13"
+   ],
+   "exit_code": 1,
+   "output": "warning: Requirements file `constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because all versions of docopt have no usable wheels and pipreqs==0.4.13\n      depends on docopt, we can conclude that pipreqs==0.4.13 cannot be used.\n      And because you require pipreqs==0.4.13, we can conclude that your\n      requirements are unsatisfiable.\n\nhint: Wheels are required for `docopt` because building from source is disabled for all packages (i.e., with `--no-build`)",
+   "phrase_wrapped_across_lines": false,
+   "uv_hint_names": "docopt",
+   "extracted": {
+    "d8b1c0a": {
+     "blocked_requirement": "docopt",
+     "title": "The wheel-only trial stopped at docopt",
+     "names_uv_hint_package": true
+    },
+    "27afb06": {
+     "blocked_requirement": "docopt",
+     "title": "The wheel-only trial stopped at docopt",
+     "names_uv_hint_package": true
+    },
+    "365aa84": {
+     "blocked_requirement": "docopt",
+     "title": "The wheel-only trial stopped at docopt",
+     "names_uv_hint_package": true
+    }
+   }
+  },
+  {
+   "requests": [
+    "coveralls==3.3.1"
+   ],
+   "exit_code": 1,
+   "output": "warning: Requirements file `constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because only the following versions of coverage are available:\n          coverage<=4.1\n          coverage>=4.2,<=4.3.4\n          coverage>=4.4,<=4.5.4\n          coverage>=5.0,<=5.5\n          coverage>6.0.dev0,<=6.5.0\n          coverage>=7.0\n      and all of:\n          coverage>=4.1,<=5.5\n          coverage>=6.1.2,<=6.5.0\n       have no usable wheels, we can conclude that all of:\n          coverage>=4.1,<=5.5\n          coverage>=6.1.2,<=6.5.0\n       cannot be used.\n      And because coveralls==3.3.1 depends on one of:\n          coverage>=4.1,<6.0.dev0\n          coverage>6.1.1,<7.0\n      and you require coveralls==3.3.1, we can conclude that your requirements\n      are unsatisfiable.\n\nhint: Pre-releases are available for `coverage` in the requested range (e.g., 6.6.0b1), but pre-releases weren't enabled (try: `--prerelease=allow`)\nhint: Wheels are required for `coverage` because building from source is disabled for all packages (i.e., with `--no-build`)",
+   "phrase_wrapped_across_lines": false,
+   "uv_hint_names": "coverage",
+   "extracted": {
+    "d8b1c0a": {
+     "blocked_requirement": "6.5.0",
+     "title": "The wheel-only trial stopped at 6.5.0",
+     "names_uv_hint_package": false
+    },
+    "27afb06": {
+     "blocked_requirement": "6.5.0",
+     "title": "The wheel-only trial stopped at 6.5.0",
+     "names_uv_hint_package": false
+    },
+    "365aa84": {
+     "blocked_requirement": "6.5.0",
+     "title": "The wheel-only trial stopped at 6.5.0",
+     "names_uv_hint_package": false
+    }
+   }
+  },
+  {
+   "requests": [
+    "Flask-Migrate==2.0.3"
+   ],
+   "exit_code": 1,
+   "output": "warning: Requirements file `constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because flask-migrate==2.0.3 has no usable wheels and you require\n      flask-migrate==2.0.3, we can conclude that your requirements are\n      unsatisfiable.\n\nhint: Wheels are required for `flask-migrate` because building from source is disabled for all packages (i.e., with `--no-build`)",
+   "phrase_wrapped_across_lines": false,
+   "uv_hint_names": "flask-migrate",
+   "extracted": {
+    "d8b1c0a": {
+     "blocked_requirement": "flask-migrate==2.0.3",
+     "title": "The wheel-only trial stopped at flask-migrate==2.0.3",
+     "names_uv_hint_package": true
+    },
+    "27afb06": {
+     "blocked_requirement": "flask-migrate==2.0.3",
+     "title": "The wheel-only trial stopped at flask-migrate==2.0.3",
+     "names_uv_hint_package": true
+    },
+    "365aa84": {
+     "blocked_requirement": "flask-migrate==2.0.3",
+     "title": "The wheel-only trial stopped at flask-migrate==2.0.3",
+     "names_uv_hint_package": true
+    }
+   }
+  },
+  {
+   "requests": [
+    "backports.ssl_match_hostname==3.7.0.1"
+   ],
+   "exit_code": 1,
+   "output": "warning: Requirements file `constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because backports-ssl-match-hostname==3.7.0.1 has no usable wheels and\n      you require backports-ssl-match-hostname==3.7.0.1, we can conclude that\n      your requirements are unsatisfiable.\n\nhint: Wheels are required for `backports-ssl-match-hostname` because building from source is disabled for all packages (i.e., with `--no-build`)",
+   "phrase_wrapped_across_lines": false,
+   "uv_hint_names": "backports-ssl-match-hostname",
+   "extracted": {
+    "d8b1c0a": {
+     "blocked_requirement": "backports-ssl-match-hostname==3.7.0.1",
+     "title": "The wheel-only trial stopped at backports-ssl-match-hostname==3.7.0.1",
+     "names_uv_hint_package": true
+    },
+    "27afb06": {
+     "blocked_requirement": "backports-ssl-match-hostname==3.7.0.1",
+     "title": "The wheel-only trial stopped at backports-ssl-match-hostname==3.7.0.1",
+     "names_uv_hint_package": true
+    },
+    "365aa84": {
+     "blocked_requirement": "backports-ssl-match-hostname==3.7.0.1",
+     "title": "The wheel-only trial stopped at backports-ssl-match-hostname==3.7.0.1",
+     "names_uv_hint_package": true
+    }
+   }
+  },
+  {
+   "requests": [
+    "SQLAlchemy==1.1.9"
+   ],
+   "exit_code": 1,
+   "output": "warning: Requirements file `constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because sqlalchemy==1.1.9 has no usable wheels and you require\n      sqlalchemy==1.1.9, we can conclude that your requirements are\n      unsatisfiable.\n\nhint: Wheels are required for `sqlalchemy` because building from source is disabled for all packages (i.e., with `--no-build`)",
+   "phrase_wrapped_across_lines": false,
+   "uv_hint_names": "sqlalchemy",
+   "extracted": {
+    "d8b1c0a": {
+     "blocked_requirement": "sqlalchemy==1.1.9",
+     "title": "The wheel-only trial stopped at sqlalchemy==1.1.9",
+     "names_uv_hint_package": true
+    },
+    "27afb06": {
+     "blocked_requirement": "sqlalchemy==1.1.9",
+     "title": "The wheel-only trial stopped at sqlalchemy==1.1.9",
+     "names_uv_hint_package": true
+    },
+    "365aa84": {
+     "blocked_requirement": "sqlalchemy==1.1.9",
+     "title": "The wheel-only trial stopped at sqlalchemy==1.1.9",
+     "names_uv_hint_package": true
+    }
+   }
+  },
+  {
+   "requests": [
+    "alembic==0.9.1",
+    "SQLAlchemy==1.1.9"
+   ],
+   "exit_code": 1,
+   "output": "warning: Requirements file `constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because alembic==0.9.1 has no usable wheels and you require\n      alembic==0.9.1, we can conclude that your requirements are\n      unsatisfiable.\n\nhint: Wheels are required for `alembic` because building from source is disabled for all packages (i.e., with `--no-build`)",
+   "phrase_wrapped_across_lines": false,
+   "uv_hint_names": "alembic",
+   "extracted": {
+    "d8b1c0a": {
+     "blocked_requirement": "alembic==0.9.1",
+     "title": "The wheel-only trial stopped at alembic==0.9.1",
+     "names_uv_hint_package": true
+    },
+    "27afb06": {
+     "blocked_requirement": "alembic==0.9.1",
+     "title": "The wheel-only trial stopped at alembic==0.9.1",
+     "names_uv_hint_package": true
+    },
+    "365aa84": {
+     "blocked_requirement": "alembic==0.9.1",
+     "title": "The wheel-only trial stopped at alembic==0.9.1",
+     "names_uv_hint_package": true
+    }
+   }
+  },
+  {
+   "requests": [
+    "Django==1.10.5",
+    "django-cors-middleware==1.3.1"
+   ],
+   "exit_code": 1,
+   "output": "warning: Requirements file `constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because django-cors-middleware==1.3.1 has no usable wheels and you\n      require django-cors-middleware==1.3.1, we can conclude that your\n      requirements are unsatisfiable.\n\nhint: Wheels are required for `django-cors-middleware` because building from source is disabled for all packages (i.e., with `--no-build`)",
+   "phrase_wrapped_across_lines": false,
+   "uv_hint_names": "django-cors-middleware",
+   "extracted": {
+    "d8b1c0a": {
+     "blocked_requirement": "django-cors-middleware==1.3.1",
+     "title": "The wheel-only trial stopped at django-cors-middleware==1.3.1",
+     "names_uv_hint_package": true
+    },
+    "27afb06": {
+     "blocked_requirement": "django-cors-middleware==1.3.1",
+     "title": "The wheel-only trial stopped at django-cors-middleware==1.3.1",
+     "names_uv_hint_package": true
+    },
+    "365aa84": {
+     "blocked_requirement": "django-cors-middleware==1.3.1",
+     "title": "The wheel-only trial stopped at django-cors-middleware==1.3.1",
+     "names_uv_hint_package": true
+    }
+   }
+  },
+  {
+   "requests": [
+    "pyperclip",
+    "termcolor<2",
+    "docopt"
+   ],
+   "exit_code": 1,
+   "output": "warning: Requirements file `constraints.txt` does not contain any dependencies\nUsing Python 3.12.13 environment at: env\n  × No solution found when resolving dependencies:\n  ╰─▶ Because only the following versions of termcolor are available:\n          termcolor==0.1\n          termcolor==0.1.1\n          termcolor==0.1.2\n          termcolor==0.2\n          termcolor==1.0.0\n          termcolor==1.0.1\n          termcolor==1.1.0\n          termcolor>=2\n      and termcolor<=1.1.0 has no usable wheels, we can conclude that\n      termcolor<=1.1.0 cannot be used.\n      And because you require termcolor<2, we can conclude that your\n      requirements are unsatisfiable.\n\nhint: Wheels are required for `termcolor` because building from source is disabled for all packages (i.e., with `--no-build`)",
+   "phrase_wrapped_across_lines": false,
+   "uv_hint_names": "termcolor",
+   "extracted": {
+    "d8b1c0a": {
+     "blocked_requirement": "1.1.0",
+     "title": "The wheel-only trial stopped at 1.1.0",
+     "names_uv_hint_package": false
+    },
+    "27afb06": {
+     "blocked_requirement": "1.1.0",
+     "title": "The wheel-only trial stopped at 1.1.0",
+     "names_uv_hint_package": false
+    },
+    "365aa84": {
+     "blocked_requirement": "1.1.0",
+     "title": "The wheel-only trial stopped at 1.1.0",
+     "names_uv_hint_package": false
+    }
+   }
+  }
+ ]
+}

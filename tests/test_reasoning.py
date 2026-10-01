@@ -148,12 +148,12 @@ def test_unlisted_removal_is_only_a_likely_cause(tmp_path):
         "H02",
     )
     search, guess = build_view(session)["steps"][:2]
-    # First offer to find the exact release by trying them; the series guess is the fallback.
-    assert search["title"] == "Find an older numpy that provides numpy.msort" and search["search"]
-    assert guess["title"].startswith("Try an older numpy") and "msort" in guess["title"]
+    # Search before changing a version; absence alone does not prove removal.
+    assert search["title"] == "Find a compatible numpy release that provides numpy.msort" and search["search"]
+    assert guess["title"] == "Check the required version and spelling of numpy.msort"
     assert guess["cause"] is None and guess["possible"] == "Version incompatibility"
-    # numpy.msort was removed in 2.0, so stepping back one series is the right first try.
-    assert guess["command"].endswith("-m pip install 'numpy<2'")
+    assert guess["command"] is None
+    assert "no longer provides" not in search["explanation"]
 
 
 @pytest.mark.parametrize("legacy_bound", [None, "1.6"])
@@ -180,7 +180,7 @@ def test_release_search_advice_pins_the_verified_patch(tmp_path, legacy_bound):
     )])
 
     action = next(a for a in session.actions if a.action_id == "use-release-demo.utils.helper")
-    assert action.command == [session.target_python, "-m", "pip", "install", "demo==1.5.0"]
+    assert action.command == [session.target_python, "-m", "pip", "install", "--only-binary=:all:", "demo==1.5.0"]
     assert "newest" not in action.title
     assert next(i for i in session.issues if i.issue_id == issue_id).status == "open"
 
@@ -241,9 +241,9 @@ def test_install_advice_comes_with_a_command_for_the_project_interpreter(tmp_pat
     session, _ = run_scenario(tmp_path, "md_known_import")
     action = session.actions[0]
     assert action.action_id == "install-requests"
-    assert action.command == [session.target_python, "-m", "pip", "install", "requests"]
+    assert action.command == [session.target_python, "-m", "pip", "install", "--only-binary=:all:", "requests"]
     step = build_view(session)["steps"][0]
-    assert step["command"].endswith("-m pip install requests")
+    assert step["command"].endswith("-m pip install --only-binary=:all: requests")
 
 
 def test_removed_usage_is_recognised_by_its_error_message(tmp_path):
@@ -291,7 +291,7 @@ def test_missing_plugin_fixture_names_the_declared_plugin(tmp_path):
     assert [(i.diagnosis, i.diagnosis_rule) for i in issues] == [("missing_dependency", "D23")]
     step = build_view(session)["steps"][0]
     assert step["title"] == "Install pytest-httpx: the tests use its httpx_mock fixture"
-    assert step["command"].endswith("-m pip install pytest-httpx")
+    assert step["command"].endswith("-m pip install --only-binary=:all: pytest-httpx")
     assert step["where"] == ["test_http.py:1"]
     assert "[project.optional-dependencies.tests]" in step["explanation"]
     assert step["sources"] == [{"title": "pytest-httpx on PyPI", "url": "https://pypi.org/project/pytest-httpx/"}]

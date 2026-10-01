@@ -248,8 +248,41 @@ def read_project(root: Path) -> dict:
                 add(value, source, group)
             own(setup_py_name(text))
         note("setup.py is not executed; only literal declarations in its setup() call are read")
+    for filename in ("environment.yml", "environment.yaml"):
+        path = root / filename
+        if not path.exists():
+            continue
+        text = read(path)
+        if text is None:
+            continue
+        from .conda_declarations import read as read_conda
+
+        conda = read_conda(text, filename, MAX_DECLARATIONS)
+        for requirement, source in conda["pip"]:
+            add(requirement, source)
+        result["requires_python"].extend(conda["python"])
+        result.setdefault("conda_declarations", []).extend(conda["conda"])
+        result.setdefault("conda_mappings", []).extend(conda["mappings"])
+        for message in conda["notes"]:
+            note(message)
     if not result["files"]:
         note("No supported static declaration file was found")
+    # Documentation is a hint, not an enforceable requirement or proof of support.
+    result["python_hints"] = []
+    for name in (".python-version", "runtime.txt", "README.md", "README.rst", "README.txt"):
+        path = root / name
+        if not path.exists():
+            continue
+        text = read(path)
+        if text is None:
+            continue
+        for line, value in enumerate(text.splitlines(), 1):
+            if name in (".python-version", "runtime.txt"):
+                match = re.fullmatch(r"\s*(?:python-)?(\d+\.\d+(?:\.\d+)?)\s*", value)
+            else:
+                match = re.search(r"\bPython\s*[`:*]*\s*(\d+\.\d+(?:\.\d+)?)\b", value, re.I)
+            if match and len(result["python_hints"]) < 20:
+                result["python_hints"].append({"version": match[1], "source": f"{name}:{line}"})
     return result
 
 

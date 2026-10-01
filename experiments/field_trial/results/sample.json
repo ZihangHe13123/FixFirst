@@ -1,0 +1,3979 @@
+{
+ "seed": 20260930,
+ "sources": {
+  "jakevdp/PythonDataScienceHandbook": {
+   "candidates": [
+    {
+     "path": "notebooks/00.00-Preface.ipynb",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "notebooks/01.00-IPython-Beyond-Normal-Python.ipynb",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "notebooks/01.01-Help-And-Documentation.ipynb",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "notebooks/01.02-Shell-Keyboard-Shortcuts.ipynb",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "notebooks/01.03-Magic-Commands.ipynb",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "notebooks/01.04-Input-Output-History.ipynb",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "notebooks/01.05-IPython-And-Shell-Commands.ipynb",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "notebooks/01.06-Errors-and-Debugging.ipynb",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "notebooks/01.07-Timing-and-Profiling.ipynb",
+     "third_party": [
+      "mprun_demo"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/01.08-More-IPython-Resources.ipynb",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "notebooks/02.00-Introduction-to-NumPy.ipynb",
+     "third_party": [
+      "numpy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/02.01-Understanding-Data-Types.ipynb",
+     "third_party": [
+      "numpy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/02.02-The-Basics-Of-NumPy-Arrays.ipynb",
+     "third_party": [
+      "numpy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/02.03-Computation-on-arrays-ufuncs.ipynb",
+     "third_party": [
+      "numpy",
+      "scipy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/02.04-Computation-on-arrays-aggregates.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/02.05-Computation-on-arrays-broadcasting.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/02.06-Boolean-Arrays-and-Masks.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "vega_datasets"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/02.07-Fancy-Indexing.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/02.08-Sorting.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/02.09-Structured-Data-NumPy.ipynb",
+     "third_party": [
+      "numpy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/03.00-Introduction-to-Pandas.ipynb",
+     "third_party": [
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/03.01-Introducing-Pandas-Objects.ipynb",
+     "third_party": [
+      "numpy",
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/03.02-Data-Indexing-and-Selection.ipynb",
+     "third_party": [
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/03.03-Operations-in-Pandas.ipynb",
+     "third_party": [
+      "numpy",
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/03.04-Missing-Values.ipynb",
+     "third_party": [
+      "numpy",
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/03.05-Hierarchical-Indexing.ipynb",
+     "third_party": [
+      "numpy",
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/03.06-Concat-And-Append.ipynb",
+     "third_party": [
+      "numpy",
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/03.07-Merge-and-Join.ipynb",
+     "third_party": [
+      "numpy",
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/03.08-Aggregation-and-Grouping.ipynb",
+     "third_party": [
+      "numpy",
+      "pandas",
+      "seaborn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/03.09-Pivot-Tables.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "pandas",
+      "seaborn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/03.10-Working-With-Strings.ipynb",
+     "third_party": [
+      "numpy",
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/03.11-Working-with-Time-Series.ipynb",
+     "third_party": [
+      "dateutil",
+      "matplotlib",
+      "numpy",
+      "pandas",
+      "pandas_datareader"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/03.12-Performance-Eval-and-Query.ipynb",
+     "third_party": [
+      "numexpr",
+      "numpy",
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/03.13-Further-Resources.ipynb",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "notebooks/04.00-Introduction-To-Matplotlib.ipynb",
+     "third_party": [
+      "IPython",
+      "matplotlib",
+      "numpy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/04.01-Simple-Line-Plots.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/04.02-Simple-Scatter-Plots.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/04.03-Errorbars.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/04.04-Density-and-Contour-Plots.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/04.05-Histograms-and-Binnings.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "scipy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/04.06-Customizing-Legends.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/04.07-Customizing-Colorbars.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/04.08-Multiple-Subplots.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/04.09-Text-and-Annotation.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/04.10-Customizing-Ticks.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/04.11-Settings-and-Stylesheets.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/04.12-Three-Dimensional-Plotting.ipynb",
+     "third_party": [
+      "matplotlib",
+      "mpl_toolkits",
+      "numpy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/04.14-Visualization-With-Seaborn.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "pandas",
+      "seaborn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/04.15-Further-Resources.ipynb",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "notebooks/05.00-Machine-Learning.ipynb",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "notebooks/05.01-What-Is-Machine-Learning.ipynb",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "notebooks/05.02-Introducing-Scikit-Learn.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "seaborn",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/05.03-Hyperparameters-and-Model-Validation.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/05.04-Feature-Engineering.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "pandas",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/05.05-Naive-Bayes.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "seaborn",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/05.06-Linear-Regression.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "pandas",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/05.07-Support-Vector-Machines.ipynb",
+     "third_party": [
+      "ipywidgets",
+      "matplotlib",
+      "mpl_toolkits",
+      "numpy",
+      "scipy",
+      "seaborn",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/05.08-Random-Forests.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "seaborn",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/05.09-Principal-Component-Analysis.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/05.10-Manifold-Learning.ipynb",
+     "third_party": [
+      "matplotlib",
+      "mpl_toolkits",
+      "numpy",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/05.11-K-Means.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "scipy",
+      "seaborn",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/05.12-Gaussian-Mixtures.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "scipy",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/05.13-Kernel-Density-Estimation.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "scipy",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/05.14-Image-Features.ipynb",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "skimage",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/05.15-Learning-More.ipynb",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "notebooks/06.00-Figure-Code.ipynb",
+     "third_party": [
+      "ipywidgets",
+      "matplotlib",
+      "mpl_toolkits",
+      "numpy",
+      "pandas",
+      "seaborn",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "notebooks/Untitled.ipynb",
+     "third_party": [],
+     "excluded": "no third-party import"
+    }
+   ],
+   "seeded_order": [
+    "notebooks/01.07-Timing-and-Profiling.ipynb",
+    "notebooks/05.12-Gaussian-Mixtures.ipynb",
+    "notebooks/04.04-Density-and-Contour-Plots.ipynb",
+    "notebooks/03.12-Performance-Eval-and-Query.ipynb",
+    "notebooks/03.04-Missing-Values.ipynb",
+    "notebooks/03.01-Introducing-Pandas-Objects.ipynb",
+    "notebooks/05.02-Introducing-Scikit-Learn.ipynb",
+    "notebooks/04.05-Histograms-and-Binnings.ipynb",
+    "notebooks/05.10-Manifold-Learning.ipynb",
+    "notebooks/03.00-Introduction-to-Pandas.ipynb",
+    "notebooks/03.05-Hierarchical-Indexing.ipynb",
+    "notebooks/02.01-Understanding-Data-Types.ipynb",
+    "notebooks/03.03-Operations-in-Pandas.ipynb",
+    "notebooks/03.10-Working-With-Strings.ipynb",
+    "notebooks/03.06-Concat-And-Append.ipynb",
+    "notebooks/04.10-Customizing-Ticks.ipynb",
+    "notebooks/04.11-Settings-and-Stylesheets.ipynb",
+    "notebooks/04.02-Simple-Scatter-Plots.ipynb",
+    "notebooks/02.05-Computation-on-arrays-broadcasting.ipynb",
+    "notebooks/06.00-Figure-Code.ipynb",
+    "notebooks/05.09-Principal-Component-Analysis.ipynb",
+    "notebooks/02.02-The-Basics-Of-NumPy-Arrays.ipynb",
+    "notebooks/03.11-Working-with-Time-Series.ipynb",
+    "notebooks/04.06-Customizing-Legends.ipynb",
+    "notebooks/04.00-Introduction-To-Matplotlib.ipynb",
+    "notebooks/04.09-Text-and-Annotation.ipynb",
+    "notebooks/05.04-Feature-Engineering.ipynb",
+    "notebooks/02.03-Computation-on-arrays-ufuncs.ipynb",
+    "notebooks/04.01-Simple-Line-Plots.ipynb",
+    "notebooks/04.03-Errorbars.ipynb",
+    "notebooks/02.06-Boolean-Arrays-and-Masks.ipynb",
+    "notebooks/05.07-Support-Vector-Machines.ipynb",
+    "notebooks/05.08-Random-Forests.ipynb",
+    "notebooks/03.09-Pivot-Tables.ipynb",
+    "notebooks/03.07-Merge-and-Join.ipynb",
+    "notebooks/02.07-Fancy-Indexing.ipynb",
+    "notebooks/05.06-Linear-Regression.ipynb",
+    "notebooks/02.04-Computation-on-arrays-aggregates.ipynb",
+    "notebooks/04.12-Three-Dimensional-Plotting.ipynb",
+    "notebooks/05.11-K-Means.ipynb",
+    "notebooks/02.08-Sorting.ipynb",
+    "notebooks/03.08-Aggregation-and-Grouping.ipynb",
+    "notebooks/04.07-Customizing-Colorbars.ipynb",
+    "notebooks/02.09-Structured-Data-NumPy.ipynb",
+    "notebooks/04.08-Multiple-Subplots.ipynb",
+    "notebooks/03.02-Data-Indexing-and-Selection.ipynb",
+    "notebooks/02.00-Introduction-to-NumPy.ipynb",
+    "notebooks/04.14-Visualization-With-Seaborn.ipynb",
+    "notebooks/05.13-Kernel-Density-Estimation.ipynb",
+    "notebooks/05.14-Image-Features.ipynb",
+    "notebooks/05.05-Naive-Bayes.ipynb",
+    "notebooks/05.03-Hyperparameters-and-Model-Validation.ipynb"
+   ],
+   "chosen": [
+    "notebooks/01.07-Timing-and-Profiling.ipynb",
+    "notebooks/05.12-Gaussian-Mixtures.ipynb"
+   ]
+  },
+  "amueller/introduction_to_ml_with_python": {
+   "candidates": [
+    {
+     "path": "01-introduction.ipynb",
+     "third_party": [
+      "IPython",
+      "matplotlib",
+      "numpy",
+      "pandas",
+      "scipy",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "02-supervised-learning.ipynb",
+     "third_party": [
+      "graphviz",
+      "mpl_toolkits",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "03-unsupervised-learning.ipynb",
+     "third_party": [
+      "matplotlib",
+      "scipy",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "04-representing-data-feature-engineering.ipynb",
+     "third_party": [
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "05-model-evaluation-and-improvement.ipynb",
+     "third_party": [
+      "pandas",
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "06-algorithm-chains-and-pipelines.ipynb",
+     "third_party": [
+      "sklearn"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "07-working-with-text-data.ipynb",
+     "third_party": [
+      "nltk",
+      "sklearn",
+      "spacy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "08-conclusion.ipynb",
+     "third_party": [
+      "sklearn"
+     ],
+     "excluded": null
+    }
+   ],
+   "seeded_order": [
+    "07-working-with-text-data.ipynb",
+    "05-model-evaluation-and-improvement.ipynb",
+    "02-supervised-learning.ipynb",
+    "08-conclusion.ipynb",
+    "06-algorithm-chains-and-pipelines.ipynb",
+    "01-introduction.ipynb",
+    "03-unsupervised-learning.ipynb",
+    "04-representing-data-feature-engineering.ipynb"
+   ],
+   "chosen": [
+    "07-working-with-text-data.ipynb"
+   ]
+  },
+  "Python-World/python-mini-projects": {
+   "candidates": [
+    {
+     "path": "projects/Alarm clock/alarm_clock.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/All_links_from_given_webpage/get_links.py",
+     "third_party": [
+      "bs4",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Ascii_art/make_art.py",
+     "third_party": [
+      "cv2",
+      "numpy"
+     ],
+     "excluded": "network, service or camera: cv2"
+    },
+    {
+     "path": "projects/AudioBook/Audio-book.py",
+     "third_party": [
+      "PyPDF2",
+      "gtts"
+     ],
+     "excluded": "network, service or camera: gtts"
+    },
+    {
+     "path": "projects/Baidu_POI_crawl/main.py",
+     "third_party": [
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Battery_notification/battery.py",
+     "third_party": [
+      "psutil",
+      "pynotifier"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "projects/Billing_system/biling_system.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Bouncing_ball_simulator/ball_bounce.py",
+     "third_party": [
+      "pygame"
+     ],
+     "excluded": "GUI or input device: pygame"
+    },
+    {
+     "path": "projects/Calculate_age/calculate.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Captcha_Genrator/Captcha_Genrator.py",
+     "third_party": [
+      "captcha"
+     ],
+     "excluded": "GUI or input device: tkinter"
+    },
+    {
+     "path": "projects/Capture_Video_Frames/capture_video_frames.py",
+     "third_party": [
+      "cv2"
+     ],
+     "excluded": "network, service or camera: cv2"
+    },
+    {
+     "path": "projects/Check_website_connectivity/check_connectivity.py",
+     "third_party": [
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Cli_todo/todo.py",
+     "third_party": [
+      "click"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "projects/Compute_IoU/Compute_IoU.py",
+     "third_party": [
+      "numpy"
+     ],
+     "excluded": "no requirements.txt"
+    },
+    {
+     "path": "projects/Convert_JPEG_to_PNG/converter_GUI.py",
+     "third_party": [
+      "PIL"
+     ],
+     "excluded": "GUI or input device: tkinter"
+    },
+    {
+     "path": "projects/Convert_JSON_to_CSV/converter.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Convert_XML_To_JSON/converter.py",
+     "third_party": [
+      "xmltodict"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "projects/Convert_a_image_to_pdf/convert_image_to_pdf.py",
+     "third_party": [
+      "img2pdf"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "projects/Convert_numbers_to_word/converter.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Countdown_timer/main.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Create_a_script_to_encrypt_files_and_folder/encrypt.py",
+     "third_party": [
+      "Cryptodome"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "projects/Create_a_simple_stopwatch/stopwatch.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Create_calculator_app/calculator.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Currency_converter/cc.py",
+     "third_party": [
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Decimal_to_binary_convertor_and_vice_versa/decimal_to_binary.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Diff_Util/diff.py",
+     "third_party": [
+      "rich"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "projects/Digital_clock/digital_clock.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Dns_record/dns_record.py",
+     "third_party": [
+      "dns"
+     ],
+     "excluded": "interactive input()"
+    },
+    {
+     "path": "projects/Dominant_color/find-color.py",
+     "third_party": [
+      "cv2",
+      "numpy"
+     ],
+     "excluded": "network, service or camera: cv2"
+    },
+    {
+     "path": "projects/Download_images_from_website/scrap-img.py",
+     "third_party": [
+      "bs4",
+      "requests",
+      "selenium"
+     ],
+     "excluded": "network, service or camera: requests,selenium"
+    },
+    {
+     "path": "projects/Drowsiness detection/drowsiness detection.py",
+     "third_party": [
+      "cv2",
+      "keras",
+      "matplotlib",
+      "numpy",
+      "pygame"
+     ],
+     "excluded": "GUI or input device: pygame"
+    },
+    {
+     "path": "projects/Duplicate files remover/duplicatefileremover.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/EasyVideoPlayer/EasyVideoPlayer.py",
+     "third_party": [
+      "cv2",
+      "ffpyplayer"
+     ],
+     "excluded": "network, service or camera: cv2"
+    },
+    {
+     "path": "projects/Easy_cartoonify/easy_cartoonify.py",
+     "third_party": [
+      "cv2"
+     ],
+     "excluded": "network, service or camera: cv2"
+    },
+    {
+     "path": "projects/Encrypt_and_decrypt_text/aes_encode.py",
+     "third_party": [
+      "Crypto"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "projects/Extract_zip_files/extract_zip_files.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Fetch HTTP status code/fetch_http_status_code.py",
+     "third_party": [
+      "emoji"
+     ],
+     "excluded": "network, service or camera: urllib"
+    },
+    {
+     "path": "projects/Fetch_and_store_tweets/fetch_store_tweet.py",
+     "third_party": [
+      "tweepy"
+     ],
+     "excluded": "network, service or camera: tweepy"
+    },
+    {
+     "path": "projects/Fetch_current_weather/fetch_current_weather.py",
+     "third_party": [
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Fetch_open_ports/fetch_open_port.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Find_imdb_rating/find_IMDb_rating.py",
+     "third_party": [
+      "bs4",
+      "pandas",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Find_out_hostname_and_ip_address/Hostname_IPaddress.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/GUI Rock-Paper-Scissors Game/Rock-Paper-Scissors Game.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Games/QuizGame.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Geocoding/geocoding.py",
+     "third_party": [
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Get_meta_information_of_images/author_utils.py",
+     "third_party": [
+      "PIL",
+      "exifread",
+      "geopy",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Get_wifi_password/wifi.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Hashing_passwords/hashing_passwords.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Hello/Hello.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Image_watermark/watermark.py",
+     "third_party": [
+      "PIL"
+     ],
+     "excluded": "interactive input()"
+    },
+    {
+     "path": "projects/Instagram_profile/main.py",
+     "third_party": [
+      "PIL",
+      "lxml",
+      "requests",
+      "tqdm"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Internet_connection_check/internet_connection_check.py",
+     "third_party": [
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Language_translator/translator.py",
+     "third_party": [
+      "googletrans"
+     ],
+     "excluded": "network, service or camera: googletrans"
+    },
+    {
+     "path": "projects/Leap_Year_Checker/leapyear.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/MasterMind/Mastermind_GUIinterface.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Merge_csv_files/merge_csv_files.py",
+     "third_party": [
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "projects/Merge_pdfs/merge_pdfs.py",
+     "third_party": [
+      "PyPDF2"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "projects/Movie Information Scraper/movieInfoScraper.py",
+     "third_party": [
+      "bs4",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Multi_language_OCR/multi_language_OCR.py",
+     "third_party": [
+      "agentocr"
+     ],
+     "excluded": "interactive input()"
+    },
+    {
+     "path": "projects/Network Usage Tracker/network_usage_tracker.py",
+     "third_party": [
+      "pil",
+      "psutil"
+     ],
+     "excluded": "GUI or input device: tkinter"
+    },
+    {
+     "path": "projects/News_website_scraper/moneycontrol_scrapper.py",
+     "third_party": [
+      "bs4",
+      "requests",
+      "tqdm"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Number_guessing_game/main.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Organized_download_folder_with_different_categories/file-sortor.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/PDF to MP3/PDF__TO__MP3.py",
+     "third_party": [
+      "PyPDF2",
+      "pyttsx3"
+     ],
+     "excluded": "GUI or input device: tkinter"
+    },
+    {
+     "path": "projects/Password_generator/password_generator.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Plagarism_checker/plag.py",
+     "third_party": [
+      "sklearn"
+     ],
+     "excluded": "no requirements.txt"
+    },
+    {
+     "path": "projects/Python_auto_draw/python-auto-draw.py",
+     "third_party": [
+      "pyautogui"
+     ],
+     "excluded": "GUI or input device: pyautogui"
+    },
+    {
+     "path": "projects/Qr_code_generator/generate_qrcode.py",
+     "third_party": [
+      "qrcode"
+     ],
+     "excluded": "no requirements.txt"
+    },
+    {
+     "path": "projects/Random_Wikipedia_Article/wiki_random.py",
+     "third_party": [
+      "bs4",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Random_password_generator/python-password-generator.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Random_word_from_list/Random_word_from_list.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Recursive_password_generator/generator.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Reduce_image_file_size/reduce_image_size.py",
+     "third_party": [
+      "cv2"
+     ],
+     "excluded": "network, service or camera: cv2"
+    },
+    {
+     "path": "projects/RockPaperScissors_Game/Rock_Paper_Scissors_Game.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/S3_File_Upload/main.py",
+     "third_party": [
+      "boto3",
+      "botocore"
+     ],
+     "excluded": "network, service or camera: boto3"
+    },
+    {
+     "path": "projects/Scrape_Hacker_News/main.py",
+     "third_party": [
+      "bs4",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Scrape_quotes/quote_scraper.py",
+     "third_party": [
+      "bs4",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Scraping Medium Articles/scraping_medium.py",
+     "third_party": [
+      "bs4",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Send_email_from_csv/Sending_mail.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Set_Alarm/alarm.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Shutdown_or_restart_your_device/PowerOptions.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Sine_Wave/sine_wave.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Snake Game/snake_game.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Snapshot_of_given_website/snapshot_of_given_website.py",
+     "third_party": [
+      "chromedriver_binary",
+      "selenium"
+     ],
+     "excluded": "network, service or camera: selenium"
+    },
+    {
+     "path": "projects/Solver_linear_equations/linearEquations.py",
+     "third_party": [
+      "matplotlib",
+      "mpl_toolkits",
+      "numpy"
+     ],
+     "excluded": "interactive input()"
+    },
+    {
+     "path": "projects/Space_bullet_shooter_game/space_bullet_shooter.py",
+     "third_party": [
+      "pygame"
+     ],
+     "excluded": "GUI or input device: pygame"
+    },
+    {
+     "path": "projects/Speaking_Dictionary/SpeakingDictionary.py",
+     "third_party": [
+      "PyDictionary",
+      "gtts",
+      "pyttsx3",
+      "speech_recognition"
+     ],
+     "excluded": "network, service or camera: gtts,pyttsx3,speech_recognition"
+    },
+    {
+     "path": "projects/Speech_to_text/speech_to_text.py",
+     "third_party": [
+      "speech_recognition"
+     ],
+     "excluded": "network, service or camera: speech_recognition"
+    },
+    {
+     "path": "projects/Spell_checker/spell_checker.py",
+     "third_party": [
+      "textblob"
+     ],
+     "excluded": "interactive input()"
+    },
+    {
+     "path": "projects/Split_File/split_files.py",
+     "third_party": [
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "projects/Split_a_video_file_by_given_time_period/videosplitter.py",
+     "third_party": [
+      "ffmpeg"
+     ],
+     "excluded": "interactive input()"
+    },
+    {
+     "path": "projects/Split_folder_into_subfolders/split_and_copy.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Store_emails_in_csv/store_emails.py",
+     "third_party": [
+      "bs4"
+     ],
+     "excluded": "network, service or camera: imaplib"
+    },
+    {
+     "path": "projects/String_search_from_multiple_files/findstring.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Terminal_Based_Hangman_Game/hangman.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Terminal_progress_bar_with_images_resizing/progress_bar_ with_images_resizing.py",
+     "third_party": [
+      "PIL",
+      "tqdm"
+     ],
+     "excluded": "interactive input()"
+    },
+    {
+     "path": "projects/Text_to_speech/txtToSpeech.py",
+     "third_party": [
+      "gtts"
+     ],
+     "excluded": "network, service or camera: gtts"
+    },
+    {
+     "path": "projects/Textfile_analysis/textfile_analysis.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Tic_tac_toe/tic_tac_toe.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Tic_tac_toe_with_ai/tic-tac-toe-AI.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Time_to_load_website/time_to_load_website.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Todo_app/app.py",
+     "third_party": [
+      "flask",
+      "flask_sqlalchemy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "projects/Unique_words_in_a_file/unique.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Unstructured Supplemenrary  Service Data/ussdtim.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Web_page_summation/app.py",
+     "third_party": [
+      "utils"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "projects/Web_scraping_a_youtube_comment/webscrapindcomment.py",
+     "third_party": [
+      "selenium"
+     ],
+     "excluded": "network, service or camera: selenium"
+    },
+    {
+     "path": "projects/Website_blocker/website_blocker.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Wifi_windows_password_displayer/main.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Wikipedia_search_wordcloud/wiki-search-cloud.py",
+     "third_party": [
+      "matplotlib",
+      "wikipedia",
+      "wordcloud"
+     ],
+     "excluded": "network, service or camera: wikipedia"
+    },
+    {
+     "path": "projects/Write_a_script_to_download_a_random_image_from_unsplash_and_set_it_as_wallpaper/background_linux.py",
+     "third_party": [
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Write_script_to_compress_folder_and_files/zipfiles.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/Write_script_to_move_files_into_alphabetically_ordered_folder/main.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/XKCD_downloader/xkcd_dowloader.py",
+     "third_party": [
+      "bs4",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/Zip_Bruter/zipbruter.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/capture_screenshot/screenshot.py",
+     "third_party": [
+      "pyautogui"
+     ],
+     "excluded": "GUI or input device: pyautogui"
+    },
+    {
+     "path": "projects/cat_command/cat.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/chatbot/bot.py",
+     "third_party": [
+      "wechaty",
+      "wechaty_puppet"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "projects/cli_proxy_tester/cli.py",
+     "third_party": [
+      "click",
+      "pandas",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/convert pdf to text/converter1.py",
+     "third_party": [
+      "PyPDF2"
+     ],
+     "excluded": "interactive input()"
+    },
+    {
+     "path": "projects/convert_Imgs/JPGtoPNG.py",
+     "third_party": [
+      "PIL"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "projects/convert_dictionary_to_python_object/conversion.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/convert_png_images_to_ico_format/convert.py",
+     "third_party": [
+      "PIL"
+     ],
+     "excluded": "GUI or input device: tkinter"
+    },
+    {
+     "path": "projects/detect_align_faces/main.py",
+     "third_party": [
+      "cv2",
+      "dlib",
+      "numpy"
+     ],
+     "excluded": "network, service or camera: cv2"
+    },
+    {
+     "path": "projects/dork_search_google/main.py",
+     "third_party": [
+      "googlesearch",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/download GeeksForGeeks articles/downloader.py",
+     "third_party": [
+      "requests",
+      "selenium",
+      "webdriver_manager"
+     ],
+     "excluded": "network, service or camera: requests,selenium"
+    },
+    {
+     "path": "projects/export_mysql_to_csv_send_to_wocom/export_mysql_data_to_csv.py",
+     "third_party": [
+      "pymysql",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "projects/steganography/dct.py",
+     "third_party": [
+      "cv2",
+      "numpy"
+     ],
+     "excluded": "network, service or camera: cv2"
+    },
+    {
+     "path": "projects/telegram_bot/main.py",
+     "third_party": [
+      "telegram"
+     ],
+     "excluded": "network, service or camera: telegram"
+    },
+    {
+     "path": "projects/text_to_morse_code/text_to_morse_code.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "projects/whatsapp_Bot/main.py",
+     "third_party": [
+      "pywhatkit"
+     ],
+     "excluded": "network, service or camera: pywhatkit"
+    }
+   ],
+   "seeded_order": [
+    "projects/Web_page_summation/app.py",
+    "projects/Diff_Util/diff.py",
+    "projects/Split_File/split_files.py",
+    "projects/Convert_a_image_to_pdf/convert_image_to_pdf.py",
+    "projects/Cli_todo/todo.py",
+    "projects/chatbot/bot.py",
+    "projects/convert_Imgs/JPGtoPNG.py",
+    "projects/Todo_app/app.py",
+    "projects/Merge_pdfs/merge_pdfs.py",
+    "projects/Convert_XML_To_JSON/converter.py",
+    "projects/Battery_notification/battery.py",
+    "projects/Encrypt_and_decrypt_text/aes_encode.py",
+    "projects/Merge_csv_files/merge_csv_files.py",
+    "projects/Create_a_script_to_encrypt_files_and_folder/encrypt.py"
+   ],
+   "chosen": [
+    "projects/Web_page_summation/app.py",
+    "projects/Diff_Util/diff.py"
+   ]
+  },
+  "geekcomputers/Python": {
+   "candidates": [
+    {
+     "path": "8_puzzle.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "A solution to project euler problem 3.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "AREA OF TRIANGLE.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "ARKA.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "ASCIIvaluecharacter.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Add_two_Linked_List.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Anonymous_TextApp.py",
+     "third_party": [
+      "PIL",
+      "twilio"
+     ],
+     "excluded": "GUI or input device: tkinter"
+    },
+    {
+     "path": "AreaOfTriangle.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Armstrong_number.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Audio_Summarizer.py",
+     "third_party": [
+      "openai",
+      "whisper"
+     ],
+     "excluded": "network, service or camera: openai"
+    },
+    {
+     "path": "Base Converter Number system.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Battery_notifier.py",
+     "third_party": [
+      "plyer",
+      "psutil"
+     ],
+     "excluded": "GUI or input device: plyer"
+    },
+    {
+     "path": "Binary Coefficients.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Binary_search.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Binary_to_Decimal.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "BruteForce.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "CSV_file.py",
+     "third_party": [
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "Caesar Cipher Encoder  & Decoder.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Calculate resistance.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Calculator with simple ui.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Calendar (GUI).py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Chrome Dino Automater.py",
+     "third_party": [
+      "PIL",
+      "pyautogui"
+     ],
+     "excluded": "GUI or input device: pyautogui"
+    },
+    {
+     "path": "Classification_human_or_horse.py",
+     "third_party": [
+      "keras",
+      "numpy",
+      "tensorflow"
+     ],
+     "excluded": "GUI or input device: tkinter"
+    },
+    {
+     "path": "CliYoutubeDownloader.py",
+     "third_party": [
+      "pytube"
+     ],
+     "excluded": "network, service or camera: pytube"
+    },
+    {
+     "path": "Collatz-Conjecture.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Conversation.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "CountMillionCharacter.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "CountMillionCharacters-2.0.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Crack_password.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Credit_Card_Validator.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Cricket_score.py",
+     "third_party": [
+      "bs4",
+      "pyttsx3",
+      "win10toast"
+     ],
+     "excluded": "network, service or camera: pyttsx3,urllib"
+    },
+    {
+     "path": "Day_of_week.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Decimal number to binary function.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Decimal_To_Binary.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Delete_Linked_List.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Detect_Remove_loop.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Dictionary opperations (input,update a dict).py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Divide Operator.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Email-Automation.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Encryption using base64.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "EncryptionTool.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Exception_Handling_in_Python.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Extract_Text_from_image.py",
+     "third_party": [
+      "cv2",
+      "pytesseract"
+     ],
+     "excluded": "network, service or camera: cv2"
+    },
+    {
+     "path": "FIND FACTORIAL OF A NUMBER.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "FibonacciNumbersWithGenerators.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Fibonacci_sequence_recursive_sol.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Find current weather of any city using openweathermap API.py",
+     "third_party": [
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "FindingResolutionOfAnImage.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "FizzBuzz.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Generate a random number between 0 to 9.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Google_News.py",
+     "third_party": [
+      "bs4"
+     ],
+     "excluded": "network, service or camera: urllib"
+    },
+    {
+     "path": "Gregorian_Calendar.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Grocery calculator.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "GroupSms_Way2.py",
+     "third_party": [
+      "cookielib",
+      "urllib2"
+     ],
+     "excluded": "network, service or camera: urllib2"
+    },
+    {
+     "path": "Guess_the_number_game.py",
+     "third_party": [
+      "simplegui"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "Guessing_Game.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "HangMan Game.py",
+     "third_party": [
+      "HangMan_Includes"
+     ],
+     "excluded": "interactive input()"
+    },
+    {
+     "path": "Hangman.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Hotel-Management.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Image_resize.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Infix_to_Postfix.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Insert_operation_on_Linked_List.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Job_scheduling.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "JsonParser.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Kilometerstomile.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "LETTER GUESSER.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Letter_Counter.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "List.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Luhn_Algorithm.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Mad Libs Generator.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Memory_game.py",
+     "third_party": [
+      "pygame"
+     ],
+     "excluded": "GUI or input device: pygame"
+    },
+    {
+     "path": "Merge_linked_list.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "MobiusFunction.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Mp3_media_player.py",
+     "third_party": [
+      "mutagen",
+      "pygame"
+     ],
+     "excluded": "GUI or input device: pygame,tkinter"
+    },
+    {
+     "path": "Multiply.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "MySQL_Databses.py",
+     "third_party": [
+      "mysql"
+     ],
+     "excluded": "network, service or camera: mysql"
+    },
+    {
+     "path": "NumPy Array Exponentiation.py",
+     "third_party": [
+      "numpy"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "Number reverse.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Organise.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "PDFtoAudiobook.py",
+     "third_party": [
+      "pyPDF2",
+      "pyttsx3"
+     ],
+     "excluded": "network, service or camera: pyttsx3"
+    },
+    {
+     "path": "PONG_GAME.py",
+     "third_party": [
+      "simplegui"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "Palindrome_Checker.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Pc_information.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Polyline.py",
+     "third_party": [
+      "simplegui"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "Pomodoro (tkinter).py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Prime_number.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Python Distance.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Python Voice Generator.py",
+     "third_party": [
+      "gtts"
+     ],
+     "excluded": "network, service or camera: gtts"
+    },
+    {
+     "path": "Python-Array-Equilibrium-Index.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Python_swapping.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "QuadraticCalc.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Random Password Generator.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "RandomDice.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "RandomNumberGame.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Randomnumber.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "ReadFromCSV.py",
+     "third_party": [
+      "matplotlib",
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "Reverse_list_in_groups.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Rotate_Linked_List.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "SOUNDEX.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Sanke-water-gun game.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Secret message generator GUI by tkinter.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Shortest Distance between Two Lines.py",
+     "third_party": [
+      "numpy"
+     ],
+     "excluded": "interactive input()"
+    },
+    {
+     "path": "SimpleStopWatch.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Snake-Water-Gun-Game.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "SpeechToText.py",
+     "third_party": [
+      "pyttsx3"
+     ],
+     "excluded": "network, service or camera: pyttsx3"
+    },
+    {
+     "path": "Split_Circular_Linked_List.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "StringToBinary.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "String_Palindrome.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Strings.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Sum of digits of a number.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "TTS.py",
+     "third_party": [
+      "win32com"
+     ],
+     "excluded": "GUI or input device: tkinter"
+    },
+    {
+     "path": "TaskManager.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "TaskPlanner.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Timetable_Operations.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "To find the largest number between 3 numbers.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "To print series 1,12,123,1234......py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Todo_GUi.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Trending youtube videos.py",
+     "third_party": [
+      "googleapiclient"
+     ],
+     "excluded": "credentials"
+    },
+    {
+     "path": "Turtle_Star.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Tweet Pre-Processing.py",
+     "third_party": [
+      "nltk"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "Type of angles of a triangle.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Type_of_angles_of_triangle.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Unit Digit of a raised to power b.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "Voice Command Calculator.py",
+     "third_party": [
+      "speech_recognition"
+     ],
+     "excluded": "network, service or camera: speech_recognition"
+    },
+    {
+     "path": "WeatherGUI.py",
+     "third_party": [
+      "bs4",
+      "requests"
+     ],
+     "excluded": "GUI or input device: tkinter"
+    },
+    {
+     "path": "Web Socket.py",
+     "third_party": [
+      "colorama"
+     ],
+     "excluded": "network, service or camera: socket"
+    },
+    {
+     "path": "Web_Scraper.py",
+     "third_party": [
+      "bs4",
+      "selenium"
+     ],
+     "excluded": "network, service or camera: selenium"
+    },
+    {
+     "path": "WikipediaModule.py",
+     "third_party": [
+      "bs4"
+     ],
+     "excluded": "network, service or camera: wikipedia"
+    },
+    {
+     "path": "add_two_number.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "add_two_nums.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "advanced_calculator.py",
+     "third_party": [
+      "gtts",
+      "pygame"
+     ],
+     "excluded": "GUI or input device: pygame"
+    },
+    {
+     "path": "agecalculator.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "alexa_news_headlines.py",
+     "third_party": [
+      "flask",
+      "flask_ask",
+      "requests",
+      "unidecode"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "area_of_square_app.py",
+     "third_party": [
+      "word2number"
+     ],
+     "excluded": "interactive input()"
+    },
+    {
+     "path": "armstrongnumber.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "automail.py",
+     "third_party": [
+      "ezgmail"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "avg_xdspam_confidence.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "backup_automater_services.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "balance_parenthesis.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "basic_cal.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "batch_file_rename.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "billing.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "binary search.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "binary_search_tree.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "binod.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "birthdays.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "blackJackGUI.py",
+     "third_party": [
+      "simplegui"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "blackjack.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "bodymass.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "bookstore_manangement_system.py",
+     "third_party": [
+      "mysql"
+     ],
+     "excluded": "network, service or camera: mysql"
+    },
+    {
+     "path": "calc_area.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "calci.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "calci2.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "calculator-gui.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "calculator.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "cartesian_product.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "changemac.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "chaos.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "check whether the string is Symmetrical or Palindrome.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "check_file.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "check_for_sqlite_files.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "check_input.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "check_internet_con.py",
+     "third_party": [
+      "urllib2"
+     ],
+     "excluded": "network, service or camera: urllib,urllib2"
+    },
+    {
+     "path": "check_prime.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "chicks_n_rabs.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "classicIndianCardMatch.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "cloning_a_list.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "colorma_as_color.py",
+     "third_party": [
+      "colorama"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "colour spiral.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "compass_code.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "consonant.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "convert celsius into fahrenheit.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "convert_time.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "convert_wind_direction_to_degrees.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "count the numbers of two vovels.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "create password validity in python.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "create_dir_if_not_there.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "cricket_live_score.py",
+     "third_party": [
+      "bs4"
+     ],
+     "excluded": "network, service or camera: urllib"
+    },
+    {
+     "path": "cricket_news.py",
+     "third_party": [
+      "bs4",
+      "pyttsx3",
+      "requests"
+     ],
+     "excluded": "network, service or camera: pyttsx3,requests"
+    },
+    {
+     "path": "daily_checks.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "daily_horoscope.py",
+     "third_party": [
+      "bs4",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "date-timeclient.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "date-timeserver.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "days_from_date.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "dec_to_hex.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "decimal to binary.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "diamond.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "dice.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "diceV2_dynamic.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "dice_roller.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "dice_rolling_simulator.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "diction.py",
+     "third_party": [
+      "pyttsx3",
+      "speech_recognition"
+     ],
+     "excluded": "network, service or camera: pyttsx3,speech_recognition"
+    },
+    {
+     "path": "digital_clock.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "dir_test.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "divisors_of_a_number.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "duplicate_file_finder.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "encrypter-decrypter-gui.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "encrypter_decrypter_gui.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "encryptsys.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "env_check.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "equations.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "ex20.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "facebook id hack.py",
+     "third_party": [
+      "bs4",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "facebook-autologin-bot.py",
+     "third_party": [
+      "pyttsx3",
+      "selenium"
+     ],
+     "excluded": "network, service or camera: pyttsx3,selenium"
+    },
+    {
+     "path": "factorial_perm_comp.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "factors.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "fastapi.py",
+     "third_party": [
+      "pydantic"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "fetch_news.py",
+     "third_party": [
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "fibonacci.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "fibonici series.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "file_ext_changer.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "fileinfo.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "find_cube_root.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "find_prime.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "finding LCM.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "folder_size.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "four_digit_num_combination.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "friday.py",
+     "third_party": [
+      "pyttsx3"
+     ],
+     "excluded": "network, service or camera: pyttsx3"
+    },
+    {
+     "path": "ftp_send_receive.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "gambler.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "gcd.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "generate_permutations.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "get_crypto_price.py",
+     "third_party": [
+      "ccxt"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "get_info_remoute_srv.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "get_likes_on_FB.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "get_youtube_view.py",
+     "third_party": [
+      "pafy",
+      "selenium"
+     ],
+     "excluded": "network, service or camera: selenium"
+    },
+    {
+     "path": "google.py",
+     "third_party": [
+      "bs4",
+      "pyperclip",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests,webbrowser"
+    },
+    {
+     "path": "googlemaps.py",
+     "third_party": [
+      "geocoder",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "googleweb.py",
+     "third_party": [
+      "bs4",
+      "fuzzywuzzy",
+      "numpy",
+      "pandas",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "greaterno.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "greattwono.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "gstin_scraper.py",
+     "third_party": [
+      "bs4",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "gui_calculator.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "hamming-numbers.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "happy_num.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "heap_sort.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "helloworld.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "how to display the fibonacci sequence up to n-.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "image_compressor.py",
+     "third_party": [
+      "PIL"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "index.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "inheritance_YahV1729.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "input matrice,product any order!.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "insertion_sort.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "internet_connection_py3.py",
+     "third_party": [
+      "selenium"
+     ],
+     "excluded": "network, service or camera: selenium,urllib"
+    },
+    {
+     "path": "invisible_clock.py",
+     "third_party": [
+      "cv2",
+      "numpy"
+     ],
+     "excluded": "network, service or camera: cv2"
+    },
+    {
+     "path": "iprint.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "is_number.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "jee_result.py",
+     "third_party": [
+      "bs4",
+      "mechanize"
+     ],
+     "excluded": "network, service or camera: mechanize"
+    },
+    {
+     "path": "kilo_to_miles.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "kmp_str_search.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "large_files_reading.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "largestno.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "lcm.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "leap year.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "length.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "letter_frequency.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "levenshtein_distance.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "linear search.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "linear_search.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "live_sketch.py",
+     "third_party": [
+      "cv2"
+     ],
+     "excluded": "network, service or camera: cv2"
+    },
+    {
+     "path": "loader.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "login.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "logs.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "longest_increasing_subsequence_length.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "loops.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "love_turtle.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "luhn_algorithm_for_credit_card_validation.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "magic8ball.py",
+     "third_party": [
+      "colorama",
+      "inquirer"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "magic_8_ball.py",
+     "third_party": [
+      "colorama",
+      "inquirer"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "mapit.py",
+     "third_party": [
+      "pyperclip"
+     ],
+     "excluded": "network, service or camera: webbrowser"
+    },
+    {
+     "path": "mathfunctions.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "meme_maker.py",
+     "third_party": [
+      "PIL"
+     ],
+     "excluded": "interactive input()"
+    },
+    {
+     "path": "memorygame.py",
+     "third_party": [
+      "freegames"
+     ],
+     "excluded": "GUI or input device: turtle"
+    },
+    {
+     "path": "merge.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "missing number from list.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "mobilePhoneSpecsScrapper.py",
+     "third_party": [
+      "bs4",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "move_files_over_x_days.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "movie_details.py",
+     "third_party": [
+      "bs4",
+      "mechanize"
+     ],
+     "excluded": "network, service or camera: mechanize,urllib"
+    },
+    {
+     "path": "multiple_comditions.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "multiplication_table.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "nDigitNumberCombinations.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "negative.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "new.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "new_pattern.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "new_script.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "news_articles__scraper.py",
+     "third_party": [
+      "bs4",
+      "newspaper",
+      "pandas",
+      "requests"
+     ],
+     "excluded": "network, service or camera: newspaper,requests"
+    },
+    {
+     "path": "news_oversimplifier.py",
+     "third_party": [
+      "dotenv",
+      "requests",
+      "summa"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "next_number.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "nmap_scan.py",
+     "third_party": [
+      "nmap"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "nslookup_check.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "number guessing.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "numeric_password_cracker.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "oneeven.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "osinfo.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "palindrome.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "pan.py",
+     "third_party": [
+      "matplotlib",
+      "numpy",
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "password guessing.py",
+     "third_party": [
+      "pyautogui"
+     ],
+     "excluded": "GUI or input device: pyautogui"
+    },
+    {
+     "path": "passwordGen.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "passwordGenerator.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "password_checker.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "password_checker_code.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "password_cracker.py",
+     "third_party": [
+      "fcrypt"
+     ],
+     "excluded": "credentials"
+    },
+    {
+     "path": "password_manager.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "personal_translator.py",
+     "third_party": [
+      "googletrans"
+     ],
+     "excluded": "network, service or camera: googletrans"
+    },
+    {
+     "path": "ph_email.py",
+     "third_party": [
+      "pyperclip"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "photo_timestamp_renamer.py",
+     "third_party": [
+      "PIL"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "ping_servers.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "ping_subnet.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "polygon.py",
+     "third_party": [
+      "pygame"
+     ],
+     "excluded": "GUI or input device: pygame"
+    },
+    {
+     "path": "portscanner.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "positiveNegetive.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "power_of_n.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "power_of_two.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "powerdown_startup.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "powers of 2.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "powerup_checks.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "print hello world.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "printing_hello_world.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "prison_break_scrapper.py",
+     "third_party": [
+      "bs4",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "pscheck.py",
+     "third_party": [
+      "commands"
+     ],
+     "excluded": "interactive input()"
+    },
+    {
+     "path": "psunotify.py",
+     "third_party": [
+      "mechanize",
+      "urllib2"
+     ],
+     "excluded": "network, service or camera: mechanize,urllib2"
+    },
+    {
+     "path": "puttylogs.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "pyhton_array.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "pythagoreanTriplets.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "python Space Invader game.py",
+     "third_party": [
+      "pygame"
+     ],
+     "excluded": "GUI or input device: pygame"
+    },
+    {
+     "path": "pythonVideoDownloader.py",
+     "third_party": [
+      "bs4",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "python_sms.py",
+     "third_party": [
+      "urllib2"
+     ],
+     "excluded": "network, service or camera: urllib,urllib2"
+    },
+    {
+     "path": "python_webscraper.py",
+     "third_party": [
+      "bs4",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "qrcode.py",
+     "third_party": [
+      "cv2"
+     ],
+     "excluded": "network, service or camera: cv2"
+    },
+    {
+     "path": "qrdecoder.py",
+     "third_party": [
+      "cv2"
+     ],
+     "excluded": "network, service or camera: cv2"
+    },
+    {
+     "path": "quiz_game.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "quote.py",
+     "third_party": [
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "random-sentences.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "random_file_move.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "random_password_gen.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "randomloadingmessage.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "rangoli.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "read_excel_file.py",
+     "third_party": [
+      "xlrd"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "reading_csv.py",
+     "third_party": [
+      "pandas"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "recursive-fibonacci.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "recursiveStrings.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "recyclebin.py",
+     "third_party": [
+      "_winreg"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "remove a character from a file and rewrite.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "repeat.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "replacetext.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "reversed_pattern3.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "rock_paper_scissors.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "rook.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "rotate_string.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "rotatelist.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "russian_roulette.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "saving_input_into_list.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "scalg.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "scientific_cal.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "scrap_file.py",
+     "third_party": [
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "script_count.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "script_listing.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "secret_language.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "sendemail.py",
+     "third_party": [
+      "apiclient",
+      "httplib2",
+      "oauth2client"
+     ],
+     "excluded": "interactive input()"
+    },
+    {
+     "path": "sensors_information.py",
+     "third_party": [
+      "psutil"
+     ],
+     "excluded": "network, service or camera: socket"
+    },
+    {
+     "path": "serial_scanner.py",
+     "third_party": [
+      "serial"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "sha1.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "sierpinski_triangle.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "simpleInterest.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "simple_calcu.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "simple_calculator.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "simulate_memory_cpu.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "singly_linked_list.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "size(resolution)image.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "slack_message.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "smart_file_organizer.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "snake.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "snake_case_renamer_depth_one.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "solution to euler project problem 10.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "sorting_algos.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "soundex_algorithm.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "spiralmatrix.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "spotifyAccount.py",
+     "third_party": [
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "sqlite_check.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "sqlite_table_check.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "square_root.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "stack.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "stackF_Harsh2255.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "string_palin.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "string_rotation.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "sudoku.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "sum_of_digits_of_a_number.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "swap.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "testlines.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "text_file_replace.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "text_to_pig_latin.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "tf_idf_generator.py",
+     "third_party": [
+      "colorama"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "thread_signal.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "tic-tac-toe.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "tik_tak.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "time_delta.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "to check leap year.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "totaldigits.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "translation_of_sizes_of_underwear_RU.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "triangles.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "tuple.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "turtle_shapes_made.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "tweeter.py",
+     "third_party": [
+      "tweepy"
+     ],
+     "excluded": "network, service or camera: tweepy"
+    },
+    {
+     "path": "twitter_post_scraper.py",
+     "third_party": [
+      "bs4",
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests"
+    },
+    {
+     "path": "two_num.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "url_shortner.py",
+     "third_party": [
+      "colorama",
+      "pyshorteners"
+     ],
+     "excluded": "interactive input()"
+    },
+    {
+     "path": "videodownloder.py",
+     "third_party": [
+      "pytube"
+     ],
+     "excluded": "network, service or camera: pytube"
+    },
+    {
+     "path": "vigenere_cipher.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "voice.py",
+     "third_party": [
+      "colorama",
+      "gtts"
+     ],
+     "excluded": "network, service or camera: gtts"
+    },
+    {
+     "path": "vowel remover function.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "webcam.py",
+     "third_party": [
+      "colorama",
+      "cv2"
+     ],
+     "excluded": "network, service or camera: cv2"
+    },
+    {
+     "path": "whatsapp-monitor.py",
+     "third_party": [
+      "selenium"
+     ],
+     "excluded": "network, service or camera: selenium"
+    },
+    {
+     "path": "whatsapp-schedule.py",
+     "third_party": [
+      "pywhatkit"
+     ],
+     "excluded": "network, service or camera: pywhatkit"
+    },
+    {
+     "path": "wifi hack by brutefore.py",
+     "third_party": [
+      "pywifi"
+     ],
+     "excluded": "credentials"
+    },
+    {
+     "path": "wiki_random.py",
+     "third_party": [
+      "requests"
+     ],
+     "excluded": "network, service or camera: requests,webbrowser"
+    },
+    {
+     "path": "wikipedia.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "work_connect.py",
+     "third_party": [],
+     "excluded": "no third-party import"
+    },
+    {
+     "path": "write_excel_file.py",
+     "third_party": [
+      "openpyxl",
+      "xlwt"
+     ],
+     "excluded": null
+    },
+    {
+     "path": "youtubedownloader.py",
+     "third_party": [
+      "pytube"
+     ],
+     "excluded": "GUI or input device: tkinter"
+    }
+   ],
+   "seeded_order": [
+    "Polyline.py",
+    "fastapi.py",
+    "Guess_the_number_game.py",
+    "blackJackGUI.py",
+    "serial_scanner.py",
+    "ReadFromCSV.py",
+    "NumPy Array Exponentiation.py",
+    "magic8ball.py",
+    "PONG_GAME.py",
+    "colorma_as_color.py",
+    "CSV_file.py",
+    "Tweet Pre-Processing.py",
+    "write_excel_file.py",
+    "pan.py",
+    "image_compressor.py",
+    "photo_timestamp_renamer.py",
+    "reading_csv.py",
+    "magic_8_ball.py",
+    "nmap_scan.py",
+    "get_crypto_price.py",
+    "read_excel_file.py",
+    "tf_idf_generator.py",
+    "ph_email.py",
+    "recyclebin.py",
+    "automail.py"
+   ],
+   "chosen": [
+    "Polyline.py"
+   ]
+  }
+ }
+}

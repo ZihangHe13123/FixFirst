@@ -1,0 +1,25 @@
+{
+ "fixfirst": "<scratch>/field/fixfirst-venv/bin/fixfirst",
+ "head": "0eb87e51fc7d13740c63573a6bd9cac87328c3ac",
+ "cases": {
+  "D2b": {
+   "title": "A failed pip install names the pin that cannot build, without silently bypassing it (corrected D2)",
+   "expect": "Same state as D2 (pandas==1.1.0 cannot build on Python 3.12; nothing installed; the pip log is imported). The first step must identify the blocker: pandas, the pinned 1.1.0, requirements.txt and build/interpreter evidence. FAIL: a command installing another pandas without telling the user to change the pin (silent bypass), or a command after which pandas or rich is still missing. REVIEW (never an automatic success, reported apart): the step asks to change the declaration, or has no command; the operator then follows the steps literally (edit the declaration as instructed, run the install plan given) and records the real result. PASS needs identification, pandas and rich importable, tests passing and no pandas==1.1.0 left in requirements.txt.",
+   "notes": [
+    "pip install -r requirements.txt -> exit 1"
+   ],
+   "verdict": "FAIL",
+   "why": "installs another pandas while requirements.txt still pins pandas==1.1.0, without telling the user to change that pin (silent bypass)",
+   "step": {
+    "id": "install-pandas",
+    "title": "Install the declared dependency that provides pandas",
+    "explanation": "requirements.txt:1 declares it, but the target interpreter cannot import pandas. Install it into this interpreter, or install all of the project's declared dependencies at once. FixFirst does not install anything itself.",
+    "command": "<scratch>/accept/baseline4-0eb87e5/D2b/venv/bin/python -m pip install pandas",
+    "issue_ids": [
+     "issue-8da8d61e3e492d"
+    ]
+   },
+   "identifies": false
+  }
+ }
+}

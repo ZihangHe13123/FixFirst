@@ -1,0 +1,43 @@
+{
+ "build": "365aa84",
+ "rule": "Run the step's own trial first, then apply exactly the edits and command it returns; automatic REVIEW verdicts stay REVIEW.",
+ "cases": {
+  "A2": {
+   "returned": "requirements.txt:1 SQLAlchemy==1.1.9 -> SQLAlchemy==2.1.1; exact install of the resolved set, which now also keeps python-editor==1.0.4 and python-dateutil==2.9.0.post0 (installed, in the dependency graph)",
+   "operator_choices": [],
+   "install": 0,
+   "pip_check": 0,
+   "tests": "1 passed",
+   "fixfirst_rescan": "goal achieved",
+   "environment_change": [
+    "alembic 1.4.3 -> 1.20.0",
+    "SQLAlchemy 1.1.9 -> 2.1.1",
+    "typing_extensions 4.16.0 added"
+   ],
+   "grade": "complete (two steps); not regressed from d8b1c0a"
+  },
+  "D2b": {
+   "returned": "requirements.txt:1 pandas==1.1.0 -> pandas==3.0.6; exact install of the resolved set",
+   "operator_choices": [],
+   "install": 0,
+   "pip_check": 0,
+   "tests": "1 passed",
+   "fixfirst_rescan": "goal achieved",
+   "environment_change": [
+    "pandas 3.0.6, numpy 2.5.3, python-dateutil 2.9.0.post0, six 1.17.0, rich 15.0.0, markdown-it-py 4.2.0, mdurl 0.1.2 added"
+   ],
+   "grade": "complete (two steps); not regressed from d8b1c0a"
+  },
+  "C": {
+   "returned": "same title and explanation as d8b1c0a: 'The wheel-only trial stopped at django-cors-middleware==1.3.1'; no command",
+   "operator_choices": [
+    "not continued: no installable candidate or interpreter is given"
+   ],
+   "grade": "partial; cannot continue from the step alone (unchanged)"
+  }
+ },
+ "probes": {
+  "probe-wheel-messages.json": "14 real uv failures through collect()/advise() on d8b1c0a, 27afb06 and 365aa84",
+  "probe-orphans.json": "365aa84's counterexample and two harmless-orphan neighbours on 27afb06 and 365aa84"
+ }
+}

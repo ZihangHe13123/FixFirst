@@ -1,0 +1,12 @@
+Next steps (manual fixes are never run for you):
+  1. review-install-pandas — The wheel-only trial stopped at docopt
+     The temporary trial did not produce an installation candidate: The wheel-only trial cannot install docopt. The immediate blocker is docopt, which has no usable wheel in the resolver output. FixFirst's trial disables source builds. This result does not establish a version conflict or an unsupported Python, and does not justify changing another package's pin. Review that dependency's documented source-build or Conda installation route in a separate environment, or obtain a supported wheel, before retrying the complete project setup. Resolver output: warning: Requirements file `<tmp> does not contain any dependencies
+Using Python 3.12.13 environment at: <tmp>
+  × No solution found when resolving dependencies:
+  ╰─▶ Because all versions of docopt have no usable wheels and you require
+      docopt, we can conclude that your requirements are unsatisfiable.
+
+hint: Wheels are required for `docopt` because building from source is disabled for all packages (i.e., with `--no-build`) No declaration changes or installation command have been verified by this trial. Keep the original requirements until a reviewed alternative is available; do not repeat the same unresolved trial. The trial ignores pip/uv configuration files (environment index settings still apply); a configured private index or mirror may give a different result.
+  2. install-docopt — Install the dependency set after reviewing the failed requirement
+     Resolve the named installation blocker first, keeping the project declarations and environment consistent.
+Check again: fixfirst scan session-fecf611a85df

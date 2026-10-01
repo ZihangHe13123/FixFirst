@@ -12,6 +12,7 @@ import posixpath
 import re
 
 from packaging.requirements import InvalidRequirement, Requirement
+from packaging.specifiers import SpecifierSet
 from packaging.utils import canonicalize_name
 from packaging.version import InvalidVersion, Version
 
@@ -803,6 +804,26 @@ def observations(session: Session, issues: list[Issue], *, interface_history=Tru
                 facts.append(observed(subject, "similar_local", path, project_ref))
             for source in context["declared"]:
                 facts.append(observed(subject, "declared_in", source, project_ref))
+    # Requires-Dist remains available even in uv environments without pip. A
+    # conflicting lower bound is evidence for upgrading, not for searching back.
+    from .dependency_context import context, requirements_for, combined_specifier
+
+    dependency_context = context(environment, {**project, "_run_id": project_run.run_id if project_run else None})
+    constrained = set()
+    for name, installed_version in dependency_context["installed"].items():
+        rows = requirements_for(dependency_context, name)
+        try:
+            broken = any(r["owner"] != "project" and not SpecifierSet(r["specifier"]).contains(installed_version)
+                         for r in rows)
+        except InvalidVersion:
+            continue
+        if not broken:
+            continue
+        dist = "dist:" + name
+        refs = sorted({ref for r in rows for ref in r["refs"]})
+        facts.append(observed(dist, "required_spec", combined_specifier(dependency_context, name), refs))
+        facts.append(observed(dist, "required_by", "; ".join(sorted({r["source"] for r in rows})), refs))
+        constrained.add(dist)
     # pip check: "flask 1.1.4 has requirement Jinja2<3.0,>=2.10.1, but you have jinja2 3.1.6."
     for issue in issues:
         if issue.tool != "pip_check" or issue.kind != "dependency_conflict":
@@ -816,6 +837,8 @@ def observations(session: Session, issues: list[Issue], *, interface_history=Tru
             except InvalidRequirement:
                 continue
             dist = "dist:" + canonicalize_name(requirement.name)
+            if dist in constrained:
+                continue
             refs = event.evidence_refs
             facts.append(observed(dist, "required_spec", str(requirement.specifier), refs))
             facts.append(observed(dist, "required_by", f"{found['who']} {found['version']}", refs))
@@ -881,6 +904,11 @@ def observations(session: Session, issues: list[Issue], *, interface_history=Tru
                                     if canonicalize_name(p.get("name", "")) == canonicalize_name(data["dist"])), None)
             if environment and data.get("installed") != current_version:
                 continue  # A later environment change needs a new search.
+            if data.get("context_fingerprint"):
+                if data["context_fingerprint"] != dependency_context["fingerprint"]:
+                    continue
+            elif data.get("provides") and requirements_for(dependency_context, data["dist"]):
+                continue  # Old name-only trials did not verify these requirements.
             searches[data.get("api", "")] = (run, data)
     for api, (run, data) in searches.items():
         name, ref = "api:" + api, [f"{run.run_id}:stdout:1"]

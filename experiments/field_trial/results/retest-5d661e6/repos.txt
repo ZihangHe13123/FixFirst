@@ -1,0 +1,8 @@
+jakevdp/PythonDataScienceHandbook d66231454ef753818dc9213c9b5942e067266966 2023-05-05 master
+amueller/introduction_to_ml_with_python ea60cf6cf791553b6cca7cf31802c68cb3798ebb 2024-03-13 main
+  'projects/Fetch_and_store_tweets/img/step-6.png'
+Python-World/python-mini-projects e0cfd4b0fe5e0bb4d443daba594e83332d5fb720 2022-05-25 master
+geekcomputers/Python 808584709a9b710d7e0ece36a6ea4ffcf109b537 2026-08-31 master
+mdn/django-locallibrary-tutorial 92f1c1e7bdd4ada5209a3c69876ce29e6cee3d96 2026-09-04 main
+mjhea0/flaskr-tdd 305122f48823d98fd7fe8de989af2821b3c5d46d 2023-10-17 main
+wsvincent/djangox 14c0374eaab52dc49898229ffe9a3e8f0e0e51c2 2026-04-08 main
