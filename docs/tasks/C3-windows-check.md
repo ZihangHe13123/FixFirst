@@ -103,6 +103,7 @@ FixFirst 同时支持 Windows，组里只有 C 的电脑能真正验证它。冻
    - 复制界面给出的安装命令，在 PowerShell 里执行，确认能正常运行；
    - 点页面底部的 **Download a shareable report** 导出报告，打开看看中文正不正常，用户名有没有被替换成 `<home>`；
    - 关掉再打开，之前的会话还在。
+   - 补做默认开启的位置专用参数（positional-only）机制公开样例，按[W13步骤](../freeze/WINDOWS_HANDOFF.md#位置专用参数机制的windows待验项w13)记录实际建议、当前异常观测和原测试摘要。该项目前待Windows实测，不能用Mac结果代签；没有精确建议时记录失败，不人工补全后记通过。
    - 冻结版这次，顺手截几张 Windows 上安装和使用的图（setup.ps1 运行完、首页、检查结果页），发给 B，用在使用指南（B14）里。
 4. 最终版额外检查：
    - 从 GitHub 上下载 ZIP（Code → Download ZIP）；

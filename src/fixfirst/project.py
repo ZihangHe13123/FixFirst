@@ -148,6 +148,8 @@ def read_project(root: Path) -> dict:
                 note(f"{source}: pip options, editable paths and variable substitution are not parsed")
                 continue
             value = re.split(r"\s+#", value, maxsplit=1)[0]
+            if re.search(r"\s+--hash=", value):
+                note(f"{source}: hash-checked requirements need the original installation file; generated replacements cannot preserve archive hashes")
             value = re.sub(r"\s+--hash=\S+", "", value)
             add(value, source, group, constraint)
         if logical:
@@ -211,6 +213,8 @@ def read_project(root: Path) -> dict:
     for path in paths:
         if path.exists():
             requirements(path, "required" if os.path.normcase(path.name) == "requirements.txt" else path.stem)
+    for path in sorted(islice((root / "requirements").glob("*.txt"), MAX_FILES + 1)):
+        requirements(path, "requirements/" + path.stem)
     setup = root / "setup.cfg"
     if setup.exists():
         text = read(setup)
@@ -248,8 +252,41 @@ def read_project(root: Path) -> dict:
                 add(value, source, group)
             own(setup_py_name(text))
         note("setup.py is not executed; only literal declarations in its setup() call are read")
+    for filename in ("environment.yml", "environment.yaml"):
+        path = root / filename
+        if not path.exists():
+            continue
+        text = read(path)
+        if text is None:
+            continue
+        from .conda_declarations import read as read_conda
+
+        conda = read_conda(text, filename, MAX_DECLARATIONS)
+        for requirement, source in conda["pip"]:
+            add(requirement, source)
+        result["requires_python"].extend(conda["python"])
+        result.setdefault("conda_declarations", []).extend(conda["conda"])
+        result.setdefault("conda_mappings", []).extend(conda["mappings"])
+        for message in conda["notes"]:
+            note(message)
     if not result["files"]:
         note("No supported static declaration file was found")
+    # Documentation is a hint, not an enforceable requirement or proof of support.
+    result["python_hints"] = []
+    for name in (".python-version", "runtime.txt", "README.md", "README.rst", "README.txt"):
+        path = root / name
+        if not path.exists():
+            continue
+        text = read(path)
+        if text is None:
+            continue
+        for line, value in enumerate(text.splitlines(), 1):
+            if name in (".python-version", "runtime.txt"):
+                match = re.fullmatch(r"\s*(?:python-)?(\d+\.\d+(?:\.\d+)?)\s*", value)
+            else:
+                match = re.search(r"\bPython\s*[`:*]*\s*(\d+\.\d+(?:\.\d+)?)\b", value, re.I)
+            if match and len(result["python_hints"]) < 20:
+                result["python_hints"].append({"version": match[1], "source": f"{name}:{line}"})
     return result
 
 
@@ -388,6 +425,30 @@ def assess_project(data: dict, environment: dict) -> dict:
     return data
 
 
+def select_goal_requirements(data, goal):
+    """An unambiguous nested test requirements file follows the chosen test goal.
+
+    Other optional groups remain opt-in. Do not combine competing dev
+    environments or replace a canonical set that already declares the test runner.
+    A production-only root file keeps its constraints while the unique test set
+    adds the runner and its other declared test dependencies.
+    """
+    if goal not in ("pass_tests", "collect_tests") or any(
+            r.get("name") == "pytest" and r.get("group") == "required" and not r.get("constraint")
+            for r in data["declarations"]):
+        return data
+    groups = {r["group"] for r in data["declarations"] if r.get("name") == "pytest"
+              and r.get("group", "").startswith("requirements/") and not r.get("constraint")}
+    if len(groups) == 1:
+        selected = next(iter(groups))
+        data["selected_requirement_group"] = selected
+        for row in data["declarations"]:
+            if row["group"] == selected:
+                row["selected_from"] = selected
+                row["group"] = "required"
+    return data
+
+
 def collect_project(session, env_id: str) -> Run:
     from .runner import redact_data
 
@@ -401,7 +462,7 @@ def collect_project(session, env_id: str) -> Run:
     environment = session.environment
     if environment.get("_environment_id") != env_id:
         environment = {}
-    data = assess_project(read_project(Path(session.project_root)), environment)
+    data = assess_project(select_goal_requirements(read_project(Path(session.project_root)), session.goal), environment)
     data["environment_run_id"] = environment.get("_run_id")
     # Paths checked are only root/src; presence does not prove that importing them succeeds.
     data["local_modules"] = []
@@ -445,8 +506,8 @@ def collect_project(session, env_id: str) -> Run:
 def tested_versions(root: Path) -> list[dict]:
     """Versions the project was last locked to (Pipfile.lock, poetry.lock, uv.lock).
 
-    A lock file records a set of versions the project worked with; when a failure is raised
-    inside a library that is now a major version newer, that difference is a likely cause.
+    A lock records chosen versions, not proof that this input or test suite passed.
+    The historical tested_versions field name is retained for session compatibility.
     """
     found = []
 

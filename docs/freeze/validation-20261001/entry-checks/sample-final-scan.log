@@ -1,0 +1,12 @@
+
+Sample project with 4 problems · session-77cb1d5917a5
+Goal: Pass the test suite | achieved
+  [Verified fixed] issue-91b31964ae1617  KeyError · test_orders.py::test_checkout  → config_missing (rule)
+  [Verified fixed] issue-624772c417ae3f  AttributeError · test_stats.py::test_mean  → version_incompatibility (rule)
+  [Verified fixed] issue-b6e397dce720fd  ImportError: cannot import name 'Mapping' from 'collections'  → version_incompatibility (rule)
+  [Verified fixed] issue-687ee9a528c748  ModuleNotFoundError: No module named 'helper'  → local_module (rule)
+
+Next steps (manual fixes are never run for you):
+Check again: fixfirst scan session-77cb1d5917a5
+
+Report: <entry-checks>/sessions/session-77cb1d5917a5/report.html

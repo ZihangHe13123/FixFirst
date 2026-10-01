@@ -17,7 +17,7 @@ MAX_OUTPUT = 1_000_000
 # Real test suites can take minutes; a check that runs longer is stopped and reported.
 DEFAULT_TIMEOUT = 600
 DEFAULT_CHECKS = ("environment", "pip_check", "pytest", "ruff", "project")
-TOOLS = (*DEFAULT_CHECKS, "pytest_run", "version_search", "python_run", "unittest_run")
+TOOLS = (*DEFAULT_CHECKS, "pytest_run", "version_search", "python_run", "unittest_run", "dependency_resolve")
 SEARCH_TARGET = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$")
 
 
@@ -272,6 +272,8 @@ def search_releases(session: Session, targets: list[str]) -> Run:
     from packaging.utils import canonicalize_name
 
     from .versions import search
+    from .dependency_context import context, combined_specifier, requirements_for, trial_constraints
+    from .evidence import project_index
 
     if len(targets) != 2 or not all(isinstance(t, str) and SEARCH_TARGET.match(t) for t in targets):
         raise ValueError("A release search needs a distribution name and a dotted name")
@@ -290,7 +292,13 @@ def search_releases(session: Session, targets: list[str]) -> Run:
     if not installed or not environment.get("python_version"):
         run.status, run.stderr = "launch_failed", "Take an environment snapshot first (press Check again)."
         return run
-    result = search(python, environment["python_version"], environment.get("markers", {}), dist, installed, api)
+    project_run, project = project_index(session)
+    dependencies = context(environment, {**project, "_run_id": project_run.run_id if project_run else None})
+    result = search(python, environment["python_version"], environment.get("markers", {}), dist, installed, api,
+                    specifier=combined_specifier(dependencies, dist), constraints=trial_constraints(dependencies, dist),
+                    context_fingerprint=dependencies["fingerprint"])
+    result["requirement_sources"] = requirements_for(dependencies, dist)
+    result["constraint_notes"] = dependencies["notes"]
     run.stdout = json.dumps(result)
     run.exit_code = 0
     run.duration_s = round(time.monotonic() - start, 3)
@@ -329,6 +337,10 @@ def validate_targets(session: Session, targets: list[str]):
 
 
 def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targets=None) -> Run:
+    if tool == "dependency_resolve":
+        from .dependency_resolution import collect as resolve_dependencies
+
+        return resolve_dependencies(session, list(targets or []), timeout)
     if tool in ("python_run", "unittest_run"):
         from .execution import collect_execution
 
@@ -396,6 +408,8 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
         with tempfile.TemporaryDirectory(prefix="fixfirst-probe-", ignore_cleanup_errors=True) as directory:
             probe = Path(directory) / "_fixfirst_probe.py"
             probe.write_text(Path(__file__).with_name("probe.py").read_text(encoding="utf-8"), encoding="utf-8")
+            (Path(directory) / "_runtime_evidence.py").write_text(
+                Path(__file__).with_name("_runtime_evidence.py").read_text(encoding="utf-8"), encoding="utf-8")
             records_file = Path(directory) / "events.jsonl"
             extra = {
                 "PYTHONPATH": os.pathsep.join([directory, *[

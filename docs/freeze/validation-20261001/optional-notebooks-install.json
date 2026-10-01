@@ -1,0 +1,6 @@
+{
+  "exit_code": 0,
+  "elapsed_seconds": 3.6,
+  "index": "https://pypi.org/simple",
+  "purpose": "declared optional notebook dependencies for compatibility regression"
+}

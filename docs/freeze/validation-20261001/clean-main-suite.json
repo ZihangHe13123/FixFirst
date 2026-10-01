@@ -1,0 +1,7 @@
+{
+  "exit_code": 0,
+  "elapsed_seconds": 104.97,
+  "purpose": "same public existing regression suite against clean installed candidate with changed sklearn patch",
+  "working_directory": "<clean-source>",
+  "test_source_revision": "d7ca5052805410a74b5dda8bc02c0a30125c90f2"
+}

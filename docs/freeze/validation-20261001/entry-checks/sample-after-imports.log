@@ -1,0 +1,16 @@
+
+Sample project with 4 problems · session-77cb1d5917a5
+Goal: Pass the test suite | blocked
+  [Still failing] issue-91b31964ae1617  KeyError · test_orders.py::test_checkout  → config_missing (rule)
+  [Still failing] issue-624772c417ae3f  AttributeError · test_stats.py::test_mean  → version_incompatibility (rule)
+  [Verified fixed] issue-b6e397dce720fd  ImportError: cannot import name 'Mapping' from 'collections'  → version_incompatibility (rule)
+  [Verified fixed] issue-687ee9a528c748  ModuleNotFoundError: No module named 'helper'  → local_module (rule)
+
+Next steps (manual fixes are never run for you):
+  1. update-numpy.float — Replace numpy.float: removed in numpy 1.24
+     Observed project location: stats.py:5. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.
+  2. configure-shop_api_token — Provide the configuration value SHOP_API_TOKEN
+     The code needs SHOP_API_TOKEN at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values.
+Check again: fixfirst scan session-77cb1d5917a5
+
+Report: <entry-checks>/sessions/session-77cb1d5917a5/report.html

@@ -1,0 +1,25 @@
+{
+  "reused_regression_source": "99c8086a2fb5445d05e3e7a9fb6e1ace8b2e9681",
+  "package_source": "d7ca5052805410a74b5dda8bc02c0a30125c90f2",
+  "src_tests_metadata_changed_files": [
+    "pyproject.toml",
+    "src/fixfirst/__init__.py"
+  ],
+  "changes": "package/module version 0.6.1 to 0.7.0 only; diagnosis code, tests and setup scripts unchanged",
+  "dependency_version_changes_among_common_distributions": {
+    "pip": [
+      "26.2.1",
+      "25.0.1"
+    ],
+    "scikit-learn": [
+      "1.9.0",
+      "1.9.1"
+    ]
+  },
+  "additional_checks": "actual archive membership/bytes, deterministic repeat build, fresh source install and entry-point smoke",
+  "full_regression_rerun": true,
+  "new_clean_main_suite": "776 passed, 1 skipped",
+  "rerun_reason": "fresh official install selected scikit-learn 1.9.1 versus previous 1.9.0",
+  "mac_harness_status": "58 passed reused from 99c8086; harness/process code unchanged, not rerun",
+  "previous_regression_results_retained": "776 passed, 1 skipped; Mac harness 58 passed"
+}

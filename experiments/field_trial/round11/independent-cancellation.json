@@ -1,0 +1,13 @@
+{
+  "recorded_utc": "2026-10-01T11:06:52.354841+00:00",
+  "status": "cancelled_before_product_execution",
+  "reason": "User narrowed round11 to the existing five public mechanism cases and explicitly excluded new independent tasks.",
+  "planned_episodes_cancelled": 12,
+  "actual_product_executions": 0,
+  "baseline_executions": 0,
+  "candidate_executions": 0,
+  "identities_disclosed": false,
+  "frozen_materials_preserved": true,
+  "protocol_before_cancellation_sha256": "b1dd84cc43585bef9962d2bda7e3085c411d43f289fe0bd948c383c9d85b6a2a",
+  "protocol_with_cancellation_sha256": "71786181596f9fdeb8244d44f1561bf0e104eed9629519ff088e2259fbb81352"
+}

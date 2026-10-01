@@ -1,0 +1,49 @@
+{
+ "ref": "96b161a",
+ "projects": [
+  "C1",
+  "C2",
+  "C3",
+  "N1",
+  "N2",
+  "N3",
+  "R-C2",
+  "R-N1",
+  "R-N2",
+  "R-N3",
+  "R-S3",
+  "S2",
+  "S3"
+ ],
+ "distinct_issue_titles": 132,
+ "classes": {
+  "install / dependency / build": {
+   "titles": 105,
+   "projects": 11
+  },
+  "version / release / removed API": {
+   "titles": 1,
+   "projects": 1
+  },
+  "ImportError / ModuleNotFoundError": {
+   "titles": 14,
+   "projects": 4
+  },
+  "AttributeError": {
+   "titles": 5,
+   "projects": 3
+  },
+  "TypeError": {
+   "titles": 3,
+   "projects": 3
+  },
+  "positional-only": {
+   "titles": 0,
+   "projects": 0
+  },
+  "other (assertion, style, unknown ...)": {
+   "titles": 4,
+   "projects": 4
+  }
+ }
+}

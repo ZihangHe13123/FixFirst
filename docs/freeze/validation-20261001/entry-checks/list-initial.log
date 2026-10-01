@@ -1,0 +1,9 @@
+[
+  {
+    "session_id": "session-77cb1d5917a5",
+    "name": "Sample project with 4 problems",
+    "goal": "pass_tests",
+    "goal_status": "blocked",
+    "created_at": "2026-10-01T12:19:05+00:00"
+  }
+]

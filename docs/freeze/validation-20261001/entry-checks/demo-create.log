@@ -1,0 +1,16 @@
+
+Sample project with 4 problems · session-77cb1d5917a5
+Goal: Pass the test suite | blocked
+  [Still failing] issue-b6e397dce720fd  ImportError: cannot import name 'Mapping' from 'collections'  → version_incompatibility (rule)
+  [Still failing] issue-687ee9a528c748  ModuleNotFoundError: No module named 'helper'  → local_module (rule)
+
+Next steps (manual fixes are never run for you):
+  1. update-collections.mapping — Replace collections.Mapping: removed in Python 3.10
+     Observed project location: pricing.py:1. The target interpreter has Python 3.12.14, which no longer provides collections.Mapping (removed in 3.10). Change the code to use the same names from collections.abc. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.
+  2. fix-import-helper — Update imports of helper: the project has helpers.py
+     No installed package, standard module or known distribution is called helper, but the project contains helpers.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.
+Check again: fixfirst scan session-77cb1d5917a5
+
+Fix the project in <entry-checks>/sample/project (see FIXES.md), then run:
+  '<clean-source>/.venv/bin/python' -m fixfirst --store <entry-checks>/sessions scan session-77cb1d5917a5
+Report: <entry-checks>/sessions/session-77cb1d5917a5/report.html  ·  or use `fixfirst serve` for the web interface

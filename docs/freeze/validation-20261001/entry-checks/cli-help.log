@@ -1,0 +1,40 @@
+usage: fixfirst [-h] [--store STORE]
+                {init,list,interactive,serve,mcp,scan,import,show,run,mark-fixed,accept-baseline,report,export,configure,stop,resume,delete,graph,ask,knowledge,demo,dataset,evaluate,historical}
+                ...
+
+FixFirst: local, evidence-based Python troubleshooting
+
+positional arguments:
+  {init,list,interactive,serve,mcp,scan,import,show,run,mark-fixed,accept-baseline,report,export,configure,stop,resume,delete,graph,ask,knowledge,demo,dataset,evaluate,historical}
+    init                create a session (does not run the project)
+    list                list sessions
+    interactive         terminal menu, no commands to remember
+    serve               open the local web interface
+    mcp                 serve FixFirst to coding agents over MCP (stdio)
+    scan                run checks (pytest imports project code)
+    import              import an existing log
+    show                show the current state
+    run                 run a check action from the plan
+    mark-fixed          record a manual change and wait for verification
+    accept-baseline     accept the changed tests and test settings as the new
+                        baseline
+    report              write the HTML and JSON report
+    export              write a redacted report for sharing
+    configure           change the goal or the interpreter
+    stop                stop the session
+    resume              resume the session
+    delete              delete a session's local records
+    graph               export the session's evidence graph
+    ask                 ask why an action is advised, what the cause is, what
+                        is unverified
+    knowledge           export the domain knowledge graph and rule base
+    demo                build and run an owned demo project (never your code)
+    dataset             generate a labelled dataset by real execution
+    evaluate            run the experiments on a dataset
+    historical          replay sourced upstream regressions offline
+
+options:
+  -h, --help            show this help message and exit
+  --store STORE         directory that holds troubleshooting sessions
+                        (default: $FIXFIRST_STORE, else .fixfirst; for mcp,
+                        ~/.fixfirst/sessions)

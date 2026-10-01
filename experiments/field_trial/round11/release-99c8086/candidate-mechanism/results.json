@@ -1,0 +1,732 @@
+{
+  "scope": "Public prerequisite real executions, not independent performance",
+  "tasks": [
+    {
+      "id": "positional-only",
+      "role": "applicable_repair",
+      "first": {
+        "goal": "blocked",
+        "issues": [
+          {
+            "schema_version": 1,
+            "issue_id": "issue-15a8ef311e496c",
+            "fingerprint": "15a8ef311e496c",
+            "tool": "pytest_run",
+            "stage": "call",
+            "kind": "test_runtime_error",
+            "component": "",
+            "title": "TypeError · test_app.py::test_answer",
+            "event_ids": [
+              "event-8109c05c1ec6"
+            ],
+            "evidence_refs": [
+              "run-19fa7b958704:probe:2",
+              "run-19fa7b958704:probe:3"
+            ],
+            "member_keys": [
+              "e0038620ba5a70"
+            ],
+            "scope": "tests:project",
+            "environment_id": "d34ad4184c7cff71",
+            "category": "other_unknown",
+            "diagnosis": "code_defect",
+            "diagnosis_source": "rule",
+            "diagnosis_rule": "runtime-binding-contract",
+            "prediction": "code_defect",
+            "prediction_confidence": 1.0,
+            "prediction_note": "",
+            "group_score": 1.0,
+            "status": "open",
+            "first_seen": "2026-10-01T11:08:31+00:00",
+            "last_seen": "2026-10-01T11:08:31+00:00",
+            "note": "",
+            "targets": [
+              "test_app.py::test_answer"
+            ],
+            "verification": null
+          }
+        ],
+        "trace": {
+          "structured_evidence": false,
+          "bounded_actions": false,
+          "issues": [
+            {
+              "issue_id": "issue-15a8ef311e496c",
+              "operation": {
+                "status": "observed_operation",
+                "record": {
+                  "source": "failed_instruction_namespace",
+                  "kind": "python_binding",
+                  "operation": "CALL",
+                  "module": "core",
+                  "owner": "",
+                  "name": "adapt",
+                  "file": "<checkout>/workbench/round11/candidate-mechanism/positional-only/project/app.py",
+                  "line": 4,
+                  "static_namespace_checked": true,
+                  "requested_member_present": true,
+                  "dynamic": false,
+                  "unique": false,
+                  "candidates": [],
+                  "argument_types": [
+                    "int"
+                  ],
+                  "callee_name": "normalise",
+                  "parameters": [
+                    {
+                      "name": "value",
+                      "kind": "positional_only",
+                      "required": true
+                    }
+                  ],
+                  "positional_count": 0,
+                  "keyword_names": [
+                    "value"
+                  ],
+                  "binding_errors": {
+                    "positional_only_as_keyword": [
+                      "value"
+                    ],
+                    "missing": [
+                      "value"
+                    ],
+                    "unexpected": [],
+                    "duplicate": [],
+                    "too_many_positional": false
+                  },
+                  "definition_file": "<checkout>/workbench/round11/candidate-mechanism/positional-only/project/core.py",
+                  "definition_line": 1
+                },
+                "refs": [
+                  "run-19fa7b958704:probe:3",
+                  "run-19fa7b958704:probe:2"
+                ],
+                "location": "app.py:4",
+                "statement": "return adapt(value=value)",
+                "symbol_record_ref": "run-19fa7b958704:probe:3",
+                "symbol_statement_ref": "run-19fa7b958704:probe:2",
+                "linked_failure_ref": null,
+                "origin": "project",
+                "projection_status": "disabled"
+              },
+              "prediction": "code_defect",
+              "prediction_confidence": 1.0,
+              "prediction_note": "",
+              "diagnosis": "code_defect",
+              "diagnosis_source": "rule",
+              "diagnosis_rule": "runtime-binding-contract",
+              "adoption": "certain_rule_priority",
+              "diagnosis_candidates": [
+                {
+                  "fact_id": "issue-15a8ef311e496c:model_suggests:code_defect",
+                  "predicate": "model_suggests",
+                  "value": "code_defect",
+                  "rule_id": "decision-tree"
+                },
+                {
+                  "fact_id": "issue-15a8ef311e496c:diagnosis:code_defect",
+                  "predicate": "diagnosis",
+                  "value": "code_defect",
+                  "rule_id": "runtime-binding-contract"
+                }
+              ],
+              "candidates_omitted": 0,
+              "bounded_action": {
+                "enabled": false,
+                "eligibility": "conflicting_rule",
+                "generated": false,
+                "action_id": null,
+                "became_first_for_issue": false,
+                "became_first_step": false
+              },
+              "binding_plan": {
+                "status": "eligible_positional_only",
+                "generated": true,
+                "parameter": "value",
+                "location": "app.py:4",
+                "before": "return adapt(value=value)",
+                "after": "return adapt(value)",
+                "refs": [
+                  "run-19fa7b958704:probe:3",
+                  "run-19fa7b958704:probe:2"
+                ],
+                "action_id": "pass-positionally-issue-15a8ef311e496c"
+              },
+              "first_related_action_id": "pass-positionally-issue-15a8ef311e496c",
+              "first_related_action_rules": [
+                "P_BINDING"
+              ]
+            }
+          ],
+          "issues_omitted": 0,
+          "first_action_scope": "raw_ordered_plan",
+          "global_first_action_id": "pass-positionally-issue-15a8ef311e496c"
+        },
+        "step": {
+          "id": "pass-positionally-issue-15a8ef311e496c",
+          "issue_ids": [
+            "issue-15a8ef311e496c"
+          ],
+          "possible": null,
+          "title": "Pass value positionally at app.py:4",
+          "explanation": "app.py:4: replace `return adapt(value=value)` with `return adapt(value)`. Keep surrounding indentation and the original tests unchanged. The recorded callable declares value as positional-only. Pass the same existing expression positionally; its value and evaluation order are preserved. Re-run the original tests to verify the intended result.",
+          "command": null,
+          "confirm": "Re-run the original failing scope and then the full unchanged test suite",
+          "cause": "Defect in project code or tests",
+          "suspected": false,
+          "gather": false,
+          "search": false,
+          "resolve": false,
+          "where": [
+            "app.py:4"
+          ],
+          "errors": [
+            "TypeError · test_app.py::test_answer"
+          ],
+          "rules": [],
+          "sources": [],
+          "optional": false,
+          "impact": null,
+          "risk": null,
+          "warnings": [],
+          "breakdown": []
+        }
+      },
+      "edits_applied": [
+        [
+          "app.py",
+          "return adapt(value=value)",
+          "return adapt(value)"
+        ]
+      ],
+      "original_tests_unchanged": true,
+      "final_goal": "achieved",
+      "rounds": 2,
+      "duration_seconds": 0.843
+    },
+    {
+      "id": "healthy",
+      "role": "healthy_control",
+      "first": {
+        "goal": "achieved",
+        "issues": [],
+        "trace": {
+          "structured_evidence": false,
+          "bounded_actions": false,
+          "issues": [],
+          "issues_omitted": 0,
+          "first_action_scope": "raw_ordered_plan",
+          "global_first_action_id": "check-pytest_run"
+        },
+        "step": null
+      },
+      "edits_applied": [],
+      "original_tests_unchanged": true,
+      "final_goal": "achieved",
+      "rounds": 1,
+      "duration_seconds": 0.273
+    },
+    {
+      "id": "own-store-method",
+      "role": "observation_without_unique_repair",
+      "first": {
+        "goal": "blocked",
+        "issues": [
+          {
+            "schema_version": 1,
+            "issue_id": "issue-8e20c7bfecf9be",
+            "fingerprint": "8e20c7bfecf9be",
+            "tool": "pytest_run",
+            "stage": "call",
+            "kind": "test_runtime_error",
+            "component": "",
+            "title": "AttributeError · test_app.py::test_answer",
+            "event_ids": [
+              "event-f1e69925115e"
+            ],
+            "evidence_refs": [
+              "run-35cb82cbfe8a:probe:2",
+              "run-35cb82cbfe8a:probe:3"
+            ],
+            "member_keys": [
+              "b4733ea4b7c8c6"
+            ],
+            "scope": "tests:project",
+            "environment_id": "d34ad4184c7cff71",
+            "category": "other_unknown",
+            "diagnosis": "code_defect",
+            "diagnosis_source": "rule",
+            "diagnosis_rule": "D43",
+            "prediction": "local_module",
+            "prediction_confidence": 1.0,
+            "prediction_note": "The classifier suggested local module or path problem, but rule D43 concluded defect in project code or tests from the evidence; the rule's conclusion drives the advice.",
+            "group_score": 1.0,
+            "status": "open",
+            "first_seen": "2026-10-01T11:08:32+00:00",
+            "last_seen": "2026-10-01T11:08:32+00:00",
+            "note": "",
+            "targets": [
+              "test_app.py::test_answer"
+            ],
+            "verification": null
+          }
+        ],
+        "trace": {
+          "structured_evidence": false,
+          "bounded_actions": false,
+          "issues": [
+            {
+              "issue_id": "issue-8e20c7bfecf9be",
+              "operation": {
+                "status": "observed_operation",
+                "record": {
+                  "source": "failed_instruction_namespace",
+                  "kind": "instance",
+                  "operation": "LOAD_ATTR",
+                  "module": "app",
+                  "owner": "Store",
+                  "name": "fetch",
+                  "file": "<checkout>/workbench/round11/candidate-mechanism/own-store-method/project/app.py",
+                  "line": 6,
+                  "static_namespace_checked": true,
+                  "requested_member_present": false,
+                  "dynamic": false,
+                  "unique": false,
+                  "candidates": []
+                },
+                "refs": [
+                  "run-35cb82cbfe8a:probe:3",
+                  "run-35cb82cbfe8a:probe:2"
+                ],
+                "location": "app.py:6",
+                "statement": "return Store().fetch()",
+                "symbol_record_ref": "run-35cb82cbfe8a:probe:3",
+                "symbol_statement_ref": "run-35cb82cbfe8a:probe:2",
+                "linked_failure_ref": null,
+                "origin": "project",
+                "projection_status": "disabled"
+              },
+              "prediction": "local_module",
+              "prediction_confidence": 1.0,
+              "prediction_note": "The classifier suggested local module or path problem, but rule D43 concluded defect in project code or tests from the evidence; the rule's conclusion drives the advice.",
+              "diagnosis": "code_defect",
+              "diagnosis_source": "rule",
+              "diagnosis_rule": "D43",
+              "adoption": "certain_rule_priority",
+              "diagnosis_candidates": [
+                {
+                  "fact_id": "issue-8e20c7bfecf9be:model_suggests:local_module",
+                  "predicate": "model_suggests",
+                  "value": "local_module",
+                  "rule_id": "decision-tree"
+                },
+                {
+                  "fact_id": "issue-8e20c7bfecf9be:diagnosis:code_defect",
+                  "predicate": "diagnosis",
+                  "value": "code_defect",
+                  "rule_id": "D43"
+                }
+              ],
+              "candidates_omitted": 0,
+              "bounded_action": {
+                "enabled": false,
+                "eligibility": "conflicting_rule",
+                "generated": false,
+                "action_id": null,
+                "became_first_for_issue": false,
+                "became_first_step": false
+              },
+              "binding_plan": {
+                "status": "no_binding_observation",
+                "generated": false
+              },
+              "first_related_action_id": "review-test_runtime_error",
+              "first_related_action_rules": [
+                "P50"
+              ]
+            }
+          ],
+          "issues_omitted": 0,
+          "first_action_scope": "raw_ordered_plan",
+          "global_first_action_id": "review-test_runtime_error"
+        },
+        "step": {
+          "id": "review-test_runtime_error",
+          "issue_ids": [
+            "issue-8e20c7bfecf9be"
+          ],
+          "possible": null,
+          "title": "Inspect the exception raised while running the test",
+          "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+          "command": null,
+          "confirm": "Re-run the related test nodes, then the full suite",
+          "cause": "Defect in project code or tests",
+          "suspected": false,
+          "gather": false,
+          "search": false,
+          "resolve": false,
+          "where": [
+            "app.py:6"
+          ],
+          "errors": [
+            "AttributeError · test_app.py::test_answer"
+          ],
+          "rules": [
+            "D43: The missing attribute or unexpected argument belongs to a class or function defined in the project."
+          ],
+          "sources": [],
+          "optional": false,
+          "impact": null,
+          "risk": null,
+          "warnings": [],
+          "breakdown": []
+        }
+      },
+      "edits_applied": [],
+      "original_tests_unchanged": true,
+      "final_goal": "blocked",
+      "rounds": 1,
+      "duration_seconds": 0.288
+    },
+    {
+      "id": "regex-arity",
+      "role": "observation_without_unique_repair",
+      "first": {
+        "goal": "blocked",
+        "issues": [
+          {
+            "schema_version": 1,
+            "issue_id": "issue-693dc4e36f796e",
+            "fingerprint": "693dc4e36f796e",
+            "tool": "pytest_run",
+            "stage": "call",
+            "kind": "test_runtime_error",
+            "component": "",
+            "title": "TypeError · test_app.py::test_matches",
+            "event_ids": [
+              "event-6e3733409fc3"
+            ],
+            "evidence_refs": [
+              "run-d5a756e5cadb:probe:2",
+              "run-d5a756e5cadb:probe:3"
+            ],
+            "member_keys": [
+              "1395c92cfeef0a"
+            ],
+            "scope": "tests:project",
+            "environment_id": "d34ad4184c7cff71",
+            "category": "other_unknown",
+            "diagnosis": "code_defect",
+            "diagnosis_source": "heuristic",
+            "diagnosis_rule": "H11",
+            "prediction": "code_defect",
+            "prediction_confidence": 1.0,
+            "prediction_note": "",
+            "group_score": 1.0,
+            "status": "open",
+            "first_seen": "2026-10-01T11:08:32+00:00",
+            "last_seen": "2026-10-01T11:08:32+00:00",
+            "note": "",
+            "targets": [
+              "test_app.py::test_matches"
+            ],
+            "verification": null
+          }
+        ],
+        "trace": {
+          "structured_evidence": false,
+          "bounded_actions": false,
+          "issues": [
+            {
+              "issue_id": "issue-693dc4e36f796e",
+              "operation": {
+                "status": "observed_operation",
+                "record": {
+                  "source": "failed_instruction_namespace",
+                  "kind": "python_binding",
+                  "operation": "CALL",
+                  "module": "re",
+                  "owner": "",
+                  "name": "fullmatch",
+                  "file": "<checkout>/workbench/round11/candidate-mechanism/regex-arity/project/app.py",
+                  "line": 4,
+                  "static_namespace_checked": true,
+                  "requested_member_present": true,
+                  "dynamic": false,
+                  "unique": false,
+                  "candidates": [],
+                  "argument_types": [
+                    "str"
+                  ],
+                  "callee_name": "fullmatch",
+                  "parameters": [
+                    {
+                      "name": "pattern",
+                      "kind": "positional_or_keyword",
+                      "required": true
+                    },
+                    {
+                      "name": "string",
+                      "kind": "positional_or_keyword",
+                      "required": true
+                    },
+                    {
+                      "name": "flags",
+                      "kind": "positional_or_keyword",
+                      "required": false
+                    }
+                  ],
+                  "positional_count": 1,
+                  "keyword_names": [],
+                  "binding_errors": {
+                    "positional_only_as_keyword": [],
+                    "missing": [
+                      "string"
+                    ],
+                    "unexpected": [],
+                    "duplicate": [],
+                    "too_many_positional": false
+                  },
+                  "definition_file": "<home>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/re/__init__.py",
+                  "definition_line": 169
+                },
+                "refs": [
+                  "run-d5a756e5cadb:probe:3",
+                  "run-d5a756e5cadb:probe:2"
+                ],
+                "location": "app.py:4",
+                "statement": "return re.fullmatch(r\"[A-Z]+\") is not None",
+                "symbol_record_ref": "run-d5a756e5cadb:probe:3",
+                "symbol_statement_ref": "run-d5a756e5cadb:probe:2",
+                "linked_failure_ref": null,
+                "origin": "project",
+                "projection_status": "disabled"
+              },
+              "prediction": "code_defect",
+              "prediction_confidence": 1.0,
+              "prediction_note": "",
+              "diagnosis": "code_defect",
+              "diagnosis_source": "heuristic",
+              "diagnosis_rule": "H11",
+              "adoption": "heuristic_priority",
+              "diagnosis_candidates": [
+                {
+                  "fact_id": "issue-693dc4e36f796e:model_suggests:code_defect",
+                  "predicate": "model_suggests",
+                  "value": "code_defect",
+                  "rule_id": "decision-tree"
+                },
+                {
+                  "fact_id": "issue-693dc4e36f796e:likely:code_defect",
+                  "predicate": "likely",
+                  "value": "code_defect",
+                  "rule_id": "H11"
+                }
+              ],
+              "candidates_omitted": 0,
+              "bounded_action": {
+                "enabled": false,
+                "eligibility": "specific_action_present",
+                "generated": false,
+                "action_id": null,
+                "became_first_for_issue": false,
+                "became_first_step": false
+              },
+              "binding_plan": {
+                "status": "no_value_preserving_recipe",
+                "generated": false
+              },
+              "first_related_action_id": "check-failed-tests",
+              "first_related_action_rules": []
+            }
+          ],
+          "issues_omitted": 0,
+          "first_action_scope": "raw_ordered_plan",
+          "global_first_action_id": "check-failed-tests"
+        },
+        "step": {
+          "id": "call-re.fullmatch",
+          "issue_ids": [
+            "issue-693dc4e36f796e"
+          ],
+          "possible": "Defect in project code or tests",
+          "title": "Check the arguments passed to re.fullmatch",
+          "explanation": "Compare the argument names and required values with the callable's signature. Correct the call, preserve the test's intended result, and rerun the affected tests.",
+          "command": null,
+          "confirm": "Re-run the affected tests with the same interpreter",
+          "cause": null,
+          "suspected": false,
+          "gather": false,
+          "search": false,
+          "resolve": false,
+          "where": [
+            "app.py:4"
+          ],
+          "errors": [
+            "TypeError · test_app.py::test_matches"
+          ],
+          "rules": [
+            "H11: A standard-library function rejects the call's arguments without a recognised compatibility diagnosis: check the call first."
+          ],
+          "sources": [],
+          "optional": false,
+          "impact": null,
+          "risk": null,
+          "warnings": [],
+          "breakdown": []
+        }
+      },
+      "edits_applied": [],
+      "original_tests_unchanged": true,
+      "final_goal": "blocked",
+      "rounds": 1,
+      "duration_seconds": 0.283
+    },
+    {
+      "id": "opaque-business-check",
+      "role": "insufficient_evidence_control",
+      "first": {
+        "goal": "blocked",
+        "issues": [
+          {
+            "schema_version": 1,
+            "issue_id": "issue-45003caefaccd8",
+            "fingerprint": "45003caefaccd8",
+            "tool": "pytest_run",
+            "stage": "call",
+            "kind": "test_runtime_error",
+            "component": "",
+            "title": "ValueError · test_app.py::test_evaluate",
+            "event_ids": [
+              "event-a66f6199a5c7"
+            ],
+            "evidence_refs": [
+              "run-1b373e715726:probe:2",
+              "run-1b373e715726:probe:3"
+            ],
+            "member_keys": [
+              "f3c0960f006482"
+            ],
+            "scope": "tests:project",
+            "environment_id": "d34ad4184c7cff71",
+            "category": "other_unknown",
+            "diagnosis": "code_defect",
+            "diagnosis_source": "model",
+            "diagnosis_rule": "F01",
+            "prediction": "code_defect",
+            "prediction_confidence": 1.0,
+            "prediction_note": "",
+            "group_score": 1.0,
+            "status": "open",
+            "first_seen": "2026-10-01T11:08:32+00:00",
+            "last_seen": "2026-10-01T11:08:32+00:00",
+            "note": "",
+            "targets": [
+              "test_app.py::test_evaluate"
+            ],
+            "verification": null
+          }
+        ],
+        "trace": {
+          "structured_evidence": false,
+          "bounded_actions": false,
+          "issues": [
+            {
+              "issue_id": "issue-45003caefaccd8",
+              "operation": {
+                "status": "unsupported_exception",
+                "record": {},
+                "refs": [],
+                "location": "",
+                "statement": "",
+                "symbol_record_ref": null,
+                "symbol_statement_ref": null,
+                "linked_failure_ref": null,
+                "projection_status": "disabled"
+              },
+              "prediction": "code_defect",
+              "prediction_confidence": 1.0,
+              "prediction_note": "",
+              "diagnosis": "code_defect",
+              "diagnosis_source": "model",
+              "diagnosis_rule": "F01",
+              "adoption": "model_hypothesis",
+              "diagnosis_candidates": [
+                {
+                  "fact_id": "issue-45003caefaccd8:model_suggests:code_defect",
+                  "predicate": "model_suggests",
+                  "value": "code_defect",
+                  "rule_id": "decision-tree"
+                },
+                {
+                  "fact_id": "issue-45003caefaccd8:suspected:code_defect",
+                  "predicate": "suspected",
+                  "value": "code_defect",
+                  "rule_id": "F01"
+                }
+              ],
+              "candidates_omitted": 0,
+              "bounded_action": {
+                "enabled": false,
+                "eligibility": "unsupported_exception",
+                "generated": false,
+                "action_id": null,
+                "became_first_for_issue": false,
+                "became_first_step": false
+              },
+              "binding_plan": {
+                "status": "no_binding_observation",
+                "generated": false
+              },
+              "first_related_action_id": "review-test_runtime_error",
+              "first_related_action_rules": [
+                "P50"
+              ]
+            }
+          ],
+          "issues_omitted": 0,
+          "first_action_scope": "raw_ordered_plan",
+          "global_first_action_id": "review-test_runtime_error"
+        },
+        "step": {
+          "id": "review-test_runtime_error",
+          "issue_ids": [
+            "issue-45003caefaccd8"
+          ],
+          "possible": "Defect in project code or tests",
+          "title": "Inspect the exception raised while running the test",
+          "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+          "command": null,
+          "confirm": "Re-run the related test nodes, then the full suite",
+          "cause": null,
+          "suspected": false,
+          "gather": false,
+          "search": false,
+          "resolve": false,
+          "where": [
+            "app.py:3"
+          ],
+          "errors": [
+            "ValueError · test_app.py::test_evaluate"
+          ],
+          "rules": [
+            "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+          ],
+          "sources": [],
+          "optional": false,
+          "impact": null,
+          "risk": null,
+          "warnings": [],
+          "breakdown": []
+        }
+      },
+      "edits_applied": [],
+      "original_tests_unchanged": true,
+      "final_goal": "blocked",
+      "rounds": 1,
+      "duration_seconds": 0.286
+    }
+  ],
+  "python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
+  "source": "<checkout>/src/fixfirst/__init__.py"
+}

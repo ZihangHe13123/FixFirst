@@ -1,0 +1,14 @@
+{
+  "project": "<clean-source>",
+  "base_python": "<home>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+  "archive": "<checkout>/output/FixFirst-0.7.0-candidate-d7ca505.zip",
+  "extractor": "macOS ditto -x -k",
+  "earlier_extractor_failure": {
+    "command": "unzip -q",
+    "exit_code": 50,
+    "locale": "C.UTF-8",
+    "free_disk_gib": 177,
+    "utf8_zip_flag": true,
+    "not_used_for_install": true
+  }
+}

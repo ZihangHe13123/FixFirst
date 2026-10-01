@@ -123,6 +123,16 @@ def parse(run: Run) -> list[Event]:
                     component=missing_tool.group(1),
                 )
             ]
+    if run.tool == "dependency_resolve":
+        try:
+            data = json.loads(run.stdout)
+        except ValueError:
+            data = {}
+        # This has its own scope. Even a successful installation cannot close a
+        # pytest/program issue or claim that the goal has been reached.
+        run.verified_pass = run.exit_code == 0 and data.get("status") == "resolved"
+        run.coverage_complete = run.verified_pass
+        return []
     if run.tool == "version_search":
         try:
             data = json.loads(run.stdout)
@@ -135,6 +145,7 @@ def parse(run: Run) -> list[Event]:
         reason = {
             "offline": "PyPI could not be reached",
             "no_candidates": "no older release has a wheel for this Python",
+            "constraints_exclude_candidates": "available older wheels are excluded by the project's or installed packages' requirements",
             "not_judged": "the search budget ended or some older releases could not be installed or imported here",
         }
         return [
@@ -285,39 +296,9 @@ def parse(run: Run) -> list[Event]:
             event(run, text[:1000] or "Dependency check result unknown", stage="tool", kind="other_unknown")
         ]
     if run.tool == "pip_install":
-        results = []
-        for stream in ("stdout", "stderr"):
-            for line, value in enumerate(getattr(run, stream).splitlines(), 1):
-                if "ERROR" not in value and not re.search(
-                    r"ResolutionImpossible|Could not find|Failed building", value
-                ):
-                    continue
-                conflict = bool(
-                    re.search(
-                        r"ResolutionImpossible|conflicting dependencies|dependency conflict",
-                        value,
-                        re.I,
-                    )
-                )
-                results.append(
-                    event(
-                        run,
-                        value,
-                        stage="install",
-                        kind="dependency_conflict" if conflict else "install_failure",
-                        line=line,
-                        stream=stream,
-                    )
-                )
-        # Installation input is historical evidence; an empty log does not prove installation.
-        return results or [
-            event(
-                run,
-                "No recognisable failure in the installation log; this does not prove installation succeeded",
-                stage="install",
-                kind="other_unknown",
-            )
-        ]
+        from .install_errors import parse_install
+
+        return parse_install(run, event)
     if run.tool in ("pytest", "pytest_run"):
         failures = [r for r in run.records if r.get("type") == "failure"]
         finishes = [r for r in run.records if r.get("type") == "finish"]

@@ -1,0 +1,48 @@
+{
+  "kind": "post-hoc source-object index, not execution manifest",
+  "source_commit": "ab939519543d615b1fcce19c633d810bcd0c5da2",
+  "objects": [
+    {
+      "path": "experiments/field_trial/round9/structure-check/structure_check.py",
+      "copied": true,
+      "original_ab93951_blob": "46a07429b7b6d48ef6c1b24c1b4c81ba72975a8e",
+      "current_3703ab5_blob": "1eedf2f168dfc7f590cee081b95abb8edc64f65f"
+    },
+    {
+      "path": "experiments/field_trial/round9/structure-check/structure-check.json",
+      "copied": true,
+      "original_ab93951_blob": "2dce6cec8da01c9482c2d21eb53d14706d404482",
+      "current_3703ab5_blob": "9489f482ee9f066d0a289baebd67a767469aa965"
+    },
+    {
+      "path": "experiments/field_trial/round9/structure-check/README.md",
+      "copied": true,
+      "original_ab93951_blob": "a7804e0d3849803a3be1c81490087a8d8572baa4",
+      "current_3703ab5_blob": "f69466c0585fca0f55a727bcc8afb9319b05293e"
+    }
+  ],
+  "object_metadata_verified_with": "git cat-file -t and git ls-tree; no blob-body reads in this packaging step",
+  "transcription_source": "experiments/core_diagnosis/ROUND9.md, supplement beginning \u8865\u5145\uff1a\u5b66\u4e60\u5668\u4e0e\u6807\u7b7eoracle\u6d88\u878d\u7684\u6838\u67e5",
+  "included_files": [
+    "AB93951_SAFE_AGGREGATE.json",
+    "INTEGRATION_RECEIPT.json",
+    "README.md",
+    "SOURCES.json"
+  ],
+  "reproducibility": "Conditional: source and public aggregates are delivered, but 12 private starting sessions are excluded. Holders can compare recorded hashes and use ml_replay9.py with required authorized inputs/environments; public ZIP alone is not a complete replay.",
+  "provenance_supplement_commit": "3703ab51f449f9fc8a63a412743296eb59a842c9",
+  "integration_receipt": "INTEGRATION_RECEIPT.json",
+  "authorized_original_material_included": [
+    "experiments/field_trial/round9/structure-check/README.md",
+    "experiments/field_trial/round9/structure-check/failure-mix.json",
+    "experiments/field_trial/round9/structure-check/failure_mix.py",
+    "experiments/field_trial/round9/structure-check/structure-check.json",
+    "experiments/field_trial/round9/structure-check/structure_check.py"
+  ],
+  "replay_code": "experiments/field_trial/round9/harness/ml_replay9.py",
+  "private_start_sessions": {
+    "count": 12,
+    "included": false,
+    "read_in_this_preparation": false
+  }
+}

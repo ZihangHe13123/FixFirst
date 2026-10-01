@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "artifact_kind": "safe_aggregate_transcription",
+  "source_commit": "ab939519543d615b1fcce19c633d810bcd0c5da2",
+  "scope": "round9 public development aggregates; not round11 improvement or formal A2",
+  "provenance": "transcribed from the completed read-only review and ROUND9.md supplement; no original result bodies copied and no rerun",
+  "dataset": {
+    "original_examples": 219,
+    "fault_families": 47,
+    "labelled_before_excluding_variants": 227,
+    "excluded_variants": 8,
+    "validation": "leave one complete fault family out",
+    "training_weight_per_family": 10,
+    "seed": 42
+  },
+  "learners": {
+    "decision_tree": {
+      "max_depth": 6,
+      "min_samples_leaf": 2
+    },
+    "random_forest": {
+      "n_estimators": 300,
+      "min_samples_leaf": 2
+    },
+    "hist_gradient_boosting": {
+      "max_iter": 200,
+      "min_samples_leaf": 2
+    }
+  },
+  "correct_classifications": [
+    {
+      "features": 65,
+      "standalone": {
+        "decision_tree": 203,
+        "random_forest": 198,
+        "hist_gradient_boosting": 192
+      },
+      "fused_saved_rules_heur": {
+        "decision_tree": 217,
+        "random_forest": 217,
+        "hist_gradient_boosting": 215
+      }
+    },
+    {
+      "features": 80,
+      "standalone": {
+        "decision_tree": 213,
+        "random_forest": 198,
+        "hist_gradient_boosting": 195
+      },
+      "fused_saved_rules_heur": {
+        "decision_tree": 217,
+        "random_forest": 217,
+        "hist_gradient_boosting": 217
+      }
+    }
+  ],
+  "denominator": 219,
+  "fusion_note": "uses saved rules_heur; final planner not rerun for each learner",
+  "confidence_threshold": 0.6,
+  "oracle": {
+    "construction": "true-label single-leaf tree with p=1 passed to actual plan; existing priority/rules/actions not bypassed",
+    "format_executable_first_actions": {
+      "rules_only": 30,
+      "bundled_44_features": 31,
+      "full_training_80_features": 32,
+      "true_label_oracle": 32
+    },
+    "increment_vs_rules_only": 2,
+    "actions_executed": false,
+    "original_tests_executed": false,
+    "strict_repair_rate_upper_bound": false
+  },
+  "limitations": [
+    "Fixed learner configurations; unequal compute and no sufficient tuning or multiple seeds.",
+    "Confidence threshold 0.6 was not calibrated.",
+    "219 examples are not 219 independent projects or formal held-out evaluation.",
+    "Oracle does not override certain rules or adoption priority, so displayed diagnosis need not equal its input label.",
+    "skip-learners can reuse learner results while rerunning oracle only.",
+    "A source/result commit does not independently prove the full historical execution environment.",
+    "This newly written source index is not a historical runtime manifest.",
+    "3703ab5 records the source commit, package-directory status, three software versions and input hashes; these are observations rather than enforced expected-value gates.",
+    "Still no full run manifest, automatic start/end times or invocation snapshot, script/imported-source content hashes or actual import path. Package-directory status does not establish whole-worktree cleanliness.",
+    "A task-directory-keyed session hash map may replace an entry if multiple session files share that directory; expected count and path set are not enforced.",
+    "Twelve private starting sessions remain unavailable in the public source ZIP. Hashes cannot recover them; fresh init/scan is new collection, not byte-identical replay."
+  ],
+  "new_experiments": 0,
+  "final_freeze_version": null,
+  "provenance_supplement_commit": "3703ab51f449f9fc8a63a412743296eb59a842c9",
+  "provenance_supplement": {
+    "experiment_source_commit": "a32c1950c2b8683455ae1078ed99870990c150ec",
+    "git_status_scope": "imported fixfirst package directory only",
+    "git_status_lines": 0,
+    "software": {
+      "python": "3.12.13",
+      "scikit_learn": "1.9.1",
+      "numpy": "2.5.3"
+    },
+    "hashed_inputs": {
+      "data_files": 3,
+      "models": 2,
+      "private_start_sessions": 12
+    },
+    "time_and_full_invocation_recorded": false,
+    "script_content_hash_recorded": false,
+    "actual_import_path_recorded": false,
+    "expected_hashes_enforced": false,
+    "private_input_contents_included": false
+  },
+  "excluded_from_this_aggregate": [
+    "all per-example identities, predictions, labels, outputs and held-out aggregates",
+    "original structure-check.json body",
+    "original structure_check.py body",
+    "original README.md body",
+    "other field-trial materials"
+  ],
+  "authorized_original_material": "The five upstream structure-check files were cherry-picked unchanged into a48a9f4 and 7ce5f64; original private session files were not included."
+}

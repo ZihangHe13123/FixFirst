@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+
+<title>Sample project with 4 problems · FixFirst</title>
+<style>
+:root{--ink:#142822;--muted:#65746d;--bg:#f3f5f1;--line:#dae2db;--green:#17664a;--light:#e5f0e8;--amber:#865516;--red:#a34134;--blue:#395a8e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+aside{width:220px;background:#142f26;color:#dce9df;position:fixed;inset:0 auto 0 0;padding:35px 25px;display:flex;flex-direction:column}
+.brand{font-size:27px;font-weight:750;letter-spacing:-1px}.brand span{background:#b8dda6;color:#193326;border-radius:10px;padding:5px 9px;margin-right:7px;font-size:20px}
+.tag{font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:.65;margin-top:14px}nav{margin-top:50px}nav a{display:block;color:#cfddd4;text-decoration:none;padding:10px 0}nav a:hover{color:white}
+aside footer{margin-top:auto;font-size:12px;color:#9cb2a4}main{margin-left:220px;padding:42px 5vw 70px;max-width:1550px}
+.eyebrow{font-size:12px;text-transform:uppercase;color:var(--green);letter-spacing:2px;font-weight:700}h1{font-size:34px;line-height:1.2;letter-spacing:-1px;margin:15px 0 12px}
+h2{font-size:23px;letter-spacing:-.4px;margin:0}h3{font-size:18px;line-height:1.45;margin:8px 0}p{margin:8px 0}.muted{color:var(--muted)}
+.hero{display:flex;justify-content:space-between;gap:24px;align-items:start}.badge{display:inline-block;border-radius:30px;padding:4px 12px;font-size:12px;font-weight:650;background:#edf0ec;white-space:nowrap}
+.achieved,.resolved{background:#dceedd;color:#27623b}.blocked,.open{background:#f7e9d3;color:#825216}.unknown,.not_observed{background:#e9edf1;color:#596477}.awaiting_verification{background:#e2eafb;color:var(--blue)}
+.cause{background:#e4efe7;color:var(--green)}.cause.model{background:#fbf0dc;color:var(--amber)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:28px 0}.stat{background:white;border:1px solid var(--line);padding:18px 22px;border-radius:13px}.stat b{font-size:30px;font-weight:600;display:block;line-height:1.1;margin-bottom:8px}.stat span{color:var(--muted);font-size:13px}
+.pipeline{padding:12px 18px;background:#e7ece5;border-radius:9px;color:#48604d;font-size:13px;margin-bottom:28px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:18px 0;padding:14px 16px;background:white;border:1px solid var(--line);border-radius:12px}
+.section-head{display:flex;gap:20px;align-items:center;justify-content:space-between;margin:36px 0 16px}
+.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.card{background:white;border:1px solid var(--line);border-radius:13px;padding:22px;min-width:0}.card.featured{border:2px solid var(--green);background:#fcfffa}
+.number{background:#e7eee5;border-radius:7px;padding:3px 9px;color:var(--green);font-size:12px;font-weight:bold}.card .kind{float:right;color:var(--muted);font-size:12px}.card small{display:block;margin:14px 0 5px;font-weight:600;color:#50695b}
+.command{margin-top:14px;padding:10px;background:#edf2ed;border-radius:7px;display:flex;gap:8px;align-items:center}.command code{overflow-wrap:anywhere;font-size:11px;flex:1}
+button,select{cursor:pointer;border:1px solid #bdcdbf;background:white;color:#28533c;border-radius:7px;padding:7px 12px;font:inherit;font-size:13px;white-space:nowrap}button:hover{background:#dcebdd}button.primary{background:var(--green);color:white;border-color:var(--green)}button.primary:hover{background:#0f5239}button:disabled{opacity:.5;cursor:wait}
+.issue{margin-bottom:12px;padding:18px 22px;background:white;border:1px solid var(--line);border-radius:10px}.issue-top{display:flex;gap:15px;justify-content:space-between;align-items:flex-start}.issue-title{overflow-wrap:anywhere;font-weight:650;max-width:75%}
+.meta{font-size:12px;color:var(--muted);margin-top:6px}.details{margin-top:12px}summary{cursor:pointer;color:var(--green);font-size:13px;font-weight:550}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;background:#f1f4ef;border:1px solid var(--line);border-radius:8px;padding:14px;font:12px/1.7 ui-monospace,Menlo,monospace;max-height:460px;overflow:auto}code{font-family:ui-monospace,Menlo,monospace}
+.facts{font-size:13px;border-left:3px solid #b6cbb6;padding:7px 12px;margin:8px 0}.facts code{font-size:11px;overflow-wrap:anywhere}.facts.knowledge{border-left-color:#7ba7c9}.facts.hypothesis{border-left-color:#e2b36b}
+.diagnosis{margin-top:12px;padding:12px 14px;background:#f5f9f5;border-radius:9px;font-size:13px}.diagnosis.model{background:#fdf7ec}
+.tablewrap{overflow:auto;background:white;border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;font-size:13px}td,th{text-align:left;padding:13px 16px;border-bottom:1px solid #e7ece5}th{color:#526556;font-size:12px;background:#ebf0e9}
+.history{border-left:2px solid #b8ccbd;padding-left:20px;margin-left:8px}.history article{margin:16px 0}.history time{font-size:12px;color:var(--muted)}
+input[type=search],input[type=text]{border:1px solid var(--line);border-radius:8px;padding:9px 13px;font:inherit;width:280px;background:white}
+.empty{padding:22px;background:#e7f0e5;border-radius:12px}.note{font-size:12px;color:var(--muted);margin-top:12px}.footnote{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.anchor{scroll-margin-top:25px}.hidden{display:none!important}#status{font-size:13px;color:var(--amber)}a{color:var(--green)}
+.path{display:flex;gap:8px;overflow:auto;padding:16px 0}.path div{min-width:160px;max-width:240px;padding:12px;border:1px solid #bdcdbf;border-radius:9px;background:#fff;overflow-wrap:anywhere;font-size:13px}.path span{white-space:nowrap;color:var(--muted);align-self:center;font-size:12px}
+@media(max-width:1000px){aside{width:180px;padding:30px 18px}main{margin-left:180px;padding:35px 25px}.actions{grid-template-columns:1fr}}
+@media(max-width:700px){aside{position:relative;width:auto;padding:20px}aside nav,aside footer,.tag{display:none}main{margin-left:0;padding:24px 16px}.hero{display:block}h1{font-size:28px}.stats{grid-template-columns:repeat(2,1fr)}.section-head{align-items:start;flex-direction:column}input[type=search],input[type=text]{width:100%}.issue-title{max-width:65%}}
+@media print{aside,button,input,select,.toolbar{display:none}main{margin:0;padding:15px}.actions{display:block}.card{break-inside:avoid;margin-bottom:10px}body{background:white}}
+</style></head>
+<body data-live="0">
+<aside><div class="brand"><span>F</span>FixFirst</div><div class="tag">Local troubleshooting</div>
+<nav><a href="#overview">01 Overview</a><a href="#actions">02 Next steps</a><a href="#issues">03 Issues &amp; causes</a><a href="#dependencies">04 Declarations</a><a href="#knowledge">05 Evidence graph</a><a href="#history">06 Checks &amp; history</a></nav>
+<footer>Evidence first · every result is re-checked<br>FixFirst 0.4 · shared copy</footer></aside>
+<main>
+<section id="overview" class="anchor">
+<div class="hero"><div><div class="eyebrow">Troubleshooting workspace</div><h1>Sample project with 4 problems</h1>
+<p class="muted">Goal: Pass the test suite · in progress</p></div>
+<span class="badge achieved">Goal verified</span></div>
+<p class="note">session-77cb1d5917a5 · created 2026-10-01T12:19:05+00:00</p>
+<div class="stats"><div class="stat"><b>0</b><span>Issue groups still failing</span></div><div class="stat"><b>4</b><span>Verified fixed</span></div><div class="stat"><b>0</b><span>Unchecked or awaiting verification</span></div><div class="stat"><b>5</b><span>Checks and imports</span></div></div>
+
+<div class="pipeline">Collect evidence → group symptoms → diagnose the cause → plan the next step → you change the code → verify with a real check</div>
+<div class="empty">The goal passed its most recent check. The result covers only the recorded scope; skipped and expected failures are listed separately.</div>
+
+</section>
+
+<section id="actions" class="anchor"><div class="section-head"><h2>Next steps</h2><span class="muted">Ordered by goal impact, strength of evidence and cost</span></div>
+<div class="actions">
+<article class="card ">
+<span class="number">01</span><span class="kind">Verify</span>
+<h3>Run the full test suite</h3>
+
+<p>Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.</p><small>How to confirm</small><p class="muted">Review the new check record and the status changes</p>
+
+<p class="note">Read-only shared report</p>
+<details class="details"><summary>Why this step</summary>
+
+
+<p class="note">Addresses: the goal check</p></details></article>
+</div><p class="note">FixFirst never edits your project or installs packages. Ranking reflects the goal, the evidence and cost; it is not a probability of cause.</p></section>
+
+<section id="issues" class="anchor"><div class="section-head"><h2>Issues and root causes</h2><input id="search" type="search" placeholder="Search messages, components, causes" aria-label="Search issues"></div>
+<article class="issue" data-search="KeyError · test_orders.py::test_checkout  Verified fixed config_missing">
+<div class="issue-top"><div class="issue-title">KeyError · test_orders.py::test_checkout</div><span class="badge resolved">Verified fixed</span></div>
+<div class="meta">Test run · call · 1 message(s) · issue-91b31964ae1617</div>
+<div class="diagnosis "><span class="badge cause ">Missing configuration</span>
+ concluded by rule <b>D30</b>: The failing lookup is os.environ[...]: a required environment variable is not set.
+</div>
+
+<p class="note">All related test nodes passed in the same environment</p>
+<details><summary>Messages and where they came from</summary><p class="meta">test_orders.py::test_checkout:1 · run-978ea03d69c4:probe:2 · run-978ea03d69c4:probe:3</p><p class="meta">Raised at &lt;frozen os&gt;:714</p><pre>KeyError: &#39;SHOP_API_TOKEN&#39;</pre></details></article>
+<article class="issue" data-search="AttributeError · test_stats.py::test_mean  Verified fixed version_incompatibility">
+<div class="issue-top"><div class="issue-title">AttributeError · test_stats.py::test_mean</div><span class="badge resolved">Verified fixed</span></div>
+<div class="meta">Test run · call · 1 message(s) · issue-624772c417ae3f</div>
+<div class="diagnosis "><span class="badge cause ">Version incompatibility</span>
+ concluded by rule <b>D02</b>: The code uses a module attribute or imported name that the installed version no longer provides.
+</div>
+
+<p class="note">All related test nodes passed in the same environment</p>
+<details><summary>Messages and where they came from</summary><p class="meta">test_stats.py::test_mean:1 · run-978ea03d69c4:probe:13 · run-978ea03d69c4:probe:14</p><p class="meta">Raised at <clean-source>/.venv/lib/python3.12/site-packages/numpy/__init__.py:760</p><pre>AttributeError: module &#39;numpy&#39; has no attribute &#39;float&#39;.
+`np.float` was a deprecated alias for the builtin `float`. To avoid this error in existing code, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
+The aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:
+    https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations</pre></details></article>
+<article class="issue" data-search="ImportError: cannot import name &#39;Mapping&#39; from &#39;collections&#39;  Verified fixed version_incompatibility">
+<div class="issue-top"><div class="issue-title">ImportError: cannot import name &#39;Mapping&#39; from &#39;collections&#39;</div><span class="badge resolved">Verified fixed</span></div>
+<div class="meta">Test run · collect · 1 message(s) · issue-b6e397dce720fd</div>
+<div class="diagnosis "><span class="badge cause ">Version incompatibility</span>
+ concluded by rule <b>D02</b>: The code uses a module attribute or imported name that the installed version no longer provides.
+</div>
+
+<p class="note">Passed for real in the same environment and check scope</p>
+<details><summary>Messages and where they came from</summary><p class="meta">test_pricing.py:1 · run-c17cdf864c16:probe:1</p><pre>ImportError: cannot import name &#39;Mapping&#39; from &#39;collections&#39; (&lt;home&gt;/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/collections/__init__.py)</pre></details></article>
+<article class="issue" data-search="ModuleNotFoundError: No module named &#39;helper&#39; helper Verified fixed local_module">
+<div class="issue-top"><div class="issue-title">ModuleNotFoundError: No module named &#39;helper&#39;</div><span class="badge resolved">Verified fixed</span></div>
+<div class="meta">Test run · collect · 1 message(s) · issue-687ee9a528c748</div>
+<div class="diagnosis "><span class="badge cause ">Local module or path problem</span>
+ concluded by rule <b>D16</b>: No installed, standard or known package has this name, but a similarly named project module exists: it was probably renamed or moved.
+</div>
+
+<p class="note">Passed for real in the same environment and check scope</p>
+<details><summary>Messages and where they came from</summary><p class="meta">test_reports.py:1 · run-c17cdf864c16:probe:3</p><pre>ModuleNotFoundError: No module named &#39;helper&#39;</pre></details></article>
+</section>
+
+<section id="dependencies" class="anchor"><div class="section-head"><h2>Project dependency declarations</h2><span class="muted">1 file(s) · declarations and installed versions at check time</span></div>
+<p class="note">Required, optional and environment-conditional declarations are judged separately. Direct references and constraint files are listed but not verified.</p>
+<div class="tablewrap"><table><thead><tr><th>Declaration / source</th><th>Installed</th><th>Result</th></tr></thead><tbody>
+<tr><td><b>numpy&gt;=1.20</b><br><span class="muted">requirements.txt:1 · required</span></td><td>2.5.3</td><td>Satisfied</td></tr><tr><td><b>pytest&gt;=8</b><br><span class="muted">requirements.txt:2 · required</span></td><td>9.1.1</td><td>Satisfied</td></tr>
+</tbody></table></div>
+<details class="details"><summary>Declaration files and SHA-256</summary><p class="facts">requirements.txt<br><code>1e4cd3afdbcd6e0f1cdcc153ad3eb9df205b74302c737ef399abf3f4bd7da2e1</code></p></details></section>
+
+<section id="knowledge" class="anchor"><div class="section-head"><h2>Evidence graph</h2><span class="muted">34 entities · 29 typed relations</span></div>
+<p>Pick a goal, action or issue to follow its relations back to recorded checks, rules and knowledge sources.</p>
+<select id="graph-entity" style="width:100%;padding:11px" aria-label="Entity"><option value="goal:pass_tests">Pass the test suite · goal:pass_tests</option><option value="issue-91b31964ae1617">KeyError · test_orders.py::test_checkout · issue-91b31964ae1617</option><option value="issue-624772c417ae3f">AttributeError · test_stats.py::test_mean · issue-624772c417ae3f</option><option value="issue-b6e397dce720fd">ImportError: cannot import name &#39;Mapping&#39; from &#39;collections&#39; · issue-b6e397dce720fd</option><option value="issue-687ee9a528c748">ModuleNotFoundError: No module named &#39;helper&#39; · issue-687ee9a528c748</option><option value="action-437a557fadd4dd0aa46af14e">Run the full test suite · action-437a557fadd4dd0aa46af14e</option></select>
+<div id="graph-path" class="path" aria-label="Evidence path"></div><pre id="graph-answer" aria-live="polite"></pre>
+<p class="note">From a terminal: fixfirst ask SESSION_ID "why is this recommended". The full graph is saved next to this report as .graph.json.</p>
+<script type="application/json" id="graph-views">[{"answer": "Goal: Pass the test suite (goal:pass_tests)\nRecorded goal status: achieved\nNo known issue is linked to this goal; a completed check still decides whether it passes.\nEvidence paths:\ngoal:pass_tests \u2192 last checked by: run-8b81580a58ec\nThese links record evidence and rule inferences; they do not prove a shared root cause.", "bounded": false, "edges": [{"relation": "evaluated_by", "source": "goal:pass_tests", "target": "run-8b81580a58ec"}, {"relation": "recommends", "source": "goal:pass_tests", "target": "action-437a557fadd4dd0aa46af14e"}], "entity": "goal:pass_tests", "nodes": [{"attributes": {"status": "achieved"}, "id": "goal:pass_tests", "label": "Pass the test suite", "type": "Goal"}, {"attributes": {"exit_code": 0, "scope": "tests:project", "source": "executed", "status": "completed", "summary": {"failed": 0, "incomplete": 0, "passed": 4, "selected": 4, "skipped": 0, "xfail_or_xpass": 0}, "targets": [], "tool": "pytest_run", "verified_pass": true}, "id": "run-8b81580a58ec", "label": "pytest_run \u00b7 2026-10-01T12:19:18+00:00", "type": "Run"}, {"attributes": {"cause": null, "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.", "goal_impact": 1, "priority": 1, "targets": [], "verification": "Review the new check record and the status changes"}, "id": "action-437a557fadd4dd0aa46af14e", "label": "Run the full test suite", "type": "Action"}], "paths": [[{"relation": "evaluated_by", "source": "goal:pass_tests", "target": "run-8b81580a58ec"}]], "supported": true}, {"answer": "Issue: KeyError \u00b7 test_orders.py::test_checkout (issue-91b31964ae1617)\nStatus: resolved\nRoot cause: Missing configuration, from a diagnosis rule. A required environment variable, settings key or configuration file is not available at run time.\nEvidence paths:\nissue-91b31964ae1617 \u2192 has event: event-fadf0bb291dc \u2192 cites: evidence:run-978ea03d69c4:probe:2 \u2192 observed in: run-978ea03d69c4\nThese links record evidence and rule inferences; they do not prove a shared root cause.", "bounded": false, "edges": [{"relation": "cites", "source": "event-fadf0bb291dc", "target": "evidence:run-978ea03d69c4:probe:2"}, {"relation": "cites", "source": "event-fadf0bb291dc", "target": "evidence:run-978ea03d69c4:probe:3"}, {"relation": "observed_in", "source": "evidence:run-978ea03d69c4:probe:2", "target": "run-978ea03d69c4"}, {"relation": "observed_in", "source": "evidence:run-978ea03d69c4:probe:3", "target": "run-978ea03d69c4"}, {"relation": "has_event", "source": "issue-91b31964ae1617", "target": "event-fadf0bb291dc"}], "entity": "issue-91b31964ae1617", "nodes": [{"attributes": {"exit_code": 1, "scope": "tests:project", "source": "executed", "status": "completed", "summary": {"failed": 2, "incomplete": 0, "passed": 2, "selected": 4, "skipped": 0, "xfail_or_xpass": 0}, "targets": [], "tool": "pytest_run", "verified_pass": false}, "id": "run-978ea03d69c4", "label": "pytest_run \u00b7 2026-10-01T12:19:17+00:00", "type": "Run"}, {"attributes": {}, "id": "evidence:run-978ea03d69c4:probe:2", "label": "run-978ea03d69c4:probe:2", "type": "Evidence"}, {"attributes": {}, "id": "evidence:run-978ea03d69c4:probe:3", "label": "run-978ea03d69c4:probe:3", "type": "Evidence"}, {"attributes": {"kind": "test_runtime_error", "location": "test_orders.py::test_checkout", "stage": "call"}, "id": "event-fadf0bb291dc", "label": "KeyError: \u0027SHOP_API_TOKEN\u0027", "type": "Event"}, {"attributes": {"diagnosis": "config_missing", "diagnosis_source": "rule", "note": "All related test nodes passed in the same environment", "prediction": "config_missing", "prediction_confidence": 1.0, "status": "resolved", "targets": ["test_orders.py::test_checkout"], "tool": "pytest_run"}, "id": "issue-91b31964ae1617", "label": "KeyError \u00b7 test_orders.py::test_checkout", "type": "Issue"}], "paths": [[{"relation": "has_event", "source": "issue-91b31964ae1617", "target": "event-fadf0bb291dc"}, {"relation": "cites", "source": "event-fadf0bb291dc", "target": "evidence:run-978ea03d69c4:probe:2"}, {"relation": "observed_in", "source": "evidence:run-978ea03d69c4:probe:2", "target": "run-978ea03d69c4"}]], "supported": true}, {"answer": "Issue: AttributeError \u00b7 test_stats.py::test_mean (issue-624772c417ae3f)\nStatus: resolved\nRoot cause: Version incompatibility, from a diagnosis rule. The installed library or Python version no longer provides an API the code uses (removed module, attribute, function or keyword argument).\nEvidence paths:\nissue-624772c417ae3f \u2192 has event: event-9739bbc47936 \u2192 cites: evidence:run-978ea03d69c4:probe:13 \u2192 observed in: run-978ea03d69c4\nThese links record evidence and rule inferences; they do not prove a shared root cause.", "bounded": false, "edges": [{"relation": "cites", "source": "event-9739bbc47936", "target": "evidence:run-978ea03d69c4:probe:13"}, {"relation": "cites", "source": "event-9739bbc47936", "target": "evidence:run-978ea03d69c4:probe:14"}, {"relation": "observed_in", "source": "evidence:run-978ea03d69c4:probe:13", "target": "run-978ea03d69c4"}, {"relation": "observed_in", "source": "evidence:run-978ea03d69c4:probe:14", "target": "run-978ea03d69c4"}, {"relation": "has_event", "source": "issue-624772c417ae3f", "target": "event-9739bbc47936"}], "entity": "issue-624772c417ae3f", "nodes": [{"attributes": {"exit_code": 1, "scope": "tests:project", "source": "executed", "status": "completed", "summary": {"failed": 2, "incomplete": 0, "passed": 2, "selected": 4, "skipped": 0, "xfail_or_xpass": 0}, "targets": [], "tool": "pytest_run", "verified_pass": false}, "id": "run-978ea03d69c4", "label": "pytest_run \u00b7 2026-10-01T12:19:17+00:00", "type": "Run"}, {"attributes": {}, "id": "evidence:run-978ea03d69c4:probe:13", "label": "run-978ea03d69c4:probe:13", "type": "Evidence"}, {"attributes": {}, "id": "evidence:run-978ea03d69c4:probe:14", "label": "run-978ea03d69c4:probe:14", "type": "Evidence"}, {"attributes": {"kind": "test_runtime_error", "location": "test_stats.py::test_mean", "stage": "call"}, "id": "event-9739bbc47936", "label": "AttributeError: module \u0027numpy\u0027 has no attribute \u0027float\u0027.\n`np.float` was a deprecated alias for the builtin `float`. To avoid this error in existing code, use `float` by itself. Doing this will not modify any behavior and is safe. If you spe", "type": "Event"}, {"attributes": {"diagnosis": "version_incompatibility", "diagnosis_source": "rule", "note": "All related test nodes passed in the same environment", "prediction": "version_incompatibility", "prediction_confidence": 1.0, "status": "resolved", "targets": ["test_stats.py::test_mean"], "tool": "pytest_run"}, "id": "issue-624772c417ae3f", "label": "AttributeError \u00b7 test_stats.py::test_mean", "type": "Issue"}], "paths": [[{"relation": "has_event", "source": "issue-624772c417ae3f", "target": "event-9739bbc47936"}, {"relation": "cites", "source": "event-9739bbc47936", "target": "evidence:run-978ea03d69c4:probe:13"}, {"relation": "observed_in", "source": "evidence:run-978ea03d69c4:probe:13", "target": "run-978ea03d69c4"}]], "supported": true}, {"answer": "Issue: ImportError: cannot import name \u0027Mapping\u0027 from \u0027collections\u0027 (issue-b6e397dce720fd)\nStatus: resolved\nRoot cause: Version incompatibility, from a diagnosis rule. The installed library or Python version no longer provides an API the code uses (removed module, attribute, function or keyword argument).\nEvidence paths:\nissue-b6e397dce720fd \u2192 has event: event-8a9f08fa33a8 \u2192 cites: evidence:run-c17cdf864c16:probe:1 \u2192 observed in: run-c17cdf864c16\nThese links record evidence and rule inferences; they do not prove a shared root cause.", "bounded": false, "edges": [{"relation": "cites", "source": "event-8a9f08fa33a8", "target": "evidence:run-c17cdf864c16:probe:1"}, {"relation": "observed_in", "source": "evidence:run-c17cdf864c16:probe:1", "target": "run-c17cdf864c16"}, {"relation": "has_event", "source": "issue-b6e397dce720fd", "target": "event-8a9f08fa33a8"}], "entity": "issue-b6e397dce720fd", "nodes": [{"attributes": {"exit_code": 2, "scope": "tests:project", "source": "executed", "status": "completed", "summary": {"failed": 0, "incomplete": 2, "passed": 0, "selected": 2, "skipped": 0, "xfail_or_xpass": 0}, "targets": [], "tool": "pytest_run", "verified_pass": false}, "id": "run-c17cdf864c16", "label": "pytest_run \u00b7 2026-10-01T12:19:05+00:00", "type": "Run"}, {"attributes": {}, "id": "evidence:run-c17cdf864c16:probe:1", "label": "run-c17cdf864c16:probe:1", "type": "Evidence"}, {"attributes": {"kind": "import_failure", "location": "test_pricing.py", "stage": "collect"}, "id": "event-8a9f08fa33a8", "label": "ImportError: cannot import name \u0027Mapping\u0027 from \u0027collections\u0027 (\u003chome\u003e/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/collections/__init__.py)", "type": "Event"}, {"attributes": {"diagnosis": "version_incompatibility", "diagnosis_source": "rule", "note": "Passed for real in the same environment and check scope", "prediction": "version_incompatibility", "prediction_confidence": 1.0, "status": "resolved", "targets": [], "tool": "pytest_run"}, "id": "issue-b6e397dce720fd", "label": "ImportError: cannot import name \u0027Mapping\u0027 from \u0027collections\u0027", "type": "Issue"}], "paths": [[{"relation": "has_event", "source": "issue-b6e397dce720fd", "target": "event-8a9f08fa33a8"}, {"relation": "cites", "source": "event-8a9f08fa33a8", "target": "evidence:run-c17cdf864c16:probe:1"}, {"relation": "observed_in", "source": "evidence:run-c17cdf864c16:probe:1", "target": "run-c17cdf864c16"}]], "supported": true}, {"answer": "Issue: ModuleNotFoundError: No module named \u0027helper\u0027 (issue-687ee9a528c748)\nStatus: resolved\nRoot cause: Local module or path problem, from a diagnosis rule. A project module cannot be resolved: it was renamed or moved, the src layout is not on the path, a circular import, or a project file shadows a library or standard-library module.\nEvidence paths:\nissue-687ee9a528c748 \u2192 has event: event-6a0bdb62cbd3 \u2192 cites: evidence:run-c17cdf864c16:probe:3 \u2192 observed in: run-c17cdf864c16\nThese links record evidence and rule inferences; they do not prove a shared root cause.", "bounded": false, "edges": [{"relation": "cites", "source": "event-6a0bdb62cbd3", "target": "evidence:run-c17cdf864c16:probe:3"}, {"relation": "observed_in", "source": "evidence:run-c17cdf864c16:probe:3", "target": "run-c17cdf864c16"}, {"relation": "has_event", "source": "issue-687ee9a528c748", "target": "event-6a0bdb62cbd3"}], "entity": "issue-687ee9a528c748", "nodes": [{"attributes": {"exit_code": 2, "scope": "tests:project", "source": "executed", "status": "completed", "summary": {"failed": 0, "incomplete": 2, "passed": 0, "selected": 2, "skipped": 0, "xfail_or_xpass": 0}, "targets": [], "tool": "pytest_run", "verified_pass": false}, "id": "run-c17cdf864c16", "label": "pytest_run \u00b7 2026-10-01T12:19:05+00:00", "type": "Run"}, {"attributes": {}, "id": "evidence:run-c17cdf864c16:probe:3", "label": "run-c17cdf864c16:probe:3", "type": "Evidence"}, {"attributes": {"kind": "import_failure", "location": "test_reports.py", "stage": "collect"}, "id": "event-6a0bdb62cbd3", "label": "ModuleNotFoundError: No module named \u0027helper\u0027", "type": "Event"}, {"attributes": {"diagnosis": "local_module", "diagnosis_source": "rule", "note": "Passed for real in the same environment and check scope", "prediction": "local_module", "prediction_confidence": 1.0, "status": "resolved", "targets": [], "tool": "pytest_run"}, "id": "issue-687ee9a528c748", "label": "ModuleNotFoundError: No module named \u0027helper\u0027", "type": "Issue"}], "paths": [[{"relation": "has_event", "source": "issue-687ee9a528c748", "target": "event-6a0bdb62cbd3"}, {"relation": "cites", "source": "event-6a0bdb62cbd3", "target": "evidence:run-c17cdf864c16:probe:3"}, {"relation": "observed_in", "source": "evidence:run-c17cdf864c16:probe:3", "target": "run-c17cdf864c16"}]], "supported": true}, {"answer": "Action: Run the full test suite (action-437a557fadd4dd0aa46af14e)\nOnly the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.\nHow to verify: Review the new check record and the status changes\nEvidence paths:\nNo path reaches a recorded check yet: verification is pending or the source is missing.\nThese links record evidence and rule inferences; they do not prove a shared root cause.", "bounded": false, "edges": [], "entity": "action-437a557fadd4dd0aa46af14e", "nodes": [{"attributes": {"cause": null, "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.", "goal_impact": 1, "priority": 1, "targets": [], "verification": "Review the new check record and the status changes"}, "id": "action-437a557fadd4dd0aa46af14e", "label": "Run the full test suite", "type": "Action"}], "paths": [], "supported": true}]</script></section>
+
+<section id="history" class="anchor"><div class="section-head"><h2>Checks and history</h2><span class="muted">tfidf grouping · threshold 0.82</span></div>
+<div class="tablewrap"><table><thead><tr><th>Check</th><th>Latest run</th><th>Status</th><th>Exit code</th><th>Time</th></tr></thead><tbody><tr><td>Environment snapshot</td><td>2026-10-01T12:19:05+00:00</td><td>completed / verified pass</td><td>0</td><td>0.111 s</td></tr><tr><td>Project declarations</td><td>2026-10-01T12:19:05+00:00</td><td>completed / verified pass</td><td>0</td><td>0.003 s</td></tr><tr><td>Test run</td><td>2026-10-01T12:19:18+00:00</td><td>completed / verified pass</td><td>0</td><td>0.111 s</td></tr></tbody></table></div>
+<div class="history"><article><time>2026-10-01T12:19:18+00:00</time><p>Checks run or log imported</p><p class="note">issue-91b31964ae1617 · verified fixed</p><p class="note">issue-624772c417ae3f · verified fixed</p></article><article><time>2026-10-01T12:19:17+00:00</time><p>Checks run or log imported</p><p class="note">issue-91b31964ae1617 · new</p><p class="note">issue-624772c417ae3f · new</p><p class="note">issue-b6e397dce720fd · verified fixed</p><p class="note">issue-687ee9a528c748 · verified fixed</p></article><article><time>2026-10-01T12:19:17+00:00</time><p>Checks run or log imported</p><p class="note">issue-b6e397dce720fd · new</p><p class="note">issue-687ee9a528c748 · new</p></article></div>
+<details><summary>All check records and raw output</summary><details class="details"><summary>Test run · 2026-10-01T12:19:18+00:00 · completed · run-8b81580a58ec</summary><p class="note">executed / tests:project / tool 9.1.1 / environment 629c6d84b9e0cc4e</p><pre>&lt;python&gt; -m pytest -q --color=no -o addopts= -p _fixfirst_probe --rootdir &lt;project&gt;</pre><p class="note">Test collection imports project modules and conftest; only run it on code you trust.</p><p class="note">This run executed test bodies and fixtures; scope follows the project configuration and the recorded nodes.</p><p class="facts">Nodes 4 · passed 4 · failed 0 · skipped 0 · xfail/xpass 0 · incomplete 0</p><p class="meta">stdout</p><pre>....                                                                     [100%]
+=============================== warnings summary ===============================
+../../../FixFirst B5 中文 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624
+  <clean-source>/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624: PytestConfigWarning: No files were found in testpaths; consider removing or adjusting your testpaths configuration. Searching recursively from the current directory instead.
+    self.args, self.args_source = self._decide_args(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+4 passed, 1 warning in 0.03s
+</pre><p class="meta">stderr</p><pre>(empty)</pre><p class="meta">Structured test events</p><pre>[
+  {
+    "nodeid": "test_orders.py::test_checkout",
+    "outcome": "passed",
+    "stage": "setup",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_orders.py::test_checkout",
+    "outcome": "passed",
+    "stage": "call",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_orders.py::test_checkout",
+    "outcome": "passed",
+    "stage": "teardown",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_pricing.py::test_price_list",
+    "outcome": "passed",
+    "stage": "setup",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_pricing.py::test_price_list",
+    "outcome": "passed",
+    "stage": "call",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_pricing.py::test_price_list",
+    "outcome": "passed",
+    "stage": "teardown",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_reports.py::test_report",
+    "outcome": "passed",
+    "stage": "setup",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_reports.py::test_report",
+    "outcome": "passed",
+    "stage": "call",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_reports.py::test_report",
+    "outcome": "passed",
+    "stage": "teardown",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_stats.py::test_mean",
+    "outcome": "passed",
+    "stage": "setup",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_stats.py::test_mean",
+    "outcome": "passed",
+    "stage": "call",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_stats.py::test_mean",
+    "outcome": "passed",
+    "stage": "teardown",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "collect_only": false,
+    "collected": 4,
+    "exit_code": 0,
+    "nodes": [
+      "test_orders.py::test_checkout",
+      "test_pricing.py::test_price_list",
+      "test_reports.py::test_report",
+      "test_stats.py::test_mean"
+    ],
+    "records_dropped": false,
+    "type": "finish"
+  }
+]</pre></details><details class="details"><summary>Test run · 2026-10-01T12:19:17+00:00 · completed · run-978ea03d69c4</summary><p class="note">executed / tests:project / tool 9.1.1 / environment 629c6d84b9e0cc4e</p><pre>&lt;python&gt; -m pytest -q --color=no -o addopts= -p _fixfirst_probe --rootdir &lt;project&gt;</pre><p class="note">Test collection imports project modules and conftest; only run it on code you trust.</p><p class="note">This run executed test bodies and fixtures; scope follows the project configuration and the recorded nodes.</p><p class="facts">Nodes 4 · passed 2 · failed 2 · skipped 0 · xfail/xpass 0 · incomplete 0</p><p class="meta">stdout</p><pre>F..F                                                                     [100%]
+=================================== FAILURES ===================================
+________________________________ test_checkout _________________________________
+
+    def test_checkout():
+&gt;       assert checkout(10)[&#34;total&#34;] == 10
+               ^^^^^^^^^^^^
+
+test_orders.py:5: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+orders.py:5: in checkout
+    token = [credential]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({&lt;redacted&gt;})
+key = &#39;SHOP_API_TOKEN&#39;
+
+&gt;   ???
+E   KeyError: &#39;SHOP_API_TOKEN&#39;
+
+&lt;frozen os&gt;:714: KeyError
+__________________________________ test_mean ___________________________________
+
+    def test_mean():
+&gt;       assert mean([1, 2, 3]) == 2
+               ^^^^^^^^^^^^^^^
+
+test_stats.py:5: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+stats.py:5: in mean
+    return numpy.float(sum(values)) / len(values)
+           ^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+attr = &#39;float&#39;
+
+    def __getattr__(attr):
+        # Warn for expired attributes
+        import warnings
+    
+        if attr == &#34;linalg&#34;:
+            import numpy.linalg as linalg
+            return linalg
+        elif attr == &#34;fft&#34;:
+            import numpy.fft as fft
+            return fft
+        elif attr == &#34;dtypes&#34;:
+            import numpy.dtypes as dtypes
+            return dtypes
+        elif attr == &#34;random&#34;:
+            import numpy.random as random
+            return random
+        elif attr == &#34;polynomial&#34;:
+            import numpy.polynomial as polynomial
+            return polynomial
+        elif attr == &#34;ma&#34;:
+            import numpy.ma as ma
+            return ma
+        elif attr == &#34;ctypeslib&#34;:
+            import numpy.ctypeslib as ctypeslib
+            return ctypeslib
+        elif attr == &#34;exceptions&#34;:
+            import numpy.exceptions as exceptions
+            return exceptions
+        elif attr == &#34;testing&#34;:
+            import numpy.testing as testing
+            return testing
+        elif attr == &#34;matlib&#34;:
+            import numpy.matlib as matlib
+            return matlib
+        elif attr == &#34;f2py&#34;:
+            import numpy.f2py as f2py
+            return f2py
+        elif attr == &#34;typing&#34;:
+            import numpy.typing as typing
+            return typing
+        elif attr == &#34;rec&#34;:
+            import numpy.rec as rec
+            return rec
+        elif attr == &#34;char&#34;:
+            import numpy.char as char
+            return char
+        elif attr == &#34;core&#34;:
+            import numpy.core as core
+            return core
+        elif attr == &#34;strings&#34;:
+            import numpy.strings as strings
+            return strings
+        if attr in __future_scalars__:
+            # And future warnings for those that will change, but also give
+            # the AttributeError
+            warnings.warn(
+                f&#34;In the future `np.{attr}` will be defined as the &#34;
+                &#34;corresponding NumPy scalar.&#34;, FutureWarning, stacklevel=2)
+    
+        if attr in __former_attrs__:
+&gt;           raise AttributeError(__former_attrs__[attr], name=None)
+E           AttributeError: module &#39;numpy&#39; has no attribute &#39;float&#39;.
+E           `np.float` was a deprecated alias for the builtin `float`. To avoid this error in existing code, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
+E           The aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:
+E               https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+
+../../../FixFirst B5 中文 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/numpy/__init__.py:760: AttributeError
+=============================== warnings summary ===============================
+../../../FixFirst B5 中文 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624
+  <clean-source>/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624: PytestConfigWarning: No files were found in testpaths; consider removing or adjusting your testpaths configuration. Searching recursively from the current directory instead.
+    self.args, self.args_source = self._decide_args(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED test_orders.py::test_checkout - KeyError: &#39;SHOP_API_TOKEN&#39;
+FAILED test_stats.py::test_mean - AttributeError: module &#39;numpy&#39; has no attri...
+2 failed, 2 passed, 1 warning in 0.04s
+</pre><p class="meta">stderr</p><pre>(empty)</pre><p class="meta">Structured test events</p><pre>[
+  {
+    "nodeid": "test_orders.py::test_checkout",
+    "outcome": "passed",
+    "stage": "setup",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_orders.py::test_checkout",
+    "outcome": "failed",
+    "stage": "call",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "message": "def test_checkout():\n\u003e       assert checkout(10)[\"total\"] == 10\n               ^^^^^^^^^^^^\n\ntest_orders.py:5: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \norders.py:5: in checkout\n    token = [credential]\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = environ({\u003credacted\u003e})\nkey = \u0027SHOP_API_TOKEN\u0027\n\n\u003e   ???\nE   KeyError: \u0027SHOP_API_TOKEN\u0027\n\n\u003cfrozen os\u003e:714: KeyError",
+    "nodeid": "test_orders.py::test_checkout",
+    "stage": "call",
+    "type": "failure"
+  },
+  {
+    "attribute_access": {},
+    "exception_message": "\u0027SHOP_API_TOKEN\u0027",
+    "exception_module": "builtins",
+    "exception_type": "KeyError",
+    "module_attribute": {},
+    "nodeid": "test_orders.py::test_checkout",
+    "source_file": "\u003cfrozen os\u003e",
+    "source_line": 714,
+    "stage": "call",
+    "symbol_observation": {},
+    "symbol_observation_status": "unsupported_exception",
+    "traceback_frames": [
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_hooks.py",
+        "function": "__call__",
+        "line": 512
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_manager.py",
+        "function": "_hookexec",
+        "line": 120
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_callers.py",
+        "function": "_multicall",
+        "line": 167
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_callers.py",
+        "function": "_multicall",
+        "line": 139
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/logging.py",
+        "function": "pytest_runtest_call",
+        "line": 865
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_callers.py",
+        "function": "_multicall",
+        "line": 139
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/capture.py",
+        "function": "pytest_runtest_call",
+        "line": 900
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_callers.py",
+        "function": "_multicall",
+        "line": 139
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/skipping.py",
+        "function": "pytest_runtest_call",
+        "line": 268
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_callers.py",
+        "function": "_multicall",
+        "line": 121
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/runner.py",
+        "function": "pytest_runtest_call",
+        "line": 184
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/python.py",
+        "function": "runtest",
+        "line": 1707
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_hooks.py",
+        "function": "__call__",
+        "line": 512
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_manager.py",
+        "function": "_hookexec",
+        "line": 120
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_callers.py",
+        "function": "_multicall",
+        "line": 167
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_callers.py",
+        "function": "_multicall",
+        "line": 121
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/python.py",
+        "function": "pytest_pyfunc_call",
+        "line": 167
+      },
+      {
+        "file": "\u003cproject\u003e/test_orders.py",
+        "function": "test_checkout",
+        "line": 5
+      },
+      {
+        "file": "\u003cproject\u003e/orders.py",
+        "function": "checkout",
+        "line": 5
+      },
+      {
+        "file": "\u003cfrozen os\u003e",
+        "function": "__getitem__",
+        "line": 714
+      }
+    ],
+    "type": "exception",
+    "validation_errors": [],
+    "warnings": []
+  },
+  {
+    "nodeid": "test_orders.py::test_checkout",
+    "outcome": "passed",
+    "stage": "teardown",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_pricing.py::test_price_list",
+    "outcome": "passed",
+    "stage": "setup",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_pricing.py::test_price_list",
+    "outcome": "passed",
+    "stage": "call",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_pricing.py::test_price_list",
+    "outcome": "passed",
+    "stage": "teardown",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_reports.py::test_report",
+    "outcome": "passed",
+    "stage": "setup",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_reports.py::test_report",
+    "outcome": "passed",
+    "stage": "call",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_reports.py::test_report",
+    "outcome": "passed",
+    "stage": "teardown",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_stats.py::test_mean",
+    "outcome": "passed",
+    "stage": "setup",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "nodeid": "test_stats.py::test_mean",
+    "outcome": "failed",
+    "stage": "call",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "message": "def test_mean():\n\u003e       assert mean([1, 2, 3]) == 2\n               ^^^^^^^^^^^^^^^\n\ntest_stats.py:5: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nstats.py:5: in mean\n    return numpy.float(sum(values)) / len(values)\n           ^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nattr = \u0027float\u0027\n\n    def __getattr__(attr):\n        # Warn for expired attributes\n        import warnings\n    \n        if attr == \"linalg\":\n            import numpy.linalg as linalg\n            return linalg\n        elif attr == \"fft\":\n            import numpy.fft as fft\n            return fft\n        elif attr == \"dtypes\":\n            import numpy.dtypes as dtypes\n            return dtypes\n        elif attr == \"random\":\n            import numpy.random as random\n            return random\n        elif attr == \"polynomial\":\n            import numpy.polynomial as polynomial\n            return polynomial\n        elif attr == \"ma\":\n            import numpy.ma as ma\n            return ma\n        elif attr == \"ctypeslib\":\n            import numpy.ctypeslib as ctypeslib\n            return ctypeslib\n        elif attr == \"exceptions\":\n            import numpy.exceptions as exceptions\n            return exceptions\n        elif attr == \"testing\":\n            import numpy.testing as testing\n            return testing\n        elif attr == \"matlib\":\n            import numpy.matlib as matlib\n            return matlib\n        elif attr == \"f2py\":\n            import numpy.f2py as f2py\n            return f2py\n        elif attr == \"typing\":\n            import numpy.typing as typing\n            return typing\n        elif attr == \"rec\":\n            import numpy.rec as rec\n            return rec\n        elif attr == \"char\":\n            import numpy.char as char\n            return char\n        elif attr == \"core\":\n            import numpy.core as core\n            return core\n        elif attr == \"strings\":\n            import numpy.strings as strings\n            return strings\n        if attr in __future_scalars__:\n            # And future warnings for those that will change, but also give\n            # the AttributeError\n            warnings.warn(\n                f\"In the future `np.{attr}` will be defined as the \"\n                \"corresponding NumPy scalar.\", FutureWarning, stacklevel=2)\n    \n        if attr in __former_attrs__:\n\u003e           raise AttributeError(__former_attrs__[attr], name=None)\nE           AttributeError: module \u0027numpy\u0027 has no attribute \u0027float\u0027.\nE           `np.float` was a deprecated alias for the builtin `float`. To avoid this error in existing code, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.\nE           The aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:\nE               https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations\n\n../../../FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/numpy/__init__.py:760: AttributeError",
+    "nodeid": "test_stats.py::test_mean",
+    "stage": "call",
+    "type": "failure"
+  },
+  {
+    "attribute_access": {},
+    "exception_message": "module \u0027numpy\u0027 has no attribute \u0027float\u0027.\n`np.float` was a deprecated alias for the builtin `float`. To avoid this error in existing code, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.\nThe aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:\n    https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations",
+    "exception_module": "builtins",
+    "exception_type": "AttributeError",
+    "module_attribute": {
+      "file": "\u003cproject\u003e/stats.py",
+      "line": 5,
+      "module": "numpy",
+      "name": "float",
+      "source": "loaded_module_namespace",
+      "suggestions": [],
+      "unique": false
+    },
+    "nodeid": "test_stats.py::test_mean",
+    "source_file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/numpy/__init__.py",
+    "source_line": 760,
+    "stage": "call",
+    "symbol_observation": {
+      "candidates": [
+        {
+          "name": "float16",
+          "relation": "other"
+        },
+        {
+          "name": "float32",
+          "relation": "other"
+        },
+        {
+          "name": "float64",
+          "relation": "other"
+        },
+        {
+          "name": "floor",
+          "relation": "other"
+        },
+        {
+          "name": "load",
+          "relation": "other"
+        }
+      ],
+      "dynamic": true,
+      "file": "\u003cproject\u003e/stats.py",
+      "kind": "module",
+      "line": 5,
+      "module": "numpy",
+      "name": "float",
+      "operation": "LOAD_ATTR",
+      "owner": "",
+      "requested_member_present": false,
+      "source": "failed_instruction_namespace",
+      "static_namespace_checked": true,
+      "unique": false
+    },
+    "symbol_observation_status": "observed_operation",
+    "traceback_frames": [
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_hooks.py",
+        "function": "__call__",
+        "line": 512
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_manager.py",
+        "function": "_hookexec",
+        "line": 120
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_callers.py",
+        "function": "_multicall",
+        "line": 167
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_callers.py",
+        "function": "_multicall",
+        "line": 139
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/logging.py",
+        "function": "pytest_runtest_call",
+        "line": 865
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_callers.py",
+        "function": "_multicall",
+        "line": 139
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/capture.py",
+        "function": "pytest_runtest_call",
+        "line": 900
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_callers.py",
+        "function": "_multicall",
+        "line": 139
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/skipping.py",
+        "function": "pytest_runtest_call",
+        "line": 268
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_callers.py",
+        "function": "_multicall",
+        "line": 121
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/runner.py",
+        "function": "pytest_runtest_call",
+        "line": 184
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/python.py",
+        "function": "runtest",
+        "line": 1707
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_hooks.py",
+        "function": "__call__",
+        "line": 512
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_manager.py",
+        "function": "_hookexec",
+        "line": 120
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_callers.py",
+        "function": "_multicall",
+        "line": 167
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/pluggy/_callers.py",
+        "function": "_multicall",
+        "line": 121
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/python.py",
+        "function": "pytest_pyfunc_call",
+        "line": 167
+      },
+      {
+        "file": "\u003cproject\u003e/test_stats.py",
+        "function": "test_mean",
+        "line": 5
+      },
+      {
+        "file": "\u003cproject\u003e/stats.py",
+        "function": "mean",
+        "line": 5
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/numpy/__init__.py",
+        "function": "__getattr__",
+        "line": 760
+      }
+    ],
+    "type": "exception",
+    "validation_errors": [],
+    "warnings": []
+  },
+  {
+    "nodeid": "test_stats.py::test_mean",
+    "outcome": "passed",
+    "stage": "teardown",
+    "type": "outcome",
+    "wasxfail": false
+  },
+  {
+    "collect_only": false,
+    "collected": 4,
+    "exit_code": 1,
+    "nodes": [
+      "test_orders.py::test_checkout",
+      "test_pricing.py::test_price_list",
+      "test_reports.py::test_report",
+      "test_stats.py::test_mean"
+    ],
+    "records_dropped": false,
+    "type": "finish"
+  }
+]</pre></details><details class="details"><summary>Test run · 2026-10-01T12:19:05+00:00 · completed · run-c17cdf864c16</summary><p class="note">executed / tests:project / tool 9.1.1 / environment 629c6d84b9e0cc4e</p><pre>&lt;python&gt; -m pytest -q --color=no -o addopts= -p _fixfirst_probe --rootdir &lt;project&gt;</pre><p class="note">Test collection imports project modules and conftest; only run it on code you trust.</p><p class="note">This run executed test bodies and fixtures; scope follows the project configuration and the recorded nodes.</p><p class="facts">Nodes 2 · passed 0 · failed 0 · skipped 0 · xfail/xpass 0 · incomplete 2</p><p class="meta">stdout</p><pre>
+==================================== ERRORS ====================================
+_______________________ ERROR collecting test_pricing.py _______________________
+ImportError while importing test module &#39;&lt;project&gt;/test_pricing.py&#39;.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+&lt;home&gt;/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+test_pricing.py:1: in &lt;module&gt;
+    from pricing import price_list
+pricing.py:1: in &lt;module&gt;
+    from collections import Mapping
+E   ImportError: cannot import name &#39;Mapping&#39; from &#39;collections&#39; (&lt;home&gt;/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/collections/__init__.py)
+_______________________ ERROR collecting test_reports.py _______________________
+ImportError while importing test module &#39;&lt;project&gt;/test_reports.py&#39;.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+&lt;home&gt;/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+test_reports.py:1: in &lt;module&gt;
+    from reports import report
+reports.py:1: in &lt;module&gt;
+    from helper import double
+E   ModuleNotFoundError: No module named &#39;helper&#39;
+=============================== warnings summary ===============================
+../../../FixFirst B5 中文 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624
+  <clean-source>/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1624: PytestConfigWarning: No files were found in testpaths; consider removing or adjusting your testpaths configuration. Searching recursively from the current directory instead.
+    self.args, self.args_source = self._decide_args(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR test_pricing.py
+ERROR test_reports.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!!
+1 warning, 2 errors in 0.37s
+</pre><p class="meta">stderr</p><pre>(empty)</pre><p class="meta">Structured test events</p><pre>[
+  {
+    "attribute_access": {},
+    "exception_message": "ImportError while importing test module \u0027\u003cproject\u003e/test_pricing.py\u0027.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n\u003chome\u003e/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntest_pricing.py:1: in \u003cmodule\u003e\n    from pricing import price_list\npricing.py:1: in \u003cmodule\u003e\n    from collections import Mapping\nE   ImportError: cannot import name \u0027Mapping\u0027 from \u0027collections\u0027 (\u003chome\u003e/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/collections/__init__.py)",
+    "exception_module": "_pytest.nodes",
+    "exception_type": "CollectError",
+    "module_attribute": {},
+    "nodeid": "test_pricing.py",
+    "source_file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/python.py",
+    "source_line": 538,
+    "stage": "collect",
+    "symbol_observation": {
+      "candidates": [],
+      "dynamic": false,
+      "file": "\u003cproject\u003e/pricing.py",
+      "kind": "module",
+      "line": 1,
+      "module": "collections",
+      "name": "Mapping",
+      "operation": "IMPORT_FROM",
+      "owner": "",
+      "requested_member_present": false,
+      "source": "failed_instruction_namespace",
+      "static_namespace_checked": true,
+      "unique": false
+    },
+    "symbol_observation_status": "observed_operation",
+    "traceback_frames": [
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/runner.py",
+        "function": "from_call",
+        "line": 361
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/runner.py",
+        "function": "collect",
+        "line": 406
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/python.py",
+        "function": "collect",
+        "line": 564
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/python.py",
+        "function": "_register_setup_module_fixture",
+        "line": 577
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/python.py",
+        "function": "obj",
+        "line": 290
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/python.py",
+        "function": "_getobj",
+        "line": 561
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/python.py",
+        "function": "importtestmodule",
+        "line": 538
+      }
+    ],
+    "type": "exception",
+    "validation_errors": [],
+    "warnings": []
+  },
+  {
+    "message": "ImportError while importing test module \u0027\u003cproject\u003e/test_pricing.py\u0027.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n\u003chome\u003e/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntest_pricing.py:1: in \u003cmodule\u003e\n    from pricing import price_list\npricing.py:1: in \u003cmodule\u003e\n    from collections import Mapping\nE   ImportError: cannot import name \u0027Mapping\u0027 from \u0027collections\u0027 (\u003chome\u003e/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/collections/__init__.py)",
+    "nodeid": "test_pricing.py",
+    "stage": "collect",
+    "type": "failure"
+  },
+  {
+    "attribute_access": {},
+    "exception_message": "ImportError while importing test module \u0027\u003cproject\u003e/test_reports.py\u0027.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n\u003chome\u003e/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntest_reports.py:1: in \u003cmodule\u003e\n    from reports import report\nreports.py:1: in \u003cmodule\u003e\n    from helper import double\nE   ModuleNotFoundError: No module named \u0027helper\u0027",
+    "exception_module": "_pytest.nodes",
+    "exception_type": "CollectError",
+    "module_attribute": {},
+    "nodeid": "test_reports.py",
+    "source_file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/python.py",
+    "source_line": 538,
+    "stage": "collect",
+    "symbol_observation": {},
+    "symbol_observation_status": "unsupported_exception",
+    "traceback_frames": [
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/runner.py",
+        "function": "from_call",
+        "line": 361
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/runner.py",
+        "function": "collect",
+        "line": 406
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/python.py",
+        "function": "collect",
+        "line": 564
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/python.py",
+        "function": "_register_setup_module_fixture",
+        "line": 577
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/python.py",
+        "function": "obj",
+        "line": 290
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/python.py",
+        "function": "_getobj",
+        "line": 561
+      },
+      {
+        "file": "<checkout>/workbench/b5-delivery/FixFirst B5 \u4e2d\u6587 5w_s5y3v/FixFirst/.venv/lib/python3.12/site-packages/_pytest/python.py",
+        "function": "importtestmodule",
+        "line": 538
+      }
+    ],
+    "type": "exception",
+    "validation_errors": [],
+    "warnings": []
+  },
+  {
+    "message": "ImportError while importing test module \u0027\u003cproject\u003e/test_reports.py\u0027.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n\u003chome\u003e/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntest_reports.py:1: in \u003cmodule\u003e\n    from reports import report\nreports.py:1: in \u003cmodule\u003e\n    from helper import double\nE   ModuleNotFoundError: No module named \u0027helper\u0027",
+    "nodeid": "test_reports.py",
+    "stage": "collect",
+    "type": "failure"
+  },
+  {
+    "collect_only": false,
+    "collected": 2,
+    "exit_code": 2,
+    "nodes": [
+      "test_orders.py::test_checkout",
+      "test_stats.py::test_mean"
+    ],
+    "records_dropped": false,
+    "type": "finish"
+  }
+]</pre></details><details class="details"><summary>Project declarations · 2026-10-01T12:19:05+00:00 · completed · run-47396485f3d2</summary><p class="note">executed / declarations:project / tool unknown / environment 629c6d84b9e0cc4e</p><pre></pre><p class="note">Read-only snapshot: optional groups are not assumed to be enabled; direct references and lock files are not verified from it.</p><p class="meta">stdout</p><pre>{&#34;files&#34;: [{&#34;path&#34;: &#34;requirements.txt&#34;, &#34;sha256&#34;: &#34;1e4cd3afdbcd6e0f1cdcc153ad3eb9df205b74302c737ef399abf3f4bd7da2e1&#34;, &#34;bytes&#34;: 22}], &#34;declarations&#34;: [{&#34;name&#34;: &#34;numpy&#34;, &#34;requirement&#34;: &#34;numpy&gt;=1.20&#34;, &#34;source&#34;: &#34;requirements.txt:1&#34;, &#34;group&#34;: &#34;required&#34;, &#34;constraint&#34;: false, &#34;installed&#34;: &#34;2.5.3&#34;, &#34;status&#34;: &#34;satisfied&#34;}, {&#34;name&#34;: &#34;pytest&#34;, &#34;requirement&#34;: &#34;pytest&gt;=8&#34;, &#34;source&#34;: &#34;requirements.txt:2&#34;, &#34;group&#34;: &#34;required&#34;, &#34;constraint&#34;: false, &#34;installed&#34;: &#34;9.1.1&#34;, &#34;status&#34;: &#34;satisfied&#34;}], &#34;notes&#34;: [], &#34;requires_python&#34;: [], &#34;own_names&#34;: [], &#34;python_hints&#34;: [], &#34;environment_run_id&#34;: &#34;run-544ae11c4012&#34;, &#34;local_modules&#34;: [{&#34;name&#34;: &#34;test_stats&#34;, &#34;path&#34;: &#34;test_stats.py&#34;}, {&#34;name&#34;: &#34;orders&#34;, &#34;path&#34;: &#34;orders.py&#34;}, {&#34;name&#34;: &#34;test_pricing&#34;, &#34;path&#34;: &#34;test_pricing.py&#34;}, {&#34;name&#34;: &#34;test_reports&#34;, &#34;path&#34;: &#34;test_reports.py&#34;}, {&#34;name&#34;: &#34;stats&#34;, &#34;path&#34;: &#34;stats.py&#34;}, {&#34;name&#34;: &#34;pricing&#34;, &#34;path&#34;: &#34;pricing.py&#34;}, {&#34;name&#34;: &#34;reports&#34;, &#34;path&#34;: &#34;reports.py&#34;}, {&#34;name&#34;: &#34;helpers&#34;, &#34;path&#34;: &#34;helpers.py&#34;}, {&#34;name&#34;: &#34;test_orders&#34;, &#34;path&#34;: &#34;test_orders.py&#34;}], &#34;python_files&#34;: [&#34;helpers.py&#34;, &#34;orders.py&#34;, &#34;pricing.py&#34;, &#34;reports.py&#34;, &#34;stats.py&#34;, &#34;test_orders.py&#34;, &#34;test_pricing.py&#34;, &#34;test_reports.py&#34;, &#34;test_stats.py&#34;], &#34;defined_names&#34;: [&#34;checkout&#34;, &#34;double&#34;, &#34;mean&#34;, &#34;price_list&#34;, &#34;report&#34;, &#34;test_checkout&#34;, &#34;test_mean&#34;, &#34;test_price_list&#34;, &#34;test_report&#34;], &#34;imported_names&#34;: {&#34;Mapping&#34;: &#34;collections.Mapping&#34;, &#34;checkout&#34;: &#34;orders.checkout&#34;, &#34;double&#34;: &#34;helper.double&#34;, &#34;mean&#34;: &#34;stats.mean&#34;, &#34;numpy&#34;: &#34;numpy&#34;, &#34;os&#34;: &#34;os&#34;, &#34;price_list&#34;: &#34;pricing.price_list&#34;, &#34;report&#34;: &#34;reports.report&#34;}, &#34;source_context&#34;: {&#34;calls&#34;: {&#34;reports.py:5&#34;: [&#34;helper.double&#34;], &#34;stats.py:5&#34;: [&#34;numpy.float&#34;], &#34;test_orders.py:5&#34;: [&#34;orders.checkout&#34;], &#34;test_pricing.py:5&#34;: [&#34;pricing.price_list&#34;], &#34;test_reports.py:5&#34;: [&#34;reports.report&#34;], &#34;test_stats.py:5&#34;: [&#34;stats.mean&#34;]}, &#34;call_bindings&#34;: {&#34;reports.py:5&#34;: [{&#34;name&#34;: &#34;double&#34;, &#34;target&#34;: &#34;helper.double&#34;}], &#34;stats.py:5&#34;: [{&#34;name&#34;: &#34;numpy.float&#34;, &#34;target&#34;: &#34;numpy.float&#34;}], &#34;test_orders.py:5&#34;: [{&#34;name&#34;: &#34;checkout&#34;, &#34;target&#34;: &#34;orders.checkout&#34;}], &#34;test_pricing.py:5&#34;: [{&#34;name&#34;: &#34;price_list&#34;, &#34;target&#34;: &#34;pricing.price_list&#34;}], &#34;test_reports.py:5&#34;: [{&#34;name&#34;: &#34;report&#34;, &#34;target&#34;: &#34;reports.report&#34;}], &#34;test_stats.py:5&#34;: [{&#34;name&#34;: &#34;mean&#34;, &#34;target&#34;: &#34;stats.mean&#34;}]}, &#34;class_bases&#34;: {}, &#34;class_members&#34;: {}}, &#34;validation_settings&#34;: {&#34;complete&#34;: true, &#34;customized&#34;: false}, &#34;numpy_repr_functions&#34;: [], &#34;pydantic_default_models&#34;: [], &#34;pydantic_optional_models&#34;: {}, &#34;generator_consumption&#34;: {}, &#34;lint_config&#34;: {&#34;ruff&#34;: null, &#34;other&#34;: null}, &#34;tested_versions&#34;: []}</pre><p class="meta">stderr</p><pre>(empty)</pre></details><details class="details"><summary>Environment snapshot · 2026-10-01T12:19:05+00:00 · completed · run-544ae11c4012</summary><p class="note">executed / environment / tool 3.12.14 / environment 629c6d84b9e0cc4e</p><pre>&lt;python&gt; -c 
+import sys, json, os, platform, importlib.metadata as m
+v = sys.implementation.version
+implementation_version = f&#39;{v.major}.{v.minor}.{v.micro}&#39;
+if v.releaselevel != &#39;final&#39;:
+    implementation_version += {&#39;alpha&#39;: &#39;a&#39;, &#39;beta&#39;: &#39;b&#39;, &#39;candidate&#39;: &#39;rc&#39;}.get(v.releaselevel, v.releaselevel) + str(v.serial)
+packages = []
+for d in m.distributions():
+    packages.append({&#39;name&#39;: d.metadata.get(&#39;Name&#39;, &#39;&#39;), &#39;version&#39;: d.version,
+                     &#39;requires&#39;: d.requires or []})
+import sysconfig
+paths = sysconfig.get_paths()
+# Python 3.8/3.9 have neither packages_distributions() nor sys.stdlib_module_names.
+try:
+    imports = m.packages_distributions()
+except AttributeError:
+    imports = {}
+    for d in m.distributions():
+        tops = (d.read_text(&#39;top_level.txt&#39;) or &#39;&#39;).split()
+        if not tops:
+            for f in d.files or ():
+                top = f.parts[0] if f.parts else &#39;&#39;
+                top = top[:-3] if top.endswith(&#39;.py&#39;) else top
+                if top.isidentifier() and top not in tops:
+                    tops.append(top)
+        for top in tops:
+            imports.setdefault(top, []).append(d.metadata.get(&#39;Name&#39;, &#39;&#39;))
+stdlib = getattr(sys, &#39;stdlib_module_names&#39;, None)
+if stdlib is None:
+    stdlib = set(sys.builtin_module_names)
+    for folder in (paths[&#39;stdlib&#39;], os.path.join(paths[&#39;stdlib&#39;], &#39;lib-dynload&#39;)):
+        for entry in (os.listdir(folder) if os.path.isdir(folder) else ()):
+            base = entry.split(&#39;.&#39;)[0]
+            if base.isidentifier() and entry != &#39;site-packages&#39;:
+                stdlib.add(base)
+print(json.dumps({&#39;executable&#39;: sys.executable, &#39;prefix&#39;: sys.prefix,
+ &#39;python_version&#39;: sys.version.split()[0], &#39;packages&#39;: packages,
+ &#39;import_distributions&#39;: imports,
+ &#39;stdlib_modules&#39;: sorted(stdlib),
+ &#39;paths&#39;: {k: paths.get(k, &#39;&#39;) for k in (&#39;stdlib&#39;, &#39;platstdlib&#39;, &#39;purelib&#39;, &#39;platlib&#39;)},
+ &#39;markers&#39;: {&#39;implementation_name&#39;: sys.implementation.name,
+ &#39;implementation_version&#39;: implementation_version, &#39;os_name&#39;: os.name,
+ &#39;platform_machine&#39;: platform.machine(), &#39;platform_release&#39;: platform.release(),
+ &#39;platform_system&#39;: platform.system(), &#39;platform_version&#39;: platform.version(),
+ &#39;python_full_version&#39;: platform.python_version(),
+ &#39;platform_python_implementation&#39;: platform.python_implementation(),
+ &#39;python_version&#39;: &#39;.&#39;.join(platform.python_version_tuple()[:2]), &#39;sys_platform&#39;: sys.platform}}))
+</pre><p class="meta">stdout</p><pre>{&#34;executable&#34;: &#34;&lt;python&gt;&#34;, &#34;prefix&#34;: &#34;<clean-source>/.venv&#34;, &#34;python_version&#34;: &#34;3.12.14&#34;, &#34;packages&#34;: [{&#34;name&#34;: &#34;numpy&#34;, &#34;version&#34;: &#34;2.5.3&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;scikit-learn&#34;, &#34;version&#34;: &#34;1.9.1&#34;, &#34;requires&#34;: [&#34;numpy&gt;=1.24.1&#34;, &#34;scipy&gt;=1.10.0&#34;, &#34;joblib&gt;=1.4.0&#34;, &#34;narwhals&gt;=2.0.1&#34;, &#34;threadpoolctl&gt;=3.5.0&#34;]}, {&#34;name&#34;: &#34;cloudpickle&#34;, &#34;version&#34;: &#34;3.1.2&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;click&#34;, &#34;version&#34;: &#34;8.5.0&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;packaging&#34;, &#34;version&#34;: &#34;26.3&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;joblib&#34;, &#34;version&#34;: &#34;1.6.0&#34;, &#34;requires&#34;: [&#34;cloudpickle&gt;=3.0&#34;, &#34;distributed; extra == \&#34;test\&#34;&#34;, &#34;lz4; extra == \&#34;test\&#34;&#34;, &#34;numpy; extra == \&#34;test\&#34;&#34;, &#34;memory_profiler; extra == \&#34;test\&#34;&#34;, &#34;pytest; extra == \&#34;test\&#34;&#34;, &#34;pytest-asyncio; extra == \&#34;test\&#34;&#34;, &#34;pytest-cov; extra == \&#34;test\&#34;&#34;, &#34;pytest-run-parallel; extra == \&#34;test\&#34;&#34;, &#34;pytest-timeout; extra == \&#34;test\&#34;&#34;, &#34;threadpoolctl; extra == \&#34;test\&#34;&#34;, &#34;distributed; extra == \&#34;docs\&#34;&#34;, &#34;lz4; extra == \&#34;docs\&#34;&#34;, &#34;numpy; extra == \&#34;docs\&#34;&#34;, &#34;numpydoc; extra == \&#34;docs\&#34;&#34;, &#34;matplotlib; extra == \&#34;docs\&#34;&#34;, &#34;pandas; extra == \&#34;docs\&#34;&#34;, &#34;psutil; extra == \&#34;docs\&#34;&#34;, &#34;sphinx; extra == \&#34;docs\&#34;&#34;, &#34;pydata-sphinx-theme; extra == \&#34;docs\&#34;&#34;, &#34;sphinx-gallery; extra == \&#34;docs\&#34;&#34;, &#34;sphinx-copybutton; extra == \&#34;docs\&#34;&#34;, &#34;sphinx-design; extra == \&#34;docs\&#34;&#34;, &#34;tqdm; extra == \&#34;docs\&#34;&#34;]}, {&#34;name&#34;: &#34;iniconfig&#34;, &#34;version&#34;: &#34;2.3.0&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;Pygments&#34;, &#34;version&#34;: &#34;2.21.0&#34;, &#34;requires&#34;: [&#34;colorama&gt;=0.4.6; extra == &#39;windows-terminal&#39;&#34;]}, {&#34;name&#34;: &#34;pydantic_core&#34;, &#34;version&#34;: &#34;2.46.5&#34;, &#34;requires&#34;: [&#34;typing-extensions&gt;=4.14.1&#34;]}, {&#34;name&#34;: &#34;build&#34;, &#34;version&#34;: &#34;1.6.1&#34;, &#34;requires&#34;: [&#34;packaging &gt;= 24.0&#34;, &#34;pyproject_hooks&#34;, &#34;colorama; os_name == \&#34;nt\&#34;&#34;, &#34;importlib-metadata &gt;= 4.6; python_full_version &lt; \&#34;3.10.2\&#34;&#34;, &#34;tomli &gt;= 1.1.0; python_version &lt; \&#34;3.11\&#34;&#34;, &#34;keyring ; extra == \&#34;keyring\&#34;&#34;, &#34;uv &gt;= 0.1.18 ; extra == \&#34;uv\&#34;&#34;, &#34;virtualenv &gt;= 20.36.1 ; extra == \&#34;virtualenv\&#34;&#34;]}, {&#34;name&#34;: &#34;ruff&#34;, &#34;version&#34;: &#34;0.16.9&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;pip&#34;, &#34;version&#34;: &#34;25.0.1&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;pytest&#34;, &#34;version&#34;: &#34;9.1.1&#34;, &#34;requires&#34;: [&#34;colorama&gt;=0.4; sys_platform == \&#34;win32\&#34;&#34;, &#34;exceptiongroup&gt;=1; python_version &lt; \&#34;3.11\&#34;&#34;, &#34;iniconfig&gt;=1.0.1&#34;, &#34;packaging&gt;=22&#34;, &#34;pluggy&lt;2,&gt;=1.5&#34;, &#34;pygments&gt;=2.7.2&#34;, &#34;tomli&gt;=1; python_version &lt; \&#34;3.11\&#34;&#34;, &#34;argcomplete; extra == \&#34;dev\&#34;&#34;, &#34;attrs&gt;=19.2; extra == \&#34;dev\&#34;&#34;, &#34;hypothesis&gt;=3.56; extra == \&#34;dev\&#34;&#34;, &#34;mock; extra == \&#34;dev\&#34;&#34;, &#34;requests; extra == \&#34;dev\&#34;&#34;, &#34;setuptools; extra == \&#34;dev\&#34;&#34;, &#34;xmlschema; extra == \&#34;dev\&#34;&#34;]}, {&#34;name&#34;: &#34;pydantic&#34;, &#34;version&#34;: &#34;2.13.5&#34;, &#34;requires&#34;: [&#34;annotated-types&gt;=0.6.0&#34;, &#34;pydantic-core==2.46.5&#34;, &#34;typing-extensions&gt;=4.14.1&#34;, &#34;typing-inspection&gt;=0.4.2&#34;, &#34;email-validator&gt;=2.0.0; extra == &#39;email&#39;&#34;, &#34;tzdata; (python_version &gt;= &#39;3.9&#39; and platform_system == &#39;Windows&#39;) and extra == &#39;timezone&#39;&#34;]}, {&#34;name&#34;: &#34;pyproject_hooks&#34;, &#34;version&#34;: &#34;1.3.3&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;PyYAML&#34;, &#34;version&#34;: &#34;6.0.3&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;Jinja2&#34;, &#34;version&#34;: &#34;3.1.6&#34;, &#34;requires&#34;: [&#34;MarkupSafe&gt;=2.0&#34;, &#34;Babel&gt;=2.7 ; extra == \&#34;i18n\&#34;&#34;]}, {&#34;name&#34;: &#34;annotated-types&#34;, &#34;version&#34;: &#34;0.8.0&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;MarkupSafe&#34;, &#34;version&#34;: &#34;3.0.3&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;threadpoolctl&#34;, &#34;version&#34;: &#34;3.7.0&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;typing-inspection&#34;, &#34;version&#34;: &#34;0.4.4&#34;, &#34;requires&#34;: [&#34;typing-extensions&gt;=4.15.0&#34;]}, {&#34;name&#34;: &#34;pluggy&#34;, &#34;version&#34;: &#34;1.6.0&#34;, &#34;requires&#34;: [&#34;pre-commit; extra == \&#34;dev\&#34;&#34;, &#34;tox; extra == \&#34;dev\&#34;&#34;, &#34;pytest; extra == \&#34;testing\&#34;&#34;, &#34;pytest-benchmark; extra == \&#34;testing\&#34;&#34;, &#34;coverage; extra == \&#34;testing\&#34;&#34;]}, {&#34;name&#34;: &#34;typing_extensions&#34;, &#34;version&#34;: &#34;4.16.0&#34;, &#34;requires&#34;: []}, {&#34;name&#34;: &#34;scipy&#34;, &#34;version&#34;: &#34;1.18.1&#34;, &#34;requires&#34;: [&#34;numpy&lt;2.8,&gt;=2.0.0&#34;, &#34;pytest&gt;=8.0.0; extra == \&#34;test\&#34;&#34;, &#34;pytest-cov; extra == \&#34;test\&#34;&#34;, &#34;pytest-timeout; extra == \&#34;test\&#34;&#34;, &#34;pytest-xdist; extra == \&#34;test\&#34;&#34;, &#34;asv; extra == \&#34;test\&#34;&#34;, &#34;mpmath; extra == \&#34;test\&#34;&#34;, &#34;gmpy2; extra == \&#34;test\&#34;&#34;, &#34;threadpoolctl; extra == \&#34;test\&#34;&#34;, &#34;scikit-umfpack; extra == \&#34;test\&#34;&#34;, &#34;pooch; extra == \&#34;test\&#34;&#34;, &#34;hypothesis&gt;=6.30; extra == \&#34;test\&#34;&#34;, &#34;array-api-strict&gt;=2.3.1; extra == \&#34;test\&#34;&#34;, &#34;Cython; extra == \&#34;test\&#34;&#34;, &#34;meson; extra == \&#34;test\&#34;&#34;, &#34;ninja; sys_platform != \&#34;emscripten\&#34; and extra == \&#34;test\&#34;&#34;, &#34;scipy-doctest&gt;=2.0.0; extra == \&#34;test\&#34;&#34;, &#34;sphinx&lt;8.2.0,&gt;=5.0.0; extra == \&#34;doc\&#34;&#34;, &#34;intersphinx_registry; extra == \&#34;doc\&#34;&#34;, &#34;pydata-sphinx-theme&gt;=0.15.2; extra == \&#34;doc\&#34;&#34;, &#34;sphinx-copybutton; extra == \&#34;doc\&#34;&#34;, &#34;sphinx-design&gt;=0.4.0; extra == \&#34;doc\&#34;&#34;, &#34;matplotlib&gt;=3.5; extra == \&#34;doc\&#34;&#34;, &#34;numpydoc; extra == \&#34;doc\&#34;&#34;, &#34;jupytext; extra == \&#34;doc\&#34;&#34;, &#34;myst-nb&gt;=1.2.0; extra == \&#34;doc\&#34;&#34;, &#34;pooch; extra == \&#34;doc\&#34;&#34;, &#34;jupyterlite-sphinx&gt;=0.19.1; extra == \&#34;doc\&#34;&#34;, &#34;jupyterlite-pyodide-kernel; extra == \&#34;doc\&#34;&#34;, &#34;linkify-it-py; extra == \&#34;doc\&#34;&#34;, &#34;tabulate; extra == \&#34;doc\&#34;&#34;, &#34;click&lt;8.3.0; extra == \&#34;dev\&#34;&#34;, &#34;spin; extra == \&#34;dev\&#34;&#34;, &#34;mypy==1.19.1; extra == \&#34;dev\&#34;&#34;, &#34;pyrefly==0.63.0; extra == \&#34;dev\&#34;&#34;, &#34;typing_extensions; extra == \&#34;dev\&#34;&#34;, &#34;types-psutil; extra == \&#34;dev\&#34;&#34;, &#34;pycodestyle; extra == \&#34;dev\&#34;&#34;, &#34;ruff&gt;=0.12.0; extra == \&#34;dev\&#34;&#34;, &#34;cython-lint&gt;=0.12.2; extra == \&#34;dev\&#34;&#34;]}, {&#34;name&#34;: &#34;fixfirst-local&#34;, &#34;version&#34;: &#34;0.7.0&#34;, &#34;requires&#34;: [&#34;pydantic&lt;3,&gt;=2.8&#34;, &#34;Jinja2&lt;4,&gt;=3.1&#34;, &#34;scikit-learn&lt;2,&gt;=1.5&#34;, &#34;packaging&lt;27,&gt;=24.2&#34;, &#34;PyYAML&lt;7,&gt;=6&#34;, &#34;tomli&lt;3,&gt;=2; python_version &lt; \&#34;3.11\&#34;&#34;, &#34;pytest&lt;10,&gt;=8; extra == \&#34;dev\&#34;&#34;, &#34;ruff&lt;1,&gt;=0.9; extra == \&#34;dev\&#34;&#34;, &#34;build&lt;2,&gt;=1; extra == \&#34;dev\&#34;&#34;, &#34;click&lt;9,&gt;=8.2; extra == \&#34;dev\&#34;&#34;, &#34;sentence-transformers&lt;6,&gt;=3; extra == \&#34;semantic\&#34;&#34;, &#34;nbclient&lt;1,&gt;=0.10; extra == \&#34;notebooks\&#34;&#34;, &#34;nbformat&lt;6,&gt;=5.10; extra == \&#34;notebooks\&#34;&#34;, &#34;ipykernel&lt;8,&gt;=6; extra == \&#34;notebooks\&#34;&#34;]}, {&#34;name&#34;: &#34;narwhals&#34;, &#34;version&#34;: &#34;2.26.0&#34;, &#34;requires&#34;: [&#34;cudf-cu12&gt;=24.10.0 ; sys_platform == &#39;linux&#39; and extra == &#39;cudf&#39;&#34;, &#34;dask[dataframe]&gt;=2024.8 ; extra == &#39;dask&#39;&#34;, &#34;duckdb&gt;=1.1 ; extra == &#39;duckdb&#39;&#34;, &#34;ibis-framework&gt;=6.0.0 ; extra == &#39;ibis&#39;&#34;, &#34;packaging&gt;=21.3 ; extra == &#39;ibis&#39;&#34;, &#34;pyarrow-hotfix&gt;=0.7 ; extra == &#39;ibis&#39;&#34;, &#34;modin&gt;=0.22.0 ; extra == &#39;modin&#39;&#34;, &#34;pandas&gt;=1.3.4 ; extra == &#39;pandas&#39;&#34;, &#34;polars&gt;=0.20.4 ; extra == &#39;polars&#39;&#34;, &#34;pyarrow&gt;=13.0.0 ; extra == &#39;pyarrow&#39;&#34;, &#34;pyspark&gt;=3.5.0 ; extra == &#39;pyspark&#39;&#34;, &#34;pyspark[connect]&gt;=3.5.0 ; extra == &#39;pyspark-connect&#39;&#34;, &#34;narwhals[duckdb] ; extra == &#39;sql&#39;&#34;, &#34;sqlparse&gt;=0.5.5 ; extra == &#39;sql&#39;&#34;, &#34;sqlframe&gt;=3.22.0,!=3.39.3 ; extra == &#39;sqlframe&#39;&#34;]}, {&#34;name&#34;: &#34;fixfirst-local&#34;, &#34;version&#34;: &#34;0.7.0&#34;, &#34;requires&#34;: [&#34;pydantic&lt;3,&gt;=2.8&#34;, &#34;Jinja2&lt;4,&gt;=3.1&#34;, &#34;scikit-learn&lt;2,&gt;=1.5&#34;, &#34;packaging&lt;27,&gt;=24.2&#34;, &#34;PyYAML&lt;7,&gt;=6&#34;, &#34;tomli&lt;3,&gt;=2; python_version &lt; \&#34;3.11\&#34;&#34;, &#34;pytest&lt;10,&gt;=8; extra == \&#34;dev\&#34;&#34;, &#34;ruff&lt;1,&gt;=0.9; extra == \&#34;dev\&#34;&#34;, &#34;build&lt;2,&gt;=1; extra == \&#34;dev\&#34;&#34;, &#34;click&lt;9,&gt;=8.2; extra == \&#34;dev\&#34;&#34;, &#34;sentence-transformers&lt;6,&gt;=3; extra == \&#34;semantic\&#34;&#34;, &#34;nbclient&lt;1,&gt;=0.10; extra == \&#34;notebooks\&#34;&#34;, &#34;nbformat&lt;6,&gt;=5.10; extra == \&#34;notebooks\&#34;&#34;, &#34;ipykernel&lt;8,&gt;=6; extra == \&#34;notebooks\&#34;&#34;]}], &#34;import_distributions&#34;: {&#34;numpy&#34;: [&#34;numpy&#34;], &#34;sklearn&#34;: [&#34;scikit-learn&#34;], &#34;cloudpickle&#34;: [&#34;cloudpickle&#34;], &#34;click&#34;: [&#34;click&#34;], &#34;packaging&#34;: [&#34;packaging&#34;], &#34;joblib&#34;: [&#34;joblib&#34;], &#34;iniconfig&#34;: [&#34;iniconfig&#34;], &#34;pygments&#34;: [&#34;Pygments&#34;], &#34;pydantic_core&#34;: [&#34;pydantic_core&#34;], &#34;build&#34;: [&#34;build&#34;], &#34;ruff&#34;: [&#34;ruff&#34;], &#34;pip&#34;: [&#34;pip&#34;], &#34;_pytest&#34;: [&#34;pytest&#34;], &#34;py&#34;: [&#34;pytest&#34;], &#34;pytest&#34;: [&#34;pytest&#34;], &#34;pydantic&#34;: [&#34;pydantic&#34;], &#34;pyproject_hooks&#34;: [&#34;pyproject_hooks&#34;], &#34;_yaml&#34;: [&#34;PyYAML&#34;], &#34;yaml&#34;: [&#34;PyYAML&#34;], &#34;jinja2&#34;: [&#34;Jinja2&#34;], &#34;annotated_types&#34;: [&#34;annotated-types&#34;], &#34;markupsafe&#34;: [&#34;MarkupSafe&#34;], &#34;threadpoolctl&#34;: [&#34;threadpoolctl&#34;], &#34;__pycache__&#34;: [&#34;threadpoolctl&#34;, &#34;typing_extensions&#34;], &#34;typing_inspection&#34;: [&#34;typing-inspection&#34;], &#34;pluggy&#34;: [&#34;pluggy&#34;], &#34;typing_extensions&#34;: [&#34;typing_extensions&#34;], &#34;scipy&#34;: [&#34;scipy&#34;], &#34;fixfirst&#34;: [&#34;fixfirst-local&#34;, &#34;fixfirst-local&#34;], &#34;narwhals&#34;: [&#34;narwhals&#34;]}, &#34;stdlib_modules&#34;: [&#34;__future__&#34;, &#34;_abc&#34;, &#34;_aix_support&#34;, &#34;_ast&#34;, &#34;_asyncio&#34;, &#34;_bisect&#34;, &#34;_blake2&#34;, &#34;_bz2&#34;, &#34;_codecs&#34;, &#34;_codecs_cn&#34;, &#34;_codecs_hk&#34;, &#34;_codecs_iso2022&#34;, &#34;_codecs_jp&#34;, &#34;_codecs_kr&#34;, &#34;_codecs_tw&#34;, &#34;_collections&#34;, &#34;_collections_abc&#34;, &#34;_compat_pickle&#34;, &#34;_compression&#34;, &#34;_contextvars&#34;, &#34;_crypt&#34;, &#34;_csv&#34;, &#34;_ctypes&#34;, &#34;_curses&#34;, &#34;_curses_panel&#34;, &#34;_datetime&#34;, &#34;_dbm&#34;, &#34;_decimal&#34;, &#34;_elementtree&#34;, &#34;_frozen_importlib&#34;, &#34;_frozen_importlib_external&#34;, &#34;_functools&#34;, &#34;_gdbm&#34;, &#34;_hashlib&#34;, &#34;_heapq&#34;, &#34;_imp&#34;, &#34;_io&#34;, &#34;_json&#34;, &#34;_locale&#34;, &#34;_lsprof&#34;, &#34;_lzma&#34;, &#34;_markupbase&#34;, &#34;_md5&#34;, &#34;_msi&#34;, &#34;_multibytecodec&#34;, &#34;_multiprocessing&#34;, &#34;_opcode&#34;, &#34;_operator&#34;, &#34;_osx_support&#34;, &#34;_overlapped&#34;, &#34;_pickle&#34;, &#34;_posixshmem&#34;, &#34;_posixsubprocess&#34;, &#34;_py_abc&#34;, &#34;_pydatetime&#34;, &#34;_pydecimal&#34;, &#34;_pyio&#34;, &#34;_pylong&#34;, &#34;_queue&#34;, &#34;_random&#34;, &#34;_scproxy&#34;, &#34;_sha1&#34;, &#34;_sha2&#34;, &#34;_sha3&#34;, &#34;_signal&#34;, &#34;_sitebuiltins&#34;, &#34;_socket&#34;, &#34;_sqlite3&#34;, &#34;_sre&#34;, &#34;_ssl&#34;, &#34;_stat&#34;, &#34;_statistics&#34;, &#34;_string&#34;, &#34;_strptime&#34;, &#34;_struct&#34;, &#34;_symtable&#34;, &#34;_thread&#34;, &#34;_threading_local&#34;, &#34;_tkinter&#34;, &#34;_tokenize&#34;, &#34;_tracemalloc&#34;, &#34;_typing&#34;, &#34;_uuid&#34;, &#34;_warnings&#34;, &#34;_weakref&#34;, &#34;_weakrefset&#34;, &#34;_winapi&#34;, &#34;_wmi&#34;, &#34;_zoneinfo&#34;, &#34;abc&#34;, &#34;aifc&#34;, &#34;antigravity&#34;, &#34;argparse&#34;, &#34;array&#34;, &#34;ast&#34;, &#34;asyncio&#34;, &#34;atexit&#34;, &#34;audioop&#34;, &#34;base64&#34;, &#34;bdb&#34;, &#34;binascii&#34;, &#34;bisect&#34;, &#34;builtins&#34;, &#34;bz2&#34;, &#34;cProfile&#34;, &#34;calendar&#34;, &#34;cgi&#34;, &#34;cgitb&#34;, &#34;chunk&#34;, &#34;cmath&#34;, &#34;cmd&#34;, &#34;code&#34;, &#34;codecs&#34;, &#34;codeop&#34;, &#34;collections&#34;, &#34;colorsys&#34;, &#34;compileall&#34;, &#34;concurrent&#34;, &#34;configparser&#34;, &#34;contextlib&#34;, &#34;contextvars&#34;, &#34;copy&#34;, &#34;copyreg&#34;, &#34;crypt&#34;, &#34;csv&#34;, &#34;ctypes&#34;, &#34;curses&#34;, &#34;dataclasses&#34;, &#34;datetime&#34;, &#34;dbm&#34;, &#34;decimal&#34;, &#34;difflib&#34;, &#34;dis&#34;, &#34;doctest&#34;, &#34;email&#34;, &#34;encodings&#34;, &#34;ensurepip&#34;, &#34;enum&#34;, &#34;errno&#34;, &#34;faulthandler&#34;, &#34;fcntl&#34;, &#34;filecmp&#34;, &#34;fileinput&#34;, &#34;fnmatch&#34;, &#34;fractions&#34;, &#34;ftplib&#34;, &#34;functools&#34;, &#34;gc&#34;, &#34;genericpath&#34;, &#34;getopt&#34;, &#34;getpass&#34;, &#34;gettext&#34;, &#34;glob&#34;, &#34;graphlib&#34;, &#34;grp&#34;, &#34;gzip&#34;, &#34;hashlib&#34;, &#34;heapq&#34;, &#34;hmac&#34;, &#34;html&#34;, &#34;http&#34;, &#34;idlelib&#34;, &#34;imaplib&#34;, &#34;imghdr&#34;, &#34;importlib&#34;, &#34;inspect&#34;, &#34;io&#34;, &#34;ipaddress&#34;, &#34;itertools&#34;, &#34;json&#34;, &#34;keyword&#34;, &#34;lib2to3&#34;, &#34;linecache&#34;, &#34;locale&#34;, &#34;logging&#34;, &#34;lzma&#34;, &#34;mailbox&#34;, &#34;mailcap&#34;, &#34;marshal&#34;, &#34;math&#34;, &#34;mimetypes&#34;, &#34;mmap&#34;, &#34;modulefinder&#34;, &#34;msilib&#34;, &#34;msvcrt&#34;, &#34;multiprocessing&#34;, &#34;netrc&#34;, &#34;nis&#34;, &#34;nntplib&#34;, &#34;nt&#34;, &#34;ntpath&#34;, &#34;nturl2path&#34;, &#34;numbers&#34;, &#34;opcode&#34;, &#34;operator&#34;, &#34;optparse&#34;, &#34;os&#34;, &#34;ossaudiodev&#34;, &#34;pathlib&#34;, &#34;pdb&#34;, &#34;pickle&#34;, &#34;pickletools&#34;, &#34;pipes&#34;, &#34;pkgutil&#34;, &#34;platform&#34;, &#34;plistlib&#34;, &#34;poplib&#34;, &#34;posix&#34;, &#34;posixpath&#34;, &#34;pprint&#34;, &#34;profile&#34;, &#34;pstats&#34;, &#34;pty&#34;, &#34;pwd&#34;, &#34;py_compile&#34;, &#34;pyclbr&#34;, &#34;pydoc&#34;, &#34;pydoc_data&#34;, &#34;pyexpat&#34;, &#34;queue&#34;, &#34;quopri&#34;, &#34;random&#34;, &#34;re&#34;, &#34;readline&#34;, &#34;reprlib&#34;, &#34;resource&#34;, &#34;rlcompleter&#34;, &#34;runpy&#34;, &#34;sched&#34;, &#34;secrets&#34;, &#34;select&#34;, &#34;selectors&#34;, &#34;shelve&#34;, &#34;shlex&#34;, &#34;shutil&#34;, &#34;signal&#34;, &#34;site&#34;, &#34;smtplib&#34;, &#34;sndhdr&#34;, &#34;socket&#34;, &#34;socketserver&#34;, &#34;spwd&#34;, &#34;sqlite3&#34;, &#34;sre_compile&#34;, &#34;sre_constants&#34;, &#34;sre_parse&#34;, &#34;ssl&#34;, &#34;stat&#34;, &#34;statistics&#34;, &#34;string&#34;, &#34;stringprep&#34;, &#34;struct&#34;, &#34;subprocess&#34;, &#34;sunau&#34;, &#34;symtable&#34;, &#34;sys&#34;, &#34;sysconfig&#34;, &#34;syslog&#34;, &#34;tabnanny&#34;, &#34;tarfile&#34;, &#34;telnetlib&#34;, &#34;tempfile&#34;, &#34;termios&#34;, &#34;textwrap&#34;, &#34;this&#34;, &#34;threading&#34;, &#34;time&#34;, &#34;timeit&#34;, &#34;tkinter&#34;, &#34;token&#34;, &#34;tokenize&#34;, &#34;tomllib&#34;, &#34;trace&#34;, &#34;traceback&#34;, &#34;tracemalloc&#34;, &#34;tty&#34;, &#34;turtle&#34;, &#34;turtledemo&#34;, &#34;types&#34;, &#34;typing&#34;, &#34;unicodedata&#34;, &#34;unittest&#34;, &#34;urllib&#34;, &#34;uu&#34;, &#34;uuid&#34;, &#34;venv&#34;, &#34;warnings&#34;, &#34;wave&#34;, &#34;weakref&#34;, &#34;webbrowser&#34;, &#34;winreg&#34;, &#34;winsound&#34;, &#34;wsgiref&#34;, &#34;xdrlib&#34;, &#34;xml&#34;, &#34;xmlrpc&#34;, &#34;zipapp&#34;, &#34;zipfile&#34;, &#34;zipimport&#34;, &#34;zlib&#34;, &#34;zoneinfo&#34;], &#34;paths&#34;: {&#34;stdlib&#34;: &#34;&lt;home&gt;/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12&#34;, &#34;platstdlib&#34;: &#34;<clean-source>/.venv/lib/python3.12&#34;, &#34;purelib&#34;: &#34;<clean-source>/.venv/lib/python3.12/site-packages&#34;, &#34;platlib&#34;: &#34;<clean-source>/.venv/lib/python3.12/site-packages&#34;}, &#34;markers&#34;: {&#34;implementation_name&#34;: &#34;cpython&#34;, &#34;implementation_version&#34;: &#34;3.12.14&#34;, &#34;os_name&#34;: &#34;posix&#34;, &#34;platform_machine&#34;: &#34;arm64&#34;, &#34;platform_release&#34;: &#34;25.6.0&#34;, &#34;platform_system&#34;: &#34;Darwin&#34;, &#34;platform_version&#34;: &#34;Darwin Kernel Version 25.6.0: Fri Jul 31 19:19:08 PDT 2026; root:xnu-12377.161.14~5/RELEASE_ARM64_T6050&#34;, &#34;python_full_version&#34;: &#34;3.12.14&#34;, &#34;platform_python_implementation&#34;: &#34;CPython&#34;, &#34;python_version&#34;: &#34;3.12&#34;, &#34;sys_platform&#34;: &#34;darwin&#34;}}</pre><p class="meta">stderr</p><pre>(empty)</pre></details></details>
+<details class="details"><summary>Full reasoning trace (9 facts)</summary><div class="facts observed"><code>session:goal:pass_tests</code><br>observed · input<br><span class="muted">from </span></div><div class="facts observed"><code>session:goal_check:pytest_run</code><br>observed · input<br><span class="muted">from </span></div><div class="facts observed"><code>environment:snapshot:available</code><br>observed · input<br><span class="muted">from run-544ae11c4012:stdout:1</span></div><div class="facts observed"><code>project:declarations:available</code><br>observed · input<br><span class="muted">from run-47396485f3d2:stdout:1</span></div><div class="facts observed"><code>project:ruff_config:none</code><br>observed · input<br><span class="muted">from run-47396485f3d2:stdout:1</span></div><div class="facts observed"><code>dist:numpy:declared_in:requirements.txt:1</code><br>observed · input<br><span class="muted">from run-47396485f3d2:declaration:0</span></div><div class="facts observed"><code>dist:pytest:declared_in:requirements.txt:2</code><br>observed · input<br><span class="muted">from run-47396485f3d2:declaration:1</span></div><div class="facts observed"><code>dist:python:installed_version:3.12.14</code><br>observed · input<br><span class="muted">from run-544ae11c4012:stdout:1</span></div><div class="facts observed"><code>dist:python:previous_series_below:3</code><br>observed · input<br><span class="muted">from run-544ae11c4012:stdout:1</span></div></details></section>
+<footer class="footnote">This page reflects the checks at the recorded times; re-verify after changing the project. Common credentials are redacted from raw output, but review before sharing. The JSON next to an exported report is the full record.</footer></main>
+<script>
+const graphViews=JSON.parse(document.getElementById('graph-views').textContent);
+const graphSelect=document.getElementById('graph-entity');
+function showGraph(){const view=graphViews.find(v=>v.entity===graphSelect.value);if(!view)return;document.getElementById('graph-answer').textContent=view.answer;const box=document.getElementById('graph-path');box.replaceChildren();const nodes=new Map(view.nodes.map(n=>[n.id,n]));const path=view.paths[0]||[];[view.entity,...path.map(e=>e.target)].forEach((id,i)=>{if(i){const arrow=document.createElement('span');arrow.textContent='→ '+path[i-1].relation;box.append(arrow)}const card=document.createElement('div');const type=document.createElement('small');type.textContent=nodes.get(id)?.type||'Entity';const label=document.createElement('div');label.textContent=nodes.get(id)?.label||id;card.append(type,label);box.append(card)})}
+graphSelect.addEventListener('change',showGraph);showGraph();
+document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(b.dataset.command);b.textContent='Copied'}catch{b.textContent='Copy failed'}}));
+document.getElementById('search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('.issue').forEach(i=>i.classList.toggle('hidden',!i.dataset.search.toLowerCase().includes(q)))});
+if(document.body.dataset.live==='1'){
+const token=document.querySelector('meta[name=fixfirst-token]').content,session=document.querySelector('meta[name=fixfirst-session]').content;
+document.querySelector('button[data-op=ask]').addEventListener('click',async()=>{const out=document.getElementById('ask-answer');out.classList.remove('hidden');out.textContent='…';
+try{const r=await fetch(`/api/sessions/${session}/ask`,{method:'POST',headers:{'Content-Type':'application/json','X-FixFirst-Token':token},body:JSON.stringify({question:document.getElementById('question').value})});const data=await r.json();out.textContent=r.ok?data.answer:'Error: '+data.error}catch(err){out.textContent='Error: '+err.message}});
+}
+</script></body></html>

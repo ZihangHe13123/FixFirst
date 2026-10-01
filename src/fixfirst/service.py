@@ -21,7 +21,7 @@ from .runner import (
 
 def create_session(
     project, python, name=None, goal="collect_tests", grouping="tfidf", model=None, sbert_model=None,
-    execution=None,
+    execution=None, *, structured_evidence=False, bounded_actions=False,
 ):
     root = Path(project).expanduser().resolve()
     interpreter = Path(os.path.abspath(os.path.expanduser(python)))
@@ -52,6 +52,8 @@ def create_session(
         execution=execution,
         grouping=grouping,
         model_path=model,
+        structured_evidence=structured_evidence,
+        bounded_actions=bounded_actions,
         sbert_model=sbert_model,
     )
 
@@ -211,7 +213,8 @@ def ingest(session: Session, runs: list[Run]):
                     integrity.scope_of(session)):
                 copy.note += (" (against the tests and settings accepted as the new baseline on "
                               + baseline["recorded_at"] + ")")
-        elif old.status != "resolved" and old.tool in updated_tools:
+        elif (old.status != "resolved" and old.tool in updated_tools
+              and (old.tool != "pip_install" or matching)):
             # Only a check of the same tool can fail to observe an issue; a round that ran
             # other checks (a release search, an environment snapshot) leaves it as it was.
             copy.status = "not_observed" if old.status != "awaiting_verification" else old.status
@@ -255,7 +258,7 @@ def scan(session, checks=None, timeout=DEFAULT_TIMEOUT, targets=None):
     else:
         optional_tools = False
     if targets:
-        if list(checks) not in (["pytest_run"], ["version_search"]):
+        if list(checks) not in (["pytest_run"], ["version_search"], ["dependency_resolve"]):
             raise ValueError("--nodes must be used on its own with --checks pytest_run")
         if checks == ["pytest_run"]:
             validate_targets(session, targets)
@@ -265,6 +268,11 @@ def scan(session, checks=None, timeout=DEFAULT_TIMEOUT, targets=None):
     # The baseline is taken before any project code runs, and compared before and after the checks.
     before = integrity.before_checks(session)
     for check in checks:
+        if check == "dependency_resolve":
+            # The explicit trial must use today's declarations and interpreter,
+            # even if it was selected from yesterday's report.
+            refresh = [collect(session, "environment", timeout), collect(session, "project", timeout)]
+            ingest(session, refresh)
         if optional_tools and check in ("pip_check", "ruff"):
             package = "pip" if check == "pip_check" else "ruff"
             if not any(p.get("name", "").lower() == package
@@ -278,6 +286,21 @@ def scan(session, checks=None, timeout=DEFAULT_TIMEOUT, targets=None):
         runs.append(run)
         if run.status == "cancelled":
             break
+    from .install_feedback import collect_feedback
+    from .evidence import project_index
+
+    # Read only logs bound to suggested manual commands. Environment and project
+    # checks above have refreshed the context; imported output cannot verify a goal.
+    project_run = next((r for r in reversed(runs) if r.tool == "project"), None)
+    if project_run:
+        import json
+        try:
+            project = json.loads(project_run.stdout)
+        except ValueError:
+            project = {}
+    else:
+        _, project = project_index(session)
+    runs.extend(collect_feedback(session, project))
     integrity.after_checks(session, before)
     ingest(session, runs)
 

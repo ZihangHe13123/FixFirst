@@ -12,21 +12,24 @@ import posixpath
 import re
 
 from packaging.requirements import InvalidRequirement, Requirement
+from packaging.specifiers import SpecifierSet
 from packaging.utils import canonicalize_name
 from packaging.version import InvalidVersion, Version
 
-from .behavior import observed_changes
+from .behavior import observed_changes, observed_input_errors
 from .models import Fact, Issue, Run, Session
 from .runner import environment_id
 from .source_context import FEATURE_NAMES as SOURCE_FEATURE_NAMES, feature_values, resolved_calls
 from .interface_history import FEATURE_NAMES as HISTORY_FEATURE_NAMES, feature_values as history_features
+from .symbol_context import FEATURE_NAMES as SYMBOL_FEATURE_NAMES, feature_values as symbol_features
+from .symbol_context import HISTORY_FEATURE_NAMES as SYMBOL_HISTORY_FEATURE_NAMES, qualified_attribute_history, valid_record
 
 MODULE_MISSING = re.compile(r"No module named '([\w.]+)'")
 CANNOT_IMPORT = re.compile(
     r"cannot import name '(\w+)' from (?:partially initialized module )?'([\w.]+)'"
 )
 MODULE_ATTR = re.compile(r"module '([\w.]+)' has no attribute '(\w+)'")
-OBJECT_ATTR = re.compile(r"'(\w+)' object has no attribute '(\w+)'")
+OBJECT_ATTR = re.compile(r"'([\w.]+)' object has no attribute '(\w+)'")
 KWARG = re.compile(r"(?:([\w.]+)\(\) )?got an unexpected keyword argument '(\w+)'")
 POSITIONAL = re.compile(r"([\w.]+)\(\) (?:takes|missing) \d+ (?:positional|required)")
 CALL_SIGNATURE = re.compile(
@@ -129,8 +132,11 @@ CONTEXT_FEATURE_NAMES = [
 ]
 V4_FEATURE_NAMES = LEGACY_FEATURE_NAMES + CONTEXT_FEATURE_NAMES
 V5_FEATURE_NAMES = V4_FEATURE_NAMES + SOURCE_FEATURE_NAMES
-FEATURE_NAMES = V5_FEATURE_NAMES + HISTORY_FEATURE_NAMES
-FEATURE_LAYOUTS = {3: LEGACY_FEATURE_NAMES, 4: V4_FEATURE_NAMES, 5: V5_FEATURE_NAMES, 6: FEATURE_NAMES}
+V6_FEATURE_NAMES = V5_FEATURE_NAMES + HISTORY_FEATURE_NAMES
+V7_FEATURE_NAMES = V6_FEATURE_NAMES + SYMBOL_FEATURE_NAMES
+FEATURE_NAMES = V7_FEATURE_NAMES + SYMBOL_HISTORY_FEATURE_NAMES
+FEATURE_LAYOUTS = {3: LEGACY_FEATURE_NAMES, 4: V4_FEATURE_NAMES, 5: V5_FEATURE_NAMES,
+                   6: V6_FEATURE_NAMES, 7: V7_FEATURE_NAMES, 8: FEATURE_NAMES}
 
 
 WINDOWS_ABSOLUTE = re.compile(r"^[A-Za-z]:/")
@@ -226,6 +232,28 @@ def shown_path(path: str, project_root: str) -> str:
     return stdlib[1] if stdlib else path
 
 
+def statement_at_location(traceback: str, location: str, project_root: str) -> str:
+    """Match pytest's leading frame header or trailing error location.
+
+    A trailing frame must have exactly one highlighted line since the previous
+    frame. Multiline/ambiguous excerpts cannot support an exact source edit.
+    """
+    lines = traceback.splitlines()
+    start = 0
+    for index, line in enumerate(lines):
+        match = FRAME.match(line) or PLAIN_FRAME.match(line)
+        if not match:
+            continue
+        if f"{shown_path(match[1], project_root)}:{match[2]}" == location:
+            if " in " in line and index + 1 < len(lines) and lines[index + 1].startswith("    "):
+                return lines[index + 1].strip().removeprefix(">").strip()[:2000]
+            highlighted = [item[1:].strip() for item in lines[start:index] if item.startswith(">")]
+            if len(highlighted) == 1:
+                return highlighted[0][:2000]
+        start = index + 1
+    return ""
+
+
 def describe_warning(record: dict, project_root: str, environment: dict) -> dict:
     """Where a recorded warning came from and whether the environment, not the test, added it.
 
@@ -310,6 +338,20 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
     records = records_for(session, issue)
     exception_record = next((r for r in records if r.get("type") == "exception"), {})
     failure_record = next((r for r in records if r.get("type") == "failure"), {})
+    probe_runs = {ref.partition(":probe:")[0] for event in events for ref in event.evidence_refs if ":probe:" in ref}
+    executed_runs = {r.run_id for r in session.runs if r.source == "executed"}
+    executed_metadata = bool(probe_runs) and probe_runs <= executed_runs
+    symbol = valid_record(exception_record.get("symbol_observation")) if executed_metadata else {}
+    # Collection issues retain the failure-report reference; pytest emits its
+    # structured CollectError afterward. Join only one matching executed record,
+    # without replacing the legacy exception/frame fields used by old models.
+    if (not symbol and executed_metadata and failure_record.get("stage") == "collect"
+            and failure_record.get("nodeid")):
+        matches = [r for run in session.runs if run.run_id in probe_runs for r in run.records
+                   if r.get("type") == "exception" and r.get("exception_type") == "CollectError"
+                   and r.get("stage") == "collect" and r.get("nodeid") == failure_record["nodeid"]]
+        if len(matches) == 1:
+            symbol = valid_record(matches[0].get("symbol_observation"))
     traceback = str(failure_record.get("message") or "")
     if not traceback:
         traceback = "\n".join(output_context(session, e) for e in events)
@@ -375,6 +417,18 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
             if classify_path(path, session.project_root, environment) in ("project", "test"):
                 where = f"{shown_path(path, session.project_root)}:{line}"
     source_location = where
+    source_statement = ""
+    symbol_origin = classify_path(str(symbol.get("file", "")), session.project_root, environment)
+    symbol_location = (f"{shown_path(symbol['file'], session.project_root)}:{symbol['line']}"
+                       if symbol and type(symbol.get("line")) is int and symbol["line"] > 0 else "")
+    symbol_statement = ""
+    trace_lines = traceback.splitlines()
+    for index, line in enumerate(trace_lines[:-1]):
+        match = FRAME.match(line) or PLAIN_FRAME.match(line)
+        if match and f"{shown_path(match[1], session.project_root)}:{match[2]}" == source_location:
+            source_statement = trace_lines[index + 1].strip().removeprefix(">").strip()[:2000]
+    if symbol_location:
+        symbol_statement = statement_at_location(traceback, symbol_location, session.project_root)
     if notebook:
         where = f"{shown_path(source_file, session.project_root)} · cell {exception_record['cell']}"
     warnings = [
@@ -406,7 +460,10 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
         # The notebook cell is the user-facing location; static callable matching
         # must use the actual Python file/line when that cell calls a module.
         "source_location": source_location,
+        "source_statement": source_statement,
         "library": library,
+        "library_location": (f"{shown_path(last, session.project_root)}:{located[-1][1]}"
+                             if library and located else ""),
         "third_party_frame_ratio": round(kinds.count("third_party") / len(kinds), 3) if kinds else 0.0,
         "missing_module": None,
         "modules": [],
@@ -420,7 +477,33 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
         "warnings": warnings,
         "warning_assertion": warning_assertion,
         "signals": [],
+        "runtime_attribute": exception_record.get("attribute_access") or {},
+        "module_attribute": exception_record.get("module_attribute") or {},
+        "symbol_observation": symbol,
+        "symbol_use_origin": symbol_origin,
+        "symbol_location": symbol_location,
+        "symbol_statement": symbol_statement,
+        "precise_statement": statement_at_location(traceback, source_location, session.project_root),
+        "library_calls": [],
+        "call_arguments": [],
+        "validation_errors": exception_record.get("validation_errors") or [],
     }
+    for frame in exception_record.get("traceback_frames", [])[:20]:
+        if not isinstance(frame, dict):
+            continue
+        path, function = str(frame.get("file", "")), str(frame.get("function", ""))
+        if classify_path(path, session.project_root, environment) != "third_party":
+            continue
+        pieces = re.split(r"(?:site|dist)-packages[\\/]", path.replace("\\", "/"), maxsplit=1)
+        if len(pieces) == 2 and re.fullmatch(r"\w+", function):
+            module = pieces[1].removesuffix(".py").replace("/", ".").removesuffix(".__init__")
+            evidence["library_calls"].append(f"{module}.{function}")
+            shapes = frame.get("array_shapes")
+            if isinstance(shapes, dict) and all(
+                isinstance(shapes.get(k), list) and len(shapes[k]) <= 16
+                and all(type(v) is int and v >= 0 for v in shapes[k]) for k in ("a", "b")
+            ):
+                evidence["call_arguments"].append({"callee": f"{module}.{function}", "shapes": shapes})
 
     def add(key, value):
         if value and value not in evidence[key]:
@@ -439,8 +522,16 @@ def issue_evidence(session: Session, issue: Issue) -> dict:
     for owner, name in OBJECT_ATTR.findall(message or text):
         add("attributes", name)
         add("owners", owner)
-        if owner != "NoneType":
+        if owner != "NoneType" and "." not in owner:
             add("apis", f"{owner}.{name}")
+    # Qualified object types in text alone are not enough to borrow an API's
+    # history. The target-side probe records the actual registered object's type.
+    attribute = evidence["runtime_attribute"]
+    if exception == "AttributeError" and isinstance(attribute, dict):
+        parts = [attribute.get(k, "") for k in ("owner_module", "owner_name", "name")]
+        if all(isinstance(p, str) and re.fullmatch(r"[A-Za-z_]\w*(?:\.\w+)*", p) for p in parts):
+            add("attributes", ".".join(parts))
+            add("modules", parts[0])
     for owner in POSITIONAL.findall(message):
         add("owners", owner.split(".")[0])
     for owner, name in KWARG.findall(message):
@@ -643,6 +734,9 @@ def features(evidence: dict, contexts: dict, project: dict, environment=None, *,
     )
     values.update(feature_values(evidence, values, project, environment or {}))
     values.update(history_features(evidence, values, project, environment or {}, use_history=interface_history))
+    values.update(symbol_features(evidence))
+    values["qualified_attribute_history_match"] = (
+        interface_history and qualified_attribute_history(evidence, project, environment or {}))
     return [float(values[name]) for name in FEATURE_NAMES]
 
 
@@ -673,11 +767,38 @@ def observations(session: Session, issues: list[Issue], *, interface_history=Tru
     modules = set()
     for issue in diagnosable:
         evidence = issue_evidence(session, issue)
+        from .observed_operations import projection
+
+        projected, operation_context = projection(
+            session, issue, evidence, {**project, "_run_id": project_run.run_id if project_run else None},
+            environment, use_history=interface_history)
+        evidence["operation_context"] = operation_context
+        facts += projected
+        modules.update(f.value.removeprefix("module:") for f in projected if f.predicate == "module")
+        from .binding_advice import evidence_facts as binding_facts
+
+        facts += binding_facts(session, issue, evidence, project, environment)
         refs = issue.evidence_refs
         subject = issue.issue_id
         if evidence["exception"]:
             facts.append(observed(subject, "exception", evidence["exception"], refs))
+        if evidence["exception_module"]:
+            facts.append(observed(subject, "exception_module", evidence["exception_module"], refs))
         facts.append(observed(subject, "raised_in", evidence["raised_in"], refs))
+        if evidence["where"]:
+            facts.append(observed(subject, "source_location", evidence["where"], refs))
+        spelling = evidence["module_attribute"]
+        if (isinstance(spelling, dict) and spelling.get("source") == "loaded_module_namespace"
+                and spelling.get("unique") is True and len(spelling.get("suggestions", [])) == 1
+                and classify_path(str(spelling.get("file", "")), session.project_root, environment) in ("project", "test")
+                and type(spelling.get("line")) is int and spelling["line"] > 0):
+            module, old, new = spelling.get("module", ""), spelling.get("name", ""), spelling["suggestions"][0]
+            if all(isinstance(v, str) and re.fullmatch(r"[A-Za-z_]\w*(?:\.\w+)*", v) for v in (module, old, new)):
+                facts += [observed(subject, "spelling_module", "module:" + module, refs),
+                          observed(subject, "spelling_from", module + "." + old, refs),
+                          observed(subject, "spelling_to", module + "." + new, refs),
+                          observed(subject, "spelling_location", f"{shown_path(spelling['file'], session.project_root)}:{spelling['line']}", refs)]
+                modules.add(module)
         for module in evidence["modules"]:
             facts.append(observed(subject, "module", "module:" + module, refs))
             modules.add(module)
@@ -720,11 +841,16 @@ def observations(session: Session, issues: list[Issue], *, interface_history=Tru
                 facts.append(observed("fixture:" + fixture, "defined_locally", "yes", project_ref))
         facts += warning_facts(subject, evidence, refs)
         if evidence["library"]:
-            names = environment.get("import_distributions", {}).get(evidence["library"]) or [
+            providers = environment.get("import_distributions", {}).get(evidence["library"]) or []
+            names = providers or [
                 evidence["library"]
             ]
             dist = "dist:" + canonicalize_name(names[0])
             facts.append(observed(subject, "raised_by_library", dist, refs))
+            if len({canonicalize_name(name) for name in providers}) == 1:
+                facts.append(observed(subject, "library_owner", dist, refs + env_ref))
+            if evidence["library_location"]:
+                facts.append(observed(subject, "library_location", evidence["library_location"], refs))
             if evidence.get("project_calls_library"):
                 facts.append(observed(subject, "project_calls", dist, refs))
             if dist == "dist:pytest" or dist.startswith("dist:pytest-"):
@@ -732,6 +858,9 @@ def observations(session: Session, issues: list[Issue], *, interface_history=Tru
         for change, distribution in observed_changes(evidence, project):
             facts.append(observed(subject, "behavior_symptom", "behavior:" + change, refs + project_ref))
             facts.append(observed(subject, "behavior_provider", "dist:" + distribution, refs + project_ref))
+        for symptom, distribution in observed_input_errors(evidence):
+            facts.append(observed(subject, "input_symptom", "input:" + symptom, refs))
+            facts.append(observed(subject, "input_provider", "dist:" + distribution, refs))
         if evidence.get("call_signature"):
             facts.append(observed(subject, "signal", "call_signature", refs))
             # Resolve what was called through the project's own imports (read statically).
@@ -763,6 +892,26 @@ def observations(session: Session, issues: list[Issue], *, interface_history=Tru
                 facts.append(observed(subject, "similar_local", path, project_ref))
             for source in context["declared"]:
                 facts.append(observed(subject, "declared_in", source, project_ref))
+    # Requires-Dist remains available even in uv environments without pip. A
+    # conflicting lower bound is evidence for upgrading, not for searching back.
+    from .dependency_context import context, requirements_for, combined_specifier
+
+    dependency_context = context(environment, {**project, "_run_id": project_run.run_id if project_run else None})
+    constrained = set()
+    for name, installed_version in dependency_context["installed"].items():
+        rows = requirements_for(dependency_context, name)
+        try:
+            broken = any(r["owner"] != "project" and not SpecifierSet(r["specifier"]).contains(installed_version)
+                         for r in rows)
+        except InvalidVersion:
+            continue
+        if not broken:
+            continue
+        dist = "dist:" + name
+        refs = sorted({ref for r in rows for ref in r["refs"]})
+        facts.append(observed(dist, "required_spec", combined_specifier(dependency_context, name), refs))
+        facts.append(observed(dist, "required_by", "; ".join(sorted({r["source"] for r in rows})), refs))
+        constrained.add(dist)
     # pip check: "flask 1.1.4 has requirement Jinja2<3.0,>=2.10.1, but you have jinja2 3.1.6."
     for issue in issues:
         if issue.tool != "pip_check" or issue.kind != "dependency_conflict":
@@ -776,6 +925,8 @@ def observations(session: Session, issues: list[Issue], *, interface_history=Tru
             except InvalidRequirement:
                 continue
             dist = "dist:" + canonicalize_name(requirement.name)
+            if dist in constrained:
+                continue
             refs = event.evidence_refs
             facts.append(observed(dist, "required_spec", str(requirement.specifier), refs))
             facts.append(observed(dist, "required_by", f"{found['who']} {found['version']}", refs))
@@ -841,6 +992,11 @@ def observations(session: Session, issues: list[Issue], *, interface_history=Tru
                                     if canonicalize_name(p.get("name", "")) == canonicalize_name(data["dist"])), None)
             if environment and data.get("installed") != current_version:
                 continue  # A later environment change needs a new search.
+            if data.get("context_fingerprint"):
+                if data["context_fingerprint"] != dependency_context["fingerprint"]:
+                    continue
+            elif data.get("provides") and requirements_for(dependency_context, data["dist"]):
+                continue  # Old name-only trials did not verify these requirements.
             searches[data.get("api", "")] = (run, data)
     for api, (run, data) in searches.items():
         name, ref = "api:" + api, [f"{run.run_id}:stdout:1"]
@@ -863,6 +1019,16 @@ def observations(session: Session, issues: list[Issue], *, interface_history=Tru
     for issue in diagnosable:
         evidence = details[issue.issue_id]
         evidence["features"] = features(evidence, contexts, project, environment, interface_history=interface_history)
+    if session.structured_evidence:
+        # Preserve every actual source when the legacy and opt-in projections agree.
+        unique = {}
+        for fact in facts:
+            key = (fact.subject, fact.predicate, fact.value)
+            if key in unique:
+                unique[key].evidence_refs = list(dict.fromkeys([*unique[key].evidence_refs, *fact.evidence_refs]))
+            else:
+                unique[key] = fact
+        facts = list(unique.values())
     return facts, details
 
 

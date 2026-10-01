@@ -1,0 +1,21 @@
+{
+  "main-suite.log": "0a0c66b96f767b63236109f359059cc3ce20c1fd01738cbb62dc27ec5a19ba9e",
+  "host-environment.txt": "aae164a04296cdc5ef6b6d731d7a940481cbf1c9407399d290ebfa5be0468dac",
+  "SUMMARY.json": "d596aa189c389a8b05d204dfaf24d064367fe7c9c01797c1ad14d5c475cddc90",
+  "MECHANISM-REVIEW.md": "565471c3a19916cbb7f00a7a916e5cb5ba7c58b9249b1811ab596f5b997f8d76",
+  "harness-suite.log": "20aa7e30a74be2880f1f8a85b6435fbc86994a565c8cc8ce62b4f6442ffed452",
+  "RECEIPT.json": "a45d695bbb6c40c1bbac702997c3c0ac6bd6251aa111c8a6e27df5a9dccd7274",
+  "baseline/results.json": "b31cdff9ba9207151016b421d5e41de1697156d8c6eed1d0f5b23c9b91f37554",
+  "baseline/healthy/01-session.json": "466b003cadbbc5a40b70dbb1549d535d8eb5436a00e1ed5f00c62c29fc5c078c",
+  "baseline/opaque-business-check/01-session.json": "31e64af23b91fae84ea66c0a383aeeb5327de36107786ffc1092baea0d314b61",
+  "baseline/positional-only/01-session.json": "c4f9081650e4f60a8483040c3c949cbedbcd1a713b0e348b07497d2f4d24c234",
+  "baseline/own-store-method/01-session.json": "2cb2dbd0256e201bcf9e9ba93808ebbe17c11b4d13a202615f52a6e6b2b2ea04",
+  "baseline/regex-arity/01-session.json": "3ce25bc8b95f42bddae99a9b4521380f89239f0b832648e8fea283ae229eb1a4",
+  "candidate-mechanism/results.json": "bf19721fca6e38bbdc485fd8f6715c4e43afc86afacb766026409b771787322c",
+  "candidate-mechanism/healthy/01-session.json": "430b11356ca0a8871c3a74fda9403cdb379f854841dfaae755d434c1d9d6c1e9",
+  "candidate-mechanism/opaque-business-check/01-session.json": "1a15cd31430999f78c90a46ebeec6e5fd005290b8ca9f62da45b4fafefe414e4",
+  "candidate-mechanism/positional-only/01-session.json": "daf6d0317b87966abcfa2e79e03707142c636cbbe65504c604bb3e389b786284",
+  "candidate-mechanism/positional-only/02-session.json": "31c10f0c675db5aeee585f69fd9b8e136126d53d22101f5f15da55e6959d5552",
+  "candidate-mechanism/own-store-method/01-session.json": "342d2a901e8506af3c6cf746b36369e6c4a44a67009276a63ac4ae933216f5e3",
+  "candidate-mechanism/regex-arity/01-session.json": "6837f4033096aad33beee55254c80b16ccbf48226a6f8a7497a852d1719f326e"
+}
