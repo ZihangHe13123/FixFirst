@@ -1,4 +1,28 @@
-# v0.7.0公开候选分支
+# v0.7.0冻结与交付
+
+正式冻结以远端`v0.7.0`标签和[B5 #19冻结记录](https://github.com/ZihangHe13123/FixFirst/issues/19)为准。本文随冻结PR提交；标签尚未建立或任务记录尚未完成时，不得只凭本文或版本字符串判定冻结完成。
+
+## 正式标签的固定源码与安装包
+
+`v0.7.0`应指向干净public历史正常合入main后的提交，保留`4a7c470`等已验公开祖先。最终main/tag完整提交号、正式207文件安装包SHA256和CI链接写入B5任务；注释标签也记录该包摘要。**正式包由最终标签所指提交重新构建，下表392736…仅是合并前候选包的历史摘要。**
+
+取得正式版本及重建安装包（Python 3.11或更新版本）：
+
+```bash
+git clone https://github.com/ZihangHe13123/FixFirst.git
+cd FixFirst
+git checkout --detach v0.7.0
+python3 scripts/build_source_zip.py --revision "$(git rev-parse HEAD)" --output output/FixFirst-v0.7.0.zip
+git show --no-patch v0.7.0
+```
+
+Windows PowerShell可将Python命令换成`py -3.12`，并以`$FreezeRevision = git rev-parse HEAD`后传入`--revision $FreezeRevision`。保留生成的`.zip.receipt.json`，核对其source_commit与标签指向的commit相同，以及包SHA256与注释标签/B5记录相同。构建器只创建本地文件，不宣布冻结状态；正式状态由远端tag及B5记录决定。
+
+最终源码的生产代码、默认模型和回归测试应与已验候选逐字节一致；正式冻结只增加交付说明、CI触发和合并元数据。如不一致，必须重新说明和验证，不能套用候选收据。实际main与tag CI均应运行同一完整pytest/Ruff，结果以各自Checks为准。
+
+Windows真人签收仍按C3计划进行。R11的位置专用参数机制只有5个公开机制任务验证，没有该机制的独立保留验证，不能称为泛化提升。A2仍需A/C确认C1已冻结；本次不读取C1标签或保留输出，也不启动A2。B7准备与分析分支未合入，正式B7还需A2第1–6步结果PR合并。
+
+## 合并前候选的历史验证
 
 本分支为`codex/release-0.7.0-public`，从已公开main独立导入获准交付文件，不包含旧发布准备分支的未公开历史。原分支及旧ZIP在本地保留。
 
@@ -40,8 +64,8 @@ GitHub Actions会在公开分支push后运行源码回归；实际结果以对�
 
 参考源码ZIP仍是白名单安装包，不含全部开发测试fixture；Git分支保留完整开发测试和必要已公开支持材料。公开源码CI跑完整pytest与Ruff，不启动模型、用户研究或正式评估。CI通过不代表Windows真人验收。
 
-## 尚未完成
+## 后续验收与独立评估
 
-正式源码采用、v0.7.0标签、主分支合并和冻结公告尚未执行；Windows真实验收待C完成。A2必须等B5与C1标签冻结均明确确认，正式B7还要等A2第1–6步结果PR合并。
+正式源码采用、标签及冻结记录的实际状态见本页首段所指远端tag与B5任务。Windows真实验收待C完成；A2必须等B5与C1标签冻结均明确确认，正式B7还要等A2第1–6步结果PR合并。不能将B5技术冻结记成Windows签收、A2评分或B7实验已经完成。
 
 公开聚合说明保留其条件复现限制；12个私有起点会话没有导入。独立B7框架和分析方法分支也没有合并进本分支。

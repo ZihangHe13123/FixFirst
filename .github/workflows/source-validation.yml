@@ -2,7 +2,8 @@ name: Source validation
 
 on:
   push:
-    branches: [codex/release-0.7.0-public]
+    branches: [main, codex/release-0.7.0-public]
+    tags: [v0.7.0]
   pull_request:
 
 permissions:

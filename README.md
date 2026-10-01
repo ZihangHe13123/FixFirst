@@ -8,10 +8,11 @@ cause of each failure, ranks what to do next for your goal, and closes an issue 
 completed check of the same scope proves it fixed. It runs locally, never edits your code and
 never installs anything into your environment (it gives you the command instead).
 
-NUS-ISS Intelligent Reasoning Systems practice module, Group 24 · local candidate version 0.7.0 (not formally frozen)
+NUS-ISS Intelligent Reasoning Systems practice module, Group 24 · version 0.7.0
 
-For this public candidate branch, see the [delivery record](docs/freeze/PUBLIC_DELIVERY.md)
-for the fixed source revision, source ZIP receipt, actual validation and remaining freeze gates.
+See the [freeze and delivery record](docs/freeze/PUBLIC_DELIVERY.md) for the immutable
+`v0.7.0` identity, source ZIP recipe, actual validation and remaining evaluation gates.
+Freeze completion is recorded by the remote tag and B5 issue, not by this version string alone.
 
 Windows group testing: see [组员测试说明](docs/WINDOWS_TEAM_TEST.md). What was tested on
 each platform, and what is still open: [docs/WINDOWS_ADAPTATION.md](docs/WINDOWS_ADAPTATION.md).
