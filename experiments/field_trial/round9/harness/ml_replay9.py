@@ -5,14 +5,18 @@ Each task is rebuilt from its frozen inputs (files + env-lock), one init + scan 
 every model is replayed on that same session: raw tree label and leaf share, the fused diagnosis that a32c195 would
 assert, and the first action compared with rules only.
 """
-import glob, json, shutil, subprocess, sys
+import glob
+import json
+import shutil
+import subprocess
+import sys
 from pathlib import Path
 
 REPO, A, DEV, HOLD, WORK, OUT = (Path(p).resolve() for p in sys.argv[1:7])
 sys.path.insert(0, str(REPO / "experiments/core_diagnosis"))
 import fixfirst  # noqa: E402
 assert Path(fixfirst.__file__).resolve().is_relative_to(REPO / "src"), fixfirst.__file__
-from fixfirst.classification import MIN_CONFIDENCE, load_model, predict_tree  # noqa: E402
+from fixfirst.classification import load_model, predict_tree  # noqa: E402
 from fixfirst.reasoning import diagnose  # noqa: E402
 from fixfirst.storage import Store  # noqa: E402
 from round8_ablation import plan  # noqa: E402
@@ -22,7 +26,9 @@ MODELS = {"builtin44": REPO / "src/fixfirst/knowledge/diagnosis_tree.json",
           **{arm: A / "models" / f"full-{arm}.json" for arm in ("T61", "T65", "T80", "T81", "A65", "A80")}}
 LOADED = {k: load_model(p) for k, p in MODELS.items()}
 EXPECTED = {"M": "version_incompatibility", "U": "code_defect"}
-sh = lambda argv, cwd=None: subprocess.run(argv, cwd=cwd, capture_output=True, text=True, timeout=1800)
+def sh(argv, cwd=None):
+    return subprocess.run(argv, cwd=cwd, capture_output=True, text=True, timeout=1800)
+
 result = {"models": {k: (str(p.relative_to(A)) if p.is_relative_to(A) else "a32c195:src/fixfirst/knowledge/diagnosis_tree.json") for k, p in MODELS.items()},
           "tasks": {}}
 for half, root in (("dev", DEV), ("holdout", HOLD)):

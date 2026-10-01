@@ -4,7 +4,11 @@ planner, as the upper bound of what any classifier could change in the first act
 
     python structure_check.py <a32 checkout> <ablation2 copy> <collection3 copy> <round-9 replay work dir> <out.json>
 """
-import collections, json, re, sys, tempfile
+import collections
+import json
+import re
+import sys
+import tempfile
 from pathlib import Path
 
 REPO, A, D, RW, OUT = (Path(p).resolve() for p in sys.argv[1:6])
@@ -25,9 +29,14 @@ groups = sorted({r["group"] for r in labelled})
 report = {"rows": len(labelled), "originals": len(originals), "families": len(groups)}
 
 # provenance, recorded by the run itself: code version, library versions and the sha256 of every input
-import hashlib, importlib.metadata, platform, subprocess as _sp
-import fixfirst as _ff
-_sha = lambda p: hashlib.sha256(Path(p).read_bytes()).hexdigest()
+import hashlib  # noqa: E402
+import importlib.metadata  # noqa: E402
+import platform  # noqa: E402
+import subprocess as _sp  # noqa: E402
+import fixfirst as _ff  # noqa: E402
+def _sha(p):
+    return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+
 _src = Path(_ff.__file__).resolve().parent
 report["provenance"] = {
     "fixfirst_source_commit": _sp.run(["git", "-C", str(_src), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip() or None,
@@ -55,16 +64,22 @@ for width in ((65, 80) if "--skip-learners" not in sys.argv else ()):
         for held in groups:
             train = [r for r in originals if r["group"] != held]
             counts = collections.Counter(r["group"] for r in train)
-            X = np.array([r["features"][:width] for r in train]); y = [r["label"] for r in train]
+            X = np.array([r["features"][:width] for r in train])
+            y = [r["label"] for r in train]
             w = np.array([10 / counts[r["group"]] for r in train])
-            model = make(); model.fit(X, y, sample_weight=w)
+            model = make()
+            model.fit(X, y, sample_weight=w)
             test = [r for r in originals if r["group"] == held]
             proba = model.predict_proba(np.array([r["features"][:width] for r in test]))
             for r, p in zip(test, proba):
                 best = int(np.argmax(p))
                 preds[r["key"]] = (model.classes_[best], float(p[best]))
-        right = lambda r: preds[r["key"]][0] == r["label"]
-        fused = lambda r: (r["rules_heur"] or (preds[r["key"]][0] if preds[r["key"]][1] >= MIN_CONFIDENCE else None)) == r["label"]
+        def right(r):
+            return preds[r["key"]][0] == r["label"]
+
+        def fused(r):
+            return (r["rules_heur"] or (preds[r["key"]][0] if preds[r["key"]][1] >= MIN_CONFIDENCE else None)) == r["label"]
+
         fam = collections.defaultdict(list)
         for r in originals:
             fam[r["group"]].append(right(r))

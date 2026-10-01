@@ -12,6 +12,7 @@ docs/freeze/SOURCE_ZIP_PLAN.md
 docs/freeze/WINDOWS_HANDOFF.md
 docs/freeze/evidence/AB93951_SAFE_AGGREGATE.json
 docs/freeze/evidence/INTEGRATION_RECEIPT.json
+docs/freeze/evidence/PUBLIC_HELPER_STYLE_RECEIPT.json
 docs/freeze/evidence/README.md
 docs/freeze/evidence/SOURCES.json
 docs/freeze/source-zip-allowlist.txt

@@ -4,7 +4,11 @@
 Projects are the first-batch logs (N1..C3, re-runs merged by name) and the retest batch (R-*). Digits in titles
 are normalised so that version numbers do not split one issue into many. Coarse keyword classes; first match wins.
 """
-import collections, json, re, subprocess, sys
+import collections
+import json
+import re
+import subprocess
+import sys
 
 ref = sys.argv[1]
 files = subprocess.run(["git", "ls-tree", "-r", "--name-only", ref, "--", "experiments/field_trial/results"],

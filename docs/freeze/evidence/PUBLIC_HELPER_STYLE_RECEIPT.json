@@ -1,0 +1,27 @@
+{
+  "original_public_import_commit": "ba2f723d08a360d9dbbda91afaad051ea74b6054",
+  "changes": "Split imports/statements, convert named lambdas to equivalent defs, remove an unused imported constant, annotate imports after explicit path bootstrap. Production source and data unchanged.",
+  "files": [
+    {
+      "path": "experiments/field_trial/round9/harness/ml_replay9.py",
+      "original_sha256": "16f9420b720384266416f19377de88f282cf1343628efb165d5605075b4d2a8f",
+      "derived_sha256": "31d2541def31a1171d41a07c0c1b96b5ae07059154855b5080786f4960446949",
+      "canonical_ast_equal": true
+    },
+    {
+      "path": "experiments/field_trial/round9/structure-check/failure_mix.py",
+      "original_sha256": "2ab69c4162eb6bc749fc1f25be46f912a048ca94b4e8f895438bc6c27d537bf0",
+      "derived_sha256": "535cbeafc49b37edf7721901fbf33b0bdf3c5a65432e7c8fd347f1a89b9d4176",
+      "canonical_ast_equal": true
+    },
+    {
+      "path": "experiments/field_trial/round9/structure-check/structure_check.py",
+      "original_sha256": "e4bce6b28dc82a4ea01abc618e67855b30acc9c5c96c810766913802c8d1a354",
+      "derived_sha256": "00c4aae364605868b115bdf197de59a3f8d51a4b91a81670943f455c45d9885b",
+      "canonical_ast_equal": true
+    }
+  ],
+  "originals_preserved_in_public_commit": true,
+  "replay_or_model_execution": false,
+  "evidence_results_modified": false
+}
