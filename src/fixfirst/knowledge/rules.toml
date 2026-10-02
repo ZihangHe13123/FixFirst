@@ -296,6 +296,22 @@ then = [["?i", "diagnosis", "local_module"], ["?i", "remedy", "fix_renamed_modul
 # ======================================================================================
 
 [[rule]]
+id = "D51"
+phase = "diagnose"
+description = "The current Django settings operation explicitly reports that settings have not been configured."
+source = "https://docs.djangoproject.com/en/5.2/topics/settings/"
+when = [["?i", "django_configuration", "settings_unconfigured"]]
+then = [["?i", "diagnosis", "config_missing"], ["?i", "remedy", "review_django_configuration"]]
+
+[[rule]]
+id = "D52"
+phase = "diagnose"
+description = "The current Django registry is not ready at the failing access, outside an observed setup/populate chain."
+source = "https://docs.djangoproject.com/en/5.2/ref/applications/#troubleshooting"
+when = [["?i", "django_configuration", "apps_not_ready"]]
+then = [["?i", "diagnosis", "config_missing"], ["?i", "remedy", "review_django_configuration"]]
+
+[[rule]]
 id = "D20"
 phase = "diagnose"
 description = "The project declares this dependency but the target interpreter does not provide it."
@@ -1762,3 +1778,18 @@ title = "Upgrade {?d} from {?iv} to {?fixed} for this Python {?py} test-tool fai
 explanation = "{?summary} This check recorded the corresponding failing tool operation with {?d} {?iv} and Python {?py}. {?d} {?fixed} is a repair candidate for this specific fault, not proof that the whole project or every plugin supports this Python. Keep other dependency constraints and review any conflicting pin before installing."
 pip_install = "{?d}=={?fixed}"
 verification = "Keep the test and warning configuration, check dependency consistency and rerun the original failing command"
+
+[[rule]]
+id = "P86"
+phase = "plan"
+description = "Review the recorded Django test entrypoint and its configuration before changing application code."
+when = [["?i", "remedy", "review_django_configuration"]]
+[rule.action]
+id = "django-configuration-{?i}"
+kind = "manual_fix"
+cause = "config_missing"
+issue = "?i"
+cost = 1
+title = "Check the project's Django test configuration"
+explanation = "The failure is attributed to the selected environment's Django settings or registry operation. Use the project's intended test configuration and initialization entrypoint."
+verification = "Repeat the original failing scope after confirming the test configuration"

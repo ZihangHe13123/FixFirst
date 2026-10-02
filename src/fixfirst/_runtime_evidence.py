@@ -531,6 +531,34 @@ def symbol_observation(error, tracebacks, *, status=None):
     return finish({}, reason)
 
 
+def django_registry_state(tb):
+    """Read native bools from the actual global Apps receiver at its failure.
+
+    No Django import, API, property, __getattr__ or user __dict__ descriptor is
+    invoked. A custom registry and changed method/class bindings stay unknown.
+    This records current state, never whether setup ran at an earlier time.
+    """
+    if tb is None:
+        return {}
+    module = sys.modules.get("django.apps.registry")
+    if type(module) is not types.ModuleType:
+        return {}
+    namespace = vars(module)
+    cls, receiver = namespace.get("Apps"), tb.tb_frame.f_locals.get("self")
+    if type(cls) is not type or type(receiver) is not cls or receiver is not namespace.get("apps"):
+        return {}
+    members = type.__getattribute__(cls, "__dict__")
+    method, descriptor = members.get("check_apps_ready"), members.get("__dict__")
+    if (type(method) is not types.FunctionType or method.__code__ is not tb.tb_frame.f_code
+            or type(descriptor) is not types.GetSetDescriptorType):
+        return {}
+    values = descriptor.__get__(receiver, cls)
+    keys = ("apps_ready", "loading", "ready")
+    if type(values) is not dict or not all(type(values.get(key)) is bool for key in keys):
+        return {}
+    return {"global_registry": True, **{key: values[key] for key in keys}}
+
+
 def exception_metadata(error, tb):
     result = {"attribute_access": {}, "traceback_frames": [], "validation_errors": [], "module_attribute": {}}
     if type(error) is AttributeError and isinstance(getattr(error, "name", None), str):
@@ -558,6 +586,9 @@ def exception_metadata(error, tb):
         frames.append(row)
         tb = tb.tb_next
     result["traceback_frames"] = frames[-20:]
+    registry = django_registry_state(last)
+    if registry:
+        result["django_registry"] = registry
     result["module_attribute"] = module_attribute(error, tracebacks)
     symbol_status = {"status": "traceback_limit"}
     result["symbol_observation"] = symbol_observation(error, tracebacks, status=symbol_status) if tb is None else {}

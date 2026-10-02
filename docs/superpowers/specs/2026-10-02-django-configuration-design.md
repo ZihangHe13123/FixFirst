@@ -19,6 +19,15 @@ can cause the same exception. Grouped failures must independently agree; no
 cross-failure borrowing. Missing/foreign/hidden frames, stale environments,
 local Django shadowing and unrelated ImproperlyConfigured errors do not match.
 
+Real reproduction showed that ordinary pytest tracebacks reach the existing
+20-frame cap. The approved runtime-evidence extension therefore reads only
+native booleans from the actual global Apps instance at its failing
+check_apps_ready method, using its built-in instance-dictionary descriptor.
+D52 requires apps_ready/loading/ready all false; missing fields, non-bools,
+custom registries and initialization in progress remain unknown. This is
+current state, not proof that setup has never been called. No Django API,
+property or import runs to obtain this evidence.
+
 Static collection covers root tox.ini testenv setenv, Makefile recipes,
 runtests.py literal environment assignments, and pytest-django settings in
 pytest.ini, .pytest.ini, tox.ini, setup.cfg and pyproject.toml. Read only bounded
