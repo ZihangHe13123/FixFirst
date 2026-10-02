@@ -1,8 +1,21 @@
 # One-shot diagnosis baseline (task B3)
 
-A local model gets the same evidence as FixFirst and names the root cause and the first step,
+A local model gets recorded check evidence and names the root cause and the first step,
 with no tools and no chance to run anything. This measures what the model *knows*, independently
 of how well it can act as an agent (that is B7's question).
+
+**Real-project preparation (2 October):** use the separate
+[saved-session workflow](REAL_BASELINE.md): original raw evidence → label-free requests → sealed
+answers → model-anonymous A/C sheets. It supports `healthy`, package requirements and complete
+failure/completion records. Its inputs are a bounded presentation of the original observations,
+not lossless equality with everything FixFirst uses. Preparation was tested with synthetic
+sessions and fake responses; this is not a real-model result.
+
+The remainder of this page documents the existing **development-data `one_shot.py` interface**
+and its historical trials. Its historical omission of `packages[].requires` is not appropriate
+for v0.7's dependency reasoning, and failure records can contain evidence missing from clipped
+stdout. Do not use that interface to prepare A2 real-project scoring sheets or relabel the old
+trials as results from the new protocol.
 
 ## What the model sees
 
