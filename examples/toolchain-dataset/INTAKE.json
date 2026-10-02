@@ -1,0 +1,20 @@
+{
+  "source_patch_sha256": "100a3c4fd0c981189c03f724a5a231dc68dccc7b997133164ffa4a82729b9967",
+  "source_base": "769028d344ebee312be1554e996a393b5014fc9e",
+  "import_base": "91f1a98b56e4f6b5d0b32520536975033fb7c0ef",
+  "format_change": {
+    "file": "examples/toolchain-evaluation/predictions.csv",
+    "change": "CRLF to LF only",
+    "original_sha256": "1d8d04183d892effc6e890f27d2c7a2238e97592d34bfb16e679d73c3cb11a09",
+    "import_sha256": "53f7b6977c58b4a1ec0c37532c8de99b918649f38de699046c32b9b07611a146"
+  },
+  "counts": {
+    "registered_scenarios": 22,
+    "retained_scenarios": 21,
+    "cases": 98,
+    "issue_rows": 108,
+    "unparsed": 5,
+    "rejected": 4
+  },
+  "status": "Historical development data; labels provisional; original parser output retained."
+}

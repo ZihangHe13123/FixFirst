@@ -51,6 +51,11 @@ LABELS = {
 
 
 def load_rows(dataset: Path, skip=()) -> list[dict]:
+    manifest = dataset / "manifest.json"
+    if not (dataset / "cases.jsonl").exists() and manifest.exists():
+        parts = json.loads(manifest.read_text(encoding="utf-8")).get("datasets")
+        if parts:  # a suite made of several sub-datasets, one per environment (toolchain_cases)
+            return [row for part in parts for row in load_rows(dataset / part, skip)]
     rows = []
     with (dataset / "cases.jsonl").open(encoding="utf-8") as stream:
         for line in stream:

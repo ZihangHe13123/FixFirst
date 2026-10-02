@@ -518,13 +518,15 @@ def _(p):
     p.test_imports(f"from {p.t.module} import {p.t.func}_v2")
 
 
-def portable(session: Session, project: Path) -> dict:
-    """Replace machine-specific paths while keeping environment ids consistent."""
+def portable(session: Session, project: Path, prefix: str | None = None) -> dict:
+    """Replace machine-specific paths while keeping environment ids consistent.
+
+    ``prefix`` is the target environment's root; it defaults to this interpreter's own prefix."""
     text = session.model_dump_json()
     replacements = [
         (session.target_python, PORTABLE_PYTHON),
         (str(project), "/project"),
-        (sys.prefix, "/venv"),
+        (prefix or sys.prefix, "/venv"),
         (str(Path.home()), "/home/user"),
         (environment_id(session.target_python), environment_id(PORTABLE_PYTHON)),
     ]
