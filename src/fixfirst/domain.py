@@ -14,6 +14,7 @@ except ModuleNotFoundError:  # Python 3.10
     import tomli as tomllib
 
 from packaging.utils import canonicalize_name
+from packaging.version import InvalidVersion, Version
 
 from .models import Fact
 
@@ -22,6 +23,29 @@ KINDS = {"module", "api", "attribute", "kwarg", "usage", "fixture"}
 
 def dist_id(name: str) -> str:
     return "dist:python" if name.lower() == "python" else "dist:" + canonicalize_name(name)
+
+
+def _tool_failure_index(rows, sources):
+    """Validate bounded, source-cited failure mechanisms, not general support tables."""
+    index = {}
+    required = ("id", "distribution", "affected_from", "fixed_version", "python_from",
+                "python_before", "summary", "source")
+    for entry in rows:
+        if not isinstance(entry, dict) or any(
+                not isinstance(entry.get(name), str) or not entry[name].strip() for name in required):
+            raise ValueError("invalid tool failure knowledge entry")
+        key = "tool-failure:" + entry["id"]
+        if key in index or entry["source"] not in sources:
+            raise ValueError(f"invalid tool failure source or duplicate entry {key}")
+        try:
+            bounds = [Version(entry[name]) for name in required[2:6]]
+        except InvalidVersion as error:
+            raise ValueError(f"invalid tool failure version bound {key}") from error
+        if (any(v.is_prerelease or v.is_devrelease or v.local for v in bounds)
+                or not bounds[0] < bounds[1] or not bounds[2] < bounds[3]):
+            raise ValueError(f"invalid tool failure version interval {key}")
+        index[key] = entry
+    return index
 
 
 @lru_cache(maxsize=1)
@@ -65,6 +89,7 @@ def load() -> dict:
             raise ValueError(f"invalid input contract {key}")
         inputs[key] = entry
     data["input_index"] = inputs
+    data["tool_failure_index"] = _tool_failure_index(data.get("tool_failure", []), data["sources"])
     data["unmaintained_index"] = {dist_id(e["distribution"]): e for e in data.get("unmaintained", [])}
     # Fixtures are cited by the plugin's PyPI page unless the entry names another source.
     lint = data.setdefault("lint", {"likely_bug": [], "categories": {}})
@@ -92,6 +117,14 @@ def facts_for(entities) -> list[Fact]:
     kb = load()
     result = []
     for entity in sorted(set(entities)):
+        entry = kb["tool_failure_index"].get(entity)
+        if entry:
+            result += [
+                knowledge(entity, "tool_distribution", dist_id(entry["distribution"]), entry["source"]),
+                *[knowledge(entity, field, entry[field], entry["source"])
+                  for field in ("affected_from", "fixed_version", "python_from", "python_before")],
+                knowledge(entity, "change_summary", entry["summary"], entry["source"]),
+            ]
         entry = kb["input_index"].get(entity)
         if entry:
             result += [
@@ -276,6 +309,14 @@ def graph() -> dict:
         node(dist_id(row["distribution"]), "Distribution", row["distribution"])
         edges += [
             {"source": key, "relation": "validated_by", "target": dist_id(row["distribution"])},
+            {"source": key, "relation": "documented_in", "target": "source:" + row["source"]},
+        ]
+    for key, row in kb["tool_failure_index"].items():
+        node(key, "ToolFailure", row["summary"],
+             **{name: row[name] for name in ("affected_from", "fixed_version", "python_from", "python_before")})
+        node(dist_id(row["distribution"]), "Distribution", row["distribution"])
+        edges += [
+            {"source": key, "relation": "tool_distribution", "target": dist_id(row["distribution"])},
             {"source": key, "relation": "documented_in", "target": "source:" + row["source"]},
         ]
     return {

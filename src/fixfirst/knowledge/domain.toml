@@ -1,14 +1,52 @@
 # FixFirst domain knowledge base.
 #
 # Curated, source-attributed facts that the rule base queries. Each entry cites the
-# upstream release notes it comes from. Version numbers state the first release in which
-# the name is gone; rules compare them with the version observed in the target interpreter.
+# upstream release notes or source it comes from. Removal entries name the release in
+# which a name is gone; tool failures carry bounded ranges for a specific failure.
 # Coverage is intentionally partial: anything missing here falls back to evidence-only
 # rules and the learned classifier.
 
 [meta]
 title = "FixFirst Python troubleshooting knowledge"
-updated = "2026-10-01"
+updated = "2026-10-02"
+
+# Tool failures are matched to raw failure mechanisms before their version bounds
+# are applied. They are not classifier features or universal Python support claims.
+# Lower bounds are inclusive; fixed_version/python_before are exclusive. The lower
+# tool bounds limit this knowledge to the registered development range, not the
+# first release that introduced the defect. Python coverage is deliberately 3.12
+# only; it does not assert compatibility or incompatibility outside that interval.
+#
+# py 1.11.0's tagged source preserves __spec__ when replacing a lazy module.
+# Its changelog records the vendored apipkg update from 1.5 to 2.0:
+# https://github.com/pytest-dev/py/blob/1.11.0/CHANGELOG.rst
+# Compare the same source in tag 1.10.0, which does not preserve __spec__.
+[[tool_failure]]
+id = "py-apipkg-spec"
+distribution = "py"
+affected_from = "1.10.0"
+fixed_version = "1.11.0"
+python_from = "3.12"
+python_before = "3.13"
+summary = "py's vendored apipkg can fail with AttributeError: __spec__ while importing the pytest stack; py 1.11.0 preserves this module metadata."
+source = "py-1.11-apipkg-spec"
+
+# Upstream #10977 identifies the ast.Str/ast.NameConstant warning in 7.3.1.
+# PR #10894 uses ast.Constant on Python >=3.8; the 7.3.2 changelog includes it:
+# https://docs.pytest.org/en/7.3.x/changelog.html#pytest-7-3-2-2023-06-10
+# Registered probes cover 6.2.5 and the 7.0--7.3 line, including the failing
+# 7.3.1 / passing 7.3.2 boundary. The diagnosis additionally requires an actual
+# ast.Str DeprecationWarning failure from assertion rewriting, not a warning
+# summary or proof of where the warning filter was configured.
+[[tool_failure]]
+id = "pytest-ast-str"
+distribution = "pytest"
+affected_from = "6.2.5"
+fixed_version = "7.3.2"
+python_from = "3.12"
+python_before = "3.13"
+summary = "pytest assertion rewriting uses deprecated ast.Str on Python 3.12; when that warning terminates the run, pytest 7.3.2's ast.Constant change addresses this specific failure."
+source = "pytest-ast-str-fix"
 
 [[input_error]]
 id = "numpy-shape"
@@ -921,6 +959,14 @@ url = "https://docs.pytest.org/en/stable/deprecations.html#using-pytest-warns-no
 [sources."pypi"]
 title = "Python Package Index project pages (import name vs distribution name)"
 url = "https://pypi.org/"
+
+[sources."py-1.11-apipkg-spec"]
+title = "py 1.11.0 vendored apipkg: preserve module __spec__"
+url = "https://github.com/pytest-dev/py/blob/1.11.0/py/_vendored_packages/apipkg/__init__.py"
+
+[sources."pytest-ast-str-fix"]
+title = "pytest PR 10894: avoid deprecated AST nodes on Python 3.12 (released in 7.3.2)"
+url = "https://github.com/pytest-dev/pytest/pull/10894/files"
 
 [sources."pytest-asyncio-1.0"]
 title = "pytest-asyncio 1.0 changelog: the event_loop fixture was removed"
