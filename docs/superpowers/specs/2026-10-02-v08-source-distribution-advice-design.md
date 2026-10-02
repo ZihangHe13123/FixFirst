@@ -45,3 +45,16 @@ context, interpreter, constraints and artifact validation regressions.
 No historical third-party source package will be built for this check. No LLM,
 formal evaluation, held-out input or A2 rerun is involved. Windows-shaped input
 checks do not constitute real Windows acceptance.
+
+## Implementation validation
+
+- Focused installation/version/reasoning checks: 131 passed.
+- Full suite: 1,254 passed, 1 skipped. Ruff and whitespace checks passed.
+- The local no-network fixture actually rejects an sdist in a wheel-only
+  request, builds its self-contained pure-Python backend only after the explicit
+  manual command, then installs its prepared wheel and passes `pip check` in a
+  disposable environment. A second controlled backend reports a `pg_config`
+  prerequisite failure; feedback blocks both the build and original install
+  from being offered repeatedly. This is not a real PostgreSQL extension build.
+- The pip fallback trial also retains source-archive evidence without running
+  that backend. Existing uv wheel-only and declaration-conflict checks pass.
