@@ -9,9 +9,10 @@ green (runs fixed in both arms) and tokens the median paired difference with a s
 were not graded (setup, reference, harness or clean-up failures) are counted separately, never as
 failures. Nothing here reads a model or runs anything; it only counts rows.
 
-Only comparable runs are pooled or paired: runs under different protocols (model settings, budget,
-call policy, network, harness version, or a harness with uncommitted changes) are reported apart,
-each with its protocol id. The same run read twice is counted once; two different results for one
+Only comparable runs are pooled or paired: runs of another kind of case (real projects and generated
+cases) or under different protocols (model settings, budget, call policy, network, harness version, or
+a harness with uncommitted changes) are reported apart, each with its kind and protocol id. One rule
+of identity (group_key, then case, arm, run and attempt) serves deduplication, pooling and pairing. The same run read twice is counted once; two different results for one
 run are refused. Tokens a model server did not report are missing, not zero.
 
 Usage:
@@ -93,12 +94,18 @@ def protocol(row) -> str:
     return hashlib.sha256(json.dumps(data, sort_keys=True, default=str).encode()).hexdigest()[:8]
 
 
+def kind(row) -> str:
+    return row.get("kind") or "generated"
+
+
 def group_key(row) -> tuple:
-    return row.get("model"), policy(row), protocol(row)
+    """What runs must share to be pooled or paired: model, call policy, protocol and kind of case."""
+    return row.get("model"), policy(row), protocol(row), kind(row)
 
 
 def identity(row) -> tuple:
-    return row.get("attempt"), row.get("model"), row.get("case"), row.get("arm"), row.get("run")
+    """One run: its attempt, its group, and its case, arm and run number."""
+    return (row.get("attempt"), *group_key(row), row.get("case"), row.get("arm"), row.get("run"))
 
 
 def deduplicate(rows: list[dict]) -> tuple[list[dict], int]:
@@ -124,15 +131,16 @@ def summarise(rows: list[dict]) -> list[dict]:
     for row in deduplicate(rows)[0]:
         groups.setdefault((*group_key(row), row.get("arm")), []).append(row)
     summary = []
-    for (model, policy_, protocol_, arm), members in sorted(
-            groups.items(), key=lambda item: (tuple(str(k) for k in item[0][:3]), arm_rank(item[0][3]))):
+    for (model, policy_, protocol_, kind_, arm), members in sorted(
+            groups.items(), key=lambda item: (tuple(str(k) for k in item[0][:4]), arm_rank(item[0][4]))):
         graded = [r for r in members if r.get("grading") == "graded"]
         counted = [tokens(r) for r in graded if tokens(r) is not None]
         fixed = [r for r in graded if r.get("fixed") is True]
         known = [r for r in graded if r.get("wrong_first_cause") is not None]
         low, high = wilson(len(fixed), len(graded))
         summary.append({
-            "model": model, "call_policy": policy_, "protocol": protocol_, "arm": arm, "runs": len(members),
+            "model": model, "call_policy": policy_, "protocol": protocol_, "kind": kind_, "arm": arm,
+            "runs": len(members),
             "graded": len(graded),
             "not_graded": len(members) - len(graded), "fixed": len(fixed),
             "fixed_rate": round(len(fixed) / len(graded), 3) if graded else None, "fixed_ci95": [low, high],
@@ -159,7 +167,7 @@ def paired(rows: list[dict]) -> list[dict]:
             case = (row.get("attempt"), row.get("case"), row.get("run"))
             groups.setdefault(group_key(row), {}).setdefault(row.get("arm"), {})[case] = row
     comparisons = []
-    for (model, policy_, protocol_), arms in sorted(groups.items(), key=lambda item: tuple(str(k) for k in item[0])):
+    for (model, policy_, protocol_, kind_), arms in sorted(groups.items(), key=lambda item: tuple(str(k) for k in item[0])):
         for first, second in combinations(sorted(arms, key=arm_rank), 2):
             shared = sorted(set(arms[first]) & set(arms[second]), key=str)
             pairs = [(arms[first][c], arms[second][c]) for c in shared]
@@ -171,7 +179,8 @@ def paired(rows: list[dict]) -> list[dict]:
             token_differences = [tokens(b) - tokens(a) for a, b in pairs
                                  if tokens(a) is not None and tokens(b) is not None]
             comparisons.append({
-                "model": model, "call_policy": policy_, "protocol": protocol_, "first": first, "second": second,
+                "model": model, "call_policy": policy_, "protocol": protocol_, "kind": kind_, "first": first,
+                "second": second,
                 "pairs": len(pairs),
                 "fixed_only_first": only_first, "fixed_only_second": only_second,
                 "mcnemar_p": round(mcnemar(only_first, only_second), 4),
@@ -197,23 +206,23 @@ def read_rows(paths, attempt=None) -> list[dict]:
 def markdown(summary, comparisons) -> str:
     def cell(value):
         return "–" if value is None else str(value)
-    lines = ["| Model | Policy | Protocol | Arm | Graded | Fixed (95% CI) | Green turn | Green s | Tokens (missing) "
+    lines = ["| Model | Policy | Protocol | Kind | Arm | Graded | Fixed (95% CI) | Green turn | Green s | Tokens (missing) "
              "| FixFirst calls/reports | FixFirst s | Wrong first cause | Changed tests | Not graded |",
-             "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+             "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for s in summary:
         low, high = s["fixed_ci95"]
         rate = "–" if s["fixed_rate"] is None else f"{s['fixed']}/{s['graded']} ({cell(low)}–{cell(high)})"
         wrong = f"{s['wrong_first_cause']}/{s['first_cause_known']}" if s["first_cause_known"] else "–"
-        lines.append(f"| {s['model']} | {s['call_policy']} | {s['protocol']} | {s['arm']} | {s['graded']} | {rate} "
+        lines.append(f"| {s['model']} | {s['call_policy']} | {s['protocol']} | {s['kind']} | {s['arm']} | {s['graded']} | {rate} "
                      f"| {cell(s['median_first_green_turn'])} | {cell(s['median_first_green_s'])} "
                      f"| {cell(s['mean_tokens'])} ({s['tokens_missing']}) "
                      f"| {cell(s['mean_fixfirst_calls'])}/{cell(s['mean_fixfirst_reports'])} | {cell(s['mean_fixfirst_s'])} "
                      f"| {wrong} | {s['changed_tests']} | {s['not_graded']} |")
-    lines += ["", "| Model | Policy | Protocol | Arms | Pairs | Fixed only in first / second (McNemar p) "
+    lines += ["", "| Model | Policy | Protocol | Kind | Arms | Pairs | Fixed only in first / second (McNemar p) "
               "| Green-turn difference (pairs, sign p) | Token difference (pairs, sign p) |",
-              "|---|---|---|---|---|---|---|---|"]
+              "|---|---|---|---|---|---|---|---|---|"]
     for c in comparisons:
-        lines.append(f"| {c['model']} | {c['call_policy']} | {c['protocol']} | {c['first']} → {c['second']} | {c['pairs']} "
+        lines.append(f"| {c['model']} | {c['call_policy']} | {c['protocol']} | {c['kind']} | {c['first']} → {c['second']} | {c['pairs']} "
                      f"| {c['fixed_only_first']} / {c['fixed_only_second']} (p={c['mcnemar_p']}) "
                      f"| {cell(c['median_green_turn_difference'])} ({c['green_turn_pairs']}, p={c['green_turn_sign_p']}) "
                      f"| {cell(c['median_token_difference'])} ({c['token_pairs']}, p={c['token_sign_p']}) |")

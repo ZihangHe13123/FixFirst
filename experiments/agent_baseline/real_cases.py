@@ -176,21 +176,121 @@ def create_environment(project_dir: Path, project: dict, snapshot: Path, log: li
     return python
 
 
-def install_commands(project: dict, python: Path, uv_cache: Path) -> list[list[str]]:
-    """Commands that install the project itself from its folder, without new dependencies. They run
-    the project's build code, so the harness runs them in the sandbox (with the network for build
-    requirements)."""
-    commands = []
-    for line in project["install"]:
+# pip install options whose next word is their value (a requirements file, a folder of links, an index...),
+# never something the line installs.
+VALUE_OPTIONS = {"-r", "--requirement", "-c", "--constraint", "-f", "--find-links", "-i", "--index-url",
+                 "--extra-index-url", "-t", "--target", "--prefix", "--root", "--src", "--platform",
+                 "--python-version", "--implementation", "--abi", "--upgrade-strategy", "--trusted-host", "--cert",
+                 "--client-cert", "--cache-dir", "--log", "--proxy", "--retries", "--timeout", "--exists-action",
+                 "--global-option", "--config-settings", "-C", "--no-binary", "--only-binary", "--report",
+                 "--progress-bar", "--keyring-provider", "--use-feature", "--use-deprecated", "--python", "--group"}
+PROJECT_TARGET = re.compile(r"\.(\[[A-Za-z0-9][A-Za-z0-9._-]*(,[A-Za-z0-9][A-Za-z0-9._-]*)*\])?")
+
+
+def install_targets(line: str) -> list[str]:
+    """What a manifest install line installs: its positional words and the values of -e/--editable. The
+    values of the other options are skipped, so `-r ./requirements.txt` or `--find-links . pytest` never
+    look like the project."""
+    words, targets, i = shlex.split(line), [], 0
+    while i < len(words):
+        word = words[i]
+        if word in ("-e", "--editable") and i + 1 < len(words):
+            targets.append(words[i + 1])
+            i += 2
+            continue
+        if word.startswith("--editable="):
+            targets.append(word.removeprefix("--editable="))
+        elif word in VALUE_OPTIONS:
+            i += 1  # its value
+        elif not word.startswith("-"):
+            targets.append(word)
+        i += 1
+    return targets
+
+
+def installs_project(line: str) -> bool:
+    """Whether a manifest install line installs the project itself (third-party packages come from the
+    snapshot instead)."""
+    return any(t == "." or t.startswith((".[", "./")) for t in install_targets(line))
+
+
+def registrable_install(line: str) -> bool:
+    """Whether `install_fails` may name this line: a plain install of the project itself and nothing else
+    (`.`, `.[extras]`, `-e .`, `-e .[extras]`, `--editable=.`). Anything more complex is refused."""
+    try:
         words = shlex.split(line)
-        if not any(w == "." or w.startswith((".[", "./")) for w in words):
+    except ValueError:
+        return False
+    if len(words) == 2 and words[0] in ("-e", "--editable"):
+        words = words[1:]
+    elif len(words) == 1 and words[0].startswith("--editable="):
+        words = [words[0].removeprefix("--editable=")]
+    return len(words) == 1 and PROJECT_TARGET.fullmatch(words[0]) is not None
+
+
+def install_steps(project: dict, python: Path, uv_cache: Path) -> list[dict]:
+    """The commands that install the project itself from its folder, without new dependencies, each
+    with its manifest line and whether the manifest registers it as failing at the start
+    (`install_fails`). They run the project's build code, so the harness runs them in the sandbox
+    (with the network for build requirements)."""
+    fails = set(project.get("install_fails", []))
+    steps = []
+    for line in project["install"]:
+        if not installs_project(line):
             continue  # third-party packages: already in the snapshot
+        words = shlex.split(line)
         if project.get("pip", True):
-            commands.append([str(python), "-m", "pip", "install", "-q", "--no-deps", *words])
+            argv = [str(python), "-m", "pip", "install", "-q", "--no-deps", *words]
         else:
-            commands.append([shutil.which("uv") or "uv", "pip", "install", "-q", "--no-deps", "--no-config",
-                             "--cache-dir", str(uv_cache), "--python", str(python), *words])
-    return commands
+            argv = [shutil.which("uv") or "uv", "pip", "install", "-q", "--no-deps", "--no-config",
+                    "--cache-dir", str(uv_cache), "--python", str(python), *words]
+        steps.append({"line": line, "argv": argv, "expected_failure": line in fails})
+    return steps
+
+
+def install_commands(project: dict, python: Path, uv_cache: Path) -> list[list[str]]:
+    """The same commands without their marks (as before `install_fails`), for the core-diagnosis checks."""
+    return [step["argv"] for step in install_steps(project, python, uv_cache)]
+
+
+def install_fails_problems(project: dict) -> list[str]:
+    """`install_fails` registers, before any run, the install lines of the project itself that fail at
+    the start (the starting state of the case). It may name nothing else."""
+    fails = project.get("install_fails", [])
+    if not isinstance(fails, list) or not all(isinstance(line, str) for line in fails):
+        return ["install_fails must be a list of the project's install lines"]
+    problems = [f"install_fails names {line!r} more than once" for line in sorted(set(fails)) if fails.count(line) > 1]
+    for line in dict.fromkeys(fails):
+        if line not in project.get("install", []):
+            problems.append(f"install_fails names {line!r}, which is not one of its install lines")
+        elif not registrable_install(line):
+            problems.append(f"install_fails names {line!r}, which is not a plain install of the project itself "
+                            "(only ., .[extras], -e . or -e .[extras] can be registered)")
+    return problems
+
+
+def install_fails_registered(project: dict) -> int:
+    """How many of the project's install steps are registered as failing at the start."""
+    fails = set(project.get("install_fails", []))
+    return sum(1 for line in project.get("install", []) if line in fails and installs_project(line))
+
+
+def registered_failure_problem(code, stopped) -> str | None:
+    """Why one execution of a registered failing install step does not reach the registered start (None
+    when it does). The start is the state after the step ran to completion and exited with an error of its
+    own; a step stopped at its time limit, ended by a signal, or with no record that it ran to completion
+    never reached it. Runs and references both judge by this."""
+    if stopped is True:
+        return "was stopped at its time limit"
+    if stopped is not False:
+        return "has no record that it ran to completion"
+    if type(code) is not int:
+        return "did not finish"
+    if code == 0:
+        return "succeeded"
+    if code < 0:
+        return f"was ended by signal {-code}"
+    return None
 
 
 def venv_record(venv: Path) -> dict:
@@ -421,8 +521,17 @@ EXIT_CODES = {1: "tests failed", 2: "interrupted", 3: "internal error", 4: "usag
 
 def validate_reference(reference: dict) -> list[str]:
     """A reference can grade only if its repair worked and its own suite passed cleanly."""
-    problems = [f"repair step {step['command']!r} exited with {step['exit_code']}"
-                for step in reference.get("repair", []) if step.get("exit_code") != 0]
+    problems = []
+    for step in reference.get("repair", []):
+        code = step.get("exit_code")
+        if step.get("expected_failure"):
+            # The registered starting state: this step must fail, as it did before any run.
+            problem = registered_failure_problem(code, step.get("stopped"))
+            if problem:
+                problems.append(f"the registered failing step {step['command']!r} {problem}: "
+                                "the start is not the registered one")
+        elif code != 0:
+            problems.append(f"repair step {step['command']!r} exited with {code}")
     if reference.get("exit_code") != 0:
         code = reference.get("exit_code")
         problems.append(f"the reference suite exited with {code} ({EXIT_CODES.get(code, 'unexpected')})")

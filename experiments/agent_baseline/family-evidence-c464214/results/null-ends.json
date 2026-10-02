@@ -1,0 +1,82 @@
+{
+ "runs_per_model": [
+  5,
+  5,
+  3
+ ],
+ "effects": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "tasks": 8,
+ "replicates": 2000,
+ "baseline": "beta:0.5:0.5",
+ "effect_model": "shift",
+ "correlation": 0.0,
+ "shared_tasks": true,
+ "seed": 20261001,
+ "family_simulation": {
+  "models": [
+   {
+    "model": "model1",
+    "runs_per_arm": 5,
+    "effect": 0.0,
+    "true_mean_difference": 0.0,
+    "null_true": true,
+    "rejected_after_holm": 0.004,
+    "p_below_alpha_unadjusted": 0.04,
+    "not_estimable": 0.004,
+    "counts": {
+     "rejected": 8,
+     "p_below_alpha": 80,
+     "not_estimable": 8
+    }
+   },
+   {
+    "model": "model2",
+    "runs_per_arm": 5,
+    "effect": 0.0,
+    "true_mean_difference": 0.0,
+    "null_true": true,
+    "rejected_after_holm": 0.004,
+    "p_below_alpha_unadjusted": 0.049,
+    "not_estimable": 0.002,
+    "counts": {
+     "rejected": 8,
+     "p_below_alpha": 98,
+     "not_estimable": 4
+    }
+   },
+   {
+    "model": "model3",
+    "runs_per_arm": 3,
+    "effect": 0.0,
+    "true_mean_difference": 0.0,
+    "null_true": true,
+    "rejected_after_holm": 0.004,
+    "p_below_alpha_unadjusted": 0.041,
+    "not_estimable": 0.014,
+    "counts": {
+     "rejected": 9,
+     "p_below_alpha": 82,
+     "not_estimable": 28
+    }
+   }
+  ],
+  "alpha": 0.05,
+  "any_rejection_after_holm": 0.011,
+  "any_false_rejection_after_holm": 0.011,
+  "every_false_null_rejected_after_holm": null,
+  "any_p_below_alpha_unadjusted": 0.125,
+  "any_false_p_below_alpha_unadjusted": 0.125,
+  "counts": {
+   "replicates": 2000,
+   "any_rejection": 23,
+   "any_false_rejection": 23,
+   "every_false_null_rejected": 0,
+   "any_p_below_alpha": 250,
+   "any_false_p_below_alpha": 250
+  }
+ }
+}

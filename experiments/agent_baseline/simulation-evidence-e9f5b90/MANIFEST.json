@@ -1,0 +1,231 @@
+{
+ "what": "the eleven simulation settings of the B7 analysis, run with e9f5b90",
+ "python": "Python 3.12.13",
+ "platform": "macOS-26.6.2",
+ "code": {
+  "commit": "e9f5b9034554965606ffbba810ae20301305bb8f",
+  "files_sha256": {
+   "experiments/agent_baseline/task_analysis.py": "d977f64f33679cc9833a80f3dcddcc99f6a049cece9508cf471a71729895eb2e",
+   "experiments/agent_baseline/compare_arms.py": "b5a60c671c3849b23a41ad44ade9ec9de7413e356a1e2a4c2c1660b998ee1f66"
+  }
+ },
+ "settings": {
+  "F8x3": {
+   "description": "8 tasks x 3 runs, baselines uniform 0.1-0.9",
+   "tasks": 8,
+   "runs_per_arm": 3,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "shift",
+   "correlation": 0.0,
+   "effects": [
+    0.0,
+    0.1,
+    0.2,
+    0.3,
+    0.4
+   ],
+   "replicates": 2000,
+   "bootstrap_resamples": 1000,
+   "seed": 20261001,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --tasks 8 --runs 3 --replicates 2000 --resamples 1000 --seed 20261001 --effects 0 0.1 0.2 0.3 0.4 --baseline uniform:0.1:0.9 --effect-model shift --json experiments/agent_baseline/simulation-evidence-e9f5b90/results/F8x3.json",
+   "output": "experiments/agent_baseline/simulation-evidence-e9f5b90/results/F8x3.json",
+   "sha256": "05009ceba64c0cefd942cd93e78037052b11fca356cb943e33636c2e9deb20f2"
+  },
+  "F6x3": {
+   "description": "6 tasks x 3 runs, baselines uniform 0.1-0.9",
+   "tasks": 6,
+   "runs_per_arm": 3,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "shift",
+   "correlation": 0.0,
+   "effects": [
+    0.0,
+    0.1,
+    0.2,
+    0.3,
+    0.4
+   ],
+   "replicates": 2000,
+   "bootstrap_resamples": 1000,
+   "seed": 20261001,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --tasks 6 --runs 3 --replicates 2000 --resamples 1000 --seed 20261001 --effects 0 0.1 0.2 0.3 0.4 --baseline uniform:0.1:0.9 --effect-model shift --json experiments/agent_baseline/simulation-evidence-e9f5b90/results/F6x3.json",
+   "output": "experiments/agent_baseline/simulation-evidence-e9f5b90/results/F6x3.json",
+   "sha256": "5cbcf416eaad7a8c288b8a19744fffaf1c40c46978733b8ac84eeaad12956912"
+  },
+  "F8x3c": {
+   "description": "8 tasks x 3 runs, baselines uniform 0.6-1.0 (ceiling)",
+   "tasks": 8,
+   "runs_per_arm": 3,
+   "baseline": "uniform:0.6:1.0",
+   "effect_model": "shift",
+   "correlation": 0.0,
+   "effects": [
+    0.0,
+    0.1,
+    0.2,
+    0.3,
+    0.4
+   ],
+   "replicates": 2000,
+   "bootstrap_resamples": 1000,
+   "seed": 20261001,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --tasks 8 --runs 3 --replicates 2000 --resamples 1000 --seed 20261001 --effects 0 0.1 0.2 0.3 0.4 --baseline uniform:0.6:1.0 --effect-model shift --json experiments/agent_baseline/simulation-evidence-e9f5b90/results/F8x3c.json",
+   "output": "experiments/agent_baseline/simulation-evidence-e9f5b90/results/F8x3c.json",
+   "sha256": "fe1f4a3c3a2024fe3ae461e372df157355d1e10b760b47633c67db9462e25e7a"
+  },
+  "F8x5": {
+   "description": "8 tasks x 5 runs, baselines uniform 0.1-0.9",
+   "tasks": 8,
+   "runs_per_arm": 5,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "shift",
+   "correlation": 0.0,
+   "effects": [
+    0.0,
+    0.1,
+    0.2,
+    0.3,
+    0.4
+   ],
+   "replicates": 2000,
+   "bootstrap_resamples": 1000,
+   "seed": 20261001,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --tasks 8 --runs 5 --replicates 2000 --resamples 1000 --seed 20261001 --effects 0 0.1 0.2 0.3 0.4 --baseline uniform:0.1:0.9 --effect-model shift --json experiments/agent_baseline/simulation-evidence-e9f5b90/results/F8x5.json",
+   "output": "experiments/agent_baseline/simulation-evidence-e9f5b90/results/F8x5.json",
+   "sha256": "fc4ee9fa1b9b55c731bf5033f5331834a2370ae7df0bad07b64fa3424ead45d0"
+  },
+  "A": {
+   "description": "base: uniform 0.1-0.9, the same gain on every task",
+   "tasks": 8,
+   "runs_per_arm": 3,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "shift",
+   "correlation": 0.0,
+   "effects": [
+    0.0,
+    0.2,
+    0.3
+   ],
+   "replicates": 2000,
+   "bootstrap_resamples": 1000,
+   "seed": 20261001,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --tasks 8 --runs 3 --replicates 2000 --resamples 1000 --seed 20261001 --effects 0 0.2 0.3 --baseline uniform:0.1:0.9 --effect-model shift --json experiments/agent_baseline/simulation-evidence-e9f5b90/results/A.json",
+   "output": "experiments/agent_baseline/simulation-evidence-e9f5b90/results/A.json",
+   "sha256": "cb684492916fc0ef63542557d4921ff2483e9a3615195a760c49234c746357d4"
+  },
+  "B": {
+   "description": "baselines near 0 or 1: beta(0.5, 0.5)",
+   "tasks": 8,
+   "runs_per_arm": 3,
+   "baseline": "beta:0.5:0.5",
+   "effect_model": "shift",
+   "correlation": 0.0,
+   "effects": [
+    0.0,
+    0.2,
+    0.3
+   ],
+   "replicates": 2000,
+   "bootstrap_resamples": 1000,
+   "seed": 20261001,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --tasks 8 --runs 3 --replicates 2000 --resamples 1000 --seed 20261001 --effects 0 0.2 0.3 --baseline beta:0.5:0.5 --effect-model shift --json experiments/agent_baseline/simulation-evidence-e9f5b90/results/B.json",
+   "output": "experiments/agent_baseline/simulation-evidence-e9f5b90/results/B.json",
+   "sha256": "0770c209d55ceb163319efb3c404419251546adda7941ee614bf56d892a99022"
+  },
+  "C": {
+   "description": "weak models: uniform 0-0.3",
+   "tasks": 8,
+   "runs_per_arm": 3,
+   "baseline": "uniform:0:0.3",
+   "effect_model": "shift",
+   "correlation": 0.0,
+   "effects": [
+    0.0,
+    0.2,
+    0.3
+   ],
+   "replicates": 2000,
+   "bootstrap_resamples": 1000,
+   "seed": 20261001,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --tasks 8 --runs 3 --replicates 2000 --resamples 1000 --seed 20261001 --effects 0 0.2 0.3 --baseline uniform:0:0.3 --effect-model shift --json experiments/agent_baseline/simulation-evidence-e9f5b90/results/C.json",
+   "output": "experiments/agent_baseline/simulation-evidence-e9f5b90/results/C.json",
+   "sha256": "9594d302341b10c3a4dd9d1da3ba8d874303f91b93d1148dd51739305ac449f7"
+  },
+  "D": {
+   "description": "only half the tasks helped (twice the gain)",
+   "tasks": 8,
+   "runs_per_arm": 3,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "half",
+   "correlation": 0.0,
+   "effects": [
+    0.0,
+    0.1,
+    0.15
+   ],
+   "replicates": 2000,
+   "bootstrap_resamples": 1000,
+   "seed": 20261001,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --tasks 8 --runs 3 --replicates 2000 --resamples 1000 --seed 20261001 --effects 0 0.1 0.15 --baseline uniform:0.1:0.9 --effect-model half --json experiments/agent_baseline/simulation-evidence-e9f5b90/results/D.json",
+   "output": "experiments/agent_baseline/simulation-evidence-e9f5b90/results/D.json",
+   "sha256": "35173114ab1850bac9f8d66bb9df56cc92db636121a28a20c7c0b5a1db4177c9"
+  },
+  "E": {
+   "description": "help as a share of the remaining failures",
+   "tasks": 8,
+   "runs_per_arm": 3,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "share",
+   "correlation": 0.0,
+   "effects": [
+    0.0,
+    0.4,
+    0.6
+   ],
+   "replicates": 2000,
+   "bootstrap_resamples": 1000,
+   "seed": 20261001,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --tasks 8 --runs 3 --replicates 2000 --resamples 1000 --seed 20261001 --effects 0 0.4 0.6 --baseline uniform:0.1:0.9 --effect-model share --json experiments/agent_baseline/simulation-evidence-e9f5b90/results/E.json",
+   "output": "experiments/agent_baseline/simulation-evidence-e9f5b90/results/E.json",
+   "sha256": "82001488726e7e32771b5591e54979356601b6b7c4e357b992c82959d9e7d665"
+  },
+  "F": {
+   "description": "a task's runs repeat one draw with chance 0.7",
+   "tasks": 8,
+   "runs_per_arm": 3,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "shift",
+   "correlation": 0.7,
+   "effects": [
+    0.0,
+    0.2,
+    0.3
+   ],
+   "replicates": 2000,
+   "bootstrap_resamples": 1000,
+   "seed": 20261001,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --tasks 8 --runs 3 --replicates 2000 --resamples 1000 --seed 20261001 --effects 0 0.2 0.3 --baseline uniform:0.1:0.9 --effect-model shift --correlation 0.7 --json experiments/agent_baseline/simulation-evidence-e9f5b90/results/F.json",
+   "output": "experiments/agent_baseline/simulation-evidence-e9f5b90/results/F.json",
+   "sha256": "af07c7de2394a8425d47b9312140ff7eaaeb838a0be8b99a87fe3384e27100fc"
+  },
+  "G": {
+   "description": "B, D and F together",
+   "tasks": 8,
+   "runs_per_arm": 3,
+   "baseline": "beta:0.5:0.5",
+   "effect_model": "half",
+   "correlation": 0.7,
+   "effects": [
+    0.0,
+    0.1,
+    0.15
+   ],
+   "replicates": 2000,
+   "bootstrap_resamples": 1000,
+   "seed": 20261001,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --tasks 8 --runs 3 --replicates 2000 --resamples 1000 --seed 20261001 --effects 0 0.1 0.15 --baseline beta:0.5:0.5 --effect-model half --correlation 0.7 --json experiments/agent_baseline/simulation-evidence-e9f5b90/results/G.json",
+   "output": "experiments/agent_baseline/simulation-evidence-e9f5b90/results/G.json",
+   "sha256": "a9afe905d1f72435c47a6167e58b3f4d1491fe9625fa72d49325e90cb55d3961"
+  }
+ }
+}

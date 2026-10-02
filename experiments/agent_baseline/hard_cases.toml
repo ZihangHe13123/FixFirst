@@ -1,0 +1,51 @@
+# The harness's own, frozen registration of the hard scenarios (src/fixfirst/hard_cases.py). It is the
+# whitelist that decides what a scenario may add to the tests, and it holds what the grader needs to know
+# about each of them. Nothing in this file is shown to an agent; a run's sandbox cannot read the repository.
+#
+# check        the project function the scenario adds. The scenario may append exactly one test to the
+#              template's test module, `test_<check>`, with the body below, and nothing else: no other test
+#              file, conftest.py, pytest setting or test may differ from the healthy template. "" means the
+#              scenario appends no test.
+# check_body   the appended test's body, as the generator writes it.
+# fails_with   text of the failure the start must show: in the appended test's failure, or, without a
+#              check, in the error of the test module. A start that fails otherwise (a library that is not
+#              installed, say) is not the registered fault.
+# repair       the reference change, [old, new] pairs in the template's service module, each old text
+#              occurring exactly once. Written before any run, applied to the reference copy only, never to
+#              a test. Without a check there is none: the reference is the healthy template.
+
+[vb_numpy_repr]
+check = "describe"
+check_body = '    assert describe([1, 2]) == "max=2.0"'
+fails_with = "np.float64(2.0)"
+repair = [["np.max(np.asarray(values, dtype=float))!r", "float(np.max(np.asarray(values, dtype=float)))!r"]]
+
+[vb_numpy_promotion]
+check = "price_json"
+check_body = "    assert price_json([1]) == '{\"price\": 1.5}'"
+fails_with = "float32 is not JSON serializable"
+repair = [["np.float32(values[0]) + 0.5", "float(np.float32(values[0]) + 0.5)"]]
+
+[vb_yaml_loader]
+check = "load_settings"
+check_body = '    assert load_settings("rate: 2") == {"rate": 2}'
+fails_with = "missing 1 required positional argument: 'Loader'"
+repair = [["yaml.load(text)", "yaml.safe_load(text)"]]
+
+[vb_pydantic_coercion]
+check = "label_code"
+check_body = '    assert label_code(7) == "7"'
+fails_with = "Input should be a valid string"
+repair = [["Label(code=value).code", "Label(code=str(value)).code"]]
+
+[vb_click_mix_stderr]
+check = "run_hello"
+check_body = '    assert run_hello() == "hello\n"'
+fails_with = "unexpected keyword argument 'mix_stderr'"
+repair = [["CliRunner(mix_stderr=False)", "CliRunner()"]]
+
+[ml_renamed_then_alias]
+check = ""
+check_body = ""
+fails_with = "No module named"
+repair = []

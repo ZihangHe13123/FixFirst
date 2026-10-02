@@ -1,0 +1,47 @@
+{
+ "tasks": 8,
+ "runs_per_arm": 3,
+ "replicates": 2000,
+ "effects": [
+  0.0,
+  0.2,
+  0.3
+ ],
+ "baseline": "uniform:0:0.3",
+ "effect_model": "shift",
+ "correlation": 0.0,
+ "resamples": 1000,
+ "seed": 20261001,
+ "simulation": [
+  {
+   "effect": 0.0,
+   "true_mean_difference": 0.0,
+   "t_interval_excludes_zero": 0.048,
+   "t_interval_covers_truth": 0.948,
+   "bootstrap_excludes_zero": 0.09,
+   "bootstrap_covers_truth": 0.904,
+   "sign_test_p_below_0_05": 0.003,
+   "no_interval": 0.005
+  },
+  {
+   "effect": 0.2,
+   "true_mean_difference": 0.2,
+   "t_interval_excludes_zero": 0.344,
+   "t_interval_covers_truth": 0.961,
+   "bootstrap_excludes_zero": 0.43,
+   "bootstrap_covers_truth": 0.885,
+   "sign_test_p_below_0_05": 0.12,
+   "no_interval": 0.001
+  },
+  {
+   "effect": 0.3,
+   "true_mean_difference": 0.3,
+   "t_interval_excludes_zero": 0.606,
+   "t_interval_covers_truth": 0.962,
+   "bootstrap_excludes_zero": 0.708,
+   "bootstrap_covers_truth": 0.888,
+   "sign_test_p_below_0_05": 0.29,
+   "no_interval": 0.0
+  }
+ ]
+}

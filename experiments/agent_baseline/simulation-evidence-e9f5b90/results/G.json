@@ -1,0 +1,83 @@
+{
+ "tasks": 8,
+ "runs_per_arm": 3,
+ "replicates": 2000,
+ "effects": [
+  0.0,
+  0.1,
+  0.15
+ ],
+ "baseline": "beta:0.5:0.5",
+ "effect_model": "half",
+ "correlation": 0.7,
+ "resamples": 1000,
+ "seed": 20261001,
+ "simulation": [
+  {
+   "effect": 0.0,
+   "true_mean_difference": 0.0,
+   "t_interval_excludes_zero": 0.015,
+   "t_interval_covers_truth": 0.955,
+   "bootstrap_excludes_zero": 0.088,
+   "bootstrap_covers_truth": 0.882,
+   "sign_test_p_below_0_05": 0.001,
+   "no_interval": 0.03,
+   "counts": {
+    "replicates": 2000,
+    "t_excludes": 31,
+    "t_covers": 1909,
+    "bootstrap_excludes": 176,
+    "bootstrap_covers": 1764,
+    "sign": 1,
+    "no_interval": 60,
+    "no_bootstrap_interval": 60
+   },
+   "t_interval_covers_truth_given_interval": 0.984,
+   "bootstrap_covers_truth_given_interval": 0.909
+  },
+  {
+   "effect": 0.1,
+   "true_mean_difference": 0.08,
+   "t_interval_excludes_zero": 0.035,
+   "t_interval_covers_truth": 0.94,
+   "bootstrap_excludes_zero": 0.131,
+   "bootstrap_covers_truth": 0.823,
+   "sign_test_p_below_0_05": 0.002,
+   "no_interval": 0.021,
+   "counts": {
+    "replicates": 2000,
+    "t_excludes": 71,
+    "t_covers": 1879,
+    "bootstrap_excludes": 262,
+    "bootstrap_covers": 1646,
+    "sign": 4,
+    "no_interval": 41,
+    "no_bootstrap_interval": 41
+   },
+   "t_interval_covers_truth_given_interval": 0.959,
+   "bootstrap_covers_truth_given_interval": 0.84
+  },
+  {
+   "effect": 0.15,
+   "true_mean_difference": 0.114,
+   "t_interval_excludes_zero": 0.041,
+   "t_interval_covers_truth": 0.951,
+   "bootstrap_excludes_zero": 0.158,
+   "bootstrap_covers_truth": 0.854,
+   "sign_test_p_below_0_05": 0.001,
+   "no_interval": 0.018,
+   "counts": {
+    "replicates": 2000,
+    "t_excludes": 81,
+    "t_covers": 1901,
+    "bootstrap_excludes": 316,
+    "bootstrap_covers": 1708,
+    "sign": 1,
+    "no_interval": 35,
+    "no_bootstrap_interval": 35
+   },
+   "t_interval_covers_truth_given_interval": 0.967,
+   "bootstrap_covers_truth_given_interval": 0.869
+  }
+ ]
+}

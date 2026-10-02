@@ -1,0 +1,326 @@
+{
+ "what": "the registered confirmatory family (three models, Holm at 0.05), simulated with c464214",
+ "python": "Python 3.12.13",
+ "platform": "macOS-26.6.2",
+ "code": {
+  "commit": "c464214e860fd536a1286ebbf57e20516dd93d79",
+  "files_sha256": {
+   "experiments/agent_baseline/task_analysis.py": "9006d883bba4a0ddec0d5cb2014a7530e277ea635b6da546398aba705636fbd0",
+   "experiments/agent_baseline/compare_arms.py": "b5a60c671c3849b23a41ad44ade9ec9de7413e356a1e2a4c2c1660b998ee1f66"
+  }
+ },
+ "settings": {
+  "null": {
+   "description": "no effect in any model; baselines uniform 0.1-0.9",
+   "runs_per_model": [
+    5,
+    5,
+    3
+   ],
+   "effects": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tasks": 8,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "shift",
+   "correlation": 0.0,
+   "shared_tasks": true,
+   "replicates": 2000,
+   "seed": 20261001,
+   "alpha": 0.05,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --family-runs 5 5 3 --tasks 8 --replicates 2000 --seed 20261001 --effects 0 0 0 --baseline uniform:0.1:0.9 --effect-model shift --json experiments/agent_baseline/family-evidence-c464214/results/null.json",
+   "output": "experiments/agent_baseline/family-evidence-c464214/results/null.json",
+   "sha256": "9317bdd8855ced3a3f61d6ee53b344830442c87a75713bd7c852efa93880fca0"
+  },
+  "null-ceiling": {
+   "description": "no effect; baselines uniform 0.6-1.0",
+   "runs_per_model": [
+    5,
+    5,
+    3
+   ],
+   "effects": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tasks": 8,
+   "baseline": "uniform:0.6:1.0",
+   "effect_model": "shift",
+   "correlation": 0.0,
+   "shared_tasks": true,
+   "replicates": 2000,
+   "seed": 20261001,
+   "alpha": 0.05,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --family-runs 5 5 3 --tasks 8 --replicates 2000 --seed 20261001 --effects 0 0 0 --baseline uniform:0.6:1.0 --effect-model shift --json experiments/agent_baseline/family-evidence-c464214/results/null-ceiling.json",
+   "output": "experiments/agent_baseline/family-evidence-c464214/results/null-ceiling.json",
+   "sha256": "fb1c26ed6dae5bfbe3dfbf29630b100b177430b210a5aa785e43884d4ff13578"
+  },
+  "null-ends": {
+   "description": "no effect; baselines near 0 or 1, beta(0.5, 0.5)",
+   "runs_per_model": [
+    5,
+    5,
+    3
+   ],
+   "effects": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tasks": 8,
+   "baseline": "beta:0.5:0.5",
+   "effect_model": "shift",
+   "correlation": 0.0,
+   "shared_tasks": true,
+   "replicates": 2000,
+   "seed": 20261001,
+   "alpha": 0.05,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --family-runs 5 5 3 --tasks 8 --replicates 2000 --seed 20261001 --effects 0 0 0 --baseline beta:0.5:0.5 --effect-model shift --json experiments/agent_baseline/family-evidence-c464214/results/null-ends.json",
+   "output": "experiments/agent_baseline/family-evidence-c464214/results/null-ends.json",
+   "sha256": "c5d5c2a52ebb8656dd588b5364f106c1bd2d3a46d92cbbbc791843a9cfc3675b"
+  },
+  "null-repeats": {
+   "description": "no effect; a task's runs repeat one draw with chance 0.7",
+   "runs_per_model": [
+    5,
+    5,
+    3
+   ],
+   "effects": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tasks": 8,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "shift",
+   "correlation": 0.7,
+   "shared_tasks": true,
+   "replicates": 2000,
+   "seed": 20261001,
+   "alpha": 0.05,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --family-runs 5 5 3 --tasks 8 --replicates 2000 --seed 20261001 --effects 0 0 0 --baseline uniform:0.1:0.9 --effect-model shift --correlation 0.7 --json experiments/agent_baseline/family-evidence-c464214/results/null-repeats.json",
+   "output": "experiments/agent_baseline/family-evidence-c464214/results/null-repeats.json",
+   "sha256": "0a97f874c286690a42dc32e2e739916be10d31d311ab0ae06ec7ae749fee54f7"
+  },
+  "null-own-tasks": {
+   "description": "no effect; each model draws its own tasks",
+   "runs_per_model": [
+    5,
+    5,
+    3
+   ],
+   "effects": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tasks": 8,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "shift",
+   "correlation": 0.0,
+   "shared_tasks": false,
+   "replicates": 2000,
+   "seed": 20261001,
+   "alpha": 0.05,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --family-runs 5 5 3 --tasks 8 --replicates 2000 --seed 20261001 --effects 0 0 0 --baseline uniform:0.1:0.9 --effect-model shift --independent-tasks --json experiments/agent_baseline/family-evidence-c464214/results/null-own-tasks.json",
+   "output": "experiments/agent_baseline/family-evidence-c464214/results/null-own-tasks.json",
+   "sha256": "9633a64f1a4eb9b1a03a24364ced6999a1bd4dac97031536d88a1dbc76e05e17"
+  },
+  "null-6-tasks": {
+   "description": "no effect; six tasks",
+   "runs_per_model": [
+    5,
+    5,
+    3
+   ],
+   "effects": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tasks": 6,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "shift",
+   "correlation": 0.0,
+   "shared_tasks": true,
+   "replicates": 2000,
+   "seed": 20261001,
+   "alpha": 0.05,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --family-runs 5 5 3 --tasks 6 --replicates 2000 --seed 20261001 --effects 0 0 0 --baseline uniform:0.1:0.9 --effect-model shift --json experiments/agent_baseline/family-evidence-c464214/results/null-6-tasks.json",
+   "output": "experiments/agent_baseline/family-evidence-c464214/results/null-6-tasks.json",
+   "sha256": "189e98af4615770cf6133225f1a3b9331a75e5993530c2facf87e7554b075956"
+  },
+  "all-0.2": {
+   "description": "every model gains 0.2 on every task",
+   "runs_per_model": [
+    5,
+    5,
+    3
+   ],
+   "effects": [
+    0.2,
+    0.2,
+    0.2
+   ],
+   "tasks": 8,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "shift",
+   "correlation": 0.0,
+   "shared_tasks": true,
+   "replicates": 2000,
+   "seed": 20261001,
+   "alpha": 0.05,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --family-runs 5 5 3 --tasks 8 --replicates 2000 --seed 20261001 --effects 0.2 0.2 0.2 --baseline uniform:0.1:0.9 --effect-model shift --json experiments/agent_baseline/family-evidence-c464214/results/all-0.2.json",
+   "output": "experiments/agent_baseline/family-evidence-c464214/results/all-0.2.json",
+   "sha256": "ae105abf25380b6d1efbf3e05d498f044b76903d8f7e3839968e52edada6acc3"
+  },
+  "all-0.3": {
+   "description": "every model gains 0.3 on every task",
+   "runs_per_model": [
+    5,
+    5,
+    3
+   ],
+   "effects": [
+    0.3,
+    0.3,
+    0.3
+   ],
+   "tasks": 8,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "shift",
+   "correlation": 0.0,
+   "shared_tasks": true,
+   "replicates": 2000,
+   "seed": 20261001,
+   "alpha": 0.05,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --family-runs 5 5 3 --tasks 8 --replicates 2000 --seed 20261001 --effects 0.3 0.3 0.3 --baseline uniform:0.1:0.9 --effect-model shift --json experiments/agent_baseline/family-evidence-c464214/results/all-0.3.json",
+   "output": "experiments/agent_baseline/family-evidence-c464214/results/all-0.3.json",
+   "sha256": "4adc2d2acb96d4e327027ccfbc71614cd291c55e3842031ed3cdae6d5f61d5ec"
+  },
+  "all-0.3-repeats": {
+   "description": "every model gains 0.3; runs repeat with chance 0.7",
+   "runs_per_model": [
+    5,
+    5,
+    3
+   ],
+   "effects": [
+    0.3,
+    0.3,
+    0.3
+   ],
+   "tasks": 8,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "shift",
+   "correlation": 0.7,
+   "shared_tasks": true,
+   "replicates": 2000,
+   "seed": 20261001,
+   "alpha": 0.05,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --family-runs 5 5 3 --tasks 8 --replicates 2000 --seed 20261001 --effects 0.3 0.3 0.3 --baseline uniform:0.1:0.9 --effect-model shift --correlation 0.7 --json experiments/agent_baseline/family-evidence-c464214/results/all-0.3-repeats.json",
+   "output": "experiments/agent_baseline/family-evidence-c464214/results/all-0.3-repeats.json",
+   "sha256": "78ea39816d4096979a698580f050ddb75144f7388d01c34178c034348671efc7"
+  },
+  "all-half": {
+   "description": "every model gains 0.3 on half its tasks, nothing on the rest",
+   "runs_per_model": [
+    5,
+    5,
+    3
+   ],
+   "effects": [
+    0.15,
+    0.15,
+    0.15
+   ],
+   "tasks": 8,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "half",
+   "correlation": 0.0,
+   "shared_tasks": true,
+   "replicates": 2000,
+   "seed": 20261001,
+   "alpha": 0.05,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --family-runs 5 5 3 --tasks 8 --replicates 2000 --seed 20261001 --effects 0.15 0.15 0.15 --baseline uniform:0.1:0.9 --effect-model half --json experiments/agent_baseline/family-evidence-c464214/results/all-half.json",
+   "output": "experiments/agent_baseline/family-evidence-c464214/results/all-half.json",
+   "sha256": "a65609c0bfc65c30ed408d55151a4362c3e728f128378c83258c976719db77e4"
+  },
+  "first-0.3": {
+   "description": "only the first model (5 runs) gains 0.3",
+   "runs_per_model": [
+    5,
+    5,
+    3
+   ],
+   "effects": [
+    0.3,
+    0.0,
+    0.0
+   ],
+   "tasks": 8,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "shift",
+   "correlation": 0.0,
+   "shared_tasks": true,
+   "replicates": 2000,
+   "seed": 20261001,
+   "alpha": 0.05,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --family-runs 5 5 3 --tasks 8 --replicates 2000 --seed 20261001 --effects 0.3 0 0 --baseline uniform:0.1:0.9 --effect-model shift --json experiments/agent_baseline/family-evidence-c464214/results/first-0.3.json",
+   "output": "experiments/agent_baseline/family-evidence-c464214/results/first-0.3.json",
+   "sha256": "cacf31b5738fba8791b2a98d87441c3f7f789be6b73c4e4bf71233e1d36bd7fe"
+  },
+  "two-0.3": {
+   "description": "the two 5-run models gain 0.3, the 3-run model nothing",
+   "runs_per_model": [
+    5,
+    5,
+    3
+   ],
+   "effects": [
+    0.3,
+    0.3,
+    0.0
+   ],
+   "tasks": 8,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "shift",
+   "correlation": 0.0,
+   "shared_tasks": true,
+   "replicates": 2000,
+   "seed": 20261001,
+   "alpha": 0.05,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --family-runs 5 5 3 --tasks 8 --replicates 2000 --seed 20261001 --effects 0.3 0.3 0 --baseline uniform:0.1:0.9 --effect-model shift --json experiments/agent_baseline/family-evidence-c464214/results/two-0.3.json",
+   "output": "experiments/agent_baseline/family-evidence-c464214/results/two-0.3.json",
+   "sha256": "4f41c9336e078d4c7675a4bb13354fbf36dc240cf2ce06f0dfbaaff4be02ab4e"
+  },
+  "last-0.3": {
+   "description": "only the 3-run model gains 0.3",
+   "runs_per_model": [
+    5,
+    5,
+    3
+   ],
+   "effects": [
+    0.0,
+    0.0,
+    0.3
+   ],
+   "tasks": 8,
+   "baseline": "uniform:0.1:0.9",
+   "effect_model": "shift",
+   "correlation": 0.0,
+   "shared_tasks": true,
+   "replicates": 2000,
+   "seed": 20261001,
+   "alpha": 0.05,
+   "command": "python experiments/agent_baseline/task_analysis.py --simulate --family-runs 5 5 3 --tasks 8 --replicates 2000 --seed 20261001 --effects 0 0 0.3 --baseline uniform:0.1:0.9 --effect-model shift --json experiments/agent_baseline/family-evidence-c464214/results/last-0.3.json",
+   "output": "experiments/agent_baseline/family-evidence-c464214/results/last-0.3.json",
+   "sha256": "c8a8e42e5bb64c3c4ff69396ffa2dd9cfa21b477c927114b8fb2dfd028b6cc07"
+  }
+ }
+}

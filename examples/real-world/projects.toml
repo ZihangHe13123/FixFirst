@@ -98,6 +98,7 @@ domain = "Web scraping (HTML/XML selectors)"
 layout = "flat package, setup.py, tests/requirements.txt"
 python = "3.12"
 install = ["-e .", "-r tests/requirements.txt"]
+install_fails = ["-e ."]
 scenario = "The project and tests/requirements.txt (pytest, pytest-cov, sybil) at today's versions. Installing the project fails: its setup.py imports pkg_resources, which today's setuptools no longer ships; the test tools install."
 
 [[project]]

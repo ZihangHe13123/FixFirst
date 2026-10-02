@@ -7,5 +7,15 @@ repair = ["python -m pip install -e ."]
 label = "local_module: src layout, the project itself is not installed"
 
 [typer]
-repair = ["python -m pip install shellingham"]
-label = "missing_dependency: shellingham is declared in the [test] extra, which was not installed"
+repair = ["python -m pip install \"shellingham>=1.3.0,<2.0.0\" \"coverage>=5.2,<6.0\""]
+label = "missing_dependency: the [test] extra was not installed; shellingham (collection) and coverage (153 tests run the coverage command) are its missing parts"
+# Excluded from B7 by the predefined rule for projects the sandbox cannot support: with this repair
+# two tests still fail under the sandbox (shellingham runs ps, which the sandbox denies; one test
+# expects a ~/.bashrc in the run's empty home), so the reference is invalid (dry run, 2026-10-01).
+
+# Incomplete as of 2026-10-01 (dry run): a third layer remains, docs/conftest.py calls sybil's
+# CodeBlockParser(future_imports=...), which sybil 3.0 removed (snapshot: sybil 10.1.0), and further
+# layers are unknown, so the reference is still invalid. Kept to exercise install_fails; not a smoke case.
+[parsel]
+repair = ["python -m pip install \"w3lib>=1.19.0\" lxml \"six>=1.6.0\" \"cssselect>=0.9,<1.2\""]
+label = "missing_dependency: the declared dependencies were never installed, because installing the project failed (setup.py imports pkg_resources); the failing install is the registered start (install_fails). Second layer once the dependencies are in: parsel 1.6.0 imports cssselect.xpath._unicode_safe_getattr, which cssselect 1.2 removed, hence cssselect<1.2"
