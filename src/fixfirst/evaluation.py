@@ -50,12 +50,33 @@ LABELS = {
 }
 
 
-def load_rows(dataset: Path, skip=()) -> list[dict]:
+def _case_datasets(dataset: Path, root=None, seen=None, depth=0):
+    dataset = Path(dataset).resolve()
+    root = dataset if root is None else root
+    seen = set() if seen is None else seen
+    if depth > 16 or dataset in seen or not dataset.is_relative_to(root):
+        raise ValueError("Dataset suite contains a cycle, duplicate or external path")
+    seen.add(dataset)
+    if (dataset / "cases.jsonl").is_file():
+        if not (dataset / "cases.jsonl").resolve().is_relative_to(root):
+            raise ValueError("Dataset case file escapes its suite")
+        return [dataset]
     manifest = dataset / "manifest.json"
-    if not (dataset / "cases.jsonl").exists() and manifest.exists():
-        parts = json.loads(manifest.read_text(encoding="utf-8")).get("datasets")
-        if parts:  # a suite made of several sub-datasets, one per environment (toolchain_cases)
-            return [row for part in parts for row in load_rows(dataset / part, skip)]
+    if not manifest.is_file():
+        raise ValueError("Dataset has neither cases nor a suite manifest")
+    if not manifest.resolve().is_relative_to(root):
+        raise ValueError("Dataset manifest escapes its suite")
+    parts = json.loads(manifest.read_text(encoding="utf-8")).get("datasets")
+    if (not isinstance(parts, list) or not parts or len(parts) > 1000
+            or any(not isinstance(p, str) or not p or Path(p).is_absolute() for p in parts)):
+        raise ValueError("Dataset suite requires a nonempty list of child datasets")
+    return [leaf for part in parts for leaf in _case_datasets(dataset / part, root, seen, depth + 1)]
+
+
+def load_rows(dataset: Path, skip=()) -> list[dict]:
+    datasets = _case_datasets(dataset)
+    if datasets != [Path(dataset).resolve()]:
+        return [row for child in datasets for row in load_rows(child, skip)]
     rows = []
     with (dataset / "cases.jsonl").open(encoding="utf-8") as stream:
         for line in stream:
