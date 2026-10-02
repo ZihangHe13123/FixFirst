@@ -305,6 +305,199 @@ def test_locator_id_cannot_rename_fixed_evidence_fields(tmp_path):
     assert run["records"][1]["symbol_observation"]["source"] == "failed_instruction_namespace"
 
 
+@pytest.mark.parametrize("windows", [False, True])
+@pytest.mark.parametrize("case_id,name", [(name, name) for name in
+                                        ("pytest", "dateparser", "DateParser", "click", "httpx")]
+                         + [("dateparser", "DateParser")])
+def test_locator_names_do_not_rewrite_packages_imports_commands_or_source(tmp_path, windows, case_id, name):
+    session = saved_session(windows=windows)
+    session["name"] = name
+    environment = json.loads(raw_run(session, "environment")["stdout"])
+    packages = [{"name": n, "version": "1.0", "requires": ["pytest>=6.2.5", "dateparser>=1"]}
+                for n in ("pytest", "dateparser", "click", "httpx")]
+    imports = {"pytest": ["pytest"], "dateparser": ["dateparser"], "DateParser": ["dateparser"],
+               "click": ["click"], "httpx": ["httpx"]}
+    environment.update(packages=packages, import_distributions=imports)
+    raw_run(session, "environment")["stdout"] = json.dumps(environment)
+    session["environment"].update(environment)
+    project = json.loads(raw_run(session, "project")["stdout"])
+    bindings = {"pytest": "pytest", "dateparser": "dateparser", "DateParser": "dateparser.DateParser",
+                "click": "click", "httpx": "httpx"}
+    declarations = [{"name": n, "requirement": n + ">=1", "source": n + "/requirements.txt:1"}
+                    for n in ("pytest", "dateparser", "click", "httpx")]
+    context = {"calls": {"dateparser/api.py:5": ["dateparser.parse"],
+                         "DateParser/api.py:5": ["DateParser.parse"]}}
+    project.update(imported_names=bindings, defined_names=["DateParser"], declarations=declarations,
+                   own_names=[name], source_context=context)
+    raw_run(session, "project")["stdout"] = json.dumps(project)
+    command_and_source = (
+        "python -m pytest\npython -m pip install pytest==6.2.5 dateparser==1.0 click==8.0 httpx==0.18\n"
+        "import pytest, dateparser, click, httpx\nfrom dateparser import DateParser\n"
+        "value = DateParser(dateparser.parse('today'))\n")
+    run = raw_run(session, "pytest_run")
+    run["stdout"] = command_and_source
+    run["records"][0]["message"] += "\n" + command_and_source
+    run["records"][1]["symbol_observation"].update(module="dateparser", owner="DateParser", name="parse")
+    mapping = [{"id": case_id, "session_id": session["session_id"], "label": "LABEL_SENTINEL"}]
+    _, rows, _, _ = prepared(tmp_path, session, mapping=mapping)
+    evidence = rows[0]["evidence"]
+    assert evidence["environment"]["packages"] == packages
+    assert evidence["environment"]["import_distributions"] == imports
+    assert evidence["project"]["imported_names"] == bindings
+    assert evidence["project"]["declarations"] == declarations
+    assert evidence["project"]["source_context"] == context
+    assert evidence["project"]["own_names"] == [name]
+    assert pytest_evidence(rows[0])["stdout"] == command_and_source
+    assert command_and_source in pytest_evidence(rows[0])["records"][0]["message"]
+    observed = pytest_evidence(rows[0])["records"][1]["symbol_observation"]
+    assert (observed["module"], observed["owner"], observed["name"]) == ("dateparser", "DateParser", "parse")
+    assert not ({"case_id", "session_id", "label", "facts", "actions", "issues", "inference_trace"} & evidence.keys())
+    assert "LABEL_SENTINEL" not in json.dumps(evidence)
+    assert "CONCLUSION_" not in json.dumps(evidence)
+
+
+def test_nonopaque_identity_words_are_mapped_only_in_explicit_metadata(tmp_path):
+    session = saved_session(windows=True)
+    session["session_id"] = "dateparser"
+    raw_run(session, "environment")["run_id"] = "pytest"
+    session["environment"]["_run_id"] = "pytest"
+    project = json.loads(raw_run(session, "project")["stdout"])
+    project["environment_run_id"] = "pytest"
+    project["imported_names"] = {"pytest": "pytest", "DateParser": "dateparser.DateParser"}
+    raw_run(session, "project")["stdout"] = json.dumps(project)
+    raw_run(session, "pytest_run")["stdout"] = "python -m pytest\nfrom dateparser import DateParser\n"
+    _, rows, _, _ = prepared(tmp_path, session)
+    evidence = rows[0]["evidence"]
+    assert evidence["runs"][0]["run_id"] == evidence["project"]["environment_run_id"] == "run-1"
+    assert evidence["project"]["imported_names"] == project["imported_names"]
+    assert pytest_evidence(rows[0])["stdout"] == raw_run(session, "pytest_run")["stdout"]
+
+
+@pytest.mark.parametrize("windows", [False, True])
+def test_only_actual_opaque_id_tokens_are_replaced_and_case_is_preserved(tmp_path, windows):
+    session = saved_session(windows=windows)
+    session["session_id"] = "session-aabbccddeeff"
+    for index, run in enumerate(session["runs"]):
+        run["run_id"] = f"run-abcdef{index:06x}"
+    env_id = raw_run(session, "environment")["run_id"]
+    session["environment"]["_run_id"] = env_id
+    project = json.loads(raw_run(session, "project")["stdout"])
+    project["environment_run_id"] = env_id
+    raw_run(session, "project")["stdout"] = json.dumps(project)
+    failure = raw_run(session, "pytest_run")
+    source_id = failure["run_id"]
+    identity = session["environment"]["_environment_id"]
+    failure["stdout"] = f"{source_id}:probe:0 {session['session_id']} {identity}\n{source_id.upper()}"
+    _, rows, _, _ = prepared(tmp_path, session)
+    assert pytest_evidence(rows[0])["stdout"] == f"run-3:probe:0 session-1 environment-1\n{source_id.upper()}"
+    assert rows[0]["evidence"]["project"]["environment_run_id"] == "run-1"
+
+
+@pytest.mark.parametrize("field", ["package", "import", "api"])
+def test_opaque_id_collision_with_a_diagnostic_symbol_rejects_instead_of_changing_it(tmp_path, field):
+    session = saved_session()
+    identity = session["environment"]["_environment_id"]
+    if field == "package":
+        environment = json.loads(raw_run(session, "environment")["stdout"])
+        environment["packages"].append({"name": identity, "version": "1.0", "requires": []})
+        raw_run(session, "environment")["stdout"] = json.dumps(environment)
+    elif field == "import":
+        project = json.loads(raw_run(session, "project")["stdout"])
+        project["imported_names"][identity] = "package.symbol"
+        raw_run(session, "project")["stdout"] = json.dumps(project)
+    else:
+        raw_run(session, "pytest_run")["records"][1]["symbol_observation"]["name"] = identity
+    mapping, sessions, _ = write_inputs(tmp_path, session)
+    output = tmp_path / "prepared"
+    with pytest.raises(ValueError, match="opaque source ID collides"):
+        real_evidence.prepare(mapping, sessions, output)
+    assert not output.exists()
+
+
+@pytest.mark.parametrize("windows", [False, True])
+def test_unknown_home_accounts_are_redacted_without_changing_relative_paths(tmp_path, windows):
+    session = saved_session(windows=windows)
+    raw = (
+        'C:\\Users\\Example Person\\cache.py\nC:/Users/Forward Person/cache.py\n'
+        'c:\\uSeRs\\Mixed Person\\cache.py\nC:\\\\Users\\\\Escaped Person\\\\cache.py\n'
+        '"C:\\Users\\Quoted Person"\n"/home/Quoted Posix Person"\n'
+        '"/Users/Mac Person/cache.py"\n"/home/Linux Person/cache.py"\n'
+        '/home/shortname\nC:/Users/shortname\n'
+        'pkg/home/person/api.py pkg/Users/person/api.py dateparser.parse DateParser.parse\n')
+    expected = (
+        'C:\\Users\\<user>\\cache.py\nC:/Users/<user>/cache.py\n'
+        'c:\\uSeRs\\<user>\\cache.py\nC:\\\\Users\\\\<user>\\\\cache.py\n'
+        '"C:\\Users\\<user>"\n"/home/<user>"\n'
+        '"/Users/<user>/cache.py"\n"/home/<user>/cache.py"\n'
+        '/home/<user>\nC:/Users/<user>\n'
+        'pkg/home/person/api.py pkg/Users/person/api.py dateparser.parse DateParser.parse\n')
+    raw_run(session, "pytest_run")["stdout"] = raw
+    _, rows, _, _ = prepared(tmp_path, session)
+    assert pytest_evidence(rows[0])["stdout"] == expected
+
+
+def test_home_redaction_does_not_swallow_diagnostic_text_before_a_later_path(tmp_path):
+    session = saved_session(windows=True)
+    text = (
+        "C:\\Users\\Example could not import pytest; inspect /tmp/errors.txt\n"
+        "/home/example could not import pytest; inspect /tmp/errors.txt\n"
+        "C:/Users/Example could not import pytest; inspect /tmp/errors.txt\n")
+    raw_run(session, "pytest_run")["stdout"] = text
+    _, rows, _, _ = prepared(tmp_path, session)
+    assert pytest_evidence(rows[0])["stdout"] == text.replace(
+        "C:\\Users\\Example", "C:\\Users\\<user>").replace(
+        "/home/example", "/home/<user>").replace("C:/Users/Example", "C:/Users/<user>")
+
+
+@pytest.mark.parametrize("windows", [False, True])
+def test_path_case_matching_is_scoped_to_windows_paths_only(tmp_path, windows):
+    session = saved_session(windows=windows)
+    path = session["project_root"].swapcase() + "/DateParser.py"
+    raw_run(session, "pytest_run")["stdout"] = path + "\nDateParser dateparser PYTEST pytest"
+    _, rows, _, _ = prepared(tmp_path, session)
+    expected_path = "/project/DateParser.py" if windows else path
+    assert pytest_evidence(rows[0])["stdout"] == expected_path + "\nDateParser dateparser PYTEST pytest"
+
+
+@pytest.mark.parametrize("windows", [False, True])
+def test_distinct_dynamic_keys_that_redact_to_one_path_are_not_merged(tmp_path, windows):
+    session = saved_session(windows=windows)
+    project = json.loads(raw_run(session, "project")["stdout"])
+    prefix = "C:/Users/" if windows else "/home/"
+    project["source_context"] = {"calls": {
+        prefix + "Alice/api.py:1": ["dateparser.parse"], prefix + "Bob/api.py:1": ["DateParser.parse"]}}
+    raw_run(session, "project")["stdout"] = json.dumps(project)
+    mapping, sessions, _ = write_inputs(tmp_path, session)
+    output = tmp_path / "prepared"
+    with pytest.raises(ValueError, match="duplicate mapping keys"):
+        real_evidence.prepare(mapping, sessions, output)
+    assert not output.exists()
+
+
+@pytest.mark.parametrize("field", ["packages", "declarations", "local_modules", "tested_versions"])
+@pytest.mark.parametrize("bad_row", [None, "not an object"])
+def test_identifier_collision_check_keeps_value_errors_for_malformed_rows(tmp_path, field, bad_row):
+    session = saved_session()
+    run = raw_run(session, "environment" if field == "packages" else "project")
+    snapshot = json.loads(run["stdout"])
+    snapshot[field] = [bad_row]
+    run["stdout"] = json.dumps(snapshot)
+    mapping, sessions, _ = write_inputs(tmp_path, session)
+    with pytest.raises(ValueError):
+        real_evidence.prepare(mapping, sessions, tmp_path / "prepared")
+
+
+def test_identifier_collision_check_keeps_value_error_for_a_nonlist_collection(tmp_path):
+    session = saved_session()
+    run = raw_run(session, "project")
+    project = json.loads(run["stdout"])
+    project["declarations"] = None
+    run["stdout"] = json.dumps(project)
+    mapping, sessions, _ = write_inputs(tmp_path, session)
+    with pytest.raises(ValueError, match="Expected a list"):
+        real_evidence.prepare(mapping, sessions, tmp_path / "prepared")
+
+
 def test_later_search_resolver_and_install_records_are_not_input_evidence(tmp_path):
     session = saved_session()
     for tool in ("version_search", "dependency_resolve", "pip_install"):

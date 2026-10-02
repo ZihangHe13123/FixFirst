@@ -28,7 +28,7 @@ POLICY = {"limits": LIMITS, "text": "first and last halves with omission marker"
           "lists": "first and last halves; original record indices retained",
           "mappings": "first entries in saved order", "omissions": "evidence.truncation",
           "fields": "frozen raw snapshot/probe allowlists; unknown fields excluded",
-          "redaction": "known project/interpreter/environment paths and source identifiers"}
+          "redaction": "absolute paths/home accounts and non-colliding opaque IDs; locator names never rewrite diagnostic symbols"}
 FIELD_POLICY = {
     "project_omitted": {"conda_mappings": "Curated Conda/PyPI mappings and documentation knowledge, not raw declarations"},
     "session_omitted": "Case labels, issues, facts, actions, events, history, inference_trace and goal_status",
@@ -235,13 +235,78 @@ def _validate(session, selected):
     return environment, project, expected
 
 
+OPAQUE_ID = re.compile(r"(?:(?:run|session)-[0-9a-f]{12,64}|[0-9a-f]{16}|"
+                       r"[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})", re.I)
+IDENTIFIER = re.compile(r"[A-Za-z0-9_][A-Za-z0-9_.-]*")
+WINDOWS_HOME = r"[A-Za-z]:(?:\\{1,2}|/)(?i:Users)(?:\\{1,2}|/)"
+HOME = re.compile(
+    # Quoting establishes a path boundary even for accounts containing spaces.
+    rf"(?<=[\"'])(?P<quoted_windows>{WINDOWS_HOME})[^\\/\"'\r\n:]+(?=[\\/\"'])"
+    r"|(?<=[\"'])(?P<quoted_posix>/(?:Users|home)/)[^/\"'\r\n]+(?=[/\"'])"
+    # Unquoted Windows paths need a consistent following separator and cannot
+    # consume a log delimiter or whitespace just before that separator.
+    r"|(?<![\w])(?P<windows>[A-Za-z]:\\{1,2}(?i:Users)\\{1,2})[^\\/\"'\r\n:;,]+(?<!\s)(?=\\)"
+    r"|(?<![\w])(?P<windows_slash>[A-Za-z]:/(?i:Users)/)[^\\/\"'\r\n:;,]+(?<!\s)(?=/)"
+    rf"|(?<![\w])(?P<windows_bare>{WINDOWS_HOME})[^\\/\s\"',;:()]+"
+    # An unquoted POSIX account is one token; later log text is not a path.
+    r"|(?<![\w:/\\])(?P<posix>/(?:Users|home)/)[^/\s\"',;:()]+"
+)
+
+
+def _diagnostic_identifiers(environment, project, selected):
+    """Names whose meaning must not change even if an opaque ID has that spelling."""
+    names = set()
+
+    def add(value):
+        if isinstance(value, str):
+            names.update(IDENTIFIER.findall(value))
+        elif isinstance(value, dict):
+            for key, item in value.items():
+                add(key)
+                add(item)
+        elif isinstance(value, list):
+            for item in value:
+                add(item)
+
+    for package in environment.get("packages", []):
+        if not isinstance(package, dict):
+            raise ValueError("Expected a package object in environment.packages")
+        add(package.get("name"))
+        add(package.get("requires"))
+    for field in ("import_distributions", "stdlib_modules"):
+        add(environment.get(field))
+    for field in ("defined_names", "imported_names", "own_names", "source_context",
+                  "pydantic_optional_models", "pydantic_default_models", "numpy_repr_functions"):
+        add(project.get(field))
+    for field in ("local_modules", "declarations", "conda_declarations", "tested_versions"):
+        rows = project.get(field, [])
+        if not isinstance(rows, list):
+            raise ValueError(f"Expected a list at project.{field}")
+        for row in rows:
+            if not isinstance(row, dict):
+                raise ValueError(f"Expected an object at project.{field}")
+            for name in ("name", "requirement"):
+                add(row.get(name))
+    for run in selected:
+        for record in run["records"]:
+            if record.get("type") != "exception":
+                continue
+            for field in ("exception_type", "exception_module"):
+                add(record.get(field))
+            for field in ("symbol_observation", "attribute_access", "module_attribute"):
+                observation = record.get(field)
+                if isinstance(observation, dict):
+                    for name in ("module", "owner", "name", "callee_name", "owner_module", "owner_name",
+                                 "candidates", "parameters", "keyword_names", "suggestions"):
+                        add(observation.get(name))
+    return names
+
+
 class Rendering:
-    def __init__(self, session, environment, expected, selected, case_id):
+    def __init__(self, session, environment, expected, selected, project):
         self.omissions = []
         aliases = []
-        self.windows = bool(ntpath.splitdrive(session["target_python"])[0])
-        replacements = {session["project_root"]: "/project", session["target_python"]: "/environment/python",
-                        expected: "environment-1"}
+        replacements = {session["project_root"]: "/project", session["target_python"]: "/environment/python"}
         prefix = environment.get("prefix")
         if isinstance(prefix, str) and prefix:
             replacements[prefix] = "/environment"
@@ -251,27 +316,38 @@ class Rendering:
         for key, path in environment.get("paths", {}).items():
             if isinstance(path, str) and path:
                 replacements[path] = "/environment/" + ("site-packages" if key in {"purelib", "platlib"} else "stdlib")
-        for index, run in enumerate(selected):
-            replacements[run["run_id"]] = f"run-{index + 1}"
-        for key in (session.get("session_id"), session.get("name"), case_id):
-            if isinstance(key, str) and key:
-                replacements.setdefault(key, "case")
         for private, public in sorted(replacements.items(), key=lambda item: -len(item[0])):
+            windows = bool(ntpath.splitdrive(private)[0]) and ntpath.isabs(private)
+            if not windows and not private.startswith("/"):
+                continue
             variants = {private, private.replace("\\", "/"), private.replace("\\", "\\\\")}
-            for variant in sorted(variants, key=len, reverse=True):
-                # Token boundaries avoid changing module names merely containing a short case id.
-                pattern = re.escape(variant)
-                if variant[0].isalnum() and "/" not in variant and "\\" not in variant:
-                    pattern = r"(?<![\w])" + pattern + r"(?![\w])"
-                elif variant[-1].isalnum():
+            for variant in sorted(variants, key=lambda value: (-len(value), value)):
+                pattern = r"(?<![\w])" + re.escape(variant)
+                if variant[-1].isalnum():
                     pattern += r"(?![\w.-])"
-                aliases.append((pattern, public))
-        self.pattern = re.compile("|".join(f"(?P<a{i}>{p})" for i, (p, _) in enumerate(aliases)),
-                                  re.I if self.windows else 0)
+                aliases.append((f"(?i:{pattern})" if windows else pattern, public))
+        self.run_ids = {run["run_id"]: f"run-{index + 1}" for index, run in enumerate(selected)}
+        opaque = {}
+        protected = _diagnostic_identifiers(environment, project, selected)
+        # These aliases have identity semantics. Ordinary words used as locators
+        # are handled only in the explicit metadata fields, never in source text.
+        for private, public in [*self.run_ids.items(), (expected, "environment-1"),
+                                (session.get("session_id"), "session-1")]:
+            if not isinstance(private, str) or not OPAQUE_ID.fullmatch(private):
+                continue
+            if private in protected:
+                raise ValueError("An opaque source ID collides with a diagnostic identifier")
+            if private in opaque and opaque[private] != public:
+                raise ValueError("An opaque source ID has conflicting identity roles")
+            opaque[private] = public
+        for private, public in opaque.items():
+            aliases.append((r"(?<![\w.-])" + re.escape(private) + r"(?![\w.-])", public))
+        self.pattern = re.compile("|".join(f"(?P<a{i}>{p})" for i, (p, _) in enumerate(aliases)))
         self.aliases = {f"a{i}": public for i, (_, public) in enumerate(aliases)}
 
     def redact(self, value):
-        return self.pattern.sub(lambda match: self.aliases[match.lastgroup], value)
+        value = self.pattern.sub(lambda match: self.aliases[match.lastgroup], value)
+        return HOME.sub(lambda match: next(v for v in match.groups() if v is not None) + "<user>", value)
 
     def text(self, value, path, limit):
         value = self.redact(value)
@@ -289,6 +365,8 @@ class Rendering:
         return [*range(half), *range(length - half, length)]
 
     def render(self, value, schema, path):
+        if path == "project.environment_run_id":
+            return self.run_ids[value]
         if schema is None:
             if isinstance(value, str):
                 limit = LIMITS["failure_chars"] if path.endswith(".message") and ".records[" in path else LIMITS["value_chars"]
@@ -316,8 +394,8 @@ class Rendering:
         return result
 
 
-def _evidence(session, selected, environment, project, expected, case_id):
-    render = Rendering(session, environment, expected, selected, case_id)
+def _evidence(session, selected, environment, project, expected):
+    render = Rendering(session, environment, expected, selected, project)
     evidence = {"protocol": PROTOCOL, "goal": "pass_tests", "runs": [],
                 "environment": render.render(environment, ENVIRONMENT, "environment"),
                 "project": render.render(project, PROJECT, "project")}
@@ -375,7 +453,7 @@ def prepare(mapping_path: Path, sessions_root: Path, output: Path) -> dict:
             raise ValueError("Mapping session_id does not match saved session")
         selected, method = _select(session, row.get("observation_cutoff_run_id"))
         environment, project, expected = _validate(session, selected)
-        evidence = _evidence(session, selected, environment, project, expected, case_id)
+        evidence = _evidence(session, selected, environment, project, expected)
         source_sha256 = digest(raw)
         cases.append({"case_id": case_id, "evidence": evidence, "evidence_sha256": digest(canonical(evidence)),
                       "source_sha256": source_sha256})

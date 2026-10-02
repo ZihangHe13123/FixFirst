@@ -27,7 +27,7 @@ python experiments/diagnosis_baseline/real_evidence.py \
 
 Only saved `pass_tests` pytest sessions are supported. The adapter verifies project working
 directory, interpreter identity, executed source, scope and snapshot/run links before replacing
-known paths and source identifiers with neutral aliases. Saved Windows paths are handled as
+known paths and opaque source identifiers with neutral aliases. Saved Windows paths are handled as
 Windows paths even on macOS. It does not open the original project or interpreter.
 
 Prepared `cases.jsonl` contains a case ID for pairing, raw evidence, its digest and the original
@@ -39,8 +39,22 @@ FixFirst issues, facts, actions, diagnoses, follow-up search results, labels and
 are excluded. Fixed text/list limits are recorded in `truncation`; the comparison is a **bounded
 presentation of shared original evidence**, not a claim of identical information or no loss.
 
-Known project/environment paths are neutralized consistently. This is not a general secret
-scanner: arbitrary secrets embedded in original stdout must be sanitized by the data owners.
+Known project/environment paths are neutralized consistently. Absolute Windows and POSIX
+home-directory prefixes outside those roots also have their account component neutralized.
+Case IDs and session display names are omitted as metadata; they are not globally erased
+from diagnostic content. A case named `pytest`, for example, must retain the actual package
+name, import names, requirements and command text. Windows path matching is insensitive to
+case, while Python names remain case-sensitive. Ambiguous identifier collisions are rejected
+rather than silently changing evidence.
+
+Prepared files from an older builder that replaced real package names with `case` cannot be
+repaired by guessing the original names. Re-export from the unchanged original sessions with
+the corrected, pinned builder and preserve both exports and their provenance. Do not rerun
+project checks to replace historical evidence.
+
+This is not a general secret scanner. Ambiguous unquoted paths and arbitrary secrets embedded
+in original stdout still need review by the data owners; the adapter must not erase adjacent
+diagnostic text to guess a path boundary.
 Private source records, mappings and manifests should not be committed with experiment code.
 
 ## 2. Request answers without labels
