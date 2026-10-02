@@ -78,6 +78,13 @@ def base_facts(session: Session, active, knowledge=True) -> tuple[list[Fact], di
             observed("project", "declarations", "available", [f"{project_run.run_id}:stdout:1"])
         )
     evidence_facts, details = observations(session, active, interface_history=knowledge)
+    from .tool_compatibility import observations as tool_observations
+
+    tool_facts, tool_details = tool_observations(session, active)
+    evidence_facts += tool_facts
+    for issue_id, detail in tool_details.items():
+        if issue_id in details:
+            details[issue_id]["tool_failure"] = detail
     facts += evidence_facts
     mentioned = {
         f.value for f in evidence_facts
@@ -86,13 +93,14 @@ def base_facts(session: Session, active, knowledge=True) -> tuple[list[Fact], di
             "raised_by_library",
             "behavior_symptom",
             "input_symptom",
+            "tool_failure_symptom",
         )
     }
     known = domain.facts_for(mentioned) if knowledge else []
     facts += known
     distributions = (
         {"dist:python"}
-        | {f.value for f in known if f.predicate in ("removed_from", "deprecated_in", "provided_by_plugin", "changed_in")}
+        | {f.value for f in known if f.predicate in ("removed_from", "deprecated_in", "provided_by_plugin", "changed_in", "tool_distribution")}
         | {f.subject for f in evidence_facts if f.predicate == "required_spec"}
         | {f.value for f in evidence_facts if f.predicate == "provided_by"}
         | {f.value for f in evidence_facts if f.predicate == "emitted_by" and f.value.startswith("dist:")}
@@ -145,6 +153,16 @@ def apply_classifier(session: Session, active, details) -> list[Fact]:
         issue.prediction, issue.prediction_confidence = suggestions.get(issue.issue_id, (None, None))
         issue.prediction_note = ""
         if issue.prediction and issue.prediction_confidence >= MIN_CONFIDENCE:
+            detail = details.get(issue.issue_id, {})
+            if (str(detail.get("exception", "")).endswith("Warning")
+                    and detail.get("raised_in") not in {"project", "test"}):
+                issue.prediction_note = (
+                    "A warning terminated the check, but its emitting library or standard-library "
+                    "frame does not by itself identify the responsible caller or warning policy. "
+                    "The classifier prediction is retained separately; a matching documented "
+                    "tool failure may supply a rule diagnosis."
+                )
+                continue
             from .symbol_advice import unsupported_version_claim
 
             if unsupported_version_claim(issue.prediction, details.get(issue.issue_id, {})):
@@ -423,6 +441,9 @@ def infer_and_plan(session: Session):
     from .dependency_advice import refine
 
     actions = refine(session, actions, by_id, base.facts)
+    from .tool_compatibility import refine as refine_tools
+
+    actions = refine_tools(session, actions, details, base.facts)
     from .install_feedback import bind_commands
     from .evidence import project_index
 

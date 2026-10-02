@@ -14,6 +14,19 @@ CONFIG = re.compile(
     re.I,
 )
 STYLE_PREFIXES = ("E1", "E2", "E3", "E5", "W", "Q", "COM", "I", "D")
+TRACEBACK_HEADER = "Traceback (most recent call last):"
+CHAIN_SEPARATORS = {
+    "During handling of the above exception, another exception occurred:",
+    "The above exception was the direct cause of the following exception:",
+}
+TERMINAL_EXCEPTION = re.compile(r"^(?:E\s+)?((?:[A-Za-z_]\w*\.)*[A-Z]\w*):\s*(.*)$")
+TRACEBACK_FRAME = re.compile(r'^\s*File "(.+)", line (\d+)(?:, in .*)?$|^(.+\.py):(\d+): in .*$')
+ERROR_BLOCK = re.compile(
+    r"^(?:_+\s+)?ERROR collecting (.+?)(?:\s+_+)?$"
+    r"|^ImportError while loading conftest ['\"](.+)['\"]\.?$"
+)
+OUTPUT_SECTION = re.compile(r"^([_=\-])\1{2,}.*\1{3,}$")
+NONFAILURE_SECTION = re.compile(r"warnings summary|captured (?:stdout|stderr|log)|short test summary info", re.I)
 
 
 def event(
@@ -88,6 +101,78 @@ def exception_event(run, text, location="", stage="collect", line=1, stream="std
         line=line,
         stream=stream,
     )
+
+
+def _terminal_failure(run, lines, location, stage, stream="stdout", offset=0):
+    """Read a Warning, or the terminal exception of an explicit standard chain.
+
+    The caller establishes that these lines belong to a failed block/probe record.
+    Anchored headers avoid treating source code, a warning location or a wrapper's
+    quoted exception name as the terminal exception.
+    """
+    terminal, source = None, ("", None)
+    traceback_count = 0
+    chained = False
+    for index, value in enumerate(lines):
+        if OUTPUT_SECTION.match(value) and NONFAILURE_SECTION.search(value):
+            break
+        if value == TRACEBACK_HEADER:
+            traceback_count += 1
+        if value in CHAIN_SEPARATORS:
+            chained = True
+        frame = TRACEBACK_FRAME.match(value)
+        if frame:
+            source = (frame.group(1) or frame.group(3), int(frame.group(2) or frame.group(4)))
+        match = TERMINAL_EXCEPTION.match(value)
+        if match:
+            terminal = index, match, source
+    if terminal is None:
+        return None
+    index, match, source = terminal
+    code = match.group(1).rsplit(".", 1)[-1]
+    if not code.endswith("Warning") and not (chained and traceback_count >= 2):
+        return None
+    line = offset + index + 1
+    message = f"{match.group(1)}: {match.group(2)}"
+    if code.endswith("Warning"):
+        # Warning text may mention another error/configuration; its observed type wins.
+        item = event(run, message, stage=stage, kind="test_runtime_error"
+                     if stage in ("call", "setup", "teardown") else "other_unknown",
+                     location=location, line=line, code=code, stream=stream)
+    else:
+        item = exception_event(run, message, location, stage, line, stream)
+        item.code = code
+    item.source_file, item.source_line = source
+    return item
+
+
+def _text_failure_blocks(lines):
+    """Bound collection/conftest errors and standard tracebacks, excluding summaries."""
+    start, location, terminal_seen, chain_pending = None, "", False, False
+    allow_traceback = True
+    for index, value in enumerate(lines):
+        context = ERROR_BLOCK.match(value)
+        traceback = value == TRACEBACK_HEADER
+        if context or (traceback and allow_traceback and (start is None or (terminal_seen and not chain_pending))):
+            if start is not None:
+                yield start, index, location
+            start, location = index, (context.group(1) or context.group(2)) if context else ""
+            terminal_seen, chain_pending = False, False
+            allow_traceback = True
+        elif OUTPUT_SECTION.match(value):
+            if start is not None:
+                yield start, index, location
+            start, location, terminal_seen, chain_pending = None, "", False, False
+            allow_traceback = not NONFAILURE_SECTION.search(value)
+        if start is not None:
+            if value in CHAIN_SEPARATORS and terminal_seen:
+                chain_pending = True
+            elif traceback:
+                chain_pending = False
+            if TERMINAL_EXCEPTION.match(value):
+                terminal_seen = True
+    if start is not None:
+        yield start, len(lines), location
 
 
 def parse(run: Run) -> list[Event]:
@@ -323,6 +408,16 @@ def parse(run: Run) -> list[Event]:
                         ),
                         {},
                     )
+                    if run.exit_code not in (None, 0) and (
+                        "exception_message" not in exception
+                        or (item.stage == "collect" and exception.get("exception_type") == "CollectError")
+                    ):
+                        terminal = _terminal_failure(
+                            run, str(record.get("message", "")).splitlines(), item.location, item.stage,
+                        )
+                        if terminal:
+                            item = terminal
+                            item.evidence_refs = [f"{run.run_id}:probe:{index}"]
                     if "exception_message" in exception and not (
                         item.stage == "collect" and exception.get("exception_type") == "CollectError"
                     ):
@@ -391,7 +486,15 @@ def parse(run: Run) -> list[Event]:
             result = []
             location = ""
             for stream in ("stdout", "stderr"):
-                for line, value in enumerate(getattr(run, stream).splitlines(), 1):
+                lines = getattr(run, stream).splitlines()
+                terminal_events, consumed = {}, set()
+                if run.exit_code not in (None, 0):
+                    for start, end, block_location in _text_failure_blocks(lines):
+                        item = _terminal_failure(run, lines[start:end], block_location, stage, stream, start)
+                        if item:
+                            terminal_events[item.line] = item
+                            consumed.update(range(start + 1, end + 1))
+                for line, value in enumerate(lines, 1):
                     context = re.search(
                         r"(?:ERROR collecting|ERROR|FAILED)\s+([^\s]+\.py[^\s]*)"
                         r"|while loading conftest '([^']+)'",
@@ -399,6 +502,11 @@ def parse(run: Run) -> list[Event]:
                     )
                     if context:
                         location = context.group(1) or context.group(2)
+                    if line in terminal_events:
+                        result.append(terminal_events[line])
+                        continue
+                    if line in consumed:
+                        continue
                     if IMPORT.search(value) or CONFIG.search(value) or EXCEPTION.search(value):
                         result.append(exception_event(run, value, location, stage, line, stream))
             if result:

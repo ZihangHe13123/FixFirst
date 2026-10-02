@@ -24,6 +24,7 @@ from packaging.utils import canonicalize_name
 from packaging.version import InvalidVersion
 
 from .models import Run
+from .pytest_settings import recorded_warning_filters
 
 MAX_FILES = 30
 MAX_BYTES = 128_000
@@ -492,6 +493,7 @@ def collect_project(session, env_id: str) -> Run:
         Path(session.project_root), data["python_files"], data["imported_names"], MAX_BYTES, MAX_INDEXED_FILES,
     ))
     data["lint_config"] = lint_settings(Path(session.project_root))
+    data["pytest_warning_filters"] = recorded_warning_filters(Path(session.project_root))
     data["tested_versions"] = tested_versions(Path(session.project_root))
     run.stdout = json.dumps(redact_data(data), ensure_ascii=False, indent=2)
     run.exit_code = 0
