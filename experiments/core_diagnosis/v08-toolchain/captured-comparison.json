@@ -1,0 +1,2616 @@
+{
+  "metric": "case-level captured root-cause classification, not repair success or first-step quality",
+  "scope": "A2-informed development scenarios; labels include unreviewed author judgments",
+  "frozen_default_model_sha256": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3",
+  "n_cases": 103,
+  "before_correct": 55,
+  "after_correct": 93,
+  "roster_size": 110,
+  "before_ledger": {
+    "cases": 98,
+    "unparsed": 5,
+    "rejected": 4,
+    "inapplicable": 3
+  },
+  "after_ledger": {
+    "cases": 103,
+    "rejected": 4,
+    "inapplicable": 3
+  },
+  "families": {
+    "django": {
+      "cases": 30,
+      "before_correct": 25,
+      "after_correct": 30
+    },
+    "old_library": {
+      "cases": 10,
+      "before_correct": 10,
+      "after_correct": 10
+    },
+    "setuptools": {
+      "cases": 20,
+      "before_correct": 10,
+      "after_correct": 10
+    },
+    "old_test_tool": {
+      "cases": 43,
+      "before_correct": 10,
+      "after_correct": 43
+    }
+  },
+  "cases": [
+    {
+      "case_id": "fixture-orders--dj_apps_not_ready",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "code_defect"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--dj_unset_makefile",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--dj_unset_pytest_django",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--dj_unset_runtests",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--dj_unset_runtime",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--dj_unset_tox",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--ol_nose_imp",
+      "family": "old_library",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--ol_six_moves",
+      "family": "old_library",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--st_get_distribution",
+      "family": "setuptools",
+      "provisional_label": "missing_dependency",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": false
+      }
+    },
+    {
+      "case_id": "fixture-orders--st_pkg_resources_absent",
+      "family": "setuptools",
+      "provisional_label": "missing_dependency",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--st_pkg_resources_removed",
+      "family": "setuptools",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": false
+      }
+    },
+    {
+      "case_id": "fixture-orders--st_pkg_resources_runtime",
+      "family": "setuptools",
+      "provisional_label": "missing_dependency",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--tt_ast_str_conftest",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "unparsed",
+        "issue_count": 1,
+        "diagnoses": [
+          null
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--tt_ast_str_ini",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--tt_ast_str_narrow",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--tt_ast_str_setupcfg",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--tt_ast_str_toml",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--tt_own_warning",
+      "family": "old_test_tool",
+      "provisional_label": "code_defect",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "code_defect"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "code_defect"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--tt_py_spec_t625",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 2,
+        "diagnoses": [
+          "code_defect",
+          "code_defect"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--tt_py_spec_t713",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 2,
+        "diagnoses": [
+          "code_defect",
+          "code_defect"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "fixture-orders--tt_shadow_pluggy",
+      "family": "old_test_tool",
+      "provisional_label": "local_module",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "local_module"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "local_module"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--dj_apps_not_ready",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "code_defect"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--dj_unset_makefile",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--dj_unset_pytest_django",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--dj_unset_runtests",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--dj_unset_runtime",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--dj_unset_tox",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--ol_nose_imp",
+      "family": "old_library",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--ol_six_moves",
+      "family": "old_library",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--st_get_distribution",
+      "family": "setuptools",
+      "provisional_label": "missing_dependency",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": false
+      }
+    },
+    {
+      "case_id": "flat-shop--st_pkg_resources_absent",
+      "family": "setuptools",
+      "provisional_label": "missing_dependency",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--st_pkg_resources_removed",
+      "family": "setuptools",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": false
+      }
+    },
+    {
+      "case_id": "flat-shop--st_pkg_resources_runtime",
+      "family": "setuptools",
+      "provisional_label": "missing_dependency",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--tt_ast_str_conftest",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "unparsed",
+        "issue_count": 1,
+        "diagnoses": [
+          null
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--tt_ast_str_ini",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--tt_ast_str_narrow",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--tt_ast_str_setupcfg",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--tt_ast_str_t625",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--tt_ast_str_toml",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--tt_own_warning",
+      "family": "old_test_tool",
+      "provisional_label": "code_defect",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "code_defect"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "code_defect"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--tt_py_spec_t625",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 2,
+        "diagnoses": [
+          "code_defect",
+          "code_defect"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--tt_py_spec_t713",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 2,
+        "diagnoses": [
+          "code_defect",
+          "code_defect"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "flat-shop--tt_shadow_pluggy",
+      "family": "old_test_tool",
+      "provisional_label": "local_module",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "local_module"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "local_module"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--dj_apps_not_ready",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "code_defect"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--dj_unset_makefile",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--dj_unset_pytest_django",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--dj_unset_runtests",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--dj_unset_runtime",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--dj_unset_tox",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--ol_nose_imp",
+      "family": "old_library",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--ol_six_moves",
+      "family": "old_library",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--st_get_distribution",
+      "family": "setuptools",
+      "provisional_label": "missing_dependency",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": false
+      }
+    },
+    {
+      "case_id": "pkg-inventory--st_pkg_resources_absent",
+      "family": "setuptools",
+      "provisional_label": "missing_dependency",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--st_pkg_resources_removed",
+      "family": "setuptools",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": false
+      }
+    },
+    {
+      "case_id": "pkg-inventory--st_pkg_resources_runtime",
+      "family": "setuptools",
+      "provisional_label": "missing_dependency",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--tt_ast_str_conftest",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "unparsed",
+        "issue_count": 1,
+        "diagnoses": [
+          null
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--tt_ast_str_ini",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--tt_ast_str_narrow",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--tt_ast_str_setupcfg",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--tt_ast_str_t625",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--tt_ast_str_toml",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--tt_own_warning",
+      "family": "old_test_tool",
+      "provisional_label": "code_defect",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "code_defect"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "code_defect"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--tt_py_spec_t625",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 2,
+        "diagnoses": [
+          "code_defect",
+          "code_defect"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--tt_py_spec_t713",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 2,
+        "diagnoses": [
+          "code_defect",
+          "code_defect"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "pkg-inventory--tt_shadow_pluggy",
+      "family": "old_test_tool",
+      "provisional_label": "local_module",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "local_module"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "local_module"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--dj_apps_not_ready",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "code_defect"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--dj_unset_makefile",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--dj_unset_pytest_django",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--dj_unset_runtests",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--dj_unset_runtime",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--dj_unset_tox",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--ol_nose_imp",
+      "family": "old_library",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--ol_six_moves",
+      "family": "old_library",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--st_get_distribution",
+      "family": "setuptools",
+      "provisional_label": "missing_dependency",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": false
+      }
+    },
+    {
+      "case_id": "src-billing--st_pkg_resources_absent",
+      "family": "setuptools",
+      "provisional_label": "missing_dependency",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--st_pkg_resources_removed",
+      "family": "setuptools",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": false
+      }
+    },
+    {
+      "case_id": "src-billing--st_pkg_resources_runtime",
+      "family": "setuptools",
+      "provisional_label": "missing_dependency",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--tt_ast_str_conftest",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "unparsed",
+        "issue_count": 1,
+        "diagnoses": [
+          null
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--tt_ast_str_ini",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--tt_ast_str_narrow",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--tt_ast_str_setupcfg",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--tt_ast_str_toml",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--tt_own_warning",
+      "family": "old_test_tool",
+      "provisional_label": "code_defect",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "code_defect"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "code_defect"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--tt_py_spec_t625",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 2,
+        "diagnoses": [
+          "code_defect",
+          "code_defect"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--tt_py_spec_t713",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 2,
+        "diagnoses": [
+          "code_defect",
+          "code_defect"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "src-billing--tt_shadow_pluggy",
+      "family": "old_test_tool",
+      "provisional_label": "local_module",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "local_module"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "local_module"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "unittest-grades--dj_apps_not_ready",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "code_defect"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "unittest-grades--dj_unset_makefile",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "unittest-grades--dj_unset_pytest_django",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "unittest-grades--dj_unset_runtests",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "unittest-grades--dj_unset_runtime",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "unittest-grades--dj_unset_tox",
+      "family": "django",
+      "provisional_label": "config_missing",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "config_missing"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "unittest-grades--ol_nose_imp",
+      "family": "old_library",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "unittest-grades--ol_six_moves",
+      "family": "old_library",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "unittest-grades--st_get_distribution",
+      "family": "setuptools",
+      "provisional_label": "missing_dependency",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": false
+      }
+    },
+    {
+      "case_id": "unittest-grades--st_pkg_resources_absent",
+      "family": "setuptools",
+      "provisional_label": "missing_dependency",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "unittest-grades--st_pkg_resources_removed",
+      "family": "setuptools",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": false
+      }
+    },
+    {
+      "case_id": "unittest-grades--st_pkg_resources_runtime",
+      "family": "setuptools",
+      "provisional_label": "missing_dependency",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "missing_dependency"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "unittest-grades--tt_ast_str_conftest",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "unparsed",
+        "issue_count": 1,
+        "diagnoses": [
+          null
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "unittest-grades--tt_own_warning",
+      "family": "old_test_tool",
+      "provisional_label": "code_defect",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "code_defect"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "code_defect"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "unittest-grades--tt_py_spec_t625",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 2,
+        "diagnoses": [
+          "code_defect",
+          "code_defect"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "unittest-grades--tt_py_spec_t713",
+      "family": "old_test_tool",
+      "provisional_label": "version_incompatibility",
+      "before": {
+        "status": "cases",
+        "issue_count": 2,
+        "diagnoses": [
+          "code_defect",
+          "code_defect"
+        ],
+        "correct": false
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "version_incompatibility"
+        ],
+        "correct": true
+      }
+    },
+    {
+      "case_id": "unittest-grades--tt_shadow_pluggy",
+      "family": "old_test_tool",
+      "provisional_label": "local_module",
+      "before": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "local_module"
+        ],
+        "correct": true
+      },
+      "after": {
+        "status": "cases",
+        "issue_count": 1,
+        "diagnoses": [
+          "local_module"
+        ],
+        "correct": true
+      }
+    }
+  ],
+  "input_file_hashes": {
+    "before": {
+      "audit/fixture-orders--dj_apps_not_ready.json": "2200e2501b2fdab4e7515e1aea496c7f315eb51876fd2c5c5c0168b2a80ccc9d",
+      "audit/fixture-orders--dj_unset_makefile.json": "1dc8c804b49cbd33d6deb77435969629981712800dc1241ed916e5f123edd41f",
+      "audit/fixture-orders--dj_unset_pytest_django.json": "64ea1b028d7245cd153bb6b2f3c241f2af7902d83d35136a1828b5fdfdd87e44",
+      "audit/fixture-orders--dj_unset_runtests.json": "73329e3960eb9438ae93adedfa61db3091f946f62a266c751e3234d00c429d1d",
+      "audit/fixture-orders--dj_unset_runtime.json": "d71a26e340f131bf7b6fe2c7f899ba876132c5bf523200e8f35835c9a272e606",
+      "audit/fixture-orders--dj_unset_tox.json": "f60577da1dca4829493d035631e5378073502bd3015814a41eff222ba7295706",
+      "audit/fixture-orders--ol_nose_imp.json": "594766f991b4cd9701fb89249d978f29c9c105c19766876afd786fe0584815f5",
+      "audit/fixture-orders--ol_six_moves.json": "8eac7a21842fd7f3ef795415b607648f4b967f71b06a8af35ffbc1cb0ca21e09",
+      "audit/fixture-orders--st_get_distribution.json": "c8787b857705ce14902bf17af14ac8d0fb2f4d4232bc17cc41e6b180df0d62d1",
+      "audit/fixture-orders--st_pkg_resources_absent.json": "8e1434b75640d36fe1e913d64f5994672cbe1d61d0bddd4bfe6f2e638f348e6a",
+      "audit/fixture-orders--st_pkg_resources_removed.json": "0f9461153f7ad85ecde86cdbf58f9501e9dbe05d308b495023090c64aa930237",
+      "audit/fixture-orders--st_pkg_resources_runtime.json": "6eab328fd2cdadfd3e5597b24c769fd0a56ac456db4660ed654b77b6ebb6cd89",
+      "audit/fixture-orders--tt_ast_str_conftest.json": "ba6dd6db2414dd3fd397ea5ddd88c92affa139984b4d675c08237b70f3a7f0ad",
+      "audit/fixture-orders--tt_ast_str_ini.json": "0d9f63afc39700f31151fcfbf47b8cf0b725de2a4cc76a7e21fc5eddde053b03",
+      "audit/fixture-orders--tt_ast_str_narrow.json": "b0a88f3c52e50384ae2d664f32d894542a6fec55fb57bcc6b23a7fe2fd856ab9",
+      "audit/fixture-orders--tt_ast_str_setupcfg.json": "d5f870adc05f8484c884f517db00b927ab1e62ad90bf0ad53055426d13d779c9",
+      "audit/fixture-orders--tt_ast_str_toml.json": "1df9c928e73bc45b645073ff3b556fa16bcf4e0d6d2b45f56e05c5f45643001b",
+      "audit/fixture-orders--tt_own_warning.json": "0c12b4f5d2a11133e28e3dab99b85e301e3c8aa7f52bdcb3db12bc904d003fcd",
+      "audit/fixture-orders--tt_py_spec_t625.json": "28582671028a121a9fe80427c217a6a0823678e27ba20bf6567ac755265223b1",
+      "audit/fixture-orders--tt_py_spec_t713.json": "39b7a6bd79c5ea031399dfce5f11e84f372a708ddfae247e338a29946d3ae257",
+      "audit/fixture-orders--tt_shadow_pluggy.json": "74fb883f2686a59594efb41b051bc17499e2a868640bc70253b1ff247ce4515d",
+      "audit/flat-shop--dj_apps_not_ready.json": "b0a2f16843b1fbd4f9eecca38c805fceb779a4ba7d253409a0f59c76bcdd1cd4",
+      "audit/flat-shop--dj_unset_makefile.json": "622cea1937cb8a702201896d5ba50a42c121f8e0180bd0577924c9de3d07dba7",
+      "audit/flat-shop--dj_unset_pytest_django.json": "beaabe453f3d38378b260f423640a447aff6a8f1d4b2bb50002cdf105ac481e4",
+      "audit/flat-shop--dj_unset_runtests.json": "5f44f691ccfaf462546845afac3b350567c43843c3362b1d260308af54d83936",
+      "audit/flat-shop--dj_unset_runtime.json": "e8ff1790fd223c969f4a4afbeea6715dcdb522fada22872f01ccf6af24d2eff8",
+      "audit/flat-shop--dj_unset_tox.json": "bff85e7da54c08e0e280e4c9502d7b5476d3a8431ec935e72bfa07d6374fd298",
+      "audit/flat-shop--ol_nose_imp.json": "c8020e1f0460aa587cf81c6f7a4dcd68e1121d528600d414ac761fa936bfe72e",
+      "audit/flat-shop--ol_six_moves.json": "95722e8ce5bdbfa3f193595e5611577601a2c24470655db7eace34637309d182",
+      "audit/flat-shop--st_get_distribution.json": "6e78a92490f1756a67d4c5bc6173faa4f5211ccbeb8575eed1ae5ec76d5c8158",
+      "audit/flat-shop--st_pkg_resources_absent.json": "25746ff9f29be563550449b33a6300a9a839d06377a3d364fef9b07c2105052e",
+      "audit/flat-shop--st_pkg_resources_removed.json": "c03d3ab3cd94c0fda3b944d58bb704046402661c9b2438b7b87313fa6c4ba817",
+      "audit/flat-shop--st_pkg_resources_runtime.json": "c9d5187573f133f1b1c82c9b81bd63f7f8e40dfa680864e4742f5b9c27181249",
+      "audit/flat-shop--tt_ast_str_conftest.json": "39828f566417a1d392bf28dab868565fc63a3f64701c9a9fd3e9a008f537c3f6",
+      "audit/flat-shop--tt_ast_str_ini.json": "190c467f9a835d3acfbb9401ec824b7cdffb08f91a636da4a99838e162066e55",
+      "audit/flat-shop--tt_ast_str_narrow.json": "3aaa7ac4d1af246c33ca99e96ee3d607beae849d65a8670ac9ef9b23a6f6da74",
+      "audit/flat-shop--tt_ast_str_setupcfg.json": "fdffdb9bdab44895d6b23888e6f9e0c2074e6a05f82ef2b6eee04a8802adceee",
+      "audit/flat-shop--tt_ast_str_t625.json": "0dbdc36ec3730d5aa73bf08f88327fc02889dfe79012ec5b26daad469e9d4a1d",
+      "audit/flat-shop--tt_ast_str_toml.json": "c8a946c6f505d192eceffe09cd103ddd47b3939192c1aba6a41c607dc54d8f09",
+      "audit/flat-shop--tt_own_warning.json": "6183a6ace14a530aab8c1c2b6878e9d4b2b621407b22c162d6af89f882aff491",
+      "audit/flat-shop--tt_py_spec_t625.json": "7c1fba514e4b0382faa3dabcc0e9aafdbebd3c81a44068a816928d96fecbd298",
+      "audit/flat-shop--tt_py_spec_t713.json": "48628bdb98da50f8898543a527cf1c63a29e14975abca616b26540882334815f",
+      "audit/flat-shop--tt_shadow_pluggy.json": "c80ded43b5c2dd1e7423e77bd570c1b2e15ef5ebb2f8a247f15b2d686a5c2d92",
+      "audit/pkg-inventory--dj_apps_not_ready.json": "380940672526169c9b38a2bb98ce10dbe514859abe596373ee57ded0cfabcf2b",
+      "audit/pkg-inventory--dj_unset_makefile.json": "d2be36aea3c79625f217b3370fe0894d366f13cd8c414a96ecaf1e8766a9bb8e",
+      "audit/pkg-inventory--dj_unset_pytest_django.json": "632bf91a2411f87ebc453cfbf61d0791f54d74a30bf0bc912876e270de05e571",
+      "audit/pkg-inventory--dj_unset_runtests.json": "b4ccd5343ceda702888326a6bf731025ea5be8f002982a04df680990b4e73a60",
+      "audit/pkg-inventory--dj_unset_runtime.json": "2fdf5cc9e437597fbcc8a2a49626f30be0f813dab0e322c2283a6a55e1012cd6",
+      "audit/pkg-inventory--dj_unset_tox.json": "8ebb98489a788060383808dbc02076b20f41aea4031cf61ca9150c16975c8b33",
+      "audit/pkg-inventory--ol_nose_imp.json": "e0ce339fd544049236d3431c6f29005f9704d1c3b0cb6be4be1eb37356a2c419",
+      "audit/pkg-inventory--ol_six_moves.json": "d1626bd1011073c1f33a64d6f8562b4d935976a50f1af3040966389376c6cd69",
+      "audit/pkg-inventory--st_get_distribution.json": "742705786aec0d50351d21da981dd5cd7eb75de6d29f518f8d1a406839095483",
+      "audit/pkg-inventory--st_pkg_resources_absent.json": "e27c9222f94cf62412ce9f771fdb537d6f2406073b957ad7b79e9489922a7a65",
+      "audit/pkg-inventory--st_pkg_resources_removed.json": "8527516e2a32d5d14edfc13ac2a1271bca8698b3edbcd87b32df7747f12ec87a",
+      "audit/pkg-inventory--st_pkg_resources_runtime.json": "30fbd5830b493847f231dbc7f5d2cde79568de58e1ee41ee24f418b81a114bed",
+      "audit/pkg-inventory--tt_ast_str_conftest.json": "3716bc06b1e0cb3f77dc886d53e2a139d631dcd9ea072580406bedb5d05890c4",
+      "audit/pkg-inventory--tt_ast_str_ini.json": "183d34b2eb983d600061f61aa94f533853604427decc61dd02de094db608d011",
+      "audit/pkg-inventory--tt_ast_str_narrow.json": "1e30a8ee3559391e7286a351a5ceecae1a3b98298ab2dc9e30e62adcb2765855",
+      "audit/pkg-inventory--tt_ast_str_setupcfg.json": "bf1529fefdc6c8f5056f036fcf44244ab73b91e5461656da658bedf9bb8e8d05",
+      "audit/pkg-inventory--tt_ast_str_t625.json": "042ab357e6f5e994e54fffa66cc4eefd9373df804b30ae58d2dd78a3e036be32",
+      "audit/pkg-inventory--tt_ast_str_toml.json": "d7ade222258d582acfb2086d17262366aef8ac07de9f7dc6ea8d0bfca6aee9be",
+      "audit/pkg-inventory--tt_own_warning.json": "a28c16d17b01788020b489ee863c60b62ab033699fffb7f75829faff1dddcc5e",
+      "audit/pkg-inventory--tt_py_spec_t625.json": "0c62d604e3e468b1d592c858b8c3543b1cfc54721e177cc5702c49a364e4e303",
+      "audit/pkg-inventory--tt_py_spec_t713.json": "005736bdb7f7e00dff984283312acebdfb06f375e13a7f20e133d0288588aba3",
+      "audit/pkg-inventory--tt_shadow_pluggy.json": "8408c8ce2e720c461b09182680a25ad426fad829a042d9e10cb31a88c913b714",
+      "audit/src-billing--dj_apps_not_ready.json": "00e7f83356b6ae85beef14656abf6942e3e4590b8ca43e5c2a155d9abfcc861b",
+      "audit/src-billing--dj_unset_makefile.json": "ea4eff71f9ff48ff3d7dbf1532ad336993ec9f9bdd9e5db814f1dc9f9b0112b2",
+      "audit/src-billing--dj_unset_pytest_django.json": "7f0bec2fb59f98aa5974eaad31c49c4feba2df22f3c3416898bdfdc7c4451c33",
+      "audit/src-billing--dj_unset_runtests.json": "8978f494cc63cf237088bc12ed560c65cca9906011033dd6fde54309b1b76428",
+      "audit/src-billing--dj_unset_runtime.json": "2d7cf05b0a8db233e8c3e9146ac39eb046b97165cf37fca0052835033c3cb9d9",
+      "audit/src-billing--dj_unset_tox.json": "5b2c4e0666bfe974f9cec2bd1f187328d18d4c3f2f1f45d61755a0533c4bea73",
+      "audit/src-billing--ol_nose_imp.json": "7ad9d6d9734467ad242bf5ffde57973d3c3c1deda9a985135d5d5802cf25f0ec",
+      "audit/src-billing--ol_six_moves.json": "dffc3c1f48c91f21da04381f45300ffd1353149d63dcb7ae5bdeaf49fa79d25f",
+      "audit/src-billing--st_get_distribution.json": "de97527668199cd4ac384f46c15d7b88373869035d620af624a1d4cc0c29625f",
+      "audit/src-billing--st_pkg_resources_absent.json": "2fe7ba6d309ba85dc2a5c8401a7327bcda7bc1d48e85165b1ad47c36d1a1401d",
+      "audit/src-billing--st_pkg_resources_removed.json": "ad9744647498081e1603b7383fed719d9d63747db952044c3c192606702ea409",
+      "audit/src-billing--st_pkg_resources_runtime.json": "4b6503ca0c09e8004007abb969b831167f11078acd8f965216e619fd1a5b7f0c",
+      "audit/src-billing--tt_ast_str_conftest.json": "6613a5830089c3903aa1c812382ee2eb1663209f05a43fa5fb3b797cebda10a5",
+      "audit/src-billing--tt_ast_str_ini.json": "433e53621fb5e22e5a82744eb8db19340ab4be3bc053f68b9545183a3ab94f9a",
+      "audit/src-billing--tt_ast_str_narrow.json": "4ad3a743c5ff2f44ecdf364d5a9029abcb31d98fb5dcc88464042f5a08a16a9f",
+      "audit/src-billing--tt_ast_str_setupcfg.json": "498ba1d3e6af7e6174766dfebf7c7013f7fb7083da9fc8195b1e418329ebb85f",
+      "audit/src-billing--tt_ast_str_toml.json": "fa25d3e5a5eca761f37dc1e2c8ae97544614f1990b200a13ce77e63d3ca8e72c",
+      "audit/src-billing--tt_own_warning.json": "318ce021d6c617de3bf31bb4cbc8202d789cce1a5054d7bc0185ec950b81f859",
+      "audit/src-billing--tt_py_spec_t625.json": "b58ca77abc7336c4b3a9a446bcc763f5952d7017a8dc83590a6f556063befcca",
+      "audit/src-billing--tt_py_spec_t713.json": "afe278ce803d2937b553938a61c148c0555c4d4392b27c13656d55508acfd593",
+      "audit/src-billing--tt_shadow_pluggy.json": "ee22ab5c355aff942870952e8cc55fe439fdda49d21b07e8a3f366f653a5a834",
+      "audit/unittest-grades--dj_apps_not_ready.json": "129a8130aa2ab9336f7273cb323d44f0208747c9b9e48d969c28c446285455df",
+      "audit/unittest-grades--dj_unset_makefile.json": "ed69242b4b872bd1b32ba0693b7a37954928c03d580fd43c99dfb7979d666ab9",
+      "audit/unittest-grades--dj_unset_pytest_django.json": "e9d11b300ebfb0e7fbe24fb6f9a3c39a0150d8e43986a846e081470de299f7f1",
+      "audit/unittest-grades--dj_unset_runtests.json": "1d3dcd66cf35fe26cb6e61454ba813fa55e341926980c8046da10ab805ed3fa7",
+      "audit/unittest-grades--dj_unset_runtime.json": "0ccebee317ba1f7a4d5c8407381811df0edf487bf1d7759750d8db1af088a2f5",
+      "audit/unittest-grades--dj_unset_tox.json": "32e21bef1e73ecfff3a9f319c54299d3696cc0388844d6edb24a4d46caa8e30b",
+      "audit/unittest-grades--ol_nose_imp.json": "fba58b70d806f4156e8ff5febc32341cfcdf5b47795a310f00268f2b9f64b634",
+      "audit/unittest-grades--ol_six_moves.json": "db8bd16a379db9e828d3afbebac53388f09588116ea8760ce4bfbc76e27b08eb",
+      "audit/unittest-grades--st_get_distribution.json": "2c8cefee015a1e9d50cb7aa442c66ee6d7f690d1d19bae216fd3f4e359069cee",
+      "audit/unittest-grades--st_pkg_resources_absent.json": "1134bed9f87756ab25e0ba58ad974725975b061f9a9a9f596b0653294d135ea8",
+      "audit/unittest-grades--st_pkg_resources_removed.json": "b7dcd1de59c2653188481e936fa508834118c57a7eae13bb1724b5491f06070d",
+      "audit/unittest-grades--st_pkg_resources_runtime.json": "e289501f937dbdb631dac37ce26e8edf1bccd04fff8edbad519079ee3b3f2421",
+      "audit/unittest-grades--tt_ast_str_conftest.json": "eab6f13408ee8efecbe2054da99c4d8a74aaef4d095c4e500a79cd4fd9084d78",
+      "audit/unittest-grades--tt_ast_str_ini.json": "220e42daaaf0eef370a46180b9e9baf8a8071c78db18990f85c5bdd89b582a8d",
+      "audit/unittest-grades--tt_ast_str_narrow.json": "d390f338e4c05cba80523575d565d62a4e405f61f7fdd873fd17d16eca706e2f",
+      "audit/unittest-grades--tt_ast_str_setupcfg.json": "581f4dcdd93d5168a4c56015409a26c43ce4181d8a1f57c02d0ab96c2f6f9b6d",
+      "audit/unittest-grades--tt_ast_str_toml.json": "1eb25408ccc8db304bdb9d5355e88e6b2ab6f6d4b7eef387ee87a9ef6e5a1f47",
+      "audit/unittest-grades--tt_own_warning.json": "4ff8b7a4962142f98d8f19b8aa4e7815c4697d7348f1eb3df428b96a7e9513e3",
+      "audit/unittest-grades--tt_py_spec_t625.json": "798b4e95c5f3cef0271632fcc30d634ccd9a9699aefd9358ed616bc4a422b114",
+      "audit/unittest-grades--tt_py_spec_t713.json": "cfb5c77e5960ba6e6d4ad8d00cdeea357622cd8208a2433081a3c3fd7113b44a",
+      "audit/unittest-grades--tt_shadow_pluggy.json": "4a840c281698bab4acd9acff592053aeb7c848384bc072930e892d08a1ecdc0c",
+      "environment-lock.json": "20df788b60c30155c328cede7f87b30dfa9c7ca603344fb9505fffb19b44034d",
+      "manifest.json": "d89b32bae43c706dcd3bca5e7e1445182add8509ddbcefef96f136ef845f4014",
+      "t625-py110/cases.jsonl": "db3a133b736328eba4b95d01d4f37bdf76386031b0b0148756a74bb9f03857c8",
+      "t625-py110/environment.json": "c167b8a43b21d423e906b4a8b407f354783cf8e44a0d4fc1d70fd3534475819e",
+      "t625-py111/cases.jsonl": "fd40e2dc598bcc6fed3f7bff96e9e0398a3da784c6c4615f3d3c4cb9dfad9e7d",
+      "t625-py111/environment.json": "fb8057cf00e7bc981d8c785e47bf5515cb067df3bdec72b175699cb532c7db84",
+      "t701-py111/cases.jsonl": "f00deb6ba33f8fde1d806b51892619331aa6167739862b682592ac4c3a648395",
+      "t701-py111/environment.json": "e3bc15ddc93387fb70abba858baf627977189aa763a00487b9f9d99c1fbe3f03",
+      "t713-py110/cases.jsonl": "4a55bdcadb1311d75eb61dc57c67b70a0cacede589a7e6c7112224549a31b117",
+      "t713-py110/environment.json": "8adb09b7b1df122833cdaaea32a136e462df673efd1fd39c5894f9a5b7c92677",
+      "t722/cases.jsonl": "c7b12a3fb3dd04a0c36dfaf9ef7963d0ec10d857f8ae3f0a427e3ca602beef14",
+      "t722/environment.json": "2bdf35a58f518ecae240360d3d5191e5a3cb94493d15fb5946b0eb0e2d8929bc",
+      "t8/cases.jsonl": "98cacb80555a5a25a7be2e1d75baded5e7a6a64035c2b69a6e6ad4a6c161306e",
+      "t8/environment.json": "1696529918f150f7f77b91f03111904416ff1aa563ed0bc8cb3b3a6253462fee",
+      "t8-django/cases.jsonl": "fbc9bf3d7ab7257ed53d0776858331a9f51beac0212c3eef5b6469f2651a09c4",
+      "t8-django/environment.json": "b5278a324d5ea4b1ce8bf1ce68ba4a16a081f9bfeaf664a3a72829d365b3e579",
+      "t8-django-pytest/cases.jsonl": "1a4dccfd1e79dbb59360153e43cb6606e6694f3ad17b1bbfba65c17ca3ed70ee",
+      "t8-django-pytest/environment.json": "65e5d66b8e91e1aac507835c7bfebb7bab2741515c0ec0c0ed5a4fe525a286c7",
+      "t8-nose/cases.jsonl": "54ffc210baea2bc05914240d2024d0871a646384cb669bf46af65ebeb01df5a5",
+      "t8-nose/environment.json": "4b7494f709cd1da065ca33ed4be0627a16ab51f6301c4d34b20b7fd3a2c9efbc",
+      "t8-setuptools84/cases.jsonl": "5d6e422628a3ac74fb67fc1317ea5af0c3780da10789fef830d23d7ba0a8e533",
+      "t8-setuptools84/environment.json": "dac2c6a1b17ab1e6539fe6648a635fe116e78927aa1bbcfc3df4274d3c4f8592",
+      "t8-six115/cases.jsonl": "0ec854d6d5be1ccfc38e68a1aa0ec769d7ee1acba107b12de541e46b180c2cbc",
+      "t8-six115/environment.json": "4702ea957982cb02e425a658a346acfaa9521d9a110c4cb7f0260cdd7207756f"
+    },
+    "after": {
+      "audit/fixture-orders--dj_apps_not_ready.json": "34126b739fc5e444ae7c55ddbc0d3ea0537fe4aef3b57a5b7eef043bca2e89a9",
+      "audit/fixture-orders--dj_unset_makefile.json": "b7fd42cfe724ab5a8d8aef938e87c4424a54f309d2dbdca111ac842dc47d93d4",
+      "audit/fixture-orders--dj_unset_pytest_django.json": "c23b8af371905893d5f06ea6f34c282085b52e85a3d5fef31449c1288b586973",
+      "audit/fixture-orders--dj_unset_runtests.json": "a4a8ceef515072b4f63286fcd5bfbacb2ce1c48b7279a427a0c1811ce02609ae",
+      "audit/fixture-orders--dj_unset_runtime.json": "2eb6e7627eb73419ef6e8896ccf2f68f48eb3e9f72cd6041b1b38025c1607405",
+      "audit/fixture-orders--dj_unset_tox.json": "8ef6fc491263e7cbcfe0cf615d52813d072e3387a22085434e0548f73739a060",
+      "audit/fixture-orders--ol_nose_imp.json": "9d897e9c1bec403a93be9267d6a55ead4ee7cdaf1b31d24e5c3cd2de33319794",
+      "audit/fixture-orders--ol_six_moves.json": "3efe13e25ae61d445fa25e903d35524b0926c02f28a008fd7500310d08c5a9f1",
+      "audit/fixture-orders--st_get_distribution.json": "ecd1737535997c3ac7b93e18d8e0b73594388945dde475c9d6b40ad2e4794fed",
+      "audit/fixture-orders--st_pkg_resources_absent.json": "1d0b51defc876dacf72951a711d17a455c80af80a908de0f04b650c4c49d925f",
+      "audit/fixture-orders--st_pkg_resources_removed.json": "75a044e790b9da0c8223978c73090f58301997eae8a0fd7895b4911c0efc5993",
+      "audit/fixture-orders--st_pkg_resources_runtime.json": "3fd2b74b7f54ea7a51e49641bb81dd15eed75e2bab446d6932c9f4f85cc21065",
+      "audit/fixture-orders--tt_ast_str_conftest.json": "7d0e9dae659abe2f3c2760db600b695bc4a2f1c59ec3d89cbfe1f154b7b0a954",
+      "audit/fixture-orders--tt_ast_str_ini.json": "6c322fb815c24184d87779176b5d7f2666a20150d893ca7b021eeec460891f23",
+      "audit/fixture-orders--tt_ast_str_narrow.json": "f55e74db2d3ae8b2884313a9af7b4b328cef3789d6fd32f5e51eaf9d44846e26",
+      "audit/fixture-orders--tt_ast_str_setupcfg.json": "0abf942526ea475f0ca649326852793087657ab0d06fe55220251cba10255acd",
+      "audit/fixture-orders--tt_ast_str_toml.json": "d06e5b9c3f2e075333f0e369a04d3d2e25864894c010b765a890b2613e371dc4",
+      "audit/fixture-orders--tt_own_warning.json": "ec78a0c1560f0c58033c4e6281074e93d1a39d4c72e1ecafcb62b8720706ae33",
+      "audit/fixture-orders--tt_py_spec_t625.json": "ed4a4d91fb4d6f16bc6803008f4764c4719948b9bc36c737908e424bd599fe32",
+      "audit/fixture-orders--tt_py_spec_t713.json": "2aa997c41315605fc825ea9e8916d14edcc4ef148ba462cfd88bd8658ab41d9f",
+      "audit/fixture-orders--tt_shadow_pluggy.json": "6015445daf8a3e46f8ea256dff8bf9e7d23532af4c53a6e9cb08faf32014f8f7",
+      "audit/flat-shop--dj_apps_not_ready.json": "e09862a96f6a2855e89ece3437543bd023f3e80ea8a244ec95ccb4c0c5c3593d",
+      "audit/flat-shop--dj_unset_makefile.json": "d75b4fa6cc028833a614e617127c8a4e01f03525eebfea039d6e505d46b00b91",
+      "audit/flat-shop--dj_unset_pytest_django.json": "b3e0b9eb5e2c9ffb5512c2aa104383b12bd506216d8de0879d4ed61461cedf81",
+      "audit/flat-shop--dj_unset_runtests.json": "e7a053901432cbf64e0b78e29cc1d4574c40bc711ad799715ba9ae2a65620374",
+      "audit/flat-shop--dj_unset_runtime.json": "ee3577ceabbcb6c0578879d8e9d9d123f93c08958f6868c61519681f6553b7d1",
+      "audit/flat-shop--dj_unset_tox.json": "576d80d35a3dcd796f4aeaa992b4c74a0436f4734a5b2aea79b83757beb98edf",
+      "audit/flat-shop--ol_nose_imp.json": "4b4ceca3413093a2652ad3cdb0b5c02495cb29ced1e76b3041341f49d83b0bf9",
+      "audit/flat-shop--ol_six_moves.json": "4152c0ef9c0c1134d824d0dcc19db1fbb31b20c01dbe366b0f347831fb518db9",
+      "audit/flat-shop--st_get_distribution.json": "259b704b81baf40fa05023119fb4f127cb3e4188c2a3bfe1a1bf5d003aab7882",
+      "audit/flat-shop--st_pkg_resources_absent.json": "11271f82207aada4864af9b831ca36660ec1d1fbd8ef4d238b10588e32bc1c86",
+      "audit/flat-shop--st_pkg_resources_removed.json": "960515c51b9a9e8f6e1fd9b3fc4d2fdcfc6c2e6fe7b7558f9a0b8987f8988097",
+      "audit/flat-shop--st_pkg_resources_runtime.json": "59b53f9110fe17c7e146505b008b26b5d7de98e5be2fce0a2a656e4a8881f077",
+      "audit/flat-shop--tt_ast_str_conftest.json": "20b4c60347ebd36c79327cde403565313ad3b40382a6390f6e46f7a802e912f7",
+      "audit/flat-shop--tt_ast_str_ini.json": "a04e1ef3fe48be6586a05bd7390d8c6068fc8fad92c37f8e54791095fd3bde98",
+      "audit/flat-shop--tt_ast_str_narrow.json": "3350edf4049b5da946879e192e5eb03cba4c927b2bbccca9e4846d0c0221c7f7",
+      "audit/flat-shop--tt_ast_str_setupcfg.json": "5e4b9e1be6b0bb1274fe2e1c1053eb070dafd4098f5e8905228b55d7f6209421",
+      "audit/flat-shop--tt_ast_str_t625.json": "85148d5ed1d11dd9eb503c3073437cc3189f27e09fc10358f2efcd4a29c4c5e9",
+      "audit/flat-shop--tt_ast_str_toml.json": "20f465dd1f5cbf1bea54df3bb52c8b6775a8440883feb5c47bc8edc0dcc8e85c",
+      "audit/flat-shop--tt_own_warning.json": "a92a531e2eec174f82c3677671438a05e305eda94ca16e3b47cf149ac94d58db",
+      "audit/flat-shop--tt_py_spec_t625.json": "8d908e0b233e1df5ad670a4de2080a5125dfdf2122ea63c983754da873dee389",
+      "audit/flat-shop--tt_py_spec_t713.json": "a45f6453f65582601f3da332c80775f1314800651fdabb3eb4deba2758a074f5",
+      "audit/flat-shop--tt_shadow_pluggy.json": "13c0c41bbe86d5e25ff897f7d2bc1fde57b66c6777387a37524807c7b8dc6299",
+      "audit/pkg-inventory--dj_apps_not_ready.json": "e6e80501cfff375092f14eb15877008f046afa722f32260e534e163e60de2d17",
+      "audit/pkg-inventory--dj_unset_makefile.json": "606495cc37e951921a87fc528bd1d7059af115a7b5a024036f5ed890739c4def",
+      "audit/pkg-inventory--dj_unset_pytest_django.json": "718c3c310f2b878725cf0ecb6a807eb4217bb49b055b468b1afd5f9e1d957d63",
+      "audit/pkg-inventory--dj_unset_runtests.json": "cbe9f86cb8fcbfaafc56d3a487b00a9ae7e7b961d8793a542843c55406da9420",
+      "audit/pkg-inventory--dj_unset_runtime.json": "146196e78ce40beb0377d2dd1be4765cd04d85dc94260a44597f51f9e5aa1cf2",
+      "audit/pkg-inventory--dj_unset_tox.json": "2d994beec2bd1f1128604174acf1b00f87e2de975a4b1ed9e34f79a08871d4c0",
+      "audit/pkg-inventory--ol_nose_imp.json": "197c22a6215d1d251435e91a4963bb3b43087cf3e898daa719cafb688a31f7fd",
+      "audit/pkg-inventory--ol_six_moves.json": "98a71ee7737964316689fced48c4f680feb6986c51fe31fb5d1db80dbdfffca3",
+      "audit/pkg-inventory--st_get_distribution.json": "321d927909b5771bc36129530215ccd9919b210905e93a29e81052b2b7f43c10",
+      "audit/pkg-inventory--st_pkg_resources_absent.json": "5d09175f85221abc04917e8055c3ae65f6e32076cd38251fc35262fe2f88087e",
+      "audit/pkg-inventory--st_pkg_resources_removed.json": "bd3d6ac8658e0d1fc4b8b1e940f984b58d85ff730ffafb2519686ec58440a007",
+      "audit/pkg-inventory--st_pkg_resources_runtime.json": "41a92be6318a8c79287274b1b314211d0170d75f6d7c1c296ee0703cc3fa5607",
+      "audit/pkg-inventory--tt_ast_str_conftest.json": "fa03b8da7306161f1d95b683edb423354d5088a6a5042be455ae4a56f36eaadb",
+      "audit/pkg-inventory--tt_ast_str_ini.json": "011c34ebecf50bb8f869d74e11b8a84245a254247ab4e7e0a627b5642cebd439",
+      "audit/pkg-inventory--tt_ast_str_narrow.json": "b2c03d3a5e25adfa09855c79b5f9dc45062681a4cf42c80f7ec85053ac7656e0",
+      "audit/pkg-inventory--tt_ast_str_setupcfg.json": "5bd5cf0f19106f9f6947eb304b69461b560343cc8d6cdcc3bd9419164b7a76c7",
+      "audit/pkg-inventory--tt_ast_str_t625.json": "a6c434b0fa98c5bea194907bbb98cbff61abad0c3e943d569f07a115d6ef81f8",
+      "audit/pkg-inventory--tt_ast_str_toml.json": "63f162ffd15c4a095b9f01505eef5ae2802998f85375e19d31ecb13e73037042",
+      "audit/pkg-inventory--tt_own_warning.json": "c533e1dea7adcd4c232cc42431e8c8072b56154acc372139a92d5cedd6478ab6",
+      "audit/pkg-inventory--tt_py_spec_t625.json": "b84d697a8e52cc8f3b69287736e6f72d3d07c8dbe4f4fa0879ac0bd061fab87b",
+      "audit/pkg-inventory--tt_py_spec_t713.json": "81d0593f5074774116acba89b521521c1b39761d18c13f9bed339ae29310f147",
+      "audit/pkg-inventory--tt_shadow_pluggy.json": "139157cf68c3ea1bdf7569efccc3a13872835a1faa902ab97b176020ebd9ba38",
+      "audit/src-billing--dj_apps_not_ready.json": "039eeaea41369a62207c7a1d62fefac1335e3c7d1322596e78d450e5f34b4edf",
+      "audit/src-billing--dj_unset_makefile.json": "ad40a1e536ab5c3e30b777e2782cdee69beab24da3371fa030c32b76dc42b528",
+      "audit/src-billing--dj_unset_pytest_django.json": "de33c1c6fc7e85353feec3184dea3a92d09b8aebcd92544309175d506e105063",
+      "audit/src-billing--dj_unset_runtests.json": "8cc5ed131af2a8df3dd44f69974b27644cad3c8ac4c26467c4dd0c336b46d9ea",
+      "audit/src-billing--dj_unset_runtime.json": "671fb529941f9a6555985120828acb244079752624d40b56b8078bfcf7bcd78f",
+      "audit/src-billing--dj_unset_tox.json": "cffcb0e7d7e5ceb17ace1b676a200bcd312bec4387c66c44ef4fefec56d9803a",
+      "audit/src-billing--ol_nose_imp.json": "966777b4ca271bb1ea6f759e0b9a728b98ca825b1308756e5d1bd5b9c085e80f",
+      "audit/src-billing--ol_six_moves.json": "ec519c922e7505aa316efb14f395897ab4755625b27ff2736cc9d807c0ade884",
+      "audit/src-billing--st_get_distribution.json": "f6639571527f787499bf23410b6b819f8e8a4ab187e69a25ded38725fff05414",
+      "audit/src-billing--st_pkg_resources_absent.json": "692ee8105fae1e3ac87b472a8392d31361ecefb317be3477300f7a72ca294fda",
+      "audit/src-billing--st_pkg_resources_removed.json": "14d605911d624609aab7118ebcf23d6637bf001a710cb0bb47ab9a8054ece606",
+      "audit/src-billing--st_pkg_resources_runtime.json": "22f0926078ab16efe15b74265b74abdb38b45ed4b55947219967dcf0e9dfba16",
+      "audit/src-billing--tt_ast_str_conftest.json": "8843ab646b6aabcbdafa68c2a66c2a4a3ac15ce85d3cfdd70155a81ce31487dd",
+      "audit/src-billing--tt_ast_str_ini.json": "d27ef4562091812dfcf32565e4b0ed3b26dc304de764f083a89d9520fc5779df",
+      "audit/src-billing--tt_ast_str_narrow.json": "c9d0ac970f3099c098a8399f621d1b69c55cf300061580862ccf406a6e7c8795",
+      "audit/src-billing--tt_ast_str_setupcfg.json": "9f2bf859f516af20562d5eb50ab721755ac50b9864c20229851b5db9d1386e12",
+      "audit/src-billing--tt_ast_str_toml.json": "94288764eb5a35efc49831098cd2c2ef210c6821845bdc7def1b9732e96c535b",
+      "audit/src-billing--tt_own_warning.json": "487284e23fac5bf9dd426b0756ef21a26586858c82a54695e952eec419e1b9b0",
+      "audit/src-billing--tt_py_spec_t625.json": "6c707a127e5e9e32ca3d5734410e6dcbeec0ab5d817c977d05f09b3959528641",
+      "audit/src-billing--tt_py_spec_t713.json": "ae6b8aad0147050a6c4a96728f7f12eb4e82c7ee8bd9dc92da09f65f10ea3813",
+      "audit/src-billing--tt_shadow_pluggy.json": "e0005735660bf0f428c8a3a1b2d45348c645547a4647b25fdba4c9959c9341ff",
+      "audit/unittest-grades--dj_apps_not_ready.json": "c78837c2f52dceccda51be9b6f70274fb78ca4a0a288e189347d85941d3da937",
+      "audit/unittest-grades--dj_unset_makefile.json": "edc8bf4b67ca84b09b10011afced2906a8b3b5ddac9a2f234c2e81f09c511c81",
+      "audit/unittest-grades--dj_unset_pytest_django.json": "580f0cd1ed4c6d03842f0e6c1c67cab3f0868fce585ffb0b3ea9c878d6b3a319",
+      "audit/unittest-grades--dj_unset_runtests.json": "9c8462d320d84dc02bb461cbea374d3b8a3d515eb7c7e69afb1057c0a75de99f",
+      "audit/unittest-grades--dj_unset_runtime.json": "eeaccb57a2c9494b23cb2b162c722350c5d4ceb0ef23d296db38a474f9b12f9e",
+      "audit/unittest-grades--dj_unset_tox.json": "39e8f5d718a45f4e09ec3f95edbfcd8b19984be79e3493e494fde9751cc4fd28",
+      "audit/unittest-grades--ol_nose_imp.json": "c6203167ac13cbb5ca3a292384256017751b0bf9a8d24cfee2f6f37a92591669",
+      "audit/unittest-grades--ol_six_moves.json": "da9f4512afb028c9ecbeeceb419bf99282599075a03d62fed920e2caed2d464f",
+      "audit/unittest-grades--st_get_distribution.json": "f57277602b56052fabacdd29b773b2688725b8e00e00b8949ac4cd8b0ec155d2",
+      "audit/unittest-grades--st_pkg_resources_absent.json": "f41b2db661ee8ea1b8ac7e8f8a8223b6deb1e249589f3e412a4cced6cea59a9a",
+      "audit/unittest-grades--st_pkg_resources_removed.json": "0535c299acdb584462f8c2a5ceddbbe1b3fab3a98ea03b0549d58ea3188784c5",
+      "audit/unittest-grades--st_pkg_resources_runtime.json": "3a7dbb3e4021919afd14cfb45a5b2996f1850c9eb4ddf50616dc20e8942deff2",
+      "audit/unittest-grades--tt_ast_str_conftest.json": "5dcc7e1cb4def0702624326ce093b1fad75a89d6fc2455d1b240af3252f33062",
+      "audit/unittest-grades--tt_ast_str_ini.json": "d643565a14c6b0949748b9437c1f5fbceccfffc5ca43742f5362dd7d2b7e63d0",
+      "audit/unittest-grades--tt_ast_str_narrow.json": "0a4959ffe97aaf7f9425202bc2ea79845da5f641af5367f168d7119a99f3545f",
+      "audit/unittest-grades--tt_ast_str_setupcfg.json": "877dc3b2fd88018da1f46f68ff4ddbfde171f41af6beff21fe2a98871f1e1415",
+      "audit/unittest-grades--tt_ast_str_toml.json": "61829919cea3aeb1db30f6e4a25e29dd87a187ad079f28fb514fce1ac50266ff",
+      "audit/unittest-grades--tt_own_warning.json": "e946fecf6cb7f97e335d82308d1965e87a7988a0e787f150d44de87ae55f1b46",
+      "audit/unittest-grades--tt_py_spec_t625.json": "92bffcff1f7a476af2b8c53193a46c90105d9fa3622cfc2a7982c14f18cc9006",
+      "audit/unittest-grades--tt_py_spec_t713.json": "e5b0734d8964e43a84eb65e1b802237268be9556b5b3b7da93ba6c7eb6f7754b",
+      "audit/unittest-grades--tt_shadow_pluggy.json": "92bc34b665e1a8202017c92ef4c1398fb557c05c7e2f22c7ae8daf90c4c6caba",
+      "environment-lock.json": "20df788b60c30155c328cede7f87b30dfa9c7ca603344fb9505fffb19b44034d",
+      "manifest.json": "579ab1f4a5ac3d30d44d97e158ad7cc273fcc0ac17201a19a21e5186785e9f28",
+      "t625-py110/cases.jsonl": "ef3346df0d3f21b63d70c3c3a3f6187b038a9119d0f5afef57b84a3833b3b2c7",
+      "t625-py110/environment.json": "98da36b264d5956564f993bfbfe05202a82533832313c6ca878827edb2535427",
+      "t625-py111/cases.jsonl": "6d63f641d6b72834f80ab1258f773416fc371cbbf6efc5402eb717ebc10369f6",
+      "t625-py111/environment.json": "fb8057cf00e7bc981d8c785e47bf5515cb067df3bdec72b175699cb532c7db84",
+      "t701-py111/cases.jsonl": "5fbefe89ea6e978332881266c5c44f532da2a4d7c45f9d4a6ca04970b893b450",
+      "t701-py111/environment.json": "5ab8a932261c2de909598c02d3f66dffe822352b36c896605d1c5bf37d641b43",
+      "t713-py110/cases.jsonl": "28f73320c80274050bec87373f1952c8ac77c73811b5ae6486ed05c79e8e6ac3",
+      "t713-py110/environment.json": "67651a1982274eec7d7d6cf62afc7eba4b543e80f24e5fc57e4c47ada297831a",
+      "t722/cases.jsonl": "9fcd3dda431b8cacc9574d06825449ea6efabdaae4ff6007caaee1dc768c68ac",
+      "t722/environment.json": "2bdf35a58f518ecae240360d3d5191e5a3cb94493d15fb5946b0eb0e2d8929bc",
+      "t8/cases.jsonl": "acf6fdcf49489c6d23d180206aa75a66076f9e437c759ef3a336c792604421ee",
+      "t8/environment.json": "1696529918f150f7f77b91f03111904416ff1aa563ed0bc8cb3b3a6253462fee",
+      "t8-django/cases.jsonl": "e2a3a1cfa3e1c99014b71463223d4226d976e143719f47bca239ec171c29d637",
+      "t8-django/environment.json": "b5278a324d5ea4b1ce8bf1ce68ba4a16a081f9bfeaf664a3a72829d365b3e579",
+      "t8-django-pytest/cases.jsonl": "19dc48de2c33ec13436efc49ebad94e6efab29eca49b49bc02cb8a32704e67b6",
+      "t8-django-pytest/environment.json": "65e5d66b8e91e1aac507835c7bfebb7bab2741515c0ec0c0ed5a4fe525a286c7",
+      "t8-nose/cases.jsonl": "55131e1e74a4a7fd1e392d8a1605cd3124c449687f34ced693abb2e8f32739de",
+      "t8-nose/environment.json": "4b7494f709cd1da065ca33ed4be0627a16ab51f6301c4d34b20b7fd3a2c9efbc",
+      "t8-setuptools84/cases.jsonl": "215f4d29957940bd24dcd9f7a9e0d99b57a664034ffa1bfe98f6c7dbc764faa8",
+      "t8-setuptools84/environment.json": "dac2c6a1b17ab1e6539fe6648a635fe116e78927aa1bbcfc3df4274d3c4f8592",
+      "t8-six115/cases.jsonl": "0b606a5fd201b47d45c710805d7d26a735652587c6348514650989f2ef4079a6",
+      "t8-six115/environment.json": "4702ea957982cb02e425a658a346acfaa9521d9a110c4cb7f0260cdd7207756f"
+    }
+  },
+  "source_files_sha256": {
+    "before": {
+      "__init__.py": "f306963c4844cb4daa5a61575d3a3ebfde9f1fbdb19938d74a10c8fe667a0f3b",
+      "__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+      "_notebook_runner.py": "9a16e715352f07284c9952b1b7027920f82691b55fcda1699a64be5c2b5ec154",
+      "_runtime_evidence.py": "e0ab47d5aeed0550049854cc734ee9bf88fbe9ab741e30453d6c6bcde36f3019",
+      "_unittest_runner.py": "abb94b5f4852a575ecdd0bc8702ce3758724bd55fca00c6e806055a483053356",
+      "_winprocess.py": "a57855d492192b3ac29004d1212f135721ac930c6b2bfba30dce1496840ad1b4",
+      "behavior.py": "4c308ec9b93854d877dce8d79e8f590916730f64153e7abdf98493c6c50d53d0",
+      "binding_advice.py": "8c35e8b9cafd4541189de3283904d4f9707a8344351f87340223359cf1b61059",
+      "cases.py": "f4e25213b6902b081bdda50ab896903f91a23280496ff23cc3f587f4809c170d",
+      "classification.py": "01c15255662d886121a328f69fca2be67e6c4d605a1f7cbd3c8fcb5a45ab9cfc",
+      "cli.py": "20075018501c2922275e00304a325ddaa0c98d8a65c1b80f3cb29d9d86d27257",
+      "conda_declarations.py": "9df3ae4263a16b2c328ed5c3838e33423f601a720780e28ae706e02661504ffd",
+      "dependency_advice.py": "bce5a6df11fdc27c4dac0ee54204b7c9a81b9b539340bd16ac74684a4301534b",
+      "dependency_context.py": "bb554fdbb1bc23d41ea6704189d2101774f056be86bacdffa31db8c64a4ccf1a",
+      "dependency_resolution.py": "1a218ac07c1b552bfa16a3c725beb96fd93b77ef0a419ebeb6b84e30ee331ec6",
+      "diagnosis_cases.py": "1ed05b103f758f20ced0739ed12e6b8a58d6ea463c551c3d0326e74b89d19636",
+      "domain.py": "85c60fe6754d2bfd7c2e89696990ce1a9f98c28be7f288da9aa6d568d0e9b4ed",
+      "engine.py": "2af0f39c39db97f95d50662a971a0a47a3a6ebc5af517d5c49515de0a289105e",
+      "evaluation.py": "11ef4b41e202c12bb925d140bd7b61ef0009f5cf60b14d7c1048f3e1899f0478",
+      "evidence.py": "f9875ef137ac393c89d34331a8a67f340e0c10ea8b3399ff8c925b728432335e",
+      "execution.py": "f83c009c6ea21d252bfd17fb66adf04e0631ca8b6571f45873d96c519bf29e2f",
+      "execution_cases.py": "49d0f5f4d1ac3158101046d205c17602a00cc5f35e9da59c99c9cf71d75f556c",
+      "execution_parsers.py": "8486f3065a6c8321c631b32b8945d5217d4f83a62145a0d2ec7ec6121ef36af9",
+      "facts.py": "b29760f3b776c94a624269a05316e75baac6905972679a0d3c052039a795cb5d",
+      "grouping.py": "b432e844d5c6add7c36b24057c7ce3a9dff8b5855d0efb3e5703121848aeed0f",
+      "hard_cases.py": "e729c1476e9b8bb4adf3e18f2d419c68173a2cb3bf512539c47224f70daa7833",
+      "historical_cases.py": "5d0ed255be14aae2f91dd5bed04ebe92723e46294abd1b6f94d4c20d098cbb90",
+      "install_errors.py": "03c9882205df00dd7da92023be806f54c9f2c371223f52acb4bd65e186e9b602",
+      "install_feedback.py": "9776d0228bbad0002e8074678872784b094d21148eec89785768b47dcade0076",
+      "integrity.py": "bf8611264df5695dfc379fe0b657c5560cba82e2057d3cd4d2ecac368e4b3344",
+      "interactive.py": "5308cb305bf117546f51ee7796accb1515c426f165cd8e823db6024d175dd01a",
+      "interface_history.py": "14a7f36f742e08827eeb288af2c88e9b465b858c988c0dcb9b15506095fe7ade",
+      "knowledge/diagnosis_tree.json": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3",
+      "knowledge/domain.toml": "acaa0ec4f8d222e0f0472b33e918d807a8b7000e0c374efa8911643af9e2a114",
+      "knowledge/rules.toml": "483001d6852a65623a4e971b758135c207a67481517817de0e94df65223c082d",
+      "knowledge_graph.py": "ea7b0c3f9f0b1e834f353bc459b48eabd8843a273aa8097718a14b4c413af03d",
+      "mcp_server.py": "a507925d1f0ac7d1ea1dd1e5ff0e37ca32e9e23c957d6946e4f487da384d4377",
+      "migration_advice.py": "79ce1da4034970c83815b1f69b14457e96601c3a9ec140324535699ea6c19aa9",
+      "models.py": "35dcadb47b980129a6d0972c4cbe65f7f301698cfbd0041fd3fa4fee3ac5365f",
+      "multi_cases.py": "43d6f7cca66c4056d293a26f4d6fd924c07a55bef03fc074e613cfe6ff36733d",
+      "observed_operations.py": "c9740ec67579c56f1f66a2d78d317f3970e278a8f380391f4274de3d86893e55",
+      "parsers.py": "4eddf746e174197a707ba16319e0e993c26d0b5230c6a04eab667dd4e721befa",
+      "playground.py": "f813c09dc4708672778f53dd6b7c87827121f6f2e11093524a0e9a30d568322d",
+      "probe.py": "41b8ae2ac43bda89221e934f39ce306e965c1836d148ea3976c2e0272e7c35d3",
+      "processes.py": "f86b783afb16e189c385fbf53f728b0151d6ebce88c38ac8cc1586c628412f0e",
+      "project.py": "47fb3d90259834e817cfc8190519f9458eb7f55241f168e5511786d931dec4d1",
+      "reasoning.py": "c85c15c982f52d78a9ce25e6d1ad125e68d24330d40330796654d6db7e6683f5",
+      "report.py": "b790cb7cfd244eab9f06e6379cb583240577998f75dcdf7673076936e324068a",
+      "runner.py": "15a0226513b0f2afcc6aa15b39e2a1fef8b79523a37ef741fcc5553c6055cb87",
+      "service.py": "81c1083d6235f56fd253d2b293a5046da01bf2e8c8aa10818e587904184032bb",
+      "source_context.py": "051e4f6a532676d5028ba45f2d1814bb1845d638802dca97a9dc3cea2935055a",
+      "storage.py": "590f5dc772005a97d7f16db8772fe23745d2b5d35329c3030e86e003fa08d1cf",
+      "symbol_advice.py": "6079ca904ce35bb9428672c596a05279cbdae4167a3a75e98fa854031a3a69ba",
+      "symbol_context.py": "43386b554b894ccfd0f98ea442cab2f4a85c6b1add20fac7ef78f4c629120e50",
+      "test_results.py": "13f15b576756e7adb8928e1f1a587c8a47d5ececafbf240bdec57ea52de6cde2",
+      "toolchain_cases.py": "1ae365eb0e6cb7cc595bd6fcb9f887cf3783911195dddd8a087bcc2020e9866d",
+      "toolchain_environments.py": "e54842f74ec28248d10d41cd819e9c34a3865e095f4bfbe341da662d88a11515",
+      "toolchain_manifest.py": "396d4649d45f16f36648b6e802eb159f77e322455a053fbb7eac146c63fa3838",
+      "versions.py": "bac5f2e083eacec0952bddde71fff60e0ea11faf08c96e63c004571132883391",
+      "web.py": "c440b25c10f3fb0c880812e400fd479cab8c6b4f9b68cae3b5a731601be353e8",
+      "workspace.py": "a2fef548e060a2291f7c711f58ecfc330f42162bf40b5e245a80007174e888bf"
+    },
+    "after": {
+      "__init__.py": "f306963c4844cb4daa5a61575d3a3ebfde9f1fbdb19938d74a10c8fe667a0f3b",
+      "__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+      "_notebook_runner.py": "9a16e715352f07284c9952b1b7027920f82691b55fcda1699a64be5c2b5ec154",
+      "_runtime_evidence.py": "569085ff5c6260e203744f4f552a9c0751e4e23c2613323ab34c9f06a1fd64e5",
+      "_unittest_runner.py": "abb94b5f4852a575ecdd0bc8702ce3758724bd55fca00c6e806055a483053356",
+      "_winprocess.py": "a57855d492192b3ac29004d1212f135721ac930c6b2bfba30dce1496840ad1b4",
+      "behavior.py": "4c308ec9b93854d877dce8d79e8f590916730f64153e7abdf98493c6c50d53d0",
+      "binding_advice.py": "8c35e8b9cafd4541189de3283904d4f9707a8344351f87340223359cf1b61059",
+      "cases.py": "f4e25213b6902b081bdda50ab896903f91a23280496ff23cc3f587f4809c170d",
+      "classification.py": "01c15255662d886121a328f69fca2be67e6c4d605a1f7cbd3c8fcb5a45ab9cfc",
+      "cli.py": "20075018501c2922275e00304a325ddaa0c98d8a65c1b80f3cb29d9d86d27257",
+      "conda_declarations.py": "9df3ae4263a16b2c328ed5c3838e33423f601a720780e28ae706e02661504ffd",
+      "dependency_advice.py": "d738017172a71e0c5df01848d06dae4dacaa0d6b944cbdb4c8e7d841e8d70da9",
+      "dependency_context.py": "bb554fdbb1bc23d41ea6704189d2101774f056be86bacdffa31db8c64a4ccf1a",
+      "dependency_resolution.py": "2f46bd324cf140643accdb082b900f1c7326f07caed4632c0bf8aed108de9f8b",
+      "diagnosis_cases.py": "1ed05b103f758f20ced0739ed12e6b8a58d6ea463c551c3d0326e74b89d19636",
+      "django_configuration.py": "83955faabe280cd1095e266b97554383f2f299cf928e8081940748f8c5fd3be7",
+      "domain.py": "fb827a8a39b3fead16ece72171ccab7988967f8ae14074e11ab222b74c8214c8",
+      "engine.py": "2af0f39c39db97f95d50662a971a0a47a3a6ebc5af517d5c49515de0a289105e",
+      "evaluation.py": "11ef4b41e202c12bb925d140bd7b61ef0009f5cf60b14d7c1048f3e1899f0478",
+      "evidence.py": "f9875ef137ac393c89d34331a8a67f340e0c10ea8b3399ff8c925b728432335e",
+      "execution.py": "f83c009c6ea21d252bfd17fb66adf04e0631ca8b6571f45873d96c519bf29e2f",
+      "execution_cases.py": "49d0f5f4d1ac3158101046d205c17602a00cc5f35e9da59c99c9cf71d75f556c",
+      "execution_parsers.py": "8486f3065a6c8321c631b32b8945d5217d4f83a62145a0d2ec7ec6121ef36af9",
+      "facts.py": "79bd7ae56806090f4a19b54f83277696bc6e472041deee546888d72357c80926",
+      "grouping.py": "b432e844d5c6add7c36b24057c7ce3a9dff8b5855d0efb3e5703121848aeed0f",
+      "hard_cases.py": "e729c1476e9b8bb4adf3e18f2d419c68173a2cb3bf512539c47224f70daa7833",
+      "historical_cases.py": "5d0ed255be14aae2f91dd5bed04ebe92723e46294abd1b6f94d4c20d098cbb90",
+      "install_errors.py": "015b6cc0104a73cfb2f5ebc8aba71bb039098a06794b1fdbd2ab893e07aebdc7",
+      "install_feedback.py": "394c49e738842602600ecc01ad4365c6b3dc110e8f3fd65ad76b31c1ec36c517",
+      "integrity.py": "bbb329a7f70d3bd07f1563378085e6348cf352462623582f5b9f3d2131df2b5e",
+      "interactive.py": "5308cb305bf117546f51ee7796accb1515c426f165cd8e823db6024d175dd01a",
+      "interface_history.py": "14a7f36f742e08827eeb288af2c88e9b465b858c988c0dcb9b15506095fe7ade",
+      "knowledge/diagnosis_tree.json": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3",
+      "knowledge/domain.toml": "ba7106f16d532605adcbb91171270d3ec58186a03891c544e700ccb2ae9bc3ed",
+      "knowledge/rules.toml": "ea64d31f0a2d2ac5106d495f553bfe0f4dc3578601b947aabbd02d11c7e810b4",
+      "knowledge_graph.py": "ea7b0c3f9f0b1e834f353bc459b48eabd8843a273aa8097718a14b4c413af03d",
+      "mcp_server.py": "a507925d1f0ac7d1ea1dd1e5ff0e37ca32e9e23c957d6946e4f487da384d4377",
+      "migration_advice.py": "79ce1da4034970c83815b1f69b14457e96601c3a9ec140324535699ea6c19aa9",
+      "models.py": "6ba17b1ee1d70d45f903eb20c9ebab1e7ab31f70fc60cbdb9dcd746680e175e5",
+      "multi_cases.py": "43d6f7cca66c4056d293a26f4d6fd924c07a55bef03fc074e613cfe6ff36733d",
+      "observed_operations.py": "c9740ec67579c56f1f66a2d78d317f3970e278a8f380391f4274de3d86893e55",
+      "parsers.py": "915f6092574f9ce18529285fe5d26966e48edde9a7802ab3a9057b631e3c209a",
+      "playground.py": "f813c09dc4708672778f53dd6b7c87827121f6f2e11093524a0e9a30d568322d",
+      "probe.py": "322a5330f104e22af3827db45ffaee528a458474288dace5e164c4765306c0a4",
+      "processes.py": "f86b783afb16e189c385fbf53f728b0151d6ebce88c38ac8cc1586c628412f0e",
+      "project.py": "2174c7937e4d730e314c8ef5b6be1bb4ca8127d5f5967960c612c5257b4874f7",
+      "pytest_settings.py": "8d3a92a759f689b970aa302bbf76bab1bbf37c7267babc09f0afcb2bd1c750f7",
+      "reasoning.py": "a1add5dd93d3a94aed8c1e5a5bbcdb62cd5401556f06c00c71d2ed25e8beb4ed",
+      "report.py": "02f274d1b9999d2861d72997d4b3ad1174bbde259872674c704b665d0d312e07",
+      "runner.py": "330d76ff2fff89b353c729f255ad948aebef9163119f6667e3d164053f4653e7",
+      "service.py": "63d2b23ba0ea89afbe7571a2e6153e08e5e0bf686661f479f58082e1afb47b0f",
+      "source_context.py": "051e4f6a532676d5028ba45f2d1814bb1845d638802dca97a9dc3cea2935055a",
+      "storage.py": "590f5dc772005a97d7f16db8772fe23745d2b5d35329c3030e86e003fa08d1cf",
+      "symbol_advice.py": "6079ca904ce35bb9428672c596a05279cbdae4167a3a75e98fa854031a3a69ba",
+      "symbol_context.py": "43386b554b894ccfd0f98ea442cab2f4a85c6b1add20fac7ef78f4c629120e50",
+      "test_results.py": "d4a9d07e116363d0712ab74140e9e897a588b346d5ecd37c3b44d77caf479454",
+      "tool_compatibility.py": "949951180fbeab754519803915bd18450fb6f651f603042e6d42052886148551",
+      "toolchain_cases.py": "1ae365eb0e6cb7cc595bd6fcb9f887cf3783911195dddd8a087bcc2020e9866d",
+      "toolchain_environments.py": "e54842f74ec28248d10d41cd819e9c34a3865e095f4bfbe341da662d88a11515",
+      "toolchain_manifest.py": "396d4649d45f16f36648b6e802eb159f77e322455a053fbb7eac146c63fa3838",
+      "versions.py": "086258636dd2dddd12a59f5af3d4ec19311c4c4aea56b2365488dc47be03adf7",
+      "web.py": "c440b25c10f3fb0c880812e400fd479cab8c6b4f9b68cae3b5a731601be353e8",
+      "workspace.py": "4ae36cdccd05b4ca31b99111678cca49f35e52ce437dd4f1033d34d091973c7b"
+    }
+  }
+}

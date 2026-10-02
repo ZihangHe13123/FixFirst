@@ -1,0 +1,481 @@
+{
+  "origin": "toolchain_injection",
+  "suite": "toolchain",
+  "cases": 98,
+  "issues": 108,
+  "labels": {
+    "version_incompatibility": 53,
+    "code_defect": 5,
+    "local_module": 5,
+    "missing_dependency": 15,
+    "config_missing": 30
+  },
+  "trained_on": {
+    "dataset": "diagnosis-dataset",
+    "issues": 215
+  },
+  "skipped_rules": [],
+  "library_versions": {},
+  "summary": {
+    "naive_v03": {
+      "n": 108,
+      "accuracy": 0.1852,
+      "macro_f1": 0.1456,
+      "coverage": 1.0,
+      "precision_when_answered": 0.1852,
+      "accuracy_95ci": [
+        0.1121,
+        0.2617
+      ]
+    },
+    "rules_no_kg": {
+      "n": 108,
+      "accuracy": 0.0463,
+      "macro_f1": 0.2,
+      "coverage": 0.0463,
+      "precision_when_answered": 1.0,
+      "accuracy_95ci": [
+        0.0093,
+        0.0926
+      ]
+    },
+    "rules": {
+      "n": 108,
+      "accuracy": 0.0926,
+      "macro_f1": 0.2345,
+      "coverage": 0.0926,
+      "precision_when_answered": 1.0,
+      "accuracy_95ci": [
+        0.0439,
+        0.1553
+      ]
+    },
+    "rules_heur": {
+      "n": 108,
+      "accuracy": 0.1389,
+      "macro_f1": 0.2635,
+      "coverage": 0.1389,
+      "precision_when_answered": 1.0,
+      "accuracy_95ci": [
+        0.0741,
+        0.2115
+      ]
+    },
+    "tree": {
+      "n": 108,
+      "accuracy": 0.4167,
+      "macro_f1": 0.3532,
+      "coverage": 1.0,
+      "precision_when_answered": 0.4167,
+      "accuracy_95ci": [
+        0.319,
+        0.5189
+      ]
+    },
+    "hybrid_no_kg": {
+      "n": 108,
+      "accuracy": 0.463,
+      "macro_f1": 0.4619,
+      "coverage": 1.0,
+      "precision_when_answered": 0.463,
+      "accuracy_95ci": [
+        0.3654,
+        0.5701
+      ]
+    },
+    "hybrid": {
+      "n": 108,
+      "accuracy": 0.5093,
+      "macro_f1": 0.5243,
+      "coverage": 1.0,
+      "precision_when_answered": 0.5093,
+      "accuracy_95ci": [
+        0.4107,
+        0.6139
+      ]
+    }
+  },
+  "per_scenario": [
+    {
+      "scenario": "dj_apps_not_ready",
+      "label": "config_missing",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 0.0,
+      "hybrid_no_kg": 0.0,
+      "hybrid": 0.0
+    },
+    {
+      "scenario": "dj_unset_makefile",
+      "label": "config_missing",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 1.0,
+      "hybrid_no_kg": 1.0,
+      "hybrid": 1.0
+    },
+    {
+      "scenario": "dj_unset_pytest_django",
+      "label": "config_missing",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 1.0,
+      "hybrid_no_kg": 1.0,
+      "hybrid": 1.0
+    },
+    {
+      "scenario": "dj_unset_runtests",
+      "label": "config_missing",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 1.0,
+      "hybrid_no_kg": 1.0,
+      "hybrid": 1.0
+    },
+    {
+      "scenario": "dj_unset_runtime",
+      "label": "config_missing",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 1.0,
+      "hybrid_no_kg": 1.0,
+      "hybrid": 1.0
+    },
+    {
+      "scenario": "dj_unset_tox",
+      "label": "config_missing",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 1.0,
+      "hybrid_no_kg": 1.0,
+      "hybrid": 1.0
+    },
+    {
+      "scenario": "ol_nose_imp",
+      "label": "version_incompatibility",
+      "knowledge_covered": true,
+      "n": 5,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 1.0,
+      "rules_heur": 1.0,
+      "tree": 0.0,
+      "hybrid_no_kg": 0.0,
+      "hybrid": 1.0
+    },
+    {
+      "scenario": "ol_six_moves",
+      "label": "version_incompatibility",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 1.0,
+      "tree": 1.0,
+      "hybrid_no_kg": 1.0,
+      "hybrid": 1.0
+    },
+    {
+      "scenario": "st_get_distribution",
+      "label": "missing_dependency",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 1.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 0.0,
+      "hybrid_no_kg": 0.0,
+      "hybrid": 0.0
+    },
+    {
+      "scenario": "st_pkg_resources_absent",
+      "label": "missing_dependency",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 1.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 1.0,
+      "hybrid_no_kg": 1.0,
+      "hybrid": 1.0
+    },
+    {
+      "scenario": "st_pkg_resources_removed",
+      "label": "version_incompatibility",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 0.0,
+      "hybrid_no_kg": 0.0,
+      "hybrid": 0.0
+    },
+    {
+      "scenario": "st_pkg_resources_runtime",
+      "label": "missing_dependency",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 1.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 1.0,
+      "hybrid_no_kg": 1.0,
+      "hybrid": 1.0
+    },
+    {
+      "scenario": "tt_ast_str_ini",
+      "label": "version_incompatibility",
+      "knowledge_covered": false,
+      "n": 4,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 0.0,
+      "hybrid_no_kg": 0.0,
+      "hybrid": 0.0
+    },
+    {
+      "scenario": "tt_ast_str_narrow",
+      "label": "version_incompatibility",
+      "knowledge_covered": false,
+      "n": 4,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 0.0,
+      "hybrid_no_kg": 0.0,
+      "hybrid": 0.0
+    },
+    {
+      "scenario": "tt_ast_str_setupcfg",
+      "label": "version_incompatibility",
+      "knowledge_covered": false,
+      "n": 4,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 0.0,
+      "hybrid_no_kg": 0.0,
+      "hybrid": 0.0
+    },
+    {
+      "scenario": "tt_ast_str_t625",
+      "label": "version_incompatibility",
+      "knowledge_covered": false,
+      "n": 2,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 0.0,
+      "hybrid_no_kg": 0.0,
+      "hybrid": 0.0
+    },
+    {
+      "scenario": "tt_ast_str_toml",
+      "label": "version_incompatibility",
+      "knowledge_covered": false,
+      "n": 4,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 0.0,
+      "hybrid_no_kg": 0.0,
+      "hybrid": 0.0
+    },
+    {
+      "scenario": "tt_own_warning",
+      "label": "code_defect",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 1.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 1.0,
+      "hybrid_no_kg": 1.0,
+      "hybrid": 1.0
+    },
+    {
+      "scenario": "tt_py_spec_t625",
+      "label": "version_incompatibility",
+      "knowledge_covered": false,
+      "n": 10,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 0.0,
+      "hybrid_no_kg": 0.0,
+      "hybrid": 0.0
+    },
+    {
+      "scenario": "tt_py_spec_t713",
+      "label": "version_incompatibility",
+      "knowledge_covered": false,
+      "n": 10,
+      "naive_v03": 0.0,
+      "rules_no_kg": 0.0,
+      "rules": 0.0,
+      "rules_heur": 0.0,
+      "tree": 0.0,
+      "hybrid_no_kg": 0.0,
+      "hybrid": 0.0
+    },
+    {
+      "scenario": "tt_shadow_pluggy",
+      "label": "local_module",
+      "knowledge_covered": false,
+      "n": 5,
+      "naive_v03": 0.0,
+      "rules_no_kg": 1.0,
+      "rules": 1.0,
+      "rules_heur": 1.0,
+      "tree": 0.0,
+      "hybrid_no_kg": 1.0,
+      "hybrid": 1.0
+    }
+  ],
+  "hybrid_said": {
+    "dj_apps_not_ready": {
+      "code_defect (tree)": 5
+    },
+    "dj_unset_makefile": {
+      "config_missing (tree)": 5
+    },
+    "dj_unset_pytest_django": {
+      "config_missing (tree)": 5
+    },
+    "dj_unset_runtests": {
+      "config_missing (tree)": 5
+    },
+    "dj_unset_runtime": {
+      "config_missing (tree)": 5
+    },
+    "dj_unset_tox": {
+      "config_missing (tree)": 5
+    },
+    "ol_nose_imp": {
+      "version_incompatibility (D01)": 5
+    },
+    "ol_six_moves": {
+      "version_incompatibility (H09)": 5
+    },
+    "st_get_distribution": {
+      "local_module (tree)": 5
+    },
+    "st_pkg_resources_absent": {
+      "missing_dependency (tree)": 5
+    },
+    "st_pkg_resources_removed": {
+      "missing_dependency (tree)": 5
+    },
+    "st_pkg_resources_runtime": {
+      "missing_dependency (tree)": 5
+    },
+    "tt_ast_str_ini": {
+      "config_missing (tree)": 4
+    },
+    "tt_ast_str_narrow": {
+      "config_missing (tree)": 4
+    },
+    "tt_ast_str_setupcfg": {
+      "config_missing (tree)": 4
+    },
+    "tt_ast_str_t625": {
+      "config_missing (tree)": 2
+    },
+    "tt_ast_str_toml": {
+      "config_missing (tree)": 4
+    },
+    "tt_own_warning": {
+      "code_defect (tree)": 5
+    },
+    "tt_py_spec_t625": {
+      "code_defect (tree)": 10
+    },
+    "tt_py_spec_t713": {
+      "code_defect (tree)": 10
+    },
+    "tt_shadow_pluggy": {
+      "local_module (D10)": 5
+    }
+  },
+  "hybrid_confusion": {
+    "missing_dependency": {
+      "missing_dependency": 10,
+      "local_module": 5,
+      "version_incompatibility": 0,
+      "config_missing": 0,
+      "code_defect": 0,
+      "none": 0
+    },
+    "local_module": {
+      "missing_dependency": 0,
+      "local_module": 5,
+      "version_incompatibility": 0,
+      "config_missing": 0,
+      "code_defect": 0,
+      "none": 0
+    },
+    "version_incompatibility": {
+      "missing_dependency": 5,
+      "local_module": 0,
+      "version_incompatibility": 10,
+      "config_missing": 18,
+      "code_defect": 20,
+      "none": 0
+    },
+    "config_missing": {
+      "missing_dependency": 0,
+      "local_module": 0,
+      "version_incompatibility": 0,
+      "config_missing": 25,
+      "code_defect": 5,
+      "none": 0
+    },
+    "code_defect": {
+      "missing_dependency": 0,
+      "local_module": 0,
+      "version_incompatibility": 0,
+      "config_missing": 0,
+      "code_defect": 5,
+      "none": 0
+    }
+  },
+  "limitations": "Real runs in pinned virtual environments, one fix verified per case. Scenarios were written after the 2026-10 held-out run showed these mechanisms, so results on them are development results, never held-out ones. They are not a sample of naturally occurring failures."
+}
