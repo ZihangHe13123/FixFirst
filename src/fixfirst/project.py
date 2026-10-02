@@ -494,6 +494,9 @@ def collect_project(session, env_id: str) -> Run:
     ))
     data["lint_config"] = lint_settings(Path(session.project_root))
     data["pytest_warning_filters"] = recorded_warning_filters(Path(session.project_root))
+    from .django_configuration import recorded_configuration
+
+    data["django_configuration"] = recorded_configuration(Path(session.project_root))
     data["tested_versions"] = tested_versions(Path(session.project_root))
     run.stdout = json.dumps(redact_data(data), ensure_ascii=False, indent=2)
     run.exit_code = 0

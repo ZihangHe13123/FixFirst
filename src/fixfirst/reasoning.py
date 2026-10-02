@@ -85,6 +85,13 @@ def base_facts(session: Session, active, knowledge=True) -> tuple[list[Fact], di
     for issue_id, detail in tool_details.items():
         if issue_id in details:
             details[issue_id]["tool_failure"] = detail
+    from .django_configuration import observations as django_observations
+
+    django_facts, django_details = django_observations(session, active)
+    evidence_facts += django_facts
+    for issue_id, detail in django_details.items():
+        if issue_id in details:
+            details[issue_id]["django_configuration"] = detail
     facts += evidence_facts
     mentioned = {
         f.value for f in evidence_facts
@@ -444,6 +451,9 @@ def infer_and_plan(session: Session):
     from .tool_compatibility import refine as refine_tools
 
     actions = refine_tools(session, actions, details, base.facts)
+    from .django_configuration import refine as refine_django
+
+    actions = refine_django(session, actions, details)
     from .install_feedback import bind_commands
     from .evidence import project_index
 
