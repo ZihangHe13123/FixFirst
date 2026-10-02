@@ -106,6 +106,9 @@ class Environments:
         pins = entry["packages"] if entry else list(definition.packages)
         no_deps = ["--no-deps"] if entry else []
         command([self.uv, "pip", "install", "-q", "--python", str(interpreter(folder)), *no_deps, *pins])
+        # --no-deps reproduces a lock, but alone would accept a lock that omitted
+        # a transitive dependency or pinned an incompatible version.
+        command([self.uv, "pip", "check", "--python", str(interpreter(folder))])
         observed = identity(folder)
         if entry:
             expected = {canonicalize_name(Requirement(p).name): str(next(iter(Requirement(p).specifier)).version)

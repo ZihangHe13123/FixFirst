@@ -66,7 +66,12 @@ def _case_datasets(dataset: Path, root=None, seen=None, depth=0):
         raise ValueError("Dataset has neither cases nor a suite manifest")
     if not manifest.resolve().is_relative_to(root):
         raise ValueError("Dataset manifest escapes its suite")
-    parts = json.loads(manifest.read_text(encoding="utf-8")).get("datasets")
+    metadata = json.loads(manifest.read_text(encoding="utf-8"))
+    if metadata.get("suite") == "toolchain":
+        from .toolchain_manifest import validate
+
+        validate(metadata)
+    parts = metadata.get("datasets")
     if (not isinstance(parts, list) or not parts or len(parts) > 1000
             or any(not isinstance(p, str) or not p or Path(p).is_absolute() for p in parts)):
         raise ValueError("Dataset suite requires a nonempty list of child datasets")

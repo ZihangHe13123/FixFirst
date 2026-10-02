@@ -100,3 +100,52 @@ def test_manager_refuses_existing_environment(tmp_path, monkeypatch):
     manager = te.Environments(tmp_path, {"case": tc.Env("case", "3.12", ("pytest==8.3.5",))})
     with pytest.raises(ValueError, match="unowned"):
         manager.build("case")
+
+
+def test_toolchain_wrapper_keeps_suite_validation(tmp_path):
+    root = tmp_path / "suite"
+    (root / "child").mkdir(parents=True)
+    (root / "child/cases.jsonl").write_text("")
+    (root / "manifest.json").write_text(json.dumps({
+        "scenarios": [], "datasets": ["child", "child"]}))
+    with pytest.raises(ValueError, match="duplicate"):
+        tc.load_rows(root)
+
+
+@pytest.mark.parametrize("change", ["incomplete", "missing", "duplicate", "audit"])
+def test_new_suite_rejects_partial_or_unreconciled_ledger(tmp_path, change):
+    from fixfirst.toolchain_manifest import validate
+
+    value = {"schema_version": 2, "completion": "complete", "templates": ["t"],
+             "scenarios": [{"id": "s"}], "cases": [{"case_id": "t--s"}],
+             "unparsed": [], "rejected": [], "inapplicable": [],
+             "audit_files": ["audit/t--s.json"]}
+    validate(value)
+    if change == "incomplete":
+        value["completion"] = "incomplete"
+    elif change == "missing":
+        value["cases"] = []
+    elif change == "duplicate":
+        value["rejected"] = [{"case_id": "t--s"}]
+    elif change == "audit":
+        value["audit_files"] = []
+    with pytest.raises(ValueError):
+        validate(value)
+
+
+def test_dependency_check_failure_prevents_accepting_version_pins(tmp_path, monkeypatch):
+    monkeypatch.setattr(te.shutil, "which", lambda name: "uv")
+    commands = []
+
+    def command(argv):
+        commands.append(argv)
+        if argv[1:3] == ["pip", "check"]:
+            raise ValueError("missing transitive dependency")
+        return "uv recorded-version"
+
+    monkeypatch.setattr(te, "command", command)
+    manager = te.Environments(tmp_path, {"case": tc.Env("case", "3.12", ("pytest==8.3.5",))})
+    with pytest.raises(ValueError, match="transitive"):
+        manager.build("case")
+    assert any(argv[1:3] == ["pip", "check"] for argv in commands)
+    assert not manager.records

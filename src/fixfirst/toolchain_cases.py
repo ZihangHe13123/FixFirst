@@ -36,6 +36,7 @@ from . import diagnosis_cases as dc
 from .models import now
 from .service import create_session, scan
 from .toolchain_environments import Environments, interpreter, source_identity
+from .toolchain_manifest import validate as validate_manifest
 
 HEALTHY_ENV = "t8"
 
@@ -432,7 +433,8 @@ def build_dataset(output: Path, work: Path | None = None, keep_work: bool = Fals
     started = time.monotonic()
     chosen = [s for s in TOOL_SCENARIOS if not only or s.scenario_id in only]
     manifest = {
-        "schema_version": 1,
+        "schema_version": 2,
+        "completion": "running",
         "source_files_sha256": source_identity(),
         "lock_mode": "exact_replay" if lock else "discovery",
         "created_at": now(),
@@ -491,7 +493,11 @@ def build_dataset(output: Path, work: Path | None = None, keep_work: bool = Fals
                 manifest["datasets"].append(env_key)
             else:
                 shutil.rmtree(sub)
+        validate_manifest(manifest, complete=False)
+        manifest["completion"] = "complete"
     finally:
+        if manifest["completion"] != "complete":
+            manifest["completion"] = "incomplete"
         manifest["environments"] = manager.records
         manifest["seconds"] = round(time.monotonic() - started, 1)
         dc.write(output / "environment-lock.json", json.dumps(manager.export_lock(), indent=2))
@@ -553,14 +559,15 @@ def build_case(scenario, template, pristine, work, folder, envs, sub, manifest):
 
 def load_rows(output: Path, skip=()) -> list[dict]:
     """The evaluation rows of every sub-dataset (evaluation.load_rows), with the family and sub-dataset attached."""
-    from .evaluation import load_rows as load_one
+    from .evaluation import _case_datasets, load_rows as load_one
 
     output = Path(output)
     manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
     families = {s["id"]: s["family"] for s in manifest["scenarios"]}
     rows = []
-    for name in manifest["datasets"]:
-        for row in load_one(output / name, skip):
+    for child in _case_datasets(output):
+        name = str(child.relative_to(output.resolve()))
+        for row in load_one(child, skip):
             row["family"] = families[row["scenario"]]
             row["dataset"] = name
             rows.append(row)
