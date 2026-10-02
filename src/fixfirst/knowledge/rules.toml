@@ -396,6 +396,38 @@ then = [["?i", "diagnosis", "config_missing"], ["?i", "remedy", "provide_env"], 
 # ======================================================================================
 
 [[rule]]
+id = "D49"
+phase = "diagnose"
+description = "A py vendored-apipkg __spec__ failure is attributed to the installed tool and its documented version interval."
+when = [
+  ["?i", "tool_failure_symptom", "tool-failure:py-apipkg-spec"],
+  ["?i", "tool_failure_symptom", "?x"], ["?i", "tool_failure_provider", "?d"],
+  ["?x", "tool_distribution", "?d"], ["?d", "installed_version", "?iv"],
+  ["?x", "affected_from", "?lo"], ["?x", "fixed_version", "?fixed"],
+  ["test", "version_gte", "?iv", "?lo"], ["test", "version_lt", "?iv", "?fixed"],
+  ["dist:python", "installed_version", "?py"],
+  ["?x", "python_from", "?plo"], ["?x", "python_before", "?phi"],
+  ["test", "version_gte", "?py", "?plo"], ["test", "version_lt", "?py", "?phi"],
+]
+then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "upgrade_test_tool"], ["?i", "because", "?x"]]
+
+[[rule]]
+id = "D50"
+phase = "diagnose"
+description = "The recorded pytest assertion rewriter triggers Python's ast.Str deprecation as an exception within a documented affected interval."
+when = [
+  ["?i", "tool_failure_symptom", "tool-failure:pytest-ast-str"],
+  ["?i", "tool_failure_symptom", "?x"], ["?i", "tool_failure_provider", "?d"],
+  ["?x", "tool_distribution", "?d"], ["?d", "installed_version", "?iv"],
+  ["?x", "affected_from", "?lo"], ["?x", "fixed_version", "?fixed"],
+  ["test", "version_gte", "?iv", "?lo"], ["test", "version_lt", "?iv", "?fixed"],
+  ["dist:python", "installed_version", "?py"],
+  ["?x", "python_from", "?plo"], ["?x", "python_before", "?phi"],
+  ["test", "version_gte", "?py", "?plo"], ["test", "version_lt", "?py", "?phi"],
+]
+then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "upgrade_test_tool"], ["?i", "because", "?x"]]
+
+[[rule]]
 id = "D40"
 phase = "diagnose"
 description = "A test assertion failed: the observed behaviour differs from the test's expectation."
@@ -1709,3 +1741,24 @@ cost = 1
 title = "Pass {?parameter} positionally at {?location}"
 explanation = "The actual callable declares this parameter as positional-only. Preserve the existing expression and original tests."
 verification = "Re-run the original failing scope and then the full unchanged test suite"
+
+[[rule]]
+id = "P85"
+phase = "plan"
+description = "Offer the source-cited repair for this specific test-tool failure, subject to project and installed dependency constraints."
+when = [
+  ["?i", "remedy", "upgrade_test_tool"], ["?i", "because", "?x"],
+  ["?x", "tool_distribution", "?d"], ["?d", "installed_version", "?iv"],
+  ["dist:python", "installed_version", "?py"],
+  ["?x", "fixed_version", "?fixed"], ["?x", "change_summary", "?summary"],
+]
+[rule.action]
+id = "upgrade-test-tool-{?d}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 1
+title = "Upgrade {?d} from {?iv} to {?fixed} for this Python {?py} test-tool failure"
+explanation = "{?summary} This check recorded the corresponding failing tool operation with {?d} {?iv} and Python {?py}. {?d} {?fixed} is a repair candidate for this specific fault, not proof that the whole project or every plugin supports this Python. Keep other dependency constraints and review any conflicting pin before installing."
+pip_install = "{?d}=={?fixed}"
+verification = "Keep the test and warning configuration, check dependency consistency and rerun the original failing command"

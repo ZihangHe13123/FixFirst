@@ -4,6 +4,7 @@ import json
 import os
 import importlib.util
 from pathlib import Path
+import traceback
 
 _runtime_spec = importlib.util.spec_from_file_location(
     "_fixfirst_runtime_evidence", Path(__file__).with_name("_runtime_evidence.py"))
@@ -35,6 +36,51 @@ def emit(data, final=False):
         return
     with open(path, "a", encoding="utf-8") as file:
         file.write(text)
+
+
+def pytest_load_initial_conftests():
+    """Retain the actual startup exception before pytest hides its internal frames.
+
+    The hook wrapper observes the existing outcome; it never retries, suppresses,
+    or replaces the failure. In particular a project's own warning stays a
+    project warning even when pytest's displayed traceback is shortened.
+    """
+    outcome = yield
+    try:
+        info = outcome.excinfo
+        if not info:
+            return
+        kind, value, tb = info
+        # pytest wraps a failed conftest import and later hides the tool frames.
+        if kind.__name__ == "ConftestImportFailure" and kind.__module__.startswith("_pytest."):
+            inner = getattr(value, "excinfo", None)
+            if isinstance(inner, tuple) and len(inner) == 3:
+                kind, value, tb = inner
+            else:
+                cause = getattr(value, "cause", None)
+                if isinstance(cause, BaseException):
+                    kind, value, tb = type(cause), cause, cause.__traceback__
+        if tb is None:
+            return
+        last = tb
+        while last.tb_next:
+            last = last.tb_next
+        node = "<initial-conftest>"
+        emit({"type": "failure", "stage": "collect", "nodeid": node,
+              "message": "".join(traceback.format_exception(kind, value, tb))[:32000]})
+        emit({"type": "exception", "stage": "collect", "nodeid": node,
+              "exception_type": kind.__name__, "exception_module": kind.__module__,
+              "exception_message": str(value)[:16000],
+              "source_file": last.tb_frame.f_code.co_filename, "source_line": last.tb_lineno,
+              **_runtime.exception_metadata(value, tb)})
+    except BaseException:
+        # An observation failure must not alter pytest's original error outcome.
+        pass
+
+
+# Equivalent to hookimpl(hookwrapper=True, tryfirst=True); retain this copied
+# probe's stdlib-only imports, including before conftest loading succeeds.
+pytest_load_initial_conftests.pytest_impl = {"hookwrapper": True, "tryfirst": True}
 
 
 def pytest_collectreport(report):
