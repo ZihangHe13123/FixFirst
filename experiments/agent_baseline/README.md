@@ -145,7 +145,12 @@ held-out projects are added only after A2's results are merged.
 - **One interpreter.** Commands, pytest, FixFirst's diagnosis and the grader all use the case's
   `.venv`, with nothing inherited from the harness's environment. The MCP `diagnose` call always
   gets the case's project and interpreter: a missing value is filled in (`mcp_arguments_filled`), a
-  different one is overridden (`mcp_arguments_overridden`).
+  different one is overridden (`mcp_arguments_overridden`). In every case, real or generated, `diagnose` and `observe`
+  also get the grader's goal (`pass_tests`: the full suite, with pytest), counted as `mcp_goal_filled`
+  or `mcp_goal_overridden`, and so do the harness's own first calls under `scheduled`. In the
+  2026-10-01 smoke Qwen3.8 passed no goal; FixFirst guessed unittest for cachetools (all its tests are
+  unittest-style and no pytest section is configured) and kept reporting a failure after the pytest
+  suite passed, so the agent spent another ~720 s on it. The goal carries no test content.
 - **Time.** `--run-timeout` is the agent's budget. Model requests, every tool call, FixFirst's
   server and every process get only what is left; at the deadline the whole process tree is killed
   (FixFirst's checks run in their own sessions, so the harness finds them by parent process). Calls
@@ -215,6 +220,31 @@ held-out projects are added only after A2's results are merged.
   `reference_invalid`, `unsupported_case`, `harness_error`, `cleanup_failed`), `error` with the stage, and `grading`
   (`graded`, `not_graded`, `grading_error`); `fixed` is empty unless the run was graded. Arms
   alternate per case and run.
+- **A registered failing install is the start, not an error.** Some real projects begin with the
+  project itself failing to install (parsel 1.6.0: its `setup.py` imports `pkg_resources`, which
+  today's setuptools no longer ships). The manifest registers such lines before any run with
+  `install_fails`. Only a plain install of the project itself can be registered (`.`, `.[extras]`,
+  `-e .` or `-e .[extras]`); a line that installs anything else as well, or that names the project's
+  folder only as another option's value (`-r ./requirements.txt`, `--find-links . pytest`), is refused
+  up front. Every arm and the reference then start from the same state: the registered step runs in
+  the sandbox and must fail, as it did when the case was recorded, and the run continues from there.
+  The step must run to completion and exit with an error of its own. If it succeeds, is stopped at its
+  time limit, is ended by a signal, or (in a cached reference) has no record that it ran to completion,
+  the start is not the registered one: the run ends as `setup_failed` with that reason before any
+  episode, and the reference is invalid and never cached; nothing is skipped silently. A step that is
+  not registered must still succeed. Every real-project row records `install_fails_registered` (also
+  when its reference or environment failed), every install step records whether it was `stopped`, and
+  the registration is part of the reference's cache key.
+- **Projects the sandbox cannot support are excluded by a rule fixed in advance.** A project whose
+  reference stays invalid only because its tests need what the sandbox denies (listing processes,
+  files in the user's home, the network while grading) is left out of the main analysis, and the
+  number and the reasons are reported. A reference that is invalid for any other reason (an incomplete
+  repair, an install problem a repair can fix) is not excluded by this rule: it is repaired, or
+  reported as invalid. Tests are never deselected to make a case pass; a common test
+  subset would need a protocol change first and would be reported apart, never as passing the full
+  original suite. Example: typer 0.3.2. Its repair needs both `shellingham` and `coverage` from the
+  `[test]` extra (153 tests run the `coverage` command); with both, two tests still fail under the
+  sandbox (`shellingham` runs `ps`, and one test expects a `~/.bashrc`).
 - **Harness checks without a model.** `--model fake:SCRIPT.json` replays scripted replies, including
   malformed ones and slow ones. `experiments/agent_baseline/test_harness.py` (macOS, real sandboxed
   processes, offline; run it explicitly: `.venv/bin/python -m pytest -q experiments/agent_baseline/test_harness.py`)
@@ -389,6 +419,82 @@ different results for one run are refused; tokens a server did not report count 
 zero. So far this was checked with scripted replies only, on public
 development cases; the model and budget for a real comparison are not chosen yet.
 
+`task_analysis.py` is the preregistered main analysis; `compare_arms.py` stays the auxiliary one. It
+takes the task as the unit: per model, protocol and kind of case (real projects and generated hard
+cases are never pooled), each task gets one fix rate per arm over its graded runs, and arms are
+compared task by task (mcp − baseline, mcp − facts, facts − baseline). It reports the mean difference
+with a 95% t-interval, a bootstrap interval as a sensitivity check, and an exact sign test; with
+`--labels` (keys `kind:case`, or `case` when case names are unique across kinds) also per fault type.
+Episodes a model ended are graded and count. A run is identified as in `compare_arms.py` (model, call
+policy, protocol, kind, case, arm, run, attempt); it may be retried once, in a later attempt and only
+after setup_failed, mcp_start_failed, cleanup_failed or harness_error, with the attempts in a known order
+(started_utc, or the time in an automatic attempt id); anything else is a deviation, left out and
+listed. Every run used must record its source identity (a real task's source commit, a generated
+case's harness commit), and every attempt of a task that recorded one must agree on it, or the task is
+left out and listed. A comparison whose two arms were run but one has no graded runs is shown with 0
+tasks; all tasks agreeing (within 1e-9) is flagged degenerate with no interval; a ledger gives per group
+and arm the rows read and kept and the runs used, never graded, retried and left out; a bare-case label
+shared by several kinds is listed and not applied. The JSON also records the inputs' names, digests and
+rows and the analysis code's digests, with its commit only when both files are that commit's. `--simulate` checks the analysis on synthetic tasks. In the
+eleven settings tried (6–8 tasks, 3–5 runs, 2000 replicates each) the t-interval's false positives with
+no effect were 1.5–5.9% and its coverage 90.6–96.4%, against 8.8–11.8% and 82.3–90.7% for the
+percentile bootstrap, which is why the t-interval is the main one; neither has a general guarantee with
+so few, bounded and discrete task differences, and the sign test (ties dropped) cannot reach p < 0.05
+with fewer than six non-zero differences.
+It also compares how fast the fix came, task by task: the turns to the first fix (a difference) and the
+time to the first fix (a ratio of geometric means, on the log scale). The time is the harness's agent
+time to the end of the turn after which the grader's check first passed (`first_green_s`), never the
+episode's length (`agent_s`, `total_s`), which also counts what the agent did after the fix. As
+preregistered only fixed runs count; because that favours an arm that fixes only the easy runs, it is
+always shown with a failure-penalized version that keeps every graded run and counts one not fixed as its
+whole budget (a score, not a time to fix). Speed is secondary: neither replaces the fix rate.
+
+With `--family FAMILY.json` the report starts with the confirmatory family, as registered before the run:
+mcp − baseline on real projects, one comparison per model, each model with its one protocol id and its
+task set. Its decision is Holm's step-down procedure at 0.05 on the two-sided p-values of the paired
+t-test (the test the t-interval belongs to, at full precision); the intervals shown stay the usual 95%
+ones and are not adjusted. Only the registered tasks enter: a registered task without a graded run in
+both arms is listed (the estimate is then over the tasks used, not the whole registered set), and so is
+a task that was not registered. A model that cannot be estimated (no
+data under its protocol, fewer than two tasks, or every task differing by the same amount) stays in the
+family and counts as not rejected, so the family never shrinks after the results are seen. Everything
+else in the report is exploratory. Holm's adjustment does not repair a t-test that is itself off with so
+few tasks, so the family-wise error rate is not guaranteed; `--simulate --family-runs` shows how the
+family behaves under chosen settings. In the thirteen settings of `family-evidence-c464214/` (three
+models with 5, 5 and 3 runs per arm, 8 tasks, 2000 replicates each), where no model had an effect Holm's
+procedure rejected at least one in 1.15–4.85% of replicates (11.35–17.70% with unadjusted p-values); where
+every model truly gained 0.275 it rejected a 5-run model in 58.75% and 55.65% and the 3-run model in
+40.35% (74.00%, 73.10% and 55.90% unadjusted). The adjustment costs power, and none of this is a guarantee.
+
+With `--hard-selection SELECTION.json --hard-selection-sha256 HEX` the generated hard instances are held
+to the selection frozen before the runs: the record `qualify_hard.py` wrote, and the SHA-256 registered
+for that file, which the file must have. What is expected comes from that record, never from the rows:
+which scenarios are hard, and which instance of each is the formal one. The formal instances are then a
+kind of their own in the report (`hard`), apart from other generated cases. A run of one counts only if
+every attempt of it, failed ones replaced by a retry included, ran under that selection
+(`hard_selection`) in the formal role (`hard_role`), and no attempt recorded another instance
+(`hard_instance`) than the selection's for its case; the graded attempt must record it. A run that fails
+this is left out and listed with the protocol deviations, and a later attempt does not undo it. An attempt
+that failed before its instance was built recorded none: it is counted, confirms nothing and contradicts
+nothing. A hard case that is not a formal instance (a development instance, another template, any row
+with hard-instance fields) is counted and analysed nowhere in that report; a formal instance's row
+without the fields is not an ordinary generated case, it is left out. Formal instances without a run
+used are listed per model and protocol. Real projects and other generated cases keep their own path, the
+confirmatory family is untouched, and the protocol id still keeps budgets apart (a rehearsal at another
+time limit is another group). Without the option, rows with those fields are analysed as generated
+cases and the report says that nothing about their instances was checked: that is for development runs,
+not for the formal hard analysis.
+
+```bash
+.venv/bin/python experiments/agent_baseline/task_analysis.py ../agent-runs/results.jsonl --labels labels.json --json tasks.json
+.venv/bin/python experiments/agent_baseline/task_analysis.py ../agent-runs/results.jsonl --family family.json --json tasks.json
+.venv/bin/python experiments/agent_baseline/task_analysis.py ../agent-runs/results.jsonl \
+    --hard-selection experiments/agent_baseline/hard-selection.json --hard-selection-sha256 HEX --json tasks.json
+.venv/bin/python experiments/agent_baseline/task_analysis.py --simulate --family-runs 5 5 3 --effects 0 0 0 --tasks 8 --replicates 2000
+.venv/bin/python experiments/agent_baseline/task_analysis.py --simulate --tasks 8 --runs 3 --replicates 2000 \
+    --baseline beta:0.5:0.5 --effect-model half --correlation 0.7
+```
+
 ## Before the formal run
 
 - **MCP server**: done on 28 Sep (`fixfirst mcp`): tools `diagnose`, `check_again`, `explain`, output
@@ -402,3 +508,88 @@ development cases; the model and budget for a real comparison are not chosen yet
   FixFirst's first step.
 - **One-shot diagnosis baseline**: give each model the same evidence and ask only for the cause and
   the first step, with no tools. This separates knowing the answer from carrying it out.
+
+## Hard scenarios as agent tasks (2 Oct, scripted checks only)
+
+The six hard scenarios (`src/fixfirst/hard_cases.py`) could not be run: `--cases` looked only at the
+main scenarios, and five of the six append a test, which the harness refuses for a generated case
+because the healthy template is then no reference. `hard_instances.py` adds them as tasks; an instance
+is one template with one hard scenario applied.
+
+- **What a scenario may add.** `hard_cases.toml` is the harness's own whitelist: per scenario the one
+  check it may append to the template's test module (function name and body), the text its failure must
+  show, and the repair. A start is admitted only if its tests and pytest settings are the healthy
+  template's plus exactly that check, byte for byte (other line endings are another file); another test
+  file, a changed conftest.py or pytest setting, an extra or altered test make it `unsupported_case`. The
+  scenario without a check (`ml_renamed_then_alias`) must leave them unchanged.
+- **Reference.** The start with the registered repair applied to a separate copy, never to a test; for
+  the scenario without a check, the healthy template. It must pass cleanly with every test actually
+  passing, the registered check among them (a skipped check proves nothing). The repair was written
+  before any run; these fixes were known when FixFirst's rules were written, so hard cases stay
+  development data and are reported apart from real projects.
+- **During a run** nothing changes: the start's tests and settings are the baseline that must not
+  change, the grader runs the whole suite offline on a copy and compares it test by test with the
+  reference. Deleting the appended check, or replacing the faulty call by something that returns the
+  wrong value, is not a fix. The agent's sandbox cannot read the registration, the repair, the reference
+  or the other copies.
+- **Answers kept out of reach.** A frozen selection carries the registered repairs, `--repairs` the known
+  repairs of real projects, `--sources` their clones with the later history. A sandbox reads everything
+  outside the home folder, the output folder, the repository and the system temporary folders, and
+  inside those what it is given. So each of the three must lie in the home folder, the repository or a
+  system temporary folder and share no path with anything a sandbox may be given: the output folder
+  (every run's folders are made in it), FixFirst's code (`src/`), its environment and the interpreter
+  that environment was made from, the 28 Sep tool and uv. Sharing counts both ways, answers inside such
+  a folder or a folder of answers around one; otherwise the invocation is refused before any run. The
+  interpreter a real project's own environment is made from is known only once that environment exists:
+  every sandbox profile is held against the answers when it is written, so a run that would share a path
+  with the clones ends as `setup_failed` (its reference as invalid) before any sandbox of it starts. On
+  top of that every profile denies the selection and the repairs file by name, and the folder of clones
+  with everything below it.
+  A name is all the rule for a file knows: it holds where the sandbox cannot rename the file, which is
+  why no file of answers may lie where a sandbox writes.
+- **Identity.** An instance is the digest of its manifest: the registration, the appended check, every
+  file of the start and of the reference, the tests and settings, the generator's and the harness's code
+  by content, the interpreter and its installed distributions (names and versions, no paths), and how
+  the suite is graded. The reference outcome is cached under that digest; every run copies the start and
+  is checked file by file against the manifest; each row records `hard_instance`. The harness's code
+  (the qualification script included) enters by content, not by commit, so that committing a record of
+  the selection does not change the instances it records; the commit is still in every row and in the
+  protocol id.
+- **Environment.** Generated cases run offline with this repository's `.venv`; the sandbox does not let
+  a run write to it, so changing a dependency's version is not a repair an agent can make here. The
+  scenarios need NumPy 2, PyYAML 6, pydantic 2 and Click 8.2 or later installed there; a start that
+  fails because a library is missing does not show the registered fault and does not qualify.
+- **Qualification** (`qualify_hard.py`, no model): an instance qualifies when its start is admitted, its
+  reference passes as above, and its start shows the registered fault: the check fails with the
+  registered text and nothing else fails (without a check: the template's test module fails to load
+  because the renamed helper is missing, and that loading error is the only thing the suite reports). A
+  suite that did not run to a verdict says nothing about the instance: stopped at its time limit, ended
+  by a signal, no exit code, pytest's own internal or usage error, or the sandbox or harness failing. Such
+  a check is tried once more and then counts as not qualified. The record keeps, per attempt, the
+  instance's whole manifest and what each failure said, so it can be checked without the run folders.
+- **Which template.** Six scenarios, five templates. Each scenario has the templates in a fixed order:
+  sorted by name, starting at the scenario's place among the sorted scenarios. Going through them, the
+  first instance that qualifies is the formal one and the next that qualifies the development one, so
+  the two always differ; then the scenario is done. One qualified instance is the formal one; none
+  means the scenario cannot run, and it stays listed. `qualify_hard.py --out DIR` writes
+  `hard-selection.json` with every attempt, its reason and digests. It must be made and committed
+  before any model runs a hard instance; nothing in it depends on a model.
+- **Frozen runs.** `agent_pilot.py --hard-selection FILE --hard-role formal|development` runs only the
+  instances selected for that role and only while their digest is the recorded one; otherwise the case
+  is refused before any run, or its rows are `reference_invalid`. Rows record `hard_role` and the
+  selection file's digest.
+
+Rotating the templates uses all five (two formal instances share one), but the six tasks are not
+independent for that: they share templates and one generator, a template that is formal for one scenario
+is the development template of another, and with six equally weighted instances the templates do not
+weigh the same. Hard cases remain exploratory.
+
+```bash
+.venv/bin/python experiments/agent_baseline/qualify_hard.py --out ../agent-runs/hard
+.venv/bin/python experiments/agent_baseline/agent_pilot.py --model M --cases fixture-orders:vb_yaml_loader \
+    --arms baseline facts mcp --hard-selection ../agent-runs/hard/hard-selection.json --hard-role formal
+```
+
+Checked with scripted replies and the real suites only (2 Oct): all 30 template and scenario pairs are
+admitted and take their repair; in this environment every start shows its registered fault and every
+reference passes. No model has run a hard instance yet.

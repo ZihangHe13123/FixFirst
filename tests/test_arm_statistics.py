@@ -56,7 +56,7 @@ def test_the_command_line_prints_tables_and_writes_the_numbers(tmp_path, capsys)
         row("mcp", "c1", True, attempt="other")]) + "\n")
     ca.main([str(results), "--attempt", "a", "--json", str(tmp_path / "out.json")])
     printed = capsys.readouterr().out
-    assert re.search(r"\| m \| scheduled \| [0-9a-f]{8} \| facts \| 1 \| 1/1", printed)
+    assert re.search(r"\| m \| scheduled \| [0-9a-f]{8} \| generated \| facts \| 1 \| 1/1", printed)
     assert "baseline → facts" in printed and "facts → mcp" in printed
     numbers = json.loads((tmp_path / "out.json").read_text())
     assert [s["arm"] for s in numbers["summary"]] == ["baseline", "facts", "mcp"] and len(numbers["paired"]) == 3

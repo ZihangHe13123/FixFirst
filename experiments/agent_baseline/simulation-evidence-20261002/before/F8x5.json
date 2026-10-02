@@ -1,0 +1,58 @@
+{
+ "simulation": [
+  {
+   "effect": 0.0,
+   "true_mean_difference": 0.0,
+   "t_interval_excludes_zero": 0.052,
+   "t_interval_covers_truth": 0.948,
+   "bootstrap_excludes_zero": 0.099,
+   "bootstrap_covers_truth": 0.901,
+   "sign_test_p_below_0_05": 0.013
+  },
+  {
+   "effect": 0.1,
+   "true_mean_difference": 0.1,
+   "t_interval_excludes_zero": 0.149,
+   "t_interval_covers_truth": 0.948,
+   "bootstrap_excludes_zero": 0.235,
+   "bootstrap_covers_truth": 0.885,
+   "sign_test_p_below_0_05": 0.05
+  },
+  {
+   "effect": 0.2,
+   "true_mean_difference": 0.194,
+   "t_interval_excludes_zero": 0.451,
+   "t_interval_covers_truth": 0.959,
+   "bootstrap_excludes_zero": 0.584,
+   "bootstrap_covers_truth": 0.894,
+   "sign_test_p_below_0_05": 0.235
+  },
+  {
+   "effect": 0.3,
+   "true_mean_difference": 0.275,
+   "t_interval_excludes_zero": 0.739,
+   "t_interval_covers_truth": 0.948,
+   "bootstrap_excludes_zero": 0.851,
+   "bootstrap_covers_truth": 0.882,
+   "sign_test_p_below_0_05": 0.479
+  },
+  {
+   "effect": 0.4,
+   "true_mean_difference": 0.344,
+   "t_interval_excludes_zero": 0.909,
+   "t_interval_covers_truth": 0.95,
+   "bootstrap_excludes_zero": 0.962,
+   "bootstrap_covers_truth": 0.893,
+   "sign_test_p_below_0_05": 0.698
+  }
+ ],
+ "tasks": 8,
+ "runs_per_arm": 5,
+ "replicates": 2000,
+ "baseline_range": [
+  0.1,
+  0.9
+ ],
+ "resamples": 1000,
+ "seed": 20261001
+}

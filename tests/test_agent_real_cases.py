@@ -2,9 +2,11 @@
 integrity, and a grader that compares per-test outcomes with a reference."""
 
 import hashlib
+import json
 import os
 from pathlib import Path
 import re
+import shlex
 import subprocess
 import sys
 import threading
@@ -148,6 +150,96 @@ def test_the_source_is_exported_from_the_commit_only(tmp_path):
     assert (dest / "pkg" / "core.py").read_text() == "X = 1\n" and not (dest / "notes.txt").exists()
 
 
+def test_registered_failing_install_steps_are_marked_and_checked_before_any_run(tmp_path):
+    python = tmp_path / ".venv" / "bin" / "python"
+    project = {"install": ["-e .", "-r tests/requirements.txt"], "install_fails": ["-e ."]}
+    steps = rc.install_steps(project, python, tmp_path / "uv-cache")
+    assert [(s["line"], s["expected_failure"]) for s in steps] == [("-e .", True)]
+    assert rc.install_commands(project, python, tmp_path / "uv-cache") == [steps[0]["argv"]]
+    assert rc.install_fails_problems(project) == []
+    assert rc.install_fails_problems({"install": ["-e ."]}) == []  # nothing registered
+    assert rc.install_fails_problems({"install": ["-e ."], "install_fails": ["."]})  # not an install line
+    assert rc.install_fails_problems({"install": ["-e .", "pytest"], "install_fails": ["pytest"]})  # third party
+    assert rc.install_fails_problems({"install": ["-e ."], "install_fails": "-e ."})  # not a list
+    assert rc.install_fails_problems({"install": ["-e ."], "install_fails": ["-e .", "-e ."]})  # twice
+    assert rc.install_fails_registered(project) == 1 and rc.install_fails_registered({"install": ["-e ."]}) == 0
+
+
+@pytest.mark.parametrize("line", ["-e .", "-e .[tests]", ".", ".[dev,docs]", "--editable=.", "--editable .[test]",
+                                  '-e "."'])
+def test_a_plain_install_of_the_project_itself_can_be_registered(tmp_path, line):
+    project = {"install": [line, "pytest"], "install_fails": [line]}
+    assert rc.install_fails_problems(project) == [] and rc.install_fails_registered(project) == 1
+    [step] = rc.install_steps(project, tmp_path / "python", tmp_path / "uv-cache")
+    assert (step["line"], step["expected_failure"]) == (line, True)
+
+
+@pytest.mark.parametrize("line,installs_project", [
+    ("-r ./requirements.txt", False),  # a requirements list
+    ("--find-links . pytest", False),  # a third-party package found in a local folder
+    ("--find-links=./wheels pytest", False),
+    ("-c ./constraints.txt pytest", False),
+    ("-e . -r requirements.txt", True),  # the project, but not only the project
+    ("-e ./plugins/extra", True),  # a package in the project's folder, not the project itself
+])
+def test_only_a_plain_install_of_the_project_itself_can_be_registered(tmp_path, line, installs_project):
+    problems = rc.install_fails_problems({"install": [line], "install_fails": [line]})
+    assert any("not a plain install of the project itself" in p for p in problems)
+    assert rc.installs_project(line) is installs_project
+    steps = rc.install_steps({"install": [line]}, tmp_path / "python", tmp_path / "uv-cache")
+    assert [s["line"] for s in steps] == ([line] if installs_project else [])
+
+
+def test_every_install_line_of_the_manifest_is_read_as_before():
+    legacy = lambda line: any(w == "." or w.startswith((".[", "./")) for w in shlex.split(line))  # noqa: E731
+    manifest = rc.load_manifest(Path(__file__).resolve().parents[1] / "examples" / "real-world" / "projects.toml")
+    lines = [line for project in manifest.values() for line in project["install"]]
+    assert lines and [rc.installs_project(line) for line in lines] == [legacy(line) for line in lines]
+    assert all(rc.install_fails_problems(project) == [] for project in manifest.values())
+
+
+@pytest.mark.parametrize("code,stopped,problem", [
+    (1, False, None),  # ran to completion and failed: the registered start
+    (0, False, "succeeded"),
+    (None, False, "did not finish"),
+    (124, True, "was stopped at its time limit"),
+    (-9, False, "was ended by signal 9"),
+    (1, None, "has no record that it ran to completion"),
+])
+def test_a_registered_failure_is_the_start_only_if_it_ran_to_completion(code, stopped, problem):
+    assert rc.registered_failure_problem(code, stopped) == problem
+
+
+def test_a_reference_accepts_only_the_registered_install_failure():
+    failed = {"command": "install the project: -e .", "exit_code": 1, "stopped": False, "expected_failure": True}
+    reference = {**outcome({"a": "passed"}), "repair": [failed, {"command": "pip install six", "exit_code": 0}]}
+    assert rc.validate_reference(reference) == []
+    for change, reason in (({"exit_code": 0}, "succeeded"), ({"exit_code": None}, "did not finish"),
+                           ({"exit_code": 124, "stopped": True}, "was stopped at its time limit"),
+                           ({"exit_code": -9}, "was ended by signal 9")):
+        problems = rc.validate_reference({**reference, "repair": [{**failed, **change}]})
+        assert any(reason in p and "start is not the registered one" in p for p in problems), change
+    unrecorded = {k: v for k, v in failed.items() if k != "stopped"}  # e.g. cached before completion was recorded
+    assert any("has no record that it ran to completion" in p
+               for p in rc.validate_reference({**reference, "repair": [unrecorded]}))
+    unregistered = {**reference, "repair": [{"command": "install the project: -e .", "exit_code": 1}]}
+    assert any("exited with 1" in p for p in rc.validate_reference(unregistered))
+
+
+def test_a_cached_reference_is_reused_unless_its_registered_start_lacks_completion_evidence(tmp_path):
+    key = "k" * 64
+    base = {"key": key, "commit": "c" * 40, "problems": [], **outcome({"a": "passed"})}
+    unregistered = tmp_path / "unregistered.json"  # written before "stopped" was recorded: still usable
+    unregistered.write_text(json.dumps({**base, "repair": [{"command": "install the project: -e .", "exit_code": 0}]}))
+    assert rc.read_reference_cache(unregistered, key, "t1") == (json.loads(unregistered.read_text()), None)
+    registered = tmp_path / "registered.json"
+    registered.write_text(json.dumps({**base, "repair": [
+        {"command": "install the project: -e .", "exit_code": 1, "expected_failure": True}]}))
+    data, note = rc.read_reference_cache(registered, key, "t1")
+    assert data is None and "has no record that it ran to completion" in note
+    assert (tmp_path / "registered.json.unusable-t1").exists() and not registered.exists()
+
+
 def test_the_install_step_of_the_project_is_returned_for_the_sandbox(tmp_path):
     python = tmp_path / ".venv" / "bin" / "python"
     commands = rc.install_commands({"install": ["-e .", "pytest pytest-cov", "-r requirements.txt"]}, python,
@@ -168,6 +260,60 @@ def test_a_sandbox_profile_denies_the_private_areas_and_allows_only_the_run(tmp_
     assert set(re.findall(r'\(subpath "([^"]+)"\)', write)) == {str(run / "project"), str(run / "tmp"), "/dev/fd"}
     assert text.index("(allow file-read-data") < text.index("(deny file-read* (subpath")  # secrets last
     assert "(deny network*)" not in iso.profile_text(iso.Policy((), (), network=True, owner=iso.new_mark()), denied=())
+
+
+def test_protected_files_are_denied_after_everything_the_policy_allows(tmp_path):
+    answers = tmp_path / "readable" / "answers.json"
+    answers.parent.mkdir()
+    answers.write_text("{}")
+    policy = iso.Policy(writable=(), readable=(answers.parent,), owner=iso.new_mark())
+    plain = iso.profile_text(policy, denied=(tmp_path,)).splitlines()
+    assert not [line for line in plain if "(literal" in line and line.startswith("(deny file-read*")]
+    lines = iso.profile_text(policy, denied=(tmp_path,), protected=(answers,)).splitlines()
+    rules = [f'(deny {operation} (literal "{os.path.realpath(answers)}"))' for operation in ("file-read-data", "file-read*")]
+    allow = next(i for i, line in enumerate(lines) if line.startswith("(allow file-read-data"))
+    # the later rule for the same operation wins: the folder around it is allowed, the file is not
+    assert allow < lines.index(rules[0]) < lines.index(rules[1])
+    assert [line for line in lines if line not in rules] == plain  # nothing else changes
+
+
+def test_a_protected_folder_is_denied_with_all_below_it_after_everything_the_policy_allows(tmp_path):
+    clones, answers = tmp_path / "readable" / "source-clones", tmp_path / "readable" / "answers.json"
+    policy = iso.Policy(writable=(), readable=(clones.parent,), owner=iso.new_mark())
+    plain = iso.profile_text(policy, denied=(tmp_path,)).splitlines()
+    lines = iso.profile_text(policy, denied=(tmp_path,), protected_folders=(clones,)).splitlines()
+    rules = [f"(deny {operation} (subpath {iso._quoted(clones)}))" for operation in ("file-read-data", "file-read*")]
+    allow = next(i for i, line in enumerate(lines) if line.startswith("(allow file-read-data"))
+    assert allow < lines.index(rules[0]) < lines.index(rules[1])  # the folder around it is allowed, it is not
+    assert [line for line in lines if line not in rules] == plain  # nothing else changes
+    both = iso.profile_text(policy, denied=(tmp_path,), protected=(answers,), protected_folders=(clones,)).splitlines()
+    by_name = [f"(deny {operation} (literal {iso._quoted(answers)}))" for operation in ("file-read-data", "file-read*")]
+    assert [line for line in both if line not in plain] == by_name + rules  # a file by its name, a folder with all below
+
+
+@pytest.mark.parametrize("one,other,shared", [
+    ("a/b", "a/b", True), ("a/b/c/d", "a/b", True), ("a/b", "a/b/c/d", True), ("a", "a/b", True),
+    ("a/b", "a/c", False), ("a/bc", "a/b", False), ("a/b/c", "a/c/b", False)])
+def test_two_paths_share_something_when_one_is_the_other_or_lies_inside_it(tmp_path, one, other, shared):
+    assert iso.overlap(tmp_path / one, tmp_path / other) is shared
+    assert iso.overlap(str(tmp_path / other), tmp_path / one) is shared  # either way round, as text or as a path
+
+
+def test_shared_paths_are_found_whatever_the_case_or_the_unicode_form(tmp_path):
+    """A volume that keeps neither apart opens src/ as SRC/ too, and so do the sandbox's rules on it."""
+    assert iso.overlap(tmp_path / "Repo" / "SRC" / "clones", tmp_path / "repo" / "src")
+    assert iso.overlap(tmp_path / "repo", tmp_path / "REPO" / "src" / "clones")
+    composed, decomposed = "caf\u00e9", "cafe\u0301"  # one name in two Unicode forms
+    assert composed != decomposed and iso.overlap(tmp_path / composed / "clones", tmp_path / decomposed)
+    assert not iso.overlap(tmp_path / "Repo" / "SRC", tmp_path / "repo" / "srcs")
+
+
+@pytest.mark.skipif(os.name == "nt", reason="links to folders need a privilege on Windows")
+def test_paths_are_compared_as_resolved_so_a_link_shares_what_its_target_shares(tmp_path):
+    (tmp_path / "real" / "inner").mkdir(parents=True)
+    (tmp_path / "link").symlink_to(tmp_path / "real", target_is_directory=True)
+    assert iso.overlap(tmp_path / "link" / "inner", tmp_path / "real") and iso.overlap(tmp_path / "real", tmp_path / "link")
+    assert not iso.overlap(tmp_path / "link", tmp_path / "elsewhere")
 
 
 def test_run_folders_are_unique_and_never_reused(tmp_path):

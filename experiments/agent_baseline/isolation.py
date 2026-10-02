@@ -9,7 +9,12 @@ under macOS sandbox-exec with a Policy:
 - under the home folder, the output folder, the repository and the system temporary folders it
   reads only what the policy names (the run's own folders, the interpreters and, for FixFirst's
   server, FixFirst's code), so reference repairs, labels, reference outcomes and other runs stay
-  out of reach; ~/.ssh, ~/.omlx, ~/.claude and the keychains are never readable;
+  out of reach; ~/.ssh, ~/.omlx, ~/.claude and the keychains are never readable. The files the harness
+  names as protected (the known repairs, a frozen selection) are denied by name on top of that, also
+  where a folder around them is readable; a file is denied under its own path only, so this holds while
+  the sandbox cannot rename it, and the harness refuses protected files in folders a run may write. A
+  protected folder (the source clones) is denied with everything below it, and the harness writes no
+  profile that gives a sandbox anything sharing a path with it;
 - it has the network only when the policy says so;
 - it belongs to an owner (a run, or one grader check): the profile denies a Mach name made from the
   owner's random token, which nothing else denies. A sandbox is inherited by every process started
@@ -44,6 +49,7 @@ import subprocess
 import tempfile
 import threading
 import time
+import unicodedata
 
 HOME = Path.home()
 SENSITIVE = (".ssh", ".omlx", ".claude", "Library/Keychains")
@@ -76,9 +82,30 @@ def owner_name(owner: str) -> str:
     return f"org.fixfirst.run.{owner}"
 
 
-def profile_text(policy: Policy, denied: tuple) -> str:
-    """Later rules win: deny the private areas, allow the policy's paths, deny secrets again. Then the
-    owner's name, the requests that would start a process outside the sandbox, and the signal targets."""
+def _folded(path) -> tuple:
+    """A resolved path's parts without case and in one Unicode form. The volumes this runs on tell neither
+    apart, and the sandbox's rules follow the volume; where a volume does, this only finds more shared."""
+    fold = lambda part: unicodedata.normalize("NFD", unicodedata.normalize("NFD", part).casefold())  # noqa: E731
+    return tuple(fold(part) for part in Path(os.path.realpath(path)).parts)
+
+
+def overlap(one, other) -> bool:
+    """Whether two paths share anything once resolved: they are the same, or one lies inside the other.
+    Folders that share nothing can be given to a sandbox and kept from it independently."""
+    a, b = _folded(one), _folded(other)
+    return a[:len(b)] == b[:len(a)]
+
+
+class Exposed(RuntimeError):
+    """A sandbox would be given something that shares a path with answers."""
+
+
+def profile_text(policy: Policy, denied: tuple, protected: tuple = (), protected_folders: tuple = ()) -> str:
+    """Among rules for the same operation the later one wins: deny the private areas, allow the policy's
+    paths, then deny the protected files again, for file-read-data itself (a rule for file-read* does not
+    override the earlier, more specific allow) and for every other kind of read; a protected folder the
+    same way, with everything below it. Then the secrets, the owner's name, the requests that would start
+    a process outside the sandbox, and the signal targets."""
     if not re.fullmatch(r"[0-9a-f]{24}", policy.owner):
         raise ValueError("a sandbox profile needs its owner's token (new_mark())")
     lines = ["(version 1)", "(allow default)"]
@@ -89,6 +116,10 @@ def profile_text(policy: Policy, denied: tuple) -> str:
     allowed += [f"(literal {_quoted(p)})" for p in policy.readable_files]
     lines.append("(allow file-read-data " + " ".join(allowed) + ")")
     lines.append("(deny file-read* " + " ".join(f"(subpath {_quoted(HOME / p)})" for p in SENSITIVE) + ")")
+    for names in (" ".join(f"(literal {_quoted(p)})" for p in protected),
+                  " ".join(f"(subpath {_quoted(p)})" for p in protected_folders)):
+        if names:
+            lines += [f"(deny file-read-data {names})", f"(deny file-read* {names})"]
     lines.append("(deny file-write*)")
     lines.append("(allow file-write* " + " ".join(f"(subpath {_quoted(p)})" for p in policy.writable)
                  + ' (literal "/dev/null") (subpath "/dev/fd"))')
@@ -99,8 +130,9 @@ def profile_text(policy: Policy, denied: tuple) -> str:
     return "\n".join(lines) + "\n"
 
 
-def write_profile(policy: Policy, path: Path, denied: tuple) -> Path:
-    path.write_text(profile_text(policy, denied), encoding="utf-8")
+def write_profile(policy: Policy, path: Path, denied: tuple, protected: tuple = (),
+                  protected_folders: tuple = ()) -> Path:
+    path.write_text(profile_text(policy, denied, protected, protected_folders), encoding="utf-8")
     return path
 
 

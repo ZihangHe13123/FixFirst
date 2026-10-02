@@ -4,6 +4,15 @@ Cases:
   generated  --cases template:scenario: projects built by diagnosis_cases.py, run offline with this
              repository's .venv as in the 28 Sep pilot. Their reference is the healthy template;
              scenarios that change test files or pytest settings have none and are refused.
+  hard       the same option with a scenario of hard_cases.py. Its start may add exactly the check
+             registered in hard_cases.toml; its reference is the start with the registered repair (see
+             hard_instances.py). With --hard-selection only the instances frozen for --hard-role run,
+             and only while their content is the frozen one.
+Answers (--repairs, --sources, --hard-selection) must lie where no run's sandbox reads: inside the home
+folder, the repository or a system temporary folder, and sharing no path with what a sandbox is given
+(the output folder, FixFirst's code and environment, the interpreters, the tools); otherwise nothing is
+run. The repairs and the selection are also denied by name in every sandbox, the source clones with
+everything below them.
   real       --projects ID ...: projects from a manifest (default examples/real-world/projects.toml).
              Every run exports the project from a fixed commit of its source clone (--sources) and
              rebuilds its own .venv from the recorded snapshot; the reference comes from applying the
@@ -69,6 +78,7 @@ from fixfirst.storage import Store
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
+import hard_instances as hi  # noqa: E402
 import isolation as iso  # noqa: E402
 import real_cases as rc  # noqa: E402
 
@@ -78,6 +88,8 @@ BASE = os.environ.get("LLM_BASE_URL", "http://127.0.0.1:8123/v1")
 _KEY = os.environ.get("LLM_API_KEY", "")
 HEADERS = {"Authorization": f"Bearer {_KEY}"} if _KEY else {}
 TMP = os.path.realpath(tempfile.gettempdir())
+INSTALL_SECONDS = 900  # each install or repair step of a real case
+GRADING_GOAL = "pass_tests"  # FixFirst checks what the grader checks: the full test suite, with pytest
 HOME = str(Path.home())
 OUTPUT_LIMIT = 6000
 COMMAND_CAP = {True: 600, False: 180}  # seconds per command, with and without the network
@@ -177,6 +189,16 @@ def fixfirst_readable() -> tuple:
     return (FIXFIRST / "src", *interpreters(PYTHON.parent.parent))
 
 
+def harness_readable() -> tuple:
+    """What a policy may let a sandbox read besides a run's own folders, known before any case is prepared:
+    FixFirst's code, its environment and that environment's interpreter (the generated cases run in it
+    too), the 28 Sep tool, and uv for installing a real project. A real project's own environment lies in
+    its run folder; the interpreter it was made from is known only once it exists, and Context.check holds
+    the run's sandbox against the answers then."""
+    uv = shutil.which("uv")
+    return (*fixfirst_readable(), HERE / "ff_tool.py", *((Path(os.path.realpath(uv)),) if uv else ()))
+
+
 @dataclass
 class Context:
     """One invocation: where runs go, which attempt this is, what is denied to every run."""
@@ -185,6 +207,24 @@ class Context:
     attempt: str
     network: bool
     denied: tuple = ()
+    protected: tuple = ()  # files with answers (known repairs, a frozen selection): unreadable in every sandbox
+    protected_folders: tuple = ()  # folders with answers (the source clones): the same, with all below them
+
+    def check(self, policy: iso.Policy):
+        """Hold what a sandbox would be given against the answers: nothing that shares a path with a folder
+        of answers, and no place to write that holds a file of answers (such a file is denied by name
+        only, which a rename there would undo)."""
+        given = (*policy.readable, *policy.readable_files, *policy.writable)
+        clashes = [(answers, root) for answers in self.protected_folders for root in given if iso.overlap(answers, root)]
+        clashes += [(answers, root) for answers in self.protected for root in policy.writable if iso.overlap(answers, root)]
+        if clashes:
+            answers, root = clashes[0]
+            raise iso.Exposed(f"{answers} holds answers and shares a path with {root}, which a sandbox would be given")
+
+    def write_profile(self, policy: iso.Policy, path: Path) -> Path:
+        """Every sandbox profile of this invocation is written here, after check()."""
+        self.check(policy)
+        return iso.write_profile(policy, path, self.denied, self.protected, self.protected_folders)
 
 
 @dataclass
@@ -237,7 +277,7 @@ class Run:
     def profile(self, kind: str) -> Path:
         path = self.folder / f"{kind}.sb"
         if not path.exists():
-            iso.write_profile(self.policy(kind), path, self.ctx.denied)
+            self.ctx.write_profile(self.policy(kind), path)
         return path
 
     def env(self, python: Path | None = None) -> dict:
@@ -260,8 +300,8 @@ class Run:
         grader = self.folder / "grader" / f"check-{self.checks:03d}"
         grader.mkdir(parents=True)
         owner = iso.new_mark()  # the check's own: its processes are not the run's
-        profile = iso.write_profile(iso.Policy((grader,), (self.project, *self.interpreters), False, owner=owner),
-                                    grader / "grader.sb", self.ctx.denied)
+        profile = self.ctx.write_profile(iso.Policy((grader,), (self.project, *self.interpreters), False, owner=owner),
+                                         grader / "grader.sb")
 
         def execute(argv, cwd, env, timeout):
             try:
@@ -494,7 +534,7 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
     stats = {"turns": 0, "tool_calls": 0, "pytest_runs": 0, "fixfirst_calls": 0, "prompt_tokens": 0,
              "completion_tokens": 0, "model_s": 0.0, "tool_s": 0.0, "end": "turn_cap", "bad_calls": 0,
              "first_green_turn": None, "first_green_s": None, "error": None, "mcp_arguments_filled": 0,
-             "mcp_arguments_overridden": 0, "fixfirst_reports": 0, "fixfirst_s": 0.0, "fixfirst_output_chars": 0,
+             "mcp_arguments_overridden": 0, "mcp_goal_filled": 0, "mcp_goal_overridden": 0, "fixfirst_reports": 0, "fixfirst_s": 0.0, "fixfirst_output_chars": 0,
              "usage_reported": False}
     budget = iso.Budget(settings.run_timeout)
     tools = BASIC_TOOLS + ([FIXFIRST_TOOL] if arm == "fixfirst" else [])
@@ -651,7 +691,8 @@ def policy_text(policy: str, mcp, first_tool: str, again_tool: str) -> str:
 def fixfirst_report(tool: str, run: Run, mcp, budget: iso.Budget, stats) -> str:
     """A FixFirst call the harness makes itself (scheduled policy): the same arguments in both arms,
     and its time counts against the agent's budget like a tool call's."""
-    arguments = {} if tool == "check_again" else {"project": str(run.project), "python": str(run.python)}
+    arguments = ({} if tool == "check_again"
+                 else {"project": str(run.project), "python": str(run.python), "goal": GRADING_GOAL})
     started = time.monotonic()
     try:
         text = mcp.call(tool, arguments, budget.remaining())
@@ -684,6 +725,14 @@ def run_tool(name, args, run: Run, stats, mcp, budget: iso.Budget, turn):
         if mcp.dead:
             return "error: FixFirst's server was stopped"
         stats["fixfirst_calls"] += 1
+        if name in ("diagnose", "observe"):
+            # FixFirst checks the grader's goal, whatever goal the model asked for: otherwise its own
+            # guess (say, unittest for a pytest project) can call a fixed project still failing.
+            given = args.get("goal")
+            if given != GRADING_GOAL:
+                counter = "mcp_goal_overridden" if given else "mcp_goal_filled"
+                stats[counter] = stats.get(counter, 0) + 1
+            args = {**args, "goal": GRADING_GOAL}
         if name in ("diagnose", "observe") and run.real:
             # The case's project and interpreter, whatever the model passed: a missing value is
             # filled in, a different one is overridden.
@@ -772,6 +821,67 @@ def generated_reference(ctx: Context, template: str, pristine: Path, cache: dict
     return data
 
 
+def hard_instance(ctx: Context, t, scenario_id: str, cache: dict, frozen: dict | None) -> dict:
+    """A hard instance, made once per invocation: the healthy template, the start and the reference each
+    in a folder of its own, the manifest whose digest identifies it, and the reference outcome, cached
+    under that digest. `end` says why it cannot be run: unsupported_case when the start is not admitted,
+    reference_invalid when the reference cannot grade or the instance is not the frozen one."""
+    spec = f"{t.name}:{scenario_id}"
+    if ("hard", spec) in cache:
+        return cache[("hard", spec)]
+    entry = hi.load_registry()[scenario_id]
+    folder = ctx.out / "_hard" / f"{iso.slug(spec, 40)}--{ctx.attempt}"
+    built = hi.build(folder, t, hi.scenario(scenario_id))
+    data = cache[("hard", spec)] = {"start": built["start"], "required": hi.required_node(t, entry), "digest": None,
+                                    "manifest": None, "reference": None, "problems": [], "end": None}
+    problems = hi.admit(built["pristine"], built["start"], t, entry)
+    if problems:
+        data.update(problems=problems, end="unsupported_case")
+        return data
+    run = Run(ctx, folder / "reference", False, False, PYTHON, interpreters(PYTHON.parent.parent))
+    problems = hi.make_reference(run.project, built["pristine"], built["start"], t, entry)
+    if problems:
+        data.update(problems=problems, end="reference_invalid")
+        return data
+    manifest = hi.manifest(t, scenario_id, entry, built["start"], run.project, hi.environment(PYTHON), hi.code_identity())
+    digest = hi.digest(manifest)
+    rc.write_json(folder / "manifest.json", {"digest": digest, **manifest})
+    data.update(digest=digest, manifest=manifest)
+    if frozen is not None and frozen.get(spec) != digest:
+        data.update(end="reference_invalid", problems=[
+            f"the instance is not the frozen one: its digest is {digest[:16]}, the selection has {str(frozen.get(spec))[:16]}"])
+        return data
+    (ctx.out / "_reference").mkdir(parents=True, exist_ok=True)
+    cached = ctx.out / "_reference" / f"hard--{iso.slug(spec, 40)}--{digest[:12]}.json"
+    reference, note = rc.read_reference_cache(cached, digest, ctx.attempt)
+    if reference and hi.reference_problems(reference, t, entry):  # passes as a reference, not as a hard instance's
+        aside = cached.with_name(f"{cached.name}.unusable-{ctx.attempt}")
+        cached.rename(aside)
+        reference, note = None, f"the cached reference was not usable for a hard instance; kept as {aside.name} and built again"
+    if reference is None:
+        reference = {"key": digest, "commit": "", "repair": [], "cache_note": note}
+        try:
+            suite = run.suite()
+            reference.update(exit_code=suite["exit_code"], stopped=suite["stopped"], counts=suite["counts"],
+                             summary=suite["summary"], outcomes=suite["outcomes"])
+        except (RuntimeError, OSError, subprocess.SubprocessError, ParseError) as error:
+            reference.update(exit_code=None, stopped=None, counts={}, outcomes={}, summary="",
+                             setup_error=f"{type(error).__name__}: {error}"[:500])
+        finally:
+            run.end_processes("after the reference")
+        # Not the instance's doing: the suite could not be run, was interrupted, or left processes behind.
+        reference["not_completed"] = (reference.get("setup_error") or "; ".join(run.cleanup_problems)
+                                      or hi.not_completed(reference["exit_code"], reference["stopped"]))
+        reference["problems"] = (([reference["setup_error"]] if reference.get("setup_error") else [])
+                                 + run.cleanup_problems + hi.reference_problems(reference, t, entry))
+        rc.write_json(folder / "reference.json", reference)
+        if not reference["problems"]:
+            rc.write_json(cached, reference)
+    data.update(reference=reference, problems=reference["problems"],
+                end="reference_invalid" if reference["problems"] else None)
+    return data
+
+
 def real_reference(ctx: Context, project: dict, source: Path, snapshot: Path, repair: list[str]) -> dict:
     """The outcome after the known repair, on a separate copy, checked before it grades anything.
     Only valid references are cached (written atomically); an unusable cache is set aside and the
@@ -780,7 +890,10 @@ def real_reference(ctx: Context, project: dict, source: Path, snapshot: Path, re
     commit = rc.source_commit(source)
     if not commit:
         raise RuntimeError(f"no git clone of {project['id']} in {source}")
-    key = hashlib.sha256(json.dumps([commit, snapshot.read_text(encoding="utf-8"), repair]).encode()).hexdigest()
+    parts = [commit, snapshot.read_text(encoding="utf-8"), repair]
+    if project.get("install_fails"):  # a registered failing install is part of the start
+        parts.append(project["install_fails"])
+    key = hashlib.sha256(json.dumps(parts).encode()).hexdigest()
     name = f"{iso.slug(project['id'], 30)}--{key[:12]}"
     (ctx.out / "_reference").mkdir(parents=True, exist_ok=True)
     cached = ctx.out / "_reference" / f"{name}.json"
@@ -795,12 +908,14 @@ def real_reference(ctx: Context, project: dict, source: Path, snapshot: Path, re
         run.python = rc.create_environment(run.project, project, snapshot, [])
         run.interpreters = interpreters(run.project / ".venv")
         env = {**run.env(), "SETUPTOOLS_SCM_PRETEND_VERSION": project["ref"].lstrip("v")}
-        for argv in rc.install_commands(project, run.python, run.tmp / "uv-cache"):
-            code, output, _ = run.execute(argv, "install", 900, env=env)
-            data["repair"].append({"command": "install the project: " + " ".join(argv[-2:]), "exit_code": code})
+        for step in rc.install_steps(project, run.python, run.tmp / "uv-cache"):
+            code, output, stopped = run.execute(step["argv"], "install", INSTALL_SECONDS, env=env)
+            data["repair"].append({"command": "install the project: " + " ".join(step["argv"][-2:]), "exit_code": code,
+                                   "stopped": stopped, "expected_failure": step["expected_failure"],
+                                   "output": output[-1000:]})
         for command in repair:
-            code, output, _ = run.execute(["/bin/bash", "-c", command], "install", 900)
-            data["repair"].append({"command": command, "exit_code": code, "output": output[-1000:]})
+            code, output, stopped = run.execute(["/bin/bash", "-c", command], "install", INSTALL_SECONDS)
+            data["repair"].append({"command": command, "exit_code": code, "stopped": stopped, "output": output[-1000:]})
         suite = run.suite()
         data.update(exit_code=suite["exit_code"], counts=suite["counts"], summary=suite["summary"],
                     outcomes=suite["outcomes"])
@@ -890,7 +1005,8 @@ def play(model, arm, run: Run, settings, fake_path, reference, row, state_digest
 
 def run_real(ctx: Context, row: dict, settings, project, source, snapshot, reference, arm, run_index, fake_path):
     run = Run(ctx, iso.run_folder(ctx.out, project["id"], arm, run_index, ctx.model, ctx.attempt), ctx.network, True)
-    row.update(run_dir=run.folder.relative_to(ctx.out).as_posix(), stage="setup")
+    row.update(run_dir=run.folder.relative_to(ctx.out).as_posix(), stage="setup",
+               install_fails_registered=rc.install_fails_registered(project))
     try:
         prepare_and_play_real(ctx, run, row, settings, project, source, snapshot, reference, arm, fake_path)
     finally:
@@ -907,13 +1023,20 @@ def prepare_and_play_real(ctx: Context, run: Run, row: dict, settings, project, 
         run.python = rc.create_environment(run.project, project, snapshot, setup_log)
         record = rc.venv_record(run.project / ".venv")  # read before any project code can change it
         run.interpreters = interpreters(run.project / ".venv")
+        ctx.check(run.policy("agent"))  # known only now; a project that installs nothing writes no profile in setup
         row["python"] = record["version"]
         env = {**run.env(), "SETUPTOOLS_SCM_PRETEND_VERSION": project["ref"].lstrip("v")}
-        for argv in rc.install_commands(project, run.python, run.tmp / "uv-cache"):
-            code, output, _ = run.execute(argv, "install", 900, env=env)
-            setup_log.append({"step": "install the project (sandboxed): " + " ".join(argv[-2:]), "exit_code": code,
-                              "output": output[-2000:]})
-            if code:
+        for step in rc.install_steps(project, run.python, run.tmp / "uv-cache"):
+            code, output, stopped = run.execute(step["argv"], "install", INSTALL_SECONDS, env=env)
+            setup_log.append({"step": "install the project (sandboxed): " + " ".join(step["argv"][-2:]), "exit_code": code,
+                              "stopped": stopped, "expected_failure": step["expected_failure"], "output": output[-2000:]})
+            if step["expected_failure"]:
+                # Every arm starts where the registered case starts: after this step ran and failed.
+                problem = rc.registered_failure_problem(code, stopped)
+                if problem:
+                    raise SetupError(f"the registered failing install step {step['line']!r} {problem}: "
+                                     "the start is not the registered one")
+            elif code:
                 raise SetupError(f"installing the project failed ({code})")
     except (RuntimeError, OSError, subprocess.SubprocessError, SetupError) as error:
         row.update(end="setup_failed", error=f"{type(error).__name__}: {error}"[:500], grading="not_graded", fixed=None)
@@ -934,9 +1057,11 @@ def prepare_and_play_real(ctx: Context, run: Run, row: dict, settings, project, 
         row["packages"] = rc.freeze_difference(start, end)
 
 
-def run_generated(ctx: Context, row: dict, settings, spec, arm, run_index, fake_path, references):
+def run_generated(ctx: Context, row: dict, settings, spec, arm, run_index, fake_path, references, frozen=None):
     template, scenario = spec.split(":")
     t = next(x for x in dc.TEMPLATES if x.name == template)
+    if is_hard(spec):
+        return run_hard(ctx, row, settings, spec, t, scenario, arm, run_index, fake_path, references, frozen)
     s = next(x for x in dc.SCENARIOS if x.scenario_id == scenario)
     pristine = ctx.out / "_templates" / template
     if not pristine.exists():
@@ -947,6 +1072,34 @@ def run_generated(ctx: Context, row: dict, settings, spec, arm, run_index, fake_
     row.update(run_dir=run.folder.relative_to(ctx.out).as_posix(), stage="setup", cause=s.label)
     try:
         prepare_and_play_generated(ctx, run, row, settings, t, s, pristine, reference, arm, fake_path)
+    finally:
+        close_run(run, row)
+
+
+def is_hard(spec: str) -> bool:
+    return spec.split(":")[-1] in hi.hard_scenarios()
+
+
+def run_hard(ctx: Context, row: dict, settings, spec, t, scenario, arm, run_index, fake_path, cache, frozen):
+    """A run of a hard instance: every arm, model and repeat starts from a copy of the same start, checked
+    file by file against the instance's manifest; the start's tests and settings are the baseline."""
+    run = Run(ctx, iso.run_folder(ctx.out, spec, arm, run_index, ctx.model, ctx.attempt), False, False,
+              PYTHON, interpreters(PYTHON.parent.parent))
+    row.update(run_dir=run.folder.relative_to(ctx.out).as_posix(), stage="setup", cause=hi.scenario(scenario).label)
+    try:
+        instance = hard_instance(ctx, t, scenario, cache, frozen)
+        row.update(hard_instance=instance["digest"], required_node=instance["required"])
+        if instance["end"]:
+            row.update(end=instance["end"], error="; ".join(instance["problems"])[:500], grading="not_graded", fixed=None)
+            return
+        shutil.copytree(instance["start"], run.project)
+        if hi.tree(run.project) != instance["manifest"]["start"]:
+            row.update(end="setup_failed", error="the run's copy is not the instance's start", grading="not_graded",
+                       fixed=None)
+            return
+        run.baseline = rc.integrity(run.project)
+        play(ctx.model, arm, run, settings, fake_path, instance["reference"], row,
+             lambda: rc.workspace_digest(run.project, None))
     finally:
         close_run(run, row)
 
@@ -984,6 +1137,24 @@ def check_output_folder(out: Path) -> str | None:
     return None
 
 
+def exposure(path: Path, denied: tuple, readable: tuple) -> str | None:
+    """Why a run's sandbox could read `path`, a file or folder that holds answers; None when it cannot.
+    A sandbox reads everything except the denied folders, and inside those what it is given. So answers
+    must lie inside a denied folder and share no path with anything a sandbox may be given: the folders
+    in `readable` (where runs get folders of their own: the output folder) and what the harness lets its
+    sandboxes read wherever they run (harness_readable). Sharing goes both ways: answers inside such a
+    folder, and a folder of answers around one."""
+    real = Path(os.path.realpath(path))
+    if not any(real == root or root in real.parents for root in (Path(os.path.realpath(r)) for r in denied)):
+        return ("is outside the folders a run is kept out of (the home folder, the output folder, the repository, "
+                "the system temporary folders)")
+    for root in (*readable, *harness_readable()):
+        if iso.overlap(real, root):
+            return (f"shares a path with {os.path.realpath(root)}, which runs may read (the output folder, FixFirst's "
+                    "code and environment, the interpreters, the tools)")
+    return None
+
+
 def redact(text: str, out: Path) -> str:
     pairs = ((out.as_uri(), "file://<out>"), (str(out), "<out>"), (FIXFIRST.as_uri(), "file://<repo>"),
              (str(FIXFIRST), "<repo>"), (TMP, "<tmp>"), ("/private/tmp", "<tmp>"),
@@ -1016,9 +1187,30 @@ def main(argv=None):
     parser.add_argument("--seed", type=int, default=20261001)
     parser.add_argument("--attempt", help="a name for this invocation (default: time and a random suffix)")
     parser.add_argument("--out", default=str(FIXFIRST.parent / "agent-runs"))
+    parser.add_argument("--hard-selection", help="the frozen selection of hard instances (qualify_hard.py); "
+                                                 "hard cases then run only as selected and only with the frozen content")
+    parser.add_argument("--hard-role", choices=hi.ROLES, help="which instances of the selection: formal or development")
     args = parser.parse_args(argv)
     if not args.cases and not args.projects:
         parser.error("give --cases or --projects")
+    known = {t.name for t in dc.TEMPLATES}, {s.scenario_id for s in dc.SCENARIOS} | set(hi.hard_scenarios())
+    unknown = [spec for spec in args.cases if spec.count(":") != 1 or spec.split(":")[0] not in known[0]
+               or spec.split(":")[1] not in known[1]]
+    if unknown:
+        parser.error(f"not a template:scenario of the generated cases: {', '.join(unknown)}")
+    if bool(args.hard_selection) != bool(args.hard_role):
+        parser.error("--hard-selection and --hard-role go together")
+    frozen, selection_digest = None, None
+    if args.hard_selection:
+        try:
+            hi.load_registry()
+            frozen = hi.selected(json.loads(Path(args.hard_selection).read_text(encoding="utf-8")), args.hard_role)
+        except (OSError, ValueError, TypeError, KeyError, AttributeError) as error:
+            parser.error(f"--hard-selection cannot be read: {type(error).__name__}: {error}")
+        selection_digest = rc.file_hash(Path(args.hard_selection))
+        outside = [spec for spec in args.cases if is_hard(spec) and spec not in frozen]
+        if outside:
+            parser.error(f"not the selection's {args.hard_role} instances: {', '.join(outside)}")
     if args.projects and "fixfirst" in args.arms:
         parser.error("the fixfirst arm is only for the generated cases of the 28 Sep pilot")
     if args.attempt and not re.fullmatch(r"[A-Za-z0-9._-]+", args.attempt):
@@ -1027,14 +1219,29 @@ def main(argv=None):
     problem = check_output_folder(out)
     if problem:
         parser.error(problem)
+    # What holds answers (a frozen selection carries the registered repairs; the known repairs; the source
+    # clones with their later history) must be out of every run's reach, wherever the user keeps it.
+    denied = (Path(HOME), out, FIXFIRST, *iso.SYSTEM_TEMP)
+    answers = {"--hard-selection": args.hard_selection, "--repairs": args.repairs if args.projects else None,
+               "--sources": args.sources if args.projects else None}
+    try:  # every run's folders are made inside the output folder, so none of it may hold answers
+        exposed = [f"{option} {args_path} {reason}" for option, args_path in answers.items() if args_path
+                   for reason in [exposure(Path(args_path), denied, (out,))] if reason]
+    except (OSError, KeyError) as error:
+        parser.error(f"what the harness's sandboxes read cannot be established: {type(error).__name__}: {error}")
+    if exposed:
+        parser.error("a run could read the answers: " + "; ".join(exposed))
+    protected = tuple(Path(os.path.realpath(answers[option])) for option in ("--hard-selection", "--repairs")
+                      if answers[option])
+    protected_folders = (Path(os.path.realpath(answers["--sources"])),) if answers["--sources"] else ()
     attempt = args.attempt or iso.new_attempt()
     if (out / "runs").exists() and any((out / "runs").glob(f"*--{attempt}")):
         parser.error(f"attempt {attempt} already has runs in {out}; runs are never overwritten")
     out.mkdir(parents=True, exist_ok=True)
     fake_path = Path(args.model.split(":", 1)[1]).resolve() if args.model.startswith("fake:") else None
     identity = f"fake-{fake_path.stem}-{iso.slug(str(fake_path))[-8:]}" if fake_path else args.model
-    ctx = Context(out, identity, attempt, args.network == "on",
-                  denied=(Path(HOME), out, FIXFIRST, *iso.SYSTEM_TEMP))
+    ctx = Context(out, identity, attempt, args.network == "on", denied=denied, protected=protected,
+                  protected_folders=protected_folders)
     settings = Settings(args.max_turns, args.run_timeout, args.temperature, args.max_tokens, args.seed,
                         args.call_policy)
     manifest_path = Path(args.manifest).resolve()
@@ -1049,6 +1256,9 @@ def main(argv=None):
         parser.error("; ".join([f"not in the manifest: {', '.join(unknown)}"] * bool(unknown)
                                + [f"no known repair in {args.repairs} (the grader needs a reference): "
                                   f"{', '.join(no_repair)}"] * bool(no_repair)))
+    registration = {p: rc.install_fails_problems(manifest[p]) for p in args.projects}
+    if any(registration.values()):
+        parser.error("; ".join(f"{p}: {'; '.join(v)}" for p, v in registration.items() if v))
     references = {}
     work = [("generated", spec) for spec in args.cases] + [("real", pid) for pid in args.projects]
     for case_index, (kind, name) in enumerate(work):
@@ -1070,6 +1280,10 @@ def main(argv=None):
                        "network": "on" if (ctx.network and kind == "real") else "off", "settings": vars(settings),
                        "harness_commit": harness, "uncommitted_changes": dirty, "end": None, "error": None,
                        "grading": None, "fixed": None}
+                if kind == "real":  # every real row, also when its reference or setup failed
+                    row["install_fails_registered"] = rc.install_fails_registered(project)
+                elif is_hard(name):  # every row of a hard instance says under which selection it ran, if any
+                    row.update(hard_role=args.hard_role, hard_selection=selection_digest)
                 try:
                     if kind == "real" and reference["problems"]:
                         row.update(end="reference_invalid", error="; ".join(reference["problems"])[:500],
@@ -1078,7 +1292,7 @@ def main(argv=None):
                     elif kind == "real":
                         run_real(ctx, row, settings, project, source, snapshot, reference, arm, run_index, fake_path)
                     else:
-                        run_generated(ctx, row, settings, name, arm, run_index, fake_path, references)
+                        run_generated(ctx, row, settings, name, arm, run_index, fake_path, references, frozen)
                 except Exception as error:  # the per-run boundary: record it and go on to the next run
                     row.update(end=row.get("end") or "harness_error", grading="not_graded", fixed=None,
                                error=f"{type(error).__name__}: {error}"[:500],
