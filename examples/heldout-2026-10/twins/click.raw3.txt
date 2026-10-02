@@ -1,0 +1,772 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.7, pytest-6.2.5, py-1.11.0, pluggy-1.6.0
+rootdir: <home>\heldout-twins\click, configfile: setup.cfg, testpaths: tests
+collected 0 items / 19 errors
+
+=================================== ERRORS ====================================
+__________________ ERROR collecting tests/test_arguments.py ___________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1001: in visit_UnaryOp
+    operand_res, operand_expl = self.visit(unary.operand)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1046: in visit_Attribute
+    value, value_expl = self.visit(attr.value)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:1803: in __getattr__
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+____________________ ERROR collecting tests/test_basic.py _____________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1055: in visit_Compare
+    left_res, left_expl = self.visit(comp.left)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1046: in visit_Attribute
+    value, value_expl = self.visit(attr.value)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+____________________ ERROR collecting tests/test_chain.py _____________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1001: in visit_UnaryOp
+    operand_res, operand_expl = self.visit(unary.operand)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1046: in visit_Attribute
+    value, value_expl = self.visit(attr.value)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+___________________ ERROR collecting tests/test_commands.py ___________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1066: in visit_Compare
+    next_res, next_expl = self.visit(next_operand)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1046: in visit_Attribute
+    value, value_expl = self.visit(attr.value)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+____________________ ERROR collecting tests/test_compat.py ____________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1001: in visit_UnaryOp
+    operand_res, operand_expl = self.visit(unary.operand)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1014: in visit_Call
+    new_func, func_expl = self.visit(call.func)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+___________________ ERROR collecting tests/test_context.py ____________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1055: in visit_Compare
+    left_res, left_expl = self.visit(comp.left)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1046: in visit_Attribute
+    value, value_expl = self.visit(attr.value)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+________________ ERROR collecting tests/test_custom_classes.py ________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1055: in visit_Compare
+    left_res, left_expl = self.visit(comp.left)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1014: in visit_Call
+    new_func, func_expl = self.visit(call.func)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+___________________ ERROR collecting tests/test_defaults.py ___________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1001: in visit_UnaryOp
+    operand_res, operand_expl = self.visit(unary.operand)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1046: in visit_Attribute
+    value, value_expl = self.visit(attr.value)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+__________________ ERROR collecting tests/test_formatting.py __________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1055: in visit_Compare
+    left_res, left_expl = self.visit(comp.left)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+___________________ ERROR collecting tests/test_imports.py ____________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1055: in visit_Compare
+    left_res, left_expl = self.visit(comp.left)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+__________________ ERROR collecting tests/test_info_dict.py ___________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1055: in visit_Compare
+    left_res, left_expl = self.visit(comp.left)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+________________ ERROR collecting tests/test_normalization.py _________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1055: in visit_Compare
+    left_res, left_expl = self.visit(comp.left)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1046: in visit_Attribute
+    value, value_expl = self.visit(attr.value)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+___________________ ERROR collecting tests/test_options.py ____________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1055: in visit_Compare
+    left_res, left_expl = self.visit(comp.left)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1046: in visit_Attribute
+    value, value_expl = self.visit(attr.value)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+____________________ ERROR collecting tests/test_parser.py ____________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1055: in visit_Compare
+    left_res, left_expl = self.visit(comp.left)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1014: in visit_Call
+    new_func, func_expl = self.visit(call.func)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+_______________ ERROR collecting tests/test_shell_completion.py _______________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1055: in visit_Compare
+    left_res, left_expl = self.visit(comp.left)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+____________________ ERROR collecting tests/test_termui.py ____________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1055: in visit_Compare
+    left_res, left_expl = self.visit(comp.left)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1046: in visit_Attribute
+    value, value_expl = self.visit(attr.value)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+___________________ ERROR collecting tests/test_testing.py ____________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1055: in visit_Compare
+    left_res, left_expl = self.visit(comp.left)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1014: in visit_Call
+    new_func, func_expl = self.visit(call.func)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1046: in visit_Attribute
+    value, value_expl = self.visit(attr.value)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+____________________ ERROR collecting tests/test_types.py _____________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1055: in visit_Compare
+    left_res, left_expl = self.visit(comp.left)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+____________________ ERROR collecting tests/test_utils.py _____________________
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:161: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:355: in _rewrite_test
+    rewrite_asserts(tree, source, fn_, config)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:418: in rewrite_asserts
+    AssertionRewriter(module_path, config, source).run(mod)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:741: in run
+    new.extend(self.visit(child))
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:872: in visit_Assert
+    top_condition, explanation = self.visit(assert_.test)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1055: in visit_Compare
+    left_res, left_expl = self.visit(comp.left)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:1014: in visit_Call
+    new_func, func_expl = self.visit(call.func)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+.venv\Lib\site-packages\_pytest\assertion\rewrite.py:958: in visit_Name
+    inlocs = ast.Compare(ast.Str(name.id), [ast.In()], [locs])
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+=========================== short test summary info ===========================
+ERROR tests/test_arguments.py - DeprecationWarning: ast.Str is deprecated and...
+ERROR tests/test_basic.py - DeprecationWarning: ast.Str is deprecated and wil...
+ERROR tests/test_chain.py - DeprecationWarning: ast.Str is deprecated and wil...
+ERROR tests/test_commands.py - DeprecationWarning: ast.Str is deprecated and ...
+ERROR tests/test_compat.py - DeprecationWarning: ast.Str is deprecated and wi...
+ERROR tests/test_context.py - DeprecationWarning: ast.Str is deprecated and w...
+ERROR tests/test_custom_classes.py - DeprecationWarning: ast.Str is deprecate...
+ERROR tests/test_defaults.py - DeprecationWarning: ast.Str is deprecated and ...
+ERROR tests/test_formatting.py - DeprecationWarning: ast.Str is deprecated an...
+ERROR tests/test_imports.py - DeprecationWarning: ast.Str is deprecated and w...
+ERROR tests/test_info_dict.py - DeprecationWarning: ast.Str is deprecated and...
+ERROR tests/test_normalization.py - DeprecationWarning: ast.Str is deprecated...
+ERROR tests/test_options.py - DeprecationWarning: ast.Str is deprecated and w...
+ERROR tests/test_parser.py - DeprecationWarning: ast.Str is deprecated and wi...
+ERROR tests/test_shell_completion.py - DeprecationWarning: ast.Str is depreca...
+ERROR tests/test_termui.py - DeprecationWarning: ast.Str is deprecated and wi...
+ERROR tests/test_testing.py - DeprecationWarning: ast.Str is deprecated and w...
+ERROR tests/test_types.py - DeprecationWarning: ast.Str is deprecated and wil...
+ERROR tests/test_utils.py - DeprecationWarning: ast.Str is deprecated and wil...
+!!!!!!!!!!!!!!!!!! Interrupted: 19 errors during collection !!!!!!!!!!!!!!!!!!!
+============================= 19 errors in 2.16s ==============================

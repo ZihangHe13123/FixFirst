@@ -1,0 +1,36 @@
+Traceback (most recent call last):
+  File "<home>\heldout-twins\click\.venv\Lib\site-packages\py\_vendored_packages\apipkg\__init__.py", line 145, in __makeattr
+    modpath, attrname = self.__map__[name]
+                        ~~~~~~~~~~~~^^^^^^
+KeyError: '__spec__'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 189, in _run_module_as_main
+  File "<frozen runpy>", line 148, in _get_module_details
+  File "<frozen runpy>", line 112, in _get_module_details
+  File "<home>\heldout-twins\click\.venv\Lib\site-packages\pytest\__init__.py", line 8, in <module>
+    from _pytest._code import ExceptionInfo
+  File "<home>\heldout-twins\click\.venv\Lib\site-packages\_pytest\_code\__init__.py", line 5, in <module>
+    from .code import Code
+  File "<home>\heldout-twins\click\.venv\Lib\site-packages\_pytest\_code\code.py", line 41, in <module>
+    from _pytest._io import TerminalWriter
+  File "<home>\heldout-twins\click\.venv\Lib\site-packages\_pytest\_io\__init__.py", line 3, in <module>
+    from .terminalwriter import get_terminal_width
+  File "<home>\heldout-twins\click\.venv\Lib\site-packages\_pytest\_io\terminalwriter.py", line 19, in <module>
+    from ..compat import assert_never
+  File "<home>\heldout-twins\click\.venv\Lib\site-packages\_pytest\compat.py", line 32, in <module>
+    LEGACY_PATH = py.path. local
+                  ^^^^^^^^^^^^^^
+  File "<home>\heldout-twins\click\.venv\Lib\site-packages\py\_vendored_packages\apipkg\__init__.py", line 152, in __makeattr
+    result = importobj(modpath, attrname)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<home>\heldout-twins\click\.venv\Lib\site-packages\py\_vendored_packages\apipkg\__init__.py", line 72, in importobj
+    module = __import__(modpath, None, None, ['__doc__'])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1320, in _find_and_load_unlocked
+  File "<home>\heldout-twins\click\.venv\Lib\site-packages\py\_vendored_packages\apipkg\__init__.py", line 150, in __makeattr
+    raise AttributeError(name)
+AttributeError: __spec__

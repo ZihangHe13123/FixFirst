@@ -1,0 +1,28 @@
+E.......................................................<home>\heldout-projects\python-markdown\markdown\extensions\admonition.py:79: DeprecationWarning: Testing an element's truth value will always return True in future versions.  Use specific 'len(elem)' or 'elem is not None' test instead.
+  while last_child:
+<home>\heldout-projects\python-markdown\markdown\extensions\admonition.py:81: DeprecationWarning: Testing an element's truth value will always return True in future versions.  Use specific 'len(elem)' or 'elem is not None' test instead.
+  sibling and block.startswith(' ' * self.tab_length * 2) and
+<home>\heldout-projects\python-markdown\markdown\extensions\admonition.py:82: DeprecationWarning: Testing an element's truth value will always return True in future versions.  Use specific 'len(elem)' or 'elem is not None' test instead.
+  last_child and last_child.tag in ('ul', 'ol', 'dl')
+..s....................................................................................ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss...........................................................................ss.................................................................................................................................................................................................<home>\heldout-projects\python-markdown\markdown\extensions\admonition.py:88: DeprecationWarning: Testing an element's truth value will always return True in future versions.  Use specific 'len(elem)' or 'elem is not None' test instead.
+  last_child = self.lastChild(sibling) if sibling else None
+........sssssssssssssssssssssssssssssssssssssss.........................sssssssssssssssssss..................................................................................................................................................................................................................................................................................................................................
+======================================================================
+ERROR: test_apis (unittest.loader._FailedTest.test_apis)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_apis
+Traceback (most recent call last):
+  File "C:\ProgramData\anaconda3\Lib\unittest\loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\unittest\loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "<home>\heldout-projects\python-markdown\tests\test_apis.py", line 34, in <module>
+    import yaml
+ModuleNotFoundError: No module named 'yaml'
+
+
+----------------------------------------------------------------------
+Ran 894 tests in 0.663s
+
+FAILED (errors=1, skipped=129)

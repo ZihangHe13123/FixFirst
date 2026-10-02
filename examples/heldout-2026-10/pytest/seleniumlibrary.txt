@@ -1,0 +1,382 @@
+# Plain pytest output for the held-out check (scripts/heldout.py pytest)
+# project: seleniumlibrary (robotframework/SeleniumLibrary v6.3.0)
+# command: python -m pytest, in <home>\heldout-projects\seleniumlibrary, environment activated
+# python: 3.12.7
+# run 1: exit code 2, 6.5 s, 33 errors
+# run 2: exit code 2, 1.5 s, 33 errors
+# date: 2026-09-30T19:42:43+08:00
+
+============================= test session starts =============================
+platform win32 -- Python 3.12.7, pytest-9.1.1, pluggy-1.6.0
+rootdir: <home>\heldout-projects\seleniumlibrary
+configfile: pyproject.toml
+plugins: platformdirs-4.12.2, approvaltests-0.2.4, mockito-0.0.6.post1
+collected 0 items / 33 errors
+
+=================================== ERRORS ====================================
+______ ERROR collecting utest/test/api/test_accessing_keywod_methods.py _______
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\api\test_accessing_keywod_methods.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\api\test_accessing_keywod_methods.py:3: in <module>
+    from SeleniumLibrary import SeleniumLibrary
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_______ ERROR collecting utest/test/api/test_event_firing_webdriver.py ________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\api\test_event_firing_webdriver.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\api\test_event_firing_webdriver.py:7: in <module>
+    from SeleniumLibrary import SeleniumLibrary
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_____ ERROR collecting utest/test/api/test_filepath_unusual_characters.py _____
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\api\test_filepath_unusual_characters.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\api\test_filepath_unusual_characters.py:10: in <module>
+    from SeleniumLibrary.utils.path_formatter import _format_path
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_____________ ERROR collecting utest/test/api/test_get_timeout.py _____________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\api\test_get_timeout.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\api\test_get_timeout.py:6: in <module>
+    from SeleniumLibrary.base import LibraryComponent
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+________ ERROR collecting utest/test/api/test_plugin_documentation.py _________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\api\test_plugin_documentation.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\api\test_plugin_documentation.py:10: in <module>
+    from SeleniumLibrary import SeleniumLibrary
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_________ ERROR collecting utest/test/api/test_plugin_keyword_tags.py _________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\api\test_plugin_keyword_tags.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\api\test_plugin_keyword_tags.py:4: in <module>
+    from SeleniumLibrary import SeleniumLibrary
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_______________ ERROR collecting utest/test/api/test_plugins.py _______________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\api\test_plugins.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\api\test_plugins.py:7: in <module>
+    from SeleniumLibrary import SeleniumLibrary
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_______ ERROR collecting utest/test/keywords/test_browsermanagement.py ________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_browsermanagement.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_browsermanagement.py:7: in <module>
+    from SeleniumLibrary.keywords import BrowserManagementKeywords
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_________ ERROR collecting utest/test/keywords/test_click_modifier.py _________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_click_modifier.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_click_modifier.py:5: in <module>
+    from SeleniumLibrary.keywords import ElementKeywords
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_____________ ERROR collecting utest/test/keywords/test_cookie.py _____________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_cookie.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_cookie.py:6: in <module>
+    from SeleniumLibrary.keywords import CookieKeywords
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_______ ERROR collecting utest/test/keywords/test_expectedconditions.py _______
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_expectedconditions.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_expectedconditions.py:3: in <module>
+    from SeleniumLibrary.keywords import ExpectedConditionKeywords
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+____ ERROR collecting utest/test/keywords/test_firefox_profile_parsing.py _____
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_firefox_profile_parsing.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_firefox_profile_parsing.py:11: in <module>
+    from SeleniumLibrary.keywords import WebDriverCreator
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+___ ERROR collecting utest/test/keywords/test_input_text_file_decorator.py ____
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_input_text_file_decorator.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_input_text_file_decorator.py:5: in <module>
+    from SeleniumLibrary.keywords.webdrivertools.sl_file_detector import (
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+___________ ERROR collecting utest/test/keywords/test_javascript.py ___________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_javascript.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_javascript.py:10: in <module>
+    from SeleniumLibrary.keywords import JavaScriptKeywords
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_ ERROR collecting utest/test/keywords/test_keyword_arguments_browsermanagement.py _
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_keyword_arguments_browsermanagement.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_keyword_arguments_browsermanagement.py:5: in <module>
+    from SeleniumLibrary.keywords import BrowserManagementKeywords
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+___ ERROR collecting utest/test/keywords/test_keyword_arguments_element.py ____
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_keyword_arguments_element.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_keyword_arguments_element.py:3: in <module>
+    from SeleniumLibrary.keywords import ElementKeywords
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_ ERROR collecting utest/test/keywords/test_keyword_arguments_formelement.py __
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_keyword_arguments_formelement.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_keyword_arguments_formelement.py:4: in <module>
+    from SeleniumLibrary.keywords import FormElementKeywords
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_ ERROR collecting utest/test/keywords/test_keyword_arguments_selectelement.py _
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_keyword_arguments_selectelement.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_keyword_arguments_selectelement.py:6: in <module>
+    from SeleniumLibrary.keywords import SelectElementKeywords
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+___ ERROR collecting utest/test/keywords/test_keyword_arguments_waiting.py ____
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_keyword_arguments_waiting.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_keyword_arguments_waiting.py:4: in <module>
+    from SeleniumLibrary.keywords import WaitingKeywords
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+___________ ERROR collecting utest/test/keywords/test_press_keys.py ___________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_press_keys.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_press_keys.py:10: in <module>
+    from SeleniumLibrary.keywords import ElementKeywords
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_____ ERROR collecting utest/test/keywords/test_runonfailure_from_lib.py ______
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_runonfailure_from_lib.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_runonfailure_from_lib.py:5: in <module>
+    from SeleniumLibrary import SeleniumLibrary
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+__________ ERROR collecting utest/test/keywords/test_screen_shot.py ___________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_screen_shot.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_screen_shot.py:6: in <module>
+    from SeleniumLibrary import ScreenshotKeywords, SeleniumLibrary
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+____ ERROR collecting utest/test/keywords/test_selenium_options_parser.py _____
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_selenium_options_parser.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_selenium_options_parser.py:13: in <module>
+    from SeleniumLibrary.keywords.webdrivertools import SeleniumOptions, WebDriverCreator
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_________ ERROR collecting utest/test/keywords/test_tablekeywords.py __________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_tablekeywords.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_tablekeywords.py:5: in <module>
+    from SeleniumLibrary.keywords import TableElementKeywords
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_ ERROR collecting utest/test/keywords/test_waiting_stale_element_refereance_exception.py _
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_waiting_stale_element_refereance_exception.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_waiting_stale_element_refereance_exception.py:5: in <module>
+    from SeleniumLibrary.keywords import WaitingKeywords
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_________ ERROR collecting utest/test/keywords/test_webdrivercache.py _________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_webdrivercache.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_webdrivercache.py:7: in <module>
+    from SeleniumLibrary.keywords import WebDriverCache
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+___ ERROR collecting utest/test/keywords/test_windowmananger_window_info.py ___
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\keywords\test_windowmananger_window_info.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\keywords\test_windowmananger_window_info.py:5: in <module>
+    from SeleniumLibrary.locators.windowmanager import WindowManager
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_________ ERROR collecting utest/test/locators/test_elementfinder.py __________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\locators\test_elementfinder.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\locators\test_elementfinder.py:9: in <module>
+    from SeleniumLibrary.errors import ElementNotFound
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_________ ERROR collecting utest/test/locators/test_windowmanager.py __________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\locators\test_windowmanager.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\locators\test_windowmanager.py:6: in <module>
+    from SeleniumLibrary.errors import WindowNotFound
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+______________ ERROR collecting utest/test/utils/test_package.py ______________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\utils\test_package.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\utils\test_package.py:3: in <module>
+    from SeleniumLibrary.utils import escape_xpath_value
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+__________ ERROR collecting utest/test/utils/test_type_converter.py ___________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\utils\test_type_converter.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\utils\test_type_converter.py:7: in <module>
+    from SeleniumLibrary.utils.types import type_converter
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+_______________ ERROR collecting utest/test/utils/test_types.py _______________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\utils\test_types.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\utils\test_types.py:1: in <module>
+    from SeleniumLibrary.utils import is_noney
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+___________ ERROR collecting utest/test/utils/test_xpath_escape.py ____________
+ImportError while importing test module '<home>\heldout-projects\seleniumlibrary\utest\test\utils\test_xpath_escape.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\test\utils\test_xpath_escape.py:10: in <module>
+    from SeleniumLibrary.utils import escape_xpath_value
+E   ModuleNotFoundError: No module named 'SeleniumLibrary'
+=========================== short test summary info ===========================
+ERROR utest/test/api/test_accessing_keywod_methods.py
+ERROR utest/test/api/test_event_firing_webdriver.py
+ERROR utest/test/api/test_filepath_unusual_characters.py
+ERROR utest/test/api/test_get_timeout.py
+ERROR utest/test/api/test_plugin_documentation.py
+ERROR utest/test/api/test_plugin_keyword_tags.py
+ERROR utest/test/api/test_plugins.py
+ERROR utest/test/keywords/test_browsermanagement.py
+ERROR utest/test/keywords/test_click_modifier.py
+ERROR utest/test/keywords/test_cookie.py
+ERROR utest/test/keywords/test_expectedconditions.py
+ERROR utest/test/keywords/test_firefox_profile_parsing.py
+ERROR utest/test/keywords/test_input_text_file_decorator.py
+ERROR utest/test/keywords/test_javascript.py
+ERROR utest/test/keywords/test_keyword_arguments_browsermanagement.py
+ERROR utest/test/keywords/test_keyword_arguments_element.py
+ERROR utest/test/keywords/test_keyword_arguments_formelement.py
+ERROR utest/test/keywords/test_keyword_arguments_selectelement.py
+ERROR utest/test/keywords/test_keyword_arguments_waiting.py
+ERROR utest/test/keywords/test_press_keys.py
+ERROR utest/test/keywords/test_runonfailure_from_lib.py
+ERROR utest/test/keywords/test_screen_shot.py
+ERROR utest/test/keywords/test_selenium_options_parser.py
+ERROR utest/test/keywords/test_tablekeywords.py
+ERROR utest/test/keywords/test_waiting_stale_element_refereance_exception.py
+ERROR utest/test/keywords/test_webdrivercache.py
+ERROR utest/test/keywords/test_windowmananger_window_info.py
+ERROR utest/test/locators/test_elementfinder.py
+ERROR utest/test/locators/test_windowmanager.py
+ERROR utest/test/utils/test_package.py
+ERROR utest/test/utils/test_type_converter.py
+ERROR utest/test/utils/test_types.py
+ERROR utest/test/utils/test_xpath_escape.py
+!!!!!!!!!!!!!!!!!! Interrupted: 33 errors during collection !!!!!!!!!!!!!!!!!!!
+============================= 33 errors in 4.91s ==============================

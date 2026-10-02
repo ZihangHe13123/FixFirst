@@ -1,0 +1,123 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.7, pytest-9.1.1, pluggy-1.6.0
+rootdir: <home>\heldout-twins\django-storages
+configfile: tox.ini
+testpaths: tests/
+plugins: cov-7.1.0
+collected 253 items
+
+tests\test_azure.py ...........................                          [ 10%]
+tests\test_dropbox.py .F...................                              [ 18%]
+tests\test_ftp.py ..................................                     [ 32%]
+tests\test_gcloud.py ........................................            [ 48%]
+tests\test_s3.py ....................................................... [ 69%]
+.............                                                            [ 75%]
+tests\test_sftp.py ................................                      [ 87%]
+tests\test_utils.py .......................F.......                      [100%]
+
+================================== FAILURES ===================================
+_______________________ DropboxTest.test_chunked_upload _______________________
+
+self = <tests.test_dropbox.DropboxTest testMethod=test_chunked_upload>
+start = <MagicMock name='files_upload_session_start' id='2348369402224'>
+append = <MagicMock name='files_upload_session_append_v2' id='2348368856752'>
+finish = <MagicMock name='files_upload_session_finish' id='2348369444304'>
+upload = <MagicMock name='files_upload' id='2348344902816'>
+
+    @mock.patch("dropbox.Dropbox.files_upload")
+    @mock.patch("dropbox.Dropbox.files_upload_session_finish")
+    @mock.patch("dropbox.Dropbox.files_upload_session_append_v2")
+    @mock.patch(
+        "dropbox.Dropbox.files_upload_session_start",
+        return_value=mock.MagicMock(session_id="foo"),
+    )
+    def test_chunked_upload(self, start, append, finish, upload):
+        large_file = File(io.BytesIO(b"bar" * self.storage.CHUNK_SIZE), "foo")
+>       self.storage._save("foo", large_file)
+
+tests\test_dropbox.py:138: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+storages\backends\dropbox.py:171: in _save
+    self._chunked_upload(content, self._full_path(name))
+storages\backends\dropbox.py:182: in _chunked_upload
+    commit = CommitInfo(path=dest_path, mode=WriteMode(self.write_mode))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\dropbox\files.py:419: in __init__
+    self.path = path
+    ^^^^^^^^^
+.venv\Lib\site-packages\stone\backends\python_rsrc\stone_base.py:80: in __set__
+    value = self.validator.validate(value)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <stone.backends.python_rsrc.stone_validators.String object at 0x00000222BFDEA930>
+val = 'C:/foo'
+
+    def validate(self, val):
+        """
+        A unicode string of the correct length and pattern will pass validation.
+        """
+        if not isinstance(val, str):
+            raise ValidationError("'%s' expected to be a string, got %s"
+                                  % (get_value_string(val), generic_type_name(val)))
+    
+        if self.max_length is not None and len(val) > self.max_length:
+            raise ValidationError("'%s' must be at most %d characters, got %d"
+                                  % (get_value_string(val), self.max_length, len(val)))
+        if self.min_length is not None and len(val) < self.min_length:
+            raise ValidationError("'%s' must be at least %d characters, got %d"
+                                  % (get_value_string(val), self.min_length, len(val)))
+    
+        if self.pattern and not self.pattern_re.match(val):
+            # Detect if pattern is matching an email address and return redacted error message.
+            if self.pattern == "^['#&A-Za-z0-9._%+-]+@[A-Za-z0-9-][A-Za-z0-9.-]*\\.[A-Za-z]{2,15}$":
+                val = "*****"
+    
+>           raise ValidationError("'%s' did not match pattern '%s'"
+                                  % (get_value_string(val), self.pattern))
+E           stone.backends.python_rsrc.stone_validators.ValidationError: 'C:/foo' did not match pattern '(/(.|[\r\n])*)|(ns:[0-9]+(/(.|[\r\n])*)?)|(id:.*)'
+
+.venv\Lib\site-packages\stone\backends\python_rsrc\stone_validators.py:346: ValidationError
+_________ TestGetAvailableOverwriteName.test_maxlength_less_than_name _________
+
+self = <tests.test_utils.TestGetAvailableOverwriteName testMethod=test_maxlength_less_than_name>
+
+    def test_maxlength_less_than_name(self):
+        name = "parent/child.txt"
+>       self.assertEqual(gaon(name, len(name) - 1), "parent/chil.txt")
+E       AssertionError: 'parent\\chil.txt' != 'parent/chil.txt'
+E       - parent\chil.txt
+E       ?       ^
+E       + parent/chil.txt
+E       ?       ^
+
+tests\test_utils.py:136: AssertionError
+============================== warnings summary ===============================
+tests/test_azure.py: 27 warnings
+tests/test_dropbox.py: 21 warnings
+tests/test_ftp.py: 34 warnings
+tests/test_gcloud.py: 40 warnings
+tests/test_s3.py: 68 warnings
+tests/test_sftp.py: 32 warnings
+tests/test_utils.py: 31 warnings
+  <home>\heldout-twins\django-storages\.venv\Lib\site-packages\django\db\backends\utils.py:98: RuntimeWarning: Accessing the database during app initialization is discouraged. To fix this warning, avoid executing queries in AppConfig.ready() or when your app modules are imported.
+    warnings.warn(self.APPS_NOT_READY_WARNING_MSG, category=RuntimeWarning)
+
+tests/test_azure.py: 40 warnings
+  <home>\heldout-twins\django-storages\storages\backends\azure_storage.py:126: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    self._user_delegation_key_expiry = datetime.utcnow()
+
+tests/test_s3.py::S3StorageTests::test_storage_url_custom_domain_signed_urls
+tests/test_s3.py::S3StorageTests::test_storage_url_custom_domain_signed_urls
+  <home>\heldout-twins\django-storages\tests\test_s3.py:769: DeprecationWarning: datetime.datetime.utcfromtimestamp() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.fromtimestamp(timestamp, datetime.UTC).
+    dt.utcnow.return_value = datetime.datetime.utcfromtimestamp(0)
+
+tests/test_s3.py::S3StorageTests::test_use_threads_false
+  <home>\heldout-twins\django-storages\storages\backends\s3.py:353: DeprecationWarning: The AWS_S3_USE_THREADS setting is deprecated. Use AWS_S3_TRANSFER_CONFIG to customize any of the boto.s3.transfer.TransferConfig parameters.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_dropbox.py::DropboxTest::test_chunked_upload - stone.backen...
+FAILED tests/test_utils.py::TestGetAvailableOverwriteName::test_maxlength_less_than_name
+================= 2 failed, 251 passed, 296 warnings in 9.95s =================

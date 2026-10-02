@@ -1,0 +1,508 @@
+# Plain pytest output for the held-out check (scripts/heldout.py pytest)
+# project: python-qrcode (lincolnloop/python-qrcode v7.3.1)
+# command: python -m pytest, in <home>\heldout-projects\python-qrcode, environment activated
+# python: 3.12.7
+# run 1: exit code 1, 3.8 s, 9 failed, 62 passed, 2 skipped
+# run 2: exit code 1, 3.2 s, 9 failed, 62 passed, 2 skipped
+# date: 2026-09-29T22:05:18+08:00
+
+============================= test session starts =============================
+
+platform win32 -- Python 3.12.7, pytest-9.1.1, pluggy-1.6.0
+
+rootdir: <home>\heldout-projects\python-qrcode
+
+configfile: setup.cfg
+
+plugins: cov-7.1.0
+
+collected 73 items
+
+
+
+qrcode\tests\test_example.py .                                           [  1%]
+
+qrcode\tests\test_qrcode.py .................................ss......... [ 61%]
+
+...............                                                          [ 82%]
+
+qrcode\tests\test_release.py F...                                        [ 87%]
+
+qrcode\tests\test_script.py FFFFFFFF                                     [ 98%]
+
+qrcode\tests\test_util.py .                                              [100%]
+
+
+
+================================== FAILURES ===================================
+
+_______________________ UpdateManpageTests.test_change ________________________
+
+
+
+self = <qrcode.tests.test_release.UpdateManpageTests testMethod=test_change>
+
+mock_file = <MagicMock name='open' id='1960071150192'>
+
+
+
+    @mock.patch(OPEN, new_callable=mock.mock_open, read_data=DATA)
+
+    def test_change(self, mock_file):
+
+>       update_manpage({'name': 'qrcode', 'new_version': '3.11'})
+
+
+
+qrcode\tests\test_release.py:34: 
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+
+data = {'name': 'qrcode', 'new_version': '3.11'}
+
+
+
+    def update_manpage(data):
+
+        """
+
+        Update the version in the manpage document.
+
+        """
+
+        if data['name'] != 'qrcode':
+
+            return
+
+    
+
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+        filename = os.path.join(base_dir, 'doc', 'qr.1')
+
+        with open(filename) as f:
+
+            lines = f.readlines()
+
+    
+
+        changed = False
+
+        for i, line in enumerate(lines):
+
+            if not line.startswith('.TH '):
+
+                continue
+
+            parts = re.split(r'"([^"]*)"', line)
+
+            if len(parts) < 5:
+
+                continue
+
+            changed = parts[3] != data['new_version']
+
+            if changed:
+
+                # Update version
+
+                parts[3] = data['new_version']
+
+                # Update date
+
+>               parts[1] = datetime.datetime.now().strftime('%-d %b %Y')
+
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E               ValueError: Invalid format string
+
+
+
+qrcode\release.py:34: ValueError
+
+_________________________ ScriptTest.test_bad_factory _________________________
+
+
+
+self = <qrcode.tests.test_script.ScriptTest testMethod=test_bad_factory>
+
+mock_stderr = <MagicMock name='stderr' id='1960072133568'>
+
+
+
+    @mock.patch('sys.stderr')
+
+    def test_bad_factory(self, mock_stderr):
+
+>       self.assertRaises(SystemExit, main, 'testtext --factory fish'.split())
+
+
+
+qrcode\tests\test_script.py:67: 
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+
+    def main(args=None):
+
+        if args is None:
+
+            args = sys.argv[1:]
+
+>       from pkg_resources import get_distribution
+
+E       ModuleNotFoundError: No module named 'pkg_resources'
+
+
+
+qrcode\console_scripts.py:36: ModuleNotFoundError
+
+___________________________ ScriptTest.test_factory ___________________________
+
+
+
+self = <qrcode.tests.test_script.ScriptTest testMethod=test_factory>
+
+mock_stdout = <MagicMock name='stdout' id='1960072132608'>
+
+
+
+    @mock.patch('sys.stdout')
+
+    def test_factory(self, mock_stdout):
+
+>       main('testtext --factory svg'.split())
+
+
+
+qrcode\tests\test_script.py:63: 
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+
+args = ['testtext', '--factory', 'svg']
+
+
+
+    def main(args=None):
+
+        if args is None:
+
+            args = sys.argv[1:]
+
+>       from pkg_resources import get_distribution
+
+E       ModuleNotFoundError: No module named 'pkg_resources'
+
+
+
+qrcode\console_scripts.py:36: ModuleNotFoundError
+
+___________________________ ScriptTest.test_isatty ____________________________
+
+
+
+self = <qrcode.tests.test_script.ScriptTest testMethod=test_isatty>
+
+mock_print_ascii = <MagicMock name='print_ascii' id='1960072122864'>
+
+
+
+    @mock.patch('os.isatty', lambda *args: True)
+
+    @mock.patch('qrcode.main.QRCode.print_ascii')
+
+    def test_isatty(self, mock_print_ascii):
+
+>       main(['testtext'])
+
+
+
+qrcode\tests\test_script.py:24: 
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+
+args = ['testtext']
+
+
+
+    def main(args=None):
+
+        if args is None:
+
+            args = sys.argv[1:]
+
+>       from pkg_resources import get_distribution
+
+E       ModuleNotFoundError: No module named 'pkg_resources'
+
+
+
+qrcode\console_scripts.py:36: ModuleNotFoundError
+
+__________________________ ScriptTest.test_optimize ___________________________
+
+
+
+self = <qrcode.tests.test_script.ScriptTest testMethod=test_optimize>
+
+mock_print_ascii = <MagicMock name='print_ascii' id='1960072127376'>
+
+
+
+    @mock.patch('os.isatty', lambda *args: True)
+
+    @mock.patch('qrcode.main.QRCode.print_ascii')
+
+    def test_optimize(self, mock_print_ascii):
+
+>       main('testtext --optimize 0'.split())
+
+
+
+qrcode\tests\test_script.py:59: 
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+
+args = ['testtext', '--optimize', '0']
+
+
+
+    def main(args=None):
+
+        if args is None:
+
+            args = sys.argv[1:]
+
+>       from pkg_resources import get_distribution
+
+E       ModuleNotFoundError: No module named 'pkg_resources'
+
+
+
+qrcode\console_scripts.py:36: ModuleNotFoundError
+
+___________________________ ScriptTest.test_output ____________________________
+
+
+
+self = <qrcode.tests.test_script.ScriptTest testMethod=test_output>
+
+
+
+    def test_output(self):
+
+        tmpfile = os.path.join(self.tmpdir, "test.png")
+
+>       main(['testtext', '--output', tmpfile])
+
+
+
+qrcode\tests\test_script.py:71: 
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+
+args = ['testtext', '--output', '<home>\\AppData\\Local\\Temp\\tmp0ehrkq_p\\test.png']
+
+
+
+    def main(args=None):
+
+        if args is None:
+
+            args = sys.argv[1:]
+
+>       from pkg_resources import get_distribution
+
+E       ModuleNotFoundError: No module named 'pkg_resources'
+
+
+
+qrcode\console_scripts.py:36: ModuleNotFoundError
+
+____________________________ ScriptTest.test_piped ____________________________
+
+
+
+self = <qrcode.tests.test_script.ScriptTest testMethod=test_piped>
+
+mock_stdout = <MagicMock name='stdout' id='1960072115648'>
+
+
+
+    @mock.patch('os.isatty', lambda *args: False)
+
+    @mock.patch('sys.stdout')
+
+    def test_piped(self, mock_stdout):
+
+>       main(['testtext'])
+
+
+
+qrcode\tests\test_script.py:30: 
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+
+args = ['testtext']
+
+
+
+    def main(args=None):
+
+        if args is None:
+
+            args = sys.argv[1:]
+
+>       from pkg_resources import get_distribution
+
+E       ModuleNotFoundError: No module named 'pkg_resources'
+
+
+
+qrcode\console_scripts.py:36: ModuleNotFoundError
+
+____________________________ ScriptTest.test_stdin ____________________________
+
+
+
+self = <qrcode.tests.test_script.ScriptTest testMethod=test_stdin>
+
+mock_print_ascii = <MagicMock name='print_ascii' id='1960072103888'>
+
+
+
+    @mock.patch('os.isatty', lambda *args: True)
+
+    @mock.patch('qrcode.main.QRCode.print_ascii')
+
+    def test_stdin(self, mock_print_ascii):
+
+        mock_stdin = mock.Mock(sys.stdin)
+
+        stdin_buffer = getattr(mock_stdin, 'buffer', mock_stdin)
+
+        stdin_buffer.read.return_value = 'testtext'
+
+        with mock.patch('sys.stdin', mock_stdin):
+
+>           main([])
+
+
+
+qrcode\tests\test_script.py:39: 
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+
+args = []
+
+
+
+    def main(args=None):
+
+        if args is None:
+
+            args = sys.argv[1:]
+
+>       from pkg_resources import get_distribution
+
+E       ModuleNotFoundError: No module named 'pkg_resources'
+
+
+
+qrcode\console_scripts.py:36: ModuleNotFoundError
+
+________________ ScriptTest.test_stdin_py3_unicodedecodeerror _________________
+
+
+
+self = <qrcode.tests.test_script.ScriptTest testMethod=test_stdin_py3_unicodedecodeerror>
+
+mock_print_ascii = <MagicMock name='print_ascii' id='1960072106816'>
+
+
+
+    @mock.patch('os.isatty', lambda *args: True)
+
+    @mock.patch('qrcode.main.QRCode.print_ascii')
+
+    def test_stdin_py3_unicodedecodeerror(self, mock_print_ascii):
+
+        mock_stdin = mock.Mock(sys.stdin)
+
+        mock_stdin.buffer.read.return_value = 'testtext'
+
+        mock_stdin.read.side_effect = bad_read
+
+        with mock.patch('sys.stdin', mock_stdin):
+
+            # sys.stdin.read() will raise an error...
+
+            self.assertRaises(UnicodeDecodeError, sys.stdin.read)
+
+            # ... but it won't be used now.
+
+>           main([])
+
+
+
+qrcode\tests\test_script.py:53: 
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+
+args = []
+
+
+
+    def main(args=None):
+
+        if args is None:
+
+            args = sys.argv[1:]
+
+>       from pkg_resources import get_distribution
+
+E       ModuleNotFoundError: No module named 'pkg_resources'
+
+
+
+qrcode\console_scripts.py:36: ModuleNotFoundError
+
+=========================== short test summary info ===========================
+
+FAILED qrcode/tests/test_release.py::UpdateManpageTests::test_change - ValueE...
+
+FAILED qrcode/tests/test_script.py::ScriptTest::test_bad_factory - ModuleNotF...
+
+FAILED qrcode/tests/test_script.py::ScriptTest::test_factory - ModuleNotFound...
+
+FAILED qrcode/tests/test_script.py::ScriptTest::test_isatty - ModuleNotFoundE...
+
+FAILED qrcode/tests/test_script.py::ScriptTest::test_optimize - ModuleNotFoun...
+
+FAILED qrcode/tests/test_script.py::ScriptTest::test_output - ModuleNotFoundE...
+
+FAILED qrcode/tests/test_script.py::ScriptTest::test_piped - ModuleNotFoundEr...
+
+FAILED qrcode/tests/test_script.py::ScriptTest::test_stdin - ModuleNotFoundEr...
+
+FAILED qrcode/tests/test_script.py::ScriptTest::test_stdin_py3_unicodedecodeerror
+
+=================== 9 failed, 62 passed, 2 skipped in 3.15s ===================
+

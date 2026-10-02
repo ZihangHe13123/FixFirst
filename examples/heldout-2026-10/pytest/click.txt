@@ -1,0 +1,46 @@
+# Plain pytest output for the held-out check (scripts/heldout.py pytest)
+# project: click (pallets/click 8.0.3)
+# command: python -m pytest, in <home>\heldout-projects\click, environment activated
+# python: 3.12.7
+# run 1: exit code 1, 0.2 s, AttributeError: __spec__
+# run 2: exit code 1, 0.1 s, AttributeError: __spec__
+# date: 2026-09-29T22:05:11+08:00
+
+Traceback (most recent call last):
+  File "<home>\heldout-projects\click\.venv\Lib\site-packages\py\_vendored_packages\apipkg\__init__.py", line 145, in __makeattr
+    modpath, attrname = self.__map__[name]
+                        ~~~~~~~~~~~~^^^^^^
+KeyError: '__spec__'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 189, in _run_module_as_main
+  File "<frozen runpy>", line 148, in _get_module_details
+  File "<frozen runpy>", line 112, in _get_module_details
+  File "<home>\heldout-projects\click\.venv\Lib\site-packages\pytest\__init__.py", line 5, in <module>
+    from _pytest.assertion import register_assert_rewrite
+  File "<home>\heldout-projects\click\.venv\Lib\site-packages\_pytest\assertion\__init__.py", line 9, in <module>
+    from _pytest.assertion import rewrite
+  File "<home>\heldout-projects\click\.venv\Lib\site-packages\_pytest\assertion\rewrite.py", line 34, in <module>
+    from _pytest.assertion import util
+  File "<home>\heldout-projects\click\.venv\Lib\site-packages\_pytest\assertion\util.py", line 13, in <module>
+    import _pytest._code
+  File "<home>\heldout-projects\click\.venv\Lib\site-packages\_pytest\_code\__init__.py", line 2, in <module>
+    from .code import Code
+  File "<home>\heldout-projects\click\.venv\Lib\site-packages\_pytest\_code\code.py", line 54, in <module>
+    class Code:
+  File "<home>\heldout-projects\click\.venv\Lib\site-packages\_pytest\_code\code.py", line 81, in Code
+    def path(self) -> Union[py.path.local, str]:
+                            ^^^^^^^^^^^^^
+  File "<home>\heldout-projects\click\.venv\Lib\site-packages\py\_vendored_packages\apipkg\__init__.py", line 152, in __makeattr
+    result = importobj(modpath, attrname)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<home>\heldout-projects\click\.venv\Lib\site-packages\py\_vendored_packages\apipkg\__init__.py", line 72, in importobj
+    module = __import__(modpath, None, None, ['__doc__'])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1320, in _find_and_load_unlocked
+  File "<home>\heldout-projects\click\.venv\Lib\site-packages\py\_vendored_packages\apipkg\__init__.py", line 150, in __makeattr
+    raise AttributeError(name)
+AttributeError: __spec__

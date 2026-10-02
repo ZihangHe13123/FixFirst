@@ -1,0 +1,18 @@
+# Plain pytest output for the held-out check (scripts/heldout.py pytest)
+# project: httpx (encode/httpx 0.21.1)
+# command: python -m pytest, in <home>\heldout-projects\httpx, environment activated
+# python: 3.12.7
+# run 1: exit code 4, 1.3 s, E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+# run 2: exit code 4, 0.5 s, E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+# date: 2026-09-29T22:05:24+08:00
+
+ImportError while loading conftest '<home>\heldout-projects\httpx\tests\conftest.py'.
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead

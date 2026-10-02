@@ -1,0 +1,231 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.7, pytest-9.1.1, pluggy-1.6.0
+rootdir: <home>\heldout-twins\seleniumlibrary
+configfile: pyproject.toml
+plugins: platformdirs-4.12.2, approvaltests-0.2.4, mockito-0.0.6.post1
+collected 244 items
+
+utest\test\api\test_accessing_keywod_methods.py ...                      [  1%]
+utest\test\api\test_event_firing_webdriver.py ....                       [  2%]
+utest\test\api\test_filepath_unusual_characters.py s                     [  3%]
+utest\test\api\test_get_timeout.py ...                                   [  4%]
+utest\test\api\test_plugin_documentation.py sss                          [  5%]
+utest\test\api\test_plugin_keyword_tags.py .....                         [  7%]
+utest\test\api\test_plugins.py .............                             [ 13%]
+utest\test\keywords\test_browsermanagement.py ................           [ 19%]
+utest\test\keywords\test_click_modifier.py ....                          [ 21%]
+utest\test\keywords\test_cookie.py ...........                           [ 25%]
+utest\test\keywords\test_firefox_profile_parsing.py s                    [ 26%]
+utest\test\keywords\test_input_text_file_decorator.py ..                 [ 27%]
+utest\test\keywords\test_javascript.py sssss                             [ 29%]
+utest\test\keywords\test_keyword_arguments_browsermanagement.py ....     [ 30%]
+utest\test\keywords\test_keyword_arguments_element.py ..                 [ 31%]
+utest\test\keywords\test_keyword_arguments_formelement.py ......         [ 34%]
+utest\test\keywords\test_keyword_arguments_selectelement.py ..           [ 34%]
+utest\test\keywords\test_keyword_arguments_waiting.py ..                 [ 35%]
+utest\test\keywords\test_press_keys.py ssss                              [ 37%]
+utest\test\keywords\test_runonfailure_from_lib.py .                      [ 37%]
+utest\test\keywords\test_screen_shot.py .......                          [ 40%]
+utest\test\keywords\test_selenium_options_parser.py sssssssss...F.F..... [ 48%]
+F                                                                        [ 49%]
+utest\test\keywords\test_tablekeywords.py ....                           [ 50%]
+utest\test\keywords\test_waiting_stale_element_refereance_exception.py . [ 51%]
+.......                                                                  [ 54%]
+utest\test\keywords\test_webdrivercache.py .................             [ 61%]
+utest\test\keywords\test_windowmananger_window_info.py ........          [ 64%]
+utest\test\locators\test_elementfinder.py .............................. [ 76%]
+....................................                                     [ 91%]
+utest\test\locators\test_windowmanager.py ...............                [ 97%]
+utest\test\utils\test_package.py ...                                     [ 98%]
+utest\test\utils\test_type_converter.py .                                [ 99%]
+utest\test\utils\test_types.py .                                         [ 99%]
+utest\test\utils\test_xpath_escape.py s                                  [100%]
+
+================================== FAILURES ===================================
+______________________ test_create_firefox_with_options _______________________
+
+creator = <SeleniumLibrary.keywords.webdrivertools.webdrivertools.WebDriverCreator object at 0x00000203D3CC3650>
+output_dir = '<home>\\heldout-twins\\seleniumlibrary\\utest\\output_dir'
+
+    def test_create_firefox_with_options(creator, output_dir):
+        log_file = os.path.join(output_dir, "geckodriver-1.log")
+        options = mock()
+        profile = mock()
+        expected_webdriver = mock()
+        when(webdriver).FirefoxProfile().thenReturn(profile)
+        when(webdriver).Firefox(
+            options=options,
+            service=ANY
+            # firefox_profile=profile,
+            # executable_path="geckodriver",
+            # service_log_path=log_file,
+        ).thenReturn(expected_webdriver)
+>       driver = creator.create_firefox({}, None, None, options=options)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+utest\test\keywords\test_selenium_options_parser.py:263: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\SeleniumLibrary\keywords\webdrivertools\webdrivertools.py:212: in create_firefox
+    service = FirefoxService(executable_path=executable_path, **log_method)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\firefox\service.py:70: in __init__
+    super().__init__(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.firefox.service.Service object at 0x00000203D3CC2330>
+executable_path = 'geckodriver', port = 0
+log_output = '<home>\\heldout-twins\\seleniumlibrary\\utest\\output_dir\\geckodriver-1.log'
+env = None, driver_path_env_key = 'SE_GECKODRIVER', kwargs = {}
+
+    def __init__(
+        self,
+        executable_path: str | None = None,
+        port: int = 0,
+        log_output: int | str | IO[Any] | None = None,
+        env: Mapping[Any, Any] | None = None,
+        driver_path_env_key: str | None = None,
+        **kwargs,
+    ) -> None:
+        self._owns_log_output = False
+        self.log_output: int | IO[Any] | None
+        if isinstance(log_output, str):
+>           self.log_output = open(log_output, "a+", encoding="utf-8")
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '<home>\\heldout-twins\\seleniumlibrary\\utest\\output_dir\\geckodriver-1.log'
+
+.venv\Lib\site-packages\selenium\webdriver\common\service.py:63: FileNotFoundError
+__________________ test_create_headless_firefox_with_options __________________
+
+creator = <SeleniumLibrary.keywords.webdrivertools.webdrivertools.WebDriverCreator object at 0x00000203D3CC3650>
+output_dir = '<home>\\heldout-twins\\seleniumlibrary\\utest\\output_dir'
+
+    def test_create_headless_firefox_with_options(creator, output_dir):
+        log_file = os.path.join(output_dir, "geckodriver-1.log")
+        options = mock()
+        profile = mock()
+        expected_webdriver = mock()
+        when(webdriver).FirefoxProfile().thenReturn(profile)
+        when(webdriver).Firefox(
+            options=options,
+            service=ANY
+            # firefox_profile=profile,
+            # executable_path="geckodriver",
+            # service_log_path=log_file,
+        ).thenReturn(expected_webdriver)
+>       driver = creator.create_headless_firefox({}, None, None, options=options)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+utest\test\keywords\test_selenium_options_parser.py:299: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\SeleniumLibrary\keywords\webdrivertools\webdrivertools.py:257: in create_headless_firefox
+    return self.create_firefox(
+src\SeleniumLibrary\keywords\webdrivertools\webdrivertools.py:212: in create_firefox
+    service = FirefoxService(executable_path=executable_path, **log_method)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\firefox\service.py:70: in __init__
+    super().__init__(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.firefox.service.Service object at 0x00000203D3C95DC0>
+executable_path = 'geckodriver', port = 0
+log_output = '<home>\\heldout-twins\\seleniumlibrary\\utest\\output_dir\\geckodriver-1.log'
+env = None, driver_path_env_key = 'SE_GECKODRIVER', kwargs = {}
+
+    def __init__(
+        self,
+        executable_path: str | None = None,
+        port: int = 0,
+        log_output: int | str | IO[Any] | None = None,
+        env: Mapping[Any, Any] | None = None,
+        driver_path_env_key: str | None = None,
+        **kwargs,
+    ) -> None:
+        self._owns_log_output = False
+        self.log_output: int | IO[Any] | None
+        if isinstance(log_output, str):
+>           self.log_output = open(log_output, "a+", encoding="utf-8")
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '<home>\\heldout-twins\\seleniumlibrary\\utest\\output_dir\\geckodriver-1.log'
+
+.venv\Lib\site-packages\selenium\webdriver\common\service.py:63: FileNotFoundError
+_________________________ test_create_driver_firefox __________________________
+
+creator = <SeleniumLibrary.keywords.webdrivertools.webdrivertools.WebDriverCreator object at 0x00000203D3CC3650>
+output_dir = '<home>\\heldout-twins\\seleniumlibrary\\utest\\output_dir'
+
+    def test_create_driver_firefox(creator, output_dir):
+        log_file = os.path.join(output_dir, "geckodriver-1.log")
+        str_options = "add_argument:--disable-dev-shm-usage"
+        options = mock()
+        profile = mock()
+        when(webdriver).FirefoxProfile().thenReturn(profile)
+        expected_webdriver = mock()
+        when(creator.selenium_options).create("firefox", str_options).thenReturn(options)
+        executable_path = "geckodriver"
+        when(creator)._get_executable_path(ANY).thenReturn(executable_path)
+        when(webdriver).Firefox(
+            options=options,
+            service=ANY
+            # firefox_profile=profile,
+            # executable_path=executable_path,
+            # service_log_path=log_file,
+        ).thenReturn(expected_webdriver)
+>       driver = creator.create_driver(
+            "FireFox", desired_capabilities={}, remote_url=None, options=str_options
+        )
+
+utest\test\keywords\test_selenium_options_parser.py:392: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\SeleniumLibrary\keywords\webdrivertools\webdrivertools.py:85: in create_driver
+    return creation_method(
+src\SeleniumLibrary\keywords\webdrivertools\webdrivertools.py:212: in create_firefox
+    service = FirefoxService(executable_path=executable_path, **log_method)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\firefox\service.py:70: in __init__
+    super().__init__(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.firefox.service.Service object at 0x00000203D3C94890>
+executable_path = 'geckodriver', port = 0
+log_output = '<home>\\heldout-twins\\seleniumlibrary\\utest\\output_dir\\geckodriver-1.log'
+env = None, driver_path_env_key = 'SE_GECKODRIVER', kwargs = {}
+
+    def __init__(
+        self,
+        executable_path: str | None = None,
+        port: int = 0,
+        log_output: int | str | IO[Any] | None = None,
+        env: Mapping[Any, Any] | None = None,
+        driver_path_env_key: str | None = None,
+        **kwargs,
+    ) -> None:
+        self._owns_log_output = False
+        self.log_output: int | IO[Any] | None
+        if isinstance(log_output, str):
+>           self.log_output = open(log_output, "a+", encoding="utf-8")
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '<home>\\heldout-twins\\seleniumlibrary\\utest\\output_dir\\geckodriver-1.log'
+
+.venv\Lib\site-packages\selenium\webdriver\common\service.py:63: FileNotFoundError
+============================== warnings summary ===============================
+.venv\Lib\site-packages\robot\utils\__init__.py:268
+.venv\Lib\site-packages\robot\utils\__init__.py:268
+.venv\Lib\site-packages\robot\utils\__init__.py:268
+.venv\Lib\site-packages\robot\utils\__init__.py:268
+  <home>\heldout-twins\seleniumlibrary\.venv\Lib\site-packages\robot\utils\__init__.py:268: DeprecationWarning: 'robot.utils.is_string' is deprecated and will be removed in Robot Framework 9.0.
+    warnings.warn(
+
+utest/test/keywords/test_browsermanagement.py::test_set_selenium_timeout_only_affects_open_browsers
+  <home>\heldout-twins\seleniumlibrary\utest\test\keywords\test_browsermanagement.py:24: DeprecationWarning: 'verifyNoMoreInteractions' is deprecated. Use 'ensureNoUnverifiedInteractions' instead.
+    verifyNoMoreInteractions(first_browser)
+
+utest/test/keywords/test_browsermanagement.py::test_set_selenium_timeout_only_affects_open_browsers
+  <home>\heldout-twins\seleniumlibrary\utest\test\keywords\test_browsermanagement.py:25: DeprecationWarning: 'verifyNoMoreInteractions' is deprecated. Use 'ensureNoUnverifiedInteractions' instead.
+    verifyNoMoreInteractions(second_browser)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED utest/test/keywords/test_selenium_options_parser.py::test_create_firefox_with_options
+FAILED utest/test/keywords/test_selenium_options_parser.py::test_create_headless_firefox_with_options
+FAILED utest/test/keywords/test_selenium_options_parser.py::test_create_driver_firefox
+============ 3 failed, 217 passed, 24 skipped, 6 warnings in 9.93s ============

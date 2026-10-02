@@ -1,0 +1,18 @@
+ImportError while loading conftest '<home>\heldout-twins\httpx\tests\conftest.py'.
+tests\conftest.py:20: in <module>
+    from httpx import URL
+httpx\__init__.py:2: in <module>
+    from ._api import delete, get, head, options, patch, post, put, request, stream
+httpx\_api.py:4: in <module>
+    from ._client import Client
+httpx\_client.py:9: in <module>
+    from ._auth import Auth, BasicAuth, FunctionAuth
+httpx\_auth.py:10: in <module>
+    from ._models import Request, Response
+httpx\_models.py:1: in <module>
+    import cgi
+C:\ProgramData\anaconda3\Lib\cgi.py:57: in <module>
+    warnings._deprecated(__name__, remove=(3,13))
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: 'cgi' is deprecated and slated for removal in Python 3.13

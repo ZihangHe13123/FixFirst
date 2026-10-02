@@ -1,0 +1,43 @@
+# Twin check for the held-out batch (task A1)
+#
+# project: python-qrcode (lincolnloop/python-qrcode v7.3.1)
+# The twin is a copy of the project with the same environment (scripts/heldout.py twin).  The
+# original project and its environment are untouched, so pytest/python-qrcode.txt stays valid.
+# Raw pytest output of each run: twins/python-qrcode.raw*.txt
+#
+# What was checked
+#   Original        --repeat 2 reproduced the target failure (pytest/python-qrcode.txt).
+#   Twin            only the change the first step prescribes -- no other difference.
+#   Target failure  did the original error go away?
+#   After twin      pass, or a clearly different next-layer failure.
+#
+# Machine paths in the raw captures are shortened to <home>, and the user name in
+# pytest's own temporary-directory names to <user>, the way scripts/heldout.py does
+# for pytest/<id>.txt.  Nothing else in them was edited.
+
+Original (pytest/python-qrcode.txt)
+  run 1: exit 1, 9 failed, 62 passed, 2 skipped
+  run 2: exit 1, 9 failed, 62 passed, 2 skipped
+  same_every_run: true
+
+Twin
+step 1: only qrcode/release.py:34, the first-step change: strftime('%-d %b %Y') (a glibc
+      extension CPython on Windows does not implement) replaced by a portable equivalent
+      -> exit 1, 9 failed, 62 passed, 2 skipped -- 'Invalid format string' still appears once
+step 2: the same nonportable directive at its second site, tests/test_release.py:37 (the test's
+      own expectation), nothing else
+      -> exit 1, 9 failed, 62 passed, 2 skipped -- 0 format errors
+
+Target failure
+  Gone after step 2: 'Invalid format string' drops from 1 to 0.  It took two sites -- the
+  directive is in the project code and in the test that asserts on it.
+
+After twin
+  step 1: the same ValueError is now raised from tests/test_release.py:37, so the first-step
+  change moved the failure instead of clearing it.
+  step 2: the date handling is fine, and the release test now fails at tests/test_release.py:39,
+  mock_file().write.has_calls(...): modern unittest.mock rejects the name -- AttributeError:
+  'has_calls' is not a valid assertion (the typo deny-list).
+  unchanged in both steps: the 8 ScriptTest failures from qrcode/console_scripts.py:36 ('from
+  pkg_resources import get_distribution') -> ModuleNotFoundError: No module named
+  'pkg_resources'.  Deliberately not touched: a second, independent cause.

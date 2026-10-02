@@ -1,0 +1,212 @@
+# Plain pytest output for the held-out check (scripts/heldout.py pytest)
+# project: python-slugify (un33k/python-slugify v9.1.0)
+# command: python -m pytest, in <home>\heldout-projects\python-slugify, environment activated
+# python: 3.12.7
+# run 1: exit code 1, 2.1 s, FAILURES
+# date: 2026-10-02T14:57:05+08:00
+
+[1m============================= test session starts =============================[0m
+platform win32 -- Python 3.12.7, pytest-9.1.1, pluggy-1.6.0
+rootdir: <home>\heldout-projects\python-slugify
+configfile: pyproject.toml
+testpaths: tests
+collected 125 items
+
+tests\test_add_uppercase_error.py [32m.[0m[32m.[0m[32m.[0m[32m                                    [  2%][0m
+tests\test_legacy.py [32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m [ 43%]
+[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m                                          [ 68%][0m
+tests\test_release.py [32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[31mF[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[31m     [100%][0m
+
+================================== FAILURES ===================================
+[31m[1m_ ReleaseRegressionTests.test_modern_hard_cut_does_not_end_in_post_replacement_delimiters (replacement='one--two', separator='-', limit=5) _[0m
+
+self = <tests.test_release.ReleaseRegressionTests testMethod=test_modern_hard_cut_does_not_end_in_post_replacement_delimiters>
+
+    [0m[94mdef[39;49;00m[90m [39;49;00m[92mtest_modern_hard_cut_does_not_end_in_post_replacement_delimiters[39;49;00m([96mself[39;49;00m):[90m[39;49;00m
+        cases = ([90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m4[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m5[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m6[39;49;00m, [33m'[39;49;00m[33mone--t[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m6[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m7[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m8[39;49;00m, [33m'[39;49;00m[33mone::::t[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m--one[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m2[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m--one[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m3[39;49;00m, [33m'[39;49;00m[33m--o[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m---[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m2[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mx--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33mx[39;49;00m[33m'[39;49;00m, [94m3[39;49;00m, [33m'[39;49;00m[33mx[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m, [94m4[39;49;00m, [33m'[39;49;00m[33monet[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+        )[90m[39;49;00m
+        [94mfor[39;49;00m replacement, separator, limit, expected [95min[39;49;00m cases:[90m[39;49;00m
+            [94mwith[39;49;00m [96mself[39;49;00m.subTest(replacement=replacement, separator=separator, limit=limit):[90m[39;49;00m
+>               [96mself[39;49;00m.assertEqual(slugify([33m'[39;49;00m[33mvalue[39;49;00m[33m'[39;49;00m, replacements=[([33m'[39;49;00m[33mvalue[39;49;00m[33m'[39;49;00m, replacement)],[90m[39;49;00m
+                                         replacement_stage=[33m'[39;49;00m[33mpost[39;49;00m[33m'[39;49;00m, allow_unicode=[94mTrue[39;49;00m,[90m[39;49;00m
+                                         separator=separator, max_length=limit), expected)[90m[39;49;00m
+[1m[31mE               AssertionError: 'one-' != 'one'[0m
+[1m[31mE               - one-[0m
+[1m[31mE               ?    -[0m
+[1m[31mE               + one[0m
+
+[1m[31mtests\test_release.py[0m:72: AssertionError
+[31m[1m_ ReleaseRegressionTests.test_modern_hard_cut_does_not_end_in_post_replacement_delimiters (replacement='one--two', separator='::', limit=6) _[0m
+
+self = <tests.test_release.ReleaseRegressionTests testMethod=test_modern_hard_cut_does_not_end_in_post_replacement_delimiters>
+
+    [0m[94mdef[39;49;00m[90m [39;49;00m[92mtest_modern_hard_cut_does_not_end_in_post_replacement_delimiters[39;49;00m([96mself[39;49;00m):[90m[39;49;00m
+        cases = ([90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m4[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m5[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m6[39;49;00m, [33m'[39;49;00m[33mone--t[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m6[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m7[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m8[39;49;00m, [33m'[39;49;00m[33mone::::t[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m--one[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m2[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m--one[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m3[39;49;00m, [33m'[39;49;00m[33m--o[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m---[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m2[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mx--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33mx[39;49;00m[33m'[39;49;00m, [94m3[39;49;00m, [33m'[39;49;00m[33mx[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m, [94m4[39;49;00m, [33m'[39;49;00m[33monet[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+        )[90m[39;49;00m
+        [94mfor[39;49;00m replacement, separator, limit, expected [95min[39;49;00m cases:[90m[39;49;00m
+            [94mwith[39;49;00m [96mself[39;49;00m.subTest(replacement=replacement, separator=separator, limit=limit):[90m[39;49;00m
+>               [96mself[39;49;00m.assertEqual(slugify([33m'[39;49;00m[33mvalue[39;49;00m[33m'[39;49;00m, replacements=[([33m'[39;49;00m[33mvalue[39;49;00m[33m'[39;49;00m, replacement)],[90m[39;49;00m
+                                         replacement_stage=[33m'[39;49;00m[33mpost[39;49;00m[33m'[39;49;00m, allow_unicode=[94mTrue[39;49;00m,[90m[39;49;00m
+                                         separator=separator, max_length=limit), expected)[90m[39;49;00m
+[1m[31mE               AssertionError: 'one::' != 'one'[0m
+[1m[31mE               - one::[0m
+[1m[31mE               ?    --[0m
+[1m[31mE               + one[0m
+
+[1m[31mtests\test_release.py[0m:72: AssertionError
+[31m[1m_ ReleaseRegressionTests.test_modern_hard_cut_does_not_end_in_post_replacement_delimiters (replacement='one--two', separator='::', limit=7) _[0m
+
+self = <tests.test_release.ReleaseRegressionTests testMethod=test_modern_hard_cut_does_not_end_in_post_replacement_delimiters>
+
+    [0m[94mdef[39;49;00m[90m [39;49;00m[92mtest_modern_hard_cut_does_not_end_in_post_replacement_delimiters[39;49;00m([96mself[39;49;00m):[90m[39;49;00m
+        cases = ([90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m4[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m5[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m6[39;49;00m, [33m'[39;49;00m[33mone--t[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m6[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m7[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m8[39;49;00m, [33m'[39;49;00m[33mone::::t[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m--one[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m2[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m--one[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m3[39;49;00m, [33m'[39;49;00m[33m--o[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m---[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m2[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mx--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33mx[39;49;00m[33m'[39;49;00m, [94m3[39;49;00m, [33m'[39;49;00m[33mx[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m, [94m4[39;49;00m, [33m'[39;49;00m[33monet[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+        )[90m[39;49;00m
+        [94mfor[39;49;00m replacement, separator, limit, expected [95min[39;49;00m cases:[90m[39;49;00m
+            [94mwith[39;49;00m [96mself[39;49;00m.subTest(replacement=replacement, separator=separator, limit=limit):[90m[39;49;00m
+>               [96mself[39;49;00m.assertEqual(slugify([33m'[39;49;00m[33mvalue[39;49;00m[33m'[39;49;00m, replacements=[([33m'[39;49;00m[33mvalue[39;49;00m[33m'[39;49;00m, replacement)],[90m[39;49;00m
+                                         replacement_stage=[33m'[39;49;00m[33mpost[39;49;00m[33m'[39;49;00m, allow_unicode=[94mTrue[39;49;00m,[90m[39;49;00m
+                                         separator=separator, max_length=limit), expected)[90m[39;49;00m
+[1m[31mE               AssertionError: 'one::' != 'one'[0m
+[1m[31mE               - one::[0m
+[1m[31mE               ?    --[0m
+[1m[31mE               + one[0m
+
+[1m[31mtests\test_release.py[0m:72: AssertionError
+[31m[1m_ ReleaseRegressionTests.test_modern_hard_cut_does_not_end_in_post_replacement_delimiters (replacement='--one', separator='-', limit=2) _[0m
+
+self = <tests.test_release.ReleaseRegressionTests testMethod=test_modern_hard_cut_does_not_end_in_post_replacement_delimiters>
+
+    [0m[94mdef[39;49;00m[90m [39;49;00m[92mtest_modern_hard_cut_does_not_end_in_post_replacement_delimiters[39;49;00m([96mself[39;49;00m):[90m[39;49;00m
+        cases = ([90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m4[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m5[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m6[39;49;00m, [33m'[39;49;00m[33mone--t[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m6[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m7[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m8[39;49;00m, [33m'[39;49;00m[33mone::::t[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m--one[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m2[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m--one[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m3[39;49;00m, [33m'[39;49;00m[33m--o[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m---[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m2[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mx--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33mx[39;49;00m[33m'[39;49;00m, [94m3[39;49;00m, [33m'[39;49;00m[33mx[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m, [94m4[39;49;00m, [33m'[39;49;00m[33monet[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+        )[90m[39;49;00m
+        [94mfor[39;49;00m replacement, separator, limit, expected [95min[39;49;00m cases:[90m[39;49;00m
+            [94mwith[39;49;00m [96mself[39;49;00m.subTest(replacement=replacement, separator=separator, limit=limit):[90m[39;49;00m
+>               [96mself[39;49;00m.assertEqual(slugify([33m'[39;49;00m[33mvalue[39;49;00m[33m'[39;49;00m, replacements=[([33m'[39;49;00m[33mvalue[39;49;00m[33m'[39;49;00m, replacement)],[90m[39;49;00m
+                                         replacement_stage=[33m'[39;49;00m[33mpost[39;49;00m[33m'[39;49;00m, allow_unicode=[94mTrue[39;49;00m,[90m[39;49;00m
+                                         separator=separator, max_length=limit), expected)[90m[39;49;00m
+[1m[31mE               AssertionError: '-' != ''[0m
+[1m[31mE               - -[0m
+
+[1m[31mtests\test_release.py[0m:72: AssertionError
+[31m[1m_ ReleaseRegressionTests.test_modern_hard_cut_does_not_end_in_post_replacement_delimiters (replacement='---', separator='-', limit=2) _[0m
+
+self = <tests.test_release.ReleaseRegressionTests testMethod=test_modern_hard_cut_does_not_end_in_post_replacement_delimiters>
+
+    [0m[94mdef[39;49;00m[90m [39;49;00m[92mtest_modern_hard_cut_does_not_end_in_post_replacement_delimiters[39;49;00m([96mself[39;49;00m):[90m[39;49;00m
+        cases = ([90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m4[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m5[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m6[39;49;00m, [33m'[39;49;00m[33mone--t[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m6[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m7[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m8[39;49;00m, [33m'[39;49;00m[33mone::::t[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m--one[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m2[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m--one[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m3[39;49;00m, [33m'[39;49;00m[33m--o[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m---[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m2[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mx--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33mx[39;49;00m[33m'[39;49;00m, [94m3[39;49;00m, [33m'[39;49;00m[33mx[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m, [94m4[39;49;00m, [33m'[39;49;00m[33monet[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+        )[90m[39;49;00m
+        [94mfor[39;49;00m replacement, separator, limit, expected [95min[39;49;00m cases:[90m[39;49;00m
+            [94mwith[39;49;00m [96mself[39;49;00m.subTest(replacement=replacement, separator=separator, limit=limit):[90m[39;49;00m
+>               [96mself[39;49;00m.assertEqual(slugify([33m'[39;49;00m[33mvalue[39;49;00m[33m'[39;49;00m, replacements=[([33m'[39;49;00m[33mvalue[39;49;00m[33m'[39;49;00m, replacement)],[90m[39;49;00m
+                                         replacement_stage=[33m'[39;49;00m[33mpost[39;49;00m[33m'[39;49;00m, allow_unicode=[94mTrue[39;49;00m,[90m[39;49;00m
+                                         separator=separator, max_length=limit), expected)[90m[39;49;00m
+[1m[31mE               AssertionError: '-' != ''[0m
+[1m[31mE               - -[0m
+
+[1m[31mtests\test_release.py[0m:72: AssertionError
+[31m[1m_ ReleaseRegressionTests.test_modern_hard_cut_does_not_end_in_post_replacement_delimiters (replacement='x--two', separator='x', limit=3) _[0m
+
+self = <tests.test_release.ReleaseRegressionTests testMethod=test_modern_hard_cut_does_not_end_in_post_replacement_delimiters>
+
+    [0m[94mdef[39;49;00m[90m [39;49;00m[92mtest_modern_hard_cut_does_not_end_in_post_replacement_delimiters[39;49;00m([96mself[39;49;00m):[90m[39;49;00m
+        cases = ([90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m4[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m5[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m6[39;49;00m, [33m'[39;49;00m[33mone--t[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m6[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m7[39;49;00m, [33m'[39;49;00m[33mone[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m::[39;49;00m[33m'[39;49;00m, [94m8[39;49;00m, [33m'[39;49;00m[33mone::::t[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m--one[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m2[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m--one[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m3[39;49;00m, [33m'[39;49;00m[33m--o[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33m---[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m-[39;49;00m[33m'[39;49;00m, [94m2[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mx--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33mx[39;49;00m[33m'[39;49;00m, [94m3[39;49;00m, [33m'[39;49;00m[33mx[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+            ([33m'[39;49;00m[33mone--two[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m'[39;49;00m, [94m4[39;49;00m, [33m'[39;49;00m[33monet[39;49;00m[33m'[39;49;00m),[90m[39;49;00m
+        )[90m[39;49;00m
+        [94mfor[39;49;00m replacement, separator, limit, expected [95min[39;49;00m cases:[90m[39;49;00m
+            [94mwith[39;49;00m [96mself[39;49;00m.subTest(replacement=replacement, separator=separator, limit=limit):[90m[39;49;00m
+>               [96mself[39;49;00m.assertEqual(slugify([33m'[39;49;00m[33mvalue[39;49;00m[33m'[39;49;00m, replacements=[([33m'[39;49;00m[33mvalue[39;49;00m[33m'[39;49;00m, replacement)],[90m[39;49;00m
+                                         replacement_stage=[33m'[39;49;00m[33mpost[39;49;00m[33m'[39;49;00m, allow_unicode=[94mTrue[39;49;00m,[90m[39;49;00m
+                                         separator=separator, max_length=limit), expected)[90m[39;49;00m
+[1m[31mE               AssertionError: 'xx' != 'x'[0m
+[1m[31mE               - xx[0m
+[1m[31mE               ? -[0m
+[1m[31mE               + x[0m
+
+[1m[31mtests\test_release.py[0m:72: AssertionError
+[31m[1m_ ReleaseRegressionTests.test_modern_word_boundary_hard_cut_keeps_delimiters_with_the_next_word _[0m
+
+self = <tests.test_release.ReleaseRegressionTests testMethod=test_modern_word_boundary_hard_cut_keeps_delimiters_with_the_next_word>
+
+    [0m[94mdef[39;49;00m[90m [39;49;00m[92mtest_modern_word_boundary_hard_cut_keeps_delimiters_with_the_next_word[39;49;00m([96mself[39;49;00m):[90m[39;49;00m
+        [94mfor[39;49;00m order [95min[39;49;00m ([94mFalse[39;49;00m, [94mTrue[39;49;00m):[90m[39;49;00m
+>           [96mself[39;49;00m.assertEqual(slugify([33m'[39;49;00m[33mvalue[39;49;00m[33m'[39;49;00m, replacements=[([33m'[39;49;00m[33mvalue[39;49;00m[33m'[39;49;00m, [33m'[39;49;00m[33m--longword[39;49;00m[33m'[39;49;00m)],[90m[39;49;00m
+                                     replacement_stage=[33m'[39;49;00m[33mpost[39;49;00m[33m'[39;49;00m, allow_unicode=[94mTrue[39;49;00m,[90m[39;49;00m
+                                     max_length=[94m2[39;49;00m, word_boundary=[94mTrue[39;49;00m, save_order=order), [33m'[39;49;00m[33m'[39;49;00m)[90m[39;49;00m
+[1m[31mE           AssertionError: '-' != ''[0m
+[1m[31mE           - -[0m
+
+[1m[31mtests\test_release.py[0m:78: AssertionError
+[36m[1m=========================== short test summary info ===========================[0m
+[31mSUBFAILED(replacement='one--two', separator='-', limit=5)[0m tests/test_release.py::[1mReleaseRegressionTests::test_modern_hard_cut_does_not_end_in_post_replacement_delimiters[0m - AssertionError: 'one-' != 'one'
+[31mSUBFAILED(replacement='one--two', separator='::', limit=6)[0m tests/test_release.py::[1mReleaseRegressionTests::test_modern_hard_cut_does_not_end_in_post_replacement_delimiters[0m - AssertionError: 'one::' != 'one'
+[31mSUBFAILED(replacement='one--two', separator='::', limit=7)[0m tests/test_release.py::[1mReleaseRegressionTests::test_modern_hard_cut_does_not_end_in_post_replacement_delimiters[0m - AssertionError: 'one::' != 'one'
+[31mSUBFAILED(replacement='--one', separator='-', limit=2)[0m tests/test_release.py::[1mReleaseRegressionTests::test_modern_hard_cut_does_not_end_in_post_replacement_delimiters[0m - AssertionError: '-' != ''
+[31mSUBFAILED(replacement='---', separator='-', limit=2)[0m tests/test_release.py::[1mReleaseRegressionTests::test_modern_hard_cut_does_not_end_in_post_replacement_delimiters[0m - AssertionError: '-' != ''
+[31mSUBFAILED(replacement='x--two', separator='x', limit=3)[0m tests/test_release.py::[1mReleaseRegressionTests::test_modern_hard_cut_does_not_end_in_post_replacement_delimiters[0m - AssertionError: 'xx' != 'x'
+[31mFAILED[0m tests/test_release.py::[1mReleaseRegressionTests::test_modern_word_boundary_hard_cut_keeps_delimiters_with_the_next_word[0m - AssertionError: '-' != ''
+[31m======================== [31m[1m7 failed[0m, [32m124 passed[0m[31m in 1.79s[0m[31m ========================[0m

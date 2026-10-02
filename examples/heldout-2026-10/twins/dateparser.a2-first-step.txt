@@ -1,0 +1,101 @@
+# Twin check for A2 scoring -- dateparser, FixFirst's own first step
+#
+# project: dateparser (scrapinghub/dateparser v1.1.0)
+# Why this run exists: A2 scores this project 'partial' rather than 'correct'.  The label says
+# the first layer is the missing declared fasttext dependency (label first_step: install the
+# declared fasttext dependency, making it install on this Windows/Python 3.12 environment).
+# FixFirst names the same dependency, so the cause is right; what decides between 'correct' and
+# 'partial' is whether the step it actually offers can be carried out.  This run tests that
+# directly, in a copy: the intervention is the command FixFirst itself offers, taken verbatim
+# from results-v0.7.0.json (fixfirst_command), and the question is whether the target failure
+# goes away.
+#
+# The twin is a fresh copy of the project with the same environment (scripts/heldout.py twin).
+# The original project and its environment are untouched, so pytest/dateparser.txt,
+# twins/dateparser.txt and results-v0.7.0.json stay valid.
+#
+# What was checked
+#   Original        pytest/dateparser.txt, exit 2, 3 errors, both runs, unchanged.
+#   Twin baseline   same environment, fasttext absent (importlib.util.find_spec -> None).
+#   Intervention    the command FixFirst offers, run with the copy's own interpreter:
+#                     python.exe -m pip install --log <log> --disable-pip-version-check
+#                         --only-binary=:all: fasttext
+#   Target failure  did the 3 'No module named fasttext' errors go away?
+#   Contrast        the same request with --only-binary removed, to show which part of the
+#                   command decides the outcome.  Nothing else was changed.
+#
+# Machine paths in this capture are shortened to <home>, the same way scripts/heldout.py does
+# for pytest/<id>.txt.  Nothing else was edited.
+#
+# Run 2026-10-02 on v0.7.0 for A2.  The commands in this file were executed by Claude Code (an
+# AI assistant) at role A's direction, as measurement for the score; the score itself was
+# decided by role A.  The contrast run is included because it changes what the failure means:
+# see "Contrast" below.
+
+Original (pytest/dateparser.txt)
+  run 1: exit 2, 17 warnings, 3 errors -- all ModuleNotFoundError: No module named 'fasttext'
+  run 2: exit 2, 17 warnings, 3 errors -- identical
+  same_every_run: true
+
+Twin baseline
+  .venv\Scripts\python.exe -c "import importlib.util as u; print(u.find_spec('fasttext'))"
+    fasttext spec: None
+  twin interpreter: 3.12.7 | packaged by Anaconda, Inc. (base: anaconda3 -- same base as the
+  original project's environment)
+
+Intervention: FixFirst's own command, verbatim
+  ERROR: Could not find a version that satisfies the requirement fasttext (from versions: none)
+  ERROR: No matching distribution found for fasttext
+  exit status 1
+
+  The pip log of that run says which part of the command does it.  Every wheel PyPI offers for
+  fasttext is a macOS cp27 wheel, so none is usable here; and every source distribution is
+  dropped by the flag FixFirst itself sets:
+
+    Skipping link: No sources permitted for fasttext: .../fasttext-0.9.3.tar.gz (from https://pypi.org/simple/fasttext/)
+    Given no hashes to check 0 links for project 'fasttext': discarding no candidates
+    ERROR: Could not find a version that satisfies the requirement fasttext (from versions: none)
+
+  "No sources permitted" is pip's message for --only-binary=:all:.  fixfirst_command is not the
+  only place that flag is set: it is FixFirst's own install policy (src/fixfirst/
+  dependency_advice.py:107 and :176, dependency_resolution.py:181, :277 and :285,
+  versions.py:146).  No environment variable or pip configuration on this machine forces it:
+  no PIP_* variables are set and 'pip config list' prints nothing.
+
+Target failure
+  NOT gone.  fasttext is still absent (find_spec -> None) and pytest in the same copy gives
+  17 warnings, 3 errors in 9.48 s -- the same collection errors as the original.  The layer the
+  label names is not closed by the step FixFirst offers.
+
+Contrast: the same request with --only-binary removed
+  pip install --disable-pip-version-check fasttext  (exit status 1, output cut to the last lines)
+
+    error: Command '['C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\
+    MSVC\14.44.35207\bin\HostX86\x64\cl.exe', '/c', ... '/Tppython/fasttext_module/fasttext/
+    pybind/fasttext_pybind.cc', ...]' returned non-zero exit status 2
+    error: Failed building wheel for fasttext
+    Failed to build fasttext
+
+  Two things follow, and they matter for how this project is written up:
+
+  1) The flag is the whole difference.  Without it pip does resolve fasttext -- it downloads the
+     sdist and tries to build it.  With it there is nothing to resolve at all.
+
+  2) This machine does have a C++ toolchain, and pip finds it.  The build gets as far as invoking
+     cl.exe from Visual Studio 2022 Build Tools 14.44.35207; it fails on C++ compile errors in
+     fasttext's bundled pybind11 sources (C2672: no matching overload for pybind11::init), not on
+     a missing compiler.  twins/dateparser.txt records the first step failing with 'error:
+     Microsoft Visual C++ 14.0 or greater is required', which is the message uv's build frontend
+     reports; that record was made with 'uv pip install fasttext', so the two runs differ in tool
+     as well as in flag.  The Build Tools directory on this machine was created 2026-09-30
+     20:37-20:38, about four minutes before that record was written at 20:47.  Whatever the reason
+     for the difference, the held-out project was not modified: the label, its scenario and the
+     original captures stand as they are, and this note is the record of the discrepancy.
+     (For the score it makes no difference -- 'partial' needs only that FixFirst's own step does
+     not clear the layer, which is shown above.)
+
+Not measured
+  Whether any intervention could install fasttext here.  The contrast shows the sdist does not
+  build with this compiler either, and the label's own twin notes that the dependency has no
+  Windows/cp312 wheel.  The label's first layer therefore cannot be closed in this environment,
+  which is what the label's checked_by_trying already says.

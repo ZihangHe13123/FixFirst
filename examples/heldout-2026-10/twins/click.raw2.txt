@@ -1,0 +1,40 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.7, pytest-9.1.1, pluggy-1.6.0
+rootdir: <home>\heldout-twins\click
+configfile: setup.cfg
+testpaths: tests
+collected 495 items / 1 error
+
+=================================== ERRORS ====================================
+____________________ ERROR collecting tests/test_basic.py _____________________
+.venv\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\_pytest\python.py:250: in pytest_pycollect_makeitem
+    return list(collector._genfunctions(name, obj))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\_pytest\python.py:476: in _genfunctions
+    self.ihook.pytest_generate_tests.call_extra(methods, dict(metafunc=metafunc))
+.venv\Lib\site-packages\pluggy\_hooks.py:573: in call_extra
+    return self._hookexec(self.name, hookimpls, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\_pytest\python.py:124: in pytest_generate_tests
+    metafunc.parametrize(*marker.args, **marker.kwargs, _param_mark=marker)
+.venv\Lib\site-packages\_pytest\python.py:1316: in parametrize
+    argnames, parametersets = ParameterSet._for_parametrize(
+.venv\Lib\site-packages\_pytest\mark\structures.py:202: in _for_parametrize
+    warnings.warn(
+E   pytest.PytestRemovedIn10Warning: Passing a non-Collection iterable to parametrize is deprecated.
+E   Test: tests/test_basic.py::test_boolean_conversion, argvalues type: chain
+E   Please convert to a list or tuple.
+E   See https://docs.pytest.org/en/stable/deprecations.html#parametrize-iterators
+=========================== short test summary info ===========================
+ERROR tests/test_basic.py - pytest.PytestRemovedIn10Warning: Passing a non-Co...
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+============================== 1 error in 2.16s ===============================

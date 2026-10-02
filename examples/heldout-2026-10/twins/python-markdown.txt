@@ -1,0 +1,47 @@
+# Twin check for the held-out batch (task A1)
+#
+# project: python-markdown (Python-Markdown/markdown 3.4.3)
+# The twin is a copy of the project with the same environment (scripts/heldout.py twin).  The
+# original project and its environment are untouched, so pytest/python-markdown.txt stays valid.
+# Raw pytest output of each run: twins/python-markdown.raw*.txt
+#
+# What was checked
+#   Original        --repeat 2 reproduced the target failure (pytest/python-markdown.txt).
+#   Twin            only the change the first step prescribes -- no other difference.
+#   Target failure  did the original error go away?
+#   After twin      pass, or a clearly different next-layer failure.
+#
+# Machine paths in the raw captures are shortened to <home>, and the user name in
+# pytest's own temporary-directory names to <user>, the way scripts/heldout.py does
+# for pytest/<id>.txt.  Nothing else in them was edited.
+
+Original (pytest/python-markdown.txt)
+  run 1: exit 2, 2 errors
+  run 2: exit 2, 2 errors
+  same_every_run: true
+
+Twin
+the declared testing dependency installed and nothing else: uv pip install pyyaml into the
+      copy's venv.  No project or test file was edited, and the testing extra's other entry
+      (coverage) was deliberately left out so the intervention stays one package
+      -> exit 2, 1 error -- the target error is gone and collection now reaches 1090 items
+
+Target failure
+  Gone: 'No module named yaml' at tests/test_apis.py:34 drops to 0 occurrences.  In the
+  untouched environment the same interpreter fails `import yaml` on its own, so the twin's one
+  intervention is what removed it.
+
+After twin
+  exit 2, 1090 items collected, 1 error in 0.92 s.
+  next layer, the only one left: tests/test_syntax/extensions/test_md_in_html.py imports
+  unittest.TestSuite, and modern pytest refuses to collect a Test* class that has an __init__
+  constructor -- pytest.PytestCollectionWarning raised during collection, which interrupts it.
+  that residual cannot come from project config: the repository has no pytest configuration at
+  all (no pytest.ini, no setup.cfg, no [tool.pytest.ini_options] in pyproject.toml, no [pytest]
+  section in tox.ini), so it is modern pytest against 2021 test code -- the same kind of layer
+  as httpx's cgi and python-qrcode's has_calls.
+  extra evidence for the first layer, outside the twin: the project's own documented test
+  command, python -m unittest discover tests (docs/contributing.md:298), run in the untouched
+  environment, dies on the same line -- Ran 894 tests, FAILED (errors=1, skipped=129),
+  ModuleNotFoundError: No module named yaml at tests/test_apis.py:34.  Raw output: twins/python-
+  markdown.docpath.txt.

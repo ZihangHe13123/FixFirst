@@ -1,0 +1,41 @@
+# Twin check for the held-out batch (task A1)
+#
+# project: robotframework (robotframework/robotframework v4.1.3)
+# The twin is a copy of the project with the same environment (scripts/heldout.py twin).  The
+# original project and its environment are untouched, so pytest/robotframework.txt stays valid.
+# Raw pytest output of each run: twins/robotframework.raw*.txt
+#
+# What was checked
+#   Original        --repeat 2 reproduced the target failure (pytest/robotframework.txt).
+#   Twin            only the change the first step prescribes -- no other difference.
+#   Target failure  did the original error go away?
+#   After twin      pass, or a clearly different next-layer failure.
+#
+# Machine paths in the raw captures are shortened to <home>, and the user name in
+# pytest's own temporary-directory names to <user>, the way scripts/heldout.py does
+# for pytest/<id>.txt.  Nothing else in them was edited.
+
+Original (pytest/robotframework.txt)
+  run 1: exit 2, 98 errors
+  run 2: exit 2, 98 errors
+  same_every_run: true
+
+Twin
+one root conftest.py doing only what utest/run.py does for the package: sys.path.insert of src/.
+      Nothing else, and no project file was edited
+
+Target failure
+  Gone -- all 98 'No module named robot' errors disappear (robot 4.1.3 imports from src/).
+
+After twin
+  exit 2, 45 warnings, 5 errors in 1.48 s (collection is interrupted, so no test runs yet).
+  next layer, 4 of the 5: utest/api/test_run_and_rebot.py:18 and
+  utest/running/test_running.py:11 -> No module named 'resources';
+  utest/running/test_handlers.py:17 and test_testlibrary.py:12 -> No module named 'classes'.
+  Those are the project's own test-support packages: utest/run.py:28-33 inserts ../src AND
+  ../atest/testresources/testlibs, and its discovery inserts the utest/ directory itself
+  (run.py:42), so the runner supplies three paths and src/ alone is only the first of them.
+  the 5th is utest/utils/test_encoding.py:9 UNICODE.encode(CONSOLE_ENCODING) ->
+  UnicodeEncodeError: 'gbk' codec ... That one is the machine's console codepage (cp936), not a
+  project defect, and PYTHONUTF8 does not help because the test encodes with the console
+  codepage explicitly.

@@ -1,0 +1,30 @@
+# Plain pytest output for the held-out check (scripts/heldout.py pytest)
+# project: python-markdown (Python-Markdown/markdown 3.4.3)
+# command: python -m pytest, in <home>\heldout-twin-py\copies\python-markdown, environment activated
+# python: 3.12.7
+# run 1: exit code 2, 1.6 s, 1 error
+# date: 2026-09-30T20:29:50+08:00
+
+============================= test session starts =============================
+platform win32 -- Python 3.12.7, pytest-9.1.1, pluggy-1.6.0
+rootdir: <home>\heldout-twin-py\copies\python-markdown
+configfile: pyproject.toml
+collected 1090 items / 1 error
+
+=================================== ERRORS ====================================
+______ ERROR collecting tests/test_syntax/extensions/test_md_in_html.py _______
+.venv\Lib\site-packages\_pytest\runner.py:361: in from_call
+    result: TResult | None = func()
+                             ^^^^^^
+.venv\Lib\site-packages\_pytest\runner.py:406: in collect
+    return list(collector.collect())
+                ^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\_pytest\python.py:762: in collect
+    self.warn(
+.venv\Lib\site-packages\_pytest\nodes.py:263: in warn
+    warnings.warn_explicit(
+E   pytest.PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: tests/test_syntax/extensions/test_md_in_html.py)
+=========================== short test summary info ===========================
+ERROR tests/test_syntax/extensions/test_md_in_html.py::TestSuite - pytest.Pyt...
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+============================== 1 error in 0.92s ===============================
