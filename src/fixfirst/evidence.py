@@ -23,6 +23,7 @@ from .source_context import FEATURE_NAMES as SOURCE_FEATURE_NAMES, feature_value
 from .interface_history import FEATURE_NAMES as HISTORY_FEATURE_NAMES, feature_values as history_features
 from .symbol_context import FEATURE_NAMES as SYMBOL_FEATURE_NAMES, feature_values as symbol_features
 from .symbol_context import HISTORY_FEATURE_NAMES as SYMBOL_HISTORY_FEATURE_NAMES, qualified_attribute_history, valid_record
+from .runtime_features import FEATURE_NAMES as RUNTIME_FEATURE_NAMES, feature_values as runtime_features
 
 MODULE_MISSING = re.compile(r"No module named '([\w.]+)'")
 CANNOT_IMPORT = re.compile(
@@ -134,9 +135,10 @@ V4_FEATURE_NAMES = LEGACY_FEATURE_NAMES + CONTEXT_FEATURE_NAMES
 V5_FEATURE_NAMES = V4_FEATURE_NAMES + SOURCE_FEATURE_NAMES
 V6_FEATURE_NAMES = V5_FEATURE_NAMES + HISTORY_FEATURE_NAMES
 V7_FEATURE_NAMES = V6_FEATURE_NAMES + SYMBOL_FEATURE_NAMES
-FEATURE_NAMES = V7_FEATURE_NAMES + SYMBOL_HISTORY_FEATURE_NAMES
+V8_FEATURE_NAMES = V7_FEATURE_NAMES + SYMBOL_HISTORY_FEATURE_NAMES
+FEATURE_NAMES = V8_FEATURE_NAMES + RUNTIME_FEATURE_NAMES
 FEATURE_LAYOUTS = {3: LEGACY_FEATURE_NAMES, 4: V4_FEATURE_NAMES, 5: V5_FEATURE_NAMES,
-                   6: V6_FEATURE_NAMES, 7: V7_FEATURE_NAMES, 8: FEATURE_NAMES}
+                   6: V6_FEATURE_NAMES, 7: V7_FEATURE_NAMES, 8: V8_FEATURE_NAMES, 9: FEATURE_NAMES}
 
 
 WINDOWS_ABSOLUTE = re.compile(r"^[A-Za-z]:/")
@@ -737,6 +739,7 @@ def features(evidence: dict, contexts: dict, project: dict, environment=None, *,
     values.update(symbol_features(evidence))
     values["qualified_attribute_history_match"] = (
         interface_history and qualified_attribute_history(evidence, project, environment or {}))
+    values.update({name: evidence.get("raw_runtime_features", {}).get(name, -1.0) for name in RUNTIME_FEATURE_NAMES})
     return [float(values[name]) for name in FEATURE_NAMES]
 
 
@@ -1018,6 +1021,7 @@ def observations(session: Session, issues: list[Issue], *, interface_history=Tru
             )
     for issue in diagnosable:
         evidence = details[issue.issue_id]
+        evidence["raw_runtime_features"] = runtime_features(session, issue)
         evidence["features"] = features(evidence, contexts, project, environment, interface_history=interface_history)
     if session.structured_evidence:
         # Preserve every actual source when the legacy and opt-in projections agree.

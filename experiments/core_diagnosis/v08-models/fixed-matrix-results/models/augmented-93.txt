@@ -1,0 +1,43 @@
+|--- context_external_api <= 0.50
+|   |--- module_mentioned <= 0.50
+|   |   |--- context_configuration <= 0.50
+|   |   |   |--- raised_in_third_party <= 0.50
+|   |   |   |   |--- api_mentioned <= 0.50
+|   |   |   |   |   |--- class: code_defect
+|   |   |   |   |--- api_mentioned >  0.50
+|   |   |   |   |   |--- raised_in_project <= 0.50
+|   |   |   |   |   |   |--- class: version_incompatibility
+|   |   |   |   |   |--- raised_in_project >  0.50
+|   |   |   |   |   |   |--- class: code_defect
+|   |   |   |--- raised_in_third_party >  0.50
+|   |   |   |   |--- raw_message_settings_unconfigured <= -0.50
+|   |   |   |   |   |--- class: version_incompatibility
+|   |   |   |   |--- raw_message_settings_unconfigured >  -0.50
+|   |   |   |   |   |--- class: config_missing
+|   |   |--- context_configuration >  0.50
+|   |   |   |--- raw_operation_test_tool_owned <= 0.50
+|   |   |   |   |--- class: config_missing
+|   |   |   |--- raw_operation_test_tool_owned >  0.50
+|   |   |   |   |--- class: version_incompatibility
+|   |--- module_mentioned >  0.50
+|   |   |--- context_project_resolution <= 0.50
+|   |   |   |--- interface_history_match <= 0.50
+|   |   |   |   |--- source_context_available <= 0.50
+|   |   |   |   |   |--- class: missing_dependency
+|   |   |   |   |--- source_context_available >  0.50
+|   |   |   |   |   |--- raw_setuptools_release <= 41999999.50
+|   |   |   |   |   |   |--- class: missing_dependency
+|   |   |   |   |   |--- raw_setuptools_release >  41999999.50
+|   |   |   |   |   |   |--- class: version_incompatibility
+|   |   |   |--- interface_history_match >  0.50
+|   |   |   |   |--- class: version_incompatibility
+|   |   |--- context_project_resolution >  0.50
+|   |   |   |--- context_local_symbol <= 0.50
+|   |   |   |   |--- class: local_module
+|   |   |   |--- context_local_symbol >  0.50
+|   |   |   |   |--- context_configuration <= 0.50
+|   |   |   |   |   |--- class: code_defect
+|   |   |   |   |--- context_configuration >  0.50
+|   |   |   |   |   |--- class: local_module
+|--- context_external_api >  0.50
+|   |--- class: version_incompatibility
