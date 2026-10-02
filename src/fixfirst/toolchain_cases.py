@@ -35,6 +35,7 @@ import time
 from . import diagnosis_cases as dc
 from .models import now
 from .service import create_session, scan
+from .toolchain_environments import Environments, interpreter, source_identity
 
 HEALTHY_ENV = "t8"
 
@@ -386,28 +387,6 @@ def clean_env(home: Path, extra=()) -> dict:
             "NO_COLOR": "1", **dict(extra)}
 
 
-def build_env(root: Path, env: Env) -> Path:
-    uv = shutil.which("uv")
-    if not uv:
-        raise ValueError("uv is required to build the toolchain environments")
-    folder = root / env.key
-    if folder.exists():
-        return folder
-    # --seed puts pip into the environment, as it is in every real user's environment
-    result = run([uv, "venv", "-q", "--seed", "--python", env.python, str(folder)])
-    if result.returncode:
-        raise ValueError(f"cannot create {env.key}: {result.stderr[-300:]}")
-    result = run([uv, "pip", "install", "-q", "--python", str(folder / "bin" / "python"), *env.packages])
-    if result.returncode:
-        raise ValueError(f"cannot install {env.packages} for {env.key}: {result.stderr[-400:]}")
-    return folder
-
-
-def freeze(folder: Path) -> list[str]:
-    uv = shutil.which("uv")
-    result = run([uv, "pip", "freeze", "--python", str(folder / "bin" / "python")])
-    return sorted(line for line in result.stdout.splitlines() if line.strip())
-
 
 def passes(project: Path, python: Path, variables=()) -> tuple[bool, str]:
     with tempfile.TemporaryDirectory(prefix="fixfirst-fix-") as home:
@@ -423,26 +402,39 @@ def check_fix(scenario: ToolScenario, project: Path, template, index, envs: Path
         shutil.copytree(project, target)
         if scenario.fix:
             scenario.fix(dc.Project(target, template, index))
-        python = envs / (scenario.fix_env or scenario.fault_env) / "bin" / "python"
+        python = interpreter(envs / (scenario.fix_env or scenario.fault_env))
         ok, tail = passes(target, python, scenario.fix_variables)
     return {"fix_env": scenario.fix_env or scenario.fault_env, "project_edit": bool(scenario.fix),
             "variables": [k for k, _ in scenario.fix_variables], "passed": ok, "output_tail": "" if ok else tail}
 
 
-def build_dataset(output: Path, work: Path | None = None, keep_work: bool = False, only=()):
+def build_dataset(output: Path, work: Path | None = None, keep_work: bool = False, only=(), lock: Path | None = None):
     """Build the toolchain suite. ``work`` holds the virtual environments (large, not part of the result)."""
     output = output.expanduser().resolve()
     if output.exists():
         raise ValueError("Dataset directory already exists; choose a new --output")
-    work = (work or Path(tempfile.mkdtemp(prefix="fixfirst-toolchain-"))).expanduser().resolve()
-    work.mkdir(parents=True, exist_ok=True)
+    if set(only) - {s.scenario_id for s in TOOL_SCENARIOS}:
+        raise ValueError("Unknown toolchain scenario selection")
+    supplied_work = work is not None
+    if supplied_work:
+        work = work.expanduser().resolve()
+        if work.exists() or work.is_symlink():
+            raise ValueError("Toolchain work directory must be new; existing directories are never removed")
+        if work == output or work in output.parents or output in work.parents:
+            raise ValueError("Toolchain work and output directories must not overlap")
+    else:
+        work = Path(tempfile.mkdtemp(prefix="fixfirst-toolchain-"))
     envs = work / "envs"
-    envs.mkdir(exist_ok=True)
+    manager = Environments(envs, ENVS, lock)
+    work.mkdir(parents=True, exist_ok=not supplied_work)
+    envs.mkdir()
     output.mkdir(parents=True)
     started = time.monotonic()
     chosen = [s for s in TOOL_SCENARIOS if not only or s.scenario_id in only]
     manifest = {
         "schema_version": 1,
+        "source_files_sha256": source_identity(),
+        "lock_mode": "exact_replay" if lock else "discovery",
         "created_at": now(),
         "origin": "toolchain_injection",
         "suite": "toolchain",
@@ -458,6 +450,8 @@ def build_dataset(output: Path, work: Path | None = None, keep_work: bool = Fals
         "cases": [],
         "rejected": [],
         "unparsed": [],
+        "inapplicable": [],
+        "audit_files": [],
         "limitations": (
             "Real runs in pinned virtual environments, one fix verified per case. Scenarios were written "
             "after the 2026-10 held-out run showed these mechanisms, so results on them are development "
@@ -466,20 +460,18 @@ def build_dataset(output: Path, work: Path | None = None, keep_work: bool = Fals
     }
     try:
         pristine = work / "templates"
-        reference = build_env(envs, ENVS[HEALTHY_ENV])
+        reference = manager.build(HEALTHY_ENV)
         for template in dc.TEMPLATES:
             dc.build_template(pristine / template.name, template)
-            baseline = create_session(pristine / template.name, str(reference / "bin" / "python"), template.name,
+            baseline = create_session(pristine / template.name, str(interpreter(reference)), template.name,
                                       goal="pass_tests")
             scan(baseline, dc.CHECKS)
             if baseline.goal_status != "achieved" or any(i.status == "open" for i in baseline.issues):
                 raise ValueError(f"Template {template.name} is not healthy: {[i.title for i in baseline.issues]}")
         for env_key in sorted({s.fault_env for s in chosen}):
-            folder = build_env(envs, ENVS[env_key])
-            manifest["environments"][env_key] = {"python": ENVS[env_key].python, "packages": freeze(folder)}
+            folder = manager.build(env_key)
             for fix_key in sorted({s.fix_env for s in chosen if s.fault_env == env_key and s.fix_env}):
-                manifest["environments"].setdefault(
-                    fix_key, {"python": ENVS[fix_key].python, "packages": freeze(build_env(envs, ENVS[fix_key]))})
+                manager.build(fix_key)
             sub = output / env_key
             sub.mkdir()
             cases = sub / "cases.jsonl"
@@ -487,6 +479,8 @@ def build_dataset(output: Path, work: Path | None = None, keep_work: bool = Fals
             for template in dc.TEMPLATES:
                 for scenario in (s for s in chosen if s.fault_env == env_key):
                     if scenario.templates and template.name not in scenario.templates:
+                        manifest["inapplicable"].append({"case_id": f"{template.name}--{scenario.scenario_id}",
+                                                        "reason": "outside registered template applicability"})
                         continue
                     row = build_case(scenario, template, pristine, work, folder, envs, sub, manifest)
                     if row:
@@ -498,7 +492,9 @@ def build_dataset(output: Path, work: Path | None = None, keep_work: bool = Fals
             else:
                 shutil.rmtree(sub)
     finally:
+        manifest["environments"] = manager.records
         manifest["seconds"] = round(time.monotonic() - started, 1)
+        dc.write(output / "environment-lock.json", json.dumps(manager.export_lock(), indent=2))
         dc.write(output / "manifest.json", json.dumps(manifest, ensure_ascii=False, indent=2))
         if not keep_work:
             shutil.rmtree(work, ignore_errors=True)
@@ -511,12 +507,19 @@ def build_case(scenario, template, pristine, work, folder, envs, sub, manifest):
     shutil.copytree(pristine / template.name, project)
     index = dc.TEMPLATES.index(template)
     scenario.apply(dc.Project(project, template, index))
-    session = create_session(project, str(folder / "bin" / "python"), case_id, goal="pass_tests")
+    session = create_session(project, str(interpreter(folder)), case_id, goal="pass_tests")
     scan(session, dc.CHECKS)
     runs = [r for r in session.runs if r.tool == "pytest_run"]
     text = "\n".join(f"{r.stdout}\n{r.stderr}" for r in runs)
     failures = [i for i in session.issues if i.status == "open" and i.tool == "pytest_run"]
     typed = [i for i in failures if i.kind != "tool_failure"]
+    audit, observed_environment = dc.portable(session, project, prefix=str(folder))
+    audit["environment"] = {**observed_environment,
+                            **{k: v for k, v in audit["environment"].items() if k.startswith("_")}}
+    audit_path = f"audit/{case_id}.json"
+    dc.write(sub.parent / audit_path, json.dumps({"case_id": case_id, "scenario": scenario.scenario_id,
+             "label": scenario.label, "session": audit}, ensure_ascii=False, indent=1))
+    manifest["audit_files"].append(audit_path)
     if not failures or not re.search(scenario.shows, text):
         manifest["rejected"].append({"case_id": case_id, "reason": "intended mechanism not observed",
                                      "issues": [f"{i.kind}:{i.title[:100]}" for i in session.issues]})
