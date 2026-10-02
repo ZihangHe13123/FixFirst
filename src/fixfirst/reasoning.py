@@ -384,6 +384,8 @@ def order_actions(actions, facts):
 
 
 def goal_status(session: Session, active) -> str:
+    from .test_results import pytest_options_limited
+
     current = environment_id(session.target_python)
     target = GOAL_CHECKS[session.goal]
     last = next((r for r in reversed(session.runs) if r.tool == target), None)
@@ -394,6 +396,8 @@ def goal_status(session: Session, active) -> str:
         and last.environment_id == current
     )
     status = "unknown" if not eligible else "achieved" if last.verified_pass else "blocked"
+    if status == "achieved" and pytest_options_limited(last):
+        status = "unknown"
     if any(i.status == "awaiting_verification" and i.tool == target for i in active):
         status = "unknown"
     if session.goal in ("pass_tests", "pass_unittest"):

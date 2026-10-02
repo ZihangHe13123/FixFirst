@@ -4,6 +4,7 @@ import json
 import os
 import importlib.util
 from pathlib import Path
+import sys
 import traceback
 
 _runtime_spec = importlib.util.spec_from_file_location(
@@ -38,13 +39,49 @@ def emit(data, final=False):
         file.write(text)
 
 
-def pytest_load_initial_conftests():
+def record_pytest_options(config):
+    """Observe the active file's original addopts, before project conftests run.
+
+    Older pytest keeps original values in inicfg. Newer pytest has already merged
+    -o overrides into _inicfg; its own reader can read the one file it selected.
+    Never search for a different config or parse options back into the command.
+    """
+    record = {"type": "pytest_config", "config_complete": False, "config_file": "",
+              "config_addopts": None}
+    try:
+        path = getattr(config, "inipath", None) or getattr(config, "inifile", None)
+        record["config_file"] = str(path) if path else ""
+        if hasattr(config, "_inicfg"):
+            reader = getattr(sys.modules.get("_pytest.config.findpaths"), "load_config_dict_from_file", None)
+            if path and reader is None:
+                raise ValueError("Active pytest configuration reader is unavailable")
+            values = (reader(Path(path)) or {}) if path else {}
+        else:
+            values = config.inicfg
+        value = values.get("addopts", "")
+        value = getattr(value, "value", value)  # pytest's newer ConfigValue wrapper
+        if not (isinstance(value, str) or isinstance(value, list) and all(isinstance(v, str) for v in value)):
+            raise ValueError("Original pytest addopts are not text or a list of text")
+        if len(json.dumps(value)) > 16000 or len(record["config_file"]) > 4096:
+            raise ValueError("Original pytest options exceed the observation limit")
+        record.update(config_addopts=value, config_complete=True)
+    except BaseException:
+        # Observing configuration must not alter the check or its exception outcome.
+        record["observation_error"] = "The original pytest options could not be recorded"
+    try:
+        emit(record)
+    except BaseException:
+        pass
+
+
+def pytest_load_initial_conftests(early_config):
     """Retain the actual startup exception before pytest hides its internal frames.
 
     The hook wrapper observes the existing outcome; it never retries, suppresses,
     or replaces the failure. In particular a project's own warning stays a
     project warning even when pytest's displayed traceback is shortened.
     """
+    record_pytest_options(early_config)
     outcome = yield
     try:
         info = outcome.excinfo
