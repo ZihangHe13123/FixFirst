@@ -1,0 +1,66 @@
+{
+  "integrity": "passed",
+  "default_model_sha256": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3",
+  "results_sha256": "219177c548182741431e9e755006ec59f07f3d6520d79e2fdfb90ed5d910c0b0",
+  "nodes": {
+    "base-81": {
+      "file_sha256": "80fbe80f16a34aaf8c281644a4f835284cfef5ceb71d38f6924c5e141de489ea",
+      "internal_feature_indices": [
+        16,
+        22,
+        29,
+        30,
+        44,
+        50,
+        61,
+        62
+      ],
+      "new_feature_indices": [],
+      "new_feature_names": []
+    },
+    "base-93": {
+      "file_sha256": "11aab42746f1f00e3f9ddae67163919d06115d802d6a8b3f62b94ef1234c6122",
+      "internal_feature_indices": [
+        16,
+        22,
+        29,
+        30,
+        44,
+        45,
+        50,
+        61,
+        62
+      ],
+      "new_feature_indices": [],
+      "new_feature_names": []
+    },
+    "augmented-93": {
+      "file_sha256": "df1a93f6e3e9693cee74d0c012acf2f943ed6bcedc60ba5a13e1621fc89be184",
+      "internal_feature_indices": [
+        16,
+        18,
+        22,
+        29,
+        44,
+        49,
+        50,
+        60,
+        61,
+        62,
+        82,
+        83,
+        92
+      ],
+      "new_feature_indices": [
+        82,
+        83,
+        92
+      ],
+      "new_feature_names": [
+        "raw_operation_test_tool_owned",
+        "raw_message_settings_unconfigured",
+        "raw_setuptools_release"
+      ]
+    }
+  }
+}

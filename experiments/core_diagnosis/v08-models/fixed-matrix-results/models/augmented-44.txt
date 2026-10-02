@@ -1,0 +1,52 @@
+|--- module_mentioned <= 0.50
+|   |--- signal_config_words <= 0.50
+|   |   |--- third_party_frame_ratio <= 0.38
+|   |   |   |--- signal_config_context <= 0.50
+|   |   |   |   |--- signal_environ_lookup <= 0.50
+|   |   |   |   |   |--- signal_getenv <= 0.50
+|   |   |   |   |   |   |--- class: code_defect
+|   |   |   |   |   |--- signal_getenv >  0.50
+|   |   |   |   |   |   |--- class: config_missing
+|   |   |   |   |--- signal_environ_lookup >  0.50
+|   |   |   |   |   |--- class: config_missing
+|   |   |   |--- signal_config_context >  0.50
+|   |   |   |   |--- class: config_missing
+|   |   |--- third_party_frame_ratio >  0.38
+|   |   |   |--- signal_config_context <= 0.50
+|   |   |   |   |--- exception_AttributeError <= 0.50
+|   |   |   |   |   |--- class: config_missing
+|   |   |   |   |--- exception_AttributeError >  0.50
+|   |   |   |   |   |--- class: version_incompatibility
+|   |   |   |--- signal_config_context >  0.50
+|   |   |   |   |--- class: version_incompatibility
+|   |--- signal_config_words >  0.50
+|   |   |--- class: config_missing
+|--- module_mentioned >  0.50
+|   |--- module_local <= 0.50
+|   |   |--- module_installed <= 0.50
+|   |   |   |--- api_mentioned <= 0.50
+|   |   |   |   |--- stage_collect <= 0.50
+|   |   |   |   |   |--- class: missing_dependency
+|   |   |   |   |--- stage_collect >  0.50
+|   |   |   |   |   |--- module_declared <= 0.50
+|   |   |   |   |   |   |--- class: missing_dependency
+|   |   |   |   |   |--- module_declared >  0.50
+|   |   |   |   |   |   |--- class: missing_dependency
+|   |   |   |--- api_mentioned >  0.50
+|   |   |   |   |--- module_stdlib <= 0.50
+|   |   |   |   |   |--- third_party_frame_ratio <= 0.29
+|   |   |   |   |   |   |--- class: local_module
+|   |   |   |   |   |--- third_party_frame_ratio >  0.29
+|   |   |   |   |   |   |--- class: version_incompatibility
+|   |   |   |   |--- module_stdlib >  0.50
+|   |   |   |   |   |--- class: version_incompatibility
+|   |   |--- module_installed >  0.50
+|   |   |   |--- class: version_incompatibility
+|   |--- module_local >  0.50
+|   |   |--- raised_in_test <= 0.50
+|   |   |   |--- class: local_module
+|   |   |--- raised_in_test >  0.50
+|   |   |   |--- exception_ModuleNotFoundError <= 0.50
+|   |   |   |   |--- class: code_defect
+|   |   |   |--- exception_ModuleNotFoundError >  0.50
+|   |   |   |   |--- class: local_module
