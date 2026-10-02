@@ -147,7 +147,7 @@ def parser():
     dataset = sub.add_parser("dataset", help="generate a labelled dataset by real execution")
     dataset.add_argument("--output", default="workbench/dataset")
     dataset.add_argument(
-        "--suite", choices=["diagnosis", "hard", "multi", "collection", "execution"], default="diagnosis"
+        "--suite", choices=["diagnosis", "hard", "multi", "toolchain", "collection", "execution"], default="diagnosis"
     )
     evaluation = sub.add_parser("evaluate", help="run the experiments on a dataset")
     evaluation.add_argument("dataset")
@@ -264,6 +264,11 @@ def main(argv=None):
                 from .multi_cases import build_dataset as build_multi
 
                 print(build_multi(Path(args.output)))
+                return 0
+            if getattr(args, "suite", None) == "toolchain":
+                from .toolchain_cases import build_dataset as build_toolchain
+
+                print(build_toolchain(Path(args.output)))
                 return 0
             from . import cases
 
