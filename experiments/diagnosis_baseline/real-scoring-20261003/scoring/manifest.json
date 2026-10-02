@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "protocol": "b3-blind-scores-v1",
+  "input_batch_sha256": "aded7ae0d8d85ff1fdd78a7264809724dd8e99b79c943dc947b38725951d63f8",
+  "answers_sha256": "e723093e4fbd8152dd31a0f86a26af4f56384a701c28b40e28045e7ef5655f9d",
+  "protocol_sha256": "4fbb8c7810bfb4a206ca29fe4cf0c27a4952c9bb1a84a000685bbe2a7f973a42",
+  "case_ids": [
+    "click",
+    "pytest",
+    "dateparser",
+    "python-qrcode",
+    "httpx",
+    "python-ftfy",
+    "robotframework",
+    "python-slugify",
+    "django-cacheops",
+    "seleniumlibrary",
+    "django-storages",
+    "python-markdown"
+  ],
+  "model_aliases": [
+    "model-1",
+    "model-2",
+    "model-3"
+  ],
+  "sheets": {
+    "model-1-A.csv": "2bf51b620bd57eab7a349ac70cfcd0aad3049652bed59b35e272f6807e2822ef",
+    "model-1-C.csv": "2bf51b620bd57eab7a349ac70cfcd0aad3049652bed59b35e272f6807e2822ef",
+    "model-2-A.csv": "c967cc9ac8403e68303c104688d3862006b5c6f0d0bdf5c7483284cb386a2294",
+    "model-2-C.csv": "c967cc9ac8403e68303c104688d3862006b5c6f0d0bdf5c7483284cb386a2294",
+    "model-3-A.csv": "b41e6c568942da6c2f120714e5b6499e571a99664603b684ea562b5199956f4a",
+    "model-3-C.csv": "b41e6c568942da6c2f120714e5b6499e571a99664603b684ea562b5199956f4a"
+  }
+}
