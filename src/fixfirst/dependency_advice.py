@@ -1,5 +1,6 @@
 """Constrain installation advice using recorded project and environment facts."""
 
+import json
 from packaging.requirements import InvalidRequirement, Requirement
 from packaging.utils import canonicalize_name
 from packaging.specifiers import SpecifierSet
@@ -218,7 +219,7 @@ def refine(session, actions, by_id, facts):
             conflict_ids.add(issue.issue_id)
             historical.add(issue.issue_id)
             continue
-        failed = next((e for e in members if e.code in ("build_failure", "no_distribution", "no_wheel", "python_requires",
+        failed = next((e for e in members if e.code in ("build_failure", "no_distribution", "no_wheel", "python_requires", "index_access",
                                                        "missing_build_tool", "legacy_build_config")
                        and e.component), None)
         if not failed:
@@ -310,6 +311,22 @@ def refine(session, actions, by_id, facts):
                     "route, change the psycopg2 declaration to psycopg2-binary, retaining any version range, "
                     "before installing; do not install both distributions. The binary route still needs "
                     "a wheel compatible with this interpreter. Source: https://www.psycopg.org/docs/install/")
+        elif failed.code == "index_access":
+            trial = False
+            blocker.title = f"Restore package index access before retrying {name}"
+            blocker.explanation = (
+                f"The recorded request could not reliably access its package index: {failed.message.strip()}. "
+                "Check the configured index, connectivity, authentication and certificate settings. "
+                "This does not establish that the requested release or a usable wheel is absent. "
+                "Do not replace the pin or start a source build to work around an unverified index result.")
+        elif failed.code == "python_requires":
+            trial = False
+            blocker.title = f"Review the Python requirement for {name}"
+            blocker.explanation = (
+                f"The installation reports a Requires-Python rejection: {failed.message.strip()}. "
+                f"Current declaration: {requirements}. A source build does not remove this metadata requirement. "
+                "Review a supported interpreter or a compatible release with the project's other constraints; "
+                "neither alternative has been verified by this failed request.")
         elif failed.code == "no_distribution":
             trial = False
             blocker.title = f"Check the requested {name} release and package index"
@@ -320,8 +337,9 @@ def refine(session, actions, by_id, facts):
                 "No source-build command or replacement version is justified yet; do not repeat the same request.")
         elif failed.code == "no_wheel":
             offered = offer_build(session, blocker, requirement,
-                "The wheel-only installation request found no matching distribution. This may be a "
-                "missing wheel or an unavailable version; it does not establish a Python incompatibility.")
+                "The recorded wheel-only request excluded a matching source archive. A source build is "
+                "needed to prepare a wheel from that archive; this does not establish a Python incompatibility "
+                "or prove that the build and its system prerequisites are available.")
             trial = bool(rows) and not offered
         if not rows:
             blocker.explanation += (
@@ -410,4 +428,34 @@ def refine(session, actions, by_id, facts):
                     "file and documented installer; rebuilding a wheel changes the archive hash. "
                     "FixFirst cannot generate a replacement installation/build command that preserves those "
                     "checks. Review the failed artifact and update the lock through the project's workflow.")
+    # P66 already prevents repeating an inconclusive search. Keep the concrete
+    # source/metadata reason visible on that existing action, without inventing
+    # a compatible release or adding another probe/build action.
+    facts_by_id = {fact.fact_id: fact for fact in facts}
+    for action in result:
+        if "P66" not in action.rule_ids:
+            continue
+        run_ids = {ref.split(":", 1)[0] for key in action.reason_refs
+                   for ref in getattr(facts_by_id.get(key), "evidence_refs", [])}
+        search = next((run for run in reversed(session.runs)
+                       if run.run_id in run_ids and run.tool == "version_search"), None)
+        if not search:
+            continue
+        try:
+            outcome = json.loads(search.stdout)
+        except ValueError:
+            continue
+        if outcome.get("status") == "source_build_required":
+            source_versions = ", ".join(outcome.get("availability", {}).get("source_only", [])[:5])
+            action.explanation += (
+                f" The queried release metadata lists source archives for {outcome.get('dist', 'the package')} "
+                f"({source_versions}), but no eligible wheel was available to this wheel-only search. "
+                "Those archives were not built or checked for the missing API. A reviewed source build in "
+                "a separate environment is a manual option; its build backend, native tools and headers "
+                "remain unverified. No version is recommended until its API and dependency checks pass.")
+        elif outcome.get("status") == "python_requires":
+            action.explanation += (
+                " The recorded release metadata excluded the older artifacts by Requires-Python. "
+                "Building from source does not bypass that requirement; review a supported interpreter "
+                "or another release together with the project constraints.")
     return result
