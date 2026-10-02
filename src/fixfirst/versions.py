@@ -80,30 +80,54 @@ def series(version: Version) -> str:
 def candidates(data: dict, installed: str, python_version: str, markers: dict,
                specifier: str = "") -> list[str]:
     """Every usable release older than the installed version, including earlier patches."""
+    return candidate_availability(data, installed, python_version, markers, specifier)["wheels"]
+
+
+def candidate_availability(data, installed, python_version, markers, specifier=""):
+    """Separate wheel eligibility from source availability and metadata exclusions.
+
+    A source archive is only a recorded release artifact: no backend, build
+    dependency, native prerequisite or application behavior is tested here.
+    """
     python = Version(python_version)
     ceiling = Version(installed)
     allowed = SpecifierSet(specifier)
-    found = set()
+    found = {key: set() for key in (
+        "wheels", "source_only", "wheel_tags_excluded", "requires_python_excluded",
+        "constraints_excluded", "metadata_unknown",
+    )}
     for text, files in (data.get("releases") or {}).items():
         try:
             version = Version(text)
         except InvalidVersion:
             continue
-        if version.is_prerelease or version.is_devrelease or version >= ceiling or version not in allowed:
+        if version.is_prerelease or version.is_devrelease or version >= ceiling:
             continue
+        if version not in allowed:
+            found["constraints_excluded"].add(version)
+            continue
+        wheel, source, python_ok, python_rejected, unknown = False, False, False, False, False
         for item in files:
-            if item.get("yanked") or item.get("packagetype") != "bdist_wheel":
+            if item.get("yanked") or item.get("packagetype") not in ("bdist_wheel", "sdist"):
                 continue
             spec = item.get("requires_python")
             try:
                 if spec and python not in SpecifierSet(spec):
+                    python_rejected = True
                     continue
             except InvalidSpecifier:
+                unknown = True
                 continue
-            if wheel_fits(item.get("filename", ""), python, markers):
-                found.add(version)
-                break
-    return [str(v) for v in sorted(found, reverse=True)]
+            python_ok = True
+            if item["packagetype"] == "sdist":
+                source = True
+            elif wheel_fits(item.get("filename", ""), python, markers):
+                wheel = True
+        reason = ("wheels" if wheel else "source_only" if source else "wheel_tags_excluded" if python_ok
+                  else "metadata_unknown" if unknown else "requires_python_excluded" if python_rejected else None)
+        if reason:
+            found[reason].add(version)
+    return {key: [str(v) for v in sorted(values, reverse=True)] for key, values in found.items()}
 
 
 class Sandbox:
@@ -167,12 +191,18 @@ def search(python: str, python_version: str, markers: dict, dist: str, installed
               "constraints": list(constraints)}
     try:
         data = fetch(PYPI.format(dist))
-        available = candidates(data, installed, python_version, markers, specifier)
+        availability = candidate_availability(data, installed, python_version, markers, specifier)
+        result.update(availability=availability, trial_restriction="wheels_only")
+        available = availability["wheels"]
     except (OSError, ValueError) as error:
         return {**result, "status": "offline", "error": str(error)[:300]}
     if not available or not module:
-        status = "constraints_exclude_candidates" if specifier and candidates(
-            data, installed, python_version, markers) else "no_candidates"
+        status = ("source_build_required" if availability["source_only"] else
+                  "constraints_exclude_candidates" if specifier and candidates(
+                      data, installed, python_version, markers) else
+                  "python_requires" if availability["requires_python_excluded"]
+                  and not availability["wheel_tags_excluded"] and not availability["metadata_unknown"]
+                  else "no_candidates")
         return {**result, "status": status}
     # Include every patch before the installed release, then the newest of each older
     # series. The remaining patches stay available for a fallback if this search fails.
@@ -209,7 +239,8 @@ def search(python: str, python_version: str, markers: dict, dist: str, installed
             result.update(
                 provides=release, below=below,
                 first_without=without if series(Version(without)) == series(provided) else series(Version(without)),
-                status="found" if all(outcomes.get(v) == "missing" for v in newer) else "partial",
+                status="found" if all(outcomes.get(v) == "missing" for v in newer)
+                and not any(Version(v) > provided for v in availability["source_only"]) else "partial",
             )
             return result
 
@@ -241,7 +272,8 @@ def search(python: str, python_version: str, markers: dict, dist: str, installed
                     break
                 if release not in outcomes and check_release(release) == "provides":
                     return found_result(release)
-            if len(outcomes) == len(available) and all(v == "missing" for v in outcomes.values()):
+            if (len(outcomes) == len(available) and all(v == "missing" for v in outcomes.values())
+                    and not availability["source_only"]):
                 result["status"] = "not_found"
             return result
         # Bisect between the newest series known to lack the name and the one that has it.

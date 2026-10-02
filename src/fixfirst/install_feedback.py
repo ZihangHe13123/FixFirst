@@ -153,7 +153,10 @@ def offer_build(session, action, requirement, reason):
         "requested package into this session's wheel directory, without installing it into the project. "
         "Building from source executes the package's build scripts; this is a manual operation, not "
         "something Check again runs for you. Build dependencies may be downloaded into a temporary "
-        "build environment. After it finishes, Check again reads the log and any valid wheel. "
+        "build environment. A pure-Python archive may build without a compiler; native extensions may "
+        "need compilers, headers or external libraries. Those system prerequisites and build success "
+        "are unknown until documented or observed in the build output. Review the package's build "
+        "instructions before choosing this operation. After it finishes, Check again reads the log and any valid wheel. "
         "If building fails, the next step must address that output; do not repeat the same build. "
         "A built wheel does not mean the project has been repaired.")
     action.command = build_command(session, str(req))

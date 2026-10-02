@@ -229,7 +229,9 @@ def parse(run: Run) -> list[Event]:
             return []
         reason = {
             "offline": "PyPI could not be reached",
-            "no_candidates": "no older release has a wheel for this Python",
+            "no_candidates": "the queried metadata contains no eligible older wheel for this Python/platform; this does not prove that the release is absent",
+            "source_build_required": "matching older source archives exist, but this search only installs wheels; source builds and their system prerequisites have not been tested",
+            "python_requires": "the older release artifacts were excluded by their recorded Requires-Python metadata; building from source does not bypass that requirement",
             "constraints_exclude_candidates": "available older wheels are excluded by the project's or installed packages' requirements",
             "not_judged": "the search budget ended or some older releases could not be installed or imported here",
         }
