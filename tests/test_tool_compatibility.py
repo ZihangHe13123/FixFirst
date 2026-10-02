@@ -176,7 +176,7 @@ def test_startup_observation_cannot_replace_an_exception_whose_stringifier_raise
         original = sys.exc_info()
     class Outcome:
         excinfo = original
-    wrapper = probe.pytest_load_initial_conftests()
+    wrapper = probe.pytest_load_initial_conftests(None)
     next(wrapper)
     with pytest.raises(StopIteration):
         wrapper.send(Outcome())

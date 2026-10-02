@@ -292,6 +292,13 @@ environment says about the modules involved) as JSON, with no cause, ranking or 
 
 ## Scope and safety
 
+- Pytest checks use fixed options. FixFirst records the active configuration's original
+  `addopts` and any `PYTEST_ADDOPTS` it leaves out. Empty options and known display options
+  such as `-q` still allow verification. If the omitted options change execution (for example
+  `--cov`, `-k`, `-m`, or `--ignore`), or cannot be read, a pass is shown as a pass of the recorded
+  check. The original command and earlier problems remain unverified; run your usual pytest
+  command to confirm them. Older saved checks without this observation keep their existing status.
+
 - Changing tests is not taken as fixing them. Before the first check runs anything, FixFirst records
   the tests (by the project's own test file patterns and the files tests are collected from),
   conftest.py files and the pytest settings that select or judge tests; for unittest, the files its
