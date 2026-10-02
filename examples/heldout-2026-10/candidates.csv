@@ -1,0 +1,86 @@
+id,repo,ref,python,domain,found_in,tried_on,pytest_summary,root_cause_guess,kept,reason
+python-diskcache,grantjenks/python-diskcache,,3.12,Caching,awesome-python: Caching,2026-09-29,,,yes,confirm the tests need no network or paid service; PyPI name unknown - read the tag off the repo's Releases page
+hishel,karpetrosyan/hishel,,3.12,Caching,awesome-python: Caching,2026-09-29,,,yes,confirm the tests need no network or paid service
+dogpile-cache,sqlalchemy/dogpile.cache,rel_1_1_4,3.12,Caching,awesome-python: Caching,2026-09-29,"14 failed, 340 passed, 473 skipped, 100 deselected",version_incompatibility,yes,"Kept (option b). Two layers: first a pkg_resources/setuptools compatibility failure, then timing-sensitive cache-invalidation failures -> the rest goes in later_layers. The failure classification was reached with LLM assistance during the error investigation; recorded here for transparency.；已标注（labels-A.csv）；twin 里装 setuptools 84.0.0 没能恢复 pkg_resources"
+django-cacheops,Suor/django-cacheops,6.0,3.12,Caching,awesome-python: Caching,2026-09-29,"2 warnings, 1 error",config_missing,yes,"confirm the tests need no network or paid service；自然 config_missing：只有 run_tests.py:3 和 manage.py:6 设 DJANGO_SETTINGS_MODULE=tests.settings，tox 命令是 ./run_tests.py；裸 pytest 两次都 exit 2 报 ImproperlyConfigured: Requested setting CACHEOPS_DEGRADE_ON_FAILURE, but settings are not configured"
+django,django/django,4.0,3.12,Web Frameworks,awesome-python: Web Frameworks,2026-09-29,,,yes,large repo (282 MB); confirm the tests need no network or paid service
+bottle,bottlepy/bottle,0.12.19,3.12,Web Frameworks,awesome-python: Web Frameworks,2026-09-29,"3 warnings, 22 errors",version_incompatibility,yes,confirm the tests need no network or paid service；已标注（labels-A.csv）；bottle.py 无条件 from inspect import getargspec
+pyramid,Pylons/pyramid,2.0,3.12,Web Frameworks,awesome-python: Web Frameworks,2026-09-29,,,yes,confirm the tests need no network or paid service
+fasthtml,AnswerDotAI/fasthtml,,,Web Frameworks,Web Frameworks,2026-09-29,,,no,not pure Python (repo language is Jupyter Notebook)
+starlette,Kludex/starlette,0.17.1,3.12,Web Frameworks,awesome-python: Web Frameworks,2026-09-29,,,yes,confirm the tests need no network or paid service
+tornado,tornadoweb/tornado,,,Web Frameworks,Web Frameworks,2026-09-29,,,no,reserved for B12 (BugsInPy)
+litestar,litestar-org/litestar,,3.12,Web Frameworks,awesome-python: Web Frameworks,2026-09-29,,,yes,large repo (203 MB); confirm the tests need no network or paid service
+reflex,reflex-dev/reflex,,3.12,Web Frameworks,awesome-python: Web Frameworks,2026-09-29,,,yes,confirm the tests need no network or paid service
+pandas,pandas-dev/pandas,,,Data Analysis,Data Analysis,2026-09-29,,,no,reserved for B12 (BugsInPy)
+polars,pola-rs/polars,,,Data Analysis,Data Analysis,2026-09-29,,,no,not pure Python (repo language is Rust)
+ibis,ibis-project/ibis,3.2.0,3.12,Data Analysis,awesome-python: Data Analysis,2026-09-29,,,yes,ships .cc sources - check for a C extension; confirm the tests need no network or paid service
+click,pallets/click,8.0.3,3.12,CLI Development,awesome-python: CLI Development,2026-09-29,AttributeError: __spec__,version_incompatibility,yes,confirm the tests need no network or paid service；保留为 version_incompatibility 配额
+python-prompt-toolkit,prompt-toolkit/python-prompt-toolkit,3.0.24,3.12,CLI Development,awesome-python: CLI Development,2026-09-29,,,yes,confirm the tests need no network or paid service
+python-fire,google/python-fire,0.1.0,3.12,CLI Development,awesome-python: CLI Development,2026-09-29,,,yes,confirm the tests need no network or paid service
+tqdm,tqdm/tqdm,,,CLI Development,CLI Development,2026-09-29,,,no,reserved for B12 (BugsInPy)
+rich,Textualize/rich,10.16.1,3.12,CLI Development,awesome-python: CLI Development,2026-09-29,,,yes,confirm the tests need no network or paid service
+colorama,tartley/colorama,0.4.4,3.12,CLI Development,awesome-python: CLI Development,2026-09-29,,,yes,confirm the tests need no network or paid service
+alive-progress,rsalmei/alive-progress,2.1.0,3.12,CLI Development,awesome-python: CLI Development,2026-09-29,,,yes,confirm the tests need no network or paid service
+textual,Textualize/textual,0.1.12,3.12,CLI Development,awesome-python: CLI Development,2026-09-29,,,yes,large repo (496 MB); confirm the tests need no network or paid service
+urwid,urwid/urwid,2.1.2,3.12,CLI Development,awesome-python: CLI Development,2026-09-29,,,yes,confirm the tests need no network or paid service
+asciimatics,peterbrittain/asciimatics,1.13.0,3.12,CLI Development,awesome-python: CLI Development,2026-09-29,,,yes,confirm the tests need no network or paid service
+pytest,pytest-dev/pytest,6.2.5,3.12,Testing,awesome-python: Testing,2026-09-29,E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead,version_incompatibility,yes,confirm the tests need no network or paid service；保留为 version_incompatibility 配额
+hypothesis,HypothesisWorks/hypothesis,6.34.1,3.12,Testing,awesome-python: Testing,2026-09-29,,,yes,ships .rs sources - check for a C extension; confirm the tests need no network or paid service
+robotframework,robotframework/robotframework,4.1.3,3.12,Testing,awesome-python: Testing,2026-09-29,98 errors,local_module,yes,confirm the tests need no network or paid service；自然 local_module：utest/README.rst 只让装 utest/requirements.txt 且从不安装包，utest/run.py:29-33 自己把 ../src 塞进 sys.path；裸 pytest 两次都 exit 2、98 errors 全是 ModuleNotFoundError: No module named robot
+tox,tox-dev/tox,3.24.5,3.12,Testing,awesome-python: Testing,2026-09-29,,,yes,confirm the tests need no network or paid service
+nox,wntrblm/nox,2021.10.1,3.12,Testing,awesome-python: Testing,2026-09-29,,,yes,confirm the tests need no network or paid service
+playwright-python,microsoft/playwright-python,1.17.2,3.12,Testing,awesome-python: Testing,2026-09-29,,,yes,confirm the tests need no network or paid service
+selenium,SeleniumHQ/selenium,,,Testing,Testing,2026-09-29,,,no,not pure Python (repo language is Java)
+seleniumbase,seleniumbase/SeleniumBase,2.3.5,3.12,Testing,awesome-python: Testing,2026-09-29,,,yes,confirm the tests need no network or paid service
+locust,locustio/locust,2.5.1,3.12,Testing,awesome-python: Testing,2026-09-29,,,yes,confirm the tests need no network or paid service
+schemathesis,schemathesis/schemathesis,3.12.1,3.12,Testing,awesome-python: Testing,2026-09-29,,,yes,confirm the tests need no network or paid service
+responses,getsentry/responses,0.16.0,3.12,Testing,awesome-python: Testing,2026-09-29,,,yes,confirm the tests need no network or paid service
+freezegun,spulec/freezegun,1.1.0,3.12,Testing,awesome-python: Testing,2026-09-29,,,yes,confirm the tests need no network or paid service
+vcrpy,kevin1024/vcrpy,4.1.1,3.12,Testing,awesome-python: Testing,2026-09-29,,,yes,confirm the tests need no network or paid service
+respx,lundberg/respx,0.19.0,3.12,Testing,awesome-python: Testing,2026-09-29,,,yes,confirm the tests need no network or paid service
+factory-boy,FactoryBoy/factory_boy,3.2.1,3.12,Testing,awesome-python: Testing,2026-09-29,,,yes,confirm the tests need no network or paid service
+polyfactory,litestar-org/polyfactory,,3.12,Testing,awesome-python: Testing,2026-09-29,,,yes,confirm the tests need no network or paid service
+coveragepy,coveragepy/coveragepy,6.2,3.12,Testing,awesome-python: Testing,2026-09-29,,,yes,ships .c sources - check for a C extension; confirm the tests need no network or paid service
+faker,joke2k/faker,11.1.0,3.12,Testing,awesome-python: Testing,2026-09-29,,,yes,confirm the tests need no network or paid service
+mimesis,lk-geimfari/mimesis,5.2.1,3.12,Testing,awesome-python: Testing,2026-09-29,,,yes,confirm the tests need no network or paid service
+dateutil,dateutil/dateutil,,3.12,Date and Time,awesome-python: Date and Time,2026-09-29,,,yes,confirm the tests need no network or paid service; PyPI name unknown - read the tag off the repo's Releases page
+dateparser,scrapinghub/dateparser,1.1.0,3.12,Date and Time,awesome-python: Date and Time,2026-09-29,"17 warnings, 3 errors",missing_dependency,yes,"confirm the tests need no network or paid service；按文档装 -e .[calendars,fasttext,langdetect]，fasttext 是 C++ 扩展本机无 MSVC 装不上；3 个收集错误都是 ModuleNotFoundError: No module named fasttext（已在 scenario 里写明原因）"
+pendulum,python-pendulum/pendulum,2.1.2,3.12,Date and Time,awesome-python: Date and Time,2026-09-29,,,yes,ships .rs sources - check for a C extension; confirm the tests need no network or paid service
+whenever,ariebovenberg/whenever,,3.12,Date and Time,awesome-python: Date and Time,2026-09-29,,,yes,ships .rs sources - check for a C extension; confirm the tests need no network or paid service
+charset-normalizer,jawah/charset_normalizer,2.0.9,3.12,Text Processing,awesome-python: Text Processing,2026-09-29,,,yes,ships .pxd/.pyx sources - check for a C extension; confirm the tests need no network or paid service
+chardet,chardet/chardet,4.0.0,3.12,Text Processing,awesome-python: Text Processing,2026-09-29,,,yes,ships .pxd sources - check for a C extension; confirm the tests need no network or paid service
+python-ftfy,rspeer/python-ftfy,6.0.3,3.12,Text Processing,awesome-python: Text Processing,2026-09-29,"318 passed, 10 xfailed",healthy,yes,"confirm the tests need no network or paid service；裸 pytest 两次都 exit 0（318 passed, 10 xfailed）；满足 healthy 配额"
+rapidfuzz,rapidfuzz/RapidFuzz,1.9.1,3.12,Text Processing,awesome-python: Text Processing,2026-09-29,,,yes,ships .cpp/.pxd/.pyx sources - check for a C extension; confirm the tests need no network or paid service
+pyfiglet,pwaller/pyfiglet,0.7.6,3.12,Text Processing,awesome-python: Text Processing,2026-09-29,,,yes,confirm the tests need no network or paid service
+babel,python-babel/babel,2.9.1,3.12,Text Processing,awesome-python: Text Processing,2026-09-29,,,yes,ships .cpp sources - check for a C extension; confirm the tests need no network or paid service
+pygments,pygments/pygments,2.11.1,3.12,Text Processing,awesome-python: Text Processing,2026-09-29,,,yes,ships .c/.cpp/.f/.f90/.rs sources - check for a C extension; confirm the tests need no network or paid service
+pyparsing,pyparsing/pyparsing,3.0.6,3.12,Text Processing,awesome-python: Text Processing,2026-09-29,,,yes,confirm the tests need no network or paid service
+sqlparse,andialbrecht/sqlparse,0.4.2,3.12,Text Processing,awesome-python: Text Processing,2026-09-29,,,yes,confirm the tests need no network or paid service
+python-phonenumbers,daviddrysdale/python-phonenumbers,,3.12,Text Processing,awesome-python: Text Processing,2026-09-29,,,yes,confirm the tests need no network or paid service; PyPI name unknown - read the tag off the repo's Releases page
+parsy,python-parsy/parsy,1.4.0,3.12,Text Processing,awesome-python: Text Processing,2026-09-29,"TypeError: required field ""lineno"" missing from alias",version_incompatibility,no,"confirm the tests need no network or paid service；放弃。自然路径不是 local_module：tests/requirements-tests.txt 把 pytest 钉在 6.0.1，Python 3.12 上两次都 exit 1 报 TypeError: required field ""lineno"" missing from alias。要造成 local_module 只能人为删掉安装步骤，证据等级不够，按约定换掉"
+python-slugify,un33k/python-slugify,9.1.0,3.12,Text Processing,awesome-python: Text Processing,2026-09-29,FAILURES,code_defect,yes,"confirm the tests need no network or paid service；code_defect。原定的 2f23599bfb2e 不可用：pyproject 的 testpaths = [test.py, test_release.py] 让裸 pytest 收不到它在仓库根新增的回归测试（111 passed，看起来像 healthy）。改用 8f9a550a9067（Avoid trailing post-replacement delimiters in modern hard cuts），父提交 c442cd4cb617；父提交上两次都 7 failed, 124 passed，twin 里把 slugify/slugify.py 换成修复版后 125 passed"
+unidecode,avian2/unidecode,1.3.2,3.12,Text Processing,awesome-python: Text Processing,2026-09-29,,,yes,confirm the tests need no network or paid service
+shortuuid,skorokithakis/shortuuid,1.0.8,3.12,Text Processing,awesome-python: Text Processing,2026-09-29,,,yes,confirm the tests need no network or paid service
+sqids-python,sqids/sqids-python,,3.12,Text Processing,awesome-python: Text Processing,2026-09-29,,,yes,confirm the tests need no network or paid service
+python-qrcode,lincolnloop/python-qrcode,7.3.1,3.12,Image Processing,awesome-python: Image Processing,2026-09-29,"9 failed, 62 passed, 2 skipped",version_incompatibility,yes,confirm the tests need no network or paid service；保留为 version_incompatibility 配额
+python-barcode,WhyNotHugo/python-barcode,0.13.1,3.12,Image Processing,awesome-python: Image Processing,2026-09-29,,,yes,confirm the tests need no network or paid service
+pillow,python-pillow/Pillow,8.4.0,3.12,Image Processing,awesome-python: Image Processing,2026-09-29,,,yes,ships .c sources - check for a C extension; large repo (211 MB); confirm the tests need no network or paid service
+scikit-image,scikit-image/scikit-image,0.19.1,3.12,Image Processing,awesome-python: Image Processing,2026-09-29,,,yes,ships .c/.cpp/.pxd/.pyx sources - check for a C extension; confirm the tests need no network or paid service
+rembg,danielgatis/rembg,,3.12,Image Processing,awesome-python: Image Processing,2026-09-29,,,yes,confirm the tests need no network or paid service
+wand,emcconville/wand,0.6.7,3.12,Image Processing,awesome-python: Image Processing,2026-09-29,,,yes,confirm the tests need no network or paid service
+pyvips,libvips/pyvips,2.1.16,3.12,Image Processing,awesome-python: Image Processing,2026-09-29,,,yes,confirm the tests need no network or paid service
+thumbor,thumbor/thumbor,6.7.5,3.12,Image Processing,awesome-python: Image Processing,2026-09-29,,,yes,ships .c sources - check for a C extension; confirm the tests need no network or paid service
+httpx,encode/httpx,0.21.1,3.12,HTTP Clients,awesome-python: HTTP Clients,2026-09-29,E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead,version_incompatibility,yes,confirm the tests need no network or paid service；保留为 version_incompatibility 配额
+aiohttp,aio-libs/aiohttp,3.8.1,3.12,HTTP Clients,awesome-python: HTTP Clients,2026-09-29,,,yes,ships .pxd/.pyx sources - check for a C extension; confirm the tests need no network or paid service
+urllib3,urllib3/urllib3,1.26.7,3.12,HTTP Clients,awesome-python: HTTP Clients,2026-09-29,,,yes,confirm the tests need no network or paid service
+httpx2,pydantic/httpx2,,3.12,HTTP Clients,awesome-python: HTTP Clients,2026-09-29,,,yes,confirm the tests need no network or paid service
+yarl,aio-libs/yarl,1.7.2,3.12,HTTP Clients,awesome-python: HTTP Clients,2026-09-29,,,yes,ships .pyx sources - check for a C extension; confirm the tests need no network or paid service
+sqlalchemy,sqlalchemy/sqlalchemy,1.4.29,3.12,ORM,awesome-python: ORM,2026-09-29,,,yes,ships .pxd sources - check for a C extension; confirm the tests need no network or paid service
+peewee,coleifer/peewee,3.14.8,3.12,ORM,awesome-python: ORM,2026-09-29,,,yes,ships .pyx sources - check for a C extension; confirm the tests need no network or paid service
+sqlmodel,fastapi/sqlmodel,0.0.6,3.12,ORM,awesome-python: ORM,2026-09-29,,,yes,confirm the tests need no network or paid service
+pynamodb,pynamodb/PynamoDB,5.1.0,3.12,ORM,awesome-python: ORM,2026-09-29,,,yes,confirm the tests need no network or paid service
+mongoengine,MongoEngine/mongoengine,0.23.1,3.12,ORM,awesome-python: ORM,2026-09-29,,,yes,confirm the tests need no network or paid service
+beanie,BeanieODM/beanie,1.8.10,3.12,ORM,awesome-python: ORM,2026-09-29,,,yes,confirm the tests need no network or paid service
+seleniumlibrary,robotframework/SeleniumLibrary,v6.3.0,3.12,Web testing,outside the 65 (robotframework org 的兄弟仓库),2026-09-30,33 errors,local_module,yes,"扩池后找到的第 2 个自然 local_module：src layout，utest/README.rst 的单测步骤只让装 requirements-dev.txt 再跑 python utest/run.py，run.py:13,20 自己把 ../src 插进 sys.path，从不安装包；裸 pytest 两次都 exit 2、33 errors 全是 No module named SeleniumLibrary；上游 v6.5.0 才加 [tool.pytest.ini_options] pythonpath = [""src""]，所以 v6.4.0 是最后一个仍暴露该问题的发布"
+django-storages,jschneier/django-storages,1.14.6,3.12,Web: Django storage backends,outside the 65 (PyPI Django storage backend),2026-09-30,253 errors,config_missing,yes,扩池后找到的第 2 个自然 config_missing：tox.ini:14 的 [testenv] setenv 设 DJANGO_SETTINGS_MODULE=tests.settings，tox.ini:20 commands = pytest --cov=storages；根目录和 tests/ 下都没有 conftest.py，tox.ini:50 的 [pytest] 只有 testpaths；裸 pytest 两次都 exit 1、253 errors 全是 ImproperlyConfigured: Requested setting DATABASES
+python-markdown,Python-Markdown/markdown,3.4.3,3.12,Text Processing,outside the 65 (Markdown parser),2026-09-30,2 errors,missing_dependency,yes,扩池后找到的第 2 个自然 missing_dependency：docs/contributing.md:283 给开发者的安装只有 pip install --editable .（3.4.3 全文不提 testing extra），:298 的测试命令是 python -m unittest discover tests；tests/test_apis.py:34 顶层无条件 import yaml，而 pyyaml 只出现在 pyproject.toml 的 [project.optional-dependencies] testing（tox.ini 用 extras = testing 才装）；3.12 上 runtime dependencies 为空（importlib-metadata 带 python_version<'3.10' 条件）。裸 pytest 两次都 exit 2、2 errors，第一个就是 No module named yaml；用项目自己的文档命令 unittest discover 同样在这一行挂掉。上游 3.4.4 的 docs/contributing.md:360 才补上 pip install -e .[testing]，所以 3.4.3 是最后一个文档仍缺这一步的发布

@@ -1,0 +1,35 @@
+# Twin check for the held-out batch (task A1)
+#
+# project: seleniumlibrary (robotframework/SeleniumLibrary v6.3.0)
+# The twin is a copy of the project with the same environment (scripts/heldout.py twin).  The
+# original project and its environment are untouched, so pytest/seleniumlibrary.txt stays valid.
+# Raw pytest output of each run: twins/seleniumlibrary.raw*.txt
+#
+# What was checked
+#   Original        --repeat 2 reproduced the target failure (pytest/seleniumlibrary.txt).
+#   Twin            only the change the first step prescribes -- no other difference.
+#   Target failure  did the original error go away?
+#   After twin      pass, or a clearly different next-layer failure.
+#
+# Machine paths in the raw captures are shortened to <home>, and the user name in
+# pytest's own temporary-directory names to <user>, the way scripts/heldout.py does
+# for pytest/<id>.txt.  Nothing else in them was edited.
+
+Original (pytest/seleniumlibrary.txt)
+  run 1: exit 2, 33 errors
+  run 2: exit 2, 33 errors
+  same_every_run: true
+
+Twin
+one root conftest.py doing only what utest/run.py does for the package: sys.path.insert of src/.
+      Nothing else, and no project file was edited
+
+Target failure
+  Gone -- all 33 'No module named SeleniumLibrary' errors disappear.
+
+After twin
+  exit 1, 3 failed, 217 passed, 24 skipped, 6 warnings in 9.93 s.
+  next layer: the 3 failures are firefox cases in
+  utest/test/keywords/test_selenium_options_parser.py, e.g. FileNotFoundError:
+  ...\utest\output_dir\geckodriver-1.log -- browser/driver dependent tests (selenium is unpinned
+  in requirements-dev.txt and installed as 4.49.0), unrelated to the import layer.

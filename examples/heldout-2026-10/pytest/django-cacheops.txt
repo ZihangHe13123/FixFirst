@@ -1,0 +1,46 @@
+# Plain pytest output for the held-out check (scripts/heldout.py pytest)
+# project: django-cacheops (Suor/django-cacheops 6.0)
+# command: python -m pytest, in <home>\heldout-projects\django-cacheops, environment activated
+# python: 3.12.7
+# run 1: exit code 2, 2.0 s, 2 warnings, 1 error
+# run 2: exit code 2, 0.8 s, 2 warnings, 1 error
+# date: 2026-09-30T19:25:31+08:00
+
+============================= test session starts =============================
+platform win32 -- Python 3.12.7, pytest-9.1.1, pluggy-1.6.0
+rootdir: <home>\heldout-projects\django-cacheops
+collected 0 items / 1 error
+
+=================================== ERRORS ====================================
+____________________ ERROR collecting tests/test_extras.py ____________________
+tests\test_extras.py:4: in <module>
+    from cacheops import cached_as, no_invalidation, invalidate_obj, invalidate_model, invalidate_all
+cacheops\__init__.py:7: in <module>
+    from .simple import *
+cacheops\simple.py:8: in <module>
+    from .redis import redis_client, handle_connection_failure
+cacheops\redis.py:13: in <module>
+    if settings.CACHEOPS_DEGRADE_ON_FAILURE:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cacheops\conf.py:34: in __getattr__
+    res = getattr(base_settings, name, getattr(Defaults, name))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\django\conf\__init__.py:82: in __getattr__
+    self._setup(name)
+.venv\Lib\site-packages\django\conf\__init__.py:63: in _setup
+    raise ImproperlyConfigured(
+E   django.core.exceptions.ImproperlyConfigured: Requested setting CACHEOPS_DEGRADE_ON_FAILURE, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.
+============================== warnings summary ===============================
+.venv\Lib\site-packages\django\http\request.py:1
+  <home>\heldout-projects\django-cacheops\.venv\Lib\site-packages\django\http\request.py:1: DeprecationWarning: 'cgi' is deprecated and slated for removal in Python 3.13
+    import cgi
+
+.venv\Lib\site-packages\django\utils\encoding.py:268
+  <home>\heldout-projects\django-cacheops\.venv\Lib\site-packages\django\utils\encoding.py:268: DeprecationWarning: 'locale.getdefaultlocale' is deprecated and slated for removal in Python 3.15. Use setlocale(), getencoding() and getlocale() instead.
+    encoding = locale.getdefaultlocale()[1] or 'ascii'
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_extras.py - django.core.exceptions.ImproperlyConfigured: Req...
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+======================== 2 warnings, 1 error in 1.44s =========================

@@ -1,0 +1,110 @@
+# Plain pytest output for the held-out check (scripts/heldout.py pytest)
+# project: dateparser (scrapinghub/dateparser v1.1.0)
+# command: python -m pytest, in <home>\heldout-projects\dateparser, environment activated
+# python: 3.12.7
+# run 1: exit code 2, 2.6 s, 17 warnings, 3 errors
+# date: 2026-10-02T14:56:57+08:00
+
+============================= test session starts =============================
+platform win32 -- Python 3.12.7, pytest-9.1.1, pluggy-1.6.0
+rootdir: <home>\heldout-projects\dateparser
+configfile: pytest.ini
+plugins: cov-7.1.0
+collected 23537 items / 3 errors
+
+=================================== ERRORS ====================================
+______ ERROR collecting dateparser/custom_language_detection/fasttext.py ______
+ImportError while importing test module '<home>\heldout-projects\dateparser\dateparser\custom_language_detection\fasttext.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+dateparser\custom_language_detection\fasttext.py:3: in <module>
+    import fasttext
+E   ModuleNotFoundError: No module named 'fasttext'
+_______________ ERROR collecting tests/test_language_detect.py ________________
+ImportError while importing test module '<home>\heldout-projects\dateparser\tests\test_language_detect.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\tests\test_language_detect.py:7: in <module>
+    from dateparser.custom_language_detection.fasttext import detect_languages as fast_text_detect_languages
+..\dateparser\custom_language_detection\fasttext.py:3: in <module>
+    import fasttext
+E   ModuleNotFoundError: No module named 'fasttext'
+_______________ ERROR collecting tests/test_language_detect.py ________________
+ImportError while importing test module '<home>\heldout-projects\dateparser\tests\test_language_detect.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\tests\test_language_detect.py:7: in <module>
+    from dateparser.custom_language_detection.fasttext import detect_languages as fast_text_detect_languages
+..\dateparser\custom_language_detection\fasttext.py:3: in <module>
+    import fasttext
+E   ModuleNotFoundError: No module named 'fasttext'
+============================== warnings summary ===============================
+dateparser\timezone_parser.py:81
+  <home>\heldout-projects\dateparser\dateparser\timezone_parser.py:81: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    offset = datetime.now() - datetime.utcnow()
+
+dateparser\calendars\hijri_parser.py:1
+  <home>\heldout-projects\dateparser\dateparser\calendars\hijri_parser.py:1: DeprecationWarning: hijri-converter is deprecated. Use 'hijridate' instead: pip install hijridate==2.3.0
+    from hijri_converter import convert
+
+tests\test_search.py:459
+tests\test_search.py:459
+  <home>\heldout-projects\dateparser\tests\test_search.py:459: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    2014, datetime.datetime.utcnow().month, datetime.datetime.utcnow().day, 0, 0)
+
+tests\test_search.py:461
+  <home>\heldout-projects\dateparser\tests\test_search.py:461: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    ('October', datetime.datetime(2014, 10, datetime.datetime.utcnow().day, 0, 0)),
+
+tests\test_search.py:470
+  <home>\heldout-projects\dateparser\tests\test_search.py:470: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    [('May 2020', datetime.datetime(2020, 5, datetime.datetime.utcnow().day, 0, 0)),
+
+tests\test_search.py:471
+  <home>\heldout-projects\dateparser\tests\test_search.py:471: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    ('June 2020', datetime.datetime(2020, 6, datetime.datetime.utcnow().day, 0, 0)),
+
+tests\test_search.py:472
+  <home>\heldout-projects\dateparser\tests\test_search.py:472: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    ('2023', datetime.datetime(2023, 6, datetime.datetime.utcnow().day, 0, 0)),
+
+tests\test_search.py:473
+  <home>\heldout-projects\dateparser\tests\test_search.py:473: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    ('January UTC', datetime.datetime(2023, 1, datetime.datetime.utcnow().day, 0, 0, tzinfo=pytz.utc)),
+
+tests\test_search.py:526
+tests\test_search.py:526
+  <home>\heldout-projects\dateparser\tests\test_search.py:526: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    2014, datetime.datetime.utcnow().month, datetime.datetime.utcnow().day, 0, 0)
+
+tests\test_search.py:541
+tests\test_search.py:541
+  <home>\heldout-projects\dateparser\tests\test_search.py:541: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    2014, datetime.datetime.utcnow().month, datetime.datetime.utcnow().day, 0, 0)
+
+tests\test_search.py:551
+tests\test_search.py:551
+  <home>\heldout-projects\dateparser\tests\test_search.py:551: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    1938, datetime.datetime.utcnow().month, datetime.datetime.utcnow().day, 0, 0)
+
+tests\test_search.py:554
+tests\test_search.py:554
+  <home>\heldout-projects\dateparser\tests\test_search.py:554: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    1939, datetime.datetime.utcnow().month, datetime.datetime.utcnow().day, 0, 0)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR dateparser/custom_language_detection/fasttext.py
+ERROR tests/test_language_detect.py
+ERROR tests/test_language_detect.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 3 errors during collection !!!!!!!!!!!!!!!!!!!
+======================= 17 warnings, 3 errors in 2.12s ========================

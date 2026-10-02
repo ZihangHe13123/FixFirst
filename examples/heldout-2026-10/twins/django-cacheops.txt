@@ -1,0 +1,43 @@
+# Twin check for the held-out batch (task A1)
+#
+# project: django-cacheops (Suor/django-cacheops 6.0)
+# The twin is a copy of the project with the same environment (scripts/heldout.py twin).  The
+# original project and its environment are untouched, so pytest/django-cacheops.txt stays valid.
+# Raw pytest output of each run: twins/django-cacheops.raw*.txt
+#
+# What was checked
+#   Original        --repeat 2 reproduced the target failure (pytest/django-cacheops.txt).
+#   Twin            only the change the first step prescribes -- no other difference.
+#   Target failure  did the original error go away?
+#   After twin      pass, or a clearly different next-layer failure.
+#
+# Machine paths in the raw captures are shortened to <home>, and the user name in
+# pytest's own temporary-directory names to <user>, the way scripts/heldout.py does
+# for pytest/<id>.txt.  Nothing else in them was edited.
+
+Original (pytest/django-cacheops.txt)
+  run 1: exit 2, 2 warnings, 1 error
+  run 2: exit 2, 2 warnings, 1 error
+  same_every_run: true
+
+Twin
+step 1: DJANGO_SETTINGS_MODULE=tests.settings in the environment for the run, and nothing else
+      (no file touched)
+      -> exit 2, 2 warnings, 1 error -- ImproperlyConfigured appears 0 times
+step 2: the same step completed the way the project's own runner does it (run_tests.py:3 sets
+      the settings module, run_tests.py:20 calls django.setup()): a root conftest.py with
+      exactly those two lines
+      -> exit 1, 8 failed, 3 passed, 3 warnings, 4 errors in 344 s
+
+Target failure
+  Gone after step 1: 'Requested setting CACHEOPS_DEGRADE_ON_FAILURE, but settings are not
+  configured' drops to 0.
+
+After twin
+  step 1: exit 2, 1 error -- django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet,
+  which is the second thing run_tests.py:20 does.
+  step 2: collection finally works and the tests run, revealing a third layer:
+  sqlite3.OperationalError: no such table: tests_category (run_tests.py also runs makemigrations
+  itself) and redis.exceptions.ConnectionError ... localhost:6379 (no Redis service on this
+  machine).
+  the step-2 run took 344 s, most of it Redis connection retries -- do not re-run it casually.

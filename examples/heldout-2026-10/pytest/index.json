@@ -1,0 +1,194 @@
+{
+  "click": {
+    "python": "3.12.7",
+    "same_every_run": true,
+    "runs": [
+      {
+        "exit_code": 1,
+        "seconds": 0.2,
+        "summary": "AttributeError: __spec__"
+      },
+      {
+        "exit_code": 1,
+        "seconds": 0.1,
+        "summary": "AttributeError: __spec__"
+      }
+    ]
+  },
+  "python-qrcode": {
+    "python": "3.12.7",
+    "same_every_run": true,
+    "runs": [
+      {
+        "exit_code": 1,
+        "seconds": 3.8,
+        "summary": "9 failed, 62 passed, 2 skipped"
+      },
+      {
+        "exit_code": 1,
+        "seconds": 3.2,
+        "summary": "9 failed, 62 passed, 2 skipped"
+      }
+    ]
+  },
+  "python-ftfy": {
+    "python": "3.12.7",
+    "same_every_run": true,
+    "runs": [
+      {
+        "exit_code": 0,
+        "seconds": 2.1,
+        "summary": "318 passed, 10 xfailed"
+      },
+      {
+        "exit_code": 0,
+        "seconds": 1.5,
+        "summary": "318 passed, 10 xfailed"
+      }
+    ]
+  },
+  "httpx": {
+    "python": "3.12.7",
+    "same_every_run": true,
+    "runs": [
+      {
+        "exit_code": 4,
+        "seconds": 1.3,
+        "summary": "E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead"
+      },
+      {
+        "exit_code": 4,
+        "seconds": 0.5,
+        "summary": "E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead"
+      }
+    ]
+  },
+  "dateparser": {
+    "python": "3.12.7",
+    "same_every_run": true,
+    "runs": [
+      {
+        "exit_code": 2,
+        "seconds": 3.4,
+        "summary": "17 warnings, 3 errors"
+      },
+      {
+        "exit_code": 2,
+        "seconds": 2.6,
+        "summary": "17 warnings, 3 errors"
+      }
+    ]
+  },
+  "pytest": {
+    "python": "3.12.7",
+    "same_every_run": true,
+    "runs": [
+      {
+        "exit_code": 4,
+        "seconds": 1.1,
+        "summary": "E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead"
+      },
+      {
+        "exit_code": 4,
+        "seconds": 0.3,
+        "summary": "E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead"
+      }
+    ]
+  },
+  "robotframework": {
+    "python": "3.12.7",
+    "same_every_run": true,
+    "runs": [
+      {
+        "exit_code": 2,
+        "seconds": 3.5,
+        "summary": "98 errors"
+      },
+      {
+        "exit_code": 2,
+        "seconds": 1.5,
+        "summary": "98 errors"
+      }
+    ]
+  },
+  "python-slugify": {
+    "python": "3.12.7",
+    "same_every_run": true,
+    "runs": [
+      {
+        "exit_code": 1,
+        "seconds": 3.7,
+        "summary": "7 failed, 124 passed"
+      },
+      {
+        "exit_code": 1,
+        "seconds": 2.2,
+        "summary": "7 failed, 124 passed"
+      }
+    ]
+  },
+  "django-cacheops": {
+    "python": "3.12.7",
+    "same_every_run": true,
+    "runs": [
+      {
+        "exit_code": 2,
+        "seconds": 2.0,
+        "summary": "2 warnings, 1 error"
+      },
+      {
+        "exit_code": 2,
+        "seconds": 0.8,
+        "summary": "2 warnings, 1 error"
+      }
+    ]
+  },
+  "seleniumlibrary": {
+    "python": "3.12.7",
+    "same_every_run": true,
+    "runs": [
+      {
+        "exit_code": 2,
+        "seconds": 6.5,
+        "summary": "33 errors"
+      },
+      {
+        "exit_code": 2,
+        "seconds": 1.5,
+        "summary": "33 errors"
+      }
+    ]
+  },
+  "django-storages": {
+    "python": "3.12.7",
+    "same_every_run": true,
+    "runs": [
+      {
+        "exit_code": 1,
+        "seconds": 20.5,
+        "summary": "253 errors"
+      },
+      {
+        "exit_code": 1,
+        "seconds": 17.8,
+        "summary": "253 errors"
+      }
+    ]
+  },
+  "python-markdown": {
+    "python": "3.12.7",
+    "same_every_run": true,
+    "runs": [
+      {
+        "exit_code": 2,
+        "seconds": 4.5,
+        "summary": "2 errors"
+      },
+      {
+        "exit_code": 2,
+        "seconds": 0.7,
+        "summary": "2 errors"
+      }
+    ]
+  }
+}

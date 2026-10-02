@@ -1,0 +1,32 @@
+# Twin check for the held-out batch (task A1)
+#
+# project: python-slugify (un33k/python-slugify v9.1.0, checked out at the parent of the fix,
+#          c442cd4cb61763c85b078d6ea83b5959c3ff364a)
+# The twin is a copy of the project with the same environment (scripts/heldout.py twin).  The
+# original project and its environment are untouched, so pytest/python-slugify.txt stays valid.
+# Raw pytest output: twins/python-slugify.raw.txt
+#
+# What was checked
+#   Original        --repeat 2 reproduced the target failure (pytest/python-slugify.txt).
+#   Twin            only the change the first step prescribes -- no other difference.
+#   Target failure  did the original error go away?
+#   After twin      pass, or a clearly different next-layer failure.
+
+Original (pytest/python-slugify.txt)
+  run 1: exit 1, 7 failed, 124 passed
+  run 2: exit 1, 7 failed, 124 passed
+  same_every_run: true
+  the 7 are 1 failure plus 6 failing subtests of the two regression tests taken from the fix
+  commit 8f9a550 (tests/test_release.py), e.g. 'one-' != 'one' and '-' != ''.
+
+Twin
+  slugify/slugify.py replaced by the file from the fix commit 8f9a550 (#200), and nothing else;
+  the regression tests stay exactly as the fix commit wrote them.
+
+Target failure
+  Gone -- both regression tests pass.
+
+After twin
+  exit 0, 125 passed in 2.04 s.  (125 items: 124 passed + 1 failed = 131 in the original footer,
+  because pytest counts the 6 subtest failures on top of the item counts.)
+  next layer: none -- nothing is left failing, so python-slugify has no later_layers.

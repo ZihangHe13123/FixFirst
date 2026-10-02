@@ -1,0 +1,1006 @@
+[
+  {
+    "id": "click",
+    "session_id": "session-1def9c7ef7a0",
+    "python": "3.12.7",
+    "seconds": 9.7,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {},
+    "steps": [
+      {
+        "title": "Read the original output and investigate by hand",
+        "cause": null,
+        "possible": "Defect in project code or tests",
+        "suspected": false,
+        "optional": false,
+        "where": [],
+        "command": null,
+        "rules": [
+          "F01"
+        ],
+        "issues": 2
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "AttributeError: __spec__",
+        "tool": "pytest_run",
+        "kind": "other_unknown",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "KeyError: '__spec__'",
+        "tool": "pytest_run",
+        "kind": "other_unknown",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "Could not start ruff in the target environment: <home>\\heldout-projects\\click\\.venv\\Scripts\\python.exe: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "pytest",
+    "session_id": "session-d608ed3575df",
+    "python": "3.12.7",
+    "seconds": 9.3,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {},
+    "steps": [
+      {
+        "title": "Check that the tool is available and ran to completion",
+        "cause": null,
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [],
+        "command": null,
+        "rules": [],
+        "issues": 2
+      }
+    ],
+    "optional": [],
+    "other": [],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "pytest usage error; see the original output",
+        "tool": "pytest_run",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "Could not start ruff in the target environment: <home>\\heldout-projects\\pytest\\.venv\\Scripts\\python.exe: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "dateparser",
+    "session_id": "session-cedf039ebea1",
+    "python": "3.12.7",
+    "seconds": 9.9,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "xfail_or_xpass": 0,
+      "selected": 0,
+      "incomplete": 0
+    },
+    "steps": [
+      {
+        "title": "Install the declared dependency that provides fasttext",
+        "cause": "Missing third-party dependency",
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "../dateparser/custom_language_detection/fasttext.py:3"
+        ],
+        "command": "<home>\\heldout-projects\\dateparser\\.venv\\Scripts\\python.exe -m pip install --log <home>\\heldout-projects\\dateparser\\.fixfirst\\installation\\session-cedf039ebea1\\94aae2beb39cb31d\\16630f064c95db8606e67753.log --disable-pip-version-check --only-binary=:all: fasttext",
+        "rules": [
+          "D20"
+        ],
+        "issues": 1
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "ModuleNotFoundError: No module named 'fasttext'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "missing_dependency",
+        "source": "rule",
+        "rule": "D20"
+      },
+      {
+        "title": "Could not start ruff in the target environment: <home>\\heldout-projects\\dateparser\\.venv\\Scripts\\python.exe: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "python-qrcode",
+    "session_id": "session-a73d68291c95",
+    "python": "3.12.7",
+    "seconds": 5.0,
+    "headline": "2 problems to fix",
+    "status": "todo",
+    "tests": {
+      "passed": 62,
+      "failed": 9,
+      "skipped": 2,
+      "xfail_or_xpass": 0,
+      "selected": 73,
+      "incomplete": 0
+    },
+    "steps": [
+      {
+        "title": "Check the import path and dependency declarations",
+        "cause": null,
+        "possible": "Version incompatibility",
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "qrcode/console_scripts.py:36"
+        ],
+        "command": null,
+        "rules": [
+          "F01"
+        ],
+        "issues": 1
+      },
+      {
+        "title": "Inspect the exception raised while running the test",
+        "cause": null,
+        "possible": "Defect in project code or tests",
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "qrcode/release.py:34"
+        ],
+        "command": null,
+        "rules": [
+          "F01"
+        ],
+        "issues": 1
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "ModuleNotFoundError: No module named 'pkg_resources'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "version_incompatibility",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ValueError · qrcode/tests/test_release.py::UpdateManpageTests::test_change",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "Could not start ruff in the target environment: <home>\\heldout-projects\\python-qrcode\\.venv\\Scripts\\python.exe: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "httpx",
+    "session_id": "session-dbcf40ac9d5e",
+    "python": "3.12.7",
+    "seconds": 4.9,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {},
+    "steps": [
+      {
+        "title": "Check that the tool is available and ran to completion",
+        "cause": null,
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [],
+        "command": null,
+        "rules": [],
+        "issues": 2
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Read the original output and investigate by hand"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "WARNING: Error parsing dependencies of uvicorn: .* suffix can only be used with `==` or `!=` operators\r\n    click (>=7.*)\r\n           ~~~~^",
+        "tool": "pip_check",
+        "kind": "other_unknown",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "pytest usage error; see the original output",
+        "tool": "pytest_run",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      },
+      {
+        "title": "Could not start ruff in the target environment: <home>\\heldout-projects\\httpx\\.venv\\Scripts\\python.exe: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "python-ftfy",
+    "session_id": "session-86fa61dcdde7",
+    "python": "3.12.7",
+    "seconds": 3.2,
+    "headline": "All tests pass",
+    "status": "done",
+    "tests": {
+      "passed": 296,
+      "failed": 0,
+      "skipped": 0,
+      "xfail_or_xpass": 10,
+      "selected": 306,
+      "incomplete": 0
+    },
+    "steps": [],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "Could not start ruff in the target environment: <home>\\heldout-projects\\python-ftfy\\.venv\\Scripts\\python.exe: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "robotframework",
+    "session_id": "session-aeb0b57e9ea8",
+    "python": "3.12.7",
+    "seconds": 16.6,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "xfail_or_xpass": 0,
+      "selected": 0,
+      "incomplete": 0
+    },
+    "steps": [
+      {
+        "title": "Make the project module robot importable",
+        "cause": "Local module or path problem",
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "utest/api/test_deco.py:3"
+        ],
+        "command": null,
+        "rules": [
+          "D13"
+        ],
+        "issues": 1
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "ModuleNotFoundError: No module named 'robot'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "local_module",
+        "source": "rule",
+        "rule": "D13"
+      },
+      {
+        "title": "Could not start ruff in the target environment: <home>\\heldout-projects\\robotframework\\.venv\\Scripts\\python.exe: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "python-slugify",
+    "session_id": "session-4728cb75d2c7",
+    "python": "3.12.7",
+    "seconds": 4.0,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {
+      "passed": 124,
+      "failed": 1,
+      "skipped": 0,
+      "xfail_or_xpass": 0,
+      "selected": 125,
+      "incomplete": 0
+    },
+    "steps": [
+      {
+        "title": "Compare the failed assertion's expected and actual values",
+        "cause": "Defect in project code or tests",
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "tests/test_release.py:72",
+          "tests/test_release.py:78"
+        ],
+        "command": null,
+        "rules": [
+          "D40"
+        ],
+        "issues": 2
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "Assertion failed · tests/test_release.py::ReleaseRegressionTests::test_modern_hard_cut_does_not_end_in_post_replacement_delimiters",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Assertion failed · tests/test_release.py::ReleaseRegressionTests::test_modern_word_boundary_hard_cut_keeps_delimiters_with_the_next_word",
+        "tool": "pytest_run",
+        "kind": "test_assertion",
+        "diagnosis": "code_defect",
+        "source": "rule",
+        "rule": "D40"
+      },
+      {
+        "title": "Could not start ruff in the target environment: <home>\\heldout-projects\\python-slugify\\.venv\\Scripts\\python.exe: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "django-cacheops",
+    "session_id": "session-146ea530f22d",
+    "python": "3.12.7",
+    "seconds": 2.8,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "xfail_or_xpass": 0,
+      "selected": 0,
+      "incomplete": 0
+    },
+    "steps": [
+      {
+        "title": "Read the original output and investigate by hand",
+        "cause": null,
+        "possible": "Missing configuration",
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "cacheops/conf.py:34"
+        ],
+        "command": null,
+        "rules": [
+          "F01"
+        ],
+        "issues": 1
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "ImproperlyConfigured: Requested setting CACHEOPS_DEGRADE_ON_FAILURE, but settings are not configured. You must either define the environment variable DJANGO_SET",
+        "tool": "pytest_run",
+        "kind": "other_unknown",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "Could not start ruff in the target environment: <home>\\heldout-projects\\django-cacheops\\.venv\\Scripts\\python.exe: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "seleniumlibrary",
+    "session_id": "session-d83b2eb36a34",
+    "python": "3.12.7",
+    "seconds": 6.1,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "xfail_or_xpass": 0,
+      "selected": 0,
+      "incomplete": 0
+    },
+    "steps": [
+      {
+        "title": "Make the project module SeleniumLibrary importable",
+        "cause": "Local module or path problem",
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "utest/test/api/test_accessing_keywod_methods.py:3"
+        ],
+        "command": null,
+        "rules": [
+          "D13"
+        ],
+        "issues": 1
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "ModuleNotFoundError: No module named 'SeleniumLibrary'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "local_module",
+        "source": "rule",
+        "rule": "D13"
+      },
+      {
+        "title": "Could not start ruff in the target environment: <home>\\heldout-projects\\seleniumlibrary\\.venv\\Scripts\\python.exe: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  },
+  {
+    "id": "django-storages",
+    "session_id": "session-e8facf4e3a5a",
+    "python": "3.12.7",
+    "seconds": 18.3,
+    "headline": "1 problem to fix",
+    "status": "todo",
+    "tests": {
+      "passed": 0,
+      "failed": 111,
+      "skipped": 0,
+      "xfail_or_xpass": 0,
+      "selected": 253,
+      "incomplete": 142
+    },
+    "steps": [
+      {
+        "title": "Inspect the exception raised while running the test",
+        "cause": null,
+        "possible": "Missing configuration",
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "tests/test_azure.py::AzureStorageTest::test_client_settings",
+          "tests/test_azure.py::AzureStorageTest::test_connection_string_can_have_missing",
+          "tests/test_azure.py::AzureStorageTest::test_container_client_default_params"
+        ],
+        "command": null,
+        "rules": [
+          "F01"
+        ],
+        "issues": 110
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_client_settings",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_connection_string_can_have_missing",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_container_client_default_params",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_container_client_params_account_key",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_container_client_params_connection_string",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_container_client_params_sas_token",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_container_client_params_token_credential",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_delete_blob",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_get_available_invalid",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_get_available_name",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_get_available_name_first",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_get_available_name_max_len",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_get_valid_path",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_get_valid_path_idempotency",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_override_class_variable",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_override_init_argument",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_override_settings",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_size_of_file",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_storage_exists",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_storage_listdir_base",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_storage_open_write",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_storage_save",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_url",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_url_custom_domain",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_url_expire",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_url_expire_user_delegation_key",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_azure.py::AzureStorageTest::test_url_unsafe_chars",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_dropbox.py::DropboxFileTest::test_read",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_dropbox.py::DropboxFileTest::test_server_bad_response",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_dropbox.py::DropboxRootPathTest::test_formats",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_dropbox.py::DropboxRootPathTest::test_jailed",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_dropbox.py::DropboxRootPathTest::test_saves",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_dropbox.py::DropboxRootPathTest::test_suspicious",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_dropbox.py::DropboxTest::test_app_key_app_secret_no_refresh_token",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_dropbox.py::DropboxTest::test_chunked_upload",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_dropbox.py::DropboxTest::test_delete",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_dropbox.py::DropboxTest::test_exists",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_dropbox.py::DropboxTest::test_formats",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_dropbox.py::DropboxTest::test_listdir",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "ImproperlyConfigured · tests/test_dropbox.py::DropboxTest::test_no_access_token",
+        "tool": "pytest_run",
+        "kind": "test_runtime_error",
+        "diagnosis": "config_missing",
+        "source": "model",
+        "rule": "F01"
+      }
+    ]
+  },
+  {
+    "id": "python-markdown",
+    "session_id": "session-248645025fe8",
+    "python": "3.12.7",
+    "seconds": 3.6,
+    "headline": "2 problems to fix",
+    "status": "todo",
+    "tests": {
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "xfail_or_xpass": 0,
+      "selected": 1003,
+      "incomplete": 1003
+    },
+    "steps": [
+      {
+        "title": "Install pyyaml, which provides the import yaml",
+        "cause": "Missing third-party dependency",
+        "possible": null,
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "tests/test_apis.py:34"
+        ],
+        "command": "<home>\\heldout-projects\\python-markdown\\.venv\\Scripts\\python.exe -m pip install --log <home>\\heldout-projects\\python-markdown\\.fixfirst\\installation\\session-248645025fe8\\bf1a372ef69ab285\\02408c178759f10ad7a9d902.log --disable-pip-version-check --only-binary=:all: pyyaml",
+        "rules": [
+          "D21"
+        ],
+        "issues": 1
+      },
+      {
+        "title": "Read the original output and investigate by hand",
+        "cause": null,
+        "possible": "Defect in project code or tests",
+        "suspected": false,
+        "optional": false,
+        "where": [
+          "tests/test_syntax/extensions/test_md_in_html.py::TestSuite"
+        ],
+        "command": null,
+        "rules": [
+          "F01"
+        ],
+        "issues": 1
+      }
+    ],
+    "optional": [],
+    "other": [
+      "Check that the tool is available and ran to completion"
+    ],
+    "pending": 0,
+    "search": null,
+    "issues": [
+      {
+        "title": "ModuleNotFoundError: No module named 'yaml'",
+        "tool": "pytest_run",
+        "kind": "import_failure",
+        "diagnosis": "missing_dependency",
+        "source": "rule",
+        "rule": "D21"
+      },
+      {
+        "title": "PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: tests/test_syntax/extensions/test_md_in_html.py)",
+        "tool": "pytest_run",
+        "kind": "other_unknown",
+        "diagnosis": "code_defect",
+        "source": "model",
+        "rule": "F01"
+      },
+      {
+        "title": "Could not start ruff in the target environment: <home>\\heldout-projects\\python-markdown\\.venv\\Scripts\\python.exe: No module named ruff",
+        "tool": "ruff",
+        "kind": "tool_failure",
+        "diagnosis": null,
+        "source": null,
+        "rule": null
+      }
+    ]
+  }
+]

@@ -1,0 +1,143 @@
+# The new held-out batch (task A1). Copy this file into the private repository
+# fixfirst-heldout and add one [[project]] block per project; the scripts need at least one.
+# The fields are the same as in examples/real-world/projects.toml:
+#
+#   id         short name, lowercase with hyphens; the same id is used in the label files
+#   repo       owner/name on GitHub
+#   ref        the release (tag) to use, e.g. "v1.4.0" or "2.2.0"
+#   domain     e.g. "Web: Flask extension", "Data visualisation"
+#   layout     project layout and how dependencies are declared,
+#              e.g. "src layout, pyproject.toml (hatch)" or "flat package, setup.py, requirements-dev.txt"
+#   python     Python version installed by uv, e.g. "3.12" (do not use "system": Windows has none)
+#   install    how the project's own files tell a newcomer to install it; each item is what
+#              follows `pip install`, run inside the project folder
+#   scenario   one sentence: how this environment was made and what was deliberately left out.
+#              Write it before running pytest.
+#
+# Only for a code-defect project (a real bug fix):
+#   commit     check out this commit instead of the release (the parent of the fix)
+#   tests_from take test files from this commit (the fix itself) ...
+#   test_files ... namely these files
+
+[[project]]
+id = "click"
+repo = "pallets/click"
+ref = "8.0.3"
+domain = "CLI Development"
+layout = "src layout (src/click/), setup.py + setup.cfg; install_requires = colorama (Windows only); test deps in requirements/tests.txt (pytest pinned to 6.2.5, plus attrs/iniconfig/packaging/pluggy/py/pyparsing/toml); tox.ini [testenv] deps = -r requirements/tests.txt"
+python = "3.12"
+install = ["-e .", "-r requirements/tests.txt"]
+scenario = "完全按 tox.ini [testenv] 装：-e . 加 -r requirements/tests.txt（该文件自带 pytest，因此 python -m pytest 可用）。没有故意少装任何东西。"
+
+[[project]]
+id = "pytest"
+repo = "pytest-dev/pytest"
+ref = "6.2.5"
+domain = "Testing"
+layout = "src layout (src/_pytest/), setup.cfg + setup.py (setuptools-scm); install_requires = attrs/iniconfig/packaging/pluggy/py/toml (+ atomicwrites, colorama on Windows); test deps in [options.extras_require] testing = argcomplete, hypothesis>=3.56, mock, nose, requests, xmlschema; tox.ini [testenv] extras = testing + pygments>=2.7.2"
+python = "3.12"
+install = ["-e .[testing]", "pygments>=2.7.2"]
+scenario = "完全按 tox.ini [testenv] 装：extras = testing 加 pygments>=2.7.2（即 -e .[testing] 与 pygments）。没有故意少装任何东西。"
+
+[[project]]
+id = "dateparser"
+repo = "scrapinghub/dateparser"
+ref = "v1.1.0"
+domain = "Date and Time"
+layout = "flat package (dateparser/, tests/), setup.py; install_requires = python-dateutil, pytz, regex !=2019.02.19,!=2021.8.27, tzlocal; test deps in tests/requirements.txt (flake8, parameterized, pytest, pytest-cov); tox.ini [testenv] deps = -r tests/requirements.txt; pytest.ini turns on --doctest-modules"
+python = "3.12"
+install = ["-e .[calendars,fasttext,langdetect]", "-r dateparser_scripts/requirements.txt", "-r tests/requirements.txt", "tzlocal<3.0b1"]
+scenario = "[自然路径] 照 tox.ini [testenv] 装：deps = -r dateparser_scripts/requirements.txt（gitpython、ruamel.yaml）加 -r tests/requirements.txt（flake8、parameterized、pytest、pytest-cov）加 tzlocal<3.0b1，再按 setup.py 的 extras_require 装 calendars、langdetect、fasttext 三个 extra。fasttext 是【项目自己声明过的】依赖（setup.py: extras_require={'fasttext': ['fasttext']}，一手证据），不是漏声明；它在这个目标环境（Windows 11 + Python 3.12，没有 MSVC Build Tools）装不上——它是 C++ 扩展，uv 报 error: Microsoft Visual C++ 14.0 or greater is required。所以环境里缺的是一个【已声明但在目标环境装不上】的依赖，裸 pytest 在收集阶段稳定报 ModuleNotFoundError: No module named 'fasttext'（3 个收集错误）。性质是「声明了、装不上」，不是「项目忘记声明 fasttext」。没有为了凑类别故意少装任何东西。另外：tox 自己跑的是 pytest tests（只收 tests/），heldout.py 跑的是裸 python -m pytest，配合 pytest.ini 的 --doctest-modules 会把整个包一起收。环境变量 PYTHONUTF8=1：setup.py 读 README.rst 时没写 encoding=，中文 Windows 默认 GBK 会让 pip install -e . 抛 UnicodeDecodeError——那是环境语言设置不是项目缺陷，所以建环境和跑测试都设了这个变量。"
+
+[[project]]
+id = "python-qrcode"
+repo = "lincolnloop/python-qrcode"
+ref = "v7.3.1"
+domain = "Image Processing"
+layout = "flat package (qrcode/, qrcode/tests/), setup.cfg + setup.py; install_requires = colorama (Windows only); extras: test = pytest + pytest-cov, pil = pillow; tox.ini [testenv] usedevelop = True, extras = test, pil, and deps = two git://github.com/ojii/... URLs (pymaging, pymaging-png)"
+python = "3.12"
+install = ["-e .[test,pil]"]
+scenario = "按 tox.ini [testenv] 装：extras = test, pil，即 -e .[test,pil]（tox 本身没装，用 uv pip install 执行同一行）。但 tox.ini 的 deps 是两条 git://github.com/ojii/pymaging... URL，GitHub 2022 年已停用 git:// 协议，照文档根本装不上，这两条没装；测试对 pymaging 有 try/except + @skipIf 保护，缺它只会让相关用例 skip，不产生报错。"
+
+[[project]]
+id = "httpx"
+repo = "encode/httpx"
+ref = "0.21.1"
+domain = "HTTP Clients"
+layout = "flat package (httpx/, tests/), setup.py; the documented install is requirements.txt, whose first line is -e .[cli,http2,brotli] followed by a pinned test toolchain (pytest==6.2.4, pytest-asyncio==0.15.1, pytest-trio==0.7.0, trio==0.19.0, trustme==0.8.0, uvicorn==0.14.0)"
+python = "3.12"
+install = ["-r requirements.txt"]
+scenario = "完全按 requirements.txt 装（第一行 -e .[cli,http2,brotli] 装项目本身，其余是锁版本的测试工具链）。没有故意少装任何东西。"
+
+[[project]]
+id = "python-ftfy"
+repo = "rspeer/python-ftfy"
+ref = "v6.0.3"
+domain = "Text Processing"
+layout = "flat package (ftfy/ with ftfy/tests/ and ftfy/bad_codecs/), setup.py; install_requires = wcwidth; tests_require = pytest; tox.ini [testenv] deps = pytest; pytest.ini runs --doctest-modules over the package (--ignore=setup.py,specimens,scripts,docs)"
+python = "3.12"
+install = ["-e .", "pytest"]
+scenario = "完全按 tox.ini [testenv] 装：-e . 加 pytest。没有故意少装任何东西；pytest.ini 开了 --doctest-modules，所以收集到的测试数比 test_*.py 多。"
+
+[[project]]
+id = "robotframework"
+repo = "robotframework/robotframework"
+ref = "v4.1.3"
+domain = "Testing"
+layout = "src layout (src/robot/), setup.py with package_dir = {'': 'src'}; unit tests in utest/ are plain unittest in test_*.py files, run by utest/run.py, which at lines 29-33 inserts ../src into sys.path itself; utest/README.rst documents `pip install -r utest/requirements.txt` as the install step and never installs the package, telling you to put src on PYTHONPATH to run a single test; utest/requirements.txt = docutils, jsonschema, typing_extensions; no pytest.ini, no pythonpath setting and no conftest.py in the repo"
+python = "3.12"
+install = ["-r utest/requirements.txt", "pytest"]
+scenario = "[自然路径] 完全按项目自己的单测文档装：utest/README.rst 明说单测依赖在 utest/requirements.txt 里，用 pip install -r 装；该文件不含项目本身，文档也从不安装包，而是让你把 src 加进 PYTHONPATH。项目自己的单测入口是 python utest/run.py。另加 pytest，因为 heldout.py 跑的是裸 python -m pytest，而项目文档里没有 pytest。没有故意删掉任何安装步骤。"
+
+[[project]]
+id = "python-slugify"
+repo = "un33k/python-slugify"
+ref = "v9.1.0"                        # 修复提交 8f9a550（2026-09-22）之前最近的发布
+domain = "Text Processing"
+layout = "flat package (slugify/), pyproject.toml（setuptools>=77 构建后端，不用 setuptools-scm，版本取 slugify.__version__.__version__）；dependencies = text-unidecode>=1.3，extras unidecode / anyascii；测试在 tests/（test_legacy.py、test_release.py 等），pyproject.toml [tool.pytest.ini_options] testpaths = [\"tests\"]、addopts = \"--color=yes\"、filterwarnings = [\"error\"]；tox.ini [testenv] deps = coverage[toml]>=7、pytest>=8"
+python = "3.12"
+install = ["-e .", "pytest>=8", "coverage[toml]>=7"]
+commit = "c442cd4cb61763c85b078d6ea83b5959c3ff364a"    # 修复提交的父提交，真实缺陷就在这个状态里
+tests_from = "8f9a550a906701412c8fc93e731582098f2caee2"  # 修复提交 "Avoid trailing post-replacement delimiters in modern hard cuts (#200)"
+test_files = ["tests/test_release.py"]                  # 修复提交在该文件里新增的两条回归测试
+scenario = "[代码缺陷] 代码检出到修复提交的父提交 c442cd4（2026-09-22）：此时 slugify/slugify.py 的 _modern_truncate 直接按 token 下标决定分隔符，重复分隔符产生的空 token 会让硬截断的结果以分隔符结尾（'one--two' 截到 4 位应得 'one'，却得 'one-'）。回归测试取自修复提交 8f9a550，即 tests/test_release.py 里新增的 test_modern_hard_cut_does_not_end_in_post_replacement_delimiters 和 test_modern_word_boundary_hard_cut_keeps_delimiters_with_the_next_word；testpaths = [\"tests\"] 所以裸 pytest 收得到它们。装法照 tox.ini [testenv]：-e . 加 deps coverage[toml]>=7、pytest>=8，text-unidecode 由 -e . 自动带上。没有改任何项目代码，也没有人为改测试。"
+
+[[project]]
+id = "django-cacheops"
+repo = "Suor/django-cacheops"
+ref = "6.0"
+domain = "Caching"
+layout = "flat package (cacheops/), setup.py + setup.cfg；schema 迁移在 cacheops/migrations/；测试在 tests/（tests/__init__.py、tests/settings.py、tests/tests.py），跑测试的入口是仓库根的 run_tests.py —— 它第 3 行设 os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.settings'、第 20 行调 django.setup()，然后自己 makemigrations 并用 Django 的 test runner 跑；manage.py 第 6 行也是同样的 setdefault。tox.ini [testenv] commands = ./run_tests.py []（另有 CACHEOPS_DB=mysql/postgresql 等变体），deps 含 before_after==1.0.0、jinja2>=2.10、dill 以及按 Django factor 选版本；仓库里没有 conftest.py，也没有 pytest.ini/pyproject 里的 pytest 配置"
+python = "3.12"
+install = ["-e .", "Django>=3.2,<3.3", "before_after==1.0.0", "jinja2>=2.10", "dill", "pytest"]
+scenario = "[自然路径] 完全按 tox.ini [testenv] 装：-e . 加 deps（before_after==1.0.0、jinja2>=2.10、dill）加 Django（tox.ini 的 factor 里 Python 3.x 对应的是 dj32 = Django>=3.2,<3.3）。另加 pytest，因为 heldout.py 跑的是裸 python -m pytest，而项目自己的入口是 ./run_tests.py（Django test runner），tox.ini 的依赖里没有 pytest。没有故意少装任何东西，也没有删掉任何安装步骤：项目文档里让跑测试前设 DJANGO_SETTINGS_MODULE 的地方只有 run_tests.py 和 manage.py 自己，裸 pytest 进不到那两行。"
+
+[[project]]
+id = "seleniumlibrary"
+repo = "robotframework/SeleniumLibrary"
+ref = "v6.3.0"
+domain = "Web testing"
+layout = "src layout (src/SeleniumLibrary/), setup.py + pyproject.toml；v6.3.0 的 pyproject.toml 只有 [tool.black]/[tool.isort]，没有 [tool.pytest.ini_options]、没有 pythonpath；仓库里没有 conftest.py、没有 pytest.ini/tox.ini/setup.cfg。单测是 utest/test/ 下的普通 pytest/unittest（utest/test/api/test_plugins.py:6 就是 from SeleniumLibrary import SeleniumLibrary）。utest/README.rst 的单测步骤是 pip install -r requirements-dev.txt 然后 python utest/run.py，从不安装包；utest/run.py:13 设 SRC = join(CURDIR, os.pardir, 'src')，:20 在 run_unit_tests 的第一句 sys.path.insert(0, SRC)。requirements-dev.txt 只有第三方开发工具加 -r requirements.txt（selenium、robotframework、robotframework-pythonlibcore），没有 -e . / pip install . / setup.py develop / poetry / tox usedevelop"
+python = "3.12"
+install = ["-r requirements-dev.txt"]
+scenario = "[自然路径] 完全按项目自己的单测文档装：utest/README.rst 的 Requirements 段写 pip install -r requirements-dev.txt（BUILD.rst:41 也是同一行），该文件自带 pytest、pytest-mockito、pytest-approvaltests，并以 -r requirements.txt 拉 selenium、robotframework、robotframework-pythonlibcore——不含项目本身。文档给的入口是 python utest/run.py，它自己把 ../src 插进 sys.path（run.py:13,20）；文档从不安装包。heldout.py 跑的是裸 python -m pytest，没有 run.py 那次 sys.path 插入，包又在 src/ 下，所以收集期稳定报 No module named 'SeleniumLibrary'。没有故意少装任何步骤。上游掩盖这个问题的修复在 v6.5.0 才出现（[tool.pytest.ini_options] pythonpath = [\"src\"]）：v6.3.0/v6.4.0 的 pyproject.toml 里没有，v6.5.0 起才有（逐 tag 核过 v6.3.0/v6.4.0/v6.5.0/v6.6.0/v6.7.0），所以 v6.4.0 是最后一个仍暴露该问题的发布。"
+
+[[project]]
+id = "django-storages"
+repo = "jschneier/django-storages"
+ref = "1.14.6"
+domain = "Web: Django storage backends"
+layout = "flat package (storages/), pyproject.toml + setup.py (setuptools)；测试在 tests/（tests/settings.py、test_s3.py、test_sftp.py、test_azure.py、test_gcloud.py、test_dropbox.py、test_ftp.py、test_utils.py）。项目文档给的跑测试入口是 pytest：tox.ini:14 的 [testenv] setenv 里设 DJANGO_SETTINGS_MODULE = tests.settings，tox.ini:20 commands = pytest --cov=storages {posargs}；tox.ini:21-32 deps = cryptography、django5.1: django~=5.1.0、moto<5、pytest、pytest-cov、rsa，tox.ini:33-39 extras = azure、boto3、dropbox、google、libcloud、sftp。唯一的 pytest 配置是 tox.ini:50 的 [pytest]，只有 testpaths = tests/，没有 DJANGO_SETTINGS_MODULE；仓库根和 tests/ 下都没有 conftest.py（按 ref 1.14.6 用 GitHub contents API 核过），pyproject.toml 里没有 [tool.pytest.ini_options]"
+python = "3.12"
+install = ["-e .[azure,boto3,dropbox,google,libcloud,sftp]", "django~=5.1.0", "cryptography", "moto<5", "pytest", "pytest-cov", "rsa"]
+scenario = "[自然路径] 完全按 tox.ini [testenv] 装：-e . 加 tox.ini 列出的 extras（azure、boto3、dropbox、google、libcloud、sftp）加 deps（cryptography、Python 3.12 对应的 django~=5.1.0、moto<5、pytest、pytest-cov、rsa）。项目文档给的跑测试命令是 tox 的 pytest --cov=storages，而它唯一的配置来源就是 [testenv] setenv 里的 DJANGO_SETTINGS_MODULE=tests.settings——别的地方都没有（根目录和 tests/ 下都没有 conftest.py，tox.ini 的 [pytest] 只有 testpaths）。所以从仓库根跑裸 python -m pytest 时这个变量不存在，Django 的 LazySettings 直接抛 ImproperlyConfigured。没有故意少装任何东西，也没有自己加 conftest.py。"
+
+[[project]]
+id = "python-markdown"
+repo = "Python-Markdown/markdown"
+ref = "3.4.3"
+domain = "Text Processing"
+layout = "flat package (markdown/, tests/), pyproject.toml（setuptools>=61.2 + wheel 后端）+ tox.ini；runtime dependencies 只有 importlib-metadata>=4.4 且带 python_version<'3.10' 条件，即在 3.12 上为空；[project.optional-dependencies] testing = ['coverage','pyyaml']；tox.ini [testenv] extras = testing、deps = pytidylib、commands = coverage run --source=markdown -m unittest discover tests（跑测试用的是 unittest，不是 pytest）；docs/contributing.md:283 给开发者的安装步骤只有 pip install --editable .，:298 给的跑测试命令是 python -m unittest discover tests，全文没有任何一步装 testing extra（也没有 pip install -r 之类）；仓库里没有任何 pytest 配置（无 pytest.ini、无 setup.cfg，pyproject.toml 无 [tool.pytest.ini_options]，tox.ini 无 [pytest] 段）。tests/test_apis.py:34 是顶层无保护的 import yaml。上游在 3.4.4 才把文档改成 pip install -e .[testing]（3.4.4 的 docs/contributing.md:360），所以 3.4.3 是最后一个文档仍缺这一步的发布。"
+python = "3.12"
+install = ["-e .", "pytest"]
+scenario = "[自然路径] 完全按项目自己的开发文档装：docs/contributing.md:283 的 pip install --editable .（即 -e .），这是文档里唯一的开发安装步骤；文档 :298 的跑测试命令是 python -m unittest discover tests。另加 pytest，因为 heldout.py 跑的是裸 python -m pytest，而这个仓库里根本没有 pytest 配置（见 layout），文档也从不提 pytest（tox.ini 用的是 unittest）。没有故意少装任何东西：PyYAML 是【项目自己声明过】的依赖（pyproject.toml 的 [project.optional-dependencies] testing = ['coverage','pyyaml']），只是 3.4.3 的贡献文档那条 editable 安装没有带上 testing extra，而 tests/test_apis.py:34 有顶层无保护的 import yaml。性质是「声明了、但文档给的安装路径没装」，不是「项目忘记声明 pyyaml」。文档 :303-305 另说 PyTidyLib 缺失只会让相关用例 skip（tox.ini 的 deps 里有 pytidylib），这个没装，符合文档说法。"

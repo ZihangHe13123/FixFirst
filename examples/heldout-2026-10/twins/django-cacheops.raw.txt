@@ -1,0 +1,37 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.7, pytest-9.1.1, pluggy-1.6.0
+rootdir: <home>\heldout-twins\django-cacheops
+collected 0 items / 1 error
+
+=================================== ERRORS ====================================
+____________________ ERROR collecting tests/test_extras.py ____________________
+tests\test_extras.py:9: in <module>
+    from .models import Post, Category, Local, DbAgnostic, DbBinded
+tests\models.py:8: in <module>
+    from django.contrib.auth.models import User
+.venv\Lib\site-packages\django\contrib\auth\models.py:3: in <module>
+    from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+.venv\Lib\site-packages\django\contrib\auth\base_user.py:48: in <module>
+    class AbstractBaseUser(models.Model):
+.venv\Lib\site-packages\django\db\models\base.py:108: in __new__
+    app_config = apps.get_containing_app_config(module)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\django\apps\registry.py:253: in get_containing_app_config
+    self.check_apps_ready()
+.venv\Lib\site-packages\django\apps\registry.py:136: in check_apps_ready
+    raise AppRegistryNotReady("Apps aren't loaded yet.")
+E   django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet.
+============================== warnings summary ===============================
+.venv\Lib\site-packages\django\http\request.py:1
+  <home>\heldout-twins\django-cacheops\.venv\Lib\site-packages\django\http\request.py:1: DeprecationWarning: 'cgi' is deprecated and slated for removal in Python 3.13
+    import cgi
+
+.venv\Lib\site-packages\django\utils\encoding.py:268
+  <home>\heldout-twins\django-cacheops\.venv\Lib\site-packages\django\utils\encoding.py:268: DeprecationWarning: 'locale.getdefaultlocale' is deprecated and slated for removal in Python 3.15. Use setlocale(), getencoding() and getlocale() instead.
+    encoding = locale.getdefaultlocale()[1] or 'ascii'
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_extras.py - django.core.exceptions.AppRegistryNotReady: Apps...
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+======================== 2 warnings, 1 error in 4.05s =========================

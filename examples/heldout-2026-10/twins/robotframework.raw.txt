@@ -1,0 +1,242 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.7, pytest-9.1.1, pluggy-1.6.0
+rootdir: <home>\heldout-twins\robotframework
+collected 1632 items / 5 errors
+
+=================================== ERRORS ====================================
+______________ ERROR collecting utest/api/test_run_and_rebot.py _______________
+ImportError while importing test module '<home>\heldout-twins\robotframework\utest\api\test_run_and_rebot.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\api\test_run_and_rebot.py:18: in <module>
+    from resources.runningtestcase import RunningTestCase
+E   ModuleNotFoundError: No module named 'resources'
+_______________ ERROR collecting utest/running/test_handlers.py _______________
+ImportError while importing test module '<home>\heldout-twins\robotframework\utest\running\test_handlers.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\running\test_handlers.py:17: in <module>
+    from classes import (NameLibrary, DocLibrary, ArgInfoLibrary,
+E   ModuleNotFoundError: No module named 'classes'
+_______________ ERROR collecting utest/running/test_running.py ________________
+ImportError while importing test module '<home>\heldout-twins\robotframework\utest\running\test_running.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\running\test_running.py:11: in <module>
+    from resources.runningtestcase import RunningTestCase
+E   ModuleNotFoundError: No module named 'resources'
+_____________ ERROR collecting utest/running/test_testlibrary.py ______________
+ImportError while importing test module '<home>\heldout-twins\robotframework\utest\running\test_testlibrary.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\ProgramData\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utest\running\test_testlibrary.py:12: in <module>
+    from classes import (NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary,
+E   ModuleNotFoundError: No module named 'classes'
+________________ ERROR collecting utest/utils/test_encoding.py ________________
+utest\utils\test_encoding.py:9: in <module>
+    ENCODED = UNICODE.encode(CONSOLE_ENCODING)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   UnicodeEncodeError: 'gbk' codec can't encode character '\xe4' in position 3: illegal multibyte sequence
+E   encoding with 'cp936' codec failed
+============================== warnings summary ===============================
+.venv\Lib\site-packages\typing_extensions.py:1433
+  <home>\heldout-twins\robotframework\.venv\Lib\site-packages\typing_extensions.py:1433: DeprecationWarning: Failing to pass a value for the 'fields' parameter is deprecated and will be disallowed in Python 3.15. To create a TypedDict class with 0 fields using the functional syntax, pass an empty dictionary, e.g. `Dummy = TypedDict('Dummy', {})`.
+    return _create_typeddict(
+
+src\robot\model\testcase.py:26
+  <home>\heldout-twins\robotframework\src\robot\model\testcase.py:26: PytestCollectionWarning: cannot collect test class 'TestCase' because it has a __init__ constructor (from: utest/model/test_body.py)
+    @py3to2
+
+src\robot\model\testcase.py:26
+  <home>\heldout-twins\robotframework\src\robot\model\testcase.py:26: PytestCollectionWarning: cannot collect test class 'TestCase' because it has a __init__ constructor (from: utest/model/test_control.py)
+    @py3to2
+
+src\robot\model\testsuite.py:29
+  <home>\heldout-twins\robotframework\src\robot\model\testsuite.py:29: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/model/test_filter.py)
+    @py3to2
+
+src\robot\model\testsuite.py:29
+  <home>\heldout-twins\robotframework\src\robot\model\testsuite.py:29: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/model/test_fixture.py)
+    @py3to2
+
+src\robot\model\testsuite.py:29
+  <home>\heldout-twins\robotframework\src\robot\model\testsuite.py:29: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/model/test_keyword.py)
+    @py3to2
+
+src\robot\model\testcase.py:26
+  <home>\heldout-twins\robotframework\src\robot\model\testcase.py:26: PytestCollectionWarning: cannot collect test class 'TestCase' because it has a __init__ constructor (from: utest/model/test_keyword.py)
+    @py3to2
+
+src\robot\result\model.py:317
+  <home>\heldout-twins\robotframework\src\robot\result\model.py:317: PytestCollectionWarning: cannot collect test class 'TestCase' because it has a __init__ constructor (from: utest/model/test_statistics.py)
+    class TestCase(model.TestCase, StatusMixin):
+
+src\robot\result\model.py:349
+  <home>\heldout-twins\robotframework\src\robot\result\model.py:349: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/model/test_statistics.py)
+    class TestSuite(model.TestSuite, StatusMixin):
+
+src\robot\result\model.py:317
+  <home>\heldout-twins\robotframework\src\robot\result\model.py:317: PytestCollectionWarning: cannot collect test class 'TestCase' because it has a __init__ constructor (from: utest/model/test_tagstatistics.py)
+    class TestCase(model.TestCase, StatusMixin):
+
+src\robot\model\testcase.py:26
+  <home>\heldout-twins\robotframework\src\robot\model\testcase.py:26: PytestCollectionWarning: cannot collect test class 'TestCase' because it has a __init__ constructor (from: utest/model/test_testcase.py)
+    @py3to2
+
+src\robot\model\testcase.py:136
+  <home>\heldout-twins\robotframework\src\robot\model\testcase.py:136: PytestCollectionWarning: cannot collect test class 'TestCases' because it has a __init__ constructor (from: utest/model/test_testcase.py)
+    class TestCases(ItemList):
+
+src\robot\model\testsuite.py:29
+  <home>\heldout-twins\robotframework\src\robot\model\testsuite.py:29: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/model/test_testcase.py)
+    @py3to2
+
+src\robot\model\testsuite.py:29
+  <home>\heldout-twins\robotframework\src\robot\model\testsuite.py:29: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/model/test_testsuite.py)
+    @py3to2
+
+utest\output\test_listeners.py:36
+  <home>\heldout-twins\robotframework\utest\output\test_listeners.py:36: PytestCollectionWarning: cannot collect test class 'TestMock' because it has a __init__ constructor (from: utest/output/test_listeners.py)
+    class TestMock(Mock):
+
+src\robot\parsing\model\blocks.py:109
+  <home>\heldout-twins\robotframework\src\robot\parsing\model\blocks.py:109: PytestCollectionWarning: cannot collect test class 'TestCase' because it has a __init__ constructor (from: utest/parsing/test_model.py)
+    class TestCase(Block):
+
+src\robot\parsing\model\blocks.py:94
+  <home>\heldout-twins\robotframework\src\robot\parsing\model\blocks.py:94: PytestCollectionWarning: cannot collect test class 'TestCaseSection' because it has a __init__ constructor (from: utest/parsing/test_model.py)
+    class TestCaseSection(Section):
+
+src\robot\parsing\model\statements.py:562
+  <home>\heldout-twins\robotframework\src\robot\parsing\model\statements.py:562: PytestCollectionWarning: cannot collect test class 'TestCaseName' because it has a __init__ constructor (from: utest/parsing/test_model.py)
+    @Statement.register
+
+src\robot\parsing\model\statements.py:562
+  <home>\heldout-twins\robotframework\src\robot\parsing\model\statements.py:562: PytestCollectionWarning: cannot collect test class 'TestCaseName' because it has a __init__ constructor (from: utest/parsing/test_statements.py)
+    @Statement.register
+
+src\robot\parsing\model\statements.py:452
+  <home>\heldout-twins\robotframework\src\robot\parsing\model\statements.py:452: PytestCollectionWarning: cannot collect test class 'TestSetup' because it has a __init__ constructor (from: utest/parsing/test_statements.py)
+    @Statement.register
+
+src\robot\parsing\model\statements.py:470
+  <home>\heldout-twins\robotframework\src\robot\parsing\model\statements.py:470: PytestCollectionWarning: cannot collect test class 'TestTeardown' because it has a __init__ constructor (from: utest/parsing/test_statements.py)
+    @Statement.register
+
+src\robot\parsing\model\statements.py:488
+  <home>\heldout-twins\robotframework\src\robot\parsing\model\statements.py:488: PytestCollectionWarning: cannot collect test class 'TestTemplate' because it has a __init__ constructor (from: utest/parsing/test_statements.py)
+    @Statement.register
+
+src\robot\parsing\model\statements.py:502
+  <home>\heldout-twins\robotframework\src\robot\parsing\model\statements.py:502: PytestCollectionWarning: cannot collect test class 'TestTimeout' because it has a __init__ constructor (from: utest/parsing/test_statements.py)
+    @Statement.register
+
+src\robot\result\model.py:349
+  <home>\heldout-twins\robotframework\src\robot\result\model.py:349: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/reporting/test_jsexecutionresult.py)
+    class TestSuite(model.TestSuite, StatusMixin):
+
+src\robot\result\model.py:317
+  <home>\heldout-twins\robotframework\src\robot\result\model.py:317: PytestCollectionWarning: cannot collect test class 'TestCase' because it has a __init__ constructor (from: utest/reporting/test_jsmodelbuilders.py)
+    class TestCase(model.TestCase, StatusMixin):
+
+src\robot\result\model.py:349
+  <home>\heldout-twins\robotframework\src\robot\result\model.py:349: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/reporting/test_jsmodelbuilders.py)
+    class TestSuite(model.TestSuite, StatusMixin):
+
+src\robot\reporting\jsmodelbuilders.py:125
+  <home>\heldout-twins\robotframework\src\robot\reporting\jsmodelbuilders.py:125: PytestCollectionWarning: cannot collect test class 'TestBuilder' because it has a __init__ constructor (from: utest/reporting/test_jsmodelbuilders.py)
+    class TestBuilder(_Builder):
+
+src\robot\result\model.py:349
+  <home>\heldout-twins\robotframework\src\robot\result\model.py:349: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/reporting/test_reporting.py)
+    class TestSuite(model.TestSuite, StatusMixin):
+
+src\robot\result\model.py:317
+  <home>\heldout-twins\robotframework\src\robot\result\model.py:317: PytestCollectionWarning: cannot collect test class 'TestCase' because it has a __init__ constructor (from: utest/result/test_configurer.py)
+    class TestCase(model.TestCase, StatusMixin):
+
+src\robot\result\model.py:349
+  <home>\heldout-twins\robotframework\src\robot\result\model.py:349: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/result/test_configurer.py)
+    class TestSuite(model.TestSuite, StatusMixin):
+
+src\robot\result\model.py:349
+  <home>\heldout-twins\robotframework\src\robot\result\model.py:349: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/result/test_keywordremover.py)
+    class TestSuite(model.TestSuite, StatusMixin):
+
+src\robot\result\model.py:349
+  <home>\heldout-twins\robotframework\src\robot\result\model.py:349: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/result/test_resultbuilder.py)
+    class TestSuite(model.TestSuite, StatusMixin):
+
+src\robot\result\model.py:317
+  <home>\heldout-twins\robotframework\src\robot\result\model.py:317: PytestCollectionWarning: cannot collect test class 'TestCase' because it has a __init__ constructor (from: utest/result/test_resultmodel.py)
+    class TestCase(model.TestCase, StatusMixin):
+
+src\robot\result\model.py:349
+  <home>\heldout-twins\robotframework\src\robot\result\model.py:349: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/result/test_resultmodel.py)
+    class TestSuite(model.TestSuite, StatusMixin):
+
+utest\result\test_resultserializer.py:28
+  <home>\heldout-twins\robotframework\utest\result\test_resultserializer.py:28: PytestCollectionWarning: cannot collect test class 'TestableOutputWriter' because it has a __init__ constructor (from: utest/result/test_resultserializer.py)
+    class TestableOutputWriter(OutputWriter):
+
+src\robot\model\testsuite.py:29
+  <home>\heldout-twins\robotframework\src\robot\model\testsuite.py:29: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/result/test_visitor.py)
+    @py3to2
+
+src\robot\running\model.py:153
+  <home>\heldout-twins\robotframework\src\robot\running\model.py:153: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/running/test_builder.py)
+    class TestSuite(model.TestSuite):
+
+src\robot\running\builder\builders.py:26
+  <home>\heldout-twins\robotframework\src\robot\running\builder\builders.py:26: PytestCollectionWarning: cannot collect test class 'TestSuiteBuilder' because it has a __init__ constructor (from: utest/running/test_builder.py)
+    class TestSuiteBuilder(object):
+
+src\robot\running\model.py:153
+  <home>\heldout-twins\robotframework\src\robot\running\model.py:153: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/running/test_imports.py)
+    class TestSuite(model.TestSuite):
+
+src\robot\running\model.py:153
+  <home>\heldout-twins\robotframework\src\robot\running\model.py:153: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/running/test_randomizer.py)
+    class TestSuite(model.TestSuite):
+
+src\robot\running\model.py:131
+  <home>\heldout-twins\robotframework\src\robot\running\model.py:131: PytestCollectionWarning: cannot collect test class 'TestCase' because it has a __init__ constructor (from: utest/running/test_randomizer.py)
+    class TestCase(model.TestCase):
+
+src\robot\running\model.py:153
+  <home>\heldout-twins\robotframework\src\robot\running\model.py:153: PytestCollectionWarning: cannot collect test class 'TestSuite' because it has a __init__ constructor (from: utest/running/test_run_model.py)
+    class TestSuite(model.TestSuite):
+
+src\robot\running\model.py:131
+  <home>\heldout-twins\robotframework\src\robot\running\model.py:131: PytestCollectionWarning: cannot collect test class 'TestCase' because it has a __init__ constructor (from: utest/running/test_run_model.py)
+    class TestCase(model.TestCase):
+
+src\robot\running\builder\builders.py:26
+  <home>\heldout-twins\robotframework\src\robot\running\builder\builders.py:26: PytestCollectionWarning: cannot collect test class 'TestSuiteBuilder' because it has a __init__ constructor (from: utest/running/test_run_model.py)
+    class TestSuiteBuilder(object):
+
+src\robot\running\timeouts\__init__.py:119
+  <home>\heldout-twins\robotframework\src\robot\running\timeouts\__init__.py:119: PytestCollectionWarning: cannot collect test class 'TestTimeout' because it has a __init__ constructor (from: utest/running/test_timeouts.py)
+    class TestTimeout(_Timeout):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR utest/api/test_run_and_rebot.py
+ERROR utest/running/test_handlers.py
+ERROR utest/running/test_running.py
+ERROR utest/running/test_testlibrary.py
+ERROR utest/utils/test_encoding.py - UnicodeEncodeError: 'gbk' codec can't en...
+!!!!!!!!!!!!!!!!!!! Interrupted: 5 errors during collection !!!!!!!!!!!!!!!!!!!
+======================= 45 warnings, 5 errors in 1.48s ========================

@@ -1,0 +1,18 @@
+tools/scan-cache.json
+tools/__pycache__/
+
+# Screening caches and working files: not part of the deliverable, and the
+# cache alone is hundreds of MB.
+.screen-cache/
+probe/
+reserve/
+*-report.json
+labels-reserve.csv
+projects-reserve.toml
+
+# Uncommitted local candidate-screening tools (the documented one,
+# tools/scan_candidates.py, stays tracked).
+tools/scan_docs_config.py
+tools/scan_layout_config.py
+tools/scan_test_config_needs.py
+tools/screen_categories.py

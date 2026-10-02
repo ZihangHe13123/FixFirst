@@ -1,0 +1,25 @@
+# Plain pytest output for the held-out check (scripts/heldout.py pytest)
+# project: pytest (pytest-dev/pytest 6.2.5)
+# command: python -m pytest, in <home>\heldout-projects\pytest, environment activated
+# python: 3.12.7
+# run 1: exit code 4, 1.1 s, E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+# run 2: exit code 4, 0.3 s, E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+# date: 2026-09-29T22:05:58+08:00
+
+<home>\heldout-projects\pytest\src\_pytest\config\__init__.py:318: PluggyTeardownRaisedWarning: A plugin raised an exception during an old-style hookwrapper teardown.
+Plugin: helpconfig, Hook: pytest_cmdline_parse
+ConftestImportFailure: DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead (from <home>\heldout-projects\pytest\testing\conftest.py)
+For more information see https://pluggy.readthedocs.io/en/stable/api_reference.html#pluggy.PluggyTeardownRaisedWarning
+  config = pluginmanager.hook.pytest_cmdline_parse(
+ImportError while loading conftest '<home>\heldout-projects\pytest\testing\conftest.py'.
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+C:\ProgramData\anaconda3\Lib\ast.py:407: in visit
+    return visitor(node)
+C:\ProgramData\anaconda3\Lib\ast.py:584: in _new
+    warnings._deprecated(
+C:\ProgramData\anaconda3\Lib\warnings.py:532: in _deprecated
+    warn(msg, DeprecationWarning, stacklevel=3)
+E   DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead

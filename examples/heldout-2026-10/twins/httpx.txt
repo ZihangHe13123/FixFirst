@@ -1,0 +1,35 @@
+# Twin check for the held-out batch (task A1)
+#
+# project: httpx (encode/httpx 0.21.1)
+# The twin is a copy of the project with the same environment (scripts/heldout.py twin).  The
+# original project and its environment are untouched, so pytest/httpx.txt stays valid.
+# Raw pytest output of each run: twins/httpx.raw*.txt
+#
+# What was checked
+#   Original        --repeat 2 reproduced the target failure (pytest/httpx.txt).
+#   Twin            only the change the first step prescribes -- no other difference.
+#   Target failure  did the original error go away?
+#   After twin      pass, or a clearly different next-layer failure.
+#
+# Machine paths in the raw captures are shortened to <home>, and the user name in
+# pytest's own temporary-directory names to <user>, the way scripts/heldout.py does
+# for pytest/<id>.txt.  Nothing else in them was edited.
+
+Original (pytest/httpx.txt)
+  run 1: exit 4, DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+  run 2: exit 4, DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+  same_every_run: true
+
+Twin
+the pinned pytest==6.2.4 (requirements.txt:29) replaced by pytest 9.1.1, nothing else
+
+Target failure
+  Gone -- ast.Str appears 0 times in the whole output.
+
+After twin
+  exit 4, and the conftest still cannot be imported, but for a different reason:
+  tests/conftest.py:20 -> httpx/_models.py:1 -> import cgi -> DeprecationWarning: 'cgi' is
+  deprecated and slated for removal in Python 3.13, escalated to an error by httpx's own
+  setup.cfg filterwarnings = error.
+  so the second layer is httpx's own use of the module Python 3.13 removes, not the test
+  toolchain.

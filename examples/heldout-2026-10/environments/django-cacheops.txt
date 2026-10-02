@@ -1,0 +1,21 @@
+# Python 3.12.7
+asgiref==3.12.1
+before-after==1.0.0
+colorama==0.4.6
+dill==0.4.1
+django==3.2.25
+funcy==1.18
+iniconfig==2.3.0
+jinja2==3.1.6
+markupsafe==3.0.3
+mock==1.0.1
+packaging==26.3
+pip==26.2.1
+pluggy==1.6.0
+pygments==2.21.0
+pytest==9.1.1
+pytz==2026.4
+redis==8.1.0
+six==1.17.0
+sqlparse==0.6.0
+tzdata==2026.4
