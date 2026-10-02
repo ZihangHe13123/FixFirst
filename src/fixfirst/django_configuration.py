@@ -241,6 +241,9 @@ def observations(session, issues):
     current = environment_id(session.target_python)
     env_run = next((r for r in session.runs if r.run_id == environment.get("_run_id")), None)
     if not (project_run and env_run and env_run.source == "executed" and env_run.environment_id == current
+            and env_run.scope == "environment" and project_run.scope == "declarations:project"
+            and all(r.cwd and _normal(r.cwd, session.project_root) == _normal(session.project_root, session.project_root)
+                    for r in (env_run, project_run))
             and all(r.status == "completed" and r.exit_code == 0 and not r.truncated
                     for r in (env_run, project_run))):
         return [], {}

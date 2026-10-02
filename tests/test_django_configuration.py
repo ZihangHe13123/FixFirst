@@ -144,6 +144,20 @@ def saved_case(tmp_path, mechanism="settings", *, windows=False, mutate=None, co
     return session
 
 
+@pytest.mark.parametrize("tool,field,value", [
+    ("project", "cwd", "/different-project"), ("project", "cwd", ""),
+    ("project", "scope", "foreign-project-snapshot"),
+    ("environment", "cwd", "/different-project"), ("environment", "scope", "foreign-environment"),
+])
+def test_foreign_snapshot_cannot_supply_settings_advice(tmp_path, tool, field, value):
+    from fixfirst.django_configuration import observations
+
+    session = saved_case(tmp_path, config={"candidates": [{"module": "foreign.settings",
+                         "source": "tox.ini", "entrypoint": "tox testenv"}]})
+    setattr(next(r for r in session.runs if r.tool == tool), field, value)
+    assert observations(session, session.issues) == ([], {})
+
+
 @pytest.mark.parametrize("mechanism,rule", [("settings", "D51"), ("apps", "D52")])
 @pytest.mark.parametrize("windows", [False, True])
 def test_exact_django_operation_produces_named_diagnosis_and_manual_advice(tmp_path, mechanism, rule, windows):
