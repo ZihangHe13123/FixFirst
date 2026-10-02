@@ -405,6 +405,7 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
         "pytest_run": "tests:selected" if targets else "tests:project",
     }[tool]
     if tool in ("pytest", "pytest_run"):
+        original_addopts = os.environ.get("PYTEST_ADDOPTS", "")
         with tempfile.TemporaryDirectory(prefix="fixfirst-probe-", ignore_cleanup_errors=True) as directory:
             probe = Path(directory) / "_fixfirst_probe.py"
             probe.write_text(Path(__file__).with_name("probe.py").read_text(encoding="utf-8"), encoding="utf-8")
@@ -420,15 +421,28 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
                 "FIXFIRST_USER_IOENCODING": os.environ.get("PYTHONIOENCODING", ""),
             }
             run = execute(argv, cwd, tool, scope, python, timeout, extra_env=extra)
+            configurations = []
             if records_file.exists():
                 raw = records_file.read_bytes()[:MAX_OUTPUT]
                 for line in raw.decode("utf-8", "replace").splitlines():
                     try:
                         record = redact_data(json.loads(line))
                         if isinstance(record, dict):
-                            run.records.append(record)
+                            if record.get("type") == "pytest_config":
+                                configurations.append(record)
+                            else:
+                                run.records.append(record)
                     except ValueError:
                         run.notes.append("Structured test events were incomplete")
+            run.pytest_options = {"config_complete": False, "config_file": "", "config_addopts": None,
+                                  "environment_addopts": redact(original_addopts) if len(original_addopts) <= 16000 else None}
+            if len(configurations) == 1:
+                run.pytest_options.update({key: value for key, value in configurations[0].items()
+                                           if key in {"config_complete", "config_file", "config_addopts", "observation_error"}})
+            from .test_results import pytest_options_note
+
+            if note := pytest_options_note(run):
+                run.notes.append(note)
             run.notes.append(
                 "Test collection imports project modules and conftest; only run it on code you trust."
             )
@@ -442,7 +456,7 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
         run = execute(argv, cwd, tool, scope, python, timeout)
     run.targets = targets
     if tool == "pytest_run":
-        run.notes.append("This run executed test bodies and fixtures; scope follows the project configuration and the recorded nodes.")
+        run.notes.append("This run executed test bodies and fixtures; the result covers the recorded nodes using FixFirst's fixed options.")
     if tool == "environment" and run.status == "completed" and run.exit_code == 0:
         try:
             payload = json.loads(run.stdout)

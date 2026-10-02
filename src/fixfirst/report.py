@@ -10,9 +10,10 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 
 from . import domain
 from .knowledge_graph import build_graph, query_graph
-from .models import Session
+from .models import Session, GOAL_CHECKS
 from .runner import redact
 from .storage import atomic_write
+from .test_results import pytest_options_note, pytest_options_limited
 
 GOALS = {
     "collect_tests": "Restore test collection",
@@ -250,6 +251,7 @@ def html(session: Session, store_root: Path, public=False, live: dict | None = N
         for ref in fact.evidence_refs:
             if domain.source(ref):
                 sources[ref] = domain.source(ref)
+    goal_run = next((r for r in reversed(session.runs) if r.tool == GOAL_CHECKS[session.goal]), None)
     text = ENV.get_template("report.html").render(
         session=data,
         goal_name=GOALS[session.goal],
@@ -269,6 +271,8 @@ def html(session: Session, store_root: Path, public=False, live: dict | None = N
         sources=sources,
         causes=domain.load()["causes"],
         dependency_states=DEPENDENCY_STATES,
+        pytest_scope_note=pytest_options_note(goal_run) if goal_run else "",
+        limited_pytest_runs={r.run_id for r in session.runs if pytest_options_limited(r)},
     )
     return text, data, graph
 
