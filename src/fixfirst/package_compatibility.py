@@ -93,18 +93,27 @@ def _observation(session, issue, environment, project_run, project):
         if not isinstance(path, str) or not path or type(observed_failure.get("line")) is not int:
             return None, "The failed operation lacks a bounded source location."
         expected = {"pkgutil_impimporter": "AttributeError", "missing_pkg_resources": "ModuleNotFoundError"}.get(mechanism)
+        frames = record.get("traceback_frames", [])
+        outer_frame = frames[-1] if isinstance(frames, list) and frames else {}
         wrapped = (record.get("exception_type") == "CollectError"
                    and record.get("exception_module") == "_pytest.nodes"
                    and record.get("stage") == "collect" and issue.tool in {"pytest", "pytest_run"}
+                   and event.stage == "collect" and event.location == record.get("nodeid")
+                   and isinstance(outer_frame, dict)
+                   and record.get("source_file") == outer_frame.get("file")
+                   and record.get("source_line") == outer_frame.get("line")
                    and observed_failure.get("wrapper") == "pytest_collect_error")
+        source_record = record.get("package_failure_exception", {}) if wrapped else record
+        if not isinstance(source_record, dict):
+            source_record = {}
         message = record.get("exception_message", "")
         expected_message = ("module 'pkgutil' has no attribute 'ImpImporter'" if mechanism == "pkgutil_impimporter"
                             else "No module named 'pkg_resources'")
         if (not expected or observed_failure.get("exception_type") != expected or event.code != expected
                 or not isinstance(message, str) or expected_message not in message
-                or (not wrapped and (record.get("exception_type") != expected
-                    or _normal(record.get("source_file", ""), session.project_root) != _normal(path, session.project_root)
-                    or record.get("source_line") != observed_failure["line"]))):
+                or source_record.get("exception_type") != expected
+                or _normal(source_record.get("source_file", ""), session.project_root) != _normal(path, session.project_root)
+                or source_record.get("source_line") != observed_failure["line"]):
             return None, "The package observation does not match this exception's type and source location."
         if mechanism == "pkgutil_impimporter":
             stdlib = environment.get("paths", {}).get("stdlib", "")

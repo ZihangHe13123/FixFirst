@@ -712,6 +712,14 @@ def exception_metadata(error, tb):
                 result["package_failure"] = package_failure(cause, cause_frames)
                 if result["package_failure"]:
                     result["package_failure"]["wrapper"] = "pytest_collect_error"
+                    # Independently retain the underlying exception's source
+                    # point. The outer CollectError is raised in pytest itself.
+                    source_tb = cause_frames[-1]
+                    result["package_failure_exception"] = {
+                        "exception_type": type(cause).__name__,
+                        "source_file": source_tb.tb_frame.f_code.co_filename,
+                        "source_line": source_tb.tb_lineno,
+                    }
     if type(error) is wrapped_type and not result["symbol_observation"]:
         cause = error.__cause__ if error.__cause__ is not None else error.__context__
         if type(cause) in (ImportError, AttributeError, TypeError):
