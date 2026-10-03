@@ -1,0 +1,946 @@
+{
+  "schema_version": 1,
+  "scope": "B3 real projects only; generated and hard formal runs remain open",
+  "fault_classes": [
+    "missing_dependency",
+    "version_incompatibility",
+    "local_module",
+    "config_missing",
+    "code_defect"
+  ],
+  "models": {
+    "model-1": {
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "first_step": {
+        "requests": 12,
+        "answered": 10,
+        "service_no_answer": 2,
+        "counts": {
+          "correct": 5,
+          "partial": 3,
+          "generic": 0,
+          "wrong": 2
+        },
+        "correct_per_answer": 0.5,
+        "correct_per_request": 0.4166666666666667
+      },
+      "first_step_by_class": {
+        "missing_dependency": {
+          "requests": 2,
+          "answered": 2,
+          "service_no_answer": 0,
+          "counts": {
+            "correct": 1,
+            "partial": 1,
+            "generic": 0,
+            "wrong": 0
+          },
+          "correct_per_answer": 0.5,
+          "correct_per_request": 0.5
+        },
+        "version_incompatibility": {
+          "requests": 4,
+          "answered": 4,
+          "service_no_answer": 0,
+          "counts": {
+            "correct": 1,
+            "partial": 1,
+            "generic": 0,
+            "wrong": 2
+          },
+          "correct_per_answer": 0.25,
+          "correct_per_request": 0.25
+        },
+        "local_module": {
+          "requests": 2,
+          "answered": 1,
+          "service_no_answer": 1,
+          "counts": {
+            "correct": 1,
+            "partial": 0,
+            "generic": 0,
+            "wrong": 0
+          },
+          "correct_per_answer": 1.0,
+          "correct_per_request": 0.5
+        },
+        "config_missing": {
+          "requests": 2,
+          "answered": 1,
+          "service_no_answer": 1,
+          "counts": {
+            "correct": 0,
+            "partial": 1,
+            "generic": 0,
+            "wrong": 0
+          },
+          "correct_per_answer": 0.0,
+          "correct_per_request": 0.0
+        },
+        "code_defect": {
+          "requests": 1,
+          "answered": 1,
+          "service_no_answer": 0,
+          "counts": {
+            "correct": 1,
+            "partial": 0,
+            "generic": 0,
+            "wrong": 0
+          },
+          "correct_per_answer": 1.0,
+          "correct_per_request": 1.0
+        },
+        "healthy": {
+          "requests": 1,
+          "answered": 1,
+          "service_no_answer": 0,
+          "counts": {
+            "correct": 1,
+            "partial": 0,
+            "generic": 0,
+            "wrong": 0
+          },
+          "correct_per_answer": 1.0,
+          "correct_per_request": 1.0
+        }
+      },
+      "root_all_faults": {
+        "n": 11,
+        "correct": 8,
+        "accuracy": 0.7272727272727273,
+        "macro_f1": 0.7980952380952381,
+        "per_class": {
+          "missing_dependency": {
+            "support": 2,
+            "tp": 2,
+            "fp": 1,
+            "fn": 0,
+            "f1": 0.8
+          },
+          "version_incompatibility": {
+            "support": 4,
+            "tp": 3,
+            "fp": 0,
+            "fn": 1,
+            "f1": 0.8571428571428571
+          },
+          "local_module": {
+            "support": 2,
+            "tp": 1,
+            "fp": 0,
+            "fn": 1,
+            "f1": 0.6666666666666666
+          },
+          "config_missing": {
+            "support": 2,
+            "tp": 1,
+            "fp": 0,
+            "fn": 1,
+            "f1": 0.6666666666666666
+          },
+          "code_defect": {
+            "support": 1,
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "f1": 1.0
+          }
+        },
+        "confusion": {
+          "missing_dependency": {
+            "missing_dependency": 2
+          },
+          "version_incompatibility": {
+            "version_incompatibility": 3,
+            "missing_dependency": 1
+          },
+          "local_module": {
+            "no_valid_answer": 1,
+            "local_module": 1
+          },
+          "config_missing": {
+            "config_missing": 1,
+            "no_valid_answer": 1
+          },
+          "code_defect": {
+            "code_defect": 1
+          }
+        }
+      },
+      "root_answered_faults": {
+        "n": 9,
+        "correct": 8,
+        "accuracy": 0.8888888888888888,
+        "macro_f1": 0.9314285714285714,
+        "per_class": {
+          "missing_dependency": {
+            "support": 2,
+            "tp": 2,
+            "fp": 1,
+            "fn": 0,
+            "f1": 0.8
+          },
+          "version_incompatibility": {
+            "support": 4,
+            "tp": 3,
+            "fp": 0,
+            "fn": 1,
+            "f1": 0.8571428571428571
+          },
+          "local_module": {
+            "support": 1,
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "f1": 1.0
+          },
+          "config_missing": {
+            "support": 1,
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "f1": 1.0
+          },
+          "code_defect": {
+            "support": 1,
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "f1": 1.0
+          }
+        },
+        "confusion": {
+          "missing_dependency": {
+            "missing_dependency": 2
+          },
+          "version_incompatibility": {
+            "version_incompatibility": 3,
+            "missing_dependency": 1
+          },
+          "local_module": {
+            "local_module": 1
+          },
+          "config_missing": {
+            "config_missing": 1
+          },
+          "code_defect": {
+            "code_defect": 1
+          }
+        }
+      },
+      "healthy": {
+        "n": 1,
+        "answered": 1,
+        "predicted_healthy": 1,
+        "false_alarms": 0,
+        "first_step_correct": 1
+      },
+      "agreement": {
+        "n": 10,
+        "agree": 10,
+        "agreement": 1.0,
+        "kappa": 1.0
+      },
+      "usage": {
+        "rows_with_usage": 10,
+        "rows_without_usage": 2,
+        "prompt_tokens": 446516,
+        "completion_tokens": 418,
+        "prompt_minus_precount": {
+          "0": 10
+        }
+      },
+      "latency_s_all_requests": {
+        "median": 333.17384649999997,
+        "min": 206.34081,
+        "max": 683.223318
+      }
+    },
+    "model-2": {
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "first_step": {
+        "requests": 12,
+        "answered": 10,
+        "service_no_answer": 2,
+        "counts": {
+          "correct": 0,
+          "partial": 2,
+          "generic": 1,
+          "wrong": 7
+        },
+        "correct_per_answer": 0.0,
+        "correct_per_request": 0.0
+      },
+      "first_step_by_class": {
+        "missing_dependency": {
+          "requests": 2,
+          "answered": 1,
+          "service_no_answer": 1,
+          "counts": {
+            "correct": 0,
+            "partial": 1,
+            "generic": 0,
+            "wrong": 0
+          },
+          "correct_per_answer": 0.0,
+          "correct_per_request": 0.0
+        },
+        "version_incompatibility": {
+          "requests": 4,
+          "answered": 4,
+          "service_no_answer": 0,
+          "counts": {
+            "correct": 0,
+            "partial": 0,
+            "generic": 0,
+            "wrong": 4
+          },
+          "correct_per_answer": 0.0,
+          "correct_per_request": 0.0
+        },
+        "local_module": {
+          "requests": 2,
+          "answered": 2,
+          "service_no_answer": 0,
+          "counts": {
+            "correct": 0,
+            "partial": 0,
+            "generic": 0,
+            "wrong": 2
+          },
+          "correct_per_answer": 0.0,
+          "correct_per_request": 0.0
+        },
+        "config_missing": {
+          "requests": 2,
+          "answered": 1,
+          "service_no_answer": 1,
+          "counts": {
+            "correct": 0,
+            "partial": 1,
+            "generic": 0,
+            "wrong": 0
+          },
+          "correct_per_answer": 0.0,
+          "correct_per_request": 0.0
+        },
+        "code_defect": {
+          "requests": 1,
+          "answered": 1,
+          "service_no_answer": 0,
+          "counts": {
+            "correct": 0,
+            "partial": 0,
+            "generic": 1,
+            "wrong": 0
+          },
+          "correct_per_answer": 0.0,
+          "correct_per_request": 0.0
+        },
+        "healthy": {
+          "requests": 1,
+          "answered": 1,
+          "service_no_answer": 0,
+          "counts": {
+            "correct": 0,
+            "partial": 0,
+            "generic": 0,
+            "wrong": 1
+          },
+          "correct_per_answer": 0.0,
+          "correct_per_request": 0.0
+        }
+      },
+      "root_all_faults": {
+        "n": 11,
+        "correct": 3,
+        "accuracy": 0.2727272727272727,
+        "macro_f1": 0.31666666666666665,
+        "per_class": {
+          "missing_dependency": {
+            "support": 2,
+            "tp": 1,
+            "fp": 5,
+            "fn": 1,
+            "f1": 0.25
+          },
+          "version_incompatibility": {
+            "support": 4,
+            "tp": 0,
+            "fp": 0,
+            "fn": 4,
+            "f1": 0.0
+          },
+          "local_module": {
+            "support": 2,
+            "tp": 0,
+            "fp": 0,
+            "fn": 2,
+            "f1": 0.0
+          },
+          "config_missing": {
+            "support": 2,
+            "tp": 1,
+            "fp": 0,
+            "fn": 1,
+            "f1": 0.6666666666666666
+          },
+          "code_defect": {
+            "support": 1,
+            "tp": 1,
+            "fp": 1,
+            "fn": 0,
+            "f1": 0.6666666666666666
+          }
+        },
+        "confusion": {
+          "missing_dependency": {
+            "missing_dependency": 1,
+            "no_valid_answer": 1
+          },
+          "version_incompatibility": {
+            "code_defect": 1,
+            "missing_dependency": 3
+          },
+          "local_module": {
+            "missing_dependency": 2
+          },
+          "config_missing": {
+            "config_missing": 1,
+            "no_valid_answer": 1
+          },
+          "code_defect": {
+            "code_defect": 1
+          }
+        }
+      },
+      "root_answered_faults": {
+        "n": 9,
+        "correct": 3,
+        "accuracy": 0.3333333333333333,
+        "macro_f1": 0.3904761904761905,
+        "per_class": {
+          "missing_dependency": {
+            "support": 1,
+            "tp": 1,
+            "fp": 5,
+            "fn": 0,
+            "f1": 0.2857142857142857
+          },
+          "version_incompatibility": {
+            "support": 4,
+            "tp": 0,
+            "fp": 0,
+            "fn": 4,
+            "f1": 0.0
+          },
+          "local_module": {
+            "support": 2,
+            "tp": 0,
+            "fp": 0,
+            "fn": 2,
+            "f1": 0.0
+          },
+          "config_missing": {
+            "support": 1,
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "f1": 1.0
+          },
+          "code_defect": {
+            "support": 1,
+            "tp": 1,
+            "fp": 1,
+            "fn": 0,
+            "f1": 0.6666666666666666
+          }
+        },
+        "confusion": {
+          "missing_dependency": {
+            "missing_dependency": 1
+          },
+          "version_incompatibility": {
+            "code_defect": 1,
+            "missing_dependency": 3
+          },
+          "local_module": {
+            "missing_dependency": 2
+          },
+          "config_missing": {
+            "config_missing": 1
+          },
+          "code_defect": {
+            "code_defect": 1
+          }
+        }
+      },
+      "healthy": {
+        "n": 1,
+        "answered": 1,
+        "predicted_healthy": 0,
+        "false_alarms": 1,
+        "first_step_correct": 0
+      },
+      "agreement": {
+        "n": 10,
+        "agree": 9,
+        "agreement": 0.9,
+        "kappa": 0.7777777777777778
+      },
+      "usage": {
+        "rows_with_usage": 10,
+        "rows_without_usage": 2,
+        "prompt_tokens": 615171,
+        "completion_tokens": 401,
+        "prompt_minus_precount": {
+          "1": 10
+        }
+      },
+      "latency_s_all_requests": {
+        "median": 41.527521500000006,
+        "min": 0.225467,
+        "max": 334.719018
+      }
+    },
+    "model-3": {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "first_step": {
+        "requests": 12,
+        "answered": 11,
+        "service_no_answer": 1,
+        "counts": {
+          "correct": 6,
+          "partial": 3,
+          "generic": 0,
+          "wrong": 2
+        },
+        "correct_per_answer": 0.5454545454545454,
+        "correct_per_request": 0.5
+      },
+      "first_step_by_class": {
+        "missing_dependency": {
+          "requests": 2,
+          "answered": 2,
+          "service_no_answer": 0,
+          "counts": {
+            "correct": 1,
+            "partial": 1,
+            "generic": 0,
+            "wrong": 0
+          },
+          "correct_per_answer": 0.5,
+          "correct_per_request": 0.5
+        },
+        "version_incompatibility": {
+          "requests": 4,
+          "answered": 4,
+          "service_no_answer": 0,
+          "counts": {
+            "correct": 2,
+            "partial": 1,
+            "generic": 0,
+            "wrong": 1
+          },
+          "correct_per_answer": 0.5,
+          "correct_per_request": 0.5
+        },
+        "local_module": {
+          "requests": 2,
+          "answered": 2,
+          "service_no_answer": 0,
+          "counts": {
+            "correct": 2,
+            "partial": 0,
+            "generic": 0,
+            "wrong": 0
+          },
+          "correct_per_answer": 1.0,
+          "correct_per_request": 1.0
+        },
+        "config_missing": {
+          "requests": 2,
+          "answered": 1,
+          "service_no_answer": 1,
+          "counts": {
+            "correct": 0,
+            "partial": 1,
+            "generic": 0,
+            "wrong": 0
+          },
+          "correct_per_answer": 0.0,
+          "correct_per_request": 0.0
+        },
+        "code_defect": {
+          "requests": 1,
+          "answered": 1,
+          "service_no_answer": 0,
+          "counts": {
+            "correct": 1,
+            "partial": 0,
+            "generic": 0,
+            "wrong": 0
+          },
+          "correct_per_answer": 1.0,
+          "correct_per_request": 1.0
+        },
+        "healthy": {
+          "requests": 1,
+          "answered": 1,
+          "service_no_answer": 0,
+          "counts": {
+            "correct": 0,
+            "partial": 0,
+            "generic": 0,
+            "wrong": 1
+          },
+          "correct_per_answer": 0.0,
+          "correct_per_request": 0.0
+        }
+      },
+      "root_all_faults": {
+        "n": 11,
+        "correct": 9,
+        "accuracy": 0.8181818181818182,
+        "macro_f1": 0.8266666666666667,
+        "per_class": {
+          "missing_dependency": {
+            "support": 2,
+            "tp": 2,
+            "fp": 1,
+            "fn": 0,
+            "f1": 0.8
+          },
+          "version_incompatibility": {
+            "support": 4,
+            "tp": 4,
+            "fp": 0,
+            "fn": 0,
+            "f1": 1.0
+          },
+          "local_module": {
+            "support": 2,
+            "tp": 1,
+            "fp": 0,
+            "fn": 1,
+            "f1": 0.6666666666666666
+          },
+          "config_missing": {
+            "support": 2,
+            "tp": 1,
+            "fp": 0,
+            "fn": 1,
+            "f1": 0.6666666666666666
+          },
+          "code_defect": {
+            "support": 1,
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "f1": 1.0
+          }
+        },
+        "confusion": {
+          "missing_dependency": {
+            "missing_dependency": 2
+          },
+          "version_incompatibility": {
+            "version_incompatibility": 4
+          },
+          "local_module": {
+            "missing_dependency": 1,
+            "local_module": 1
+          },
+          "config_missing": {
+            "config_missing": 1,
+            "no_valid_answer": 1
+          },
+          "code_defect": {
+            "code_defect": 1
+          }
+        }
+      },
+      "root_answered_faults": {
+        "n": 10,
+        "correct": 9,
+        "accuracy": 0.9,
+        "macro_f1": 0.8933333333333333,
+        "per_class": {
+          "missing_dependency": {
+            "support": 2,
+            "tp": 2,
+            "fp": 1,
+            "fn": 0,
+            "f1": 0.8
+          },
+          "version_incompatibility": {
+            "support": 4,
+            "tp": 4,
+            "fp": 0,
+            "fn": 0,
+            "f1": 1.0
+          },
+          "local_module": {
+            "support": 2,
+            "tp": 1,
+            "fp": 0,
+            "fn": 1,
+            "f1": 0.6666666666666666
+          },
+          "config_missing": {
+            "support": 1,
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "f1": 1.0
+          },
+          "code_defect": {
+            "support": 1,
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "f1": 1.0
+          }
+        },
+        "confusion": {
+          "missing_dependency": {
+            "missing_dependency": 2
+          },
+          "version_incompatibility": {
+            "version_incompatibility": 4
+          },
+          "local_module": {
+            "missing_dependency": 1,
+            "local_module": 1
+          },
+          "config_missing": {
+            "config_missing": 1
+          },
+          "code_defect": {
+            "code_defect": 1
+          }
+        }
+      },
+      "healthy": {
+        "n": 1,
+        "answered": 1,
+        "predicted_healthy": 0,
+        "false_alarms": 1,
+        "first_step_correct": 0
+      },
+      "agreement": {
+        "n": 11,
+        "agree": 10,
+        "agreement": 0.9090909090909091,
+        "kappa": 0.838235294117647
+      },
+      "usage": {
+        "rows_with_usage": 11,
+        "rows_without_usage": 1,
+        "prompt_tokens": 563727,
+        "completion_tokens": 663,
+        "prompt_minus_precount": {
+          "0": 11
+        }
+      },
+      "latency_s_all_requests": {
+        "median": 55.745444,
+        "min": 28.356001,
+        "max": 431.987414
+      }
+    }
+  },
+  "disagreements": [
+    {
+      "model_alias": "model-2",
+      "id": "python-slugify",
+      "A": "partial",
+      "C": "generic",
+      "consensus": "generic"
+    },
+    {
+      "model_alias": "model-3",
+      "id": "pytest",
+      "A": "correct",
+      "C": "wrong",
+      "consensus": "wrong"
+    }
+  ],
+  "pooled_agreement": {
+    "n": 31,
+    "agree": 29,
+    "agreement": 0.9354838709677419,
+    "kappa": 0.9041731066460587
+  },
+  "fixfirst": {
+    "version": "v0.7.0",
+    "first_step": {
+      "requests": 12,
+      "answered": 12,
+      "service_no_answer": 0,
+      "counts": {
+        "correct": 4,
+        "partial": 1,
+        "generic": 6,
+        "wrong": 1
+      },
+      "correct_per_answer": 0.3333333333333333,
+      "correct_per_request": 0.3333333333333333
+    },
+    "root_policy": "Final first-step cause or possible; hedged included, no class abstains. Descriptive post-run extraction.",
+    "root_all_faults": {
+      "n": 11,
+      "correct": 8,
+      "accuracy": 0.7272727272727273,
+      "macro_f1": 0.8133333333333334,
+      "per_class": {
+        "missing_dependency": {
+          "support": 2,
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "f1": 1.0
+        },
+        "version_incompatibility": {
+          "support": 4,
+          "tp": 1,
+          "fp": 0,
+          "fn": 3,
+          "f1": 0.4
+        },
+        "local_module": {
+          "support": 2,
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "f1": 1.0
+        },
+        "config_missing": {
+          "support": 2,
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "f1": 1.0
+        },
+        "code_defect": {
+          "support": 1,
+          "tp": 1,
+          "fp": 1,
+          "fn": 0,
+          "f1": 0.6666666666666666
+        }
+      },
+      "confusion": {
+        "missing_dependency": {
+          "missing_dependency": 2
+        },
+        "version_incompatibility": {
+          "code_defect": 1,
+          "no_prediction": 2,
+          "version_incompatibility": 1
+        },
+        "local_module": {
+          "local_module": 2
+        },
+        "config_missing": {
+          "config_missing": 2
+        },
+        "code_defect": {
+          "code_defect": 1
+        }
+      }
+    },
+    "hedged_predictions": 4,
+    "per_case": [
+      {
+        "id": "click",
+        "truth": "version_incompatibility",
+        "prediction": "code_defect",
+        "hedged": true,
+        "score": "wrong"
+      },
+      {
+        "id": "pytest",
+        "truth": "version_incompatibility",
+        "prediction": "no_prediction",
+        "hedged": false,
+        "score": "generic"
+      },
+      {
+        "id": "dateparser",
+        "truth": "missing_dependency",
+        "prediction": "missing_dependency",
+        "hedged": false,
+        "score": "partial"
+      },
+      {
+        "id": "python-qrcode",
+        "truth": "version_incompatibility",
+        "prediction": "version_incompatibility",
+        "hedged": true,
+        "score": "generic"
+      },
+      {
+        "id": "httpx",
+        "truth": "version_incompatibility",
+        "prediction": "no_prediction",
+        "hedged": false,
+        "score": "generic"
+      },
+      {
+        "id": "python-ftfy",
+        "truth": "healthy",
+        "prediction": "healthy",
+        "hedged": false,
+        "score": "correct"
+      },
+      {
+        "id": "robotframework",
+        "truth": "local_module",
+        "prediction": "local_module",
+        "hedged": false,
+        "score": "correct"
+      },
+      {
+        "id": "python-slugify",
+        "truth": "code_defect",
+        "prediction": "code_defect",
+        "hedged": false,
+        "score": "generic"
+      },
+      {
+        "id": "django-cacheops",
+        "truth": "config_missing",
+        "prediction": "config_missing",
+        "hedged": true,
+        "score": "generic"
+      },
+      {
+        "id": "seleniumlibrary",
+        "truth": "local_module",
+        "prediction": "local_module",
+        "hedged": false,
+        "score": "correct"
+      },
+      {
+        "id": "django-storages",
+        "truth": "config_missing",
+        "prediction": "config_missing",
+        "hedged": true,
+        "score": "generic"
+      },
+      {
+        "id": "python-markdown",
+        "truth": "missing_dependency",
+        "prediction": "missing_dependency",
+        "hedged": false,
+        "score": "correct"
+      }
+    ],
+    "healthy": {
+      "n": 1,
+      "predicted_healthy": 1,
+      "false_alarms": 0
+    }
+  }
+}

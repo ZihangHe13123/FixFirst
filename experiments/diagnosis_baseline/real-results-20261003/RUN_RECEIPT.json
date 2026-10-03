@@ -1,0 +1,518 @@
+{
+  "runner_commit": "5cff6702351272829e2424c54f0d1232963d021f",
+  "answers_sha256": "e723093e4fbd8152dd31a0f86a26af4f56384a701c28b40e28045e7ef5655f9d",
+  "input_batch_sha256": "aded7ae0d8d85ff1fdd78a7264809724dd8e99b79c943dc947b38725951d63f8",
+  "protocol_sha256": "4fbb8c7810bfb4a206ca29fe4cf0c27a4952c9bb1a84a000685bbe2a7f973a42",
+  "answer_manifest_sha256": "510cf47fc35cfde0048a1026bb98d9208972bf025cb46b5ca31706c6161c1077",
+  "registration_sha256": "b849ede00b143a2199cdb08ff6e259f51a28bfe5e08cd1d4df830bb37eea1a42",
+  "settings": {
+    "decoding": {
+      "temperature": 0,
+      "top_p": 1,
+      "max_tokens": 1024,
+      "thinking": false,
+      "seed": 20260929
+    },
+    "request_timeout_s": 1200,
+    "retries": 0,
+    "tools": false,
+    "context_tokens": 262144,
+    "execution": {
+      "serial": true,
+      "chunked_prefill": true,
+      "memory_guard_gb": 38,
+      "ssd_cache": false,
+      "speculative_draft": false,
+      "external_api": false
+    }
+  },
+  "socket_timeout_is_wall_clock_limit": false,
+  "usage_note": "Ten answered Gemma rows report pre-count +1 prompt token; cause remains unknown. Missing usage is not zero.",
+  "source_scope": "Allowlisted projection of previously sealed records. Private raw records are not republished; hashes are receipts, not signatures.",
+  "records": [
+    {
+      "model_alias": "model-1",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "case_id": "click",
+      "answer_status": "ok",
+      "latency_s": 284.597901,
+      "usage": {
+        "completion_tokens": 54,
+        "prompt_tokens": 34469,
+        "total_tokens": 34523
+      },
+      "precount_prompt_tokens": 34469,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-1",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "case_id": "pytest",
+      "answer_status": "ok",
+      "latency_s": 468.480066,
+      "usage": {
+        "completion_tokens": 56,
+        "prompt_tokens": 55960,
+        "total_tokens": 56016
+      },
+      "precount_prompt_tokens": 55960,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-1",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "case_id": "dateparser",
+      "answer_status": "ok",
+      "latency_s": 300.631233,
+      "usage": {
+        "completion_tokens": 30,
+        "prompt_tokens": 37366,
+        "total_tokens": 37396
+      },
+      "precount_prompt_tokens": 37366,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-1",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "case_id": "python-qrcode",
+      "answer_status": "ok",
+      "latency_s": 288.428478,
+      "usage": {
+        "completion_tokens": 34,
+        "prompt_tokens": 36018,
+        "total_tokens": 36052
+      },
+      "precount_prompt_tokens": 36018,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-1",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "case_id": "httpx",
+      "answer_status": "ok",
+      "latency_s": 311.57728,
+      "usage": {
+        "completion_tokens": 45,
+        "prompt_tokens": 38843,
+        "total_tokens": 38888
+      },
+      "precount_prompt_tokens": 38843,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-1",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "case_id": "python-ftfy",
+      "answer_status": "ok",
+      "latency_s": 529.8292,
+      "usage": {
+        "completion_tokens": 29,
+        "prompt_tokens": 65152,
+        "total_tokens": 65181
+      },
+      "precount_prompt_tokens": 65152,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-1",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "case_id": "robotframework",
+      "answer_status": "invalid",
+      "latency_s": 559.776801,
+      "usage": null,
+      "precount_prompt_tokens": 117211,
+      "technical_code": "prefill_memory_exceeded"
+    },
+    {
+      "model_alias": "model-1",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "case_id": "python-slugify",
+      "answer_status": "ok",
+      "latency_s": 325.182842,
+      "usage": {
+        "completion_tokens": 38,
+        "prompt_tokens": 41935,
+        "total_tokens": 41973
+      },
+      "precount_prompt_tokens": 41935,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-1",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "case_id": "django-cacheops",
+      "answer_status": "ok",
+      "latency_s": 206.34081,
+      "usage": {
+        "completion_tokens": 32,
+        "prompt_tokens": 27129,
+        "total_tokens": 27161
+      },
+      "precount_prompt_tokens": 27129,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-1",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "case_id": "seleniumlibrary",
+      "answer_status": "ok",
+      "latency_s": 518.633546,
+      "usage": {
+        "completion_tokens": 59,
+        "prompt_tokens": 65562,
+        "total_tokens": 65621
+      },
+      "precount_prompt_tokens": 65562,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-1",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "case_id": "django-storages",
+      "answer_status": "invalid",
+      "latency_s": 683.223318,
+      "usage": null,
+      "precount_prompt_tokens": 217431,
+      "technical_code": "prefill_memory_aborted"
+    },
+    {
+      "model_alias": "model-1",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "case_id": "python-markdown",
+      "answer_status": "ok",
+      "latency_s": 341.164851,
+      "usage": {
+        "completion_tokens": 41,
+        "prompt_tokens": 44082,
+        "total_tokens": 44123
+      },
+      "precount_prompt_tokens": 44082,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-2",
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "case_id": "click",
+      "answer_status": "ok",
+      "latency_s": 41.598373,
+      "usage": {
+        "completion_tokens": 43,
+        "prompt_tokens": 39610,
+        "total_tokens": 39653
+      },
+      "precount_prompt_tokens": 39609,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-2",
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "case_id": "pytest",
+      "answer_status": "ok",
+      "latency_s": 59.807939,
+      "usage": {
+        "completion_tokens": 36,
+        "prompt_tokens": 66614,
+        "total_tokens": 66650
+      },
+      "precount_prompt_tokens": 66613,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-2",
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "case_id": "dateparser",
+      "answer_status": "ok",
+      "latency_s": 37.162263,
+      "usage": {
+        "completion_tokens": 42,
+        "prompt_tokens": 46507,
+        "total_tokens": 46549
+      },
+      "precount_prompt_tokens": 46506,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-2",
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "case_id": "python-qrcode",
+      "answer_status": "ok",
+      "latency_s": 31.374144,
+      "usage": {
+        "completion_tokens": 40,
+        "prompt_tokens": 40453,
+        "total_tokens": 40493
+      },
+      "precount_prompt_tokens": 40452,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-2",
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "case_id": "httpx",
+      "answer_status": "ok",
+      "latency_s": 33.714808,
+      "usage": {
+        "completion_tokens": 34,
+        "prompt_tokens": 43107,
+        "total_tokens": 43141
+      },
+      "precount_prompt_tokens": 43106,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-2",
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "case_id": "python-ftfy",
+      "answer_status": "ok",
+      "latency_s": 78.388539,
+      "usage": {
+        "completion_tokens": 49,
+        "prompt_tokens": 79157,
+        "total_tokens": 79206
+      },
+      "precount_prompt_tokens": 79156,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-2",
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "case_id": "robotframework",
+      "answer_status": "ok",
+      "latency_s": 195.180849,
+      "usage": {
+        "completion_tokens": 34,
+        "prompt_tokens": 141478,
+        "total_tokens": 141512
+      },
+      "precount_prompt_tokens": 141477,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-2",
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "case_id": "python-slugify",
+      "answer_status": "ok",
+      "latency_s": 41.45667,
+      "usage": {
+        "completion_tokens": 47,
+        "prompt_tokens": 49591,
+        "total_tokens": 49638
+      },
+      "precount_prompt_tokens": 49590,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-2",
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "case_id": "django-cacheops",
+      "answer_status": "ok",
+      "latency_s": 24.752105,
+      "usage": {
+        "completion_tokens": 40,
+        "prompt_tokens": 32939,
+        "total_tokens": 32979
+      },
+      "precount_prompt_tokens": 32938,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-2",
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "case_id": "seleniumlibrary",
+      "answer_status": "ok",
+      "latency_s": 73.947607,
+      "usage": {
+        "completion_tokens": 36,
+        "prompt_tokens": 75715,
+        "total_tokens": 75751
+      },
+      "precount_prompt_tokens": 75714,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-2",
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "case_id": "django-storages",
+      "answer_status": "invalid",
+      "latency_s": 334.719018,
+      "usage": null,
+      "precount_prompt_tokens": 245498,
+      "technical_code": "prefill_memory_exceeded"
+    },
+    {
+      "model_alias": "model-2",
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "case_id": "python-markdown",
+      "answer_status": "request_error",
+      "latency_s": 0.225467,
+      "usage": null,
+      "precount_prompt_tokens": 54299,
+      "technical_code": "http_400"
+    },
+    {
+      "model_alias": "model-3",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "case_id": "click",
+      "answer_status": "ok",
+      "latency_s": 70.715166,
+      "usage": {
+        "completion_tokens": 82,
+        "prompt_tokens": 34469,
+        "total_tokens": 34551
+      },
+      "precount_prompt_tokens": 34469,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-3",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "case_id": "pytest",
+      "answer_status": "ok",
+      "latency_s": 62.901556,
+      "usage": {
+        "completion_tokens": 89,
+        "prompt_tokens": 55960,
+        "total_tokens": 56049
+      },
+      "precount_prompt_tokens": 55960,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-3",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "case_id": "dateparser",
+      "answer_status": "ok",
+      "latency_s": 35.578701,
+      "usage": {
+        "completion_tokens": 50,
+        "prompt_tokens": 37366,
+        "total_tokens": 37416
+      },
+      "precount_prompt_tokens": 37366,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-3",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "case_id": "python-qrcode",
+      "answer_status": "ok",
+      "latency_s": 36.196076,
+      "usage": {
+        "completion_tokens": 65,
+        "prompt_tokens": 36018,
+        "total_tokens": 36083
+      },
+      "precount_prompt_tokens": 36018,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-3",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "case_id": "httpx",
+      "answer_status": "ok",
+      "latency_s": 39.507424,
+      "usage": {
+        "completion_tokens": 55,
+        "prompt_tokens": 38843,
+        "total_tokens": 38898
+      },
+      "precount_prompt_tokens": 38843,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-3",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "case_id": "python-ftfy",
+      "answer_status": "ok",
+      "latency_s": 103.366457,
+      "usage": {
+        "completion_tokens": 40,
+        "prompt_tokens": 65152,
+        "total_tokens": 65192
+      },
+      "precount_prompt_tokens": 65152,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-3",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "case_id": "robotframework",
+      "answer_status": "ok",
+      "latency_s": 305.107072,
+      "usage": {
+        "completion_tokens": 55,
+        "prompt_tokens": 117211,
+        "total_tokens": 117266
+      },
+      "precount_prompt_tokens": 117211,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-3",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "case_id": "python-slugify",
+      "answer_status": "ok",
+      "latency_s": 45.571763,
+      "usage": {
+        "completion_tokens": 60,
+        "prompt_tokens": 41935,
+        "total_tokens": 41995
+      },
+      "precount_prompt_tokens": 41935,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-3",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "case_id": "django-cacheops",
+      "answer_status": "ok",
+      "latency_s": 28.356001,
+      "usage": {
+        "completion_tokens": 49,
+        "prompt_tokens": 27129,
+        "total_tokens": 27178
+      },
+      "precount_prompt_tokens": 27129,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-3",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "case_id": "seleniumlibrary",
+      "answer_status": "ok",
+      "latency_s": 99.535115,
+      "usage": {
+        "completion_tokens": 57,
+        "prompt_tokens": 65562,
+        "total_tokens": 65619
+      },
+      "precount_prompt_tokens": 65562,
+      "technical_code": null
+    },
+    {
+      "model_alias": "model-3",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "case_id": "django-storages",
+      "answer_status": "invalid",
+      "latency_s": 431.987414,
+      "usage": null,
+      "precount_prompt_tokens": 217431,
+      "technical_code": "prefill_memory_exceeded"
+    },
+    {
+      "model_alias": "model-3",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "case_id": "python-markdown",
+      "answer_status": "ok",
+      "latency_s": 48.589332,
+      "usage": {
+        "completion_tokens": 61,
+        "prompt_tokens": 44082,
+        "total_tokens": 44143
+      },
+      "precount_prompt_tokens": 44082,
+      "technical_code": null
+    }
+  ]
+}

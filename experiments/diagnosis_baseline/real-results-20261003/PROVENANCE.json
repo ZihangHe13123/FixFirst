@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "issued_package": {
+    "commit": "e722cd54a514004b5d4192260d6a168c6168abe0",
+    "path": "experiments/diagnosis_baseline/real-scoring-20261003",
+    "preserved_byte_identical": true,
+    "files": [
+      {
+        "path": "experiments/diagnosis_baseline/real-scoring-20261003/README.md",
+        "sha256": "6abd3e108ba9d3622a02637373782c9d88963fdb41cd2c1a17ce1367864b863a"
+      },
+      {
+        "path": "experiments/diagnosis_baseline/real-scoring-20261003/RECEIPT.json",
+        "sha256": "113fe6e4f3857779179e56f0d9881de3c5dbe87528136dd83e26ac0e81004837"
+      },
+      {
+        "path": "experiments/diagnosis_baseline/real-scoring-20261003/SHA256SUMS.txt",
+        "sha256": "43cbc8a5572a60b052113348e8159af9ec32d4ff7980785687a173e9731c0c6b"
+      },
+      {
+        "path": "experiments/diagnosis_baseline/real-scoring-20261003/delivery/B3-scoring-A.zip",
+        "sha256": "4513dc7752e19989bfd6f2a665cfcf6270191c2683a310f48cbdb115e416bf65"
+      },
+      {
+        "path": "experiments/diagnosis_baseline/real-scoring-20261003/delivery/B3-scoring-C.zip",
+        "sha256": "ab6a2510f30172c5fb6a65aae63edc735617c4a84a5620cdfeec26eee92bb22f"
+      },
+      {
+        "path": "experiments/diagnosis_baseline/real-scoring-20261003/delivery/SHA256SUMS.txt",
+        "sha256": "02912a28c01e2e6e8925d4f193ef21721334a8fda4da10427a1117bff6f1eaf1"
+      },
+      {
+        "path": "experiments/diagnosis_baseline/real-scoring-20261003/scoring/README.md",
+        "sha256": "129bc87b7dd5d9e0415dd2e1e12401d852cecc9a51237776bb058f09f5d80332"
+      },
+      {
+        "path": "experiments/diagnosis_baseline/real-scoring-20261003/scoring/SHA256SUMS.txt",
+        "sha256": "59c69a6db674cbc02be0be293a995d3dcadd2a8f46f2af97d69150ac0834112a"
+      },
+      {
+        "path": "experiments/diagnosis_baseline/real-scoring-20261003/scoring/manifest.json",
+        "sha256": "2f551cb830b965eef85a8bf201032a5c7a95ba6ae996bbcdaa3964e114d935ee"
+      },
+      {
+        "path": "experiments/diagnosis_baseline/real-scoring-20261003/scoring/model-1-A.csv",
+        "sha256": "2bf51b620bd57eab7a349ac70cfcd0aad3049652bed59b35e272f6807e2822ef"
+      },
+      {
+        "path": "experiments/diagnosis_baseline/real-scoring-20261003/scoring/model-1-C.csv",
+        "sha256": "2bf51b620bd57eab7a349ac70cfcd0aad3049652bed59b35e272f6807e2822ef"
+      },
+      {
+        "path": "experiments/diagnosis_baseline/real-scoring-20261003/scoring/model-2-A.csv",
+        "sha256": "c967cc9ac8403e68303c104688d3862006b5c6f0d0bdf5c7483284cb386a2294"
+      },
+      {
+        "path": "experiments/diagnosis_baseline/real-scoring-20261003/scoring/model-2-C.csv",
+        "sha256": "c967cc9ac8403e68303c104688d3862006b5c6f0d0bdf5c7483284cb386a2294"
+      },
+      {
+        "path": "experiments/diagnosis_baseline/real-scoring-20261003/scoring/model-3-A.csv",
+        "sha256": "b41e6c568942da6c2f120714e5b6499e571a99664603b684ea562b5199956f4a"
+      },
+      {
+        "path": "experiments/diagnosis_baseline/real-scoring-20261003/scoring/model-3-C.csv",
+        "sha256": "b41e6c568942da6c2f120714e5b6499e571a99664603b684ea562b5199956f4a"
+      },
+      {
+        "path": "experiments/diagnosis_baseline/real-scoring-20261003/scoring/unavailable-answers.csv",
+        "sha256": "e843528ddc23de3d4298324ed3c735d4ae3fe8110e93448ed6b51d570bb025be"
+      }
+    ]
+  },
+  "returned_scores": {
+    "commit": "f7a44c0184733e9d630887486732785ad2348ba5",
+    "status": "final consensus confirmed by A and C in alignment/alignment-20261003.md",
+    "files": [
+      {
+        "path": "scores/model-1-A.csv",
+        "source_path": "experiments/diagnosis_baseline/real-scoring-20261003/scoring/model-1-A.csv",
+        "source_commit": "f7a44c0184733e9d630887486732785ad2348ba5",
+        "source_sha256": "b5c5ba51f3c9285132ecbdf17fb28b39ae66731b3c7fb0916231c386fa21d89e",
+        "sha256": "b5c5ba51f3c9285132ecbdf17fb28b39ae66731b3c7fb0916231c386fa21d89e",
+        "byte_identical": true
+      },
+      {
+        "path": "scores/model-1-C.csv",
+        "source_path": "experiments/diagnosis_baseline/real-scoring-20261003/scoring/model-1-C.csv",
+        "source_commit": "f7a44c0184733e9d630887486732785ad2348ba5",
+        "source_sha256": "a8b9b37d4e011787ed0b2f0d2589ca5cb7f659aa714d1a8149d301ac849a2dc2",
+        "sha256": "a8b9b37d4e011787ed0b2f0d2589ca5cb7f659aa714d1a8149d301ac849a2dc2",
+        "byte_identical": true
+      },
+      {
+        "path": "consensus/scores-consensus-model-1.csv",
+        "source_path": "experiments/diagnosis_baseline/real-scoring-20261003/alignment/scores-consensus-model-1.csv",
+        "source_commit": "f7a44c0184733e9d630887486732785ad2348ba5",
+        "source_sha256": "3781207ac92448b97b8ca04b08e81064bd12ca84ed9dee2daa6ebbe6eaac726f",
+        "sha256": "3781207ac92448b97b8ca04b08e81064bd12ca84ed9dee2daa6ebbe6eaac726f",
+        "byte_identical": true
+      },
+      {
+        "path": "scores/model-2-A.csv",
+        "source_path": "experiments/diagnosis_baseline/real-scoring-20261003/scoring/model-2-A.csv",
+        "source_commit": "f7a44c0184733e9d630887486732785ad2348ba5",
+        "source_sha256": "d311a6b6ac8d5a8ef89971bb5636f1164969ab8e0c0745ef6c1d728f62cce037",
+        "sha256": "d311a6b6ac8d5a8ef89971bb5636f1164969ab8e0c0745ef6c1d728f62cce037",
+        "byte_identical": true
+      },
+      {
+        "path": "scores/model-2-C.csv",
+        "source_path": "experiments/diagnosis_baseline/real-scoring-20261003/scoring/model-2-C.csv",
+        "source_commit": "f7a44c0184733e9d630887486732785ad2348ba5",
+        "source_sha256": "9d0ba174f60a1570585f6f2f9d2bfb1a124e4a7ec1a4dc2b31d01f8736539b5f",
+        "sha256": "9d0ba174f60a1570585f6f2f9d2bfb1a124e4a7ec1a4dc2b31d01f8736539b5f",
+        "byte_identical": true
+      },
+      {
+        "path": "consensus/scores-consensus-model-2.csv",
+        "source_path": "experiments/diagnosis_baseline/real-scoring-20261003/alignment/scores-consensus-model-2.csv",
+        "source_commit": "f7a44c0184733e9d630887486732785ad2348ba5",
+        "source_sha256": "c42da8b7cc51a98f96151392dc974bbd9df687f2be16ef25548952504114ad69",
+        "sha256": "c42da8b7cc51a98f96151392dc974bbd9df687f2be16ef25548952504114ad69",
+        "byte_identical": true
+      },
+      {
+        "path": "scores/model-3-A.csv",
+        "source_path": "experiments/diagnosis_baseline/real-scoring-20261003/scoring/model-3-A.csv",
+        "source_commit": "f7a44c0184733e9d630887486732785ad2348ba5",
+        "source_sha256": "71fb3eb8ed8c766453f5062b0314f5bc978ba05c8e4b687a8f46c269efdf6777",
+        "sha256": "71fb3eb8ed8c766453f5062b0314f5bc978ba05c8e4b687a8f46c269efdf6777",
+        "byte_identical": true
+      },
+      {
+        "path": "scores/model-3-C.csv",
+        "source_path": "experiments/diagnosis_baseline/real-scoring-20261003/scoring/model-3-C.csv",
+        "source_commit": "f7a44c0184733e9d630887486732785ad2348ba5",
+        "source_sha256": "791fde4a255775bf857b2350fedfe77fad9f5c5b11900037e29280113f8e84ea",
+        "sha256": "791fde4a255775bf857b2350fedfe77fad9f5c5b11900037e29280113f8e84ea",
+        "byte_identical": true
+      },
+      {
+        "path": "consensus/scores-consensus-model-3.csv",
+        "source_path": "experiments/diagnosis_baseline/real-scoring-20261003/alignment/scores-consensus-model-3.csv",
+        "source_commit": "f7a44c0184733e9d630887486732785ad2348ba5",
+        "source_sha256": "cb5ba414ed8170dce3170aa49e1655cc01e29a7827136b871f231953e3ce5736",
+        "sha256": "cb5ba414ed8170dce3170aa49e1655cc01e29a7827136b871f231953e3ce5736",
+        "byte_identical": true
+      },
+      {
+        "path": "source-notes/RETURNED-A.md",
+        "source_path": "experiments/diagnosis_baseline/real-scoring-20261003/RETURNED-A.md",
+        "source_commit": "f7a44c0184733e9d630887486732785ad2348ba5",
+        "source_sha256": "e8a32eca84eeba659b6b40a029b5ef4aede9b8ce88a45d7679eadd79480c2f72",
+        "sha256": "ee55460149d3e90e395da74c571c2087b45a8216136fd7d3c5884a0948a9ced2",
+        "byte_identical": false,
+        "edits": [
+          "corrected status to final after A/C confirmation",
+          "corrected current relative paths and added provenance notice",
+          "linked the frozen rubric included in this result package"
+        ]
+      },
+      {
+        "path": "source-notes/RETURNED-C.md",
+        "source_path": "experiments/diagnosis_baseline/real-scoring-20261003/RETURNED-C.md",
+        "source_commit": "f7a44c0184733e9d630887486732785ad2348ba5",
+        "source_sha256": "2ac56a95a9dc5d60fea6d456e34aa4ca0304b403a40021a2c54f2ee7f7a91582",
+        "sha256": "e871348c6a7d9d9c6aec7bdb14257b606080b05d7360f5cc488323dd59a61e0d",
+        "byte_identical": false,
+        "edits": [
+          "corrected status to final after A/C confirmation",
+          "corrected current relative paths and added provenance notice",
+          "corrected wrong count from 10 to 11",
+          "linked the frozen rubric included in this result package"
+        ]
+      },
+      {
+        "path": "source-notes/alignment-20261003.md",
+        "source_path": "experiments/diagnosis_baseline/real-scoring-20261003/alignment/alignment-20261003.md",
+        "source_commit": "f7a44c0184733e9d630887486732785ad2348ba5",
+        "source_sha256": "6a7c2d4915a5370cba3be3062e7476dda8b983e6ace230c14c472bdcdeb9e824",
+        "sha256": "883e66ee87bbbcb19a9d6521e56d3bdc84d57d3001403fdde7af68d62456fae8",
+        "byte_identical": false,
+        "edits": [
+          "corrected status to final after A/C confirmation",
+          "corrected current relative paths and added provenance notice",
+          "linked the frozen rubric included in this result package"
+        ]
+      }
+    ]
+  },
+  "preservation_notes": [
+    "The six independent score CSVs and three consensus CSVs are exact copies of the returned commit. Scores, notes, signers, column order, BOM and line endings are unchanged.",
+    "Historical draft wording inside unchanged CSV notes is retained as part of the original record. The submitted alignment record explicitly confirms final consensus.",
+    "Only the three copied Markdown source notes were corrected for current status, count and paths. Original document bytes can be recovered from source_commit and source_path and verified with source_sha256.",
+    "No model answer, frozen reference, model identity or issued scoring package file was edited."
+  ]
+}
