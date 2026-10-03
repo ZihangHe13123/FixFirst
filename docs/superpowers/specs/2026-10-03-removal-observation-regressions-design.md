@@ -44,8 +44,8 @@ training, language-model requests, private evaluation, push, or merge.
 Extend the existing symbol record only for an ImportError or its real subclass
 when all of the following are observed in the traceback:
 
-- A bounded, absolute `IMPORT_NAME` with a literal level zero and a bounded
-  tuple of imported identifiers; no relative import, star, jump ambiguity, or
+- A bounded, absolute `IMPORT_NAME` with a literal level zero and one literal
+  imported identifier; no relative import, star, jump ambiguity, or
   dynamic CALL reconstruction.
 - The importing frame uses the actual builtin import function. Its immediately
   following traceback frame is the registered module `__getattr__` function.
@@ -54,6 +54,12 @@ when all of the following are observed in the traceback:
   object is the executing frame, its globals are that namespace, and its file
   matches the loaded module origin. Its single actual parameter is one of the
   requested import names, not a name guessed from the message.
+- The getter does not store/delete/rebind that parameter. A parameter's value
+  after reassignment is not accepted as the original import argument.
+- Prefix traceback frames do not explicitly re-raise a saved error. The exact
+  already-loaded `pluggy._callers._multicall` code may transparently forward
+  the same error to its own retained call frame, as normal pytest execution
+  requires; a project rethrow is still rejected.
 - The requested member is absent from the module dictionary. Introspection
   reads dictionaries/code/frames only; it does not call dir, getters, imports,
   properties, repr, or arbitrary descriptors.
