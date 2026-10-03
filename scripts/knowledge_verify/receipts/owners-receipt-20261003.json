@@ -11,26 +11,185 @@
   }
  },
  "tool": {
-  "verify_owners_py_sha256": "57317a2e49d36fa6c4ac769e4413c83036e64053293c337d1840c37d06e13d22",
-  "recipes_sha256": "4e4bd14bd7183910ac7cd34d8f8fc1dc040916c09abe792cdcf53890ff6e60cd",
+  "verify_owners_py_sha256": "765dd5f1a1833a383d6e4a4be682c558ee1d6ab1b7d0e7d53ee91c4ec1e873df",
+  "recipes_sha256": "c788f0accd524d57820c5a86c9ff0a52b7d3bfd8020fdce88e5a75fbce20ef5b",
   "identity_functions_sha256": "6c205b733438f19bcdd73271884e2e6c8f88f7e81c7750b3ff797d380dfe0987",
   "e2e_files_sha256": {
-   "_runtime_evidence.py": "8e18b05350f097c225a3fa403dd74bce09788ad7767433f9cc9d61b60531b8e3",
-   "domain.py": "b7e64334b7e823932f12234434cd884e9a8ca141eecc5c4904f760630a3ac07d",
-   "engine.py": "2af0f39c39db97f95d50662a971a0a47a3a6ebc5af517d5c49515de0a289105e",
-   "evidence.py": "cb308b50e9d87e125e9d58e7d4d663e0e5de82b939f9c2636fcf63ae7a1f3054",
-   "observed_operations.py": "53dbf1342daa8fae41d642895de31fc3c8ec04c99c48d3500240fef4a6a5b71d",
-   "reasoning.py": "b1a9d853bb09dbc195921ae7a1bff8be683cc80901f96cc26f69451f428095a5",
-   "removal_ownership.py": "77621a2d01cadf66b01966bc7ce7fe180185ff82d5852eba3e338a1cec44a83d",
-   "symbol_advice.py": "6079ca904ce35bb9428672c596a05279cbdae4167a3a75e98fa854031a3a69ba",
-   "symbol_context.py": "71233fd9a0cca3999a50a22efa25f7b0861481f100f63ff8d8d02449a102fffd"
+   "__init__.py": "c50a757ed410b3af97cbe42715059698fab9d3e14b8cef7a1080a871d8fcea86",
+   "_native_runner.py": "242ae6f401d741173f1a5c4e47cda266618f1bdde65be4a6bf948fa432bb7b42",
+   "_notebook_runner.py": "896b692b9fb49a6f6b605ecb9292e63e179cfda9865f559244bca9e0d448cf14",
+   "_runtime_evidence.py": "19eafd0a75a388a1e39d481b5c5d462299d0739bf64b80f88816da8a2784f2e5",
+   "_unittest_runner.py": "ca5e745e05f5c0146cefb5e94d9335e465fcceaff5c3eef18a1840a897da4f54",
+   "behavior.py": "487ff443fe4fbb67857970584763f4abfa4b68b44beb67834e9a8f80c9ee6925",
+   "binding_advice.py": "7ed8c9ad597479e333695a2979dcebcf74ecad8a4090c1f2cee160708335e799",
+   "classification.py": "a32ca19a695b69851446f4ce0e3abbadcb8b2b753ade910d2466bf4a0de19b8d",
+   "dependency_advice.py": "ad5adf9a8b240ad5aea4e1bb6790b4ef34d8ab462fef5d115c456ff4c01124e6",
+   "dependency_context.py": "e702ea87c4c00a174f9f8db6a8e39089d9ddcfb493674c2f8c2b79651c356f3d",
+   "dependency_resolution.py": "6a75214a11f4fd5ae76d6be565db5fae877fb1fad4112646f5813a1c5b77251f",
+   "django_configuration.py": "9b3952a5f1acf06683e29e1f9b7cea7274f1045224f4f1dee176e6a4ac713ef3",
+   "domain.py": "1aaa1eb8137fd9473539dddebb5b79c1ad5d0b489cab3680ab06d48805b73291",
+   "engine.py": "ed118e18191d95aca05ac19626036893966cb9728a645e2501ff414e1b0a2790",
+   "evidence.py": "f1784e64853015bc2a70cbd4a03b3e77db935f376bf4b5c4b561efcac4b92e01",
+   "execution.py": "2cd5eb0bd45519d02193b5b9b933a793e14ed6571da86975cbcaa099c93fc494",
+   "execution_parsers.py": "4a202ff067b4585d8d8d123cad40913f2d8ee3a0c348d7b5b844c37ce911fc7e",
+   "grouping.py": "86aff75b2eae071e8619a72a66651b810b1c79382f73f8f0371feee32a4bc1a8",
+   "install_feedback.py": "ed1d545d09e4b9b8637bb65e5640744ac7681ebab281446bcae4f9bbf85b4e49",
+   "integrity.py": "cd405a51315c787cbb3d6cfaf1aedd715abeff67bd84a888ca0d41e396985a2c",
+   "interface_history.py": "8e2178e4039679d9c406516ffda159b50471b92d8ee68d3b07c62cd225c73597",
+   "migration_advice.py": "c1c945aa97cbc7e4e38f290d7236a7abb744f8ed2235ce9219e0c1a41804e655",
+   "models.py": "808ee3b29a6c7cbaaadf0c2b12995443bf0847138e83577c05923f5067ac917e",
+   "observed_operations.py": "d3e26a824d7fda1111dd2144d231b8a43fb43172f358f0bf0e22338aee5f3734",
+   "package_compatibility.py": "a2dea034c34e9adf0cea9ca79aa6bad7018097b8d67f4bf93a7d9fd868b800b7",
+   "parsers.py": "0cc7eab8ae86066e0e2e0a0888b6fe832312343ca62e7ca6c58b3af86a0ed274",
+   "processes.py": "2302acb217cc346c713d43abb478d2839ef13c1b45ca7ee80b4744382a48def3",
+   "project.py": "7f6e863d73b263388604c15acd7e010f4cd438e743667600e43270167a60aeb7",
+   "pytest_settings.py": "1d3a096835749ef9b30a7073bc39ee755a8792ea1250b15fc7a8c0d2c28e3a4e",
+   "reasoning.py": "e9a6a32e215b517e5f98e170728af442e9248ff424223b0ff7926b8235b70bfd",
+   "removal_ownership.py": "4715f1f397eb6ec4662f2c3cdf822a71f1b51636d1a5738d77dd499abeed78e6",
+   "runner.py": "8c67e1f72a19e0b0bdf6680fd9c3e4b7d8419308833ecc6faa921ce06c6c007d",
+   "service.py": "d64dbd9bd4e771dac0640ea63774e81ee91850c9a60a65c57829322ea1858e4e",
+   "source_context.py": "a7886b99ecb9db356e81f907b742d5ebe03467e7f90f22476eeb043908367223",
+   "symbol_advice.py": "9dceaaeb8915b0d785f722ba2e1fae4e297dfceb8475a076049a571cafed7d39",
+   "symbol_context.py": "0e83173399dc50230526fa5f42e03cde252a54616674de0225bb2009bc77d1b3",
+   "test_results.py": "d6dbf46c9a6b6cb5f0b7818e2861f0a384e8393e19aba61035c5fe383fedc7a9",
+   "tool_compatibility.py": "df983daf376bdfa95d86864bc274a20b891479b28c9e188e9a84113c748547b7"
+  },
+  "e2e_data_sha256": {
+   "knowledge/diagnosis_tree.json": "9414f146ca3778693f93a122b6096fb4437f8bfa6723da887b5af246cc822886",
+   "knowledge/package_compatibility.toml": "686790e429003808e35591efd97dc068dfca60dd1a566a9663773cbaaca1dba7"
   },
   "e2e_rules_sha256": {
+   "G01": "e02a0e4b785e11ce550174333c7cbc12df33a4d5b821c5608156719cf3798a47",
+   "G02": "6e5669bedc2b171898d40f36ce5396732cf5003c792f20d2d7b240b64360e29a",
+   "G03": "962daf11fff4467ea82a9cfd6a0ee35c882a5b4fd36cf8827a52746d11894ce5",
+   "G05": "9a7e81f119eeb4f732411b490de12407bc388fd395f62c509e7155a8d52c859e",
+   "G07": "b3619481729f3d691671695ae396500d0f41187e4807947b0e6a895c53c5c691",
+   "G08": "b2d2b816368db86a931a010db55ded9b1150220fa2894835ee2d2dc870e34f74",
+   "G09": "976bbf07fd07e145a021e25add10aae36c394ae65f6dbc6a3d7c007d74162fcf",
+   "G06": "10691bf7a32e22b5e9a1eb5930a026dbfdabb2f58752307bf27a661bf85bb845",
+   "G11": "fd7890f91063deb1bc69ada4df2d3763521f18de648cbbeabd0e743dd45db589",
+   "G10": "eb33cd3976c3178639af29503a32aa9e555f462247195b0e7923d616884113bf",
+   "G14": "ac176fca05c8b709e613a1a596d29b5ce24c518647a81576ea894a237a502b0f",
+   "G16": "d2234931af575b3262d54f35823687a9477ae4ebacb92e5f44c7817701923e4a",
+   "G15": "5a9e9e43d103c5c04704750f29c1928e744906194edaa3a9eb3b090602eb7039",
+   "D01": "3eb7ef297d213c2985546947ef7863ae635c431fd4c567962a0c19e18588a1ab",
    "D02": "7b9ac9227a8e47cc1d275f1a0933e1f6744f71065c698bbee38bad1ff6b8580e",
    "D03": "7f25a982bcdda7138b049b66d223066796c0fe0518abf374f28c1a340a404155",
+   "D07": "dc1739da123231437d8932ea60b5860205d683294c277889d2087fc3c9e4368a",
+   "D04": "7d2c94f8c6b97a3bd4e1deca732ab996e2dbe8c34f4771ff207558fb65f74784",
+   "D06": "62734de9c8f84d7474cf8d9a28acfd5ba04419d59de3f1c1163fbca0ca787df5",
+   "D09": "d8ede0e38443e5d6933ff0901fa2f8d1b88cd69275e63cb247dc6687e22cb41f",
+   "D05": "9c70e1861f19d90d685efe7f68ab85c91f6857fa9a5ac425fe8ba280ea203f75",
+   "D10": "924effc1579b4d455cf9a8897012530769941d4cfa7729a0da6522328c87b81e",
+   "D11": "4e9838a8d93a8383925df250770fa6177f7a23ae500ae7cc33199a81cd612855",
+   "D12": "65e2b1f5d266fb2714ce0ea3af3c197dc4095eafc7ef1591e453e8e29db0f960",
+   "D13": "a353fe73f49fa308c3bcadd2c525b26e202639babb45713ef2b8c682165b991d",
+   "D14": "34ea5a4e3b47f530d45e36a07b400fd85080013cf25cdeefebb3c214553f8049",
+   "D15": "6acba739def5c38922373d99fb54a5b831861bdc7ade1ff9201949be2435b43d",
+   "D16": "12d7b56dbed84850041bf09566a032ac1743ab45202aee2f0dbc795dd8af06ab",
+   "D51": "14e1c29f3c80f4dc0e5e6bd4902ab9c4d9af2532201b2de838a62b3be04d27b2",
+   "D52": "e0757dab7af27da16caf93605eafa74eddf335d086a3bcdc6e0cc6df9c540e63",
+   "D20": "50d96033d367fa0854191db1f108b4b9815cd3cf5c205da75fd851f781dbaf69",
+   "D21": "0ab8c39423af644180e7e1c8b3d45047351fed5e5bab26c60507d3e15c6d3f06",
+   "D22": "db0c184c8f750357bfdaad35a438cd75f340d9a2dbed5c02b7efb5180c66a6db",
+   "D23": "a4c04ed40004c044d099268a48b560b6396c7345dc08a7264eeb6b928a1b7a81",
+   "D25": "9119e8c123238587c4a76582b3eb4d5728a4814ee2fa4b2cd7fbf0f176d68655",
+   "D24": "f6c23436d1817606f7c506f8298fa1a90e4b829a067220f937facb090f6d6d3c",
+   "D30": "03c384e68a35b620bf1bdfdd122de0fa69883153a83a7e7f33b8c798a8e1bf53",
+   "D31": "f63537982ae27c21559ae88862935e7640c4cc7eec1a9d144fa4afa6970cacf0",
+   "D32": "b44b182efa07c99b58c34a4b29b8a22914a91542d0eac925a44aac7fa0d136bb",
+   "D33": "62d6cf162425fd561f24d4b05b1d0354ddd200b2f66a3586d4f41648e688f337",
+   "D49": "04f6bd23924ee8ed6d55ebf5a02887053fdad6f037574a01c83321b9d450cb0b",
+   "D50": "3e1515c2cc0f829baeb2d9fc2b310239906c7db9b57fe6eb656aefa08f506cfe",
+   "D40": "839fbe866918f7dfb07d68d45dcee63005b491a75d89cfe44b5ac67d71b29e1a",
+   "D44": "eacdcb13e2d2991d01f52fade8d65a19f82b4afa8a3c5ed6d4bf2b3cfa4b6064",
+   "D45": "1129702c0ebdfae3e3629678710a7932f5f678dfe77cb4c4625def7c07c1377b",
+   "D47": "58bfad053d105a1cc00779221d389745afe1feb70ebb72145c028400726ad4e8",
+   "D48": "f7e1925d62143cbd3368f960d8b9ca20de5b26782055aa49240cd1c67c98104f",
+   "D46": "45df3a2a3cfe357a9a8bfc5d36ba448e970a8ec801abc021af96cc6e6d764027",
+   "D41": "2347205042f93a28d3ce1e0c54180a14eee086e20cecece8796967db65e9c1c6",
+   "D42": "39d26de1dc4e4b9689de0e02d9ef1d2115be1df03063b8fa6850cd37807b16b5",
    "D43": "9696bff227ef10b784c1b133595899005c2ad8af0903e2c7baa059066695f7b9",
+   "P_REMOVAL_REOBSERVE": "ddc610075a6149aab8840fa57ca5a23ee11b68c33ee7fd810c3ba8bbdf5013c0",
+   "H01": "519e7a57d8f52a47c70d7c3211c8b19d77fb178792ff5f9651bca43a96dad400",
+   "H09": "21c80c28d2bafd627e21ccc90c9c34a7a5a7cff978176c2cd647718f191e8c4b",
+   "H02": "4e017bc4e3ee7aa3a57098783985bba167fe63a4c1b7a5e2482c4eb680e26afc",
+   "H06": "8be8b88ee07cd3eaddd1a6d7930c43149d08e7110a23c27f6d2f3663d2bd8744",
+   "H07": "6c6a1d67891750d71f56460af04c14867a96b9ccefa2eab367ec1057e76e3916",
+   "H11": "72393193a5917558f2418e8e7116a735a48358828d9be858f9f2ac921ec9f1cf",
+   "H12": "2f866ec069245baea4d5381a4822d785c7d3be0944af9b0f2d7f562240c1c24c",
+   "H10": "100cb8c76dc47d28904f6c1406dd47cdbf0865b7e796e0682f70549e9a9e4f9d",
+   "H05": "18962921600a45fa040d4ee0e0775e930d66fb431ac3906ef0bb90e9a84142eb",
+   "H03": "979f5b0f05c193fc675a73ce837322d529c7496ff324c095a5601789c9371423",
+   "H04": "baeae8074587cb35b6132e79220ab5d8e620b7f4beca8a766eff93b8e30b53b1",
+   "F01": "c08d23036e7df5c2606ee53bcfa892b1034819e224ea5f6a64264b42df1447c8",
+   "P01": "b678b25f73663bc037868874adf51b42f2a2c158ee766838d98dff6c1deb9055",
+   "P02": "09d20048700748ae51b4fb1791fbc6a17dca7d7473a4851e19ac49d2676552cd",
+   "P03": "0d57cce70f90def12b4d511ee10f3861811a28b72f7a15f9084b7997f22fead4",
+   "P09": "bbd70adb6994610873367f96f95dac089596a22fe45d543144c802f5f4d8beb5",
+   "P08": "3402efedc920d9479dc3f1c530e491aaff1f29e27f66989308158fce26b98aee",
+   "P55": "2db6ddc5f1e4b2f8a36ddf297cdd29a93399ff476193934f720759ba9b0f8ad9",
+   "P56": "05e382afc62972b78dded354be5690e78f6c395cae53f3a5401e071035cc0e23",
+   "P07": "9f8e591f30d6fa3a39b8e8ffbe1e7dea167aff06d3cfbcdb83091a494bf4fd1a",
    "P10": "1373bd8c100e159b43d78718d984d53c052dc125a8f6b3922b928f9abb5cda77",
-   "P_REMOVAL_REOBSERVE": "ddc610075a6149aab8840fa57ca5a23ee11b68c33ee7fd810c3ba8bbdf5013c0"
+   "P11": "b9036d515fc68e3cdad2f4025964af85a6dddfb3fd775c586232b8c4dd577212",
+   "P12": "f44e7a762efd06a3c67bf586475ff62607090a2db82c780e5651fff2ecb4ce4f",
+   "P13": "5363420ad352be6ce6867a369f4d9c81497209641fe287038c7dcdd9bc314d2f",
+   "P14": "84682f00e96c85c652a206adb301082d810c4f872142f6daa7d80d3f7c4fe62f",
+   "P15": "2961521489a4fd343dc0a855c89b00a199ebc718f03ad69b2bfdc6d071ddb05c",
+   "P16": "95af6a23b8138a0c60329d2274cba5d792f1c01f014c1261cc8cebe8a2255f91",
+   "P17": "8ece9b39283528f5fc961da4944a72e1aa33d7d3156825f07ea8d45733d8440a",
+   "P18": "155a497d4f9b1fbebb06e9e246ccf69f986c28c9201bd8ede02fdab4a39ebb07",
+   "P19": "a3326f8f355693895dfb5d9cc0295d6a280dbd951c5b7752e1f5d55c6de12ad3",
+   "P20": "747d9d7c062d0a16ebc6d04bee36caa046e997b70464b3179724df2fdb6a7612",
+   "P58": "4fc636f791070f1b555ae3a371b1279e1312b346b9d157eee08f989a179ccfee",
+   "P57": "b7ed1064fe869d102016802305340db40ef91c48310885e634417e76f1b71397",
+   "P59": "4251666d832ea250d2d9eb570279ee0e23bbc82e786ed704c87365a0d1609a94",
+   "P66": "ba836d8bbdf9b9df0f5443e6c2e4ee77f719524ce76c599943df2f769b34e2f0",
+   "P61": "e7217359bcf1c72d359992cec1922c2a35b0e75791ba2cc245b4ede7c7616adb",
+   "P67": "e0c4a5e02f2a5b4fe4e4f498f51ef8256f4335be8aceacb030de52c8d70a2544",
+   "P63": "bcb7890ea343f9a63cc5fd4f422e3219b6a2303b13f3ee276af491abfc2ba9a0",
+   "P65": "a8c1aaaca15c09e7ca3e092c7b4ea7743a106932979507beb462727766d90268",
+   "P64": "38bbc0ce1f9462f022ada75818e19601449741057d29e3ab9131df3a9fba066c",
+   "P31": "8cd65c7d1e583578db1b479545e4a55514a46a3c779b8f7b3d118a3058f77c22",
+   "P32": "a02291b027585644e46f0fd735323e42618261867728d6fe68f30fd40f203c7d",
+   "P21": "2b1c61a4b9da53ecea0bb5d3f675ce8f9dfc72598e417bd83cafb8e08e1d83a9",
+   "P22": "d817ec1a2ef88ed0cd0e0aea43ff1438d13bb6a339af5e653442c5d5d616ffbf",
+   "P23": "52ad72d44004df1ad7bd2748296c86a2481d5ec39de0a5aa0d28ee87ead55ec2",
+   "P24": "b027f14c1860cfa074c55865cf89b0fda1b7b2d9253e8fb8c520fedf9fa56db2",
+   "P33": "f78c3e30f78a693380735d1604563eb4872941a34c9aa3e1f7ba795bf01de386",
+   "P35": "83b82417858de63f16d69580e648f57d4c19dc4d2b7ffce2ba07eed76834b2e5",
+   "P34": "a0ec5975d8c45dad49ab4d5301b8e7cff828994e0295a9137400c4dd7f3f2f6e",
+   "H13": "ce6121be6c3eeca8f43ea44c2a7ad35f82a9146dbe5dd3382c360c565bbaf88a",
+   "P84": "6f74fc22bd6680ef09dc68b897694e4a902c739d4780d7d0990eaeccdecdaec1",
+   "P83": "465ad8c0794d48885a68860b9deb319581deafb4ecfdc4d5ed30dbcb907d21df",
+   "P30": "aa98169b51a65df0b0259c8936a5e1e73bd7e884acd9083527d34f351517b4e3",
+   "P40": "0a77c6240711ec0a962f9ea9e01c2cb338d1a7c9e61dd86734bef84eb2cafd60",
+   "P41": "71bf3864b331bda5204baf7258e83200c0d814a0137f5d1f13756087683c301f",
+   "P42": "c5e47663059634432b647d3039839042c984d6b4c41863af853eaf4449252f96",
+   "P43": "c6c9c994f927b240476453bf9f08e6a0aa72a247898093a9194c950215e8f0ca",
+   "P44": "c2878f0e5d95cff2c4defcf085788df2126e0b2ce169ad22b1270e5bf419768b",
+   "G12": "60b327f7e4fde58e0e97237c5f21f59f32c6cdf4cc4911c90e3c787385039761",
+   "G13": "3ed67b4d7994b3ff01e1a892f6ae0ea4b346a0e08f863f97223b8bfa5e6a8355",
+   "RUN-P1": "8b17973ac468121a5552345d8103f2acb1298a620b1329b53996d7297ebe215f",
+   "RUN-P2": "6a329e71d0b39c4df66c974682bbd64b0dee252507aa4763ef2c96c4b2309f4f",
+   "RUN-P3": "edc1b60c794d9b323845d7ee2ce9cba1991ee3c60268e360b0aca57216f6953b",
+   "P45": "16a4b6164fe27caae286f49ef2e665fee2a1e38dad996239bad2943313980443",
+   "P46": "cdfe3181911785d1400b71a20ecdbde833a11aafbeabcbbade6b2920f9a2ff1c",
+   "RUN-P4": "b456b4d14ce79494e3962ad9803d091695ec824cebfb29cbe9aec0a052f03986",
+   "RUN-P5": "b887e96646b04a5cc9545fa92e7261fd996d41a0373136606a914e95316f6343",
+   "RUN-P6": "fe4c3fa15a3175fc7de54342e2e145bd3a061c5895cc11e91b5bbe82ace03a7e",
+   "P47": "dc082f7e20f331a3968560df51c3441587780e14134721be05aa78ef0d6e11fb",
+   "P52": "b5e56158bfcf5d7e5cfe5248edd123242a1351b98c9bd059621af281748bdbaa",
+   "P53": "71f832df2194f2d23f48d52dde971100809c8a1c4902826d297e4895be1322f1",
+   "P54": "951f307ed69cd09ff762a5ca5ab20514e465e77afadded0322b04c982cc00bcd",
+   "P48": "8c103285f5cb9c77e07ec498a296ca7d09ef1a90fa3a9c388e63fae9040bf937",
+   "P49": "e754b1d02c01fe0a897366001683de6d1b8952e7b24ac3ab9228f19f92bb6792",
+   "P50": "2f545841626f4731c31bed9fb84e172132e0c2ba74e661828c56cfdecf3d1389",
+   "P51": "4e2ca02ed9ada26f110b11f8eaa8edb012f9f3f506db2ae500526944a7942444",
+   "P_BINDING": "29f09c8ef4e0258bcc5ca7700f18551d6a32aee37ca9deb8679129d887c316b4",
+   "P85": "4055cd0e29ce8d1f0a0f7cd326cb779e9b967d3b167f15f429006d41aa76eb41",
+   "P86": "51cd2258277caa9d8a6cb4c71d1877fd7117ec326faa788800f5de449dad16d8"
   },
   "package_sha256": "bbd7363dec6fd9762d6fa1a9a6dd9fd9af3dd9517293729d869af515f9f0dc54",
   "generated": "2026-10-03",
@@ -45,7 +204,7 @@
    "owners": [
     "unittest.TestCase"
    ],
-   "block_sha256": "359d7d3f1bd46da6a9ca84c69be86555132539d69d483d69470ba198c8f585ab",
+   "block_sha256": "c3b9032afe9076a4220aab8d116fbc76c33134a38c6af74b2e2a5c9a2c82747f",
    "recipe_sha256": "c9c953a9a66ba278ffd41d431ce1ea9d8cf07ee0242cb4354cc88f9d6dddde40",
    "recipe": "import unittest\nclass T(unittest.TestCase):\n    def runTest(self):\n        pass\nobj = T()\n",
    "extra_receivers": [],
@@ -240,7 +399,7 @@
    "owners": [
     "unittest.TestCase"
    ],
-   "block_sha256": "359d7d3f1bd46da6a9ca84c69be86555132539d69d483d69470ba198c8f585ab",
+   "block_sha256": "c3b9032afe9076a4220aab8d116fbc76c33134a38c6af74b2e2a5c9a2c82747f",
    "recipe_sha256": "c9c953a9a66ba278ffd41d431ce1ea9d8cf07ee0242cb4354cc88f9d6dddde40",
    "recipe": "import unittest\nclass T(unittest.TestCase):\n    def runTest(self):\n        pass\nobj = T()\n",
    "extra_receivers": [],
@@ -435,7 +594,7 @@
    "owners": [
     "unittest.TestCase"
    ],
-   "block_sha256": "359d7d3f1bd46da6a9ca84c69be86555132539d69d483d69470ba198c8f585ab",
+   "block_sha256": "c3b9032afe9076a4220aab8d116fbc76c33134a38c6af74b2e2a5c9a2c82747f",
    "recipe_sha256": "c9c953a9a66ba278ffd41d431ce1ea9d8cf07ee0242cb4354cc88f9d6dddde40",
    "recipe": "import unittest\nclass T(unittest.TestCase):\n    def runTest(self):\n        pass\nobj = T()\n",
    "extra_receivers": [],
@@ -630,7 +789,7 @@
    "owners": [
     "unittest.TestCase"
    ],
-   "block_sha256": "359d7d3f1bd46da6a9ca84c69be86555132539d69d483d69470ba198c8f585ab",
+   "block_sha256": "c3b9032afe9076a4220aab8d116fbc76c33134a38c6af74b2e2a5c9a2c82747f",
    "recipe_sha256": "c9c953a9a66ba278ffd41d431ce1ea9d8cf07ee0242cb4354cc88f9d6dddde40",
    "recipe": "import unittest\nclass T(unittest.TestCase):\n    def runTest(self):\n        pass\nobj = T()\n",
    "extra_receivers": [],
@@ -825,7 +984,7 @@
    "owners": [
     "unittest.TestCase"
    ],
-   "block_sha256": "359d7d3f1bd46da6a9ca84c69be86555132539d69d483d69470ba198c8f585ab",
+   "block_sha256": "c3b9032afe9076a4220aab8d116fbc76c33134a38c6af74b2e2a5c9a2c82747f",
    "recipe_sha256": "c9c953a9a66ba278ffd41d431ce1ea9d8cf07ee0242cb4354cc88f9d6dddde40",
    "recipe": "import unittest\nclass T(unittest.TestCase):\n    def runTest(self):\n        pass\nobj = T()\n",
    "extra_receivers": [],
@@ -1020,7 +1179,7 @@
    "owners": [
     "unittest.TestCase"
    ],
-   "block_sha256": "359d7d3f1bd46da6a9ca84c69be86555132539d69d483d69470ba198c8f585ab",
+   "block_sha256": "c3b9032afe9076a4220aab8d116fbc76c33134a38c6af74b2e2a5c9a2c82747f",
    "recipe_sha256": "c9c953a9a66ba278ffd41d431ce1ea9d8cf07ee0242cb4354cc88f9d6dddde40",
    "recipe": "import unittest\nclass T(unittest.TestCase):\n    def runTest(self):\n        pass\nobj = T()\n",
    "extra_receivers": [],
@@ -1215,7 +1374,7 @@
    "owners": [
     "unittest.TestCase"
    ],
-   "block_sha256": "359d7d3f1bd46da6a9ca84c69be86555132539d69d483d69470ba198c8f585ab",
+   "block_sha256": "c3b9032afe9076a4220aab8d116fbc76c33134a38c6af74b2e2a5c9a2c82747f",
    "recipe_sha256": "c9c953a9a66ba278ffd41d431ce1ea9d8cf07ee0242cb4354cc88f9d6dddde40",
    "recipe": "import unittest\nclass T(unittest.TestCase):\n    def runTest(self):\n        pass\nobj = T()\n",
    "extra_receivers": [],
@@ -1410,7 +1569,7 @@
    "owners": [
     "unittest.TestCase"
    ],
-   "block_sha256": "359d7d3f1bd46da6a9ca84c69be86555132539d69d483d69470ba198c8f585ab",
+   "block_sha256": "c3b9032afe9076a4220aab8d116fbc76c33134a38c6af74b2e2a5c9a2c82747f",
    "recipe_sha256": "c9c953a9a66ba278ffd41d431ce1ea9d8cf07ee0242cb4354cc88f9d6dddde40",
    "recipe": "import unittest\nclass T(unittest.TestCase):\n    def runTest(self):\n        pass\nobj = T()\n",
    "extra_receivers": [],
@@ -1605,7 +1764,7 @@
    "owners": [
     "unittest.TestCase"
    ],
-   "block_sha256": "359d7d3f1bd46da6a9ca84c69be86555132539d69d483d69470ba198c8f585ab",
+   "block_sha256": "c3b9032afe9076a4220aab8d116fbc76c33134a38c6af74b2e2a5c9a2c82747f",
    "recipe_sha256": "c9c953a9a66ba278ffd41d431ce1ea9d8cf07ee0242cb4354cc88f9d6dddde40",
    "recipe": "import unittest\nclass T(unittest.TestCase):\n    def runTest(self):\n        pass\nobj = T()\n",
    "extra_receivers": [],
@@ -1800,7 +1959,7 @@
    "owners": [
     "unittest.TestCase"
    ],
-   "block_sha256": "359d7d3f1bd46da6a9ca84c69be86555132539d69d483d69470ba198c8f585ab",
+   "block_sha256": "c3b9032afe9076a4220aab8d116fbc76c33134a38c6af74b2e2a5c9a2c82747f",
    "recipe_sha256": "c9c953a9a66ba278ffd41d431ce1ea9d8cf07ee0242cb4354cc88f9d6dddde40",
    "recipe": "import unittest\nclass T(unittest.TestCase):\n    def runTest(self):\n        pass\nobj = T()\n",
    "extra_receivers": [],
@@ -1995,7 +2154,7 @@
    "owners": [
     "unittest.TestCase"
    ],
-   "block_sha256": "359d7d3f1bd46da6a9ca84c69be86555132539d69d483d69470ba198c8f585ab",
+   "block_sha256": "c3b9032afe9076a4220aab8d116fbc76c33134a38c6af74b2e2a5c9a2c82747f",
    "recipe_sha256": "c9c953a9a66ba278ffd41d431ce1ea9d8cf07ee0242cb4354cc88f9d6dddde40",
    "recipe": "import unittest\nclass T(unittest.TestCase):\n    def runTest(self):\n        pass\nobj = T()\n",
    "extra_receivers": [],
@@ -2190,7 +2349,7 @@
    "owners": [
     "unittest.TestCase"
    ],
-   "block_sha256": "359d7d3f1bd46da6a9ca84c69be86555132539d69d483d69470ba198c8f585ab",
+   "block_sha256": "c3b9032afe9076a4220aab8d116fbc76c33134a38c6af74b2e2a5c9a2c82747f",
    "recipe_sha256": "c9c953a9a66ba278ffd41d431ce1ea9d8cf07ee0242cb4354cc88f9d6dddde40",
    "recipe": "import unittest\nclass T(unittest.TestCase):\n    def runTest(self):\n        pass\nobj = T()\n",
    "extra_receivers": [],
@@ -2385,7 +2544,7 @@
    "owners": [
     "unittest.TestCase"
    ],
-   "block_sha256": "359d7d3f1bd46da6a9ca84c69be86555132539d69d483d69470ba198c8f585ab",
+   "block_sha256": "c3b9032afe9076a4220aab8d116fbc76c33134a38c6af74b2e2a5c9a2c82747f",
    "recipe_sha256": "c9c953a9a66ba278ffd41d431ce1ea9d8cf07ee0242cb4354cc88f9d6dddde40",
    "recipe": "import unittest\nclass T(unittest.TestCase):\n    def runTest(self):\n        pass\nobj = T()\n",
    "extra_receivers": [],
@@ -2580,7 +2739,7 @@
    "owners": [
     "unittest.TestCase"
    ],
-   "block_sha256": "359d7d3f1bd46da6a9ca84c69be86555132539d69d483d69470ba198c8f585ab",
+   "block_sha256": "c3b9032afe9076a4220aab8d116fbc76c33134a38c6af74b2e2a5c9a2c82747f",
    "recipe_sha256": "c9c953a9a66ba278ffd41d431ce1ea9d8cf07ee0242cb4354cc88f9d6dddde40",
    "recipe": "import unittest\nclass T(unittest.TestCase):\n    def runTest(self):\n        pass\nobj = T()\n",
    "extra_receivers": [],
@@ -3588,7 +3747,7 @@
    "owners": [
     "unittest.TestCase"
    ],
-   "block_sha256": "357815cb30472a8b3559e2689147fe3f31674ccac812dbfd394553a7855f476c",
+   "block_sha256": "c140791a27e2d634e64abd422df0bf77dadc828d0fdf5d50387914a2b1eee519",
    "recipe_sha256": "c9c953a9a66ba278ffd41d431ce1ea9d8cf07ee0242cb4354cc88f9d6dddde40",
    "recipe": "import unittest\nclass T(unittest.TestCase):\n    def runTest(self):\n        pass\nobj = T()\n",
    "extra_receivers": [],
@@ -3783,7 +3942,7 @@
    "owners": [
     "unittest.TestCase"
    ],
-   "block_sha256": "357815cb30472a8b3559e2689147fe3f31674ccac812dbfd394553a7855f476c",
+   "block_sha256": "c140791a27e2d634e64abd422df0bf77dadc828d0fdf5d50387914a2b1eee519",
    "recipe_sha256": "c9c953a9a66ba278ffd41d431ce1ea9d8cf07ee0242cb4354cc88f9d6dddde40",
    "recipe": "import unittest\nclass T(unittest.TestCase):\n    def runTest(self):\n        pass\nobj = T()\n",
    "extra_receivers": [],
@@ -12318,7 +12477,7 @@
    "owners": [
     "pandas.io.formats.style.Styler"
    ],
-   "block_sha256": "f1ae368675e59736e3181388c225714448f068a6a14619b360c6c6bc7f2b0ea2",
+   "block_sha256": "9853bc13818fd14dc2e2be5afbaba445f29dd499eda64b50000bc9a47c19e8f4",
    "recipe_sha256": "30d4ca9bf8b587f9ea2d5725314bfb55531749e09ec4d63fa4cbcb94dba087c7",
    "recipe": "import pandas as pd\nobj = pd.DataFrame({'a': [1.0, 2.0], 'b': [3, 4]}).style\n",
    "extra_receivers": [],
@@ -12586,7 +12745,7 @@
    "owners": [
     "pandas.io.formats.style.Styler"
    ],
-   "block_sha256": "f1ae368675e59736e3181388c225714448f068a6a14619b360c6c6bc7f2b0ea2",
+   "block_sha256": "9853bc13818fd14dc2e2be5afbaba445f29dd499eda64b50000bc9a47c19e8f4",
    "recipe_sha256": "30d4ca9bf8b587f9ea2d5725314bfb55531749e09ec4d63fa4cbcb94dba087c7",
    "recipe": "import pandas as pd\nobj = pd.DataFrame({'a': [1.0, 2.0], 'b': [3, 4]}).style\n",
    "extra_receivers": [],
@@ -16241,7 +16400,7 @@
    "owners": [
     "matplotlib.backend_bases.FigureCanvasBase"
    ],
-   "block_sha256": "451a21aa0eac5828b65f6a7c73c7878a5adf3ee24e1cd05eae64507346ec1923",
+   "block_sha256": "d6b3027b247503f75103cdec43a2f9671176aaba5811b289b1eab5850fa26885",
    "recipe_sha256": "b6582b7ba2837ee22e20dfab2620e66823797e9f2dd6e7608c14bc0328946449",
    "recipe": "import matplotlib\nmatplotlib.use('Agg')\nimport matplotlib.pyplot as plt\nfig = plt.figure()\nobj = fig.canvas\n",
    "extra_receivers": [],
@@ -16497,7 +16656,7 @@
    "owners": [
     "matplotlib.backend_bases.FigureCanvasBase"
    ],
-   "block_sha256": "451a21aa0eac5828b65f6a7c73c7878a5adf3ee24e1cd05eae64507346ec1923",
+   "block_sha256": "d6b3027b247503f75103cdec43a2f9671176aaba5811b289b1eab5850fa26885",
    "recipe_sha256": "b6582b7ba2837ee22e20dfab2620e66823797e9f2dd6e7608c14bc0328946449",
    "recipe": "import matplotlib\nmatplotlib.use('Agg')\nimport matplotlib.pyplot as plt\nfig = plt.figure()\nobj = fig.canvas\n",
    "extra_receivers": [],
@@ -19928,7 +20087,7 @@
     "flask.Flask",
     "flask.app.Flask"
    ],
-   "block_sha256": "f34c21a60563223709a8dd6c354ebdf478384d5daf68b845dd82eaf43dec105f",
+   "block_sha256": "10941c13b417e9956fac21a3a6a9b69417aa369d5eea8cfc811e7d5bc17c5bac",
    "recipe_sha256": "7e52ee48c85a394d5d333ff3a978d6810ec502cb9c26950ec8a26620a9993c54",
    "recipe": "import flask\nobj = flask.Flask(__name__)\n",
    "extra_receivers": [],
@@ -20114,7 +20273,7 @@
     "flask.Flask",
     "flask.app.Flask"
    ],
-   "block_sha256": "f34c21a60563223709a8dd6c354ebdf478384d5daf68b845dd82eaf43dec105f",
+   "block_sha256": "10941c13b417e9956fac21a3a6a9b69417aa369d5eea8cfc811e7d5bc17c5bac",
    "recipe_sha256": "7e52ee48c85a394d5d333ff3a978d6810ec502cb9c26950ec8a26620a9993c54",
    "recipe": "import flask\nobj = flask.Flask(__name__)\n",
    "extra_receivers": [],
@@ -20300,7 +20459,7 @@
     "flask.Blueprint",
     "flask.blueprints.Blueprint"
    ],
-   "block_sha256": "f3e243831892192e679892e159ef54491eff4c108cee7b0136bcff6e31b3c882",
+   "block_sha256": "36be7aefa837bd60a836b3212fb8eac826ffe6e5b7b1b020845caafec8fdaef2",
    "recipe_sha256": "52e87a2a11faf59f9097c35573d54b3ae9118d8a41d24f833c41ad203c9191fc",
    "recipe": "import flask\nobj = flask.Blueprint('bp', __name__)\n",
    "extra_receivers": [],
@@ -20486,7 +20645,7 @@
     "flask.Blueprint",
     "flask.blueprints.Blueprint"
    ],
-   "block_sha256": "f3e243831892192e679892e159ef54491eff4c108cee7b0136bcff6e31b3c882",
+   "block_sha256": "36be7aefa837bd60a836b3212fb8eac826ffe6e5b7b1b020845caafec8fdaef2",
    "recipe_sha256": "52e87a2a11faf59f9097c35573d54b3ae9118d8a41d24f833c41ad203c9191fc",
    "recipe": "import flask\nobj = flask.Blueprint('bp', __name__)\n",
    "extra_receivers": [],
@@ -21230,7 +21389,7 @@
     "flask.Flask",
     "flask.app.Flask"
    ],
-   "block_sha256": "85a8a4c8faec2c92612e6ba6bed23c9946494df2039eb43462a49c8489b1eea2",
+   "block_sha256": "0825407f5a4b84a4ad466bd7e503177f0f2ce1f96fea4c68e77c6ecb4632cac3",
    "recipe_sha256": "7e52ee48c85a394d5d333ff3a978d6810ec502cb9c26950ec8a26620a9993c54",
    "recipe": "import flask\nobj = flask.Flask(__name__)\n",
    "extra_receivers": [],
@@ -21416,7 +21575,7 @@
     "flask.Flask",
     "flask.app.Flask"
    ],
-   "block_sha256": "85a8a4c8faec2c92612e6ba6bed23c9946494df2039eb43462a49c8489b1eea2",
+   "block_sha256": "0825407f5a4b84a4ad466bd7e503177f0f2ce1f96fea4c68e77c6ecb4632cac3",
    "recipe_sha256": "7e52ee48c85a394d5d333ff3a978d6810ec502cb9c26950ec8a26620a9993c54",
    "recipe": "import flask\nobj = flask.Flask(__name__)\n",
    "extra_receivers": [],
@@ -21602,7 +21761,7 @@
     "flask.Flask",
     "flask.app.Flask"
    ],
-   "block_sha256": "85a8a4c8faec2c92612e6ba6bed23c9946494df2039eb43462a49c8489b1eea2",
+   "block_sha256": "0825407f5a4b84a4ad466bd7e503177f0f2ce1f96fea4c68e77c6ecb4632cac3",
    "recipe_sha256": "7e52ee48c85a394d5d333ff3a978d6810ec502cb9c26950ec8a26620a9993c54",
    "recipe": "import flask\nobj = flask.Flask(__name__)\n",
    "extra_receivers": [],
@@ -21788,7 +21947,7 @@
     "flask.Flask",
     "flask.app.Flask"
    ],
-   "block_sha256": "85a8a4c8faec2c92612e6ba6bed23c9946494df2039eb43462a49c8489b1eea2",
+   "block_sha256": "0825407f5a4b84a4ad466bd7e503177f0f2ce1f96fea4c68e77c6ecb4632cac3",
    "recipe_sha256": "7e52ee48c85a394d5d333ff3a978d6810ec502cb9c26950ec8a26620a9993c54",
    "recipe": "import flask\nobj = flask.Flask(__name__)\n",
    "extra_receivers": [],
@@ -21974,7 +22133,7 @@
     "flask.Flask",
     "flask.app.Flask"
    ],
-   "block_sha256": "85a8a4c8faec2c92612e6ba6bed23c9946494df2039eb43462a49c8489b1eea2",
+   "block_sha256": "0825407f5a4b84a4ad466bd7e503177f0f2ce1f96fea4c68e77c6ecb4632cac3",
    "recipe_sha256": "7e52ee48c85a394d5d333ff3a978d6810ec502cb9c26950ec8a26620a9993c54",
    "recipe": "import flask\nobj = flask.Flask(__name__)\n",
    "extra_receivers": [],
@@ -23866,7 +24025,7 @@
    "owners": [
     "pydantic.fields.FieldInfo"
    ],
-   "block_sha256": "410fdd3e3232fc57c15df52e1893f83ca44447fd1e9d70c548c27877bc67b8da",
+   "block_sha256": "1b5405f493e8fc2e5f4fed1c6f8cf5bdcce090cde3f3994fa07e246300bd3664",
    "recipe_sha256": "79c41c68dd66c8eb22c86b3de7761f45b8339a236ffd18540cd375b278f476d0",
    "recipe": "from pydantic import BaseModel\nclass M(BaseModel):\n    a: int = 1\nobj = M.__fields__['a']\n",
    "extra_receivers": [],
@@ -24077,7 +24236,7 @@
    "owners": [
     "pydantic.fields.FieldInfo"
    ],
-   "block_sha256": "410fdd3e3232fc57c15df52e1893f83ca44447fd1e9d70c548c27877bc67b8da",
+   "block_sha256": "1b5405f493e8fc2e5f4fed1c6f8cf5bdcce090cde3f3994fa07e246300bd3664",
    "recipe_sha256": "79c41c68dd66c8eb22c86b3de7761f45b8339a236ffd18540cd375b278f476d0",
    "recipe": "from pydantic import BaseModel\nclass M(BaseModel):\n    a: int = 1\nobj = M.__fields__['a']\n",
    "extra_receivers": [],
@@ -27801,7 +27960,7 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "recipe_sha256": "2d6c0682ef612996022deb1c0cfebdb8b491be03726b60689f6ff32240aa56f9",
    "recipe": "import networkx as nx\nobj = nx.Graph()\n",
    "extra_receivers": [],
@@ -28047,7 +28206,7 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "recipe_sha256": "2d6c0682ef612996022deb1c0cfebdb8b491be03726b60689f6ff32240aa56f9",
    "recipe": "import networkx as nx\nobj = nx.Graph()\n",
    "extra_receivers": [],
@@ -28293,7 +28452,7 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "recipe_sha256": "2d6c0682ef612996022deb1c0cfebdb8b491be03726b60689f6ff32240aa56f9",
    "recipe": "import networkx as nx\nobj = nx.Graph()\n",
    "extra_receivers": [],
@@ -28539,7 +28698,7 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "recipe_sha256": "2d6c0682ef612996022deb1c0cfebdb8b491be03726b60689f6ff32240aa56f9",
    "recipe": "import networkx as nx\nobj = nx.Graph()\n",
    "extra_receivers": [],
@@ -28785,7 +28944,7 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "recipe_sha256": "2d6c0682ef612996022deb1c0cfebdb8b491be03726b60689f6ff32240aa56f9",
    "recipe": "import networkx as nx\nobj = nx.Graph()\n",
    "extra_receivers": [],
@@ -29031,7 +29190,7 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "recipe_sha256": "2d6c0682ef612996022deb1c0cfebdb8b491be03726b60689f6ff32240aa56f9",
    "recipe": "import networkx as nx\nobj = nx.Graph()\n",
    "extra_receivers": [],
@@ -37145,7 +37304,6 @@
   {
    "key": "api:DiGraph.node",
    "target": "api:Graph.node",
-   "group": 1,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -37406,7 +37564,6 @@
   {
    "key": "api:DiGraph.selfloop_edges",
    "target": "api:Graph.selfloop_edges",
-   "group": 1,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -37415,8 +37572,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "ad6bbc56bff27be674fb30757210cf594cc40f90068670f47aede5a7a408743a",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "c544f09063883c7bb29705b903ab32d05c7ffd883e69acd58197f5d67f7c389a",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "68964fefe31f8bd68e9dd1f48806e38525b9bfa5a47bcf863c940a6ef8b3b8e0",
    "recipe": "import networkx as nx\nobj = nx.DiGraph()\n",
@@ -37667,7 +37824,6 @@
   {
    "key": "api:DiGraph.nodes_with_selfloops",
    "target": "api:Graph.nodes_with_selfloops",
-   "group": 1,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -37676,8 +37832,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "ad6bbc56bff27be674fb30757210cf594cc40f90068670f47aede5a7a408743a",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "c544f09063883c7bb29705b903ab32d05c7ffd883e69acd58197f5d67f7c389a",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "68964fefe31f8bd68e9dd1f48806e38525b9bfa5a47bcf863c940a6ef8b3b8e0",
    "recipe": "import networkx as nx\nobj = nx.DiGraph()\n",
@@ -37928,7 +38084,6 @@
   {
    "key": "api:DiGraph.number_of_selfloops",
    "target": "api:Graph.number_of_selfloops",
-   "group": 1,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -37937,8 +38092,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "ad6bbc56bff27be674fb30757210cf594cc40f90068670f47aede5a7a408743a",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "c544f09063883c7bb29705b903ab32d05c7ffd883e69acd58197f5d67f7c389a",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "68964fefe31f8bd68e9dd1f48806e38525b9bfa5a47bcf863c940a6ef8b3b8e0",
    "recipe": "import networkx as nx\nobj = nx.DiGraph()\n",
@@ -38189,7 +38344,6 @@
   {
    "key": "api:DiGraph.add_path",
    "target": "api:Graph.add_path",
-   "group": 1,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -38198,8 +38352,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "ad6bbc56bff27be674fb30757210cf594cc40f90068670f47aede5a7a408743a",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "c544f09063883c7bb29705b903ab32d05c7ffd883e69acd58197f5d67f7c389a",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "68964fefe31f8bd68e9dd1f48806e38525b9bfa5a47bcf863c940a6ef8b3b8e0",
    "recipe": "import networkx as nx\nobj = nx.DiGraph()\n",
@@ -38450,7 +38604,6 @@
   {
    "key": "api:DiGraph.add_cycle",
    "target": "api:Graph.add_cycle",
-   "group": 1,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -38459,8 +38612,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "ad6bbc56bff27be674fb30757210cf594cc40f90068670f47aede5a7a408743a",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "c544f09063883c7bb29705b903ab32d05c7ffd883e69acd58197f5d67f7c389a",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "68964fefe31f8bd68e9dd1f48806e38525b9bfa5a47bcf863c940a6ef8b3b8e0",
    "recipe": "import networkx as nx\nobj = nx.DiGraph()\n",
@@ -38711,7 +38864,6 @@
   {
    "key": "api:DiGraph.add_star",
    "target": "api:Graph.add_star",
-   "group": 1,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -38720,8 +38872,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "ad6bbc56bff27be674fb30757210cf594cc40f90068670f47aede5a7a408743a",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "c544f09063883c7bb29705b903ab32d05c7ffd883e69acd58197f5d67f7c389a",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "68964fefe31f8bd68e9dd1f48806e38525b9bfa5a47bcf863c940a6ef8b3b8e0",
    "recipe": "import networkx as nx\nobj = nx.DiGraph()\n",
@@ -38972,7 +39124,6 @@
   {
    "key": "api:MultiGraph.node",
    "target": "api:Graph.node",
-   "group": 2,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -39233,7 +39384,6 @@
   {
    "key": "api:MultiGraph.selfloop_edges",
    "target": "api:Graph.selfloop_edges",
-   "group": 2,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -39242,8 +39392,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "765389b82a8412e40a49304db79b51225a8a5d429f86d7013d4d77ea2ac89970",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "e386dc19ca8eda210851ef1fc4116bc05238680b09e6db00e3db3c2aedde91a4",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "dc0bd5520aed78278b218496dffcadc4b52d3dfeda6e9371103161ef75ece54f",
    "recipe": "import networkx as nx\nobj = nx.MultiGraph()\n",
@@ -39494,7 +39644,6 @@
   {
    "key": "api:MultiGraph.nodes_with_selfloops",
    "target": "api:Graph.nodes_with_selfloops",
-   "group": 2,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -39503,8 +39652,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "765389b82a8412e40a49304db79b51225a8a5d429f86d7013d4d77ea2ac89970",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "e386dc19ca8eda210851ef1fc4116bc05238680b09e6db00e3db3c2aedde91a4",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "dc0bd5520aed78278b218496dffcadc4b52d3dfeda6e9371103161ef75ece54f",
    "recipe": "import networkx as nx\nobj = nx.MultiGraph()\n",
@@ -39755,7 +39904,6 @@
   {
    "key": "api:MultiGraph.number_of_selfloops",
    "target": "api:Graph.number_of_selfloops",
-   "group": 2,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -39764,8 +39912,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "765389b82a8412e40a49304db79b51225a8a5d429f86d7013d4d77ea2ac89970",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "e386dc19ca8eda210851ef1fc4116bc05238680b09e6db00e3db3c2aedde91a4",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "dc0bd5520aed78278b218496dffcadc4b52d3dfeda6e9371103161ef75ece54f",
    "recipe": "import networkx as nx\nobj = nx.MultiGraph()\n",
@@ -40016,7 +40164,6 @@
   {
    "key": "api:MultiGraph.add_path",
    "target": "api:Graph.add_path",
-   "group": 2,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -40025,8 +40172,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "765389b82a8412e40a49304db79b51225a8a5d429f86d7013d4d77ea2ac89970",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "e386dc19ca8eda210851ef1fc4116bc05238680b09e6db00e3db3c2aedde91a4",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "dc0bd5520aed78278b218496dffcadc4b52d3dfeda6e9371103161ef75ece54f",
    "recipe": "import networkx as nx\nobj = nx.MultiGraph()\n",
@@ -40277,7 +40424,6 @@
   {
    "key": "api:MultiGraph.add_cycle",
    "target": "api:Graph.add_cycle",
-   "group": 2,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -40286,8 +40432,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "765389b82a8412e40a49304db79b51225a8a5d429f86d7013d4d77ea2ac89970",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "e386dc19ca8eda210851ef1fc4116bc05238680b09e6db00e3db3c2aedde91a4",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "dc0bd5520aed78278b218496dffcadc4b52d3dfeda6e9371103161ef75ece54f",
    "recipe": "import networkx as nx\nobj = nx.MultiGraph()\n",
@@ -40538,7 +40684,6 @@
   {
    "key": "api:MultiGraph.add_star",
    "target": "api:Graph.add_star",
-   "group": 2,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -40547,8 +40692,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "765389b82a8412e40a49304db79b51225a8a5d429f86d7013d4d77ea2ac89970",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "e386dc19ca8eda210851ef1fc4116bc05238680b09e6db00e3db3c2aedde91a4",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "dc0bd5520aed78278b218496dffcadc4b52d3dfeda6e9371103161ef75ece54f",
    "recipe": "import networkx as nx\nobj = nx.MultiGraph()\n",
@@ -40799,7 +40944,6 @@
   {
    "key": "api:MultiDiGraph.node",
    "target": "api:Graph.node",
-   "group": 3,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -41090,7 +41234,6 @@
   {
    "key": "api:MultiDiGraph.selfloop_edges",
    "target": "api:Graph.selfloop_edges",
-   "group": 3,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -41099,8 +41242,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "a2048886b645fa38b8eaa4f50462df0e5ef6295285ebbd056a893d66c7096a77",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "18eb7a9afe60f000c3d1682970a5ec3315d4e2e0bcf63b2e5da72e2f519b57f9",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "65ed7b6da0dd4f3d882cd2dc85895172bebe077fe1ec64be758d40216505f491",
    "recipe": "import networkx as nx\nobj = nx.MultiDiGraph()\n",
@@ -41381,7 +41524,6 @@
   {
    "key": "api:MultiDiGraph.nodes_with_selfloops",
    "target": "api:Graph.nodes_with_selfloops",
-   "group": 3,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -41390,8 +41532,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "a2048886b645fa38b8eaa4f50462df0e5ef6295285ebbd056a893d66c7096a77",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "18eb7a9afe60f000c3d1682970a5ec3315d4e2e0bcf63b2e5da72e2f519b57f9",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "65ed7b6da0dd4f3d882cd2dc85895172bebe077fe1ec64be758d40216505f491",
    "recipe": "import networkx as nx\nobj = nx.MultiDiGraph()\n",
@@ -41672,7 +41814,6 @@
   {
    "key": "api:MultiDiGraph.number_of_selfloops",
    "target": "api:Graph.number_of_selfloops",
-   "group": 3,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -41681,8 +41822,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "a2048886b645fa38b8eaa4f50462df0e5ef6295285ebbd056a893d66c7096a77",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "18eb7a9afe60f000c3d1682970a5ec3315d4e2e0bcf63b2e5da72e2f519b57f9",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "65ed7b6da0dd4f3d882cd2dc85895172bebe077fe1ec64be758d40216505f491",
    "recipe": "import networkx as nx\nobj = nx.MultiDiGraph()\n",
@@ -41963,7 +42104,6 @@
   {
    "key": "api:MultiDiGraph.add_path",
    "target": "api:Graph.add_path",
-   "group": 3,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -41972,8 +42112,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "a2048886b645fa38b8eaa4f50462df0e5ef6295285ebbd056a893d66c7096a77",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "18eb7a9afe60f000c3d1682970a5ec3315d4e2e0bcf63b2e5da72e2f519b57f9",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "65ed7b6da0dd4f3d882cd2dc85895172bebe077fe1ec64be758d40216505f491",
    "recipe": "import networkx as nx\nobj = nx.MultiDiGraph()\n",
@@ -42254,7 +42394,6 @@
   {
    "key": "api:MultiDiGraph.add_cycle",
    "target": "api:Graph.add_cycle",
-   "group": 3,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -42263,8 +42402,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "a2048886b645fa38b8eaa4f50462df0e5ef6295285ebbd056a893d66c7096a77",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "18eb7a9afe60f000c3d1682970a5ec3315d4e2e0bcf63b2e5da72e2f519b57f9",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "65ed7b6da0dd4f3d882cd2dc85895172bebe077fe1ec64be758d40216505f491",
    "recipe": "import networkx as nx\nobj = nx.MultiDiGraph()\n",
@@ -42545,7 +42684,6 @@
   {
    "key": "api:MultiDiGraph.add_star",
    "target": "api:Graph.add_star",
-   "group": 3,
    "kind": "api",
    "distribution": "networkx",
    "version": "2.4",
@@ -42554,8 +42692,8 @@
     "networkx.classes.Graph",
     "networkx.classes.graph.Graph"
    ],
-   "source_block_sha256": "a2048886b645fa38b8eaa4f50462df0e5ef6295285ebbd056a893d66c7096a77",
-   "target_block_sha256": "cab5ef5542ff390970263ce0c88521c10305603d0ecdd4d7bd9a9cb956f06994",
+   "source_block_sha256": "18eb7a9afe60f000c3d1682970a5ec3315d4e2e0bcf63b2e5da72e2f519b57f9",
+   "target_block_sha256": "d3342bdefbceac0fd13bffdaba90c9bcc8fffe301633aae411aba6d0b538d215",
    "replacement_note": "",
    "recipe_sha256": "65ed7b6da0dd4f3d882cd2dc85895172bebe077fe1ec64be758d40216505f491",
    "recipe": "import networkx as nx\nobj = nx.MultiDiGraph()\n",
@@ -42836,7 +42974,6 @@
   {
    "key": "api:TfidfVectorizer.get_feature_names",
    "target": "api:CountVectorizer.get_feature_names",
-   "group": 4,
    "kind": "api",
    "distribution": "scikit-learn",
    "version": "1.2",
@@ -43112,14 +43249,13 @@
   {
    "key": "api:Engine.execute",
    "target": "attribute:sqlalchemy.engine.base.Engine.execute",
-   "group": 5,
    "kind": "attribute",
    "distribution": "SQLAlchemy",
    "version": "2.0",
    "owners": [
     "sqlalchemy.engine.base.Engine"
    ],
-   "source_block_sha256": "c0886739d9747642703448be6e6457027cbd1fa339933ba6878a3a72ee0c77ef",
+   "source_block_sha256": "5d9235cda34a9d08e3d537c0cfd9939a65b9fd1b19f0eb6deaed6335e1f35bbe",
    "target_block_sha256": "ab95b2139f9ccdf76adb9d79f547e317c0ae965a2e7b854ff5e3d69f9ec007fa",
    "replacement_note": "Both texts give the same remedy (an explicit connection: with engine.connect() as connection, connection.execute(text(sql), parameters), engine.begin() for statements that must commit, bound parameters); the enabled entry spells out the text() import and is the one the product shows.",
    "recipe_sha256": "13e3d58c6e5792783765f9b102e0d7ffadfac4bdee771a5e709c902847501e1e",

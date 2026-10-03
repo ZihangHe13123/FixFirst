@@ -58,11 +58,26 @@ problem. `owners` is a claim about real classes, and `verify_owners.py` checks i
 
 Every key of a block with `owners` in the shipped knowledge base and every merged key must pass. The record is a detailed one, not a verdict: `audit_receipt()` in
 `verify_owners.py` judges it again from the stored releases, product runs and recipes with the same functions that judged the run (the run ends with that audit), and
-`tests/test_knowledge_owners.py` calls it offline, so a record whose details were emptied, edited, duplicated or no longer agree with its verdict is rejected. The
-record is tied to the blocks, to the recipes and to the tool, and in two layers to the product: `identity_functions_sha256` (the source of the functions that
-decide a receiver's identity in `_runtime_evidence.py`: owners are claims about those identities), and `e2e_files_sha256` / `e2e_rules_sha256` (the files of the
-evidence -> `removal_owner` -> D02/D03 -> P10 chain, and the rules D02, D03, D43, P10 and P_REMOVAL_REOBSERVE, that the E2E runs depend on). A change to any of them
-needs a new run. `package_sha256`, the digest of the rest of the package, is recorded for information and is not compared.
+`tests/test_knowledge_owners.py` calls it offline, so a record whose details were emptied, edited, duplicated, pasted from another key or no longer agree with its verdict
+is rejected. **What it judges**: the keys, the block hashes (by what the block parses to) and the recipe; the releases (exactly the ones the recipe and the verifying checks call
+for, each in its environment, on the interpreter and with the pinned packages of that environment); for every release in which the attribute is gone the identities of the
+receiver (a declared owner authorizes it, from the block's distribution wherever the interpreter can tell, which is Python 3.10 and newer; exactly one entry of the whole
+knowledge base authorizes it; the receiver of a merged key is an object of the merged class); the runs of FixFirst (the authorization, the rule that decided, the first step
+with the removal version and all of the replacement text, the project class of the same name, and that each record is the one of its own job). **What it takes as stored**:
+what only a new run can show again, that is the raw measurements themselves (the rows of identities, the messages, the installed versions of unpinned packages); and the
+informational fields. The record is tied to the blocks, to the recipes (by what they parse to) and to the tool (by its bytes), and in two layers to the product:
+`identity_functions_sha256` (the source of the functions that decide a receiver's identity in `_runtime_evidence.py`: owners are claims about those identities), and the
+product that the E2E runs executed: `e2e_files_sha256` (every module of the product that the runs loaded, found by the runs themselves, and the scripts that run in the target
+interpreter; the code only, comments and layout do not count), `e2e_data_sha256` (the knowledge data files besides `domain.toml`) and `e2e_rules_sha256` (every rule).
+`tests/test_knowledge_owners.py` also runs FixFirst once, with the same runner, and requires that every module it loads is in the record, so a new import in the removal chain
+or a cut-down list fails. A change to any of them needs a new run. `package_sha256`, the digest of the whole package, is recorded for information and is not compared.
+The tests do not skip when a record is missing: a missing or a second receipt fails them.
+
+**What the record does not bind**: the blocks that the product already had before the candidates (the older blocks of `domain.toml`, among them the four with `owners` that no
+candidate carries) are bound by their hash in the record only, so an edit of one of them with a refreshed hash is caught only where the E2E run shows it (the replacement text,
+the removal version); the audit of the older entries in the knowledge record was made on the baseline, and later edits of those entries are reviewed by hand; the parts of
+`domain.toml` that the E2E runs read besides the blocks with owners (other removal blocks, tool failures, sources) are not bound by this record; and nothing here proves a flow
+that the 155 scripts do not exercise.
 
 What an enabled block does **not** mean: the product observes the receiver of a failing attribute load that is a name or an attribute of a name
 (`engine.table_names()`, `self.engine.table_names()`), and these entries diagnose those shapes; a block is enabled only if FixFirst authorizes it for the
@@ -100,4 +115,8 @@ so a new release can make a run fail legitimately. `--only TEXT` runs the checks
   removals from before those releases are not covered. Four standard-library modules (`msilib`, `nis`, `ossaudiodev`, `spwd`) cannot be built on this platform.
 - The audit part re-checks the 111 older entries of `domain.toml`: 106 are confirmed, four modules are unverifiable here and one claim is contradicted
   (`flask_sqlalchemy.Model` still exists in 3.0; it was removed in 3.1). These are reported, not changed.
-- The receipts are bound to the shipped knowledge base by `tests/test_knowledge_verify.py`: it fails when a verified block is edited without re-running the verification.
+- The receipts are bound to the shipped knowledge base by `tests/test_knowledge_verify.py` and `tests/test_knowledge_owners.py`: they fail when a verified block, a source
+  or an unmaintained entry that a candidate file or the baseline defines is edited without re-running the verification. The knowledge record is judged again from its
+  details as well (`audit_knowledge_record` in the test file: every check against the check of `verify.py`, the exceptions each release raised against the expectation, every
+  probe, the summary), so emptying or editing the details fails; the lookup of PyPI for the adjacency of two pinned releases is not repeated, and the details are taken as stored.
+  Edits of the older entries of `domain.toml` (the baseline) are not bound.
