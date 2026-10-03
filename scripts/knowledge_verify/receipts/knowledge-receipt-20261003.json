@@ -1,8 +1,8 @@
 {
  "schema": 1,
- "generated_utc": "2026-10-03T04:21:50Z",
+ "generated_utc": "2026-10-03T10:56:14Z",
  "tool": {
-  "verify_py_sha256": "adc085043c75957303d2a3bc16018e7c78af5d8f1b9d820722a521813e2c809c",
+  "verify_py_sha256": "fc2f7ad72c0831b15661c7aefc4f49a50c03ac18b241f249d72bbb1c7850ff79",
   "uv": "uv 0.11.27 (19fc8b03b 2026-07-06 aarch64-apple-darwin)",
   "verify_python": "3.13.14",
   "interpreters": [
@@ -21,7 +21,7 @@
   "candidates-optional.toml": "16ff7c03e5be5cebf42497eb690202b6fe28f82619726d5453fe7bdf838c1846",
   "candidates-parked.toml": "dd45e51c61fa27b9fe667cdf6182d21343f752a3dfd5644334391700e1dc8c81"
  },
- "domain_toml_sha256": "acaa0ec4f8d222e0f0472b33e918d807a8b7000e0c374efa8911643af9e2a114",
+ "domain_toml_sha256": "8f28bf0920dd663514674941a6b3d21ccf39e986d0f85a272b18d107e3fdec08",
  "summary": {
   "candidate_checks": 1239,
   "candidate_checks_passed": 1239,
@@ -26650,7 +26650,7 @@
      "warnings": [
       [
        "DeprecationWarning",
-       "Arguments {'permutations', 'random_state'} are deprecated, whether passed by position or keyword. They will be removed in SciPy 1.17.0. Use ``method`` to perform a permutation test."
+       "Arguments {'random_state', 'permutations'} are deprecated, whether passed by position or keyword. They will be removed in SciPy 1.17.0. Use ``method`` to perform a permutation test."
       ],
       [
        "DeprecationWarning",
@@ -35248,7 +35248,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'criterion' parameter of RandomForestRegressor must be a str among {'poisson', 'friedman_mse', 'absolute_error', 'squared_error'}. Got 'mse' instead.",
+     "exc_msg": "The 'criterion' parameter of RandomForestRegressor must be a str among {'absolute_error', 'poisson', 'squared_error', 'friedman_mse'}. Got 'mse' instead.",
      "warnings": []
     },
     "later0": {
@@ -35259,7 +35259,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'criterion' parameter of RandomForestRegressor must be a str among {'absolute_error', 'squared_error', 'friedman_mse', 'poisson'}. Got 'mse' instead.",
+     "exc_msg": "The 'criterion' parameter of RandomForestRegressor must be a str among {'absolute_error', 'friedman_mse', 'squared_error', 'poisson'}. Got 'mse' instead.",
      "warnings": []
     },
     "later1": {
@@ -35270,7 +35270,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'criterion' parameter of RandomForestRegressor must be a str among {'poisson', 'absolute_error', 'squared_error', 'friedman_mse'}. Got 'mse' instead.",
+     "exc_msg": "The 'criterion' parameter of RandomForestRegressor must be a str among {'poisson', 'squared_error', 'friedman_mse', 'absolute_error'}. Got 'mse' instead.",
      "warnings": []
     },
     "later2": {
@@ -35281,7 +35281,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'criterion' parameter of RandomForestRegressor must be a str among {'absolute_error', 'poisson', 'squared_error'}. Got 'mse' instead.",
+     "exc_msg": "The 'criterion' parameter of RandomForestRegressor must be a str among {'absolute_error', 'squared_error', 'poisson'}. Got 'mse' instead.",
      "warnings": []
     }
    },
@@ -35333,7 +35333,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'criterion' parameter of RandomForestRegressor must be a str among {'absolute_error', 'friedman_mse', 'poisson', 'squared_error'}. Got 'mae' instead.",
+     "exc_msg": "The 'criterion' parameter of RandomForestRegressor must be a str among {'friedman_mse', 'squared_error', 'absolute_error', 'poisson'}. Got 'mae' instead.",
      "warnings": []
     },
     "later0": {
@@ -35344,7 +35344,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'criterion' parameter of RandomForestRegressor must be a str among {'poisson', 'friedman_mse', 'squared_error', 'absolute_error'}. Got 'mae' instead.",
+     "exc_msg": "The 'criterion' parameter of RandomForestRegressor must be a str among {'squared_error', 'poisson', 'friedman_mse', 'absolute_error'}. Got 'mae' instead.",
      "warnings": []
     },
     "later1": {
@@ -35355,7 +35355,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'criterion' parameter of RandomForestRegressor must be a str among {'squared_error', 'friedman_mse', 'poisson', 'absolute_error'}. Got 'mae' instead.",
+     "exc_msg": "The 'criterion' parameter of RandomForestRegressor must be a str among {'squared_error', 'absolute_error', 'friedman_mse', 'poisson'}. Got 'mae' instead.",
      "warnings": []
     },
     "later2": {
@@ -35366,7 +35366,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'criterion' parameter of RandomForestRegressor must be a str among {'poisson', 'squared_error', 'absolute_error'}. Got 'mae' instead.",
+     "exc_msg": "The 'criterion' parameter of RandomForestRegressor must be a str among {'absolute_error', 'poisson', 'squared_error'}. Got 'mae' instead.",
      "warnings": []
     }
    },
@@ -35418,7 +35418,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'criterion' parameter of DecisionTreeRegressor must be a str among {'absolute_error', 'friedman_mse', 'poisson', 'squared_error'}. Got 'mse' instead.",
+     "exc_msg": "The 'criterion' parameter of DecisionTreeRegressor must be a str among {'absolute_error', 'poisson', 'friedman_mse', 'squared_error'}. Got 'mse' instead.",
      "warnings": []
     },
     "later0": {
@@ -35429,7 +35429,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'criterion' parameter of DecisionTreeRegressor must be a str among {'squared_error', 'absolute_error', 'poisson', 'friedman_mse'}. Got 'mse' instead.",
+     "exc_msg": "The 'criterion' parameter of DecisionTreeRegressor must be a str among {'friedman_mse', 'absolute_error', 'squared_error', 'poisson'}. Got 'mse' instead.",
      "warnings": []
     },
     "later1": {
@@ -35440,7 +35440,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'criterion' parameter of DecisionTreeRegressor must be a str among {'friedman_mse', 'squared_error', 'poisson', 'absolute_error'}. Got 'mse' instead.",
+     "exc_msg": "The 'criterion' parameter of DecisionTreeRegressor must be a str among {'absolute_error', 'friedman_mse', 'poisson', 'squared_error'}. Got 'mse' instead.",
      "warnings": []
     },
     "later2": {
@@ -35451,7 +35451,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'criterion' parameter of DecisionTreeRegressor must be a str among {'absolute_error', 'squared_error', 'poisson'}. Got 'mse' instead.",
+     "exc_msg": "The 'criterion' parameter of DecisionTreeRegressor must be a str among {'absolute_error', 'poisson', 'squared_error'}. Got 'mse' instead.",
      "warnings": []
     }
    },
@@ -35503,7 +35503,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'criterion' parameter of ExtraTreesRegressor must be a str among {'absolute_error', 'squared_error', 'friedman_mse', 'poisson'}. Got 'mse' instead.",
+     "exc_msg": "The 'criterion' parameter of ExtraTreesRegressor must be a str among {'friedman_mse', 'poisson', 'absolute_error', 'squared_error'}. Got 'mse' instead.",
      "warnings": []
     },
     "later0": {
@@ -35514,7 +35514,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'criterion' parameter of ExtraTreesRegressor must be a str among {'squared_error', 'absolute_error', 'poisson', 'friedman_mse'}. Got 'mse' instead.",
+     "exc_msg": "The 'criterion' parameter of ExtraTreesRegressor must be a str among {'friedman_mse', 'absolute_error', 'poisson', 'squared_error'}. Got 'mse' instead.",
      "warnings": []
     },
     "later1": {
@@ -35525,7 +35525,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'criterion' parameter of ExtraTreesRegressor must be a str among {'squared_error', 'poisson', 'absolute_error', 'friedman_mse'}. Got 'mse' instead.",
+     "exc_msg": "The 'criterion' parameter of ExtraTreesRegressor must be a str among {'friedman_mse', 'absolute_error', 'squared_error', 'poisson'}. Got 'mse' instead.",
      "warnings": []
     },
     "later2": {
@@ -35536,7 +35536,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'criterion' parameter of ExtraTreesRegressor must be a str among {'squared_error', 'absolute_error', 'poisson'}. Got 'mse' instead.",
+     "exc_msg": "The 'criterion' parameter of ExtraTreesRegressor must be a str among {'poisson', 'absolute_error', 'squared_error'}. Got 'mse' instead.",
      "warnings": []
     }
    },
@@ -35689,7 +35689,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'loss' parameter of GradientBoostingClassifier must be a str among {'log_loss', 'exponential'}. Got 'deviance' instead.",
+     "exc_msg": "The 'loss' parameter of GradientBoostingClassifier must be a str among {'exponential', 'log_loss'}. Got 'deviance' instead.",
      "warnings": []
     },
     "later0": {
@@ -35700,7 +35700,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'loss' parameter of GradientBoostingClassifier must be a str among {'exponential', 'log_loss'}. Got 'deviance' instead.",
+     "exc_msg": "The 'loss' parameter of GradientBoostingClassifier must be a str among {'log_loss', 'exponential'}. Got 'deviance' instead.",
      "warnings": []
     },
     "later1": {
@@ -35711,7 +35711,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'loss' parameter of GradientBoostingClassifier must be a str among {'exponential', 'log_loss'}. Got 'deviance' instead.",
+     "exc_msg": "The 'loss' parameter of GradientBoostingClassifier must be a str among {'log_loss', 'exponential'}. Got 'deviance' instead.",
      "warnings": []
     },
     "later2": {
@@ -35774,7 +35774,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'max_features' parameter of RandomForestClassifier must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'sqrt', 'log2'} or None. Got 'auto' instead.",
+     "exc_msg": "The 'max_features' parameter of RandomForestClassifier must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'log2', 'sqrt'} or None. Got 'auto' instead.",
      "warnings": []
     },
     "later0": {
@@ -35785,7 +35785,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'max_features' parameter of RandomForestClassifier must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'sqrt', 'log2'} or None. Got 'auto' instead.",
+     "exc_msg": "The 'max_features' parameter of RandomForestClassifier must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'log2', 'sqrt'} or None. Got 'auto' instead.",
      "warnings": []
     },
     "later1": {
@@ -35796,7 +35796,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'max_features' parameter of RandomForestClassifier must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'sqrt', 'log2'} or None. Got 'auto' instead.",
+     "exc_msg": "The 'max_features' parameter of RandomForestClassifier must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'log2', 'sqrt'} or None. Got 'auto' instead.",
      "warnings": []
     },
     "later2": {
@@ -35870,7 +35870,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'max_features' parameter of RandomForestRegressor must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'sqrt', 'log2'} or None. Got 'auto' instead.",
+     "exc_msg": "The 'max_features' parameter of RandomForestRegressor must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'log2', 'sqrt'} or None. Got 'auto' instead.",
      "warnings": []
     },
     "later1": {
@@ -35892,7 +35892,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'max_features' parameter of RandomForestRegressor must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'log2', 'sqrt'} or None. Got 'auto' instead.",
+     "exc_msg": "The 'max_features' parameter of RandomForestRegressor must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'sqrt', 'log2'} or None. Got 'auto' instead.",
      "warnings": []
     }
    },
@@ -35944,7 +35944,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'max_features' parameter of DecisionTreeClassifier must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'log2', 'sqrt'} or None. Got 'auto' instead.",
+     "exc_msg": "The 'max_features' parameter of DecisionTreeClassifier must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'sqrt', 'log2'} or None. Got 'auto' instead.",
      "warnings": []
     },
     "later0": {
@@ -35966,7 +35966,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'max_features' parameter of DecisionTreeClassifier must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'sqrt', 'log2'} or None. Got 'auto' instead.",
+     "exc_msg": "The 'max_features' parameter of DecisionTreeClassifier must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'log2', 'sqrt'} or None. Got 'auto' instead.",
      "warnings": []
     },
     "later2": {
@@ -35977,7 +35977,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'max_features' parameter of DecisionTreeClassifier must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'sqrt', 'log2'} or None. Got 'auto' instead.",
+     "exc_msg": "The 'max_features' parameter of DecisionTreeClassifier must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'log2', 'sqrt'} or None. Got 'auto' instead.",
      "warnings": []
     }
    },
@@ -36029,7 +36029,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'max_features' parameter of DecisionTreeRegressor must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'sqrt', 'log2'} or None. Got 'auto' instead.",
+     "exc_msg": "The 'max_features' parameter of DecisionTreeRegressor must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'log2', 'sqrt'} or None. Got 'auto' instead.",
      "warnings": []
     },
     "later0": {
@@ -36062,7 +36062,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'max_features' parameter of DecisionTreeRegressor must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'log2', 'sqrt'} or None. Got 'auto' instead.",
+     "exc_msg": "The 'max_features' parameter of DecisionTreeRegressor must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'sqrt', 'log2'} or None. Got 'auto' instead.",
      "warnings": []
     }
    },
@@ -36125,7 +36125,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'max_features' parameter of ExtraTreesClassifier must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'log2', 'sqrt'} or None. Got 'auto' instead.",
+     "exc_msg": "The 'max_features' parameter of ExtraTreesClassifier must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'sqrt', 'log2'} or None. Got 'auto' instead.",
      "warnings": []
     },
     "later1": {
@@ -36215,7 +36215,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'max_features' parameter of GradientBoostingRegressor must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'log2', 'sqrt'} or None. Got 'auto' instead.",
+     "exc_msg": "The 'max_features' parameter of GradientBoostingRegressor must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'sqrt', 'log2'} or None. Got 'auto' instead.",
      "warnings": []
     },
     "later0": {
@@ -36237,7 +36237,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'max_features' parameter of GradientBoostingRegressor must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'log2', 'sqrt'} or None. Got 'auto' instead.",
+     "exc_msg": "The 'max_features' parameter of GradientBoostingRegressor must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'sqrt', 'log2'} or None. Got 'auto' instead.",
      "warnings": []
     },
     "later2": {
@@ -36248,7 +36248,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'max_features' parameter of GradientBoostingRegressor must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'log2', 'sqrt'} or None. Got 'auto' instead.",
+     "exc_msg": "The 'max_features' parameter of GradientBoostingRegressor must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'sqrt', 'log2'} or None. Got 'auto' instead.",
      "warnings": []
     }
    },
@@ -36300,7 +36300,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'loss' parameter of SGDClassifier must be a str among {'hinge', 'squared_epsilon_insensitive', 'perceptron', 'log_loss', 'squared_hinge', 'modified_huber', 'epsilon_insensitive', 'squared_error', 'huber'}. Got 'log' instead.",
+     "exc_msg": "The 'loss' parameter of SGDClassifier must be a str among {'squared_error', 'hinge', 'squared_hinge', 'modified_huber', 'huber', 'perceptron', 'squared_epsilon_insensitive', 'epsilon_insensitive', 'log_loss'}. Got 'log' instead.",
      "warnings": []
     },
     "later0": {
@@ -36311,7 +36311,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'loss' parameter of SGDClassifier must be a str among {'squared_hinge', 'epsilon_insensitive', 'squared_error', 'squared_epsilon_insensitive', 'hinge', 'log_loss', 'huber', 'modified_huber', 'perceptron'}. Got 'log' instead.",
+     "exc_msg": "The 'loss' parameter of SGDClassifier must be a str among {'epsilon_insensitive', 'squared_error', 'squared_hinge', 'perceptron', 'squared_epsilon_insensitive', 'hinge', 'modified_huber', 'log_loss', 'huber'}. Got 'log' instead.",
      "warnings": []
     },
     "later1": {
@@ -36322,7 +36322,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'loss' parameter of SGDClassifier must be a str among {'squared_error', 'epsilon_insensitive', 'log_loss', 'modified_huber', 'huber', 'perceptron', 'squared_epsilon_insensitive', 'hinge', 'squared_hinge'}. Got 'log' instead.",
+     "exc_msg": "The 'loss' parameter of SGDClassifier must be a str among {'hinge', 'squared_hinge', 'modified_huber', 'log_loss', 'squared_error', 'huber', 'epsilon_insensitive', 'perceptron', 'squared_epsilon_insensitive'}. Got 'log' instead.",
      "warnings": []
     },
     "later2": {
@@ -36333,7 +36333,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'loss' parameter of SGDClassifier must be a str among {'huber', 'squared_epsilon_insensitive', 'squared_error', 'perceptron', 'squared_hinge', 'log_loss', 'modified_huber', 'hinge', 'epsilon_insensitive'}. Got 'log' instead.",
+     "exc_msg": "The 'loss' parameter of SGDClassifier must be a str among {'log_loss', 'huber', 'epsilon_insensitive', 'squared_error', 'modified_huber', 'squared_hinge', 'squared_epsilon_insensitive', 'perceptron', 'hinge'}. Got 'log' instead.",
      "warnings": []
     }
    },
@@ -37212,7 +37212,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'penalty' parameter of LogisticRegression must be a str among {'l2', 'l1', 'elasticnet'} or None. Got 'none' instead.",
+     "exc_msg": "The 'penalty' parameter of LogisticRegression must be a str among {'elasticnet', 'l2', 'l1'} or None. Got 'none' instead.",
      "warnings": []
     },
     "later0": {
@@ -37234,7 +37234,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'penalty' parameter of LogisticRegression must be a str among {'elasticnet', 'l1', 'l2'} or None. Got 'none' instead.",
+     "exc_msg": "The 'penalty' parameter of LogisticRegression must be a str among {'l2', 'l1', 'elasticnet'} or None. Got 'none' instead.",
      "warnings": []
     },
     "later2": {
@@ -37245,7 +37245,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'penalty' parameter of LogisticRegression must be a str among {'elasticnet', 'l2', 'l1'} or None. Got 'none' instead.",
+     "exc_msg": "The 'penalty' parameter of LogisticRegression must be a str among {'elasticnet', 'l1', 'l2'} or None. Got 'none' instead.",
      "warnings": []
     }
    },
@@ -37382,7 +37382,7 @@
      },
      "ok": false,
      "exc_type": "InvalidParameterError",
-     "exc_msg": "The 'algorithm' parameter of KMeans must be a str among {'lloyd', 'elkan'}. Got 'full' instead.",
+     "exc_msg": "The 'algorithm' parameter of KMeans must be a str among {'elkan', 'lloyd'}. Got 'full' instead.",
      "warnings": []
     },
     "later0": {
@@ -71929,7 +71929,7 @@
      },
      "ok": false,
      "exc_type": "ArgumentError",
-     "exc_msg": "Column expression, FROM clause, or other columns clause element expected, got [<sqlalchemy.sql.elements.ColumnClause at 0x101d2d310; a>, <sqlalchemy.sql.elements.ColumnClause at 0x101d2d550; b>]. Did you mean to say select(<sqlalchemy.sql.elements.ColumnClause at 0x101d2d310; a>, <sqlalchemy.sql.elements.ColumnClause at 0x101d2d550; b>)?",
+     "exc_msg": "Column expression, FROM clause, or other columns clause element expected, got [<sqlalchemy.sql.elements.ColumnClause at 0x10a7e93d0; a>, <sqlalchemy.sql.elements.ColumnClause at 0x10a7e9400; b>]. Did you mean to say select(<sqlalchemy.sql.elements.ColumnClause at 0x10a7e93d0; a>, <sqlalchemy.sql.elements.ColumnClause at 0x10a7e9400; b>)?",
      "warnings": [
       [
        "DeprecationWarning",
@@ -71945,7 +71945,7 @@
      },
      "ok": false,
      "exc_type": "ArgumentError",
-     "exc_msg": "Column expression, FROM clause, or other columns clause element expected, got [<sqlalchemy.sql.elements.ColumnClause at 0x10828d310; a>, <sqlalchemy.sql.elements.ColumnClause at 0x10828d340; b>]. Did you mean to say select(<sqlalchemy.sql.elements.ColumnClause at 0x10828d310; a>, <sqlalchemy.sql.elements.ColumnClause at 0x10828d340; b>)?",
+     "exc_msg": "Column expression, FROM clause, or other columns clause element expected, got [<sqlalchemy.sql.elements.ColumnClause at 0x106569430; a>, <sqlalchemy.sql.elements.ColumnClause at 0x106569460; b>]. Did you mean to say select(<sqlalchemy.sql.elements.ColumnClause at 0x106569430; a>, <sqlalchemy.sql.elements.ColumnClause at 0x106569460; b>)?",
      "warnings": []
     },
     "later1": {
@@ -71956,7 +71956,7 @@
      },
      "ok": false,
      "exc_type": "ArgumentError",
-     "exc_msg": "Column expression, FROM clause, or other columns clause element expected, got [<sqlalchemy.sql.elements.ColumnClause at 0x108a292e0; a>, <sqlalchemy.sql.elements.ColumnClause at 0x108a29310; b>]. Did you mean to say select(<sqlalchemy.sql.elements.ColumnClause at 0x108a292e0; a>, <sqlalchemy.sql.elements.ColumnClause at 0x108a29310; b>)?",
+     "exc_msg": "Column expression, FROM clause, or other columns clause element expected, got [<sqlalchemy.sql.elements.ColumnClause at 0x105ec13d0; a>, <sqlalchemy.sql.elements.ColumnClause at 0x105ec1400; b>]. Did you mean to say select(<sqlalchemy.sql.elements.ColumnClause at 0x105ec13d0; a>, <sqlalchemy.sql.elements.ColumnClause at 0x105ec1400; b>)?",
      "warnings": []
     }
    },
@@ -76188,7 +76188,7 @@
      "warnings": [
       [
        "SADeprecationWarning",
-       "Object <sqlalchemy.orm.query.Query object at 0x10a9ebef0> should not be used directly in a SQL statement context, such as passing to methods such as session.execute().  This usage will be disallowed in a future release.  Please use Core select() / update() / delete() etc. with Session.execute() and other statement execution methods."
+       "Object <sqlalchemy.orm.query.Query object at 0x10a553bf0> should not be used directly in a SQL statement context, such as passing to methods such as session.execute().  This usage will be disallowed in a future release.  Please use Core select() / update() / delete() etc. with Session.execute() and other statement execution methods."
       ]
      ]
     },
@@ -76200,7 +76200,7 @@
      },
      "ok": false,
      "exc_type": "ObjectNotExecutableError",
-     "exc_msg": "Not an executable object: <sqlalchemy.orm.query.Query object at 0x109432000>",
+     "exc_msg": "Not an executable object: <sqlalchemy.orm.query.Query object at 0x1088e4800>",
      "warnings": []
     },
     "later0": {
@@ -76211,7 +76211,7 @@
      },
      "ok": false,
      "exc_type": "ObjectNotExecutableError",
-     "exc_msg": "Not an executable object: <sqlalchemy.orm.query.Query object at 0x106ed72f0>",
+     "exc_msg": "Not an executable object: <sqlalchemy.orm.query.Query object at 0x108f2b2f0>",
      "warnings": []
     }
    },
@@ -104672,6 +104672,7 @@
   "unmaintained_index": 3,
   "engine_ok": 1720,
   "engine_total": 1720,
-  "problems": []
+  "problems": [],
+  "mode": "baseline"
  }
 }

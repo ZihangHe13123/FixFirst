@@ -8234,6 +8234,106 @@ version = "3.9"
 replacement = "elem.iter(), or list(elem.iter()) where a list was relied on, in place of elem.getiterator()"
 source = "python-3.9"
 
+[[removed]]
+kind = "api"
+module = "Table"
+owners = ["sqlalchemy.Table", "sqlalchemy.sql.schema.Table"]
+names = ["exists"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "sqlalchemy.inspect(engine).has_table('table_name') (or inspect(connection).has_table(...)), which checks for the table by name; Table.exists() and its bind argument were removed."
+source = "sqlalchemy-2-execute"
+
+[[removed]]
+kind = "api"
+module = "Select"
+owners = ["sqlalchemy.Select", "sqlalchemy.sql.Select", "sqlalchemy.sql.selectable.Select"]
+names = ["apply_labels"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "select(...).set_label_style(LABEL_STYLE_TABLENAME_PLUS_COL) (from sqlalchemy import LABEL_STYLE_TABLENAME_PLUS_COL), the 1.4+ form that labels columns as table_column; Select is immutable, so use the statement the call returns."
+source = "sqlalchemy-2.0-changelog-general"
+
+[[removed]]
+kind = "api"
+module = "Query"
+owners = ["sqlalchemy.orm.Query", "sqlalchemy.orm.query.Query"]
+names = ["from_self"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "an explicit subquery with aliased(): subq = select(User, Address.email_address).join(User.addresses).subquery(); ua = aliased(User, subq); aa = aliased(Address, subq); stmt = select(ua, aa).order_by(aa.email_address), executed with session.execute(stmt); the same works with session.query(ua, aa)."
+source = "sqlalchemy-2.0-from-self"
+
+[[removed]]
+kind = "api"
+module = "Insert"
+owners = ["sqlalchemy.Insert", "sqlalchemy.sql.Insert", "sqlalchemy.sql.dml.Insert"]
+names = ["execute"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits."
+source = "sqlalchemy-2-execute"
+
+[[removed]]
+kind = "api"
+module = "Update"
+owners = ["sqlalchemy.Update", "sqlalchemy.sql.Update", "sqlalchemy.sql.dml.Update"]
+names = ["execute"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits."
+source = "sqlalchemy-2-execute"
+
+[[removed]]
+kind = "api"
+module = "Delete"
+owners = ["sqlalchemy.Delete", "sqlalchemy.sql.Delete", "sqlalchemy.sql.dml.Delete"]
+names = ["execute"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits."
+source = "sqlalchemy-2-execute"
+
+[[removed]]
+kind = "api"
+module = "Select"
+owners = ["sqlalchemy.Select", "sqlalchemy.sql.Select", "sqlalchemy.sql.selectable.Select"]
+names = ["execute"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits."
+source = "sqlalchemy-2-execute"
+
+[[removed]]
+kind = "api"
+module = "Select"
+owners = ["sqlalchemy.Select", "sqlalchemy.sql.Select", "sqlalchemy.sql.selectable.Select"]
+names = ["c", "columns", "select"]
+distribution = "SQLAlchemy"
+version = "2.1"
+replacement = "Select.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery."
+source = "sqlalchemy-2.1-changelog"
+
+[[removed]]
+kind = "api"
+module = "CompoundSelect"
+owners = ["sqlalchemy.CompoundSelect", "sqlalchemy.sql.CompoundSelect", "sqlalchemy.sql.selectable.CompoundSelect"]
+names = ["c", "columns", "select"]
+distribution = "SQLAlchemy"
+version = "2.1"
+replacement = "CompoundSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery."
+source = "sqlalchemy-2.1-changelog"
+
+[[removed]]
+kind = "api"
+module = "TextualSelect"
+owners = ["sqlalchemy.TextualSelect", "sqlalchemy.sql.selectable.TextualSelect"]
+names = ["c", "columns", "select"]
+distribution = "SQLAlchemy"
+version = "2.1"
+replacement = "TextualSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery."
+source = "sqlalchemy-2.1-changelog"
+
 # ==================================================================================================
 # SOURCES defined by this file (existing ids of domain.toml are only referenced, never redefined)
 # ==================================================================================================
@@ -8533,6 +8633,10 @@ url = "https://docs.sqlalchemy.org/en/14/changelog/migration_14.html#rowproxy-is
 [sources."sqlalchemy-2.0-allow-unmapped"]
 title = "SQLAlchemy 2.0 migration guide: add __allow_unmapped__ to explicitly typed ORM models"
 url = "https://docs.sqlalchemy.org/en/20/changelog/migration_20.html#migration-to-2-0-step-six-add-allow-unmapped-to-explicitly-typed-orm-models"
+
+[sources."sqlalchemy-2.0-from-self"]
+title = "SQLAlchemy 2.0 migration guide: selecting from the query itself as a subquery, from_self() removed"
+url = "https://docs.sqlalchemy.org/en/20/changelog/migration_20.html#selecting-from-the-query-itself-as-a-subquery-e-g-from-self"
 
 [sources."sqlalchemy-2.0-join-aliased"]
 title = "SQLAlchemy 2.0 migration guide: Query.join(aliased=True) and from_joinpoint removed"

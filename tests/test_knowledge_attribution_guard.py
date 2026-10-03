@@ -54,7 +54,7 @@ def test_parked_entries_are_verified_data_that_domain_load_does_not_read():
     knowledge = Path(domain.__file__).parent / "knowledge"
     parked = tomllib.loads((knowledge / "pending_attribution.toml").read_text(encoding="utf-8"))
     enabled = tomllib.loads((knowledge / "domain.toml").read_text(encoding="utf-8"))
-    assert len(parked["removed"]) >= 10
+    assert len(parked["removed"]) >= 5
 
     def keys(data):
         return {

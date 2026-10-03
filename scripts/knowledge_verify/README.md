@@ -1,7 +1,7 @@
 # Knowledge verification
 
-`src/fixfirst/knowledge/domain.toml` carries 610 execution-verified blocks that were added in October 2026 (129 recommended and 471
-optional `[[removed]]` blocks, 8 `[[deprecated]]` and 2 `[[unmaintained]]` blocks), and 90 more `[[removed]]` blocks that name a library class or
+`src/fixfirst/knowledge/domain.toml` carries 710 execution-verified blocks that were added in October 2026 (129 recommended and 471
+optional `[[removed]]` blocks, 8 `[[deprecated]]` and 2 `[[unmaintained]]` blocks), and 100 more `[[removed]]` blocks that name a library class or
 an attribute and are applied only through `owners` (see "Owners" below). This directory holds the programs that checked them, their exact
 inputs and machine-readable records of the last runs. The runs are **opt-in**: they need the network, `uv` and several CPython versions, and
 take about 25 minutes each. Normal test runs do not execute them; they only check that the shipped knowledge base still matches the records.
@@ -13,10 +13,11 @@ take about 25 minutes each. Normal test runs do not execute them; they only chec
 | `verify.py` | Self-contained program (about 1.2 MB: the checks are literal `Check(...)` and `Support(...)` values between a small harness at the top and `main()` at the bottom). Search for a check id such as `st82-module-pkg_resources` to change one. |
 | `verify_owners.py`, `owners/recipes.toml` | The second program, for the `owners` of the blocks that name a class (see "Owners"), and the receiver recipes it runs. |
 | `candidates/candidates.toml`, `candidates-optional.toml` | The exact blocks that were verified and then merged into `domain.toml` (tier 1 = names users hit most often on current releases; tier 2 = the verified long tail). |
-| `candidates/candidates-parked.toml` | 114 verified blocks that match a bare attribute name or a class name (a project's own `Engine` or `readfp` would be diagnosed as a version problem unless the object's class is checked). They were first parked; 90 are now enabled with `owners` (122 keys), 7 are merged into enabled blocks and 17 stay parked (`owners/dispositions.toml` says which and why). The parked ones are `src/fixfirst/knowledge/pending_attribution.toml`, which `fixfirst.domain.load()` does not read. |
-| `owners/dispositions.toml` | What became of every one of those candidates: merged into an enabled entry, or still parked, with the reason. |
+| `candidates/candidates-parked.toml` | 114 verified blocks (173 keys) that match a bare attribute name or a class name (a project's own `Engine` or `readfp` would be diagnosed as a version problem unless the object's class is checked). They were first parked; 100 blocks (138 keys) are now enabled with `owners`, 23 keys are merged into enabled entries and 7 blocks (12 keys) stay parked (`owners/dispositions.toml` says which and why). The parked ones are `src/fixfirst/knowledge/pending_attribution.toml`, which `fixfirst.domain.load()` does not read. |
+| `owners/dispositions.toml` | What became of every one of those candidates: merged into an enabled entry (`covered_by`; the receivers of the merged keys are verified, see "Owners"), or still parked, with the reason. |
+| `baseline/domain-c0bd25e.toml` | The knowledge base of the product immediately before the verified candidates were merged into it (`git show c0bd25e:src/fixfirst/knowledge/domain.toml`, byte for byte). It is the explicit base of the loader smoke test of `verify.py` (`--domain`), and the reference for every source and `[[unmaintained]]` entry that the candidates do not define (`tests/test_knowledge_verify.py`). |
 | `receipts/knowledge-receipt-20261003.json` | Full record of the last run of `verify.py`: for every check and probe the snippet, its SHA-256, the environments (interpreter and package versions), the exact exception text or output, and the verdict. Local paths are redacted. |
-| `receipts/owners-receipt-20261003.json` | Full record of the last run of `verify_owners.py`: for every key with owners the receiver recipe, the receiver identities in each release, and what FixFirst did with it. |
+| `receipts/owners-receipt-20261003.json` | Full record of the last run of `verify_owners.py`: for every key with owners (and for every merged key) the receiver recipe, the receiver identities in each release, and what FixFirst did with it (issues, rule, the plan with its replacement text, and the project class of the same name). |
 
 ## What a check proves
 
@@ -45,30 +46,46 @@ problem. `owners` is a claim about real classes, and `verify_owners.py` checks i
    be one of them in every release where the attribute is gone, from the block's distribution (a dynamic receiver counts only through its own class, as in the
    product), and every declared owner must be a real identity of a receiver in some release.
 3. FixFirst itself then diagnoses a script that ends in `obj.<name>` (in the newest release): exactly this entry must be authorized (a second matching entry would
-   show the same step twice) and the issue must be a version incompatibility. A project class with the same name that calls the same attribute must not be
-   authorized.
+   show the same step twice), the issue must be a version incompatibility decided by the entry's own rule (D02 for `api`, D03 for `attribute`), and the first step of the
+   plan must be the removal action ("Replace ...") with the replacement text of the entry. A project class with the same name that calls the same attribute must really fail in its
+   own run (a missing record is not a negative) and must not be authorized, diagnosed as a version problem or shown that replacement.
+4. The candidates that were **merged** into an enabled entry (`owners/dispositions.toml`, `[[merged]]`) are not enabled, because the entry that covers them
+   already matches their receivers through inheritance (a `DiGraph` is a `Graph`; two entries for one receiver would show the same step twice). Each merged key is
+   verified with the receiver of its own class (the recipe of the merged key, in the releases of its check): the covering entry, a unique entry of `covered_by` that
+   ends in the same attribute, must have the same distribution, removal version and source (and the same replacement, or a `replacement_note` that says why not);
+   every release without the attribute must authorize the receiver through that entry and through no other entry of the knowledge base, and FixFirst must
+   authorize exactly that entry and show its replacement. Merged keys are listed once; a key that is enabled, merged and parked at the same time, or listed twice, is an error.
 
-Every key of a block with `owners` in the shipped knowledge base must pass; `tests/test_knowledge_owners.py` ties the record to the blocks, to the recipes,
-to the tool and to the source of the product functions that decide a receiver's identity (a change there needs a new run).
+Every key of a block with `owners` in the shipped knowledge base and every merged key must pass. The record is a detailed one, not a verdict: `audit_receipt()` in
+`verify_owners.py` judges it again from the stored releases, product runs and recipes with the same functions that judged the run (the run ends with that audit), and
+`tests/test_knowledge_owners.py` calls it offline, so a record whose details were emptied, edited, duplicated or no longer agree with its verdict is rejected. The
+record is tied to the blocks, to the recipes and to the tool, and in two layers to the product: `identity_functions_sha256` (the source of the functions that
+decide a receiver's identity in `_runtime_evidence.py`: owners are claims about those identities), and `e2e_files_sha256` / `e2e_rules_sha256` (the files of the
+evidence -> `removal_owner` -> D02/D03 -> P10 chain, and the rules D02, D03, D43, P10 and P_REMOVAL_REOBSERVE, that the E2E runs depend on). A change to any of them
+needs a new run. `package_sha256`, the digest of the rest of the package, is recorded for information and is not compared.
 
 What an enabled block does **not** mean: the product observes the receiver of a failing attribute load that is a name or an attribute of a name
 (`engine.table_names()`, `self.engine.table_names()`), and these entries diagnose those shapes; a block is enabled only if FixFirst authorizes it for the
 simplest one, `obj.<name>`. Not observed, so that only the release heuristic answers: a call result (`make_engine().table_names()`), a decorator line
-(`@app.before_first_request`) and a lookup that fails inside a library. The 17 blocks that stay parked could not be authorized even for `obj.<name>`:
-`ArtistList` is a nested class, the SQLAlchemy expression classes exceed the probe's bounds (more than 16 base classes, 32 alias rows), Django's `settings` is a
-`LazySettings` proxy that fails inside Django, and the error of `array.array` is not read.
+(`@app.before_first_request`) and a lookup that fails inside a library. The product records the identities of a receiver only within bounds (at most 64 base
+classes, 128 identities and 32768 bytes of them; a receiver beyond them proves nothing). The 7 blocks (12 keys) that stay parked could not be authorized even for
+`obj.<name>`: `ArtistList` is a nested class, Django's `settings` is a `LazySettings` proxy that fails inside Django, and the error of `array.array` is not read.
 
 ## Running it
 
 ```bash
 # interpreters: uv python install 3.8 3.9 3.10 3.11 3.12 3.13 3.14 3.15   (the checks span them)
-git show 769028d:src/fixfirst/knowledge/domain.toml > /tmp/domain-before.toml     # the knowledge base before these entries
 python scripts/knowledge_verify/verify.py \
     --candidates scripts/knowledge_verify/candidates/candidates.toml \
                  scripts/knowledge_verify/candidates/candidates-optional.toml \
                  scripts/knowledge_verify/candidates/candidates-parked.toml \
-    --domain /tmp/domain-before.toml --fixfirst-src src --receipts /tmp/receipt.json
+    --domain scripts/knowledge_verify/baseline/domain-c0bd25e.toml --fixfirst-src src --receipts /tmp/receipt.json
 ```
+
+`--domain` is the explicit baseline: the collision checks and the audit read it, and the loader smoke test (the last step: the real loader and rule engine on the
+baseline plus every candidate, in a copy) builds its knowledge base from it. The product's own `domain.toml` already holds most candidates, so appending them to
+a copy of it would define every source twice; without `--domain` the smoke test accepts only a knowledge base that holds all candidates or none and says so
+otherwise. The receipt records the mode (`smoke.mode`) and the digest of the baseline (`domain_toml_sha256`).
 
 ```bash
 python scripts/knowledge_verify/verify_owners.py --fixfirst-src src --receipts /tmp/owners-receipt.json   # the owners of the shipped blocks

@@ -830,9 +830,10 @@ for item in spec["engine"]:
     if kind == "module":
         facts.append(fact("issue-1", "missing_module", entity))
     elif kind == "api":
-        facts.append(fact("issue-1", "api", entity))
+        # since the receiver ownership (D02/D03 need a removal_owner fact, which the product derives from the observed receiver)
+        facts += [fact("issue-1", "api", entity), fact("issue-1", "removal_owner", entity)]
     elif kind == "attribute":
-        facts.append(fact("issue-1", "attribute", entity))
+        facts += [fact("issue-1", "attribute", entity), fact("issue-1", "removal_owner", entity)]
     elif kind == "kwarg":
         facts += [fact("issue-1", "kwarg", entity), fact("issue-1", "callee", "callable:" + item["callee"])]
     elif kind == "usage":
@@ -851,15 +852,40 @@ print("@@SMOKE@@" + json.dumps(out))
 '''
 
 
-def loader_smoke(ws: Workspace, src_dir: str, domain_path: str, cand_text: str, cand: dict) -> dict:
+def merge_candidates_into_copy(kb_path: str, domain_path: str | None, cand_text: str, cand: dict) -> str:
+    """Prepare the knowledge base of the loader smoke test (a copy). Returns how it was made:
+      "baseline"  the explicit baseline (--domain) is the base and the candidates are appended to it;
+      "shipped"   no baseline and the copy of the product's knowledge base already holds every candidate (they are integrated): nothing is added;
+      "shipped+candidates"  no baseline and the copy holds none of them: they are appended.
+    A copy that holds only some of the candidates is an error: appending them again defines the same sources twice."""
+    if domain_path:
+        shutil.copyfile(domain_path, kb_path)
+        mode = "baseline"
+    else:
+        shipped = set(candidate_keys(tomllib.loads(open(kb_path, encoding="utf-8").read())))
+        wanted = set(candidate_keys(cand))
+        if wanted <= shipped:
+            return "shipped"
+        if wanted & shipped:
+            raise RuntimeError("the knowledge base of the product holds only some of the candidates: pass --domain with the baseline "
+                               "they are merged into (scripts/knowledge_verify/baseline/)")
+        mode = "shipped+candidates"
+    with open(kb_path, "a", encoding="utf-8") as f:
+        f.write("\n\n" + cand_text)
+    return mode
+
+
+def loader_smoke(ws: Workspace, src_dir: str, domain_path: str | None, cand_text: str, cand: dict) -> dict:
     """src_dir is the directory that contains the `fixfirst` package (read only)."""
     tmp = os.path.join(ws.base, "ff-smoke")
     shutil.rmtree(tmp, ignore_errors=True)
     shutil.copytree(os.path.join(src_dir, "fixfirst"), os.path.join(tmp, "fixfirst"),
                     ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
     kb_path = os.path.join(tmp, "fixfirst", "knowledge", "domain.toml")
-    with open(kb_path, "a", encoding="utf-8") as f:
-        f.write("\n\n" + cand_text)
+    try:
+        mode = merge_candidates_into_copy(kb_path, domain_path, cand_text, cand)
+    except RuntimeError as error:
+        return {"problems": [str(error)]}
     spec = {"removed": [], "deprecated": [], "unmaintained": [], "sources": list(cand.get("sources", {})), "engine": []}
     for key, e in candidate_keys(cand).items():
         kind, _, rest = key.partition(":")
@@ -880,7 +906,7 @@ def loader_smoke(ws: Workspace, src_dir: str, domain_path: str, cand_text: str, 
                        env=ws.env_vars, cwd=ws.neutral)
     for line in reversed(r.stdout.splitlines()):
         if line.startswith("@@SMOKE@@"):
-            return json.loads(line[len("@@SMOKE@@"):])
+            return {**json.loads(line[len("@@SMOKE@@"):]), "mode": mode}
     return {"problems": [f"loader crashed: {sanitize((r.stderr or r.stdout)[-500:])}"]}
 
 
@@ -12103,7 +12129,7 @@ def main(argv=None) -> int:
         if a.fixfirst_src and not a.only:
             out(_heading("SMOKE TEST WITH THE REAL FIXFIRST LOADER AND RULE ENGINE (a copy of the knowledge base; the repository is untouched)"))
             smoke = loader_smoke(ws, a.fixfirst_src, a.domain, cand_text, cand)
-            for k in ("removed_index", "deprecated_index", "unmaintained_index", "engine_ok", "engine_total"):
+            for k in ("mode", "removed_index", "deprecated_index", "unmaintained_index", "engine_ok", "engine_total"):
                 if k in smoke:
                     out(f"{k:20s}: {smoke[k]}")
             for p in smoke.get("problems", []):
@@ -12134,7 +12160,7 @@ def main(argv=None) -> int:
                 "audit_supports": [support_receipt(r) for r in asup],
                 "cross_check_problems": _clean(problems),
                 "smoke": _clean({k: smoke.get(k) for k in ("removed_index", "deprecated_index", "unmaintained_index", "engine_ok",
-                                                          "engine_total", "problems")}),
+                                                          "engine_total", "problems", "mode")}),
             }
             text = json.dumps(receipt, indent=1, ensure_ascii=False, default=str)
             leaks_in_receipt = leaked_paths(text)

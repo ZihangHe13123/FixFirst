@@ -14,15 +14,25 @@ by running real code, the same way verify.py checks that a name is gone:
     block's distribution (the product's own condition: a dynamic receiver counts only through its own class); every declared owner
     must be a real identity of a receiver in some release (no phantom paths);
   * unless --no-e2e, FixFirst itself (--fixfirst-src) then diagnoses a script that ends in `obj.<name>`: exactly this key must be
-    authorized (a `removal_owner` fact; a second entry that matches the same receiver would show the same step twice) and the
-    issue must be a version incompatibility; and a project class of the same name that calls the same attribute must NOT be
-    authorized or diagnosed as a version problem.
+    authorized (a `removal_owner` fact; a second entry that matches the same receiver would show the same step twice), the issue must be
+    a version incompatibility decided by the rule of the entry (D02 for api, D03 for attribute) and the first step of the plan must be the
+    removal action with the replacement text of the entry; and a project class of the same name that calls the same attribute must fail in the project
+    run and NOT be authorized, diagnosed as a version problem or shown that replacement;
+  * the candidates that were merged into an enabled entry (owners/dispositions.toml `[[merged]]`) are verified the same way with the
+    receiver of the MERGED key (a DiGraph for api:DiGraph.node) against the entry that covers it: same attribute, distribution, removal
+    version and source (and replacement, or a stated `replacement_note`), every release authorizes the receiver through that entry and
+    through no other, and FixFirst authorizes exactly that entry and shows its replacement.
 
 It does not prove that a replacement text is right (verify.py's probes do that for some blocks) and it does not prove that every failing
 statement in the wild is observable. The recipes exercise the simplest shape, `obj.<name>`. The product observes the receiver of a failing
 attribute load that is a name or an attribute of a name (`engine.t()`, `self.engine.t()`), but not a call result (`make_engine().t()`), not a
 decorator line (`@app.t`) and not a lookup that fails inside a library; and only for classes that a module holds under their qualified name
-and that have at most 16 base classes. A block that cannot be authorized for `obj.<name>` stays parked.
+and that have at most 64 base classes (at most 128 identities, 32768 bytes of them). A block that cannot be authorized for `obj.<name>` stays parked.
+
+The receipt is a detailed record, not a verdict: audit_receipt() judges it again from the stored releases and product records with the
+same functions that judged the run (tests/test_knowledge_owners.py calls it offline), so an emptied or inconsistent record fails. The receipt
+is bound to this program, to the recipes, to the code that decides a receiver's identities (identity_functions_sha256), and to the product code
+and rules that produce the diagnosis (e2e_files_sha256, e2e_rules_sha256; the digest of the whole package is informational).
 
 Requirements: as verify.py (Python >= 3.11, `uv`, uv-managed CPython 3.8 - 3.14, network access to PyPI).
 
@@ -70,6 +80,42 @@ def identity_functions_sha256(probe_path: str) -> str:
     if missing:
         raise SystemExit(f"{probe_path} no longer defines {missing}; verify_owners.py has to follow the product")
     return hashlib.sha256("\n".join(found[name] for name in IDENTITY_FUNCTIONS).encode("utf-8")).hexdigest()
+
+
+# the product code behind the E2E layer of the record (evidence -> removal_owner facts -> rule D02/D03 -> plan P10), bound file by file,
+# and the rules that make and render the diagnosis, bound rule by rule. A change of one of them needs a new run.
+E2E_FILES = ("_runtime_evidence.py", "domain.py", "engine.py", "evidence.py", "observed_operations.py", "reasoning.py",
+             "removal_ownership.py", "symbol_advice.py", "symbol_context.py")
+E2E_RULES = ("D02", "D03", "D43", "P10", "P_REMOVAL_REOBSERVE")
+RULE_OF_KIND = {"api": "D02", "attribute": "D03"}
+# the knowledge files change by design (they are bound by the hashes of their blocks), so the informational digest leaves them out
+KNOWLEDGE_DATA = ("knowledge/domain.toml", "knowledge/pending_attribution.toml")
+
+
+def _normalized(path: str) -> bytes:
+    return open(path, "rb").read().replace(b"\r\n", b"\n")
+
+
+def product_digests(package_dir: str) -> dict:
+    """What the receipt binds in the product: `package_dir` is the directory of the `fixfirst` package."""
+    probe = os.path.join(package_dir, "_runtime_evidence.py")
+    rules = {rule["id"]: rule for rule in tomllib.loads(_normalized(os.path.join(package_dir, "knowledge", "rules.toml")).decode("utf-8"))["rule"]}
+    missing = [rule for rule in E2E_RULES if rule not in rules]
+    if missing:
+        raise SystemExit(f"{package_dir}/knowledge/rules.toml no longer defines {missing}; verify_owners.py has to follow the product")
+    everything = hashlib.sha256()
+    for directory, names, files in sorted(os.walk(package_dir)):
+        names[:] = sorted(name for name in names if name != "__pycache__")
+        for name in sorted(files):
+            path = os.path.join(directory, name)
+            relative = os.path.relpath(path, package_dir).replace(os.sep, "/")
+            if name.endswith((".py", ".toml")) and relative not in KNOWLEDGE_DATA:
+                everything.update(relative.encode("utf-8") + b"\0" + _normalized(path) + b"\0")
+    return {"identity_functions_sha256": identity_functions_sha256(probe),
+            "e2e_files_sha256": {name: hashlib.sha256(_normalized(os.path.join(package_dir, name))).hexdigest() for name in E2E_FILES},
+            "e2e_rules_sha256": {rule: hashlib.sha256(json.dumps(rules[rule], sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
+                                 for rule in E2E_RULES},
+            "package_sha256": everything.hexdigest()}
 
 
 # --------------------------------------------------------------------------------------------------
@@ -217,8 +263,46 @@ def load_items(paths: list, explore: bool) -> list:
                 items.append({"key": key, "kind": entry["kind"], "module": entry.get("module", ""), "name": name,
                               "attribute": name.rsplit(".", 1)[-1], "distribution": entry["distribution"],
                               "version": entry["version"], "owners": list(entry.get("owners", [])),
+                              "replacement": entry["replacement"], "source": entry["source"],
                               "block_sha256": block_sha256(entry), "source_file": os.path.basename(path)})
     return items
+
+
+def shipped_entries(path: str) -> dict:
+    """The removal index of a knowledge base file, shaped like fixfirst.domain.load()["removed_index"] (key -> entry with its `name`).
+    The product's loader overwrites a key that two blocks define; here that is an error."""
+    index = {}
+    for entry in tomllib.loads(open(path, encoding="utf-8").read()).get("removed", []):
+        for name in entry["names"]:
+            key = key_of(entry, name)
+            if key in index:
+                raise SystemExit(f"{path}: {key} is defined by two blocks")
+            index[key] = {**entry, "name": name, "id": key}
+    return index
+
+
+def by_attribute(index: dict) -> dict:
+    """attribute name -> the api/attribute entries of the index that end in it (what a failing `obj.<name>` can be matched with)."""
+    grouped = {}
+    for entry in index.values():
+        if entry["kind"] in ("api", "attribute"):
+            grouped.setdefault(entry["name"].rsplit(".", 1)[-1], []).append(entry)
+    return grouped
+
+
+def declared_owners(entry: dict) -> set:
+    """The owners the product matches a receiver with (removal_ownership._owners): explicit `owners`, or the qualified identity of the entry."""
+    owners = entry.get("owners", [])
+    if not owners:
+        owners = [entry.get("module", "") if entry["kind"] == "api" else entry["name"].rpartition(".")[0]]
+    return {owner for owner in owners if isinstance(owner, str) and "." in owner and all(part.isidentifier() for part in owner.split("."))}
+
+
+def authorizing_entries(grouped: dict, attribute: str, result: dict) -> list:
+    """Keys of EVERY entry of the knowledge base that the product's rule authorizes for the receiver of this run (not only the key under
+    test): a receiver that two entries authorize would be shown the same step twice."""
+    return sorted(entry["id"] for entry in grouped.get(attribute, [])
+                  if evaluate({"owners": declared_owners(entry), "distribution": entry["distribution"]}, result)["authorized_by"])
 
 
 def load_recipes(path: str) -> list:
@@ -323,11 +407,17 @@ def installed(ws, env) -> dict:
         return {}
 
 
-def check_rows(item: dict, runs: dict) -> list:
-    """Problems of the receiver runs of one key. Empty = pass."""
+def check_rows(item: dict, runs: dict, phantom_check: bool = True) -> list:
+    """Problems of the receiver runs of one key. Empty = pass. `phantom_check`: every declared owner must also be an identity of the
+    receiver in some release (a block's own recipe); the receivers of a MERGED key need only be authorized by the entry that covers them."""
     problems = []
     name = item["attribute"]
     seen = set()
+    if not runs:
+        return ["no release was recorded"]
+    for needed in ("before", "after"):
+        if needed not in {role.partition("#")[0] for role in runs}:
+            problems.append(f"the record holds no run of the '{needed}' release")
     for role, result in runs.items():
         label = f"{role} ({result.get('env')})"
         variant = role.partition("#")[2]
@@ -355,9 +445,10 @@ def check_rows(item: dict, runs: dict) -> list:
                 else "the receiver is dynamic or already has the member, so only its own class counts" if verdict["needs_direct"]
                 else "the module is not provided by the block's distribution")
             problems.append(f"{label}: no declared owner authorizes the receiver ({reason}); receiver identities: {rows}")
-    for owner in item["owners"]:
-        if owner not in seen:
-            problems.append(f"declared owner {owner} is not an identity of the receiver in any release")
+    if phantom_check:
+        for owner in item["owners"]:
+            if owner not in seen:
+                problems.append(f"declared owner {owner} is not an identity of the receiver in any release")
     return problems
 
 
@@ -418,28 +509,340 @@ def target_env(envs: dict):
     return (envs[later[-1]], later[-1]) if later else (envs["after"], "after")
 
 
-def judge_e2e(item: dict, record: dict, twin: dict) -> list:
-    problems = []
+def removal_step(item: dict, record: dict, first_only: bool = False) -> bool:
+    """The plan holds the removal action (rule P10, 'Replace <name>: removed in ...') with the replacement text of the entry; `first_only`:
+    it is the first step, the one the user is shown."""
+    needle = item["replacement"][:60]
+    steps = record.get("steps", [])
+    return any(isinstance(step, list) and len(step) == 2 and str(step[0]).startswith("Replace ") and needle in str(step[1])
+               for step in (steps[:1] if first_only else steps))
+
+
+def judge_product(item: dict, record) -> list:
+    """FixFirst on a script that ends in `obj.<name>` with a receiver of the library class: exactly this entry, decided by its own rule,
+    and the plan that shows its replacement."""
+    if not isinstance(record, dict):
+        return ["no product record"]
     if "error" in record:
         return [f"the product failed on the script: {record['error']}"]
-    if item["key"] not in record.get("removal_owner", []):
-        problems.append(f"the product did not authorize {item['key']} (authorized: {record.get('removal_owner')}; issues: {record.get('issues')})")
-    elif not any(i[1] == "version_incompatibility" for i in record.get("issues", [])):
-        problems.append("the key is authorized but the issue is not diagnosed as a version incompatibility")
-    others = [k for k in record.get("removal_owner", []) if k != item["key"]]
-    if others:
-        problems.append(f"also authorized by the product (overlap): {others}")
-    if twin is None or "error" in twin:
-        problems.append(f"the same-name project class could not be run: {(twin or {}).get('error')}")
+    problems = []
+    owned = record.get("removal_owner", [])
+    if item["key"] not in owned:
+        problems.append(f"the product did not authorize {item['key']} (authorized: {owned}; issues: {record.get('issues')})")
+    elif owned != [item["key"]]:
+        problems.append(f"also authorized by the product (overlap): {[k for k in owned if k != item['key']]}")
+    rule, issues = RULE_OF_KIND[item["kind"]], record.get("issues", [])
+    if not any(len(i) == 4 and i[1] == "version_incompatibility" and i[3] == rule and item["attribute"] in i[0] for i in issues):
+        problems.append(f"no issue about '{item['attribute']}' is diagnosed as a version incompatibility by rule {rule}: {issues}")
+    if not removal_step(item, record, first_only=True):
+        problems.append("the first step of the plan is not the removal action ('Replace ...') with the replacement text of the entry")
+    return problems
+
+
+def judge_twin(item: dict, twin) -> list:
+    """The project class of the same name: its run must really fail on the attribute (a missing record is not a negative), and the product
+    must not authorize it, diagnose it as a version problem or show it the replacement of the library entry."""
+    if not isinstance(twin, dict):
+        return ["the same-name project class was not run"]
+    if "error" in twin:
+        return [f"the same-name project class could not be run: {twin['error']}"]
+    problems = []
+    issues = twin.get("issues", [])
+    if not any(len(i) > 0 and item["attribute"] in str(i[0]) for i in issues):
+        problems.append(f"the project run of the same-name class holds no failure about '{item['attribute']}' ({issues}): that is no negative evidence")
+    if twin.get("removal_owner"):
+        problems.append(f"a project class with the same name was authorized: {twin['removal_owner']}")
+    if any(len(i) > 1 and i[1] == "version_incompatibility" for i in issues):
+        problems.append(f"a project class with the same name was diagnosed as a version incompatibility: {issues}")
+    if removal_step(item, twin):
+        problems.append("a project class with the same name was shown the replacement of the library entry")
+    return problems
+
+
+def judge_e2e(item: dict, record, twin) -> list:
+    return judge_product(item, record) + judge_twin(item, twin)
+
+
+# --------------------------------------------------------------------------------------------------
+# merged keys, and the judgement of a record from what it stores (the run and the offline tests use the same functions)
+# --------------------------------------------------------------------------------------------------
+def load_merged(dispositions: dict, candidates: dict, index: dict) -> list:
+    """The keys of the `[[merged]]` groups of owners/dispositions.toml, each with the enabled entry that covers it.
+
+    `candidates` maps a key to its candidate item (candidates-parked.toml); `index` is the removal index of the shipped knowledge base. The
+    covering entry (`target`) is the one entry of the group's covered_by that ends in the same attribute. `view` is the item that check_rows()
+    and judge_product() judge the receivers of the merged key with: the covering entry's owners, distribution, version and replacement.
+    `problems` holds what is wrong with the relation itself (a unique covering entry of the same attribute, distribution, removal version,
+    source and replacement; a different replacement needs a `replacement_note`; a key is merged once)."""
+    merged, seen = [], {}
+    for number, group in enumerate(dispositions.get("merged", []), 1):
+        covered = list(group.get("covered_by", []))
+        note = str(group.get("replacement_note", "")).strip()
+        shared = []
+        if not covered or len(set(covered)) != len(covered):
+            shared.append(f"covered_by of group {number} is empty or names an entry twice")
+        if not str(group.get("why", "")).strip():
+            shared.append(f"group {number} says nothing about why it is merged")
+        for key in group.get("keys", []):
+            entry = {"key": key, "group": number, "target": None, "source": None, "view": None, "problems": list(shared),
+                     "replacement_note": note}
+            if key in seen:
+                entry["problems"].append(f"{key} is merged twice (groups {seen[key]} and {number})")
+            seen[key] = number
+            source = candidates.get(key)
+            if source is None:
+                entry["problems"].append(f"{key} is not a candidate of candidates-parked.toml")
+                merged.append(entry)
+                continue
+            entry["source"] = source
+            targets = [t for t in covered if t.rsplit(".", 1)[-1] == source["attribute"]]
+            if len(targets) != 1:
+                entry["problems"].append(f"{key}: covered_by must hold exactly one entry that ends in '{source['attribute']}', it holds {targets}")
+                merged.append(entry)
+                continue
+            target = index.get(targets[0])
+            entry["target"] = targets[0]
+            if target is None or target["kind"] not in ("api", "attribute"):
+                entry["problems"].append(f"{key}: {targets[0]} is not an enabled api/attribute entry")
+                merged.append(entry)
+                continue
+            for field, same in (("distribution", verify.canon(target["distribution"]) == verify.canon(source["distribution"])),
+                                ("version", target["version"] == source["version"]), ("source", target["source"] == source["source"])):
+                if not same:
+                    entry["problems"].append(f"{key} and {targets[0]} differ in {field}: the covering entry is not the same removal")
+            if target["replacement"] != source["replacement"] and not note:
+                entry["problems"].append(f"{key} and {targets[0]} give different replacements and the group has no replacement_note")
+            if target["replacement"] == source["replacement"] and note:
+                entry["problems"].append(f"group {number} has a replacement_note but the replacements are identical")
+            if not declared_owners(target):
+                entry["problems"].append(f"{targets[0]} has no qualified owner that could authorize a receiver")
+            entry["view"] = {"key": targets[0], "kind": target["kind"], "module": source["module"], "name": source["name"],
+                             "attribute": source["attribute"], "distribution": target["distribution"], "version": target["version"],
+                             "owners": sorted(declared_owners(target)), "replacement": target["replacement"],
+                             "block_sha256": block_sha256({k: v for k, v in target.items() if k not in ("name", "id")})}
+            merged.append(entry)
+    return merged
+
+
+def decode_release(raw: dict) -> dict:
+    """A release record as the receipt stores it, in the shape evaluate() and check_rows() take (rows: [module, owner, direct])."""
+    run = dict(raw)
+    rows = []
+    for row in raw.get("rows", []):
+        module, _, owner = row.rstrip("*").rpartition(".")
+        rows.append([module, owner, row.endswith("*")])
+    run["rows"] = rows
+    return run
+
+
+def expected_releases(recipe: dict, envs: dict) -> dict:
+    """role -> label of the environment of every release a record must hold: the first receiver, and each further one (`#n`), in every release."""
+    return {(role if number == 0 else f"{role}#{number}"): env.label()
+            for number in range(1 + len(recipe["extra"])) for role, env in envs.items()}
+
+
+def judge_releases(item: dict, recipe: dict, envs: dict, result: dict, grouped: dict, phantom_check: bool = True) -> list:
+    """The receiver runs of a record, judged again: the releases are exactly those the recipe and the verifying checks call for (each with
+    the stored identities the rule would have produced), the lookup behaves, the declared owner authorizes the receiver, and no other entry of
+    the knowledge base authorizes it."""
+    problems = []
+    expected = expected_releases(recipe, envs)
+    releases = result.get("releases")
+    releases = releases if isinstance(releases, dict) else {}
+    if set(releases) != set(expected):
+        problems.append(f"the record holds the releases {sorted(releases)}, expected {sorted(expected)}")
+    for role, label in expected.items():
+        if role in releases and releases[role].get("env") != label:
+            problems.append(f"release {role} ran in {releases[role].get('env')!r}, expected {label!r}")
+    runs = {role: decode_release(raw) for role, raw in releases.items() if role in expected}
+    problems += check_rows(item, runs, phantom_check)
+    for role, run in runs.items():
+        if "rows" not in run or "crash" in run or "setup_error" in run:
+            continue
+        if sorted(run.get("authorized_by", [])) != evaluate(item, run)["authorized_by"]:
+            problems.append(f"release {role}: the stored authorization differs from the one the rule gives for the stored identities")
+        if role.partition("#")[0] != "before" and run.get("access") == "AttributeError":
+            entries = authorizing_entries(grouped, item["attribute"], run)
+            if entries != [item["key"]]:
+                problems.append(f"release {role}: the receiver is authorized by {entries}, not by exactly {item['key']}")
+    return problems
+
+
+def judge_result(item: dict, recipe: dict, envs: dict, result: dict, grouped: dict, with_product: bool = True) -> list:
+    """Judge the record of one shipped key again from what it stores (`with_product`: the run of the product too)."""
+    problems = []
+    for field in ("key", "kind", "distribution", "version", "owners", "block_sha256"):
+        if result.get(field) != item[field]:
+            problems.append(f"the record's {field} ({result.get(field)!r}) is not that of the shipped block ({item[field]!r})")
+    if (result.get("recipe") != recipe["setup"] or result.get("extra_receivers") != recipe["extra"]
+            or result.get("recipe_sha256") != hashlib.sha256("\n@@\n".join([recipe["setup"], *recipe["extra"]]).encode("utf-8")).hexdigest()):
+        problems.append("the recipe of the record is not the recipe of recipes.toml")
+    problems += judge_releases(item, recipe, envs, result, grouped)
+    return problems + (judge_product_runs(item, recipe, envs, result) if with_product else [])
+
+
+def judge_product_runs(item: dict, recipe: dict, envs: dict, result: dict) -> list:
+    """The runs of FixFirst of a record: the release it was shown, the receiver (and each further one) and the project class of the same name."""
+    product = result.get("product")
+    if not isinstance(product, dict):
+        return ["the record holds no run of the product"]
+    problems = []
+    if product.get("release") != target_env(envs)[1]:
+        problems.append(f"the product ran in release {product.get('release')}, expected {target_env(envs)[1]}")
+    problems += judge_product(item, product.get("product")) + judge_twin(item, product.get("twin"))
+    extras = product.get("extra")
+    if not isinstance(extras, list) or len(extras) != len(recipe["extra"]):
+        problems.append(f"the product record holds {len(extras) if isinstance(extras, list) else 0} further receivers, the recipe has {len(recipe['extra'])}")
     else:
-        if twin.get("removal_owner"):
-            problems.append(f"a project class with the same name was authorized: {twin['removal_owner']}")
-        if any(i[1] == "version_incompatibility" for i in twin.get("issues", [])):
-            problems.append(f"a project class with the same name was diagnosed as a version incompatibility: {twin['issues']}")
+        for number, record in enumerate(extras, 1):
+            problems += [f"receiver {number}: {p}" for p in judge_product(item, record)]
+    return problems
+
+
+def judge_merged_result(entry: dict, recipe: dict, envs: dict, result: dict, grouped: dict, with_product: bool = True) -> list:
+    """Judge the record of a merged key again: the receiver of the MERGED key, authorized by the covering entry and by no other."""
+    problems = list(entry["problems"])
+    view = entry["view"]
+    if view is None:
+        return problems
+    for field, wanted in (("key", entry["key"]), ("target", entry["target"]), ("distribution", view["distribution"]), ("version", view["version"]),
+                          ("owners", view["owners"]), ("source_block_sha256", entry["source"]["block_sha256"]),
+                          ("target_block_sha256", view["block_sha256"]), ("replacement_note", entry["replacement_note"])):
+        if result.get(field) != wanted:
+            problems.append(f"the record's {field} ({result.get(field)!r}) is not {wanted!r}")
+    if (result.get("recipe") != recipe["setup"] or result.get("extra_receivers") != recipe["extra"]
+            or result.get("recipe_sha256") != hashlib.sha256("\n@@\n".join([recipe["setup"], *recipe["extra"]]).encode("utf-8")).hexdigest()):
+        problems.append("the recipe of the record is not the recipe of recipes.toml")
+    problems += judge_releases(view, recipe, envs, result, grouped, phantom_check=False)
+    return problems + (judge_product_runs(view, recipe, envs, result) if with_product else [])
+
+
+def audit_receipt(receipt: dict, items: list, recipes: list, index: dict, merged: list) -> list:
+    """Every problem the receipt has when it is judged again from the details it stores. [] means the verdict and the evidence agree.
+
+    items = load_items([shipped domain.toml]) (the blocks with owners), recipes = load_recipes(...), index = shipped_entries(domain.toml),
+    merged = load_merged(...). Nothing here needs the network or an interpreter other than this one."""
+    problems = []
+    if not isinstance(receipt, dict) or not isinstance(receipt.get("results"), list) or not isinstance(receipt.get("merged"), list):
+        return ["the receipt holds no list of results and no list of merged records"]
+    grouped = by_attribute(index)
+    results = [r for r in receipt["results"] if isinstance(r, dict)]
+    if len(results) != len(receipt["results"]):
+        problems.append("the receipt holds a result that is not a record")
+    seen = {}
+    for result in results:
+        seen.setdefault(result.get("key"), []).append(result)
+    for key, records in sorted(seen.items(), key=lambda pair: str(pair[0])):
+        if len(records) > 1:
+            problems.append(f"{key}: the receipt holds {len(records)} records of the key")
+    wanted = {item["key"] for item in items}
+    for key in sorted(set(seen) - wanted, key=str):
+        problems.append(f"{key}: a record of a key that is not shipped with owners")
+    for item in items:
+        records = seen.get(item["key"], [])
+        if not records:
+            problems.append(f"{item['key']}: has owners but no record")
+            continue
+        recipe = find_recipe(recipes, item["key"], strict=False)
+        if recipe is None:
+            problems.append(f"{item['key']}: no recipe")
+            continue
+        try:
+            found = judge_result(item, recipe, environments(item, recipe), records[0], grouped)
+        except Exception as error:      # a malformed record is a problem of the record, not a crash of the audit
+            found = [f"the record cannot be judged ({type(error).__name__}: {error})"]
+        if not isinstance(records[0], dict) or records[0].get("status") != "pass" or records[0].get("problems"):
+            found.append("the record is not a pass")
+        problems += [f"{item['key']}: {p}" for p in found]
+    records_of_merged = {}
+    for result in receipt["merged"]:
+        if not isinstance(result, dict):
+            problems.append("the receipt holds a merged result that is not a record")
+            continue
+        records_of_merged.setdefault(result.get("key"), []).append(result)
+    for key, records in sorted(records_of_merged.items(), key=lambda pair: str(pair[0])):
+        if len(records) > 1:
+            problems.append(f"{key}: the receipt holds {len(records)} merged records of the key")
+    for key in sorted(set(records_of_merged) - {m["key"] for m in merged}, key=str):
+        problems.append(f"{key}: a merged record of a key that no [[merged]] group names")
+    for entry in merged:
+        records = records_of_merged.get(entry["key"], [])
+        if not records:
+            problems.append(f"{entry['key']}: is merged but has no record")
+            continue
+        source = entry["source"]
+        recipe = find_recipe(recipes, entry["key"], strict=False) if source else None
+        if recipe is None:
+            problems.append(f"{entry['key']}: no recipe for the receiver of the merged key")
+            continue
+        try:
+            found = judge_merged_result(entry, recipe, environments(source, recipe), records[0], grouped)
+        except Exception as error:
+            found = [f"the record cannot be judged ({type(error).__name__}: {error})"]
+        if not isinstance(records[0], dict) or records[0].get("status") != "pass" or records[0].get("problems"):
+            found.append("the record is not a pass")
+        problems += [f"{entry['key']} (merged): {p}" for p in found]
+    summary = receipt.get("summary") if isinstance(receipt.get("summary"), dict) else {}
+    passed = sum(1 for r in results if r.get("status") == "pass")
+    merged_passed = sum(1 for records in records_of_merged.values() for r in records if r.get("status") == "pass")
+    for field, wanted_value in (("keys", len(items)), ("passed", passed), ("failed", len(results) - passed), ("e2e", True), ("reference", True)):
+        if summary.get(field) != wanted_value:
+            problems.append(f"summary.{field} is {summary.get(field)!r}, the records say {wanted_value!r}")
+    if summary.get("merged") != {"keys": len(merged), "passed": merged_passed}:
+        problems.append(f"summary.merged is {summary.get('merged')!r}, the records say {{'keys': {len(merged)}, 'passed': {merged_passed}}}")
+    if len(results) != len(items) or summary.get("failed") != 0:
+        problems.append("the receipt is not a complete pass")
     return problems
 
 
 # --------------------------------------------------------------------------------------------------
+def run_releases(ws, probe: str, item: dict, recipe: dict, envs: dict) -> dict:
+    """The receiver runs of one key: the recipe (and each further receiver, `#n`) in every release."""
+    runs = {}
+    for number, setup in enumerate([recipe["setup"], *recipe["extra"]]):
+        for role, env in envs.items():
+            name = role if number == 0 else f"{role}#{number}"
+            try:
+                runs[name] = run_recipe(ws, env, item, setup, probe)
+            except verify.MissingInterpreter as error:
+                runs[name] = {"env": env.label(), "crash": f"NOT CHECKED: {error}"}
+            except verify.EnvError as error:
+                runs[name] = {"env": env.label(), "crash": str(error)[:400]}
+    return runs
+
+
+def release_records(ws, item: dict, envs: dict, runs: dict) -> dict:
+    """The runs as the receipt stores them (redacted; rows as 'module.owner', '*' = the receiver's own class)."""
+    versions = ws.__dict__.setdefault("_owners_dists", {})
+
+    def dists(env) -> dict:
+        key = (env.python, env.pkgs, env.only_binary)
+        if key not in versions:
+            versions[key] = installed(ws, env)
+        return versions[key]
+
+    return {role: {**verify._clean({k: v for k, v in runs[role].items() if k != "rows"}),
+                   "rows": [f"{m}.{o}{'*' if d else ''}" for m, o, d in runs[role].get("rows", [])],
+                   "authorized_by": evaluate(item, runs[role])["authorized_by"] if "rows" in runs[role] else [],
+                   "dists": dists(envs[role.partition("#")[0]])} for role in runs}
+
+
+def recipe_fields(recipe: dict) -> dict:
+    return {"recipe_sha256": hashlib.sha256("\n@@\n".join([recipe["setup"], *recipe["extra"]]).encode("utf-8")).hexdigest(),
+            "recipe": recipe["setup"], "extra_receivers": recipe["extra"]}
+
+
+def extend_index(path: str, merge: list) -> dict:
+    """The removal index of the knowledge base the product runs on: the shipped one plus the blocks of --merge."""
+    index = shipped_entries(path)
+    for extra in merge:
+        for key, entry in shipped_entries(extra).items():
+            if key in index:
+                raise SystemExit(f"{extra}: {key} is already in the knowledge base copy")
+            index[key] = entry
+    return index
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--fixfirst-src", required=True, help="directory that contains the `fixfirst` package (read only)")
@@ -447,6 +850,11 @@ def main(argv=None) -> int:
     ap.add_argument("--merge", nargs="*", default=[], help="TOML file(s) merged into a COPY of the knowledge base before the product runs "
                                                            "(blocks that are not shipped yet)")
     ap.add_argument("--recipes", default=os.path.join(HERE, "owners", "recipes.toml"))
+    ap.add_argument("--dispositions", default=os.path.join(HERE, "owners", "dispositions.toml"),
+                    help="the [[merged]] groups of this file are verified too (reference run)")
+    ap.add_argument("--merged-candidates", default=os.path.join(HERE, "candidates", "candidates-parked.toml"),
+                    help="the file that holds the blocks the [[merged]] keys come from")
+    ap.add_argument("--no-merged", action="store_true", help="skip the merged keys")
     ap.add_argument("--only", default="", help="verify only keys that contain one of these texts (separated by '|')")
     ap.add_argument("--explore", action="store_true", help="print what the product sees for each key; do not judge")
     ap.add_argument("--explore-json", help="with --explore: also write every run to this JSON file")
@@ -457,11 +865,22 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     t0 = time.time()
     src = os.path.abspath(a.fixfirst_src)
-    probe = os.path.join(src, "fixfirst", "_runtime_evidence.py")
-    blocks = a.blocks or [os.path.join(src, "fixfirst", "knowledge", "domain.toml")]
+    package = os.path.join(src, "fixfirst")
+    probe = os.path.join(package, "_runtime_evidence.py")
+    domain_toml = os.path.join(package, "knowledge", "domain.toml")
+    blocks = a.blocks or [domain_toml]
     wanted = a.only.split("|")
+    # a reference run verifies every block of the shipped knowledge base that has owners, and every merged key, with the product
+    reference = not (a.blocks or a.merge or a.only or a.explore or a.no_e2e or a.no_merged or a.base)
     items = [i for i in load_items(blocks, a.explore) if any(text in i["key"] for text in wanted)]
     recipes = load_recipes(a.recipes)
+    index = extend_index(domain_toml, [os.path.abspath(p) for p in a.merge])
+    grouped = by_attribute(index)
+    merged = []
+    if not a.explore and not a.no_merged and not a.blocks:
+        candidates = {i["key"]: i for i in load_items([a.merged_candidates], True)}
+        dispositions = tomllib.loads(open(a.dispositions, encoding="utf-8").read())
+        merged = [m for m in load_merged(dispositions, candidates, index) if any(text in m["key"] or text in str(m["target"]) for text in wanted)]
     if a.base:
         os.makedirs(a.base, exist_ok=True)
         ws = PersistentWorkspace(base=os.path.abspath(a.base), keep=True)
@@ -478,23 +897,15 @@ def main(argv=None) -> int:
     out(f"generated   : {datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC by verify_owners.py")
     out(f"tooling     : {subprocess.run([verify.UV, '--version'], capture_output=True, text=True).stdout.strip()}; Python {sys.version.split()[0]}")
     out(f"keys        : {len(items)} from {', '.join(os.path.basename(b) for b in blocks)}")
-    records, results = {}, []
+    out(f"merged keys : {len(merged)}")
+    records, merged_records, results = {}, {}, []
     try:
         if a.explore:                       # blocks without a recipe (most of the shipped knowledge base) are simply not explored
             items = [i for i in items if find_recipe(recipes, i["key"], strict=False)]
         for number, item in enumerate(items, 1):
             recipe = find_recipe(recipes, item["key"])
             envs = environments(item, recipe)
-            runs = {}
-            for number_v, setup in enumerate([recipe["setup"], *recipe["extra"]]):
-                for role, env in envs.items():
-                    name = role if number_v == 0 else f"{role}#{number_v}"
-                    try:
-                        runs[name] = run_recipe(ws, env, item, setup, probe)
-                    except verify.MissingInterpreter as error:
-                        runs[name] = {"env": env.label(), "crash": f"NOT CHECKED: {error}"}
-                    except verify.EnvError as error:
-                        runs[name] = {"env": env.label(), "crash": str(error)[:400]}
+            runs = run_releases(ws, probe, item, recipe, envs)
             records[item["key"]] = (item, recipe, envs, runs)
             if not a.explore:
                 print(f"[{number}/{len(items)}] {item['key']}: {len(runs)} releases", file=sys.stderr, flush=True)
@@ -509,6 +920,13 @@ def main(argv=None) -> int:
                     out(f"    {role:7} {result['env']}: {result['access']}; type {'.'.join(result['type'])}; {flags}")
                     out(f"            rows: {shown}")
                     out(f"            providers: {result.get('providers')}")
+        for number, entry in enumerate(merged, 1):
+            if entry["view"] is None:
+                continue
+            recipe = find_recipe(recipes, entry["key"])
+            envs = environments(entry["source"], recipe)
+            merged_records[entry["key"]] = (entry, recipe, envs, run_releases(ws, probe, entry["source"], recipe, envs))
+            print(f"[merged {number}/{len(merged)}] {entry['key']} -> {entry['target']}", file=sys.stderr, flush=True)
     except BaseException:
         ws.close()
         raise
@@ -519,63 +937,106 @@ def main(argv=None) -> int:
         ws.close()
         return 0
 
-    problems_by_key = {key: check_rows(item, runs) for key, (item, recipe, envs, runs) in records.items()}
-    e2e = {}
+    product = {}
     if not a.no_e2e:
         out("\nrunning FixFirst on every key (this starts the target interpreters)")
         jobs = []
-        for key, (item, recipe, envs, runs) in records.items():
-            env, role = target_env(envs)
+        prepared = set()
+
+        def target_python(envs: dict) -> str:
+            env, _role = target_env(envs)
             python = ws.python_for(env)
-            subprocess.run([verify.UV, "pip", "install", "--quiet", "--python", python, "pip"], capture_output=True, env=ws.env_vars)
+            if python not in prepared:
+                subprocess.run([verify.UV, "pip", "install", "--quiet", "--python", python, "pip"], capture_output=True, env=ws.env_vars)
+                prepared.add(python)
+            return python
+
+        for key, (item, recipe, envs, runs) in records.items():
+            python = target_python(envs)
             jobs.append({"id": key, "python": python, "code": e2e_code(item, recipe["setup"])})
             for number_v, setup in enumerate(recipe["extra"], 1):
                 jobs.append({"id": f"{key}#{number_v}", "python": python, "code": e2e_code(item, setup)})
             jobs.append({"id": "twin:" + key, "python": python, "code": twin_code(item)})
+        for key, (entry, recipe, envs, runs) in merged_records.items():
+            python = target_python(envs)
+            jobs.append({"id": "merged:" + key, "python": python, "code": e2e_code(entry["view"], recipe["setup"])})
+            for number_v, setup in enumerate(recipe["extra"], 1):
+                jobs.append({"id": f"merged:{key}#{number_v}", "python": python, "code": e2e_code(entry["view"], setup)})
+            jobs.append({"id": "mtwin:" + key, "python": python, "code": twin_code(entry["source"])})
         src_copy = prepare_source(ws, src, [os.path.abspath(p) for p in a.merge])
         product = run_product(ws, src_copy, jobs)
-        for key, (item, recipe, envs, runs) in records.items():
-            problems_by_key[key] += judge_e2e(item, product.get(key, {"error": "no result"}), product.get("twin:" + key))
-            extra = [product.get(f"{key}#{n}", {"error": "no result"}) for n in range(1, len(recipe["extra"]) + 1)]
-            for number_v, record in enumerate(extra, 1):
-                problems_by_key[key] += [f"receiver {number_v}: {p}" for p in judge_e2e(item, record, product.get("twin:" + key))
-                                         if "project class" not in p]
-            e2e[key] = {"release": target_env(envs)[1], "product": product.get(key), "twin": product.get("twin:" + key), "extra": extra}
+
+    def product_record(prefix: str, twin_prefix: str, key: str, envs: dict, recipe: dict):
+        if a.no_e2e:
+            return None
+        extra = [product.get(f"{prefix}{key}#{n}", {"error": "no result"}) for n in range(1, len(recipe["extra"]) + 1)]
+        return verify._clean({"release": target_env(envs)[1], "product": product.get(prefix + key, {"error": "no result"}),
+                              "twin": product.get(twin_prefix + key, {"error": "no result"}), "extra": extra})
 
     failed = 0
     for key, (item, recipe, envs, runs) in records.items():
-        problems = problems_by_key[key]
-        status = "pass" if not problems else "fail"
+        result = {"key": key, "kind": item["kind"], "distribution": item["distribution"], "version": item["version"], "owners": item["owners"],
+                  "block_sha256": item["block_sha256"], **recipe_fields(recipe), "status": None, "problems": None,
+                  "releases": release_records(ws, item, envs, runs), "product": product_record("", "twin:", key, envs, recipe)}
+        problems = judge_result(item, recipe, envs, result, grouped, with_product=not a.no_e2e)
+        result["status"], result["problems"] = ("pass" if not problems else "fail"), verify._clean(problems)
         failed += bool(problems)
-        out(f"\n{status.upper():5} {key}  owners={item['owners']}")
-        for role, result in runs.items():
-            if "rows" in result:
-                verdict = evaluate(item, result)
-                out(f"      {role:7} {result['env']}: {result['access']}; authorized by {verdict['authorized_by'] or 'nobody'}")
+        out(f"\n{result['status'].upper():5} {key}  owners={item['owners']}")
+        for role, release in result["releases"].items():
+            if "rows" in runs[role]:
+                out(f"      {role:7} {release['env']}: {release['access']}; authorized by {release['authorized_by'] or 'nobody'}")
         for problem in problems:
             out(f"      PROBLEM: {problem}")
-        results.append({
-            "key": key, "kind": item["kind"], "distribution": item["distribution"], "version": item["version"], "owners": item["owners"],
-            "block_sha256": item["block_sha256"], "recipe_sha256": hashlib.sha256("\n@@\n".join([recipe["setup"], *recipe["extra"]]).encode("utf-8")).hexdigest(),
-            "recipe": recipe["setup"], "extra_receivers": recipe["extra"], "status": status, "problems": verify._clean(problems),
-            "releases": {role: {**verify._clean({k: v for k, v in runs[role].items() if k != "rows"}),
-                                "rows": [f"{m}.{o}{'*' if d else ''}" for m, o, d in runs[role].get("rows", [])],
-                                "authorized_by": evaluate(item, runs[role])["authorized_by"] if "rows" in runs[role] else [],
-                                "dists": installed(ws, envs[role.partition("#")[0]])} for role in runs},
-            "product": verify._clean(e2e.get(key)) if e2e else None})
-    out(f"\n{len(records) - failed} of {len(records)} keys passed in {time.time() - t0:.0f} s")
+        results.append(result)
+    merged_results = []
+    for entry in merged:
+        view = entry["view"]
+        if entry["key"] not in merged_records:        # the relation itself is wrong: there is nothing to run
+            out(f"\nFAIL  {entry['key']} (merged)")
+            for problem in entry["problems"]:
+                out(f"      PROBLEM: {problem}")
+            failed += 1
+            continue
+        _entry, recipe, envs, runs = merged_records[entry["key"]]
+        result = {"key": entry["key"], "target": entry["target"], "group": entry["group"], "kind": view["kind"],
+                  "distribution": view["distribution"], "version": view["version"], "owners": view["owners"],
+                  "source_block_sha256": entry["source"]["block_sha256"], "target_block_sha256": view["block_sha256"],
+                  "replacement_note": entry["replacement_note"], **recipe_fields(recipe), "status": None, "problems": None,
+                  "releases": release_records(ws, view, envs, runs), "product": product_record("merged:", "mtwin:", entry["key"], envs, recipe)}
+        problems = judge_merged_result(entry, recipe, envs, result, grouped, with_product=not a.no_e2e)
+        result["status"], result["problems"] = ("pass" if not problems else "fail"), verify._clean(problems)
+        failed += bool(problems)
+        out(f"\n{result['status'].upper():5} {entry['key']} (merged into {entry['target']})")
+        for role, release in result["releases"].items():
+            if "rows" in runs[role]:
+                out(f"      {role:7} {release['env']}: {release['access']}; authorized by {release['authorized_by'] or 'nobody'}")
+        for problem in problems:
+            out(f"      PROBLEM: {problem}")
+        merged_results.append(result)
+    passed_merged = sum(1 for r in merged_results if r["status"] == "pass")
+    out(f"\n{len(records) - sum(1 for r in results if r['status'] != 'pass')} of {len(records)} keys and "
+        f"{passed_merged} of {len(merged)} merged keys passed in {time.time() - t0:.0f} s")
     if a.receipts:
-        text = json.dumps({
-            "summary": {"keys": len(records), "passed": len(records) - failed, "failed": failed, "e2e": not a.no_e2e},
+        receipt = {
+            "summary": {"keys": len(records), "passed": sum(1 for r in results if r["status"] == "pass"),
+                        "failed": sum(1 for r in results if r["status"] != "pass"), "e2e": not a.no_e2e, "reference": reference,
+                        "merged": {"keys": len(merged), "passed": passed_merged}},
             "tool": {"verify_owners_py_sha256": hashlib.sha256(open(__file__, "rb").read().replace(b"\r\n", b"\n")).hexdigest(),
                      "recipes_sha256": hashlib.sha256(open(a.recipes, "rb").read().replace(b"\r\n", b"\n")).hexdigest(),
-                     "identity_functions_sha256": identity_functions_sha256(probe),
+                     **product_digests(package),
                      "generated": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"), "python": sys.version.split()[0]},
-            "results": results}, indent=1, ensure_ascii=False) + "\n"
+            "results": results, "merged": merged_results}
+        text = json.dumps(receipt, indent=1, ensure_ascii=False) + "\n"
         leaked = verify.leaked_paths(text)
         if leaked:
             out(f"LEAK: the receipt contains local paths: {leaked[:3]}")
             failed += 1
+        if reference:       # judge the receipt as it is stored, with the functions the offline tests use
+            audit = audit_receipt(json.loads(text), load_items([domain_toml], False), recipes, index, merged)
+            for problem in audit:
+                out(f"AUDIT: {problem}")
+            out(f"audit of the stored receipt: {len(audit)} problems")
+            failed += bool(audit)
         with open(a.receipts, "w", encoding="utf-8") as stream:
             stream.write(text)
     ws.close()

@@ -1,9 +1,13 @@
 # What became of the 114 verified candidates of candidates/candidates-parked.toml (see verify_owners.py and the README).
 #
 # enabled   the block is in domain.toml with `owners` (every key of it has a passing record in the owners receipt);
-# merged    not enabled because an enabled entry already covers the same removal (covered_by);
+# merged    not enabled because an enabled entry already covers the same removal (`covered_by`). The covering entry is the one of `covered_by`
+#           that ends in the same attribute; it must have the same distribution, removal version and source as the merged key, and the same
+#           replacement or a `replacement_note` that says why not. verify_owners.py verifies every merged key with the receiver of its own
+#           class (the `merged` section of the owners receipt): every release authorizes it through the covering entry and no other, and
+#           FixFirst authorizes exactly that entry;
 # parked    still in src/fixfirst/knowledge/pending_attribution.toml, with the reason.
-# tests/test_knowledge_owners.py checks that every candidate key has exactly one of these states.
+# tests/test_knowledge_owners.py checks that every candidate key has exactly one of these states, and that nothing is listed twice.
 
 [[merged]]
 keys = ["api:DiGraph.node", "api:DiGraph.selfloop_edges", "api:DiGraph.nodes_with_selfloops", "api:DiGraph.number_of_selfloops", "api:DiGraph.add_path", "api:DiGraph.add_cycle", "api:DiGraph.add_star"]
@@ -29,16 +33,12 @@ why = "TfidfVectorizer inherits get_feature_names from CountVectorizer; the Coun
 keys = ["api:Engine.execute"]
 covered_by = ["attribute:sqlalchemy.engine.base.Engine.execute"]
 why = "Engine.execute is already enabled as attribute:sqlalchemy.engine.base.Engine.execute with the same removal and source; a second entry would show the step twice."
+replacement_note = "Both texts give the same remedy (an explicit connection: with engine.connect() as connection, connection.execute(text(sql), parameters), engine.begin() for statements that must commit, bound parameters); the enabled entry spells out the text() import and is the one the product shows."
 
 [[parked]]
 title = "matplotlib Axes.ArtistList"
 keys = ["api:ArtistList.append", "api:ArtistList.clear", "api:ArtistList.extend", "api:ArtistList.insert", "api:ArtistList.pop", "api:ArtistList.remove"]
 why = "ArtistList is a class nested in _AxesBase (qualified name _AxesBase.ArtistList). The product records the class of a receiver only when a module holds it under its qualified name (class_identity), so no owner can ever match it."
-
-[[parked]]
-title = "SQLAlchemy expression and Query classes"
-keys = ["api:CompoundSelect.c", "api:CompoundSelect.columns", "api:CompoundSelect.select", "api:Delete.execute", "api:Insert.execute", "api:Query.from_self", "api:Select.apply_labels", "api:Select.c", "api:Select.columns", "api:Select.execute", "api:Select.select", "api:Table.exists", "api:TextualSelect.c", "api:TextualSelect.columns", "api:TextualSelect.select", "api:Update.execute"]
-why = "The receiver's class has more than 16 base classes (SQLAlchemy 2.1: Table 41, Select 44, Insert 34, Update 35, Delete 34, CompoundSelect 39, TextualSelect 34, Query 20), and the product's receiver probe records no identity beyond 16 (receiver_owners and static_namespace in fixfirst/_runtime_evidence.py). Two further caps stop the same classes: receiver_owners drops the whole set when it would hold 32 or more alias rows, and symbol_context.valid_record accepts at most 32 rows. With the three caps raised (64, 512, 512) in a scratch copy, all 16 keys of these classes pass verify_owners.py, FixFirst's own run included, with owners such as sqlalchemy.Select and sqlalchemy.sql.selectable.Select; the caps are a product decision."
 
 [[parked]]
 title = "Django settings"
