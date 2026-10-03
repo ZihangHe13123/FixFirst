@@ -14,11 +14,13 @@ def _statement_matches(statement, record):
     tree = _tree(statement)
     if tree is None:
         return False
-    if record["operation"] == "IMPORT_FROM":
+    if record["operation"] in ("IMPORT_FROM", "IMPORT_NAME"):
         node = tree.body[0]
         return (isinstance(node, ast.ImportFrom) and not node.level
                 and node.module == record["module"]
-                and sum(a.name == record["name"] for a in node.names) == 1)
+                and sum(a.name == record["name"] for a in node.names) == 1
+                and (record["operation"] != "IMPORT_NAME"
+                     or [a.name for a in node.names] == record["import_getattr"]["fromlist"]))
     if record["kind"] in ("builtin_call", "python_binding", "builtin_binding"):
         nodes = [n for n in ast.walk(tree) if isinstance(n, ast.Call)]
         return (len(nodes) == 1 and isinstance(nodes[0].func, (ast.Name, ast.Attribute))
@@ -29,7 +31,7 @@ def _statement_matches(statement, record):
     return len(nodes) == 1
 
 
-def context(session, issue, evidence):
+def context(session, issue, evidence, *, allow_dynamic=False, allow_present=False):
     """Select one executed exception and its same-run statement, retaining indices.
 
 Grouped failures spanning runs/operations remain ambiguous. In particular, an
@@ -94,13 +96,14 @@ old carried event must not donate metadata to a newer failure's traceback.
         "static_namespace_checked", "requested_member_present", "dynamic", "unique", "candidates",
         "argument_count_given", "argument_count_expected", "argument_types", "callee_name",
         "parameters", "positional_count", "keyword_names", "binding_errors", "definition_file",
-        "definition_line") if k in record}
+        "definition_line", "receiver_owners", "import_getattr") if k in record}
     record["candidates"] = [{"name": row["name"], "relation": row["relation"]} for row in record["candidates"]]
     result.update(record=record, symbol_record_ref=ref, refs=[ref])
-    if record["dynamic"]:
+    if record["dynamic"] and not allow_dynamic:
         result["status"] = "dynamic_receiver"
         return result
-    if record["kind"] not in ("builtin_call", "python_binding", "builtin_binding") and record["requested_member_present"]:
+    if (record["kind"] not in ("builtin_call", "python_binding", "builtin_binding")
+            and record["requested_member_present"] and not allow_present):
         result["status"] = "member_present"
         return result
     location = f"{shown_path(record['file'], session.project_root)}:{record['line']}"

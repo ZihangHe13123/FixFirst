@@ -154,6 +154,28 @@ def contradicts(specifier: str) -> bool:
     return lo[0] > hi[0] or (lo[0] == hi[0] and not (lo[1] and hi[1]))
 
 
+def range_side(specifier: str, lower: str, upper: str) -> str | None:
+    """Prove which side of [lower, upper) a nonempty stable interval occupies.
+
+    Keep exclusions, arbitrary equality and non-final versions inconclusive:
+    ``contradicts`` does not prove their remaining interval is nonempty.
+    """
+    specs = list(SpecifierSet(specifier))
+    for spec in specs:
+        if spec.operator not in {"<", "<=", ">", ">=", "==", "~="}:
+            return None
+        version = Version(spec.version.removesuffix(".*"))
+        if version.epoch or version.is_prerelease or version.is_postrelease or version.local:
+            return None
+    if not specs or contradicts(f"{specifier},>=0"):
+        return None
+    below = contradicts(f"{specifier},>={lower}")
+    above = contradicts(f"{specifier},<{upper}")
+    if below != above:
+        return "below" if below else "above"
+    return None
+
+
 def bounded_adjustment(specifier: str, installed: str) -> str:
     """Bound an otherwise open upgrade to one release family, not a proven fix."""
     specs = list(SpecifierSet(specifier))

@@ -6,6 +6,11 @@ paths are replaced. `playground/`, `demo/` and `execution-demo/` were re-recorde
 with 0.5 gives the same results. HTML reports are static and never run anything. Each report has its session
 JSON and evidence-graph JSON next to it.
 
+These are saved experiments with their original parser output and evaluation settings. They
+have not been recomputed for the v0.8 integration candidate. The toolchain experiment retrained
+a tree for its evaluation; its numbers must not be described as a fresh evaluation of the
+bundled model or compared with a different feature layout without identifying that difference.
+
 | Folder | What it is | Start with |
 |---|---|---|
 | `playground/` | Four faults, four root causes, fixed step by step; the best overview of the product | `01-first-scan.html` |
@@ -13,6 +18,8 @@ JSON and evidence-graph JSON next to it.
 | `diagnosis-dataset/` | 215 executed single-fault cases (5 templates × 43 scenarios) with labels; `environment.json` is the shared interpreter snapshot | `manifest.json` |
 | `hard-dataset/` | 30 executed hard cases (5 templates × 6 scenarios): documented behaviour changes of installed libraries (NumPy 2, PyYAML 6, pydantic 2, Click 8.2) and a two-layer fault; never used to train the tree, but H07 and H08 were written after seeing them, so they are development data | `manifest.json` |
 | `hard-evaluation/` | Diagnosis on the hard cases with the tree trained on the 215 cases; `before/` leaves out the heuristics H07 and H08, which were written after seeing these cases | `REPORT.md` |
+| `toolchain-dataset/` | 98 executed cases (21 scenarios in 4 families, one sub-dataset per pinned environment): an old test tool crashing on Python 3.12, libraries 3.12 no longer supports, `pkg_resources` missing or removed, Django not configured. Every case's fix was run for real. Written after the 2026-10 held-out run, so development data; `manifest.json` also lists the 5 cases only seen as an unparsed `tool_failure` | `manifest.json` |
+| `toolchain-evaluation/` | Saved development evaluation on 98 cases / 108 issues, with a tree retrained on the 215 main-set cases; this is not a held-out result or a new run of the current candidate | `REPORT.md` |
 | `demo/` | Import error + style finding: fixing style alone does not close the import issue | `01-failure.html` |
 | `execution-demo/` | Failing tests: a selected-node pass, a skipped test that is *not* a fix, full recovery | `01-two-failures.html` |
 | `dependency-demo/` | `pip check` passes but the project's declaration is not met | `01-broken.html` |
@@ -29,6 +36,8 @@ JSON and evidence-graph JSON next to it.
 .venv/bin/fixfirst evaluate examples/diagnosis-dataset --output workbench/re-evaluation  # no execution
 .venv/bin/fixfirst dataset --suite hard --output workbench/my-hard                    # ~30 seconds
 .venv/bin/fixfirst evaluate examples/hard-dataset --train examples/diagnosis-dataset --output workbench/hard-eval
+.venv/bin/fixfirst dataset --suite toolchain --output workbench/my-toolchain          # needs uv and network, ~1 minute
+.venv/bin/fixfirst evaluate examples/toolchain-dataset --train examples/diagnosis-dataset --output workbench/toolchain-eval
 .venv/bin/python scripts/record_playground.py --output workbench/my-playground
 .venv/bin/fixfirst historical --assets examples/historical-regressions/assets --output workbench/my-replay
 ```

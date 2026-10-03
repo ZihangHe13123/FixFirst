@@ -1,0 +1,665 @@
+# Receiver recipes for scripts/knowledge_verify/verify_owners.py
+#
+# A removal block with `owners` says: when an object of one of these library classes lacks attribute N, the library removed N in
+# version V. A recipe builds `obj`, a real object of such a class, in a throwaway environment of that library. verify_owners.py runs it
+#   * in the last release that still has the attribute (the attribute must exist),
+#   * in the first release without it and in later releases (the lookup must raise AttributeError and the product's own receiver_owners()
+#     must name the declared owner), and then lets FixFirst diagnose a script that ends in `obj.<name>`.
+#
+# keys     full knowledge keys ("api:Engine.execute", "attribute:readfp") or fnmatch patterns; an exact key wins over a pattern, and a key
+#          that matches two patterns is an error. `{cls}` in keys and setup expands once for every entry of `classes`.
+# include  names of [snippets] prepended to the setup.
+# extra    further setups, each building another receiver (`obj`) for the same keys: a block with several owners needs a receiver for each.
+# before / after / later
+#          optional environment overrides ([python, *pip requirements]); by default they come from the check of verify.py that covers the key.
+#
+# The environments of a check are the ones that proved the removal; they carry the helper packages a recipe needs (openpyxl, reportlab, ...).
+
+[snippets]
+django = '''
+import django
+from django.conf import settings
+settings.configure(SECRET_KEY='x', INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth', 'django.contrib.admin', 'django.contrib.sessions', 'django.contrib.messages'], DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}}, TEMPLATES=[{'BACKEND': 'django.template.backends.django.DjangoTemplates', 'APP_DIRS': True}])
+django.setup()
+'''
+matplotlib = '''
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+'''
+sklearn = '''
+import numpy as np
+rng = np.random.RandomState(0)
+X = rng.rand(40, 4)
+y = rng.randint(0, 2, size=40)
+yr = rng.rand(40)
+'''
+pillow = '''
+import os, reportlab
+from PIL import Image, ImageDraw, ImageFont
+font = ImageFont.truetype(os.path.join(os.path.dirname(reportlab.__file__), 'fonts', 'Vera.ttf'), 24)
+'''
+
+# ------------------------------------------------------------------------------------------------ Python standard library
+
+[[recipe]]
+keys = ["attribute:readfp"]
+setup = '''
+import configparser
+obj = configparser.ConfigParser()
+'''
+
+[[recipe]]
+keys = ["attribute:failUnlessAlmostEqual", "attribute:failIfAlmostEqual"]
+setup = '''
+import unittest
+class T(unittest.TestCase):
+    def runTest(self):
+        pass
+obj = T()
+'''
+
+# these fourteen names were enabled before the October additions and have no check of verify.py: the environments are given here
+[[recipe]]
+keys = ["attribute:assertEquals", "attribute:assertNotEquals", "attribute:assertAlmostEquals", "attribute:assertNotAlmostEquals",
+        "attribute:assert_", "attribute:failUnless", "attribute:failIf", "attribute:failUnlessEqual", "attribute:failIfEqual",
+        "attribute:failUnlessRaises", "attribute:assertRegexpMatches", "attribute:assertRaisesRegexp",
+        "attribute:assertNotRegexpMatches", "attribute:assertDictContainsSubset"]
+before = ["3.11"]
+after = ["3.12"]
+later = [["3.13"], ["3.14"]]
+setup = '''
+import unittest
+class T(unittest.TestCase):
+    def runTest(self):
+        pass
+obj = T()
+'''
+
+[[recipe]]
+keys = ["attribute:link_to"]
+setup = '''
+import pathlib
+obj = pathlib.Path('x')
+'''
+
+[[recipe]]
+keys = ["api:EntryPoints.*"]
+setup = '''
+import importlib.metadata as m
+obj = m.entry_points()
+'''
+
+[[recipe]]
+keys = ["api:Constant.*"]
+setup = '''
+import ast
+obj = ast.Constant('x')
+'''
+
+[[recipe]]
+keys = ["attribute:isAlive"]
+setup = '''
+import threading
+obj = threading.Thread(target=print)
+'''
+
+[[recipe]]
+keys = ["api:HTMLParser.*"]
+setup = '''
+from html.parser import HTMLParser
+obj = HTMLParser()
+'''
+
+[[recipe]]
+keys = ["api:ElementTree.*"]
+setup = '''
+import xml.etree.ElementTree as ET
+obj = ET.ElementTree(ET.Element('a'))
+'''
+
+[[recipe]]
+keys = ["attribute:xml.etree.ElementTree.Element.*"]
+setup = '''
+import xml.etree.ElementTree as ET
+obj = ET.Element('a')
+'''
+
+[[recipe]]
+keys = ["attribute:array.array.*"]
+setup = '''
+import array
+obj = array.array('b', b'ab')
+'''
+
+# ------------------------------------------------------------------------------------------------ NumPy
+
+[[recipe]]
+keys = ["attribute:numpy.ndarray.itemset", "attribute:numpy.ndarray.tostring"]
+setup = '''
+import numpy as np
+obj = np.zeros(3)
+'''
+
+# enabled before the October additions; no check of verify.py
+[[recipe]]
+keys = ["attribute:numpy.ndarray.ptp", "attribute:numpy.ndarray.newbyteorder"]
+before = ["3.12", "numpy==1.26.4"]
+after = ["3.12", "numpy==2.0.0"]
+later = [["3.12", "numpy"]]
+setup = '''
+import numpy as np
+obj = np.zeros(3)
+'''
+
+[[recipe]]
+keys = ["api:NpzFile.*"]
+setup = '''
+import io
+import numpy as np
+buf = io.BytesIO()
+np.savez(buf, a=np.arange(3))
+buf.seek(0)
+obj = np.load(buf)
+'''
+
+# ------------------------------------------------------------------------------------------------ SciPy
+
+[[recipe]]
+classes = ["csr_matrix", "csc_matrix", "coo_matrix", "lil_matrix", "dok_matrix", "dia_matrix", "bsr_matrix"]
+keys = ["api:{cls}.*"]
+setup = '''
+import scipy.sparse as sp
+obj = sp.{cls}([[1, 2], [3, 4]])
+'''
+
+# ------------------------------------------------------------------------------------------------ pandas
+
+[[recipe]]
+keys = ["api:DataFrame.iteritems", "api:DataFrame.lookup", "api:DataFrame.mad", "api:DataFrame.applymap", "api:DataFrame.first",
+        "api:DataFrame.last"]
+setup = '''
+import pandas as pd
+obj = pd.DataFrame({'a': [1.0, 2.0], 'b': [3, 4]}, index=pd.date_range('2020', periods=2))
+'''
+
+# enabled before the October additions; no check of verify.py
+[[recipe]]
+keys = ["api:DataFrame.append"]
+before = ["3.11", "pandas==1.5.3", "numpy<2"]
+after = ["3.11", "pandas==2.0.0", "numpy<2"]
+later = [["3.12", "pandas==2.3.3"], ["3.12", "pandas"]]
+setup = '''
+import pandas as pd
+obj = pd.DataFrame({'a': [1.0, 2.0], 'b': [3, 4]})
+'''
+
+[[recipe]]
+keys = ["api:Series.*"]
+setup = '''
+import pandas as pd
+obj = pd.Series([1.5, 2.5])
+'''
+
+[[recipe]]
+keys = ["api:Index.*"]
+setup = '''
+import pandas as pd
+obj = pd.Index([1, 2])
+'''
+
+[[recipe]]
+keys = ["api:DatetimeProperties.*"]
+setup = '''
+import pandas as pd
+obj = pd.Series(pd.date_range('2020', periods=2)).dt
+'''
+
+[[recipe]]
+keys = ["api:OpenpyxlWriter.*"]
+setup = '''
+import io
+import pandas as pd
+obj = pd.ExcelWriter(io.BytesIO(), engine='openpyxl')
+'''
+
+[[recipe]]
+keys = ["api:XlsxWriter.*"]
+setup = '''
+import io
+import pandas as pd
+obj = pd.ExcelWriter(io.BytesIO(), engine='xlsxwriter')
+'''
+
+[[recipe]]
+keys = ["api:Styler.*"]
+setup = '''
+import pandas as pd
+obj = pd.DataFrame({'a': [1.0, 2.0], 'b': [3, 4]}).style
+'''
+
+# ------------------------------------------------------------------------------------------------ scikit-learn
+
+[[recipe]]
+keys = ["api:CountVectorizer.*"]
+setup = '''
+from sklearn.feature_extraction.text import CountVectorizer
+obj = CountVectorizer().fit(['apple banana', 'banana cherry'])
+'''
+
+[[recipe]]
+keys = ["api:TfidfVectorizer.*"]
+setup = '''
+from sklearn.feature_extraction.text import TfidfVectorizer
+obj = TfidfVectorizer().fit(['apple banana', 'banana cherry'])
+'''
+
+[[recipe]]
+include = ["sklearn"]
+keys = ["api:RandomForestClassifier.*"]
+setup = '''
+from sklearn.ensemble import RandomForestClassifier
+obj = RandomForestClassifier().fit(X, y)
+'''
+
+[[recipe]]
+include = ["sklearn"]
+keys = ["api:RandomForestRegressor.*"]
+setup = '''
+from sklearn.ensemble import RandomForestRegressor
+obj = RandomForestRegressor().fit(X, yr)
+'''
+
+[[recipe]]
+include = ["sklearn"]
+keys = ["api:DecisionTreeClassifier.*"]
+setup = '''
+from sklearn.tree import DecisionTreeClassifier
+obj = DecisionTreeClassifier().fit(X, y)
+'''
+
+[[recipe]]
+include = ["sklearn"]
+keys = ["api:RFECV.*"]
+setup = '''
+from sklearn.feature_selection import RFECV
+from sklearn.linear_model import LogisticRegression
+obj = RFECV(LogisticRegression(), cv=3).fit(X, y)
+'''
+
+[[recipe]]
+include = ["sklearn"]
+keys = ["api:GaussianNB.*"]
+setup = '''
+from sklearn.naive_bayes import GaussianNB
+obj = GaussianNB().fit(X, y)
+'''
+
+[[recipe]]
+keys = ["attribute:_validate_data"]
+setup = '''
+from sklearn.base import BaseEstimator
+class E(BaseEstimator):
+    def fit(self, X, y=None):
+        return self
+obj = E()
+'''
+
+# ------------------------------------------------------------------------------------------------ matplotlib
+
+[[recipe]]
+include = ["matplotlib"]
+keys = ["attribute:set_window_title", "attribute:get_window_title"]
+setup = '''
+fig = plt.figure()
+obj = fig.canvas
+'''
+
+# the block names two owners: the canvas and the renderer both lost tostring_rgb, so the second one needs its own receiver
+[[recipe]]
+include = ["matplotlib"]
+keys = ["attribute:tostring_rgb"]
+setup = '''
+fig, ax = plt.subplots()
+fig.canvas.draw()
+obj = fig.canvas
+'''
+extra = ['''
+fig, ax = plt.subplots()
+fig.canvas.draw()
+obj = fig.canvas.get_renderer()
+''']
+
+[[recipe]]
+include = ["matplotlib"]
+keys = ["api:ArtistList.append", "api:ArtistList.extend", "api:ArtistList.insert", "api:ArtistList.pop", "api:ArtistList.remove"]
+setup = '''
+fig, ax = plt.subplots()
+ax.plot([1, 2])
+obj = ax.lines
+'''
+
+[[recipe]]
+include = ["matplotlib"]
+keys = ["api:ArtistList.clear"]
+setup = '''
+fig, ax = plt.subplots()
+ax.scatter([1], [1])
+obj = ax.collections
+'''
+
+[[recipe]]
+include = ["matplotlib"]
+keys = ["api:XTick.*"]
+setup = '''
+fig, ax = plt.subplots()
+fig.canvas.draw()
+obj = ax.xaxis.get_major_ticks()[0]
+'''
+
+[[recipe]]
+include = ["matplotlib"]
+keys = ["api:YTick.*"]
+setup = '''
+fig, ax = plt.subplots()
+fig.canvas.draw()
+obj = ax.yaxis.get_major_ticks()[0]
+'''
+
+[[recipe]]
+include = ["matplotlib"]
+keys = ["api:Axes3D.*"]
+setup = '''
+fig = plt.figure()
+obj = fig.add_subplot(projection='3d')
+'''
+
+[[recipe]]
+include = ["matplotlib"]
+keys = ["api:Colorbar.*"]
+setup = '''
+fig, ax = plt.subplots()
+obj = fig.colorbar(ax.imshow([[0, 1], [1, 0]]))
+'''
+
+[[recipe]]
+include = ["matplotlib"]
+keys = ["api:Legend.*"]
+setup = '''
+fig, ax = plt.subplots()
+ax.plot([1, 2], label='a')
+obj = ax.legend()
+'''
+
+[[recipe]]
+include = ["matplotlib"]
+keys = ["api:QuadContourSet.*"]
+setup = '''
+import numpy as np
+fig, ax = plt.subplots()
+obj = ax.contourf(np.arange(9.0).reshape(3, 3))
+'''
+
+[[recipe]]
+include = ["matplotlib"]
+keys = ["api:TriContourSet.*"]
+setup = '''
+fig, ax = plt.subplots()
+obj = ax.tricontour([0, 1, 0, 1], [0, 0, 1, 1], [1, 2, 3, 4])
+'''
+
+[[recipe]]
+include = ["matplotlib"]
+keys = ["api:Axes.*"]
+setup = '''
+fig, ax = plt.subplots()
+obj = ax
+'''
+
+# ------------------------------------------------------------------------------------------------ Flask, Werkzeug, Django
+
+[[recipe]]
+keys = ["api:Config.*"]
+setup = '''
+import flask
+obj = flask.Flask(__name__).config
+'''
+
+[[recipe]]
+keys = ["api:Flask.*"]
+setup = '''
+import flask
+obj = flask.Flask(__name__)
+'''
+
+[[recipe]]
+keys = ["api:Blueprint.*"]
+setup = '''
+import flask
+obj = flask.Blueprint('bp', __name__)
+'''
+
+[[recipe]]
+keys = ["api:Request.*"]
+setup = '''
+from werkzeug.wrappers import Request
+from werkzeug.test import create_environ
+obj = Request(create_environ())
+'''
+
+[[recipe]]
+keys = ["api:FlaskClient.*"]
+setup = '''
+import flask
+obj = flask.Flask(__name__).test_client()
+'''
+
+[[recipe]]
+keys = ["api:Library.*"]
+setup = '''
+from django import template
+obj = template.Library()
+'''
+
+[[recipe]]
+keys = ["api:EmailValidator.*"]
+setup = '''
+from django.core.validators import EmailValidator
+obj = EmailValidator()
+'''
+
+[[recipe]]
+include = ["django"]
+keys = ["attribute:is_ajax"]
+setup = '''
+from django.http import HttpRequest
+obj = HttpRequest()
+'''
+
+[[recipe]]
+include = ["django"]
+keys = ["attribute:make_random_password"]
+setup = '''
+from django.contrib.auth.models import User
+obj = User.objects
+'''
+
+[[recipe]]
+include = ["django"]
+keys = ["attribute:assertQuerysetEqual", "attribute:assertFormsetError"]
+setup = '''
+from django.test import TestCase
+class T(TestCase):
+    def test_x(self):
+        pass
+obj = T('test_x')
+'''
+
+[[recipe]]
+keys = ["api:Settings.*"]
+setup = '''
+import sys, types, os
+m = types.ModuleType('ff_settings')
+m.SECRET_KEY = 'x'
+m.INSTALLED_APPS = ['django.contrib.contenttypes', 'django.contrib.auth']
+m.DATABASES = {'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}}
+m.TEMPLATES = [{'BACKEND': 'django.template.backends.django.DjangoTemplates', 'APP_DIRS': True}]
+m.STATIC_URL = '/static/'
+sys.modules['ff_settings'] = m
+os.environ['DJANGO_SETTINGS_MODULE'] = 'ff_settings'
+import django
+django.setup()
+from django.conf import settings
+obj = settings
+'''
+
+# ------------------------------------------------------------------------------------------------ pydantic, SQLAlchemy, click, urllib3
+
+[[recipe]]
+keys = ["api:FieldInfo.*"]
+setup = '''
+from pydantic import BaseModel
+class M(BaseModel):
+    a: int = 1
+obj = M.__fields__['a']
+'''
+
+[[recipe]]
+keys = ["api:Engine.*"]
+setup = '''
+from sqlalchemy import create_engine
+obj = create_engine('sqlite://')
+'''
+
+[[recipe]]
+keys = ["api:MetaData.*"]
+setup = '''
+from sqlalchemy import MetaData
+obj = MetaData()
+'''
+
+[[recipe]]
+keys = ["api:Table.*"]
+setup = '''
+from sqlalchemy import MetaData, Table, Column, Integer
+obj = Table('t', MetaData(), Column('id', Integer))
+'''
+
+[[recipe]]
+keys = ["api:Select.*"]
+setup = '''
+from sqlalchemy import select, column
+obj = select(column('a'))
+'''
+
+[[recipe]]
+keys = ["api:Session.*"]
+setup = '''
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+obj = Session(create_engine('sqlite://'))
+'''
+
+[[recipe]]
+keys = ["api:Insert.*"]
+setup = '''
+from sqlalchemy import table, column
+obj = table('t', column('id')).insert().values(id=1)
+'''
+
+[[recipe]]
+keys = ["api:Update.*"]
+setup = '''
+from sqlalchemy import table, column
+obj = table('t', column('id')).update().values(id=2)
+'''
+
+[[recipe]]
+keys = ["api:Delete.*"]
+setup = '''
+from sqlalchemy import table, column
+obj = table('t', column('id')).delete()
+'''
+
+[[recipe]]
+keys = ["api:CompoundSelect.*"]
+setup = '''
+from sqlalchemy import select, union, column
+obj = union(select(column('a')), select(column('a')))
+'''
+
+[[recipe]]
+keys = ["api:TextualSelect.*"]
+setup = '''
+from sqlalchemy import text, column
+obj = text('select 1 as a').columns(column('a'))
+'''
+
+[[recipe]]
+keys = ["api:Query.*"]
+setup = '''
+from sqlalchemy import create_engine, Column, Integer
+from sqlalchemy.orm import declarative_base, Session
+Base = declarative_base()
+class User(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True)
+engine = create_engine('sqlite://')
+Base.metadata.create_all(engine)
+obj = Session(engine).query(User)
+'''
+
+[[recipe]]
+keys = ["api:Group.*"]
+setup = '''
+import click
+@click.group()
+def cli():
+    pass
+obj = cli
+'''
+
+[[recipe]]
+keys = ["api:HTTPResponse.*"]
+setup = '''
+import urllib3
+obj = urllib3.response.HTTPResponse(body=b'x', headers={'Content-Type': 'text/plain'})
+'''
+
+# ------------------------------------------------------------------------------------------------ Pillow, networkx, openai
+
+[[recipe]]
+include = ["pillow"]
+keys = ["api:FreeTypeFont.*"]
+setup = '''
+obj = font
+'''
+
+[[recipe]]
+include = ["pillow"]
+keys = ["api:ImageDraw.*"]
+setup = '''
+obj = ImageDraw.Draw(Image.new('RGB', (400, 200)))
+'''
+
+[[recipe]]
+classes = ["Graph", "DiGraph", "MultiGraph", "MultiDiGraph"]
+keys = ["api:{cls}.*"]
+setup = '''
+import networkx as nx
+obj = nx.{cls}()
+'''
+
+[[recipe]]
+keys = ["api:OpenAI.*"]
+setup = '''
+from openai import OpenAI
+obj = OpenAI(api_key='test-key')
+'''
+
+[[recipe]]
+keys = ["api:AsyncOpenAI.*"]
+setup = '''
+from openai import AsyncOpenAI
+obj = AsyncOpenAI(api_key='test-key')
+'''

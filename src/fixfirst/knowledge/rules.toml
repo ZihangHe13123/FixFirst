@@ -146,7 +146,7 @@ phase = "diagnose"
 description = "The code uses a module attribute or imported name that the installed version no longer provides."
 source = "knowledge: removed APIs"
 when = [
-  ["?i", "api", "?x"],
+  ["?i", "api", "?x"], ["?i", "removal_owner", "?x"],
   ["?x", "api_module", "?module"], ["not", "?module", "is_local", "?_"],
   ["?x", "removed_from", "?d"], ["?x", "removed_in_version", "?v"],
   ["?d", "installed_version", "?iv"], ["test", "version_gte", "?iv", "?v"],
@@ -159,7 +159,7 @@ phase = "diagnose"
 description = "The code calls a method name that the installed Python or library version removed (for example unittest aliases or NumPy ndarray methods)."
 source = "knowledge: removed attributes"
 when = [
-  ["?i", "attribute", "?x"],
+  ["?i", "attribute", "?x"], ["?i", "removal_owner", "?x"],
   ["?x", "removed_from", "?d"], ["?x", "removed_in_version", "?v"],
   ["?d", "installed_version", "?iv"], ["test", "version_gte", "?iv", "?v"],
 ]
@@ -296,6 +296,22 @@ then = [["?i", "diagnosis", "local_module"], ["?i", "remedy", "fix_renamed_modul
 # ======================================================================================
 
 [[rule]]
+id = "D51"
+phase = "diagnose"
+description = "The current Django settings operation explicitly reports that settings have not been configured."
+source = "https://docs.djangoproject.com/en/5.2/topics/settings/"
+when = [["?i", "django_configuration", "settings_unconfigured"]]
+then = [["?i", "diagnosis", "config_missing"], ["?i", "remedy", "review_django_configuration"]]
+
+[[rule]]
+id = "D52"
+phase = "diagnose"
+description = "The current Django registry is not ready at the failing access, outside an observed setup/populate chain."
+source = "https://docs.djangoproject.com/en/5.2/ref/applications/#troubleshooting"
+when = [["?i", "django_configuration", "apps_not_ready"]]
+then = [["?i", "diagnosis", "config_missing"], ["?i", "remedy", "review_django_configuration"]]
+
+[[rule]]
 id = "D20"
 phase = "diagnose"
 description = "The project declares this dependency but the target interpreter does not provide it."
@@ -396,6 +412,38 @@ then = [["?i", "diagnosis", "config_missing"], ["?i", "remedy", "provide_env"], 
 # ======================================================================================
 
 [[rule]]
+id = "D49"
+phase = "diagnose"
+description = "A py vendored-apipkg __spec__ failure is attributed to the installed tool and its documented version interval."
+when = [
+  ["?i", "tool_failure_symptom", "tool-failure:py-apipkg-spec"],
+  ["?i", "tool_failure_symptom", "?x"], ["?i", "tool_failure_provider", "?d"],
+  ["?x", "tool_distribution", "?d"], ["?d", "installed_version", "?iv"],
+  ["?x", "affected_from", "?lo"], ["?x", "fixed_version", "?fixed"],
+  ["test", "version_gte", "?iv", "?lo"], ["test", "version_lt", "?iv", "?fixed"],
+  ["dist:python", "installed_version", "?py"],
+  ["?x", "python_from", "?plo"], ["?x", "python_before", "?phi"],
+  ["test", "version_gte", "?py", "?plo"], ["test", "version_lt", "?py", "?phi"],
+]
+then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "upgrade_test_tool"], ["?i", "because", "?x"]]
+
+[[rule]]
+id = "D50"
+phase = "diagnose"
+description = "The recorded pytest assertion rewriter triggers Python's ast.Str deprecation as an exception within a documented affected interval."
+when = [
+  ["?i", "tool_failure_symptom", "tool-failure:pytest-ast-str"],
+  ["?i", "tool_failure_symptom", "?x"], ["?i", "tool_failure_provider", "?d"],
+  ["?x", "tool_distribution", "?d"], ["?d", "installed_version", "?iv"],
+  ["?x", "affected_from", "?lo"], ["?x", "fixed_version", "?fixed"],
+  ["test", "version_gte", "?iv", "?lo"], ["test", "version_lt", "?iv", "?fixed"],
+  ["dist:python", "installed_version", "?py"],
+  ["?x", "python_from", "?plo"], ["?x", "python_before", "?phi"],
+  ["test", "version_gte", "?py", "?plo"], ["test", "version_lt", "?py", "?phi"],
+]
+then = [["?i", "diagnosis", "version_incompatibility"], ["?i", "remedy", "upgrade_test_tool"], ["?i", "because", "?x"]]
+
+[[rule]]
 id = "D40"
 phase = "diagnose"
 description = "A test assertion failed: the observed behaviour differs from the test's expectation."
@@ -482,8 +530,23 @@ description = "The missing attribute or unexpected argument belongs to a class o
 when = [
   ["?i", "exception", "?e"], ["test", "in", "?e", "AttributeError,TypeError"],
   ["?i", "owner_is_local", "yes"],
+  ["not", "?i", "removal_owner_unobserved", "yes"],
 ]
 then = [["?i", "diagnosis", "code_defect"]]
+
+[[rule]]
+id = "P_REMOVAL_REOBSERVE"
+phase = "plan"
+description = "An old local class name does not establish whether a removed attribute was inherited."
+when = [["?i", "removal_owner_unobserved", "yes"], ["not", "?i", "diagnosis", "?_"]]
+[rule.action]
+id = "record-removal-ownership-{?i}"
+kind = "inspect"
+issue = "?i"
+cost = 1
+title = "Re-run the failure before choosing a repair"
+explanation = "The saved failure names an attribute also removed from a library, but does not record which class supplied it. A class defined in this project may inherit that API. Re-run the failing check to distinguish a project mistake from a library change."
+verification = "Use the same interpreter and failing check; inspect the newly recorded ownership before choosing a repair"
 
 # ======================================================================================
 # heuristic: likely causes from general experience, when no rule is certain
@@ -1709,3 +1772,39 @@ cost = 1
 title = "Pass {?parameter} positionally at {?location}"
 explanation = "The actual callable declares this parameter as positional-only. Preserve the existing expression and original tests."
 verification = "Re-run the original failing scope and then the full unchanged test suite"
+
+[[rule]]
+id = "P85"
+phase = "plan"
+description = "Offer the source-cited repair for this specific test-tool failure, subject to project and installed dependency constraints."
+when = [
+  ["?i", "remedy", "upgrade_test_tool"], ["?i", "because", "?x"],
+  ["?x", "tool_distribution", "?d"], ["?d", "installed_version", "?iv"],
+  ["dist:python", "installed_version", "?py"],
+  ["?x", "fixed_version", "?fixed"], ["?x", "change_summary", "?summary"],
+]
+[rule.action]
+id = "upgrade-test-tool-{?d}"
+kind = "manual_fix"
+cause = "version_incompatibility"
+issue = "?i"
+cost = 1
+title = "Upgrade {?d} from {?iv} to {?fixed} for this Python {?py} test-tool failure"
+explanation = "{?summary} This check recorded the corresponding failing tool operation with {?d} {?iv} and Python {?py}. {?d} {?fixed} is a repair candidate for this specific fault, not proof that the whole project or every plugin supports this Python. Keep other dependency constraints and review any conflicting pin before installing."
+pip_install = "{?d}=={?fixed}"
+verification = "Keep the test and warning configuration, check dependency consistency and rerun the original failing command"
+
+[[rule]]
+id = "P86"
+phase = "plan"
+description = "Review the recorded Django test entrypoint and its configuration before changing application code."
+when = [["?i", "remedy", "review_django_configuration"]]
+[rule.action]
+id = "django-configuration-{?i}"
+kind = "manual_fix"
+cause = "config_missing"
+issue = "?i"
+cost = 1
+title = "Check the project's Django test configuration"
+explanation = "The failure is attributed to the selected environment's Django settings or registry operation. Use the project's intended test configuration and initialization entrypoint."
+verification = "Repeat the original failing scope after confirming the test configuration"

@@ -774,6 +774,12 @@ def observations(session: Session, issues: list[Issue], *, interface_history=Tru
             environment, use_history=interface_history)
         evidence["operation_context"] = operation_context
         facts += projected
+        if interface_history:
+            from .removal_ownership import evidence_facts as removal_owner_facts
+
+            facts += removal_owner_facts(
+                session, issue, evidence, {**project, "_run_id": project_run.run_id if project_run else None},
+                environment)
         modules.update(f.value.removeprefix("module:") for f in projected if f.predicate == "module")
         from .binding_advice import evidence_facts as binding_facts
 

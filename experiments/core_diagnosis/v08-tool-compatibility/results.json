@@ -1,0 +1,653 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-02",
+  "scope": "Preregistered toy development acceptance",
+  "source": {
+    "baseline_C": "3e72647952c49c6f1b780cc2cd2402990a8ab5de",
+    "candidate": "77f23b2e01ab68b01fcf403a4233737c042a6834",
+    "knowledge_commit": "a99d448b07ee243bbdcb9bb59c9e7c53283c5bfa",
+    "candidate_runtime_source_hashes_match_commit": true,
+    "classifier_sha256": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3",
+    "classifier_unchanged": true
+  },
+  "environment": {
+    "host_platform": "macOS",
+    "target_python": "3.12.13",
+    "windows_real_host_verified": false
+  },
+  "preparation": {
+    "original_frozen_builder": {
+      "sha256": "372e6d55f2380b34e5fcedb8004071eed8abcbae2d99489ddca09dcd99d0a9fe",
+      "pip_seeded": false,
+      "environments": 10,
+      "baseline_records_preserved": 20
+    },
+    "seeded_supplemental_amendment": {
+      "sha256": "966201c9f7b60801a29f81c4cb4230f591e35056b3963e5f3d0b848b4bcb8118",
+      "builder_delta": "uv venv --seed plus explanatory comment only",
+      "added_packages": [
+        "pip==26.2.1"
+      ],
+      "original_python_and_package_versions_retained": true,
+      "case_files_and_expectations_unchanged": true,
+      "environments": 10,
+      "baseline_records": 20,
+      "candidate_records": 20,
+      "counts_as_fixfirst_repair": false
+    },
+    "original_and_supplemental_start_environments_unchanged_after_repairs": true,
+    "repair_copies_rebuilt_separately": 4
+  },
+  "modes": {
+    "default_scan": "Actual default FixFirst scan, with its pytest probe and cleared addopts.",
+    "registered_argv": "Exact preregistered pytest arguments without an added probe; recorded with environment/project evidence. Text-only successful output does not establish verified completion."
+  },
+  "case_observations": [
+    {
+      "case_id": "T1-py-spec",
+      "modes": {
+        "default_scan": {
+          "baseline": {
+            "pytest_exit_code": 1,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "code_defect"
+            ],
+            "rules": [
+              "F01"
+            ]
+          },
+          "candidate": {
+            "pytest_exit_code": 1,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "version_incompatibility"
+            ],
+            "rules": [
+              "D49"
+            ]
+          }
+        },
+        "registered_argv": {
+          "baseline": {
+            "pytest_exit_code": 1,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "code_defect"
+            ],
+            "rules": [
+              "F01"
+            ]
+          },
+          "candidate": {
+            "pytest_exit_code": 1,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "version_incompatibility"
+            ],
+            "rules": [
+              "D49"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case_id": "T2-ast-str-ini",
+      "modes": {
+        "default_scan": {
+          "baseline": {
+            "pytest_exit_code": 2,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "config_missing"
+            ],
+            "rules": [
+              "F01"
+            ]
+          },
+          "candidate": {
+            "pytest_exit_code": 2,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "version_incompatibility"
+            ],
+            "rules": [
+              "D50"
+            ]
+          }
+        },
+        "registered_argv": {
+          "baseline": {
+            "pytest_exit_code": 2,
+            "goal_status": "blocked",
+            "diagnoses": [
+              null
+            ],
+            "rules": []
+          },
+          "candidate": {
+            "pytest_exit_code": 2,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "version_incompatibility"
+            ],
+            "rules": [
+              "D50"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case_id": "T3-ast-str-cli",
+      "modes": {
+        "default_scan": {
+          "baseline": {
+            "pytest_exit_code": 0,
+            "goal_status": "achieved",
+            "diagnoses": [],
+            "rules": []
+          },
+          "candidate": {
+            "pytest_exit_code": 0,
+            "goal_status": "achieved",
+            "diagnoses": [],
+            "rules": []
+          }
+        },
+        "registered_argv": {
+          "baseline": {
+            "pytest_exit_code": 2,
+            "goal_status": "blocked",
+            "diagnoses": [
+              null
+            ],
+            "rules": []
+          },
+          "candidate": {
+            "pytest_exit_code": 2,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "version_incompatibility"
+            ],
+            "rules": [
+              "D50"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case_id": "T4-ast-str-conftest",
+      "modes": {
+        "default_scan": {
+          "baseline": {
+            "pytest_exit_code": 4,
+            "goal_status": "blocked",
+            "diagnoses": [
+              null
+            ],
+            "rules": []
+          },
+          "candidate": {
+            "pytest_exit_code": 4,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "version_incompatibility"
+            ],
+            "rules": [
+              "D50"
+            ]
+          }
+        },
+        "registered_argv": {
+          "baseline": {
+            "pytest_exit_code": 4,
+            "goal_status": "blocked",
+            "diagnoses": [
+              null
+            ],
+            "rules": []
+          },
+          "candidate": {
+            "pytest_exit_code": 4,
+            "goal_status": "blocked",
+            "diagnoses": [
+              null
+            ],
+            "rules": []
+          }
+        }
+      }
+    },
+    {
+      "case_id": "N1-old-tool-passes",
+      "modes": {
+        "default_scan": {
+          "baseline": {
+            "pytest_exit_code": 0,
+            "goal_status": "achieved",
+            "diagnoses": [],
+            "rules": []
+          },
+          "candidate": {
+            "pytest_exit_code": 0,
+            "goal_status": "achieved",
+            "diagnoses": [],
+            "rules": []
+          }
+        },
+        "registered_argv": {
+          "baseline": {
+            "pytest_exit_code": 0,
+            "goal_status": "blocked",
+            "diagnoses": [
+              null
+            ],
+            "rules": []
+          },
+          "candidate": {
+            "pytest_exit_code": 0,
+            "goal_status": "blocked",
+            "diagnoses": [
+              null
+            ],
+            "rules": []
+          }
+        }
+      }
+    },
+    {
+      "case_id": "N2-project-own-warning",
+      "modes": {
+        "default_scan": {
+          "baseline": {
+            "pytest_exit_code": 2,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "code_defect"
+            ],
+            "rules": [
+              "F01"
+            ]
+          },
+          "candidate": {
+            "pytest_exit_code": 2,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "code_defect"
+            ],
+            "rules": [
+              "F01"
+            ]
+          }
+        },
+        "registered_argv": {
+          "baseline": {
+            "pytest_exit_code": 2,
+            "goal_status": "blocked",
+            "diagnoses": [
+              null
+            ],
+            "rules": []
+          },
+          "candidate": {
+            "pytest_exit_code": 2,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "code_defect"
+            ],
+            "rules": [
+              "F01"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case_id": "N3-missing-plugin-option",
+      "modes": {
+        "default_scan": {
+          "baseline": {
+            "pytest_exit_code": 0,
+            "goal_status": "achieved",
+            "diagnoses": [],
+            "rules": []
+          },
+          "candidate": {
+            "pytest_exit_code": 0,
+            "goal_status": "achieved",
+            "diagnoses": [],
+            "rules": []
+          }
+        },
+        "registered_argv": {
+          "baseline": {
+            "pytest_exit_code": 4,
+            "goal_status": "blocked",
+            "diagnoses": [
+              null
+            ],
+            "rules": []
+          },
+          "candidate": {
+            "pytest_exit_code": 4,
+            "goal_status": "blocked",
+            "diagnoses": [
+              null
+            ],
+            "rules": []
+          }
+        }
+      }
+    },
+    {
+      "case_id": "N4-conftest-missing-module",
+      "modes": {
+        "default_scan": {
+          "baseline": {
+            "pytest_exit_code": 4,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "missing_dependency"
+            ],
+            "rules": [
+              "D21"
+            ]
+          },
+          "candidate": {
+            "pytest_exit_code": 4,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "missing_dependency"
+            ],
+            "rules": [
+              "D21"
+            ]
+          }
+        },
+        "registered_argv": {
+          "baseline": {
+            "pytest_exit_code": 4,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "missing_dependency"
+            ],
+            "rules": [
+              "D21"
+            ]
+          },
+          "candidate": {
+            "pytest_exit_code": 4,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "missing_dependency"
+            ],
+            "rules": [
+              "D21"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case_id": "N5-local-pluggy-shadow",
+      "modes": {
+        "default_scan": {
+          "baseline": {
+            "pytest_exit_code": 1,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "local_module"
+            ],
+            "rules": [
+              "D10"
+            ]
+          },
+          "candidate": {
+            "pytest_exit_code": 1,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "local_module"
+            ],
+            "rules": [
+              "D10"
+            ]
+          }
+        },
+        "registered_argv": {
+          "baseline": {
+            "pytest_exit_code": 1,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "local_module"
+            ],
+            "rules": [
+              "D10"
+            ]
+          },
+          "candidate": {
+            "pytest_exit_code": 1,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "local_module"
+            ],
+            "rules": [
+              "D10"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case_id": "C1-pytest-capped",
+      "modes": {
+        "default_scan": {
+          "baseline": {
+            "pytest_exit_code": 1,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "code_defect"
+            ],
+            "rules": [
+              "F01"
+            ]
+          },
+          "candidate": {
+            "pytest_exit_code": 1,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "version_incompatibility"
+            ],
+            "rules": [
+              "D49"
+            ]
+          }
+        },
+        "registered_argv": {
+          "baseline": {
+            "pytest_exit_code": 1,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "code_defect"
+            ],
+            "rules": [
+              "F01"
+            ]
+          },
+          "candidate": {
+            "pytest_exit_code": 1,
+            "goal_status": "blocked",
+            "diagnoses": [
+              "version_incompatibility"
+            ],
+            "rules": [
+              "D49"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "executed_repairs": [
+    {
+      "case_id": "T1-py-spec",
+      "diagnostic_mode": "default_scan",
+      "action_argv": [
+        "<case-python>",
+        "-m",
+        "pip",
+        "install",
+        "--log",
+        "<case-pip-log>",
+        "--disable-pip-version-check",
+        "--only-binary=:all:",
+        "py==1.11.0,>=1.8.2"
+      ],
+      "path_changes": "Only interpreter and pip log paths relocated to a separately rebuilt copy.",
+      "install_exit_code": 0,
+      "pip_check_exit_code": 0,
+      "original_test_argv": [
+        "<case-python>",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "test_exit_code": 0,
+      "test_summary": [
+        "1 passed, 12 warnings"
+      ],
+      "tests_and_warning_filters_unchanged": true
+    },
+    {
+      "case_id": "T2-ast-str-ini",
+      "diagnostic_mode": "default_scan",
+      "action_argv": [
+        "<case-python>",
+        "-m",
+        "pip",
+        "install",
+        "--log",
+        "<case-pip-log>",
+        "--disable-pip-version-check",
+        "--only-binary=:all:",
+        "pytest==7.3.2"
+      ],
+      "path_changes": "Only interpreter and pip log paths relocated to a separately rebuilt copy.",
+      "install_exit_code": 0,
+      "pip_check_exit_code": 0,
+      "original_test_argv": [
+        "<case-python>",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "test_exit_code": 0,
+      "test_summary": [
+        "1 passed"
+      ],
+      "tests_and_warning_filters_unchanged": true
+    },
+    {
+      "case_id": "T3-ast-str-cli",
+      "diagnostic_mode": "registered_argv",
+      "action_argv": [
+        "<case-python>",
+        "-m",
+        "pip",
+        "install",
+        "--log",
+        "<case-pip-log>",
+        "--disable-pip-version-check",
+        "--only-binary=:all:",
+        "pytest==7.3.2"
+      ],
+      "path_changes": "Only interpreter and pip log paths relocated to a separately rebuilt copy.",
+      "install_exit_code": 0,
+      "pip_check_exit_code": 0,
+      "original_test_argv": [
+        "<case-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-W",
+        "error::DeprecationWarning"
+      ],
+      "test_exit_code": 0,
+      "test_summary": [
+        "1 passed"
+      ],
+      "tests_and_warning_filters_unchanged": true
+    },
+    {
+      "case_id": "T4-ast-str-conftest",
+      "diagnostic_mode": "default_scan",
+      "action_argv": [
+        "<case-python>",
+        "-m",
+        "pip",
+        "install",
+        "--log",
+        "<case-pip-log>",
+        "--disable-pip-version-check",
+        "--only-binary=:all:",
+        "pytest==7.3.2"
+      ],
+      "path_changes": "Only interpreter and pip log paths relocated to a separately rebuilt copy.",
+      "install_exit_code": 0,
+      "pip_check_exit_code": 0,
+      "original_test_argv": [
+        "<case-python>",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "test_exit_code": 0,
+      "test_summary": [
+        "1 passed"
+      ],
+      "tests_and_warning_filters_unchanged": true
+    }
+  ],
+  "constraint_review": {
+    "case_id": "C1-pytest-capped",
+    "candidate_rule": "D49",
+    "first_step": "Resolve the py version constraints before changing it",
+    "named_existing_pin": "py==1.10.0",
+    "named_proposed_pin": "py==1.11.0",
+    "retained_pytest_declaration": "pytest>=6,<7",
+    "first_step_literally_repeats_pytest_upper_bound": false,
+    "installation_command_proposed": false,
+    "declarations_edited": false,
+    "dependency_resolution_trial_executed": false,
+    "repair_executed": false
+  },
+  "limitations": [
+    "T3 default scan omits the external -W filter and passes; its repair was validated using registered argv with that filter.",
+    "N3 registered argv remains a generic plugin usage error without a named plugin remedy. Default scan clears addopts and passes; these are separate command scopes.",
+    "T4 registered output without a probe remains unknown. D50 and the recorded repair use fresh default-scan initial-conftest traceback evidence.",
+    "C1 is declaration-conflict review only and contributes no repair success.",
+    "The observations do not establish complete acceptance of all registered expectations.",
+    "No A2 rerun, language-model request, or new generalization measurement was performed.",
+    "No real Windows host was exercised."
+  ],
+  "implementation_regression_report": {
+    "source": "Reported by the root implementation regression run, separate from independent toy verification.",
+    "full_suite": {
+      "passed": 1239,
+      "skipped": 1
+    },
+    "targeted_suite": {
+      "passed": 141
+    },
+    "ruff": "passed"
+  },
+  "publication": {
+    "raw_private_logs_included": false,
+    "local_paths_included": false,
+    "account_names_included": false,
+    "original_record_identifiers_included": false,
+    "command_paths_replaced_with_placeholders": true
+  }
+}

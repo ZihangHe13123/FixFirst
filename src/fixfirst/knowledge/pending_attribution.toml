@@ -1,0 +1,97 @@
+# FixFirst knowledge entries that are verified but NOT enabled.
+#
+# Each block below was checked by running the interpreter or library before and after the stated release (scripts/knowledge_verify/verify.py),
+# but it is matched by a class name or a bare attribute name taken from an AttributeError message ("'Engine' object has no attribute
+# 'execute'"). Such a block is enabled only with `owners`: the library classes whose attribute was removed, so that a project's own class
+# with the same name is not diagnosed as a version problem (src/fixfirst/removal_ownership.py). The October verification of those owners
+# (scripts/knowledge_verify/verify_owners.py) enabled the other blocks of the same candidate file; the ones below could not be
+# authorized, for the reason given above each group. owners/dispositions.toml in that folder lists what became of every candidate.
+#
+# This file is not read by fixfirst.domain.load(). Re-enable a block by moving it into domain.toml with owners that verify_owners.py accepts.
+# [sources."id"] tables used by blocks of domain.toml are defined there.
+
+# ==================================================================================================
+# matplotlib Axes.ArtistList
+# ArtistList is a class nested in _AxesBase (qualified name _AxesBase.ArtistList). The product
+# records the class of a receiver only when a module holds it under its qualified name
+# (class_identity), so no owner can ever match it.
+# ==================================================================================================
+
+[[removed]]
+kind = "api"
+module = "ArtistList"
+names = ["append", "extend", "insert", "pop", "remove", "clear"]
+distribution = "matplotlib"
+version = "3.7"
+replacement = "Artist.remove() and the Axes.add_* methods: remove an artist with artist.remove() (line.remove(), or ax.lines[0].remove()) in place of ax.lines.remove(line) or ax.lines.pop(0), and add one with ax.add_line(line), ax.add_patch(patch), ax.add_collection(c), ax.add_artist(a) or ax.add_image(img) in place of ax.lines.append(line) and the like. ax.lines, ax.patches, ax.collections and ax.texts are read-only sequences since 3.7."
+source = "matplotlib-3.7-removals"
+
+# ==================================================================================================
+# Django settings
+# settings is a LazySettings proxy: the receiver's class is django.conf.LazySettings, not
+# Settings, and the lookup fails inside Django's own __getattr__ (getattr(self._wrapped, name)),
+# which the product does not observe; it records only a failing attribute load in the code it
+# runs. FixFirst still reports a version incompatibility from its release heuristic H02, without
+# naming the setting.
+# ==================================================================================================
+
+[[removed]]
+kind = "api"
+module = "Settings"
+names = ["DEFAULT_FILE_STORAGE"]
+distribution = "Django"
+version = "5.1"
+replacement = "settings.STORAGES['default']['BACKEND'] (the STORAGES setting, available since Django 4.2). A DEFAULT_FILE_STORAGE value assigned in settings.py is ignored from Django 5.1 on, so move it into STORAGES; if a traceback shows an installed package reading settings.DEFAULT_FILE_STORAGE, upgrade that package."
+source = "django-5.1-removed"
+
+[[removed]]
+kind = "api"
+module = "Settings"
+names = ["STATICFILES_STORAGE"]
+distribution = "Django"
+version = "5.1"
+replacement = "settings.STORAGES['staticfiles']['BACKEND'] (the STORAGES setting, available since Django 4.2). A STATICFILES_STORAGE value assigned in settings.py is ignored from Django 5.1 on, so move it into STORAGES; if a traceback shows an installed package reading settings.STATICFILES_STORAGE, upgrade that package."
+source = "django-5.1-removed"
+
+[[removed]]
+kind = "api"
+module = "Settings"
+names = ["PASSWORD_RESET_TIMEOUT_DAYS"]
+distribution = "Django"
+version = "4.0"
+replacement = "settings.PASSWORD_RESET_TIMEOUT, which counts seconds instead of days (3 days is 259200). A PASSWORD_RESET_TIMEOUT_DAYS value assigned in settings.py is ignored from Django 4.0 on, so convert it; if a traceback shows an installed package reading the old setting, upgrade that package."
+source = "django-4.0-removed"
+
+[[removed]]
+kind = "api"
+module = "Settings"
+names = ["USE_L10N"]
+distribution = "Django"
+version = "5.0"
+replacement = "no setting: localized formatting of dates and numbers is always on since Django 5.0 (a USE_L10N = False in settings.py is ignored; the {% localize off %} tag and the unlocalize filter still switch it off for a template), so delete the reads and assume True. If a traceback shows an installed package reading settings.USE_L10N, upgrade that package."
+source = "django-5.0-removed"
+
+# ==================================================================================================
+# array.array
+# CPython words the error of a C type with the module ('array.array' object has no attribute
+# 'tostring') and the product records no operation for it, so nothing authorizes the entry and it
+# makes no diagnosis at all (finding E4 of the PR #62 acceptance).
+# ==================================================================================================
+
+[[removed]]
+kind = "attribute"
+owners = ["array.array"]
+names = ["array.array.tostring"]
+distribution = "python"
+version = "3.9"
+replacement = "tobytes(): the same bytes result under the current name"
+source = "python-3.9"
+
+[[removed]]
+kind = "attribute"
+owners = ["array.array"]
+names = ["array.array.fromstring"]
+distribution = "python"
+version = "3.9"
+replacement = "frombytes(): the same operation under the current name"
+source = "python-3.9"

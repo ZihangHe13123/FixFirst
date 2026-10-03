@@ -78,7 +78,25 @@ def base_facts(session: Session, active, knowledge=True) -> tuple[list[Fact], di
             observed("project", "declarations", "available", [f"{project_run.run_id}:stdout:1"])
         )
     evidence_facts, details = observations(session, active, interface_history=knowledge)
+    from .tool_compatibility import observations as tool_observations
+
+    tool_facts, tool_details = tool_observations(session, active)
+    evidence_facts += tool_facts
+    for issue_id, detail in tool_details.items():
+        if issue_id in details:
+            details[issue_id]["tool_failure"] = detail
+    from .django_configuration import observations as django_observations
+
+    django_facts, django_details = django_observations(session, active)
+    evidence_facts += django_facts
+    for issue_id, detail in django_details.items():
+        if issue_id in details:
+            details[issue_id]["django_configuration"] = detail
     facts += evidence_facts
+    if knowledge:
+        from .package_compatibility import diagnoses as package_diagnoses
+
+        facts += package_diagnoses(session, active)
     mentioned = {
         f.value for f in evidence_facts
         if f.predicate in (
@@ -86,13 +104,14 @@ def base_facts(session: Session, active, knowledge=True) -> tuple[list[Fact], di
             "raised_by_library",
             "behavior_symptom",
             "input_symptom",
+            "tool_failure_symptom",
         )
     }
     known = domain.facts_for(mentioned) if knowledge else []
     facts += known
     distributions = (
         {"dist:python"}
-        | {f.value for f in known if f.predicate in ("removed_from", "deprecated_in", "provided_by_plugin", "changed_in")}
+        | {f.value for f in known if f.predicate in ("removed_from", "deprecated_in", "provided_by_plugin", "changed_in", "tool_distribution")}
         | {f.subject for f in evidence_facts if f.predicate == "required_spec"}
         | {f.value for f in evidence_facts if f.predicate == "provided_by"}
         | {f.value for f in evidence_facts if f.predicate == "emitted_by" and f.value.startswith("dist:")}
@@ -144,7 +163,24 @@ def apply_classifier(session: Session, active, details) -> list[Fact]:
     for issue in active:
         issue.prediction, issue.prediction_confidence = suggestions.get(issue.issue_id, (None, None))
         issue.prediction_note = ""
+        detail = details.get(issue.issue_id, {})
+        if detail.get("removal_ownership_unobserved"):
+            issue.prediction_note = (
+                "This saved failure does not record which class supplied the missing attribute. "
+                "A project class may inherit an API removed from a library. Re-run the failing "
+                "check to record ownership before choosing a cause or repair."
+            )
+            continue
         if issue.prediction and issue.prediction_confidence >= MIN_CONFIDENCE:
+            if (str(detail.get("exception", "")).endswith("Warning")
+                    and detail.get("raised_in") not in {"project", "test"}):
+                issue.prediction_note = (
+                    "A warning terminated the check, but its emitting library or standard-library "
+                    "frame does not by itself identify the responsible caller or warning policy. "
+                    "The classifier prediction is retained separately; a matching documented "
+                    "tool failure may supply a rule diagnosis."
+                )
+                continue
             from .symbol_advice import unsupported_version_claim
 
             if unsupported_version_claim(issue.prediction, details.get(issue.issue_id, {})):
@@ -359,6 +395,8 @@ def order_actions(actions, facts):
 
 
 def goal_status(session: Session, active) -> str:
+    from .test_results import pytest_options_limited
+
     current = environment_id(session.target_python)
     target = GOAL_CHECKS[session.goal]
     last = next((r for r in reversed(session.runs) if r.tool == target), None)
@@ -369,6 +407,8 @@ def goal_status(session: Session, active) -> str:
         and last.environment_id == current
     )
     status = "unknown" if not eligible else "achieved" if last.verified_pass else "blocked"
+    if status == "achieved" and pytest_options_limited(last):
+        status = "unknown"
     if any(i.status == "awaiting_verification" and i.tool == target for i in active):
         status = "unknown"
     if session.goal in ("pass_tests", "pass_unittest"):
@@ -420,9 +460,18 @@ def infer_and_plan(session: Session):
     from .symbol_advice import refine as refine_symbols
 
     actions = refine_symbols(actions, details, by_id)
+    from .package_compatibility import refine as refine_packages
+
+    actions = refine_packages(session, actions, by_id, base.facts)
     from .dependency_advice import refine
 
     actions = refine(session, actions, by_id, base.facts)
+    from .tool_compatibility import refine as refine_tools
+
+    actions = refine_tools(session, actions, details, base.facts)
+    from .django_configuration import refine as refine_django
+
+    actions = refine_django(session, actions, details)
     from .install_feedback import bind_commands
     from .evidence import project_index
 
