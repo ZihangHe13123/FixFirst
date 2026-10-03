@@ -61,7 +61,13 @@ def _unobserved_review(session, record, event):
     frames = record.get("traceback_frames", [])
     frames = frames[-20:] if isinstance(frames, list) else []
     root = _normal(session.project_root, session.project_root).rstrip("/") + "/"
+    if event.stage == "collect" and event.location and len(event.location) <= 4096:
+        # A collection wrapper's traceback may contain only pytest internals,
+        # including a venv within the project. Its node is the useful context.
+        location = f" Recorded collection node: {event.location}."
     for frame in reversed(frames):
+        if location:
+            break
         if not isinstance(frame, dict):
             continue
         path, line = frame.get("file"), frame.get("line")

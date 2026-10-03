@@ -69,6 +69,24 @@ def test_unobserved_import_review_uses_node_when_source_location_is_unusable(tmp
     assert 'main.py:' not in repair.explanation
 
 
+@pytest.mark.parametrize('internal_environment', [False, True])
+def test_collection_review_never_directs_edits_to_pytest_wrapper(tmp_path, internal_environment):
+    def mutate(env, project, run):
+        record = run.records[1]
+        record.pop('package_failure')
+        base = str(tmp_path / '.venv') if internal_environment else '/python'
+        record['source_file'] = base + '/lib/python3.12/site-packages/_pytest/python.py'
+        record['source_line'] = 538
+        record['traceback_frames'] = [{'file': record['source_file'], 'line': 538}]
+        for item in run.records:
+            item['nodeid'] = 'tests/test_case.py'
+    session, _ = setup_case(tmp_path, 'absent', tool='pytest_run', mutate=mutate)
+    repair = action(session)
+    assert not repair.command
+    assert 'Recorded collection node: tests/test_case.py' in repair.explanation
+    assert '_pytest' not in repair.explanation
+
+
 @pytest.mark.parametrize('untrusted', ['imported', 'stale'])
 def test_old_or_imported_failure_does_not_get_current_source_review(tmp_path, untrusted):
     def mutate(env, project, run):
