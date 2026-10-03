@@ -28,6 +28,8 @@ testpaths = ["tests"]
 [tool.ruff]
 target-version = "py310"
 line-length = 100
+# generated and hashed by the verification record (scripts/knowledge_verify): editing it would invalidate the receipts
+extend-exclude = ["scripts/knowledge_verify/verify.py"]
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F"]

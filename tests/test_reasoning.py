@@ -138,10 +138,15 @@ def test_knowledge_backed_advice_cites_its_source(tmp_path):
     assert answer["supported"] and "Version incompatibility" in answer["answer"] and "D01" in answer["answer"]
 
 
-def test_unlisted_removal_is_only_a_likely_cause(tmp_path):
-    # numpy.msort is not in the knowledge base: no rule may confirm the cause, but the
-    # heuristic phase marks a version change as likely and says so.
-    session, issue = run_scenario(tmp_path, "vi_unknown_attribute")
+def test_unlisted_removal_is_only_a_likely_cause(tmp_path, monkeypatch):
+    # numpy.polyfit_legacy is in no knowledge-base entry (and in no numpy release): no rule may
+    # confirm the cause, but the heuristic phase marks a version change as likely and says so.
+    # The dataset's own "unknown attribute" scenario can no longer serve here, because the
+    # knowledge base now lists numpy.msort, in1d, row_stack, cast and mat.
+    monkeypatch.setitem(SCENARIOS, "vi_unlisted_attribute", cases.Scenario(
+        "vi_unlisted_attribute", "version_incompatibility", False, "A numpy name the knowledge base does not list",
+        lambda p: p.body("    import numpy as np\n    np.polyfit_legacy")))
+    session, issue = run_scenario(tmp_path, "vi_unlisted_attribute")
     assert (issue.diagnosis, issue.diagnosis_source, issue.diagnosis_rule) == (
         "version_incompatibility",
         "heuristic",
@@ -149,8 +154,8 @@ def test_unlisted_removal_is_only_a_likely_cause(tmp_path):
     )
     search, guess = build_view(session)["steps"][:2]
     # Search before changing a version; absence alone does not prove removal.
-    assert search["title"] == "Find a compatible numpy release that provides numpy.msort" and search["search"]
-    assert guess["title"] == "Check the required version and spelling of numpy.msort"
+    assert search["title"] == "Find a compatible numpy release that provides numpy.polyfit_legacy" and search["search"]
+    assert guess["title"] == "Check the required version and spelling of numpy.polyfit_legacy"
     assert guess["cause"] is None and guess["possible"] == "Version incompatibility"
     assert guess["command"] is None
     assert "no longer provides" not in search["explanation"]
