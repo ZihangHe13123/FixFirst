@@ -68,7 +68,10 @@ what only a new run can show again, that is the raw measurements themselves (the
 informational fields. The record is tied to the blocks, to the recipes (by what they parse to) and to the tool (by its bytes), and in two layers to the product:
 `identity_functions_sha256` (the source of the functions that decide a receiver's identity in `_runtime_evidence.py`: owners are claims about those identities), and the
 product that the E2E runs executed: `e2e_files_sha256` (every module of the product that the runs loaded, found by the runs themselves, and the scripts that run in the target
-interpreter; the code only, comments and layout do not count), `e2e_data_sha256` (the knowledge data files besides `domain.toml`) and `e2e_rules_sha256` (every rule).
+interpreter), `e2e_data_sha256` (the knowledge data files besides `domain.toml`) and `e2e_rules_sha256` (every rule). A Python file is bound as the interpreter reads it:
+its source encoding (a coding line or a byte order mark) and the text of its strings count, the blank lines and trailing spaces inside a multi-line string and a docstring too;
+comments, blank lines between statements, trailing spaces and line endings do not (nor does the position of a line: nothing a diagnosis says is taken from the line numbers of
+the product's own source). A data file is bound by what it parses to.
 `tests/test_knowledge_owners.py` also runs FixFirst once, with the same runner, and requires that every module it loads is in the record, so a new import in the removal chain
 or a cut-down list fails. A change to any of them needs a new run. `package_sha256`, the digest of the whole package, is recorded for information and is not compared.
 The tests do not skip when a record is missing: a missing or a second receipt fails them.
@@ -117,6 +120,10 @@ so a new release can make a run fail legitimately. `--only TEXT` runs the checks
   (`flask_sqlalchemy.Model` still exists in 3.0; it was removed in 3.1). These are reported, not changed.
 - The receipts are bound to the shipped knowledge base by `tests/test_knowledge_verify.py` and `tests/test_knowledge_owners.py`: they fail when a verified block, a source
   or an unmaintained entry that a candidate file or the baseline defines is edited without re-running the verification. The knowledge record is judged again from its
-  details as well (`audit_knowledge_record` in the test file: every check against the check of `verify.py`, the exceptions each release raised against the expectation, every
-  probe, the summary), so emptying or editing the details fails; the lookup of PyPI for the adjacency of two pinned releases is not repeated, and the details are taken as stored.
+  details as well (`audit_knowledge_record` in the test file): every check and probe against the one of `verify.py` (snippet, environment, expectation, what it covers), the
+  exceptions each release raised against the expectation (type, the text a check matches, the keys that FixFirst derives from the message, the warnings of a deprecation), the
+  interpreter and the packages that each role really ran with against its environment (the Python release; every package at a version that its requirement allows; a probe
+  records its interpreter only), and the summary. A record whose judged details were emptied, edited or removed fails. **Taken as stored**: the raw output that no verdict
+  follows from (messages that no check matches or derives a key from, the warnings of the checks of removals, the output of the probes), the versions of the packages
+  that are not pinned beyond what their requirement allows, and the lookup of PyPI for the adjacency of two pinned releases (not repeated).
   Edits of the older entries of `domain.toml` (the baseline) are not bound.

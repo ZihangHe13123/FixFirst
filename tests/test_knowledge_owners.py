@@ -174,8 +174,9 @@ def test_the_digests_of_the_product_follow_what_the_code_says_not_how_it_is_anno
     before = verifier.product_digests(str(package), loaded)
     assert set(before["e2e_files_sha256"]) == {*loaded, "_runtime_evidence.py", "_native_runner.py", "_unittest_runner.py", "_notebook_runner.py"}
     source = (package / "removal_ownership.py").read_text(encoding="utf-8")
-    # comments, blank lines, trailing spaces and line endings: the same digest
-    (package / "removal_ownership.py").write_bytes(("# a comment\n\n" + source.replace("\n", "   \r\n") + "\n\n# the end\n").encode("utf-8"))
+    # comments, blank lines and line endings: the same digest (the text of a docstring counts, so the lines inside the file stay as they are;
+    # test_the_digest_of_a_source_counts_what_its_strings_and_its_encoding_say has the cases that change the text of a string)
+    (package / "removal_ownership.py").write_bytes(("# a comment\n\n" + source + "\n\n# the end\n").replace("\n", "\r\n").encode("utf-8"))
     assert verifier.product_digests(str(package), loaded)["e2e_files_sha256"] == before["e2e_files_sha256"]
     # a `#` inside a string is not a comment
     (package / "removal_ownership.py").write_text(source + "\nMARK = '# not a comment'\n", encoding="utf-8")
@@ -217,6 +218,81 @@ def test_the_digests_of_the_product_follow_what_the_code_says_not_how_it_is_anno
     assert verifier.product_digests(str(package), loaded)["e2e_data_sha256"] == before["e2e_data_sha256"]
     (package / "knowledge" / "package_compatibility.toml").write_text(compatibility + '\n[extra]\nvalue = "changed"\n', encoding="utf-8")
     assert changed_digests(before["e2e_data_sha256"], verifier.product_digests(str(package), loaded)["e2e_data_sha256"]) == ["knowledge/package_compatibility.toml"]
+
+
+def test_the_digest_of_a_source_counts_what_its_strings_and_its_encoding_say(verifier, tmp_path):
+    """Review of 4c8fd80 (R3-1): the blank lines and the trailing spaces inside a multi-line string, and a coding line that makes the interpreter read
+    the same bytes as another text, change what the product does, so they must change the digest. Comments, the layout between statements, the
+    line endings and a coding line that changes nothing must not."""
+    def digest_of(source) -> str:
+        path = tmp_path / "source.py"
+        path.write_bytes(source if isinstance(source, bytes) else source.encode("utf-8"))
+        return verifier.code_sha256(str(path))
+
+    base = "import os\n\n\ndef f(x):\n    return x + 1\n\n\nTEXT = 'a # b'\n"
+    noisy = "# top\nimport os   \n\n\n\n\ndef f(x):  # why\n    # inside\n    return x + 1   \n\n\nTEXT = 'a # b'  # end\n\n# bottom\n"
+    for same in (noisy, noisy.replace("\n", "\r\n"), noisy.replace("\n", "\r"), "# coding: ascii\n" + base, "# -*- coding: utf-8 -*-\n" + base):
+        assert digest_of(same) == digest_of(base), same
+    assert digest_of(base.encode("utf-8-sig")) == digest_of(base)                  # a byte order mark
+    assert digest_of(base.replace("a # b", "a # c")) != digest_of(base)           # a `#` inside a string is part of it
+    assert digest_of(base.replace("x + 1", "x + 2")) != digest_of(base)
+
+    # what a multi-line string says: its blank lines, its trailing spaces, its line continuations
+    texts = {
+        "plain": "VALUE = '''alpha\nbeta'''\n",
+        "trailing space": "VALUE = '''alpha \nbeta'''\n",
+        "blank line": "VALUE = '''alpha\n\nbeta'''\n",
+        "space and blank line": "VALUE = '''alpha \n\nbeta'''\n",
+        "space before the closing quotes": "VALUE = '''alpha\nbeta '''\n",
+        "docstring": 'def f():\n    """One.\n\n    Two.\n    """\n',
+        "docstring, trailing space": 'def f():\n    """One. \n\n    Two.\n    """\n',
+        "docstring, no blank line": 'def f():\n    """One.\n    Two.\n    """\n',
+        "f-string": "name = 1\nVALUE = f'''alpha {name}\nbeta'''\n",
+        "f-string, trailing space": "name = 1\nVALUE = f'''alpha {name} \nbeta'''\n",
+        "f-string, blank line": "name = 1\nVALUE = f'''alpha {name}\n\nbeta'''\n",
+        "f-string, field on several lines": "name = 1\nVALUE = f'''alpha {\n  name\n} beta'''\n",
+        "f-string, space in the field": "name = 1\nVALUE = f'''alpha { \n  name  \n} beta'''\n",
+        "bytes": "VALUE = rb'''a\n  b\n'''\n",
+        "bytes, trailing space": "VALUE = rb'''a\n  b  \n'''\n",
+        "continued": "VALUE = 'abc\\\n   def'\n",
+        "continued, no indent": "VALUE = 'abc\\\ndef'\n",
+    }
+    digests = {name: digest_of(text) for name, text in texts.items()}
+    assert len(set(digests.values())) == len(texts), "two different strings have the same digest"
+    for name, text in texts.items():       # the same text with comments, lines between statements and line endings around it
+        around = "# top\n\n" + text.rstrip("\n") + "   # end\n\n\n# bottom\n"
+        assert digest_of(around) == digest_of(text), name
+        assert digest_of(text.replace("\n", "\r\n")) == digest_of(text), name       # (the interpreter reads a CRLF in a string as a line feed)
+        assert digest_of(text.replace("\n", "\r")) == digest_of(text), name
+    assert digest_of("VALUE = '''alpha\nbeta'''     \nOTHER = 1   \n") == digest_of("VALUE = '''alpha\nbeta'''\nOTHER = 1\n")      # after the string
+
+    # the encoding: the same bytes are another text under another coding line
+    dotted = "TEXT = 'demo · cell 1'\n".encode("utf-8")
+    assert digest_of(b"# coding: latin-1\n" + dotted) != digest_of(dotted)
+    assert digest_of(b"#!/usr/bin/env python\n# coding: latin-1\n" + dotted) != digest_of(b"#!/usr/bin/env python\n" + dotted)       # on the second line
+    assert digest_of(b"# coding: utf-8\n" + dotted) == digest_of(dotted)
+    assert digest_of(b"\n\n# coding: latin-1\n" + dotted) == digest_of(b"\n\n" + dotted)      # on the third line it is only a comment, as for the interpreter
+    assert digest_of(b"TEXT = '\xff'\n") != digest_of(b"TEXT = '\xfe'\n")                       # not a source of its declared encoding: bound as it is
+    assert digest_of(b"# coding: no-such-codec\nX = 1\n") != digest_of(b"# coding: no-such-codec\nX = 2\n")
+    assert digest_of(b"def f(:\n    '''open\n") != digest_of(b"def f(:\n    '''open \n")                       # not even a token stream
+
+    # a file of the product itself: a coding line on a file with a non-ASCII text changes its output (the middle dot in the location of a notebook
+    # cell is read as two characters), so it must change the digest of that file and of no other
+    package = tmp_path / "fixfirst"
+    shutil.copytree(ROOT / "src" / "fixfirst", package, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+    loaded = ["evidence.py", "reasoning.py"]
+    before = verifier.product_digests(str(package), loaded)["e2e_files_sha256"]
+    original = (package / "evidence.py").read_bytes()
+    assert "·".encode("utf-8") in original
+    (package / "evidence.py").write_bytes(b"# coding: latin-1\n" + original)
+    assert changed_digests(before, verifier.product_digests(str(package), loaded)["e2e_files_sha256"]) == ["evidence.py"]
+    (package / "evidence.py").write_bytes(b"# coding: utf-8\n" + original)
+    assert verifier.product_digests(str(package), loaded)["e2e_files_sha256"] == before
+    # and a space added inside a docstring of a bound file
+    text = original.decode("utf-8")
+    start = text.index('"""') + 3
+    (package / "evidence.py").write_bytes((text[:start] + " " + text[start:]).encode("utf-8"))
+    assert changed_digests(before, verifier.product_digests(str(package), loaded)["e2e_files_sha256"]) == ["evidence.py"]
 
 
 def test_the_digest_of_a_data_file_is_what_it_parses_to(verifier, tmp_path):

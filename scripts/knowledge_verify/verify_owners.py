@@ -38,8 +38,9 @@ newer; exactly one entry of the knowledge base authorizes it; the receiver of a 
 what only a new run can show again: the raw measurements themselves (the rows of identities, the messages, the installed versions of unpinned packages).
 The receipt is bound to this program and to the recipes, to the functions that decide a receiver's identities (identity_functions_sha256), and to the
 product that the E2E runs executed: every module of the product that was loaded in them and the scripts that run in the target interpreter
-(e2e_files_sha256), the knowledge data they read (e2e_data_sha256) and every rule (e2e_rules_sha256). Comments, blank lines, line endings and the order of
-keys do not count. The digest of the whole package is informational.
+(e2e_files_sha256), the knowledge data they read (e2e_data_sha256) and every rule (e2e_rules_sha256). Of a Python source comments, blank lines between
+statements, trailing spaces and line endings do not count; strings (their blank lines and trailing spaces too) and the source encoding do. Of data the
+order of keys does not count. The digest of the whole package is informational.
 
 Requirements: as verify.py (Python >= 3.11, `uv`, uv-managed CPython 3.8 - 3.14, network access to PyPI).
 
@@ -81,8 +82,21 @@ MARK = "@@OWNERS@@"
 IDENTITY_FUNCTIONS = ("plain_class", "class_namespace", "class_mro", "class_identity", "receiver_owners", "registered_type", "static_namespace")
 
 
+def source_text(path: str):
+    """The text of a Python source as the interpreter reads it: decoded with the encoding that PEP 263 declares (a byte order mark, or a coding cookie in
+    one of the first two lines; UTF-8 otherwise) and with unified line endings. None when the bytes do not decode that way (Python would refuse the file)."""
+    raw = open(path, "rb").read()
+    try:
+        encoding, _lines = tokenize.detect_encoding(io.BytesIO(raw).readline)
+        return raw.decode(encoding).replace("\r\n", "\n").replace("\r", "\n")
+    except (SyntaxError, UnicodeDecodeError, LookupError):
+        return None
+
+
 def identity_functions_sha256(probe_path: str) -> str:
-    source = open(probe_path, encoding="utf-8").read().replace("\r\n", "\n")
+    source = source_text(probe_path)
+    if source is None:
+        raise SystemExit(f"{probe_path} cannot be decoded as Python source")
     found = {node.name: ast.get_source_segment(source, node) for node in ast.parse(source).body
              if isinstance(node, ast.FunctionDef) and node.name in IDENTITY_FUNCTIONS}
     missing = [name for name in IDENTITY_FUNCTIONS if name not in found]
@@ -107,18 +121,48 @@ def _canonical_sha256(value) -> str:
 
 
 def code_sha256(path: str) -> str:
-    """The digest of a Python source without its comments, its blank lines, its trailing spaces and its line-ending style: what the code says, not
-    how it is annotated. (A comment is found with the tokenizer, so a `#` inside a string stays.)"""
-    text = open(path, encoding="utf-8").read().replace("\r\n", "\n")
+    """The digest of a Python source for what it says: the source is decoded as the interpreter does (a coding cookie or a byte order mark counts), and
+    comments, blank lines between statements, trailing spaces and the line-ending style do not. What a string says does: a token that spans several
+    lines is kept as it is, with its blank lines and its trailing spaces, because they are part of its value. (A comment is found with the tokenizer,
+    so a `#` inside a string stays; indentation is kept.)"""
+    text = source_text(path)
+    if text is None:
+        return hashlib.sha256(b"undecodable\0" + open(path, "rb").read()).hexdigest()
     lines = text.split("\n")
+    comment_at, spans, open_fstrings = {}, [], []
+    fstring_start, fstring_end = getattr(tokenize, "FSTRING_START", None), getattr(tokenize, "FSTRING_END", None)    # Python 3.12 tokenizes an f-string
     try:
         for token in tokenize.generate_tokens(io.StringIO(text).readline):
-            if token.type == tokenize.COMMENT:
-                row, column = token.start
-                lines[row - 1] = lines[row - 1][:column]
+            (start_row, start_column), (end_row, end_column) = token.start, token.end
+            if token.type == fstring_start:
+                open_fstrings.append(start_row)
+            elif token.type == fstring_end and open_fstrings:          # from its start to its end, as one token (as before Python 3.12)
+                first_row = open_fstrings.pop()
+                if end_row > first_row:
+                    spans.append((first_row, end_row, end_column))
+            elif token.type == tokenize.COMMENT:
+                comment_at[start_row] = start_column
+            elif end_row > start_row:          # a token of several lines (a string): its own text is its value
+                spans.append((start_row, end_row, end_column))
     except (tokenize.TokenError, IndentationError, SyntaxError):         # not a source the tokenizer takes: bind it as it is
         return hashlib.sha256(text.encode("utf-8")).hexdigest()
-    return hashlib.sha256("\n".join(line.rstrip() for line in lines if line.strip()).encode("utf-8")).hexdigest()
+    first_rows = {start_row for start_row, _end, _column in spans}
+    inside_rows = {row for start_row, end_row, _column in spans for row in range(start_row + 1, end_row)}
+    ends = {end_row: end_column for _start, end_row, end_column in spans}
+    kept = []
+    for number, line in enumerate(lines, 1):
+        if number in inside_rows or number in first_rows:       # (a comment cannot follow a token that goes on in the next row)
+            kept.append(line)
+            continue
+        if number in comment_at:
+            line = line[:comment_at[number]]
+        if number in ends:                                       # the last row of a string: its text up to where it ends is kept as it is
+            line = line[:ends[number]] + line[ends[number]:].rstrip()
+        else:
+            line = line.rstrip()
+        if line.strip():
+            kept.append(line)
+    return hashlib.sha256("\n".join(kept).encode("utf-8")).hexdigest()
 
 
 def data_sha256(path: str) -> str:

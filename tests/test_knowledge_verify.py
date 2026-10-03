@@ -2,7 +2,8 @@
 
 These tests run offline. They do not re-run the checks (that needs the network and several interpreters; see the README there): they fail
 when a verified block is edited, added or dropped without verifying again, when the record is not a complete pass, when the details of the record
-(the exceptions each release raised, the snippets, the environments, the verdicts) no longer give its verdicts, or when a local path leaks into it.
+(the exceptions each release raised, the snippets, the environments with the interpreter and the package versions each role ran with, the verdicts)
+no longer give its verdicts, or when a local path leaks into it.
 They do not skip when the record is missing: only a checkout without scripts/knowledge_verify skips them.
 """
 import copy
@@ -22,6 +23,8 @@ except ModuleNotFoundError:  # Python 3.10 (the verification programs themselves
     import tomli as tomllib
 
 import pytest
+from packaging.requirements import Requirement      # pytest itself needs packaging
+from packaging.version import InvalidVersion, Version
 
 from fixfirst import domain
 
@@ -438,6 +441,34 @@ def rejudge_check(v, check, entry: dict) -> tuple:
     return problems, info
 
 
+def judge_environment(v, env, rec: dict, reported: tuple = ()) -> list:
+    """What a role really ran with (the interpreter and the distributions its probe reported) against what verify.py plans for it: the Python
+    release, every planned package at a version its requirement allows, and the versions of the distributions that the check asks to report."""
+    problems = []
+    python = rec.get("python")
+    if not isinstance(python, str) or not python.startswith(env.python + "."):
+        problems.append(f"ran on Python {python!r}, verify.py plans {env.python}")
+    dists = rec.get("dists")
+    if not isinstance(dists, dict):
+        return problems + ["has no record of the installed distributions"]
+    installed = {v.canon(name): version for name, version in dists.items() if isinstance(name, str)}
+    for requirement in env.pkgs:
+        wanted = Requirement(requirement)
+        have = installed.get(v.canon(wanted.name))
+        if not isinstance(have, str) or not have:
+            problems.append(f"{wanted.name} is not recorded as installed (verify.py plans {requirement})")
+            continue
+        try:
+            version = Version(have)
+        except InvalidVersion:
+            problems.append(f"{wanted.name} is recorded as version {have!r}")
+            continue
+        if not wanted.specifier.contains(version, prereleases=True):
+            problems.append(f"{wanted.name} {have} was installed, verify.py plans {requirement}")
+    problems += [f"the version of {name} is not recorded" for name in reported if v.canon(name) not in installed]
+    return problems
+
+
 def audit_check_records(v, entries: list, expected: dict, label: str) -> list:
     problems, by_id = [], {}
     for entry in entries:
@@ -461,8 +492,11 @@ def audit_check_records(v, entries: list, expected: dict, label: str) -> list:
                 problems.append(f"{label} {check_id}: {field} is not what verify.py says")
         roles = entry.get("roles") if isinstance(entry.get("roles"), dict) else {}
         for role, env in role_envs(check).items():
-            if isinstance(roles.get(role), dict) and roles[role].get("env") != env.label():
+            if not isinstance(roles.get(role), dict):
+                continue        # the roles that are missing or hollow are reported by the verdicts below
+            if roles[role].get("env") != env.label():
                 problems.append(f"{label} {check_id}: {role} ran in {roles[role].get('env')!r}, verify.py says {env.label()!r}")
+            problems += [f"{label} {check_id}: {role} {problem}" for problem in judge_environment(v, env, roles[role], check.dists)]
         try:
             found_problems, info = rejudge_check(v, check, entry)
         except Exception as error:      # a malformed record is a problem of the record, not a crash of the audit
@@ -518,6 +552,9 @@ def audit_support_records(v, entries: list, expected: dict, label: str) -> list:
                               ("match", support.match), ("code", support.code), ("code_sha256", v._digest(support.code))):
             if entry.get(field) != wanted:
                 problems.append(f"{label} {support_id}: {field} is not what verify.py says")
+        python = entry.get("python")        # a probe records the interpreter it ran on, not the versions of its packages
+        if not isinstance(python, str) or not python.startswith(support.env.python + "."):
+            problems.append(f"{label} {support_id}: ran on Python {python!r}, verify.py plans {support.env.python}")
         try:
             found_problems = rejudge_support(v, support, entry)
         except Exception as error:
@@ -692,13 +729,78 @@ def a_leak_of_a_temp_path(receipt):
     a_check(receipt)["roles"]["after"]["exc_msg"] = "No module named 'x' (/tmp/ffk-verify-abc/py/bin/python)"
 
 
+def a_role_planned_with(receipt, predicate, key="checks"):
+    """(record, requirement) of the first stored role whose planned requirements (the words behind the interpreter in its label) include one that
+    the predicate accepts."""
+    for entry in receipt[key]:
+        for rec in entry["roles"].values():
+            for requirement in rec["env"].split()[1:]:
+                if predicate(requirement):
+                    return rec, requirement
+    raise AssertionError("the record holds no such role")
+
+
+def name_of(requirement: str) -> str:
+    return re.split(r"[<>=!~]", requirement)[0]
+
+
+def a_role_on_the_wrong_python(receipt):
+    """Python 3.12 is planned; the record says 3.1.0 (the reproduction of the review of 4c8fd80)."""
+    a_check(receipt, lambda c: c["id"] == "st82-module-pkg_resources")["roles"]["after"]["python"] = "3.1.0"
+
+
+def a_pinned_package_at_another_version(receipt):
+    """setuptools==82.0.0 is planned; the record says that 0.0.1 was installed (the same review)."""
+    a_check(receipt, lambda c: c["id"] == "st82-module-pkg_resources")["roles"]["after"]["dists"]["setuptools"] = "0.0.1"
+
+
+def the_versions_of_a_role_removed(receipt):
+    """Deleting the fields is not allowed to be a way out either (the same review)."""
+    rec = a_check(receipt, lambda c: c["id"] == "st82-module-pkg_resources")["roles"]["after"]
+    del rec["python"], rec["dists"]
+
+
+def a_range_that_the_installed_version_is_outside_of(receipt):
+    rec, requirement = a_role_planned_with(receipt, lambda r: "<" in r)
+    rec["dists"][name_of(requirement)] = "99.0.0"
+
+
+def a_package_that_was_not_installed(receipt):
+    rec, requirement = a_role_planned_with(receipt, lambda r: re.fullmatch(r"[A-Za-z0-9_.\-]+", r))
+    rec["dists"][name_of(requirement)] = None
+
+
+def a_version_that_is_not_a_version(receipt):
+    rec, requirement = a_role_planned_with(receipt, lambda r: "==" in r)
+    rec["dists"][name_of(requirement)] = "not-a-version"
+
+
+def the_distributions_of_a_role_forgotten(receipt):
+    a_check(receipt, lambda c: c["id"] == "st82-module-pkg_resources")["roles"]["after"]["dists"] = {}
+
+
+def a_role_of_the_audit_on_the_wrong_python(receipt):
+    a_check(receipt, key="audit_checks")["roles"]["after"]["python"] = "2.7.18"
+
+
+def a_probe_on_the_wrong_python(receipt):
+    a_check(receipt, key="supports")["python"] = "3.1.0"
+
+
+def a_probe_without_its_python(receipt):
+    a_check(receipt, key="audit_supports").pop("python")
+
+
 KNOWLEDGE_MUTATIONS = [every_role_emptied, one_role_dropped, the_exception_of_every_after_changed, the_snippet_failed_before_the_removal,
                        the_snippet_worked_after_the_removal, the_message_lacks_the_expected_text, another_environment_ran, the_expectation_blanked,
                        covers_swapped, the_snippet_edited_with_its_hash, the_hash_of_the_snippet_changed, the_status_flipped, problems_listed_on_a_pass,
                        the_derived_key_forgotten, the_adjacency_forgotten, a_check_dropped_with_the_summary, a_check_recorded_twice,
                        a_check_that_verify_py_does_not_have, the_details_of_every_probe_emptied, a_probe_failed, a_probe_claim_changed,
                        the_audit_roles_emptied, an_audit_check_that_must_fail_passes, the_audit_probes_failed, the_smoke_ran_on_another_base,
-                       the_summary_is_not_the_records]
+                       the_summary_is_not_the_records, a_role_on_the_wrong_python, a_pinned_package_at_another_version,
+                       the_versions_of_a_role_removed, a_range_that_the_installed_version_is_outside_of, a_package_that_was_not_installed,
+                       a_version_that_is_not_a_version, the_distributions_of_a_role_forgotten, a_role_of_the_audit_on_the_wrong_python,
+                       a_probe_on_the_wrong_python, a_probe_without_its_python]
 
 
 @pytest.mark.skipif(sys.version_info < (3, 11), reason="verify.py needs tomllib")
@@ -714,3 +816,28 @@ def test_a_leaked_path_in_the_details_is_found(receipt, verify_module):
     changed = copy.deepcopy(receipt)
     a_leak_of_a_temp_path(changed)
     assert verify_module.leaked_paths(json.dumps(changed)) and re.search(r"/tmp/", json.dumps(changed))
+
+
+@pytest.mark.skipif(sys.version_info < (3, 11), reason="verify.py needs tomllib")
+def test_the_environment_of_a_role_is_judged_clause_by_clause(verify_module):
+    """What a role ran with is judged against the plan: each clause has a counterexample, and the plan itself passes."""
+    env = verify_module.E("3.12", "setuptools==82.0.0", "httpx<0.28", "pydantic")
+    right = {"python": "3.12.13", "dists": {"setuptools": "82.0.0", "httpx": "0.27.2", "pydantic": "2.9.2", "cryptography": None}}
+
+    def judged(**changes):
+        rec = copy.deepcopy(right)
+        rec.update(changes)
+        return judge_environment(verify_module, env, rec, reported=("cryptography",))
+
+    assert judged() == []
+    assert judged(python="3.1.0") and judged(python="3.13.1") and judged(python="3.12") and judged(python=None) and judged(python=312)
+    assert judged(python="3.12.0rc1") == []                                                  # a release candidate is still 3.12
+    assert judged(dists=None) and judged(dists=[]) and judged(dists={})
+    assert judged(dists={**right["dists"], "setuptools": "0.0.1"}) and judged(dists={**right["dists"], "setuptools": "82.0.1"})
+    assert judged(dists={**right["dists"], "httpx": "0.28.0"}) and judged(dists={**right["dists"], "httpx": "1.0"})
+    assert judged(dists={**right["dists"], "pydantic": None}) and judged(dists={**right["dists"], "pydantic": ""})
+    assert judged(dists={**right["dists"], "pydantic": "not-a-version"}) and judged(dists={**right["dists"], "httpx": 0.27})
+    assert judged(dists={k: v for k, v in right["dists"].items() if k != "pydantic"})
+    assert judged(dists={k: v for k, v in right["dists"].items() if k != "cryptography"})      # the check asked to report it
+    assert judged(dists={**right["dists"], "Setuptools": "82.0.0"}) == []                       # names are compared canonically
+    assert judge_environment(verify_module, verify_module.E("3.12"), {"python": "3.12.1", "dists": {}}) == []
