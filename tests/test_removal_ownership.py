@@ -221,7 +221,7 @@ def test_retained_records_do_not_authorize_incomplete_or_inconsistent_runs(tmp_p
 
 def test_runtime_owner_mro_has_a_fixed_bound():
     cls = type("Base", (), {})
-    for n in range(16):
+    for n in range(64):
         cls = type(f"Level{n}", (cls,), {})
     item = cls()
     with pytest.raises(AttributeError) as caught:

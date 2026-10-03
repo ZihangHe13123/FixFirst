@@ -4,6 +4,8 @@ Names are retained for explanations, never encoded as case/package identifiers.
 The separate history bit reads existing sourced metadata; it is not a diagnosis.
 """
 
+import json
+
 from packaging.utils import canonicalize_name
 from packaging.version import InvalidVersion, Version
 
@@ -46,7 +48,7 @@ def valid_record(value):
     if kind == "module" and not module:
         return {}
     owners = value.get("receiver_owners", [])
-    if not isinstance(owners, list) or len(owners) > 32:
+    if not isinstance(owners, list) or len(owners) > 128:
         return {}
     for row in owners:
         if (not isinstance(row, dict) or set(row) != {"module", "owner", "file", "direct"}
@@ -56,6 +58,8 @@ def valid_record(value):
                 or not isinstance(row.get("file"), str) or len(row["file"]) > 4000
                 or type(row.get("direct")) is not bool):
             return {}
+    if len(json.dumps(owners, ensure_ascii=True, separators=(",", ":"))) > 32768:
+        return {}
     candidates = value.get("candidates")
     if not isinstance(candidates, list) or len(candidates) > 5:
         return {}

@@ -6,6 +6,7 @@ Record names, shapes and supplied keys only, never object values or array data.
 
 import ast
 import dis
+import json
 import re
 import sys
 import types
@@ -50,9 +51,10 @@ def receiver_owners(value):
     if not plain_class(cls):
         return []
     mro = class_mro(cls)
-    if len(mro) > 16:
+    if len(mro) > 64:
         return []
     rows = []
+    encoded_size = 2  # JSON list brackets; ASCII escaping bounds the wire size.
     for parent in mro:
         module, name = class_identity(parent)
         if not module or parent is object:
@@ -72,9 +74,11 @@ def receiver_owners(value):
             aliases = sorted(key for key, item in namespace.items() if item is parent
                              and type(key) is str and key.isidentifier() and len(key) <= 200)
             for alias in aliases[:8]:
-                rows.append({"module": alias_module, "owner": alias, "file": origin, "direct": parent is cls})
-                if len(rows) >= 32:
+                row = {"module": alias_module, "owner": alias, "file": origin, "direct": parent is cls}
+                encoded_size += len(json.dumps(row, ensure_ascii=True, separators=(",", ":"))) + bool(rows)
+                if len(rows) >= 128 or encoded_size > 32768:
                     return []  # An incomplete identity set must not imply unique ownership.
+                rows.append(row)
     return rows
 
 
@@ -236,7 +240,7 @@ def static_namespace(value):
     if not plain_class(cls):
         return None
     mro = class_mro(cls)
-    if len(mro) > 16:
+    if len(mro) > 64:
         return None
     keys, dynamic = set(), False
     for parent in mro:
