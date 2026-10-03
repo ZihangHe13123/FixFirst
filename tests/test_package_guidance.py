@@ -8,7 +8,7 @@ from test_package_compatibility import action, setup_case, setuptools_requests
 from test_dependency_advice import recorded_session
 
 
-@pytest.mark.parametrize('pin', ['setuptools>=82', 'setuptools==84.0.0', 'setuptools<66'])
+@pytest.mark.parametrize('pin', ['setuptools>=82', 'setuptools==84.0.0'])
 def test_conflicting_provider_requirement_preserves_pin_and_offers_consumer_migration(tmp_path, pin):
     session, _ = setup_case(tmp_path, 'removed', requirement=pin)
     repair = action(session)

@@ -530,8 +530,23 @@ description = "The missing attribute or unexpected argument belongs to a class o
 when = [
   ["?i", "exception", "?e"], ["test", "in", "?e", "AttributeError,TypeError"],
   ["?i", "owner_is_local", "yes"],
+  ["not", "?i", "removal_owner_unobserved", "yes"],
 ]
 then = [["?i", "diagnosis", "code_defect"]]
+
+[[rule]]
+id = "P_REMOVAL_REOBSERVE"
+phase = "plan"
+description = "An old local class name does not establish whether a removed attribute was inherited."
+when = [["?i", "removal_owner_unobserved", "yes"], ["not", "?i", "diagnosis", "?_"]]
+[rule.action]
+id = "record-removal-ownership-{?i}"
+kind = "inspect"
+issue = "?i"
+cost = 1
+title = "Re-run the failure before choosing a repair"
+explanation = "The saved failure names an attribute also removed from a library, but does not record which class supplied it. A class defined in this project may inherit that API. Re-run the failing check to distinguish a project mistake from a library change."
+verification = "Use the same interpreter and failing check; inspect the newly recorded ownership before choosing a repair"
 
 # ======================================================================================
 # heuristic: likely causes from general experience, when no rule is certain

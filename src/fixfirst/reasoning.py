@@ -163,8 +163,15 @@ def apply_classifier(session: Session, active, details) -> list[Fact]:
     for issue in active:
         issue.prediction, issue.prediction_confidence = suggestions.get(issue.issue_id, (None, None))
         issue.prediction_note = ""
+        detail = details.get(issue.issue_id, {})
+        if detail.get("removal_ownership_unobserved"):
+            issue.prediction_note = (
+                "This saved failure does not record which class supplied the missing attribute. "
+                "A project class may inherit an API removed from a library. Re-run the failing "
+                "check to record ownership before choosing a cause or repair."
+            )
+            continue
         if issue.prediction and issue.prediction_confidence >= MIN_CONFIDENCE:
-            detail = details.get(issue.issue_id, {})
             if (str(detail.get("exception", "")).endswith("Warning")
                     and detail.get("raised_in") not in {"project", "test"}):
                 issue.prediction_note = (

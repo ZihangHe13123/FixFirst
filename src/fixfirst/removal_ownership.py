@@ -7,6 +7,7 @@ authorize D02/D03; another issue's similarly named object cannot supply them.
 import posixpath
 
 from packaging.utils import canonicalize_name
+from packaging.version import InvalidVersion, Version
 
 from . import domain
 
@@ -102,6 +103,30 @@ def evidence_facts(session, issue, evidence, project, environment):
     from .evidence import CANNOT_IMPORT, MODULE_ATTR, NUMPY_REMOVED, observed
 
     result, entries = [], domain.load()["removed_index"]
+    item = evidence.get("operation_context", {})
+    # A saved local class spelling cannot exclude an inherited removed API.
+    # Current observed ancestry still distinguishes the recorded namesakes.
+    if (evidence["exception"] == "AttributeError"
+            and set(evidence["owners"]) & set(project.get("defined_names", []))
+            and not (item.get("status") == "observed_operation"
+                     and item.get("record", {}).get("receiver_owners")
+                     and _current_snapshots(session, item, project, environment)
+                     and _one_failure(session, issue, item))):
+        installed = {canonicalize_name(p.get("name", "")): p.get("version", "")
+                     for p in environment.get("packages", [])}
+        installed["python"] = environment.get("python_version", "")
+        for name in evidence["attributes"]:
+            entry = entries.get("attribute:" + name)
+            if not entry:
+                continue
+            try:
+                applicable = Version(installed.get(canonicalize_name(entry["distribution"]), "")) >= Version(entry["version"])
+            except (InvalidVersion, TypeError):
+                applicable = False
+            if applicable:
+                evidence["removal_ownership_unobserved"] = True
+                result.append(observed(issue.issue_id, "removal_owner_unobserved", "yes", issue.evidence_refs))
+                break
     # Keep established module/import diagnoses, but never interpret object text
     # or a class spelling as a module identity. Explicit owners require proof.
     message = evidence["message"]
@@ -114,7 +139,6 @@ def evidence_facts(session, issue, evidence, project, environment):
         if entry and not entry.get("owners"):
             result.append(observed(issue.issue_id, "removal_owner", key, issue.evidence_refs))
 
-    item = evidence.get("operation_context", {})
     if item.get("status") in ("dynamic_receiver", "member_present"):
         # Some exact library classes (pandas.DataFrame) implement __getattr__.
         # NumPy 2.2 also retains descriptors which raise at the removed lookup.
@@ -124,11 +148,24 @@ def evidence_facts(session, issue, evidence, project, environment):
 
         item = context(session, issue, evidence, allow_dynamic=True, allow_present=True)
     record = item.get("record", {})
-    if (item.get("status") != "observed_operation" or record.get("kind") not in ("instance", "class")
+    if (item.get("status") != "observed_operation"
             or issue.environment_id != environment.get("_environment_id")
             or not environment.get("_run_id") or not project.get("_run_id")
             or not _current_snapshots(session, item, project, environment)
             or not _one_failure(session, issue, item)):
+        return result
+    if record.get("kind") == "module" and record.get("operation") == "IMPORT_NAME":
+        proof = record.get("import_getattr", {})
+        key = f"api:{record['module']}.{record['name']}"
+        entry = entries.get(key)
+        if (entry and not entry.get("owners")
+                and _provider({"module": record["module"], "file": proof.get("module_file", "")},
+                              canonicalize_name(entry["distribution"]), project, environment)):
+            refs = [*item["refs"], f"{environment['_run_id']}:stdout:1", f"{project['_run_id']}:stdout:1"]
+            result += [observed(issue.issue_id, "api", key, refs),
+                       observed(issue.issue_id, "removal_owner", key, refs)]
+        return result
+    if record.get("kind") not in ("instance", "class"):
         return result
     owners = record.get("receiver_owners", [])
     refs = list(dict.fromkeys([*item["refs"], f"{environment['_run_id']}:stdout:1", f"{project['_run_id']}:stdout:1"]))

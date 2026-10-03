@@ -7,14 +7,14 @@ from packaging.specifiers import SpecifierSet
 from packaging.version import InvalidVersion
 import re
 
-from .dependency_context import bounded_adjustment, combined_specifier, context, contradicts, requirements_for
+from .dependency_context import bounded_adjustment, combined_specifier, context, contradicts, range_side, requirements_for
 from .models import Action
 from .install_feedback import declarations_key, has_prepared_wheel, offer_build
 
 
 def refine(session, actions, by_id, facts):
     from .evidence import current_environment, observed, project_index
-    from .package_compatibility import POLICY_ID
+    from .package_compatibility import POLICY_ID, load as package_policy
 
     environment = current_environment(session)
     project_run, project = project_index(session)
@@ -105,15 +105,40 @@ def refine(session, actions, by_id, facts):
                 f"Keeping this fixed requirement while changing only {name} cannot satisfy both requirements; "
                 "a coordinated declaration and dependency update may work.")
             if POLICY_ID in action.rule_ids and name == "setuptools":
-                action.explanation = (
-                    f"The proposed {requested} conflicts with the recorded requirements: {constraints}. "
-                    "Keep the recorded requirements while identifying the code or dependency that imports "
-                    "pkg_resources. For project code, migrate distribution metadata queries to "
-                    "importlib.metadata and package resource access to importlib.resources; choose the "
-                    "replacement appropriate for each API. For a dependency, review a compatible release "
-                    "or patch that no longer imports pkg_resources. Do not relax the setuptools requirement "
-                    "just to reinstall the legacy provider. Verify the migration with the original failing "
-                    "check and check the complete dependency set.")
+                entry = package_policy()["pkg_resources"]
+                side = range_side(combined_specifier(data, name), entry["fixed_version"], entry["provider_removed"])
+                action.explanation = f"The proposed {requested} conflicts with the recorded requirements: {constraints}. "
+                if side == "below":
+                    candidate = f"setuptools>={entry['fixed_version']},<{entry['provider_removed']}"
+                    action.title = "Review the old setuptools requirement for Python 3.12"
+                    action.explanation += (
+                        "The recorded requirements only allow releases below the bounded provider range "
+                        f"for the selected Python {environment.get('python_version', 'unknown')}. Older "
+                        "pkg_resources providers can use pkgutil.ImpImporter, which is absent in Python 3.12. "
+                        f"Review raising the named project declaration into {candidate}, preserving its "
+                        "extras and environment markers. If a dependency supplies the constraint, review "
+                        "a compatible release or patch of that dependency. Coordinate all recorded "
+                        "requirements before installation. If the old dependency stack must remain, "
+                        "review a separate environment using the Python version documented for that stack. "
+                        "This is a proposed declaration change; no compatible dependency set has been "
+                        "verified. Check the complete dependency set and rerun the original failing check.")
+                elif side == "above":
+                    action.explanation += (
+                        "Keep the recorded requirements while identifying the code or dependency that imports "
+                        "pkg_resources. For project code, migrate distribution metadata queries to "
+                        "importlib.metadata and package resource access to importlib.resources; choose the "
+                        "replacement appropriate for each API. For a dependency, review a compatible release "
+                        "or patch that no longer imports pkg_resources. Do not relax the setuptools requirement "
+                        "just to reinstall the legacy provider. Verify the migration with the original failing "
+                        "check and check the complete dependency set.")
+                else:
+                    action.title = "Review the setuptools requirements together before choosing a repair"
+                    action.explanation += (
+                        "The recorded requirements are mutually inconsistent or do not establish a single "
+                        "direction relative to the bounded provider range. Review the named declarations and "
+                        "dependent packages together before choosing a provider update or consumer migration. "
+                        "An upgrade or downgrade alone has not been established as a repair. Coordinate a "
+                        "consistent dependency set, then rerun the original failing check.")
             elif POLICY_ID not in action.rule_ids:
                 trials[action.action_id] = (name, str(Requirement(requested).specifier))
         elif changed:
