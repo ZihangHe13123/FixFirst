@@ -1,0 +1,51 @@
+# What became of the 114 verified candidates of candidates/candidates-parked.toml (see verify_owners.py and the README).
+#
+# enabled   the block is in domain.toml with `owners` (every key of it has a passing record in the owners receipt);
+# merged    not enabled because an enabled entry already covers the same removal (covered_by);
+# parked    still in src/fixfirst/knowledge/pending_attribution.toml, with the reason.
+# tests/test_knowledge_owners.py checks that every candidate key has exactly one of these states.
+
+[[merged]]
+keys = ["api:DiGraph.node", "api:DiGraph.selfloop_edges", "api:DiGraph.nodes_with_selfloops", "api:DiGraph.number_of_selfloops", "api:DiGraph.add_path", "api:DiGraph.add_cycle", "api:DiGraph.add_star"]
+covered_by = ["api:Graph.node", "api:Graph.selfloop_edges", "api:Graph.nodes_with_selfloops", "api:Graph.number_of_selfloops", "api:Graph.add_path", "api:Graph.add_cycle", "api:Graph.add_star"]
+why = "A DiGraph is a Graph. The Graph block covers it through inheritance (the owner networkx.Graph matches a base class), and the product shows one step for every matching entry, so enabling this block as well showed the same step twice (verified)."
+
+[[merged]]
+keys = ["api:MultiGraph.node", "api:MultiGraph.selfloop_edges", "api:MultiGraph.nodes_with_selfloops", "api:MultiGraph.number_of_selfloops", "api:MultiGraph.add_path", "api:MultiGraph.add_cycle", "api:MultiGraph.add_star"]
+covered_by = ["api:Graph.node", "api:Graph.selfloop_edges", "api:Graph.nodes_with_selfloops", "api:Graph.number_of_selfloops", "api:Graph.add_path", "api:Graph.add_cycle", "api:Graph.add_star"]
+why = "A MultiGraph is a Graph. The Graph block covers it through inheritance (the owner networkx.Graph matches a base class), and the product shows one step for every matching entry, so enabling this block as well showed the same step twice (verified)."
+
+[[merged]]
+keys = ["api:MultiDiGraph.node", "api:MultiDiGraph.selfloop_edges", "api:MultiDiGraph.nodes_with_selfloops", "api:MultiDiGraph.number_of_selfloops", "api:MultiDiGraph.add_path", "api:MultiDiGraph.add_cycle", "api:MultiDiGraph.add_star"]
+covered_by = ["api:Graph.node", "api:Graph.selfloop_edges", "api:Graph.nodes_with_selfloops", "api:Graph.number_of_selfloops", "api:Graph.add_path", "api:Graph.add_cycle", "api:Graph.add_star"]
+why = "A MultiDiGraph is a Graph. The Graph block covers it through inheritance (the owner networkx.Graph matches a base class), and the product shows one step for every matching entry, so enabling this block as well showed the same step twice (verified)."
+
+[[merged]]
+keys = ["api:TfidfVectorizer.get_feature_names"]
+covered_by = ["api:CountVectorizer.get_feature_names"]
+why = "TfidfVectorizer inherits get_feature_names from CountVectorizer; the CountVectorizer block covers it through inheritance and enabling both showed the same step twice (verified)."
+
+[[merged]]
+keys = ["api:Engine.execute"]
+covered_by = ["attribute:sqlalchemy.engine.base.Engine.execute"]
+why = "Engine.execute is already enabled as attribute:sqlalchemy.engine.base.Engine.execute with the same removal and source; a second entry would show the step twice."
+
+[[parked]]
+title = "matplotlib Axes.ArtistList"
+keys = ["api:ArtistList.append", "api:ArtistList.clear", "api:ArtistList.extend", "api:ArtistList.insert", "api:ArtistList.pop", "api:ArtistList.remove"]
+why = "ArtistList is a class nested in _AxesBase (qualified name _AxesBase.ArtistList). The product records the class of a receiver only when a module holds it under its qualified name (class_identity), so no owner can ever match it."
+
+[[parked]]
+title = "SQLAlchemy expression and Query classes"
+keys = ["api:CompoundSelect.c", "api:CompoundSelect.columns", "api:CompoundSelect.select", "api:Delete.execute", "api:Insert.execute", "api:Query.from_self", "api:Select.apply_labels", "api:Select.c", "api:Select.columns", "api:Select.execute", "api:Select.select", "api:Table.exists", "api:TextualSelect.c", "api:TextualSelect.columns", "api:TextualSelect.select", "api:Update.execute"]
+why = "The receiver's class has more than 16 base classes (SQLAlchemy 2.1: Table 41, Select 44, Insert 34, Update 35, Delete 34, CompoundSelect 39, TextualSelect 34, Query 20), and the product's receiver probe records no identity beyond 16 (receiver_owners and static_namespace in fixfirst/_runtime_evidence.py). Two further caps stop the same classes: receiver_owners drops the whole set when it would hold 32 or more alias rows, and symbol_context.valid_record accepts at most 32 rows. With the three caps raised (64, 512, 512) in a scratch copy, all 16 keys of these classes pass verify_owners.py, FixFirst's own run included, with owners such as sqlalchemy.Select and sqlalchemy.sql.selectable.Select; the caps are a product decision."
+
+[[parked]]
+title = "Django settings"
+keys = ["api:Settings.DEFAULT_FILE_STORAGE", "api:Settings.PASSWORD_RESET_TIMEOUT_DAYS", "api:Settings.STATICFILES_STORAGE", "api:Settings.USE_L10N"]
+why = "settings is a LazySettings proxy: the receiver's class is django.conf.LazySettings, not Settings, and the lookup fails inside Django's own __getattr__ (getattr(self._wrapped, name)), which the product does not observe; it records only a failing attribute load in the code it runs. FixFirst still reports a version incompatibility from its release heuristic H02, without naming the setting."
+
+[[parked]]
+title = "array.array"
+keys = ["attribute:array.array.fromstring", "attribute:array.array.tostring"]
+why = "CPython words the error of a C type with the module ('array.array' object has no attribute 'tostring') and the product records no operation for it, so nothing authorizes the entry and it makes no diagnosis at all (finding E4 of the PR #62 acceptance)."

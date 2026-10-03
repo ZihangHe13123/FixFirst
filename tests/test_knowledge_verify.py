@@ -95,12 +95,16 @@ def test_every_verified_key_is_covered_by_a_passing_check(receipt):
                 assert key(entry, n) in covered, (name, key(entry, n))
 
 
-def test_the_parked_file_in_the_package_is_the_parked_candidate_file():
+def test_the_parked_file_in_the_package_holds_verified_candidate_blocks_only():
+    """What is still parked is a subset of the verified candidates, unchanged; the rest was enabled or merged (test_knowledge_owners.py)."""
     shipped = blocks(KNOWLEDGE / "pending_attribution.toml")
     verified = blocks(FOLDER / "candidates" / "candidates-parked.toml")
-    assert shipped["removed"] == verified["removed"]
-    for sid, source in verified.get("sources", {}).items():
-        assert shipped["sources"][sid] == source
+    candidates = {key(e, n): e for e in verified["removed"] for n in e["names"]}
+    for entry in shipped["removed"]:
+        for n in entry["names"]:
+            assert candidates[key(entry, n)] == entry, key(entry, n)
+    for sid, source in shipped.get("sources", {}).items():
+        assert verified["sources"][sid] == source
 
 
 @pytest.mark.skipif(sys.version_info < (3, 11), reason="verify.py needs tomllib")

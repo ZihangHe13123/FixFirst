@@ -1,8 +1,9 @@
 """A project's own class must not be diagnosed as a library version problem (review of 0785845, items K1 and K2).
 
-Knowledge entries that match a bare attribute name or a class name cannot be bound to the object's real module, so they are kept in
-knowledge/pending_attribution.toml and are not loaded. Each case below is a project class that happens to share a name with such an
-entry and then calls a method it does not have: the right diagnosis is a code defect in the project.
+Knowledge entries that name a class (`module = "Engine"`) or a bare attribute only apply to an object whose class really is the named library
+class (`owners`, checked by the receiver ownership of src/fixfirst/removal_ownership.py). Each case below is a project class that happens to
+share a name with such an entry and then calls a method it does not have: the right diagnosis is a code defect in the project. The entries
+whose owners cannot be matched yet stay in knowledge/pending_attribution.toml and are not loaded.
 """
 from pathlib import Path
 import sys
@@ -22,6 +23,19 @@ CASES = {
     "local_engine": "class Engine:\n    def run(self):\n        return True\n\nEngine().execute()\n",
     "local_csr_matrix": "class csr_matrix:\n    pass\n\ncsr_matrix().A\n",
     "local_is_ajax": "class Request:\n    def is_json(self):\n        return True\n\nRequest().is_ajax()\n",
+    # classes of the entries that carry owners since the receiver ownership exists (scripts/knowledge_verify/verify_owners.py)
+    "local_dataframe": "class DataFrame:\n    pass\n\nDataFrame().iteritems\n",
+    "local_series": "class Series:\n    pass\n\nSeries().append\n",
+    "local_flask": "class Flask:\n    pass\n\nFlask().json_encoder\n",
+    "local_click_group": "class Group:\n    pass\n\nGroup().resultcallback\n",
+    "local_graph": "class Graph:\n    pass\n\nGraph().node\n",
+    "local_session": "class Session:\n    pass\n\nSession().transaction\n",
+    "local_http_response": "class HTTPResponse:\n    pass\n\nHTTPResponse().strict\n",
+    "local_legend": "class Legend:\n    pass\n\nLegend().legendHandles\n",
+    "local_openai": "class OpenAI:\n    pass\n\nOpenAI().edits\n",
+    "local_ndarray": "class ndarray:\n    pass\n\nndarray().itemset\n",
+    "local_testcase": "class TestCase:\n    pass\n\nTestCase().failUnlessAlmostEqual\n",
+    "local_field_info": "class FieldInfo:\n    pass\n\nFieldInfo().required\n",
 }
 
 
@@ -40,7 +54,7 @@ def test_parked_entries_are_verified_data_that_domain_load_does_not_read():
     knowledge = Path(domain.__file__).parent / "knowledge"
     parked = tomllib.loads((knowledge / "pending_attribution.toml").read_text(encoding="utf-8"))
     enabled = tomllib.loads((knowledge / "domain.toml").read_text(encoding="utf-8"))
-    assert len(parked["removed"]) >= 100
+    assert len(parked["removed"]) >= 10
 
     def keys(data):
         return {
