@@ -19,6 +19,7 @@ from .runner import environment_id
 from .tool_compatibility import _normal, _package_file, _stable
 
 POLICY_ID = "package-compatibility:pkg_resources"
+_UNOBSERVED = "The failed import or receiver was not observed"
 
 
 @lru_cache(maxsize=1)
@@ -54,6 +55,44 @@ def _record(event, run):
     return next(iter(unique.values())) if len(unique) == 1 else {}
 
 
+def _unobserved_review(session, record, event):
+    """Explain recorded context without turning it into operation evidence."""
+    location = ""
+    frames = record.get("traceback_frames", [])
+    frames = frames[-20:] if isinstance(frames, list) else []
+    root = _normal(session.project_root, session.project_root).rstrip("/") + "/"
+    if event.stage == "collect" and event.location and len(event.location) <= 4096:
+        # A collection wrapper's traceback may contain only pytest internals,
+        # including a venv within the project. Its node is the useful context.
+        location = f" Recorded collection node: {event.location}."
+    for frame in reversed(frames):
+        if location:
+            break
+        if not isinstance(frame, dict):
+            continue
+        path, line = frame.get("file"), frame.get("line")
+        if isinstance(path, str) and 0 < len(path) <= 4096 and type(line) is int and line > 0:
+            path = _normal(path, session.project_root)
+            if path.startswith(root):
+                location = f" Inspect the recorded project frame at {path[len(root):]}:{line}."
+                break
+    if not location:
+        path, line = record.get("source_file"), record.get("source_line")
+        if isinstance(path, str) and 0 < len(path) <= 4096 and type(line) is int and line > 0:
+            path = _normal(path, session.project_root)
+            if path.startswith(root):
+                path = path[len(root):]
+            location = f" Inspect the recorded exception at {path}:{line}."
+        elif event.location and len(event.location) <= 4096:
+            kind = "collection node" if event.stage == "collect" else "failure location"
+            location = f" Recorded {kind}: {event.location}."
+    return (_UNOBSERVED + "; a direct pkg_resources import or its failing receiver was not verified."
+            + location + " Check whether this code uses __import__ or importlib.import_module, "
+            "or an exception was raised again. Trace those calls to the original failure; "
+            "these are possibilities to inspect, not observed causes. Traceback text alone "
+            "cannot select a setuptools repair.")
+
+
 def _observation(session, issue, environment, project_run, project):
     """Only current native/probed pytest failures can license a package change."""
     current = environment_id(session.target_python)
@@ -87,7 +126,7 @@ def _observation(session, issue, environment, project_run, project):
         record = _record(event, run)
         observed_failure = record.get("package_failure", {})
         if not isinstance(observed_failure, dict) or observed_failure.get("source") != "failed_instruction":
-            return None, "The failed import or receiver was not observed; traceback text alone cannot select a setuptools repair."
+            return None, _unobserved_review(session, record, event)
         mechanism = observed_failure.get("mechanism")
         path = observed_failure.get("file", "")
         if not isinstance(path, str) or not path or type(observed_failure.get("line")) is not int:
@@ -95,21 +134,30 @@ def _observation(session, issue, environment, project_run, project):
         expected = {"pkgutil_impimporter": "AttributeError", "missing_pkg_resources": "ModuleNotFoundError"}.get(mechanism)
         frames = record.get("traceback_frames", [])
         outer_frame = frames[-1] if isinstance(frames, list) and frames else {}
-        wrapped = (record.get("exception_type") == "CollectError"
-                   and record.get("exception_module") == "_pytest.nodes"
+        wrapper = (record.get("exception_type"), record.get("exception_module"), observed_failure.get("wrapper"))
+        conftest_wrapper = wrapper == ("ConftestImportFailure", "_pytest.config", "pytest_conftest_import_failure")
+        wrapped = (wrapper in (
+                       ("CollectError", "_pytest.nodes", "pytest_collect_error"),
+                       ("ConftestImportFailure", "_pytest.config", "pytest_conftest_import_failure"))
                    and record.get("stage") == "collect" and issue.tool in {"pytest", "pytest_run"}
                    and event.stage == "collect" and event.location == record.get("nodeid")
                    and isinstance(outer_frame, dict)
                    and record.get("source_file") == outer_frame.get("file")
-                   and record.get("source_line") == outer_frame.get("line")
-                   and observed_failure.get("wrapper") == "pytest_collect_error")
+                   and record.get("source_line") == outer_frame.get("line"))
+        if conftest_wrapper:
+            wrapped = (wrapped and outer_frame.get("function") == "_importconftest"
+                       and _package_file(record.get("source_file", ""), "_pytest/config/__init__.py",
+                                         session.project_root, environment)
+                       and event.source_file == record.get("source_file")
+                       and event.source_line == record.get("source_line"))
         source_record = record.get("package_failure_exception", {}) if wrapped else record
         if not isinstance(source_record, dict):
             source_record = {}
         message = record.get("exception_message", "")
         expected_message = ("module 'pkgutil' has no attribute 'ImpImporter'" if mechanism == "pkgutil_impimporter"
                             else "No module named 'pkg_resources'")
-        if (not expected or observed_failure.get("exception_type") != expected or event.code != expected
+        event_type = "ConftestImportFailure" if conftest_wrapper and wrapped else expected
+        if (not expected or observed_failure.get("exception_type") != expected or event.code != event_type
                 or not isinstance(message, str) or expected_message not in message
                 or source_record.get("exception_type") != expected
                 or _normal(source_record.get("source_file", ""), session.project_root) != _normal(path, session.project_root)
@@ -243,6 +291,8 @@ def refine(session, actions, by_id, facts):
     command = []
     explanation = " ".join(dict.fromkeys(reasons))
     title = "Review pkg_resources ownership and compatibility before changing setuptools"
+    if any(reason.startswith(_UNOBSERVED) for reason in reasons):
+        title = "Inspect the recorded pkg_resources failure before changing setuptools"
     if not reasons:
         direction = "Install"
         if any(m["mechanism"] == "pkgutil_impimporter" for m in matches):

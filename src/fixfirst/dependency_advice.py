@@ -104,7 +104,17 @@ def refine(session, actions, by_id, facts):
                 "a separate Python environment compatible with their documented requirements. "
                 f"Keeping this fixed requirement while changing only {name} cannot satisfy both requirements; "
                 "a coordinated declaration and dependency update may work.")
-            if POLICY_ID not in action.rule_ids:
+            if POLICY_ID in action.rule_ids and name == "setuptools":
+                action.explanation = (
+                    f"The proposed {requested} conflicts with the recorded requirements: {constraints}. "
+                    "Keep the recorded requirements while identifying the code or dependency that imports "
+                    "pkg_resources. For project code, migrate distribution metadata queries to "
+                    "importlib.metadata and package resource access to importlib.resources; choose the "
+                    "replacement appropriate for each API. For a dependency, review a compatible release "
+                    "or patch that no longer imports pkg_resources. Do not relax the setuptools requirement "
+                    "just to reinstall the legacy provider. Verify the migration with the original failing "
+                    "check and check the complete dependency set.")
+            elif POLICY_ID not in action.rule_ids:
                 trials[action.action_id] = (name, str(Requirement(requested).specifier))
         elif changed:
             action.command = [session.target_python, "-m", "pip", "install", "--only-binary=:all:", *changed]
