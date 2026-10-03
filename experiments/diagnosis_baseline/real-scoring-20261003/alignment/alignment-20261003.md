@@ -1,6 +1,6 @@
 # B3 真实项目匿名评分：A/C 分歧对齐记录（2026-10-03）
 
-状态：**A、C 独立评分均已交回；两条分歧行已按 C 的判法更新共识表草案并附证据，待 A 确认后转正为 A+C。**
+状态：**A、C 独立评分均已交回；两条分歧行已按 C 的判法定稿并经 A、C 双方确认，共识表为最终版。**
 独立原表不覆盖：A 的三张表（署名 yongjun）与 C 的三张表（署名 WEI YI）均随本分支
 `b3-scoring-aligned-20261003` 提交（基于 PR #61 head `e722cd54`；A 的交付说明见
 `RETURNED-A.md`，C 的见 `RETURNED-C.md`）。
@@ -83,10 +83,10 @@ handles post-replacement truncation and word boundaries.`
   未给出能满足回归用例的修复（partial_if）。A 自留：若“调查”视为通用动作则落 generic。
 - **C（generic）**：未说出原因（trailing delimiter 未具名）、无修复动作；partial_if 要求
   “提出不完整修复”故不适用；按 rubric §2 顺序 generic 优先于 partial。
-- **取法**：共识表已按 C 的 **generic** 定稿草案（依据：未说出原因且无修复动作，partial_if 要求
+- **取法**：共识表定稿为 C 的 **generic**（A、C 双方确认；依据：未说出原因且无修复动作，partial_if 要求
   “提出不完整修复”故不适用；rubric §2“generic 优先于 partial——没说出原因就是 generic”；
   A2 对齐先例 qrcode/cacheops/django-storages 同口径“第一步动作不具名 → generic”）。
-  A 的 partial（认出 post-replacement 截断处理但只建议调查）记录在案，待 A 确认。
+  A 的 partial（认出 post-replacement 截断处理但只建议调查）记录在案。
 
 ### 分歧 ② model-3 / pytest：A=correct，C=wrong
 
@@ -103,11 +103,11 @@ in 3.14, causing the test suite to fail when warnings are treated as errors.`
   conftest 自身不含 ast.Str，改它照做不消层；wrong_if 明文命中，rubric 顺序 wrong_if 优先。
   （源码直查复核：pytest 6.2.5 的 `testing/conftest.py` 无任何 ast 引用；`ast.Str` 全部在
   `src/_pytest/assertion/rewrite.py`，其中 823 行 `keys = [ast.Str(key) ...]` 与标签记录一致。）
-- **取法**：共识表已按 C 的 **wrong** 定稿草案（依据：源码直查 pytest 6.2.5——`testing/conftest.py`
+- **取法**：共识表定稿为 C 的 **wrong**（A、C 双方确认；依据：源码直查 pytest 6.2.5——`testing/conftest.py`
   无任何 ast 引用，ast.Str 全在 `src/_pytest/assertion/rewrite.py`，其中 823 行与标签记录一致；
   答句点名改 conftest 照做不消层；wrong_if 明文“proposes project-code changes for the initial
   collection failure”，rubric 顺序 wrong_if 优先）。A 的 correct（把“any other files using ast.Str”
-  兜底句读为有效路径，会落到 rewrite.py:823）记录在案，待 A 确认；与 model-1 同项目行
+  兜底句读为有效路径，会落到 rewrite.py:823）记录在案；与 model-1 同项目行
   （双方判 correct，点的是 assertion rewriting code = 栈机制）口径不冲突。
 
 ## 4. 共识表（草案）
@@ -115,12 +115,11 @@ in 3.14, causing the test suite to fail when warnings are treated as errors.`
 `scores-consensus-model-{1,2,3}.csv`（各 12 行，UTF-8 BOM，与原始表同构）：
 
 - 29 行一致 → 取一致值，`scored_by = A+C`，notes 记录一致理由；
-- 分歧 ① → 按 C 的 generic 定稿草案，`scored_by` 标“WEI YI（草案，待 A 确认）”，notes 写双方立场与依据；
-- 分歧 ② → 按 C 的 wrong 定稿草案（同上标注），notes 写双方立场与源码证据；
+- 分歧 ① → 定稿 C 的 generic，`scored_by = C`，notes 写双方立场与依据（A 已确认）；
+- 分歧 ② → 定稿 C 的 wrong（同上），notes 写双方立场与源码证据（A 已确认）；
 - 5 条缺答 → 留空分，`scored_by = A+C`，notes 写双方确认语。
 
-按本草案的共识分布（31 条有回答）：correct 11 / partial 8 / generic 1 / wrong 11；
-A 确认两条分歧后即为最终值。
+最终共识分布（31 条有回答）：correct 11 / partial 8 / generic 1 / wrong 11。
 
 原独立评分表（A 的 `model-*-A.csv` 与 C 的 `model-*-C.csv`）一律不动，最终共识表另存。
 
@@ -137,7 +136,7 @@ A 确认两条分歧后即为最终值。
 ## 6. 下一步
 
 1. 双方原表、共识表与本文档已随分支 `b3-scoring-aligned-20261003` 提交，由 B 接收保存；
-2. A 确认分歧 ①② 两行草案（或提出异议）后，共识表转正为 A+C；
-3. 转正后另存最终共识表与定稿说明，不覆盖本底稿和双方原表；
+2. 分歧 ①② 已定稿并经 A、C 双方确认，共识表即最终版；双方独立原表保持不动；
+3. 后续由 B 决定如何并入 main；
 4. 报告口径：36 次请求总分母；服务可用率单列（5 缺答计为未取得正确建议，不写作建议方向错误）；
    第一步内容质量分母 = 31 条有实际回答；内容一致率 29/31（kappa 0.90）不含缺答行。
