@@ -19,6 +19,7 @@ from .runner import environment_id
 from .tool_compatibility import _normal, _package_file, _stable
 
 POLICY_ID = "package-compatibility:pkg_resources"
+_UNOBSERVED = "The failed import or receiver was not observed"
 
 
 @lru_cache(maxsize=1)
@@ -54,6 +55,38 @@ def _record(event, run):
     return next(iter(unique.values())) if len(unique) == 1 else {}
 
 
+def _unobserved_review(session, record, event):
+    """Explain recorded context without turning it into operation evidence."""
+    location = ""
+    frames = record.get("traceback_frames", [])
+    frames = frames[-20:] if isinstance(frames, list) else []
+    root = _normal(session.project_root, session.project_root).rstrip("/") + "/"
+    for frame in reversed(frames):
+        if not isinstance(frame, dict):
+            continue
+        path, line = frame.get("file"), frame.get("line")
+        if isinstance(path, str) and 0 < len(path) <= 4096 and type(line) is int and line > 0:
+            path = _normal(path, session.project_root)
+            if path.startswith(root):
+                location = f" Inspect the recorded project frame at {path[len(root):]}:{line}."
+                break
+    if not location:
+        path, line = record.get("source_file"), record.get("source_line")
+        if isinstance(path, str) and 0 < len(path) <= 4096 and type(line) is int and line > 0:
+            path = _normal(path, session.project_root)
+            if path.startswith(root):
+                path = path[len(root):]
+            location = f" Inspect the recorded exception at {path}:{line}."
+        elif event.location and len(event.location) <= 4096:
+            kind = "collection node" if event.stage == "collect" else "failure location"
+            location = f" Recorded {kind}: {event.location}."
+    return (_UNOBSERVED + "; a direct pkg_resources import or its failing receiver was not verified."
+            + location + " Check whether this code uses __import__ or importlib.import_module, "
+            "or an exception was raised again. Trace those calls to the original failure; "
+            "these are possibilities to inspect, not observed causes. Traceback text alone "
+            "cannot select a setuptools repair.")
+
+
 def _observation(session, issue, environment, project_run, project):
     """Only current native/probed pytest failures can license a package change."""
     current = environment_id(session.target_python)
@@ -87,7 +120,7 @@ def _observation(session, issue, environment, project_run, project):
         record = _record(event, run)
         observed_failure = record.get("package_failure", {})
         if not isinstance(observed_failure, dict) or observed_failure.get("source") != "failed_instruction":
-            return None, "The failed import or receiver was not observed; traceback text alone cannot select a setuptools repair."
+            return None, _unobserved_review(session, record, event)
         mechanism = observed_failure.get("mechanism")
         path = observed_failure.get("file", "")
         if not isinstance(path, str) or not path or type(observed_failure.get("line")) is not int:
@@ -243,6 +276,8 @@ def refine(session, actions, by_id, facts):
     command = []
     explanation = " ".join(dict.fromkeys(reasons))
     title = "Review pkg_resources ownership and compatibility before changing setuptools"
+    if any(reason.startswith(_UNOBSERVED) for reason in reasons):
+        title = "Inspect the recorded pkg_resources failure before changing setuptools"
     if not reasons:
         direction = "Install"
         if any(m["mechanism"] == "pkgutil_impimporter" for m in matches):

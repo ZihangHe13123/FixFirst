@@ -41,6 +41,12 @@ Stale, imported, ambiguous or mismatched metadata must not be presented as a
 verified failed operation. No new model features, observation permission or
 bulk knowledge changes.
 
+Migration wording follows the Python 3.12 documentation for
+[distribution metadata](https://docs.python.org/3.12/library/importlib.metadata.html)
+and [package resources](https://docs.python.org/3.12/library/importlib.resources.html).
+These are separate families of APIs; the guidance makes no blanket claim of
+drop-in equivalence for every pkg_resources operation.
+
 ## Verification and delivery
 
 1. Freeze independent before/after cases, retain baseline failures and receipts.
