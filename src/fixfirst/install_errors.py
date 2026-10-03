@@ -18,10 +18,30 @@ DETAILS = (
     ("missing_build_tool", re.compile(r"(?:fatal error|cannot open include file).*Python\.h.*(?:not found|No such file)", re.I)),
 )
 INDEX_ERROR = re.compile(
-    r"Could not fetch URL|(?:NewConnection|NameResolution|Proxy|SSLCertVerification|SSL)Error"
+    r"Could not fetch URL|(?:NewConnection|NameResolution|Proxy|SSLCertVerification|SSL|ReadTimeout|ConnectTimeout|Timeout)Error"
     r"|Connection (?:refused|reset)|Temporary failure in name resolution"
     r"|(?:401|403) (?:Client Error|Unauthorized|Forbidden)", re.I,
 )
+
+
+def missing_index_project(value):
+    """A pip-reported 404 for one Simple API project, not global absence.
+
+    Keep project 404s separate even when they name a different requirement: that
+    response is neither target absence nor proof of a broken network connection.
+    Root indexes, artifact URLs and non-404 fetch errors retain access handling.
+    """
+    match = re.search(r"Could not fetch URL (https?://\S+): 404 Client Error\b", value, re.I)
+    if not match:
+        return None
+    try:
+        url = urlsplit(match[1])
+    except ValueError:
+        return None
+    project = re.search(r"(?:^|/)simple/([A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?)/?$", url.path)
+    if not url.hostname or not project:
+        return None
+    return canonicalize_name(project[1]), match[1]
 
 
 def source_archive(value):
@@ -37,7 +57,7 @@ def source_archive(value):
 
 
 def parse_install(run, event):
-    requests, failures, details, sources, access = {}, [], [], [], []
+    requests, failures, details, sources, access, missing_projects = {}, [], [], [], [], []
     python_version = next((r.get("python_version") for r in run.records
                            if r.get("type") == "installation_context"), None)
     build_request = None
@@ -70,7 +90,10 @@ def parse_install(run, event):
                     except (InvalidSpecifier, InvalidVersion):
                         pass
                 sources.append((*archive, f"{run.run_id}:{stream}:{line}", compatible))
-            if INDEX_ERROR.search(value):
+            missing_project = missing_index_project(value)
+            if missing_project:
+                missing_projects.append((*missing_project, f"{run.run_id}:{stream}:{line}"))
+            elif INDEX_ERROR.search(value):
                 access.append((value.strip(), f"{run.run_id}:{stream}:{line}"))
             build = (re.search(r"Failed building wheel for ['\"]?([A-Za-z0-9_.-]+)", value, re.I)
                      or re.search(r"Failed to build ['\"]([A-Za-z0-9_.-]+)['\"]", value, re.I)
@@ -99,7 +122,7 @@ def parse_install(run, event):
         name = failure["component"]
         request = requests.get(name)
         local = details if len(build_names) == 1 and name in build_names else []
-        skipped, python_excluded = [], []
+        skipped, python_excluded, project_missing = [], [], []
         if failure["code"] == "no_distribution":
             requested = re.search(r"No matching distribution found for ([^\s]+)", failure["value"], re.I)
             try:
@@ -108,6 +131,9 @@ def parse_install(run, event):
                             if n == canonicalize_name(req.name) and version in req.specifier]
                 skipped = [ref for ref, compatible in matching if compatible is not False]
                 python_excluded = [ref for ref, compatible in matching if compatible is False]
+                if not req.url:
+                    project_missing = [(url, ref) for n, url, ref in missing_projects
+                                       if n == canonicalize_name(req.name)]
             except (InvalidRequirement, TypeError):
                 pass
         message = failure["value"]
@@ -125,13 +151,18 @@ def parse_install(run, event):
             elif access:
                 code = "index_access"
                 message += ". Package index access was incomplete: " + "; ".join(value for value, _ in access[:2])
+            elif project_missing and not skipped:
+                code = "index_project_missing"
+                message += ". Recorded Simple API project endpoints returned HTTP 404: " + "; ".join(
+                    url for url, _ in project_missing[:2])
         item = event(run, message, stage="install",
                      kind="dependency_conflict" if failure["conflict"] else "install_failure",
                      component=name, code=code,
                      line=failure["line"], stream=failure["stream"])
         item.evidence_refs += (([request[1]] if request else []) + [d[2] for d in local[:3]]
                               + skipped[:3] + python_excluded[:3]
-                              + ([ref for _, ref in access[:2]] if code == "index_access" else []))
+                              + ([ref for _, ref in access[:2]] if code == "index_access" else [])
+                              + ([ref for _, ref in project_missing[:2]] if code == "index_project_missing" else []))
         results.append(item)
     return results or [event(run,
         "No recognisable failure in the installation log; this does not prove installation succeeded",

@@ -235,7 +235,7 @@ def collect(session, targets, timeout):
                 result["error"] = f"The wheel-only trial cannot install {blocked}"
                 result["source_archive_observed"] = False
             for item in failure.get("blockers", []):
-                if item["code"] in ("index_access", "python_requires") or item["kind"] == "dependency_conflict":
+                if item["code"] in ("index_access", "index_project_missing", "python_requires") or item["kind"] == "dependency_conflict":
                     result["failure_kind"] = item["code"] or "dependency_conflict"
                     result["error"] = item["message"]
                     result.pop("trial_restriction", None)
@@ -318,6 +318,13 @@ def advise(session, action, environment, project, name, direction=""):
                 action.explanation += (
                     " Package index access failed. Check connectivity, index configuration, authentication "
                     "and certificates; this is not evidence that a release is absent or needs a source build.")
+            elif result.get("failure_kind") == "index_project_missing":
+                action.title = "Check the package name and index reported by the dependency trial"
+                action.explanation += (
+                    " The recorded Simple API project endpoint returned HTTP 404. Check the package "
+                    "name spelling and the intended public or private index. This does not establish "
+                    "absence on other indexes; private-index permissions remain unknown. A source "
+                    "build or arbitrary version change is not justified by this response.")
             elif result.get("failure_kind") == "python_requires":
                 action.explanation += (
                     " The recorded Requires-Python metadata rejects the interpreter. Building a source "

@@ -221,7 +221,7 @@ def refine(session, actions, by_id, facts):
             conflict_ids.add(issue.issue_id)
             historical.add(issue.issue_id)
             continue
-        failed = next((e for e in members if e.code in ("build_failure", "no_distribution", "no_wheel", "python_requires", "index_access",
+        failed = next((e for e in members if e.code in ("build_failure", "no_distribution", "no_wheel", "python_requires", "index_access", "index_project_missing",
                                                        "missing_build_tool", "legacy_build_config")
                        and e.component), None)
         if not failed:
@@ -321,6 +321,16 @@ def refine(session, actions, by_id, facts):
                 "Check the configured index, connectivity, authentication and certificate settings. "
                 "This does not establish that the requested release or a usable wheel is absent. "
                 "Do not replace the pin or start a source build to work around an unverified index result.")
+        elif failed.code == "index_project_missing":
+            trial = False
+            blocker.title = f"Check the {name} package name and expected index"
+            blocker.explanation = (
+                f"The recorded index project endpoint returned HTTP 404: {failed.message.strip()}. "
+                f"Current declaration: {requirements}. Check the package name spelling and whether this "
+                "is the intended public or private index. This records a not-found response from that "
+                "endpoint only; availability on other indexes and private-index permissions remain unknown. "
+                "No source build or version change is justified by this response. Correct the name or "
+                "index configuration as appropriate before retrying the declared requirement.")
         elif failed.code == "python_requires":
             trial = False
             blocker.title = f"Review the Python requirement for {name}"
