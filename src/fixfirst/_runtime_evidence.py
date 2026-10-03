@@ -11,17 +11,77 @@ import sys
 import types
 
 
+def plain_class(cls):
+    """Only the builtin metaclass or the already loaded standard ABCMeta."""
+    abc = sys.modules.get("abc")
+    abc_meta = vars(abc).get("ABCMeta") if type(abc) is types.ModuleType else None
+    return type(cls) is type or (abc_meta is not None and type(cls) is abc_meta)
+
+
+def class_namespace(cls):
+    # Invoke Python's own descriptor directly, never a metaclass override.
+    return type.__dict__["__dict__"].__get__(cls)
+
+
+def class_mro(cls):
+    return type.__dict__["__mro__"].__get__(cls)
+
+
+def class_identity(cls):
+    if not plain_class(cls):
+        return "", ""
+    module = type.__dict__["__module__"].__get__(cls)
+    name = type.__dict__["__qualname__"].__get__(cls)
+    if type(module) is not str or type(name) is not str or max(len(module), len(name)) > 200:
+        return "", ""
+    loaded = sys.modules.get(module)
+    if type(loaded) is types.ModuleType and vars(loaded).get(name) is cls:
+        return module, name
+    return "", ""
+
+
+def receiver_owners(value):
+    """Bounded registered MRO identities and real exports from loaded parent modules.
+
+    Public aliases (unittest.TestCase, pandas.DataFrame) must point to the exact
+    same class. No module is imported and no object attribute is evaluated.
+    """
+    cls = value if plain_class(value) else type(value)
+    if not plain_class(cls):
+        return []
+    mro = class_mro(cls)
+    if len(mro) > 16:
+        return []
+    rows = []
+    for parent in mro:
+        module, name = class_identity(parent)
+        if not module or parent is object:
+            continue
+        parts = module.split(".")
+        if len(parts) > 8:
+            continue
+        for end in range(len(parts), 0, -1):
+            alias_module = ".".join(parts[:end])
+            loaded = sys.modules.get(alias_module)
+            if type(loaded) is not types.ModuleType:
+                continue
+            namespace = vars(loaded)
+            origin = namespace.get("__file__", "")
+            if (len(namespace) > 5000 or type(origin) is not str or len(origin) > 4000):
+                continue
+            aliases = sorted(key for key, item in namespace.items() if item is parent
+                             and type(key) is str and key.isidentifier() and len(key) <= 200)
+            for alias in aliases[:8]:
+                rows.append({"module": alias_module, "owner": alias, "file": origin, "direct": parent is cls})
+                if len(rows) >= 32:
+                    return []  # An incomplete identity set must not imply unique ownership.
+    return rows
+
+
 def registered_type(value):
     cls = type(value)
-    if type(cls) is not type:
-        return "", ""  # A custom metaclass can execute descriptors during introspection.
     try:
-        module, name = type.__getattribute__(cls, "__module__"), type.__getattribute__(cls, "__qualname__")
-        if type(module) is not str or type(name) is not str:
-            return "", ""
-        loaded = sys.modules.get(module)
-        if type(loaded) is types.ModuleType and vars(loaded).get(name) is cls:
-            return module[:200], name[:200]
+        return class_identity(cls)
     except Exception:
         pass
     return "", ""
@@ -172,24 +232,21 @@ def static_namespace(value):
         if type(module) is not str or sys.modules.get(module) is not value or len(namespace) > 5000:
             return None
         return {key for key in namespace if type(key) is str}, "module", module, "", "__getattr__" in namespace
-    cls = value if type(value) is type else type(value)
-    if type(cls) is not type:
+    cls = value if plain_class(value) else type(value)
+    if not plain_class(cls):
         return None
-    mro = type.__getattribute__(cls, "__mro__")
-    if len(mro) > 8:
+    mro = class_mro(cls)
+    if len(mro) > 16:
         return None
     keys, dynamic = set(), False
     for parent in mro:
-        namespace = type.__getattribute__(parent, "__dict__")
+        namespace = class_namespace(parent)
         if len(keys) + len(namespace) > 5000:
             return None
         keys.update(key for key in namespace if type(key) is str)
         dynamic |= "__getattr__" in namespace or (parent is not object and "__getattribute__" in namespace)
-    if type(value) is type:
-        module, name = type.__getattribute__(cls, "__module__"), type.__getattribute__(cls, "__qualname__")
-        loaded = sys.modules.get(module) if type(module) is str else None
-        if type(loaded) is not types.ModuleType or type(name) is not str or vars(loaded).get(name) is not cls:
-            module, name = "", ""
+    if plain_class(value):
+        module, name = class_identity(cls)
         kind = "class"
     else:
         module, name = registered_type(value)
@@ -525,7 +582,9 @@ def symbol_observation(error, tracebacks, *, status=None):
                     "static_namespace_checked": True, "requested_member_present": missing in keys,
                     "dynamic": dynamic, "candidates": hints, "unique": unique,
                     "file": tb.tb_frame.f_code.co_filename, "line": tb.tb_lineno,
-                    "operation": instruction.opname}, "observed_operation")
+                    "operation": instruction.opname,
+                    **({"receiver_owners": receiver_owners(value)} if kind in ("class", "instance") else {})},
+                    "observed_operation")
     except Exception:
         reason = "unsupported_observation"
     return finish({}, reason)

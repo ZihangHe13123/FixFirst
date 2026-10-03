@@ -573,6 +573,7 @@ source = "werkzeug-3.0"
 [[removed]]
 kind = "api"
 module = "DataFrame"
+owners = ["pandas.DataFrame"]
 names = ["append"]
 distribution = "pandas"
 version = "2.0"

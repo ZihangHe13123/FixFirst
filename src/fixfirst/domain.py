@@ -56,6 +56,11 @@ def load() -> dict:
     for entry in data.get("removed", []):
         if entry["kind"] not in KINDS or entry["source"] not in data["sources"]:
             raise ValueError(f"invalid knowledge entry {entry.get('names')}")
+        if "owners" in entry and (
+                not isinstance(entry["owners"], list) or not entry["owners"]
+                or any(not isinstance(owner, str) or "." not in owner or len(owner) > 200
+                       or not all(part.isidentifier() for part in owner.split(".")) for owner in entry["owners"])):
+            raise ValueError(f"invalid qualified removal owners {entry.get('names')}")
         for name in entry["names"]:
             key = (
                 f"api:{entry['module']}.{name}"

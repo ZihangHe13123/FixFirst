@@ -29,7 +29,7 @@ def _statement_matches(statement, record):
     return len(nodes) == 1
 
 
-def context(session, issue, evidence):
+def context(session, issue, evidence, *, allow_dynamic=False, allow_present=False):
     """Select one executed exception and its same-run statement, retaining indices.
 
 Grouped failures spanning runs/operations remain ambiguous. In particular, an
@@ -94,13 +94,14 @@ old carried event must not donate metadata to a newer failure's traceback.
         "static_namespace_checked", "requested_member_present", "dynamic", "unique", "candidates",
         "argument_count_given", "argument_count_expected", "argument_types", "callee_name",
         "parameters", "positional_count", "keyword_names", "binding_errors", "definition_file",
-        "definition_line") if k in record}
+        "definition_line", "receiver_owners") if k in record}
     record["candidates"] = [{"name": row["name"], "relation": row["relation"]} for row in record["candidates"]]
     result.update(record=record, symbol_record_ref=ref, refs=[ref])
-    if record["dynamic"]:
+    if record["dynamic"] and not allow_dynamic:
         result["status"] = "dynamic_receiver"
         return result
-    if record["kind"] not in ("builtin_call", "python_binding", "builtin_binding") and record["requested_member_present"]:
+    if (record["kind"] not in ("builtin_call", "python_binding", "builtin_binding")
+            and record["requested_member_present"] and not allow_present):
         result["status"] = "member_present"
         return result
     location = f"{shown_path(record['file'], session.project_root)}:{record['line']}"
