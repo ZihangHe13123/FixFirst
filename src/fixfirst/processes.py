@@ -31,8 +31,17 @@ class ProcessScope:
         # Serialize with creation so shutdown cannot miss a newly launched check.
         with self.lock:
             self.cancelled = True
+            error = None
             for child in tuple(self.children):
-                child.kill_tree()
+                try:
+                    child.kill_tree()
+                except OSError as exc:
+                    # A failed signal must not leave the remaining checks running.
+                    # Keep the failure visible after attempting every child.
+                    if error is None:
+                        error = exc
+            if error is not None:
+                raise error
 
 
 _default = ProcessScope()
@@ -85,6 +94,17 @@ class ManagedProcess:
                     os.killpg(self.proc.pid, signal.SIGKILL)
                 except ProcessLookupError:
                     pass
+                except PermissionError:
+                    # On macOS, a group containing only an unreaped exited leader
+                    # can report EPERM. poll() reaps it; still signal the group
+                    # again because a finished leader may have live descendants.
+                    # A live leader or a second EPERM is a real cleanup failure.
+                    if self.proc.poll() is None:
+                        raise
+                    try:
+                        os.killpg(self.proc.pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
 
     def close(self):
         with self.scope.lock:
