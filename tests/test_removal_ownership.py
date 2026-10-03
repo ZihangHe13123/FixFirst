@@ -197,6 +197,28 @@ def test_runtime_introspection_never_reads_user_class_descriptor():
     assert seen == []
 
 
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="readfp was removed in Python 3.12")
+@pytest.mark.parametrize("tool,changes", [
+    ("project", {"exit_code": 1}),
+    ("project", {"exit_code": None}),
+    ("project", {"truncated": True}),
+    ("project", {"status": "timeout"}),
+    ("pytest_run", {"exit_code": 0}),
+    ("pytest_run", {"exit_code": None}),
+    ("pytest_run", {"truncated": True}),
+    ("pytest_run", {"status": "timeout"}),
+])
+def test_retained_records_do_not_authorize_incomplete_or_inconsistent_runs(tmp_path, proposal, tool, changes):
+    session, issue, _ = run_case(tmp_path, PARSER)
+    assert issue.diagnosis_rule == "D03"
+    run = next(run for run in session.runs if run.tool == tool)
+    for key, value in changes.items():
+        setattr(run, key, value)
+    infer_and_plan(session)
+    assert issue.diagnosis_rule not in {"D02", "D03"}
+    assert not any(f.subject == issue.issue_id and f.predicate == "removal_owner" for f in session.facts)
+
+
 def test_runtime_owner_mro_has_a_fixed_bound():
     cls = type("Base", (), {})
     for n in range(16):

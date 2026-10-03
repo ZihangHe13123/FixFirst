@@ -50,7 +50,8 @@ def _one_failure(session, issue, item):
     ref = item.get("symbol_record_ref", "")
     run_id, _, index = ref.partition(":probe:")
     run = next((run for run in session.runs if run.run_id == run_id), None)
-    if run is None or not index.isdigit() or int(index) >= len(run.records):
+    if (run is None or not index.isdigit() or int(index) >= len(run.records)
+            or run.status != "completed" or run.exit_code in (None, 0) or run.truncated):
         return False
     exception = run.records[int(index)]
     events = [event for event in session.events if event.event_id in issue.event_ids]
@@ -90,6 +91,7 @@ def _current_snapshots(session, item, project, environment):
             return False
         run = session.runs[position]
         if (run.tool != tool or run.source != "executed" or run.status != "completed"
+                or run.exit_code != 0 or run.truncated
                 or (tool == "environment" and not run.verified_pass)
                 or run.environment_id != environment.get("_environment_id")):
             return False
