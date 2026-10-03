@@ -55,6 +55,7 @@ def exception_event(run, text, location="", stage="collect", line=1, stream="std
             stage=stage,
             kind="import_failure",
             component=match.group(1),
+            code="ModuleNotFoundError",
             location=location,
             line=line,
             stream=stream,

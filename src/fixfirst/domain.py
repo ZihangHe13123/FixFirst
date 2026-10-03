@@ -56,6 +56,11 @@ def load() -> dict:
     for entry in data.get("removed", []):
         if entry["kind"] not in KINDS or entry["source"] not in data["sources"]:
             raise ValueError(f"invalid knowledge entry {entry.get('names')}")
+        if "owners" in entry and (
+                not isinstance(entry["owners"], list) or not entry["owners"]
+                or any(not isinstance(owner, str) or "." not in owner or len(owner) > 200
+                       or not all(part.isidentifier() for part in owner.split(".")) for owner in entry["owners"])):
+            raise ValueError(f"invalid qualified removal owners {entry.get('names')}")
         for name in entry["names"]:
             key = (
                 f"api:{entry['module']}.{name}"
@@ -209,7 +214,9 @@ def source(ref: str) -> dict | None:
     if ref.startswith("kb:pypi:"):
         name = ref[len("kb:pypi:"):]
         return {"title": f"{name} on PyPI", "url": f"https://pypi.org/project/{name}/"}
-    return load()["sources"].get(ref[3:])
+    from .package_compatibility import load as package_knowledge
+
+    return load()["sources"].get(ref[3:]) or package_knowledge()["sources"].get(ref[3:])
 
 
 def cause(label: str) -> dict:

@@ -205,22 +205,23 @@ def collect_execution(session, tool, timeout):
         return Run(tool=tool, scope=scope, environment_id=environment_id(session.target_python),
                    cwd=session.project_root, status="launch_failed", stderr=str(exc))
     python, cwd = session.target_python, session.project_root
-    if config.kind in ("script", "module"):
-        argv = [python, "-m", config.entry] if config.kind == "module" else [python, str(Path(cwd) / config.entry)]
-        run = execute([*argv, *config.args], cwd, tool, scope, python, timeout,
-                      input_text=config.stdin, extra_env={"PYTHONDONTWRITEBYTECODE": "1"})
-        run.execution_kind = config.kind
-        return run
     with tempfile.TemporaryDirectory(prefix="fixfirst-execution-", ignore_cleanup_errors=True) as directory:
         records = Path(directory) / "records.jsonl"
         helper = Path(__file__).with_name(
+            "_native_runner.py" if config.kind in ("script", "module") else
             "_unittest_runner.py" if config.kind == "unittest" else "_notebook_runner.py")
-        if config.kind == "unittest":
+        native = config.kind in ("script", "module")
+        if native:
+            entry = config.entry if config.kind == "module" else str(Path(cwd) / config.entry)
+            path0 = cwd if config.kind == "module" else str(Path(entry).parent)
+            argv = [python, str(helper), config.kind, entry, path0, str(records), *config.args]
+        elif config.kind == "unittest":
             argv = [python, str(helper), config.entry, config.pattern]
         else:
             argv = [sys.executable, str(helper), python, str(Path(cwd) / config.entry), str(timeout)]
         run = execute(argv, cwd, tool, scope, python, timeout,
-                      extra_env={"FIXFIRST_EXECUTION_RECORDS": str(records),
+                      input_text=config.stdin if native else None,
+                      extra_env={**({} if native else {"FIXFIRST_EXECUTION_RECORDS": str(records)}),
                                  "PYTHONDONTWRITEBYTECODE": "1"})
         run.execution_kind = config.kind
         if records.exists():

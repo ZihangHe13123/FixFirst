@@ -11,17 +11,77 @@ import sys
 import types
 
 
+def plain_class(cls):
+    """Only the builtin metaclass or the already loaded standard ABCMeta."""
+    abc = sys.modules.get("abc")
+    abc_meta = vars(abc).get("ABCMeta") if type(abc) is types.ModuleType else None
+    return type(cls) is type or (abc_meta is not None and type(cls) is abc_meta)
+
+
+def class_namespace(cls):
+    # Invoke Python's own descriptor directly, never a metaclass override.
+    return type.__dict__["__dict__"].__get__(cls)
+
+
+def class_mro(cls):
+    return type.__dict__["__mro__"].__get__(cls)
+
+
+def class_identity(cls):
+    if not plain_class(cls):
+        return "", ""
+    module = type.__dict__["__module__"].__get__(cls)
+    name = type.__dict__["__qualname__"].__get__(cls)
+    if type(module) is not str or type(name) is not str or max(len(module), len(name)) > 200:
+        return "", ""
+    loaded = sys.modules.get(module)
+    if type(loaded) is types.ModuleType and vars(loaded).get(name) is cls:
+        return module, name
+    return "", ""
+
+
+def receiver_owners(value):
+    """Bounded registered MRO identities and real exports from loaded parent modules.
+
+    Public aliases (unittest.TestCase, pandas.DataFrame) must point to the exact
+    same class. No module is imported and no object attribute is evaluated.
+    """
+    cls = value if plain_class(value) else type(value)
+    if not plain_class(cls):
+        return []
+    mro = class_mro(cls)
+    if len(mro) > 16:
+        return []
+    rows = []
+    for parent in mro:
+        module, name = class_identity(parent)
+        if not module or parent is object:
+            continue
+        parts = module.split(".")
+        if len(parts) > 8:
+            continue
+        for end in range(len(parts), 0, -1):
+            alias_module = ".".join(parts[:end])
+            loaded = sys.modules.get(alias_module)
+            if type(loaded) is not types.ModuleType:
+                continue
+            namespace = vars(loaded)
+            origin = namespace.get("__file__", "")
+            if (len(namespace) > 5000 or type(origin) is not str or len(origin) > 4000):
+                continue
+            aliases = sorted(key for key, item in namespace.items() if item is parent
+                             and type(key) is str and key.isidentifier() and len(key) <= 200)
+            for alias in aliases[:8]:
+                rows.append({"module": alias_module, "owner": alias, "file": origin, "direct": parent is cls})
+                if len(rows) >= 32:
+                    return []  # An incomplete identity set must not imply unique ownership.
+    return rows
+
+
 def registered_type(value):
     cls = type(value)
-    if type(cls) is not type:
-        return "", ""  # A custom metaclass can execute descriptors during introspection.
     try:
-        module, name = type.__getattribute__(cls, "__module__"), type.__getattribute__(cls, "__qualname__")
-        if type(module) is not str or type(name) is not str:
-            return "", ""
-        loaded = sys.modules.get(module)
-        if type(loaded) is types.ModuleType and vars(loaded).get(name) is cls:
-            return module[:200], name[:200]
+        return class_identity(cls)
     except Exception:
         pass
     return "", ""
@@ -172,24 +232,21 @@ def static_namespace(value):
         if type(module) is not str or sys.modules.get(module) is not value or len(namespace) > 5000:
             return None
         return {key for key in namespace if type(key) is str}, "module", module, "", "__getattr__" in namespace
-    cls = value if type(value) is type else type(value)
-    if type(cls) is not type:
+    cls = value if plain_class(value) else type(value)
+    if not plain_class(cls):
         return None
-    mro = type.__getattribute__(cls, "__mro__")
-    if len(mro) > 8:
+    mro = class_mro(cls)
+    if len(mro) > 16:
         return None
     keys, dynamic = set(), False
     for parent in mro:
-        namespace = type.__getattribute__(parent, "__dict__")
+        namespace = class_namespace(parent)
         if len(keys) + len(namespace) > 5000:
             return None
         keys.update(key for key in namespace if type(key) is str)
         dynamic |= "__getattr__" in namespace or (parent is not object and "__getattribute__" in namespace)
-    if type(value) is type:
-        module, name = type.__getattribute__(cls, "__module__"), type.__getattribute__(cls, "__qualname__")
-        loaded = sys.modules.get(module) if type(module) is str else None
-        if type(loaded) is not types.ModuleType or type(name) is not str or vars(loaded).get(name) is not cls:
-            module, name = "", ""
+    if plain_class(value):
+        module, name = class_identity(cls)
         kind = "class"
     else:
         module, name = registered_type(value)
@@ -525,7 +582,9 @@ def symbol_observation(error, tracebacks, *, status=None):
                     "static_namespace_checked": True, "requested_member_present": missing in keys,
                     "dynamic": dynamic, "candidates": hints, "unique": unique,
                     "file": tb.tb_frame.f_code.co_filename, "line": tb.tb_lineno,
-                    "operation": instruction.opname}, "observed_operation")
+                    "operation": instruction.opname,
+                    **({"receiver_owners": receiver_owners(value)} if kind in ("class", "instance") else {})},
+                    "observed_operation")
     except Exception:
         reason = "unsupported_observation"
     return finish({}, reason)
@@ -559,6 +618,48 @@ def django_registry_state(tb):
     return {"global_registry": True, **{key: values[key] for key in keys}}
 
 
+def package_failure(error, tracebacks):
+    """Observe the failed opcode and loaded receiver; never import a provider.
+
+    Keep this stdlib-only helper here because this file is copied into target
+    runtimes. Message text and a package-shaped filename alone are insufficient.
+    """
+    if not tracebacks or len(tracebacks) >= 200:
+        return {}
+    last = tracebacks[-1]
+    frame = last.tb_frame
+    if type(error) is AttributeError:
+        found = attribute_at_failure(last, receiver=True)
+        if not isinstance(found, tuple):
+            return {}
+        receiver, name = found
+        if (name != "ImpImporter" or type(receiver) is not types.ModuleType
+                or sys.modules.get("pkgutil") is not receiver
+                or vars(receiver).get("__name__") != "pkgutil"
+                or frame.f_globals.get("__name__") != "pkg_resources"):
+            return {}
+        module_file = vars(receiver).get("__file__")
+        if type(module_file) is not str or len(module_file) > 4096:
+            return {}
+        return {"mechanism": "pkgutil_impimporter", "module": "pkgutil",
+                "exception_type": "AttributeError",
+                "module_file": module_file, "consumer": "pkg_resources",
+                "file": frame.f_code.co_filename, "line": last.tb_lineno,
+                "source": "failed_instruction"}
+    if (type(error) is ModuleNotFoundError and error.name == "pkg_resources"
+            and len(frame.f_code.co_code) <= 64_000):
+        instruction = next((i for i in dis.get_instructions(frame.f_code)
+                            if i.offset == last.tb_lasti), None)
+        if (instruction and instruction.opname == "IMPORT_NAME"
+                and instruction.argval == "pkg_resources"
+                and "pkg_resources" not in sys.modules):
+            return {"mechanism": "missing_pkg_resources", "module": "pkg_resources",
+                    "exception_type": "ModuleNotFoundError",
+                    "file": frame.f_code.co_filename, "line": last.tb_lineno,
+                    "source": "failed_instruction"}
+    return {}
+
+
 def exception_metadata(error, tb):
     result = {"attribute_access": {}, "traceback_frames": [], "validation_errors": [], "module_attribute": {}}
     if type(error) is AttributeError and isinstance(getattr(error, "name", None), str):
@@ -586,6 +687,7 @@ def exception_metadata(error, tb):
         frames.append(row)
         tb = tb.tb_next
     result["traceback_frames"] = frames[-20:]
+    result["package_failure"] = package_failure(error, tracebacks) if tb is None else {}
     registry = django_registry_state(last)
     if registry:
         result["django_registry"] = registry
@@ -599,6 +701,25 @@ def exception_metadata(error, tb):
     pytest_nodes = sys.modules.get("_pytest.nodes")
     collector = vars(pytest_nodes).get("Collector") if type(pytest_nodes) is types.ModuleType else None
     wrapped_type = type.__getattribute__(collector, "__dict__").get("CollectError") if isinstance(collector, type) else None
+    if type(error) is wrapped_type and not result["package_failure"]:
+        cause = error.__cause__ if error.__cause__ is not None else error.__context__
+        if type(cause) in (AttributeError, ModuleNotFoundError):
+            cause_tb, cause_frames = cause.__traceback__, []
+            while cause_tb is not None and len(cause_frames) < 200:
+                cause_frames.append(cause_tb)
+                cause_tb = cause_tb.tb_next
+            if cause_tb is None:
+                result["package_failure"] = package_failure(cause, cause_frames)
+                if result["package_failure"]:
+                    result["package_failure"]["wrapper"] = "pytest_collect_error"
+                    # Independently retain the underlying exception's source
+                    # point. The outer CollectError is raised in pytest itself.
+                    source_tb = cause_frames[-1]
+                    result["package_failure_exception"] = {
+                        "exception_type": type(cause).__name__,
+                        "source_file": source_tb.tb_frame.f_code.co_filename,
+                        "source_line": source_tb.tb_lineno,
+                    }
     if type(error) is wrapped_type and not result["symbol_observation"]:
         cause = error.__cause__ if error.__cause__ is not None else error.__context__
         if type(cause) in (ImportError, AttributeError, TypeError):

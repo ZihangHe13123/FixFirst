@@ -45,6 +45,17 @@ def valid_record(value):
         return {}
     if kind == "module" and not module:
         return {}
+    owners = value.get("receiver_owners", [])
+    if not isinstance(owners, list) or len(owners) > 32:
+        return {}
+    for row in owners:
+        if (not isinstance(row, dict) or set(row) != {"module", "owner", "file", "direct"}
+                or any(not isinstance(row.get(key), str) or not row[key] or len(row[key]) > 200
+                       or not all(part.isidentifier() for part in row[key].split("."))
+                       for key in ("module", "owner"))
+                or not isinstance(row.get("file"), str) or len(row["file"]) > 4000
+                or type(row.get("direct")) is not bool):
+            return {}
     candidates = value.get("candidates")
     if not isinstance(candidates, list) or len(candidates) > 5:
         return {}

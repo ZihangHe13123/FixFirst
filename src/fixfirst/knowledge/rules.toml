@@ -146,7 +146,7 @@ phase = "diagnose"
 description = "The code uses a module attribute or imported name that the installed version no longer provides."
 source = "knowledge: removed APIs"
 when = [
-  ["?i", "api", "?x"],
+  ["?i", "api", "?x"], ["?i", "removal_owner", "?x"],
   ["?x", "api_module", "?module"], ["not", "?module", "is_local", "?_"],
   ["?x", "removed_from", "?d"], ["?x", "removed_in_version", "?v"],
   ["?d", "installed_version", "?iv"], ["test", "version_gte", "?iv", "?v"],
@@ -159,7 +159,7 @@ phase = "diagnose"
 description = "The code calls a method name that the installed Python or library version removed (for example unittest aliases or NumPy ndarray methods)."
 source = "knowledge: removed attributes"
 when = [
-  ["?i", "attribute", "?x"],
+  ["?i", "attribute", "?x"], ["?i", "removal_owner", "?x"],
   ["?x", "removed_from", "?d"], ["?x", "removed_in_version", "?v"],
   ["?d", "installed_version", "?iv"], ["test", "version_gte", "?iv", "?v"],
 ]
