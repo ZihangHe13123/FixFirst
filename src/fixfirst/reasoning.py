@@ -93,6 +93,10 @@ def base_facts(session: Session, active, knowledge=True) -> tuple[list[Fact], di
         if issue_id in details:
             details[issue_id]["django_configuration"] = detail
     facts += evidence_facts
+    if knowledge:
+        from .package_compatibility import diagnoses as package_diagnoses
+
+        facts += package_diagnoses(session, active)
     mentioned = {
         f.value for f in evidence_facts
         if f.predicate in (
@@ -449,6 +453,9 @@ def infer_and_plan(session: Session):
     from .symbol_advice import refine as refine_symbols
 
     actions = refine_symbols(actions, details, by_id)
+    from .package_compatibility import refine as refine_packages
+
+    actions = refine_packages(session, actions, by_id, base.facts)
     from .dependency_advice import refine
 
     actions = refine(session, actions, by_id, base.facts)

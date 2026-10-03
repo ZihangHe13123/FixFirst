@@ -14,6 +14,7 @@ from .install_feedback import declarations_key, has_prepared_wheel, offer_build
 
 def refine(session, actions, by_id, facts):
     from .evidence import current_environment, observed, project_index
+    from .package_compatibility import POLICY_ID
 
     environment = current_environment(session)
     project_run, project = project_index(session)
@@ -103,7 +104,8 @@ def refine(session, actions, by_id, facts):
                 "a separate Python environment compatible with their documented requirements. "
                 f"Keeping this fixed requirement while changing only {name} cannot satisfy both requirements; "
                 "a coordinated declaration and dependency update may work.")
-            trials[action.action_id] = (name, str(Requirement(requested).specifier))
+            if POLICY_ID not in action.rule_ids:
+                trials[action.action_id] = (name, str(Requirement(requested).specifier))
         elif changed:
             action.command = [session.target_python, "-m", "pip", "install", "--only-binary=:all:", *changed]
             if sources:
@@ -150,7 +152,7 @@ def refine(session, actions, by_id, facts):
                 pass
         if names & missing:
             hosts.append(action)
-    if len(missing) > 1 and hosts:
+    if len(missing) > 1 and hosts and not any(POLICY_ID in a.rule_ids for a in actions):
         host = hosts[0]
         rows = [r for r in data["requirements"] if r["owner"] == "project"]
         requested, extras_by_name = {}, {}
@@ -398,6 +400,10 @@ def refine(session, actions, by_id, facts):
         trials = {}
     from .dependency_resolution import advise
 
+    if any(POLICY_ID in action.rule_ids for action in actions):
+        # Installation feedback must not turn this bounded provider request
+        # into a new unconstrained trial that can remove pkg_resources again.
+        trials = {key: value for key, value in trials.items() if value[0] != "setuptools"}
     for action in result:
         if action.action_id in trials:
             name, direction = trials[action.action_id]

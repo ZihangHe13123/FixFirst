@@ -618,6 +618,48 @@ def django_registry_state(tb):
     return {"global_registry": True, **{key: values[key] for key in keys}}
 
 
+def package_failure(error, tracebacks):
+    """Observe the failed opcode and loaded receiver; never import a provider.
+
+    Keep this stdlib-only helper here because this file is copied into target
+    runtimes. Message text and a package-shaped filename alone are insufficient.
+    """
+    if not tracebacks or len(tracebacks) >= 200:
+        return {}
+    last = tracebacks[-1]
+    frame = last.tb_frame
+    if type(error) is AttributeError:
+        found = attribute_at_failure(last, receiver=True)
+        if not isinstance(found, tuple):
+            return {}
+        receiver, name = found
+        if (name != "ImpImporter" or type(receiver) is not types.ModuleType
+                or sys.modules.get("pkgutil") is not receiver
+                or vars(receiver).get("__name__") != "pkgutil"
+                or frame.f_globals.get("__name__") != "pkg_resources"):
+            return {}
+        module_file = vars(receiver).get("__file__")
+        if type(module_file) is not str or len(module_file) > 4096:
+            return {}
+        return {"mechanism": "pkgutil_impimporter", "module": "pkgutil",
+                "exception_type": "AttributeError",
+                "module_file": module_file, "consumer": "pkg_resources",
+                "file": frame.f_code.co_filename, "line": last.tb_lineno,
+                "source": "failed_instruction"}
+    if (type(error) is ModuleNotFoundError and error.name == "pkg_resources"
+            and len(frame.f_code.co_code) <= 64_000):
+        instruction = next((i for i in dis.get_instructions(frame.f_code)
+                            if i.offset == last.tb_lasti), None)
+        if (instruction and instruction.opname == "IMPORT_NAME"
+                and instruction.argval == "pkg_resources"
+                and "pkg_resources" not in sys.modules):
+            return {"mechanism": "missing_pkg_resources", "module": "pkg_resources",
+                    "exception_type": "ModuleNotFoundError",
+                    "file": frame.f_code.co_filename, "line": last.tb_lineno,
+                    "source": "failed_instruction"}
+    return {}
+
+
 def exception_metadata(error, tb):
     result = {"attribute_access": {}, "traceback_frames": [], "validation_errors": [], "module_attribute": {}}
     if type(error) is AttributeError and isinstance(getattr(error, "name", None), str):
@@ -645,6 +687,7 @@ def exception_metadata(error, tb):
         frames.append(row)
         tb = tb.tb_next
     result["traceback_frames"] = frames[-20:]
+    result["package_failure"] = package_failure(error, tracebacks) if tb is None else {}
     registry = django_registry_state(last)
     if registry:
         result["django_registry"] = registry
@@ -658,6 +701,17 @@ def exception_metadata(error, tb):
     pytest_nodes = sys.modules.get("_pytest.nodes")
     collector = vars(pytest_nodes).get("Collector") if type(pytest_nodes) is types.ModuleType else None
     wrapped_type = type.__getattribute__(collector, "__dict__").get("CollectError") if isinstance(collector, type) else None
+    if type(error) is wrapped_type and not result["package_failure"]:
+        cause = error.__cause__ if error.__cause__ is not None else error.__context__
+        if type(cause) in (AttributeError, ModuleNotFoundError):
+            cause_tb, cause_frames = cause.__traceback__, []
+            while cause_tb is not None and len(cause_frames) < 200:
+                cause_frames.append(cause_tb)
+                cause_tb = cause_tb.tb_next
+            if cause_tb is None:
+                result["package_failure"] = package_failure(cause, cause_frames)
+                if result["package_failure"]:
+                    result["package_failure"]["wrapper"] = "pytest_collect_error"
     if type(error) is wrapped_type and not result["symbol_observation"]:
         cause = error.__cause__ if error.__cause__ is not None else error.__context__
         if type(cause) in (ImportError, AttributeError, TypeError):

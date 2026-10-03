@@ -214,7 +214,9 @@ def source(ref: str) -> dict | None:
     if ref.startswith("kb:pypi:"):
         name = ref[len("kb:pypi:"):]
         return {"title": f"{name} on PyPI", "url": f"https://pypi.org/project/{name}/"}
-    return load()["sources"].get(ref[3:])
+    from .package_compatibility import load as package_knowledge
+
+    return load()["sources"].get(ref[3:]) or package_knowledge()["sources"].get(ref[3:])
 
 
 def cause(label: str) -> dict:
