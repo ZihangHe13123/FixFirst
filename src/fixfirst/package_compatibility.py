@@ -128,21 +128,30 @@ def _observation(session, issue, environment, project_run, project):
         expected = {"pkgutil_impimporter": "AttributeError", "missing_pkg_resources": "ModuleNotFoundError"}.get(mechanism)
         frames = record.get("traceback_frames", [])
         outer_frame = frames[-1] if isinstance(frames, list) and frames else {}
-        wrapped = (record.get("exception_type") == "CollectError"
-                   and record.get("exception_module") == "_pytest.nodes"
+        wrapper = (record.get("exception_type"), record.get("exception_module"), observed_failure.get("wrapper"))
+        conftest_wrapper = wrapper == ("ConftestImportFailure", "_pytest.config", "pytest_conftest_import_failure")
+        wrapped = (wrapper in (
+                       ("CollectError", "_pytest.nodes", "pytest_collect_error"),
+                       ("ConftestImportFailure", "_pytest.config", "pytest_conftest_import_failure"))
                    and record.get("stage") == "collect" and issue.tool in {"pytest", "pytest_run"}
                    and event.stage == "collect" and event.location == record.get("nodeid")
                    and isinstance(outer_frame, dict)
                    and record.get("source_file") == outer_frame.get("file")
-                   and record.get("source_line") == outer_frame.get("line")
-                   and observed_failure.get("wrapper") == "pytest_collect_error")
+                   and record.get("source_line") == outer_frame.get("line"))
+        if conftest_wrapper:
+            wrapped = (wrapped and outer_frame.get("function") == "_importconftest"
+                       and _package_file(record.get("source_file", ""), "_pytest/config/__init__.py",
+                                         session.project_root, environment)
+                       and event.source_file == record.get("source_file")
+                       and event.source_line == record.get("source_line"))
         source_record = record.get("package_failure_exception", {}) if wrapped else record
         if not isinstance(source_record, dict):
             source_record = {}
         message = record.get("exception_message", "")
         expected_message = ("module 'pkgutil' has no attribute 'ImpImporter'" if mechanism == "pkgutil_impimporter"
                             else "No module named 'pkg_resources'")
-        if (not expected or observed_failure.get("exception_type") != expected or event.code != expected
+        event_type = "ConftestImportFailure" if conftest_wrapper and wrapped else expected
+        if (not expected or observed_failure.get("exception_type") != expected or event.code != event_type
                 or not isinstance(message, str) or expected_message not in message
                 or source_record.get("exception_type") != expected
                 or _normal(source_record.get("source_file", ""), session.project_root) != _normal(path, session.project_root)

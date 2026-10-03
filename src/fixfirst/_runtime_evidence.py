@@ -701,8 +701,24 @@ def exception_metadata(error, tb):
     pytest_nodes = sys.modules.get("_pytest.nodes")
     collector = vars(pytest_nodes).get("Collector") if type(pytest_nodes) is types.ModuleType else None
     wrapped_type = type.__getattribute__(collector, "__dict__").get("CollectError") if isinstance(collector, type) else None
-    if type(error) is wrapped_type and not result["package_failure"]:
+    pytest_config = sys.modules.get("_pytest.config")
+    config_names = vars(pytest_config) if type(pytest_config) is types.ModuleType else {}
+    conftest_type = config_names.get("ConftestImportFailure")
+    manager = config_names.get("PytestPluginManager")
+    importer = type.__getattribute__(manager, "__dict__").get("_importconftest") if type(manager) is type else None
+    package_wrapper, cause = "", None
+    if type(error) is wrapped_type:
+        package_wrapper = "pytest_collect_error"
         cause = error.__cause__ if error.__cause__ is not None else error.__context__
+    elif (type(error) is conftest_type and type(conftest_type) is type
+          and type(importer) is types.FunctionType and last is not None and tb is None
+          and last.tb_frame.f_code is importer.__code__):
+        # Pytest retains this exact failure twice. Do not follow arbitrary cause
+        # chains or unwrap a hand-raised lookalike (even using the real class).
+        retained = vars(error).get("cause")
+        if retained is error.__cause__:
+            package_wrapper, cause = "pytest_conftest_import_failure", retained
+    if package_wrapper and not result["package_failure"]:
         if type(cause) in (AttributeError, ModuleNotFoundError):
             cause_tb, cause_frames = cause.__traceback__, []
             while cause_tb is not None and len(cause_frames) < 200:
@@ -711,9 +727,9 @@ def exception_metadata(error, tb):
             if cause_tb is None:
                 result["package_failure"] = package_failure(cause, cause_frames)
                 if result["package_failure"]:
-                    result["package_failure"]["wrapper"] = "pytest_collect_error"
+                    result["package_failure"]["wrapper"] = package_wrapper
                     # Independently retain the underlying exception's source
-                    # point. The outer CollectError is raised in pytest itself.
+                    # point. The outer wrapper is raised in pytest itself.
                     source_tb = cause_frames[-1]
                     result["package_failure_exception"] = {
                         "exception_type": type(cause).__name__,
