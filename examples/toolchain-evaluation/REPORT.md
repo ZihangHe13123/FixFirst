@@ -1,4 +1,9 @@
-# Diagnosis on a held-out set
+# Archived diagnosis on development cases
+
+This report preserves the original measurements and parser output. These scenarios were
+written after A2 exposed the failure mechanisms, so they are development data. The evaluation
+retrained a tree on the main dataset; it is not a fresh run of the bundled model or of the
+v0.8 integration candidate. Numerical results below have not been changed.
 
 98 executed cases (108 failing-test issues). Labels: code_defect 5, config_missing 30, local_module 5, missing_dependency 15, version_incompatibility 53. The decision tree was trained on diagnosis-dataset (215 issues); the rule base and knowledge graph were not changed for these cases.
 
