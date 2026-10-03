@@ -18,8 +18,12 @@ import json
 from pathlib import Path
 import re
 import shutil
+import sys
 from types import SimpleNamespace
-import tomllib
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10 (the verification programs themselves need 3.11)
+    import tomli as tomllib
 
 import pytest
 
@@ -55,6 +59,8 @@ def receipt():
 
 @pytest.fixture(scope="module")
 def verifier():
+    if sys.version_info < (3, 11):
+        pytest.skip("the verification programs need Python 3.11 (tomllib)")
     spec = importlib.util.spec_from_file_location("verify_owners_for_tests", FOLDER / "verify_owners.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -216,9 +222,9 @@ def test_enabled_blocks_are_the_verified_candidates_plus_owners():
                 assert entry["owners"] == verified["owners"], key(entry, name)
 
 
+@pytest.mark.skipif(sys.version_info < (3, 11), reason="the verification programs need Python 3.11 (tomllib)")
 def test_verify_owners_py_starts_and_documents_its_options():
     import subprocess
-    import sys
     result = subprocess.run([sys.executable, str(FOLDER / "verify_owners.py"), "--help"], capture_output=True, text=True, timeout=120)
     assert result.returncode == 0, result.stderr[-400:]
     assert "--receipts" in result.stdout and "--fixfirst-src" in result.stdout and "--explore" in result.stdout

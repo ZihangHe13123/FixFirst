@@ -14,7 +14,10 @@ import shutil
 import subprocess
 import sys
 from types import SimpleNamespace
-import tomllib
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10 (the verification programs themselves need 3.11)
+    import tomli as tomllib
 
 import pytest
 
@@ -236,6 +239,8 @@ def test_the_baseline_is_the_one_the_record_was_made_with(receipt):
 # ---------------------------------------------------------------------------------------------------------------------------------------
 @pytest.fixture(scope="module")
 def verify_module():
+    if sys.version_info < (3, 11):
+        pytest.skip("verify.py needs Python 3.11 (tomllib)")
     spec = importlib.util.spec_from_file_location("verify_py_for_tests", FOLDER / "verify.py")
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module

@@ -7,7 +7,10 @@ whose owners cannot be matched yet stay in knowledge/pending_attribution.toml an
 """
 from pathlib import Path
 import sys
-import tomllib
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10 (the verification programs themselves need 3.11)
+    import tomli as tomllib
 
 import pytest
 
