@@ -24,7 +24,7 @@ def for_issue(session, issue, project_run, project, environment):
     if (not project_run or project_run is not latest_project or not env_run or latest_env is not env_run
             or not run or issue.environment_id != current or run.scope != issue.scope
             or run.scope != check_scope(session, issue.tool)
-            or project_run.cwd != session.project_root
+            or project_run.cwd != session.project_root or run.cwd != session.project_root
             or any(r.source != 'executed' or r.status != 'completed' or r.truncated
                    or r.environment_id != current for r in (project_run, env_run, run))
             or project_run.exit_code != 0 or not env_run.verified_pass or run.exit_code in (0, None)
