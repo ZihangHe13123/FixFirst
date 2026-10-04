@@ -1,3 +1,3 @@
 """Local, evidence-based Python troubleshooting."""
 
-__version__ = "0.8.0rc1"
+__version__ = "0.8.0rc2"

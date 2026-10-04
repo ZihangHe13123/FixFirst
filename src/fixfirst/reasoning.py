@@ -171,6 +171,12 @@ def apply_classifier(session: Session, active, details) -> list[Fact]:
                 "check to record ownership before choosing a cause or repair."
             )
             continue
+        from .removal_ownership import classifier_abstention
+
+        incomplete = classifier_abstention(session, issue, detail)
+        if incomplete:
+            issue.prediction_note = incomplete
+            continue
         if issue.prediction and issue.prediction_confidence >= MIN_CONFIDENCE:
             if (str(detail.get("exception", "")).endswith("Warning")
                     and detail.get("raised_in") not in {"project", "test"}):
@@ -297,17 +303,13 @@ def rule_actions(session: Session, base: engine.FactBase, by_id) -> list[Action]
             if any(by_id[i].tool == "python_run" for i in action.issue_ids if i in by_id):
                 if action.action_id != "provide-program-input":
                     action.verification = "Re-run the same program with the same Python, arguments and input"
-                if "P12" in action.rule_ids:
-                    action.explanation = (
-                        "The module exists in this project but the selected Python cannot import it. "
-                        "For a src layout, install the project into that environment with pip install -e .; "
-                        "for a package entry, use its Python module name instead of running its file directly. "
-                        "Check the package location and __init__.py.")
-                elif "P15" in action.rule_ids:
+                if "P15" in action.rule_ids:
                     action.explanation = (
                         "A relative import was executed outside its package. Choose Python module mode "
                         "and enter the package.module name, or correct the import and package structure.")
-    return actions
+    from .local_import_advice import refine as refine_local_imports
+
+    return refine_local_imports(session, actions, by_id)
 
 
 def verification_actions(session: Session, active, facts: list[Fact]) -> list[Action]:

@@ -261,7 +261,14 @@ id = "D13"
 phase = "diagnose"
 description = "The module exists in the project tree but cannot be found: the package layout or import path is wrong (for example an uninstalled src layout)."
 when = [["?i", "missing_module", "?m"], ["?m", "is_local", "?p"], ["not", "?m", "provided_by", "?_"]]
-then = [["?i", "diagnosis", "local_module"], ["?i", "remedy", "fix_import_path"], ["?i", "because", "?m"]]
+then = [["?i", "diagnosis", "local_module"], ["?i", "remedy", "fix_import_path"], ["?i", "because", "?m"], ["?i", "local_import_path", "?p"]]
+
+[[rule]]
+id = "D13-C"
+phase = "diagnose"
+description = "A current project import fails for an exact, unambiguous module under a recorded source root."
+when = [["?i", "missing_module", "?m"], ["?i", "local_import_candidate", "?p"]]
+then = [["?i", "diagnosis", "local_module"], ["?i", "remedy", "fix_import_path"], ["?i", "because", "?m"], ["?i", "local_import_path", "?p"]]
 
 [[rule]]
 id = "D14"
@@ -897,7 +904,7 @@ verification = "Re-run the affected tests; the import must resolve to the librar
 id = "P12"
 phase = "plan"
 description = "Local module not on the import path."
-when = [["?i", "remedy", "fix_import_path"], ["?i", "because", "?m"], ["?m", "is_local", "?p"]]
+when = [["?i", "remedy", "fix_import_path"], ["?i", "because", "?m"], ["?i", "local_import_path", "?p"]]
 [rule.action]
 id = "fix-path-{?m}"
 kind = "manual_fix"

@@ -1,0 +1,409 @@
+{
+  "scope": "Development acceptance follow-ups; not held-out/generalization or B3/B7 results",
+  "baseline": "ba0636a76036b3efebc89789944606aca24be6ad",
+  "source_commit": "fc5b04549c6180e8c75d2bfb30622a945f9d8adf",
+  "version": "0.8.0rc2",
+  "model_sha256": "189f712ea75bcb117f96aae879fd0c9bdab9ee6531475d1a95faf01ec2738d30",
+  "model_weights_changed": false,
+  "local_layouts": [
+    {
+      "case_id": "L06-lib-layout",
+      "role": "before",
+      "import_root": "lib",
+      "issues": [
+        {
+          "diagnosis": "missing_dependency",
+          "diagnosis_source": "model",
+          "diagnosis_rule": "F01",
+          "prediction": "missing_dependency",
+          "prediction_confidence": 1.0
+        }
+      ],
+      "original_command_before_exit": 2,
+      "original_command_after_path_exit": 0,
+      "files_unchanged": true,
+      "repair_from_product": false
+    },
+    {
+      "case_id": "L07-nested-src",
+      "role": "before",
+      "import_root": "backend/src",
+      "issues": [
+        {
+          "diagnosis": "missing_dependency",
+          "diagnosis_source": "model",
+          "diagnosis_rule": "F01",
+          "prediction": "missing_dependency",
+          "prediction_confidence": 1.0
+        }
+      ],
+      "original_command_before_exit": 2,
+      "original_command_after_path_exit": 0,
+      "files_unchanged": true,
+      "repair_from_product": false
+    },
+    {
+      "case_id": "X01-source-dir",
+      "role": "before",
+      "import_root": "source",
+      "issues": [
+        {
+          "diagnosis": "missing_dependency",
+          "diagnosis_source": "model",
+          "diagnosis_rule": "F01",
+          "prediction": "missing_dependency",
+          "prediction_confidence": 1.0
+        }
+      ],
+      "original_command_before_exit": 2,
+      "original_command_after_path_exit": 0,
+      "files_unchanged": true,
+      "repair_from_product": false
+    },
+    {
+      "case_id": "X02-python-dir",
+      "role": "before",
+      "import_root": "python",
+      "issues": [
+        {
+          "diagnosis": "missing_dependency",
+          "diagnosis_source": "model",
+          "diagnosis_rule": "F01",
+          "prediction": "missing_dependency",
+          "prediction_confidence": 1.0
+        }
+      ],
+      "original_command_before_exit": 2,
+      "original_command_after_path_exit": 0,
+      "files_unchanged": true,
+      "repair_from_product": false
+    },
+    {
+      "case_id": "X03-packages-monorepo",
+      "role": "before",
+      "import_root": "packages/ledger/src",
+      "issues": [
+        {
+          "diagnosis": "missing_dependency",
+          "diagnosis_source": "model",
+          "diagnosis_rule": "F01",
+          "prediction": "missing_dependency",
+          "prediction_confidence": 1.0
+        }
+      ],
+      "original_command_before_exit": 2,
+      "original_command_after_path_exit": 0,
+      "files_unchanged": true,
+      "repair_from_product": false
+    },
+    {
+      "case_id": "X04-tests-sibling-helper",
+      "role": "before",
+      "import_root": "tests",
+      "issues": [
+        {
+          "diagnosis": "missing_dependency",
+          "diagnosis_source": "model",
+          "diagnosis_rule": "F01",
+          "prediction": "missing_dependency",
+          "prediction_confidence": 1.0
+        }
+      ],
+      "original_command_before_exit": 2,
+      "original_command_after_path_exit": 0,
+      "files_unchanged": true,
+      "repair_from_product": false
+    },
+    {
+      "case_id": "L06-lib-layout",
+      "role": "after",
+      "import_root": "lib",
+      "issues": [
+        {
+          "diagnosis": "local_module",
+          "diagnosis_source": "rule",
+          "diagnosis_rule": "D13-C",
+          "prediction": "local_module",
+          "prediction_confidence": 1.0
+        }
+      ],
+      "original_command_before_exit": 2,
+      "original_command_after_path_exit": 0,
+      "files_unchanged": true,
+      "repair_from_product": true
+    },
+    {
+      "case_id": "L07-nested-src",
+      "role": "after",
+      "import_root": "backend/src",
+      "issues": [
+        {
+          "diagnosis": "local_module",
+          "diagnosis_source": "rule",
+          "diagnosis_rule": "D13-C",
+          "prediction": "local_module",
+          "prediction_confidence": 1.0
+        }
+      ],
+      "original_command_before_exit": 2,
+      "original_command_after_path_exit": 0,
+      "files_unchanged": true,
+      "repair_from_product": true
+    },
+    {
+      "case_id": "X01-source-dir",
+      "role": "after",
+      "import_root": "source",
+      "issues": [
+        {
+          "diagnosis": "local_module",
+          "diagnosis_source": "rule",
+          "diagnosis_rule": "D13-C",
+          "prediction": "local_module",
+          "prediction_confidence": 1.0
+        }
+      ],
+      "original_command_before_exit": 2,
+      "original_command_after_path_exit": 0,
+      "files_unchanged": true,
+      "repair_from_product": true
+    },
+    {
+      "case_id": "X02-python-dir",
+      "role": "after",
+      "import_root": "python",
+      "issues": [
+        {
+          "diagnosis": "local_module",
+          "diagnosis_source": "rule",
+          "diagnosis_rule": "D13-C",
+          "prediction": "local_module",
+          "prediction_confidence": 1.0
+        }
+      ],
+      "original_command_before_exit": 2,
+      "original_command_after_path_exit": 0,
+      "files_unchanged": true,
+      "repair_from_product": true
+    },
+    {
+      "case_id": "X03-packages-monorepo",
+      "role": "after",
+      "import_root": "packages/ledger/src",
+      "issues": [
+        {
+          "diagnosis": "local_module",
+          "diagnosis_source": "rule",
+          "diagnosis_rule": "D13-C",
+          "prediction": "local_module",
+          "prediction_confidence": 1.0
+        }
+      ],
+      "original_command_before_exit": 2,
+      "original_command_after_path_exit": 0,
+      "files_unchanged": true,
+      "repair_from_product": true
+    },
+    {
+      "case_id": "X04-tests-sibling-helper",
+      "role": "after",
+      "import_root": "tests",
+      "issues": [
+        {
+          "diagnosis": "local_module",
+          "diagnosis_source": "rule",
+          "diagnosis_rule": "D13-C",
+          "prediction": "local_module",
+          "prediction_confidence": 1.0
+        }
+      ],
+      "original_command_before_exit": 2,
+      "original_command_after_path_exit": 0,
+      "files_unchanged": true,
+      "repair_from_product": true
+    }
+  ],
+  "receiver_boundaries": [
+    {
+      "role": "before",
+      "mro_depth": 64,
+      "observation_status": "observed_operation",
+      "diagnosis": "version_incompatibility",
+      "source": "rule",
+      "rule": "D02",
+      "raw_prediction": "code_defect",
+      "raw_confidence": 1.0,
+      "mcp_has_project_defect_hint": false
+    },
+    {
+      "role": "before",
+      "mro_depth": 65,
+      "observation_status": "unsupported_receiver",
+      "diagnosis": "code_defect",
+      "source": "model",
+      "rule": "F01",
+      "raw_prediction": "code_defect",
+      "raw_confidence": 1.0,
+      "mcp_has_project_defect_hint": true
+    },
+    {
+      "role": "before",
+      "mro_depth": 70,
+      "observation_status": "unsupported_receiver",
+      "diagnosis": "code_defect",
+      "source": "model",
+      "rule": "F01",
+      "raw_prediction": "code_defect",
+      "raw_confidence": 1.0,
+      "mcp_has_project_defect_hint": true
+    },
+    {
+      "role": "before",
+      "mro_depth": 130,
+      "observation_status": "unsupported_receiver",
+      "diagnosis": "code_defect",
+      "source": "model",
+      "rule": "F01",
+      "raw_prediction": "code_defect",
+      "raw_confidence": 1.0,
+      "mcp_has_project_defect_hint": true
+    },
+    {
+      "role": "after",
+      "mro_depth": 64,
+      "observation_status": "observed_operation",
+      "diagnosis": "version_incompatibility",
+      "source": "rule",
+      "rule": "D02",
+      "raw_prediction": "code_defect",
+      "raw_confidence": 1.0,
+      "mcp_has_project_defect_hint": false
+    },
+    {
+      "role": "after",
+      "mro_depth": 65,
+      "observation_status": "unsupported_receiver",
+      "diagnosis": null,
+      "source": null,
+      "rule": null,
+      "raw_prediction": "code_defect",
+      "raw_confidence": 1.0,
+      "mcp_has_project_defect_hint": false
+    },
+    {
+      "role": "after",
+      "mro_depth": 70,
+      "observation_status": "unsupported_receiver",
+      "diagnosis": null,
+      "source": null,
+      "rule": null,
+      "raw_prediction": "code_defect",
+      "raw_confidence": 1.0,
+      "mcp_has_project_defect_hint": false
+    },
+    {
+      "role": "after",
+      "mro_depth": 130,
+      "observation_status": "unsupported_receiver",
+      "diagnosis": null,
+      "source": null,
+      "rule": null,
+      "raw_prediction": "code_defect",
+      "raw_confidence": 1.0,
+      "mcp_has_project_defect_hint": false
+    }
+  ],
+  "saved_replay": {
+    "cases": 391,
+    "features_independently_repredicted": 388,
+    "all_observations_unchanged": true,
+    "forbidden_io": 0,
+    "negative_controls_rejected": 5,
+    "change_counts": {
+      "ordered_actions": 6,
+      "view": 6,
+      "issues": 0,
+      "standalone": 0,
+      "adopted_diagnosis": 0,
+      "tree_label_or_confidence": 0,
+      "feature_rows": 0
+    },
+    "delta_audit": {
+      "only_expected_p12_changes": true,
+      "fields": [
+        "explanation",
+        "verification",
+        "reason_refs"
+      ],
+      "view_fields": [
+        "explanation",
+        "confirm"
+      ],
+      "first_titles_order_commands_unchanged": true
+    }
+  },
+  "wheel_smoke": {
+    "version": "0.8.0rc2",
+    "runtime_from_wheel": true,
+    "default_model_sha256": "189f712ea75bcb117f96aae879fd0c9bdab9ee6531475d1a95faf01ec2738d30",
+    "default_features": 81,
+    "explicit_legacy_features": 44,
+    "cli_help_exit": 0,
+    "cases": [
+      {
+        "case": "program",
+        "goal": "run_project",
+        "rule": "D13",
+        "plan": "P12",
+        "before_exit": 1,
+        "after_exit": 0,
+        "after_stdout": "23"
+      },
+      {
+        "case": "nested",
+        "goal": "pass_tests",
+        "rule": "D13-C",
+        "plan": "P12",
+        "before_exit": 2,
+        "after_exit": 0,
+        "after_stdout": ".                                                                        [100%]\n1 passed in 0.00s"
+      }
+    ]
+  },
+  "local_evidence_sha256": {
+    "N1_BEFORE_AFTER.json": "ba175d3ae470a402c92baf55b9a3cdedcc334ce358fcbce91df987c36ad0e82b",
+    "N1_FROZEN_INPUTS.json": "d6572ea1c839dd688f9a805ab541b2767c418c46e41612f5cdba73e7a1a5234b",
+    "N3_BEFORE.json": "2f5ac27617aa09c077e356066483d0d8f6925b7ca5b606e298988cfc30a832e9",
+    "N3_AFTER.json": "c690f9593ff96fdba7cf9bfb53efd5d1d81ea146a06948018414160fd8cfffa4",
+    "regression/final-summary/SUMMARY.json": "02c6c712ae5406ccb71ef5fa050347d059b308c3d23919e107d6d217d91a17c2"
+  },
+  "validation": {
+    "targeted_passed": 130,
+    "full_suite_partition_without_owners": {
+      "passed": 1816,
+      "skipped": 75
+    },
+    "owners_test_file_passed": 92,
+    "knowledge_files_passed": 170,
+    "optional_provider_files": {
+      "passed": 71,
+      "skipped": 1
+    },
+    "separate_absent_host_guard_passed": 1,
+    "unique_cases_across_environment_reruns": {
+      "passed": 1971,
+      "skipped": 12
+    },
+    "ruff": "passed",
+    "owners_reference": {
+      "keys_passed": 155,
+      "merged_passed": 23,
+      "seconds": 721,
+      "audit_problems": 0,
+      "changed_receipt_top_level": [
+        "tool"
+      ],
+      "sha256": "a16d70489bde706f76d2b1fd5ec4b074ec774cbf51d7f1543ca33b3d8b7574ec"
+    }
+  }
+}
