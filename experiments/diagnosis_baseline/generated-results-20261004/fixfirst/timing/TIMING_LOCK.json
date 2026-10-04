@@ -1,0 +1,7 @@
+{
+  "locked_at_utc": "2026-10-04T04:34:14.872609+00:00",
+  "wrapper_sha256": "57109e41fde48bd65c138a35a6de55c58ed2d152aba37d8926df67b21c08e465",
+  "original_replay_sha256": "34ca4797af1d40eeb1dc3555f074e4f45b27e5fab724d2b4b70d706b0813a5a6",
+  "original_source_input_identity_sha256": "8324b4520a7153e65aa2df074e440ee5d25bf5ab8964e099405b313cbf578938",
+  "protocol": "One supplemental repetition/version; time only infer_and_plan after imports/model/knowledge and inputs have been loaded; parent wall clock covers complete worker process. No replacement or best-of selection."
+}

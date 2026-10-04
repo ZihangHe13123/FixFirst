@@ -157,3 +157,7 @@ Gemma-4-26B-A4B), the decoding settings, the FixFirst commit (the frozen v0.7.0)
 hard cases were used to develop rules H07 and H08, so FixFirst's results on them are development
 results. On the real projects the models' first steps are scored by A and C without knowing which
 model wrote them (A2, step 7). No paid remote model is used.
+
+## 生成案例的已封存结果
+
+[250 例、五个系统的类别对照](generated-results-20261004/README.md)：750 条模型回答与两版 FixFirst 的离线重放。含原始输入、封存、逐例预测和离线核对脚本；开发数据，第一步质量未评分。

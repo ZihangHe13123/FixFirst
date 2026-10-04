@@ -1,0 +1,1110 @@
+{
+  "scope": "Frozen generated development evidence; category scoring, not repair success or unseen generalization",
+  "input_batch_sha256": "48d1fd3ff3d86b4b498eb517adee58b78b24838d5b95c88d7056e7c5d93620a1",
+  "systems": [
+    {
+      "id": "v070",
+      "display": "FixFirst v0.7.0",
+      "kind": "recorded-session replay",
+      "commit": "c8151af7bd6c19d71605dd3add38ea2dcda98ec2",
+      "metrics": {
+        "diagnosis": {
+          "n": 220,
+          "correct": 220,
+          "accuracy": 1.0,
+          "no_valid_root_cause": 0,
+          "complete_answers": 220,
+          "answer_status_counts": {
+            "ok": 220,
+            "invalid": 0,
+            "request_error": 0
+          },
+          "root_cause_without_first_step": 0,
+          "macro_f1_fixed_five": 1.0,
+          "macro_f1_registered_support": 1.0,
+          "registered_support": [
+            "missing_dependency",
+            "local_module",
+            "version_incompatibility",
+            "config_missing",
+            "code_defect"
+          ],
+          "fixed_five_f1_perfect_prediction_ceiling": 1.0,
+          "per_label": {
+            "missing_dependency": {
+              "support": 30,
+              "predicted": 30,
+              "correct": 30,
+              "tp": 30,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "local_module": {
+              "support": 30,
+              "predicted": 30,
+              "correct": 30,
+              "tp": 30,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "version_incompatibility": {
+              "support": 70,
+              "predicted": 70,
+              "correct": 70,
+              "tp": 70,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "config_missing": {
+              "support": 30,
+              "predicted": 30,
+              "correct": 30,
+              "tp": 30,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "code_defect": {
+              "support": 60,
+              "predicted": 60,
+              "correct": 60,
+              "tp": 60,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            }
+          },
+          "qualification_counts": {
+            "confirmed": 170,
+            "model": 32,
+            "heuristic": 18
+          },
+          "first_step_quality": "unscored"
+        },
+        "hard": {
+          "n": 30,
+          "correct": 30,
+          "accuracy": 1.0,
+          "no_valid_root_cause": 0,
+          "complete_answers": 30,
+          "answer_status_counts": {
+            "ok": 30,
+            "invalid": 0,
+            "request_error": 0
+          },
+          "root_cause_without_first_step": 0,
+          "macro_f1_fixed_five": 0.4,
+          "macro_f1_registered_support": 1.0,
+          "registered_support": [
+            "local_module",
+            "version_incompatibility"
+          ],
+          "fixed_five_f1_perfect_prediction_ceiling": 0.4,
+          "per_label": {
+            "missing_dependency": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "local_module": {
+              "support": 5,
+              "predicted": 5,
+              "correct": 5,
+              "tp": 5,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "version_incompatibility": {
+              "support": 25,
+              "predicted": 25,
+              "correct": 25,
+              "tp": 25,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "config_missing": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "code_defect": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            }
+          },
+          "qualification_counts": {
+            "heuristic": 25,
+            "confirmed": 5
+          },
+          "first_step_quality": "unscored"
+        }
+      },
+      "timing": {
+        "commit": "c8151af7bd6c19d71605dd3add38ea2dcda98ec2",
+        "worker_process_wall_seconds": 2.9625093329232186,
+        "matching_primary_diagnosis_triplets": 250,
+        "suites": {
+          "diagnosis": {
+            "n": 220,
+            "infer_and_plan_seconds_total": 2.352581660845317,
+            "infer_and_plan_seconds_median": 0.010525770543608814,
+            "infer_and_plan_seconds_min": 0.010222584009170532,
+            "infer_and_plan_seconds_max": 0.015018542064353824
+          },
+          "hard": {
+            "n": 30,
+            "infer_and_plan_seconds_total": 0.323011334403418,
+            "infer_and_plan_seconds_median": 0.010570624959655106,
+            "infer_and_plan_seconds_min": 0.010353417019359767,
+            "infer_and_plan_seconds_max": 0.014917374937795103
+          }
+        }
+      }
+    },
+    {
+      "id": "v08",
+      "display": "FixFirst v0.8 candidate",
+      "kind": "recorded-session replay",
+      "commit": "ff92446c5d0de26564f1cbf50e45036c90b87713",
+      "metrics": {
+        "diagnosis": {
+          "n": 220,
+          "correct": 215,
+          "accuracy": 0.9772727272727273,
+          "no_valid_root_cause": 5,
+          "complete_answers": 215,
+          "answer_status_counts": {
+            "ok": 215,
+            "invalid": 5,
+            "request_error": 0
+          },
+          "root_cause_without_first_step": 0,
+          "macro_f1_fixed_five": 0.9925925925925926,
+          "macro_f1_registered_support": 0.9925925925925926,
+          "registered_support": [
+            "missing_dependency",
+            "local_module",
+            "version_incompatibility",
+            "config_missing",
+            "code_defect"
+          ],
+          "fixed_five_f1_perfect_prediction_ceiling": 1.0,
+          "per_label": {
+            "missing_dependency": {
+              "support": 30,
+              "predicted": 30,
+              "correct": 30,
+              "tp": 30,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "local_module": {
+              "support": 30,
+              "predicted": 30,
+              "correct": 30,
+              "tp": 30,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "version_incompatibility": {
+              "support": 70,
+              "predicted": 65,
+              "correct": 65,
+              "tp": 65,
+              "fp": 0,
+              "fn": 5,
+              "precision": 1.0,
+              "recall": 0.9285714285714286,
+              "f1": 0.9629629629629629
+            },
+            "config_missing": {
+              "support": 30,
+              "predicted": 30,
+              "correct": 30,
+              "tp": 30,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "code_defect": {
+              "support": 60,
+              "predicted": 60,
+              "correct": 60,
+              "tp": 60,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            }
+          },
+          "qualification_counts": {
+            "confirmed": 172,
+            "model": 32,
+            "unknown": 5,
+            "heuristic": 11
+          },
+          "first_step_quality": "unscored"
+        },
+        "hard": {
+          "n": 30,
+          "correct": 30,
+          "accuracy": 1.0,
+          "no_valid_root_cause": 0,
+          "complete_answers": 30,
+          "answer_status_counts": {
+            "ok": 30,
+            "invalid": 0,
+            "request_error": 0
+          },
+          "root_cause_without_first_step": 0,
+          "macro_f1_fixed_five": 0.4,
+          "macro_f1_registered_support": 1.0,
+          "registered_support": [
+            "local_module",
+            "version_incompatibility"
+          ],
+          "fixed_five_f1_perfect_prediction_ceiling": 0.4,
+          "per_label": {
+            "missing_dependency": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "local_module": {
+              "support": 5,
+              "predicted": 5,
+              "correct": 5,
+              "tp": 5,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "version_incompatibility": {
+              "support": 25,
+              "predicted": 25,
+              "correct": 25,
+              "tp": 25,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "config_missing": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "code_defect": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            }
+          },
+          "qualification_counts": {
+            "heuristic": 25,
+            "confirmed": 5
+          },
+          "first_step_quality": "unscored"
+        }
+      },
+      "timing": {
+        "commit": "ff92446c5d0de26564f1cbf50e45036c90b87713",
+        "worker_process_wall_seconds": 3.1924025409389287,
+        "matching_primary_diagnosis_triplets": 250,
+        "suites": {
+          "diagnosis": {
+            "n": 220,
+            "infer_and_plan_seconds_total": 2.5331233685137704,
+            "infer_and_plan_seconds_median": 0.011338770971633494,
+            "infer_and_plan_seconds_min": 0.010932208970189095,
+            "infer_and_plan_seconds_max": 0.015923916012980044
+          },
+          "hard": {
+            "n": 30,
+            "infer_and_plan_seconds_total": 0.3469568763393909,
+            "infer_and_plan_seconds_median": 0.011355854046996683,
+            "infer_and_plan_seconds_min": 0.011092292028479278,
+            "infer_and_plan_seconds_max": 0.016089166048914194
+          }
+        }
+      }
+    },
+    {
+      "id": "llm1",
+      "display": "Qwen3.6-35B-A3B-6bit",
+      "kind": "local LLM request",
+      "metrics": {
+        "diagnosis": {
+          "n": 220,
+          "correct": 203,
+          "accuracy": 0.9227272727272727,
+          "no_valid_root_cause": 0,
+          "complete_answers": 220,
+          "answer_status_counts": {
+            "ok": 220,
+            "invalid": 0,
+            "request_error": 0
+          },
+          "root_cause_without_first_step": 0,
+          "macro_f1_fixed_five": 0.9262612013905732,
+          "macro_f1_registered_support": 0.9262612013905732,
+          "registered_support": [
+            "missing_dependency",
+            "local_module",
+            "version_incompatibility",
+            "config_missing",
+            "code_defect"
+          ],
+          "fixed_five_f1_perfect_prediction_ceiling": 1.0,
+          "per_label": {
+            "missing_dependency": {
+              "support": 30,
+              "predicted": 33,
+              "correct": 30,
+              "tp": 30,
+              "fp": 3,
+              "fn": 0,
+              "precision": 0.9090909090909091,
+              "recall": 1.0,
+              "f1": 0.9523809523809523
+            },
+            "local_module": {
+              "support": 30,
+              "predicted": 32,
+              "correct": 28,
+              "tp": 28,
+              "fp": 4,
+              "fn": 2,
+              "precision": 0.875,
+              "recall": 0.9333333333333333,
+              "f1": 0.9032258064516129
+            },
+            "version_incompatibility": {
+              "support": 70,
+              "predicted": 63,
+              "correct": 62,
+              "tp": 62,
+              "fp": 1,
+              "fn": 8,
+              "precision": 0.9841269841269841,
+              "recall": 0.8857142857142857,
+              "f1": 0.9323308270676691
+            },
+            "config_missing": {
+              "support": 30,
+              "predicted": 27,
+              "correct": 27,
+              "tp": 27,
+              "fp": 0,
+              "fn": 3,
+              "precision": 1.0,
+              "recall": 0.9,
+              "f1": 0.9473684210526315
+            },
+            "code_defect": {
+              "support": 60,
+              "predicted": 65,
+              "correct": 56,
+              "tp": 56,
+              "fp": 9,
+              "fn": 4,
+              "precision": 0.8615384615384616,
+              "recall": 0.9333333333333333,
+              "f1": 0.896
+            }
+          }
+        },
+        "hard": {
+          "n": 30,
+          "correct": 15,
+          "accuracy": 0.5,
+          "no_valid_root_cause": 0,
+          "complete_answers": 30,
+          "answer_status_counts": {
+            "ok": 30,
+            "invalid": 0,
+            "request_error": 0
+          },
+          "root_cause_without_first_step": 0,
+          "macro_f1_fixed_five": 0.3142857142857143,
+          "macro_f1_registered_support": 0.7857142857142857,
+          "registered_support": [
+            "local_module",
+            "version_incompatibility"
+          ],
+          "fixed_five_f1_perfect_prediction_ceiling": 0.4,
+          "per_label": {
+            "missing_dependency": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "local_module": {
+              "support": 5,
+              "predicted": 5,
+              "correct": 5,
+              "tp": 5,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "version_incompatibility": {
+              "support": 25,
+              "predicted": 10,
+              "correct": 10,
+              "tp": 10,
+              "fp": 0,
+              "fn": 15,
+              "precision": 1.0,
+              "recall": 0.4,
+              "f1": 0.5714285714285714
+            },
+            "config_missing": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "code_defect": {
+              "support": 0,
+              "predicted": 15,
+              "correct": 0,
+              "tp": 0,
+              "fp": 15,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            }
+          }
+        }
+      },
+      "timing": {
+        "diagnosis": {
+          "n": 220,
+          "sum_s": 1453.537627,
+          "median_s": 6.2425630000000005,
+          "min_s": 5.486041,
+          "max_s": 40.849385
+        },
+        "hard": {
+          "n": 30,
+          "sum_s": 201.497142,
+          "median_s": 6.6795884999999995,
+          "min_s": 5.850004,
+          "max_s": 8.323543
+        },
+        "all": {
+          "n": 250,
+          "sum_s": 1655.034769,
+          "median_s": 6.287008500000001,
+          "min_s": 5.486041,
+          "max_s": 40.849385
+        }
+      }
+    },
+    {
+      "id": "llm2",
+      "display": "gemma-4-26B-A4B-it-qat-4bit",
+      "kind": "local LLM request",
+      "metrics": {
+        "diagnosis": {
+          "n": 220,
+          "correct": 213,
+          "accuracy": 0.9681818181818181,
+          "no_valid_root_cause": 0,
+          "complete_answers": 220,
+          "answer_status_counts": {
+            "ok": 220,
+            "invalid": 0,
+            "request_error": 0
+          },
+          "root_cause_without_first_step": 0,
+          "macro_f1_fixed_five": 0.9725677092221057,
+          "macro_f1_registered_support": 0.9725677092221057,
+          "registered_support": [
+            "missing_dependency",
+            "local_module",
+            "version_incompatibility",
+            "config_missing",
+            "code_defect"
+          ],
+          "fixed_five_f1_perfect_prediction_ceiling": 1.0,
+          "per_label": {
+            "missing_dependency": {
+              "support": 30,
+              "predicted": 30,
+              "correct": 30,
+              "tp": 30,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "local_module": {
+              "support": 30,
+              "predicted": 30,
+              "correct": 30,
+              "tp": 30,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "version_incompatibility": {
+              "support": 70,
+              "predicted": 66,
+              "correct": 66,
+              "tp": 66,
+              "fp": 0,
+              "fn": 4,
+              "precision": 1.0,
+              "recall": 0.9428571428571428,
+              "f1": 0.9705882352941176
+            },
+            "config_missing": {
+              "support": 30,
+              "predicted": 27,
+              "correct": 27,
+              "tp": 27,
+              "fp": 0,
+              "fn": 3,
+              "precision": 1.0,
+              "recall": 0.9,
+              "f1": 0.9473684210526315
+            },
+            "code_defect": {
+              "support": 60,
+              "predicted": 67,
+              "correct": 60,
+              "tp": 60,
+              "fp": 7,
+              "fn": 0,
+              "precision": 0.8955223880597015,
+              "recall": 1.0,
+              "f1": 0.9448818897637795
+            }
+          }
+        },
+        "hard": {
+          "n": 30,
+          "correct": 15,
+          "accuracy": 0.5,
+          "no_valid_root_cause": 0,
+          "complete_answers": 30,
+          "answer_status_counts": {
+            "ok": 30,
+            "invalid": 0,
+            "request_error": 0
+          },
+          "root_cause_without_first_step": 0,
+          "macro_f1_fixed_five": 0.3142857142857143,
+          "macro_f1_registered_support": 0.7857142857142857,
+          "registered_support": [
+            "local_module",
+            "version_incompatibility"
+          ],
+          "fixed_five_f1_perfect_prediction_ceiling": 0.4,
+          "per_label": {
+            "missing_dependency": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "local_module": {
+              "support": 5,
+              "predicted": 5,
+              "correct": 5,
+              "tp": 5,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "version_incompatibility": {
+              "support": 25,
+              "predicted": 10,
+              "correct": 10,
+              "tp": 10,
+              "fp": 0,
+              "fn": 15,
+              "precision": 1.0,
+              "recall": 0.4,
+              "f1": 0.5714285714285714
+            },
+            "config_missing": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "code_defect": {
+              "support": 0,
+              "predicted": 15,
+              "correct": 0,
+              "tp": 0,
+              "fp": 15,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            }
+          }
+        }
+      },
+      "timing": {
+        "diagnosis": {
+          "n": 220,
+          "sum_s": 1070.859836,
+          "median_s": 4.739447500000001,
+          "min_s": 3.834612,
+          "max_s": 14.97176
+        },
+        "hard": {
+          "n": 30,
+          "sum_s": 155.238801,
+          "median_s": 5.15282,
+          "min_s": 4.441444,
+          "max_s": 6.076045
+        },
+        "all": {
+          "n": 250,
+          "sum_s": 1226.098637,
+          "median_s": 4.7780555,
+          "min_s": 3.834612,
+          "max_s": 14.97176
+        }
+      }
+    },
+    {
+      "id": "llm3",
+      "display": "Qwen3.8-27B-MLX-4bit",
+      "kind": "local LLM request",
+      "metrics": {
+        "diagnosis": {
+          "n": 220,
+          "correct": 216,
+          "accuracy": 0.9818181818181818,
+          "no_valid_root_cause": 1,
+          "complete_answers": 219,
+          "answer_status_counts": {
+            "ok": 219,
+            "invalid": 1,
+            "request_error": 0
+          },
+          "root_cause_without_first_step": 0,
+          "macro_f1_fixed_five": 0.987352558667242,
+          "macro_f1_registered_support": 0.987352558667242,
+          "registered_support": [
+            "missing_dependency",
+            "local_module",
+            "version_incompatibility",
+            "config_missing",
+            "code_defect"
+          ],
+          "fixed_five_f1_perfect_prediction_ceiling": 1.0,
+          "per_label": {
+            "missing_dependency": {
+              "support": 30,
+              "predicted": 30,
+              "correct": 30,
+              "tp": 30,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "local_module": {
+              "support": 30,
+              "predicted": 29,
+              "correct": 29,
+              "tp": 29,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1.0,
+              "recall": 0.9666666666666667,
+              "f1": 0.9830508474576272
+            },
+            "version_incompatibility": {
+              "support": 70,
+              "predicted": 67,
+              "correct": 67,
+              "tp": 67,
+              "fp": 0,
+              "fn": 3,
+              "precision": 1.0,
+              "recall": 0.9571428571428572,
+              "f1": 0.9781021897810219
+            },
+            "config_missing": {
+              "support": 30,
+              "predicted": 30,
+              "correct": 30,
+              "tp": 30,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "code_defect": {
+              "support": 60,
+              "predicted": 63,
+              "correct": 60,
+              "tp": 60,
+              "fp": 3,
+              "fn": 0,
+              "precision": 0.9523809523809523,
+              "recall": 1.0,
+              "f1": 0.975609756097561
+            }
+          }
+        },
+        "hard": {
+          "n": 30,
+          "correct": 18,
+          "accuracy": 0.6,
+          "no_valid_root_cause": 0,
+          "complete_answers": 30,
+          "answer_status_counts": {
+            "ok": 30,
+            "invalid": 0,
+            "request_error": 0
+          },
+          "root_cause_without_first_step": 0,
+          "macro_f1_fixed_five": 0.3368421052631579,
+          "macro_f1_registered_support": 0.8421052631578947,
+          "registered_support": [
+            "local_module",
+            "version_incompatibility"
+          ],
+          "fixed_five_f1_perfect_prediction_ceiling": 0.4,
+          "per_label": {
+            "missing_dependency": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "local_module": {
+              "support": 5,
+              "predicted": 5,
+              "correct": 5,
+              "tp": 5,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "version_incompatibility": {
+              "support": 25,
+              "predicted": 13,
+              "correct": 13,
+              "tp": 13,
+              "fp": 0,
+              "fn": 12,
+              "precision": 1.0,
+              "recall": 0.52,
+              "f1": 0.6842105263157895
+            },
+            "config_missing": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "code_defect": {
+              "support": 0,
+              "predicted": 12,
+              "correct": 0,
+              "tp": 0,
+              "fp": 12,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            }
+          }
+        }
+      },
+      "timing": {
+        "diagnosis": {
+          "n": 220,
+          "sum_s": 11068.958687,
+          "median_s": 48.672017,
+          "min_s": 44.85709,
+          "max_s": 69.370025
+        },
+        "hard": {
+          "n": 30,
+          "sum_s": 1712.223072,
+          "median_s": 55.6533795,
+          "min_s": 50.045734,
+          "max_s": 74.189138
+        },
+        "all": {
+          "n": 250,
+          "sum_s": 12781.181759,
+          "median_s": 49.054067,
+          "min_s": 44.85709,
+          "max_s": 74.189138
+        }
+      }
+    }
+  ],
+  "first_step_quality": "unscored",
+  "hard_scenarios": {
+    "Qwen3.6-35B-A3B-6bit": {
+      "vb_numpy_repr": {
+        "n": 5,
+        "correct": 0,
+        "predictions": {
+          "code_defect": 5
+        }
+      },
+      "vb_numpy_promotion": {
+        "n": 5,
+        "correct": 0,
+        "predictions": {
+          "code_defect": 5
+        }
+      },
+      "vb_yaml_loader": {
+        "n": 5,
+        "correct": 5,
+        "predictions": {
+          "version_incompatibility": 5
+        }
+      },
+      "vb_pydantic_coercion": {
+        "n": 5,
+        "correct": 0,
+        "predictions": {
+          "code_defect": 5
+        }
+      },
+      "vb_click_mix_stderr": {
+        "n": 5,
+        "correct": 5,
+        "predictions": {
+          "version_incompatibility": 5
+        }
+      },
+      "ml_renamed_then_alias": {
+        "n": 5,
+        "correct": 5,
+        "predictions": {
+          "local_module": 5
+        }
+      }
+    },
+    "gemma-4-26B-A4B-it-qat-4bit": {
+      "vb_numpy_repr": {
+        "n": 5,
+        "correct": 0,
+        "predictions": {
+          "code_defect": 5
+        }
+      },
+      "vb_numpy_promotion": {
+        "n": 5,
+        "correct": 0,
+        "predictions": {
+          "code_defect": 5
+        }
+      },
+      "vb_yaml_loader": {
+        "n": 5,
+        "correct": 5,
+        "predictions": {
+          "version_incompatibility": 5
+        }
+      },
+      "vb_pydantic_coercion": {
+        "n": 5,
+        "correct": 0,
+        "predictions": {
+          "code_defect": 5
+        }
+      },
+      "vb_click_mix_stderr": {
+        "n": 5,
+        "correct": 5,
+        "predictions": {
+          "version_incompatibility": 5
+        }
+      },
+      "ml_renamed_then_alias": {
+        "n": 5,
+        "correct": 5,
+        "predictions": {
+          "local_module": 5
+        }
+      }
+    },
+    "Qwen3.8-27B-MLX-4bit": {
+      "vb_numpy_repr": {
+        "n": 5,
+        "correct": 5,
+        "predictions": {
+          "version_incompatibility": 5
+        }
+      },
+      "vb_numpy_promotion": {
+        "n": 5,
+        "correct": 0,
+        "predictions": {
+          "code_defect": 5
+        }
+      },
+      "vb_yaml_loader": {
+        "n": 5,
+        "correct": 3,
+        "predictions": {
+          "code_defect": 2,
+          "version_incompatibility": 3
+        }
+      },
+      "vb_pydantic_coercion": {
+        "n": 5,
+        "correct": 0,
+        "predictions": {
+          "code_defect": 5
+        }
+      },
+      "vb_click_mix_stderr": {
+        "n": 5,
+        "correct": 5,
+        "predictions": {
+          "version_incompatibility": 5
+        }
+      },
+      "ml_renamed_then_alias": {
+        "n": 5,
+        "correct": 5,
+        "predictions": {
+          "local_module": 5
+        }
+      }
+    }
+  },
+  "sources_sha256": {
+    "codex-b3-night-run-20261003/REGISTRATION.json": "e6e886dac688811d0f4fef641fdf66262b55075d0374afb2735877f7988e037a",
+    "codex-b3-night-run-20261003/answers/SEALED.json": "3aa78c66788a0bea1e8f598ad10e7edb33c290f60b079cbc52cd0a6f82a4870b",
+    "codex-b3-night-run-20261003/answers/manifest.json": "81a610e517556ee2a2c02c000c8a0d236a32e41b9a79a122a9b5bc771a5e9ae8",
+    "codex-b3-night-run-20261003/SCORES.json": "6330a485fe30ed631596d9ce273e6d6e2e5a08f2af16979d881efcbe92815859",
+    "codex-b3-generated-results-20261004/fixfirst/SCORES.json": "9b0b4309ef6afeb6aaf5063575f4af0c378dae50f5a9674aa0bc256165a8e863",
+    "codex-b3-generated-results-20261004/fixfirst/v070-replay.json": "9fb6957b65d8c0c318710620b6d7321fd2aadaa06f1aef0c9d3221094554c475",
+    "codex-b3-generated-results-20261004/fixfirst/v08-replay.json": "9f94232e9bfcabd280847d825a12b2d8e9ac2d4ef172f1d9e66c763acf4cdc4f",
+    "codex-b3-generated-results-20261004/fixfirst/timing/SUMMARY.json": "7c03a233944882f8b8e02c363a85aa42b23977e791035daf7c642d20d2858422",
+    "codex-b3-generated-preparation-20261003/labels.json": "b66463810b614cbdfeed002a69fd86119bd379199f471abe8faabee381bbce76",
+    "codex-b3-generated-results-20261004/build_report.py": "962cc406a0b51ae8a96088e89328d4f193397d20a07b952b266848d1d75a81ad"
+  }
+}
