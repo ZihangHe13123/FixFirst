@@ -1,0 +1,12 @@
+# v0.8 default-tree integration
+
+The user approved the preceding proposal: adopt the verified81-feature candidate in an isolated v0.8 candidate, fix the src-layout advice, then run release regression. This supersedes the earlier research-only/no-default-promotion boundary for this new branch. Frozen v0.7.0, ff92446, B3 answers and old evaluation artifacts remain immutable.
+
+1. Base: ff92446. Copy the exact schema8 candidate JSON/TXT (JSON SHA189f712ea75bcb117f96aae879fd0c9bdab9ee6531475d1a95faf01ec2738d30) into the bundled model. No retraining,93-feature code, hyperparameter/seed changes or training on acceptance cases.
+2. Keep legacy44 loading/prefix compatibility with an explicit frozen fixture. Guard the new shipped model identity and preserve policy tests that prove rule execution never modifies model bytes.
+3. Correct P12 guidance by giving a package-parent/PYTHONPATH route usable without packaging metadata and with the same test interpreter. Remove the unsupported unconditional editable-install alternative; do not add new metadata mechanisms or version-specific pytest options.
+4. Re-run ownership reference verification on actual candidate source and rules, with full keys/merged checks; never replace hashes without execution. The unchanged knowledge matrix can retain its original validated receipt if its binding still passes.
+5. Regenerate candidate evaluation and source/model identity; keep old reports explicitly historical. Distinguish classifier-only accuracy, final diagnoses, first-step validity and repaired projects. Public candidate evidence must be portable/sanitized; raw local traces stay in workbench.
+6. Targeted tests, existing348/new23/boundary20 development regression, full tests+Ruff, sdist/wheel audit/smoke, and available CI precede a release-validation claim. Use a separate candidate branch/PR, no public main merge or release tag in this task. B7 remains unstarted and awaits final preregistration.
+
+Acceptance and prior findings:81 improves current-source grouped CV and independently authored tree-only labels, with no demonstrated additional repaired-project gain; that limitation stays visible. Any new regression blocks candidate readiness. Existing frozen output changes only where P12 wording is intentionally corrected. Version labeling will identify this build as an unreleased v0.8 candidate rather than overwrite the released v0.7.0 distribution.
