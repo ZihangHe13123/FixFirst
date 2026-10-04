@@ -1,0 +1,251 @@
+{
+  "rows": [
+    {
+      "case_id": "main/flat-shop--lm_src_layout",
+      "action_differences": [
+        {
+          "path": [
+            0,
+            "explanation"
+          ],
+          "before": "src/app.py exists in the project but the test run cannot import app. For a src layout, install the project in editable mode (pip install -e .) or set pytest's pythonpath; otherwise check the package's location and __init__.py.",
+          "after": "src/app.py exists in the project but the test run cannot import app. For a src layout, add the absolute path to the project's src directory to PYTHONPATH in the environment of the same Python interpreter that runs the tests. Preserve any existing PYTHONPATH entries using your platform's path separator. For other layouts, use the directory containing the top-level module or package instead, and check its location and __init__.py. Then re-run the original test command from the project root."
+        },
+        {
+          "path": [
+            0,
+            "verification"
+          ],
+          "before": "Re-run test collection",
+          "after": "Re-run the original test command with the same interpreter and the updated import path"
+        }
+      ],
+      "view_differences": [
+        {
+          "path": [
+            "steps",
+            0,
+            "explanation"
+          ],
+          "before": "src/app.py exists in the project but the test run cannot import app. For a src layout, install the project in editable mode (pip install -e .) or set pytest's pythonpath; otherwise check the package's location and __init__.py.",
+          "after": "src/app.py exists in the project but the test run cannot import app. For a src layout, add the absolute path to the project's src directory to PYTHONPATH in the environment of the same Python interpreter that runs the tests. Preserve any existing PYTHONPATH entries using your platform's path separator. For other layouts, use the directory containing the top-level module or package instead, and check its location and __init__.py. Then re-run the original test command from the project root."
+        },
+        {
+          "path": [
+            "steps",
+            0,
+            "confirm"
+          ],
+          "before": "Re-run test collection",
+          "after": "Re-run the original test command with the same interpreter and the updated import path"
+        }
+      ]
+    },
+    {
+      "case_id": "main/src-billing--lm_src_layout",
+      "action_differences": [
+        {
+          "path": [
+            0,
+            "explanation"
+          ],
+          "before": "src/billing exists in the project but the test run cannot import billing. For a src layout, install the project in editable mode (pip install -e .) or set pytest's pythonpath; otherwise check the package's location and __init__.py.",
+          "after": "src/billing exists in the project but the test run cannot import billing. For a src layout, add the absolute path to the project's src directory to PYTHONPATH in the environment of the same Python interpreter that runs the tests. Preserve any existing PYTHONPATH entries using your platform's path separator. For other layouts, use the directory containing the top-level module or package instead, and check its location and __init__.py. Then re-run the original test command from the project root."
+        },
+        {
+          "path": [
+            0,
+            "verification"
+          ],
+          "before": "Re-run test collection",
+          "after": "Re-run the original test command with the same interpreter and the updated import path"
+        }
+      ],
+      "view_differences": [
+        {
+          "path": [
+            "steps",
+            0,
+            "explanation"
+          ],
+          "before": "src/billing exists in the project but the test run cannot import billing. For a src layout, install the project in editable mode (pip install -e .) or set pytest's pythonpath; otherwise check the package's location and __init__.py.",
+          "after": "src/billing exists in the project but the test run cannot import billing. For a src layout, add the absolute path to the project's src directory to PYTHONPATH in the environment of the same Python interpreter that runs the tests. Preserve any existing PYTHONPATH entries using your platform's path separator. For other layouts, use the directory containing the top-level module or package instead, and check its location and __init__.py. Then re-run the original test command from the project root."
+        },
+        {
+          "path": [
+            "steps",
+            0,
+            "confirm"
+          ],
+          "before": "Re-run test collection",
+          "after": "Re-run the original test command with the same interpreter and the updated import path"
+        }
+      ]
+    },
+    {
+      "case_id": "main/pkg-inventory--lm_src_layout",
+      "action_differences": [
+        {
+          "path": [
+            0,
+            "explanation"
+          ],
+          "before": "src/inventory exists in the project but the test run cannot import inventory. For a src layout, install the project in editable mode (pip install -e .) or set pytest's pythonpath; otherwise check the package's location and __init__.py.",
+          "after": "src/inventory exists in the project but the test run cannot import inventory. For a src layout, add the absolute path to the project's src directory to PYTHONPATH in the environment of the same Python interpreter that runs the tests. Preserve any existing PYTHONPATH entries using your platform's path separator. For other layouts, use the directory containing the top-level module or package instead, and check its location and __init__.py. Then re-run the original test command from the project root."
+        },
+        {
+          "path": [
+            0,
+            "verification"
+          ],
+          "before": "Re-run test collection",
+          "after": "Re-run the original test command with the same interpreter and the updated import path"
+        }
+      ],
+      "view_differences": [
+        {
+          "path": [
+            "steps",
+            0,
+            "explanation"
+          ],
+          "before": "src/inventory exists in the project but the test run cannot import inventory. For a src layout, install the project in editable mode (pip install -e .) or set pytest's pythonpath; otherwise check the package's location and __init__.py.",
+          "after": "src/inventory exists in the project but the test run cannot import inventory. For a src layout, add the absolute path to the project's src directory to PYTHONPATH in the environment of the same Python interpreter that runs the tests. Preserve any existing PYTHONPATH entries using your platform's path separator. For other layouts, use the directory containing the top-level module or package instead, and check its location and __init__.py. Then re-run the original test command from the project root."
+        },
+        {
+          "path": [
+            "steps",
+            0,
+            "confirm"
+          ],
+          "before": "Re-run test collection",
+          "after": "Re-run the original test command with the same interpreter and the updated import path"
+        }
+      ]
+    },
+    {
+      "case_id": "main/unittest-grades--lm_src_layout",
+      "action_differences": [
+        {
+          "path": [
+            0,
+            "explanation"
+          ],
+          "before": "src/grades.py exists in the project but the test run cannot import grades. For a src layout, install the project in editable mode (pip install -e .) or set pytest's pythonpath; otherwise check the package's location and __init__.py.",
+          "after": "src/grades.py exists in the project but the test run cannot import grades. For a src layout, add the absolute path to the project's src directory to PYTHONPATH in the environment of the same Python interpreter that runs the tests. Preserve any existing PYTHONPATH entries using your platform's path separator. For other layouts, use the directory containing the top-level module or package instead, and check its location and __init__.py. Then re-run the original test command from the project root."
+        },
+        {
+          "path": [
+            0,
+            "verification"
+          ],
+          "before": "Re-run test collection",
+          "after": "Re-run the original test command with the same interpreter and the updated import path"
+        }
+      ],
+      "view_differences": [
+        {
+          "path": [
+            "steps",
+            0,
+            "explanation"
+          ],
+          "before": "src/grades.py exists in the project but the test run cannot import grades. For a src layout, install the project in editable mode (pip install -e .) or set pytest's pythonpath; otherwise check the package's location and __init__.py.",
+          "after": "src/grades.py exists in the project but the test run cannot import grades. For a src layout, add the absolute path to the project's src directory to PYTHONPATH in the environment of the same Python interpreter that runs the tests. Preserve any existing PYTHONPATH entries using your platform's path separator. For other layouts, use the directory containing the top-level module or package instead, and check its location and __init__.py. Then re-run the original test command from the project root."
+        },
+        {
+          "path": [
+            "steps",
+            0,
+            "confirm"
+          ],
+          "before": "Re-run test collection",
+          "after": "Re-run the original test command with the same interpreter and the updated import path"
+        }
+      ]
+    },
+    {
+      "case_id": "main/fixture-orders--lm_src_layout",
+      "action_differences": [
+        {
+          "path": [
+            0,
+            "explanation"
+          ],
+          "before": "src/orders exists in the project but the test run cannot import orders. For a src layout, install the project in editable mode (pip install -e .) or set pytest's pythonpath; otherwise check the package's location and __init__.py.",
+          "after": "src/orders exists in the project but the test run cannot import orders. For a src layout, add the absolute path to the project's src directory to PYTHONPATH in the environment of the same Python interpreter that runs the tests. Preserve any existing PYTHONPATH entries using your platform's path separator. For other layouts, use the directory containing the top-level module or package instead, and check its location and __init__.py. Then re-run the original test command from the project root."
+        },
+        {
+          "path": [
+            0,
+            "verification"
+          ],
+          "before": "Re-run test collection",
+          "after": "Re-run the original test command with the same interpreter and the updated import path"
+        }
+      ],
+      "view_differences": [
+        {
+          "path": [
+            "steps",
+            0,
+            "explanation"
+          ],
+          "before": "src/orders exists in the project but the test run cannot import orders. For a src layout, install the project in editable mode (pip install -e .) or set pytest's pythonpath; otherwise check the package's location and __init__.py.",
+          "after": "src/orders exists in the project but the test run cannot import orders. For a src layout, add the absolute path to the project's src directory to PYTHONPATH in the environment of the same Python interpreter that runs the tests. Preserve any existing PYTHONPATH entries using your platform's path separator. For other layouts, use the directory containing the top-level module or package instead, and check its location and __init__.py. Then re-run the original test command from the project root."
+        },
+        {
+          "path": [
+            "steps",
+            0,
+            "confirm"
+          ],
+          "before": "Re-run test collection",
+          "after": "Re-run the original test command with the same interpreter and the updated import path"
+        }
+      ]
+    },
+    {
+      "case_id": "I02",
+      "action_differences": [
+        {
+          "path": [
+            0,
+            "explanation"
+          ],
+          "before": "src/local_ledger exists in the project but the test run cannot import local_ledger. For a src layout, install the project in editable mode (pip install -e .) or set pytest's pythonpath; otherwise check the package's location and __init__.py.",
+          "after": "src/local_ledger exists in the project but the test run cannot import local_ledger. For a src layout, add the absolute path to the project's src directory to PYTHONPATH in the environment of the same Python interpreter that runs the tests. Preserve any existing PYTHONPATH entries using your platform's path separator. For other layouts, use the directory containing the top-level module or package instead, and check its location and __init__.py. Then re-run the original test command from the project root."
+        },
+        {
+          "path": [
+            0,
+            "verification"
+          ],
+          "before": "Re-run test collection",
+          "after": "Re-run the original test command with the same interpreter and the updated import path"
+        }
+      ],
+      "view_differences": [
+        {
+          "path": [
+            "steps",
+            0,
+            "explanation"
+          ],
+          "before": "src/local_ledger exists in the project but the test run cannot import local_ledger. For a src layout, install the project in editable mode (pip install -e .) or set pytest's pythonpath; otherwise check the package's location and __init__.py.",
+          "after": "src/local_ledger exists in the project but the test run cannot import local_ledger. For a src layout, add the absolute path to the project's src directory to PYTHONPATH in the environment of the same Python interpreter that runs the tests. Preserve any existing PYTHONPATH entries using your platform's path separator. For other layouts, use the directory containing the top-level module or package instead, and check its location and __init__.py. Then re-run the original test command from the project root."
+        },
+        {
+          "path": [
+            "steps",
+            0,
+            "confirm"
+          ],
+          "before": "Re-run test collection",
+          "after": "Re-run the original test command with the same interpreter and the updated import path"
+        }
+      ]
+    }
+  ],
+  "unexpected": []
+}

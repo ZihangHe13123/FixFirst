@@ -1,0 +1,53 @@
+{
+  "product_commit": "f5e1ae70f1af53f5142d3aacb347591cf5e8b733",
+  "version": "0.8.0rc1",
+  "model_sha256": "189f712ea75bcb117f96aae879fd0c9bdab9ee6531475d1a95faf01ec2738d30",
+  "full_tests": {
+    "passed": 1822,
+    "skipped": 34,
+    "failed": 0,
+    "log_sha256": "8b47f1eb1cec35944cf0b09a39ea63e54430974e49bc371e9a927bce8daa5073",
+    "platform": "macOS",
+    "python": "3.12.13",
+    "skips": "Optional isolated Django/setuptools interpreters; opt-in environment-building suite; Windows-only quoting."
+  },
+  "ruff": "passed",
+  "owners": {
+    "keys": 155,
+    "merged": 23,
+    "failures": 0,
+    "audit_problems": 0,
+    "elapsed_s": 726.498,
+    "receipt_sha256": "6942b25af7ddca1ae9ffaf1bf5385dacd4a4f6779db6274c670fcfec9e9d5416",
+    "three_knowledge_test_files_passed": 170
+  },
+  "artifacts": [
+    {
+      "name": "fixfirst_local-0.8.0rc1-py3-none-any.whl",
+      "sha256": "d41174c2cda14c0622ebddb362e32a1a1355c301d9a0594bac803d31335f858e",
+      "files": 79,
+      "runtime_files": 74,
+      "runtime_matches_current_source": true,
+      "runtime_payload_sha256": "29b0ca7745a4f8ca41fcddd0de9a05a9879e4f283e92ed773274173cdd4b795a",
+      "legacy_fixture_present": false
+    },
+    {
+      "name": "fixfirst_local-0.8.0rc1.tar.gz",
+      "sha256": "eaa252e1d748db71b56adb9a4f0a74df48f909c745ec13aa76973fc97e8de7f0",
+      "files": 153,
+      "runtime_files": 74,
+      "runtime_matches_current_source": true,
+      "runtime_payload_sha256": "29b0ca7745a4f8ca41fcddd0de9a05a9879e4f283e92ed773274173cdd4b795a",
+      "legacy_fixture_present": true
+    }
+  ],
+  "wheel_smoke": {
+    "validated_version": "0.8.0rc1",
+    "model_columns": 81,
+    "cli_help": true,
+    "real_failure_then_P12_fix_verified_pass": true,
+    "final_runtime_identical_to_executed_wheel": true
+  },
+  "source_zip": "Old v0.7.0 whitelist builder was not used or modified. Standard wheel and sdist only.",
+  "release_status": "candidate; no tag or main merge; Linux CI reported separately on PR"
+}

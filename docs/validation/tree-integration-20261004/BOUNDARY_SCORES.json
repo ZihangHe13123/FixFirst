@@ -1,0 +1,2265 @@
+{
+  "evaluator_sha256": "3d19c758d2c744c70d2080a2cd4a45dd1650f1c7643760f0996fd476714f7ce4",
+  "rows": [
+    {
+      "case_id": "B01-alias-missing-owner",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-9ccede600e7cd0"
+          ]
+        },
+        {
+          "name": "no_definite_diagnosis",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "requires_recollection",
+          "passed": true,
+          "detail": [
+            "record-removal-ownership-issue-9ccede600e7cd0"
+          ]
+        },
+        {
+          "name": "no_named_migration",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_install_command",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-9ccede600e7cd0",
+          "diagnosis": null,
+          "diagnosis_source": null,
+          "diagnosis_rule": null,
+          "prediction": "version_incompatibility",
+          "prediction_confidence": 1.0,
+          "prediction_note": "This saved failure does not record which class supplied the missing attribute. A project class may inherit an API removed from a library. Re-run the failing check to record ownership before choosing a cause or repair."
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "record-removal-ownership-issue-9ccede600e7cd0",
+          "kind": "inspect",
+          "title": "Re-run the failure before choosing a repair",
+          "explanation": "The saved failure names an attribute also removed from a library, but does not record which class supplied it. A class defined in this project may inherit that API. Re-run the failing check to distinguish a project mistake from a library change.",
+          "verification": "Use the same interpreter and failing check; inspect the newly recorded ownership before choosing a repair",
+          "check": null,
+          "issue_ids": [
+            "issue-9ccede600e7cd0"
+          ],
+          "reason_refs": [
+            "issue-9ccede600e7cd0:removal_owner_unobserved:yes"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 1,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "P_REMOVAL_REOBSERVE"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "review-test_runtime_error",
+          "kind": "manual_fix",
+          "title": "Inspect the exception raised while running the test",
+          "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+          "verification": "Re-run the related test nodes, then the full suite",
+          "check": null,
+          "issue_ids": [
+            "issue-9ccede600e7cd0"
+          ],
+          "reason_refs": [
+            "issue-9ccede600e7cd0:kind:test_runtime_error"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "P50"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-failed-tests",
+          "kind": "rerun",
+          "title": "Re-run only the related failing tests",
+          "explanation": "Runs just the failing test nodes already observed and keeps other issues. When they all pass, the full suite still has to confirm the goal.",
+          "verification": "Check setup, call and teardown for each node; skipped and xfail do not count as fixed",
+          "check": "pytest_run",
+          "issue_ids": [
+            "issue-9ccede600e7cd0"
+          ],
+          "reason_refs": [
+            "issue-9ccede600e7cd0:affects:pass_tests"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 3,
+          "targets": [
+            "test_app.py::TestLegacyAssertions::test_legacy_alias"
+          ],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-pytest_run",
+          "kind": "rerun",
+          "title": "Run the full test suite",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "pytest_run",
+          "issue_ids": [
+            "issue-9ccede600e7cd0"
+          ],
+          "reason_refs": [
+            "issue-9ccede600e7cd0:affects:pass_tests"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 4,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B02-alias-empty-owner",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-9ccede600e7cd0"
+          ]
+        },
+        {
+          "name": "no_definite_diagnosis",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "requires_recollection",
+          "passed": true,
+          "detail": [
+            "record-removal-ownership-issue-9ccede600e7cd0"
+          ]
+        },
+        {
+          "name": "no_named_migration",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_install_command",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-9ccede600e7cd0",
+          "diagnosis": null,
+          "diagnosis_source": null,
+          "diagnosis_rule": null,
+          "prediction": "version_incompatibility",
+          "prediction_confidence": 1.0,
+          "prediction_note": "This saved failure does not record which class supplied the missing attribute. A project class may inherit an API removed from a library. Re-run the failing check to record ownership before choosing a cause or repair."
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "record-removal-ownership-issue-9ccede600e7cd0",
+          "kind": "inspect",
+          "title": "Re-run the failure before choosing a repair",
+          "explanation": "The saved failure names an attribute also removed from a library, but does not record which class supplied it. A class defined in this project may inherit that API. Re-run the failing check to distinguish a project mistake from a library change.",
+          "verification": "Use the same interpreter and failing check; inspect the newly recorded ownership before choosing a repair",
+          "check": null,
+          "issue_ids": [
+            "issue-9ccede600e7cd0"
+          ],
+          "reason_refs": [
+            "issue-9ccede600e7cd0:removal_owner_unobserved:yes"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 1,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "P_REMOVAL_REOBSERVE"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "review-test_runtime_error",
+          "kind": "manual_fix",
+          "title": "Inspect the exception raised while running the test",
+          "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+          "verification": "Re-run the related test nodes, then the full suite",
+          "check": null,
+          "issue_ids": [
+            "issue-9ccede600e7cd0"
+          ],
+          "reason_refs": [
+            "issue-9ccede600e7cd0:kind:test_runtime_error"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "P50"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-failed-tests",
+          "kind": "rerun",
+          "title": "Re-run only the related failing tests",
+          "explanation": "Runs just the failing test nodes already observed and keeps other issues. When they all pass, the full suite still has to confirm the goal.",
+          "verification": "Check setup, call and teardown for each node; skipped and xfail do not count as fixed",
+          "check": "pytest_run",
+          "issue_ids": [
+            "issue-9ccede600e7cd0"
+          ],
+          "reason_refs": [
+            "issue-9ccede600e7cd0:affects:pass_tests"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 3,
+          "targets": [
+            "test_app.py::TestLegacyAssertions::test_legacy_alias"
+          ],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-pytest_run",
+          "kind": "rerun",
+          "title": "Run the full test suite",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "pytest_run",
+          "issue_ids": [
+            "issue-9ccede600e7cd0"
+          ],
+          "reason_refs": [
+            "issue-9ccede600e7cd0:affects:pass_tests"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 4,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B03-old-alias-imported",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-9ccede600e7cd0"
+          ]
+        },
+        {
+          "name": "no_definite_diagnosis",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "requires_recollection",
+          "passed": true,
+          "detail": [
+            "record-removal-ownership-issue-9ccede600e7cd0"
+          ]
+        },
+        {
+          "name": "no_named_migration",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_install_command",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-9ccede600e7cd0",
+          "diagnosis": null,
+          "diagnosis_source": null,
+          "diagnosis_rule": null,
+          "prediction": "code_defect",
+          "prediction_confidence": 1.0,
+          "prediction_note": "This saved failure does not record which class supplied the missing attribute. A project class may inherit an API removed from a library. Re-run the failing check to record ownership before choosing a cause or repair."
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "record-removal-ownership-issue-9ccede600e7cd0",
+          "kind": "inspect",
+          "title": "Re-run the failure before choosing a repair",
+          "explanation": "The saved failure names an attribute also removed from a library, but does not record which class supplied it. A class defined in this project may inherit that API. Re-run the failing check to distinguish a project mistake from a library change.",
+          "verification": "Use the same interpreter and failing check; inspect the newly recorded ownership before choosing a repair",
+          "check": null,
+          "issue_ids": [
+            "issue-9ccede600e7cd0"
+          ],
+          "reason_refs": [
+            "issue-9ccede600e7cd0:removal_owner_unobserved:yes"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 1,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "P_REMOVAL_REOBSERVE"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "review-test_runtime_error",
+          "kind": "manual_fix",
+          "title": "Inspect the exception raised while running the test",
+          "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+          "verification": "Re-run the related test nodes, then the full suite",
+          "check": null,
+          "issue_ids": [
+            "issue-9ccede600e7cd0"
+          ],
+          "reason_refs": [
+            "issue-9ccede600e7cd0:kind:test_runtime_error"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "P50"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-failed-tests",
+          "kind": "rerun",
+          "title": "Re-run only the related failing tests",
+          "explanation": "Runs just the failing test nodes already observed and keeps other issues. When they all pass, the full suite still has to confirm the goal.",
+          "verification": "Check setup, call and teardown for each node; skipped and xfail do not count as fixed",
+          "check": "pytest_run",
+          "issue_ids": [
+            "issue-9ccede600e7cd0"
+          ],
+          "reason_refs": [
+            "issue-9ccede600e7cd0:affects:pass_tests"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 3,
+          "targets": [
+            "test_app.py::TestLegacyAssertions::test_legacy_alias"
+          ],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-pytest_run",
+          "kind": "rerun",
+          "title": "Run the full test suite",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "pytest_run",
+          "issue_ids": [
+            "issue-9ccede600e7cd0"
+          ],
+          "reason_refs": [
+            "issue-9ccede600e7cd0:affects:pass_tests"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 4,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B04-configparser-imported",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-241b29e15549fe"
+          ]
+        },
+        {
+          "name": "no_confirmed_removal",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_named_migration",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_install_command",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-241b29e15549fe",
+          "diagnosis": null,
+          "diagnosis_source": null,
+          "diagnosis_rule": null,
+          "prediction": null,
+          "prediction_confidence": null,
+          "prediction_note": ""
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "review-runtime-error",
+          "kind": "manual_fix",
+          "title": "Correct the operation at the reported source location",
+          "explanation": "Start from the last project location in the traceback. Check the named variable, input type, index or operation against the exception message, then change that code or its input. The original output shows the exact failing operation.",
+          "verification": "Re-run the same program with the same Python, arguments and input",
+          "check": null,
+          "issue_ids": [
+            "issue-241b29e15549fe"
+          ],
+          "reason_refs": [
+            "issue-241b29e15549fe:kind:runtime_error"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "RUN-P2"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-python_run",
+          "kind": "rerun",
+          "title": "Re-run the same program",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "python_run",
+          "issue_ids": [
+            "issue-241b29e15549fe"
+          ],
+          "reason_refs": [
+            "issue-241b29e15549fe:affects:run_project"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B05-configparser-stale-env",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-241b29e15549fe"
+          ]
+        },
+        {
+          "name": "no_confirmed_removal",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_named_migration",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_install_command",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-241b29e15549fe",
+          "diagnosis": null,
+          "diagnosis_source": null,
+          "diagnosis_rule": null,
+          "prediction": null,
+          "prediction_confidence": null,
+          "prediction_note": ""
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "review-runtime-error",
+          "kind": "manual_fix",
+          "title": "Correct the operation at the reported source location",
+          "explanation": "Start from the last project location in the traceback. Check the named variable, input type, index or operation against the exception message, then change that code or its input. The original output shows the exact failing operation.",
+          "verification": "Re-run the same program with the same Python, arguments and input",
+          "check": null,
+          "issue_ids": [
+            "issue-241b29e15549fe"
+          ],
+          "reason_refs": [
+            "issue-241b29e15549fe:kind:runtime_error"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "RUN-P2"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-python_run",
+          "kind": "rerun",
+          "title": "Re-run the same program",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "python_run",
+          "issue_ids": [
+            "issue-241b29e15549fe"
+          ],
+          "reason_refs": [
+            "issue-241b29e15549fe:affects:run_project"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B06-configparser-no-records",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-241b29e15549fe"
+          ]
+        },
+        {
+          "name": "no_confirmed_removal",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_named_migration",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_install_command",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-241b29e15549fe",
+          "diagnosis": null,
+          "diagnosis_source": null,
+          "diagnosis_rule": null,
+          "prediction": null,
+          "prediction_confidence": null,
+          "prediction_note": ""
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "review-runtime-error",
+          "kind": "manual_fix",
+          "title": "Correct the operation at the reported source location",
+          "explanation": "Start from the last project location in the traceback. Check the named variable, input type, index or operation against the exception message, then change that code or its input. The original output shows the exact failing operation.",
+          "verification": "Re-run the same program with the same Python, arguments and input",
+          "check": null,
+          "issue_ids": [
+            "issue-241b29e15549fe"
+          ],
+          "reason_refs": [
+            "issue-241b29e15549fe:kind:runtime_error"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "RUN-P2"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-python_run",
+          "kind": "rerun",
+          "title": "Re-run the same program",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "python_run",
+          "issue_ids": [
+            "issue-241b29e15549fe"
+          ],
+          "reason_refs": [
+            "issue-241b29e15549fe:affects:run_project"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B07-configparser-provider-conflict",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-241b29e15549fe"
+          ]
+        },
+        {
+          "name": "no_confirmed_removal",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_named_migration",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_install_command",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-241b29e15549fe",
+          "diagnosis": null,
+          "diagnosis_source": null,
+          "diagnosis_rule": null,
+          "prediction": null,
+          "prediction_confidence": null,
+          "prediction_note": ""
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "review-runtime-error",
+          "kind": "manual_fix",
+          "title": "Correct the operation at the reported source location",
+          "explanation": "Start from the last project location in the traceback. Check the named variable, input type, index or operation against the exception message, then change that code or its input. The original output shows the exact failing operation.",
+          "verification": "Re-run the same program with the same Python, arguments and input",
+          "check": null,
+          "issue_ids": [
+            "issue-241b29e15549fe"
+          ],
+          "reason_refs": [
+            "issue-241b29e15549fe:kind:runtime_error"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "RUN-P2"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-python_run",
+          "kind": "rerun",
+          "title": "Re-run the same program",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "python_run",
+          "issue_ids": [
+            "issue-241b29e15549fe"
+          ],
+          "reason_refs": [
+            "issue-241b29e15549fe:affects:run_project"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B08-local-namesake-configparser",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-a4b7a9f073f171"
+          ]
+        },
+        {
+          "name": "no_confirmed_removal",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_named_migration",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_install_command",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-a4b7a9f073f171",
+          "diagnosis": "code_defect",
+          "diagnosis_source": "rule",
+          "diagnosis_rule": "D43",
+          "prediction": null,
+          "prediction_confidence": null,
+          "prediction_note": ""
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "review-runtime-error",
+          "kind": "manual_fix",
+          "title": "Correct the operation at the reported source location",
+          "explanation": "Start from the last project location in the traceback. Check the named variable, input type, index or operation against the exception message, then change that code or its input. The original output shows the exact failing operation.",
+          "verification": "Re-run the same program with the same Python, arguments and input",
+          "check": null,
+          "issue_ids": [
+            "issue-a4b7a9f073f171"
+          ],
+          "reason_refs": [
+            "issue-a4b7a9f073f171:kind:runtime_error"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "RUN-P2"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-python_run",
+          "kind": "rerun",
+          "title": "Re-run the same program",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "python_run",
+          "issue_ids": [
+            "issue-a4b7a9f073f171"
+          ],
+          "reason_refs": [
+            "issue-a4b7a9f073f171:affects:run_project"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B09-local-entrypoints-message-hint",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-7bee18af9ea861"
+          ]
+        },
+        {
+          "name": "no_confirmed_removal",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_named_migration",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_install_command",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-7bee18af9ea861",
+          "diagnosis": "code_defect",
+          "diagnosis_source": "rule",
+          "diagnosis_rule": "D43",
+          "prediction": null,
+          "prediction_confidence": null,
+          "prediction_note": ""
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "review-runtime-error",
+          "kind": "manual_fix",
+          "title": "Correct the operation at the reported source location",
+          "explanation": "Start from the last project location in the traceback. Check the named variable, input type, index or operation against the exception message, then change that code or its input. The original output shows the exact failing operation.",
+          "verification": "Re-run the same program with the same Python, arguments and input",
+          "check": null,
+          "issue_ids": [
+            "issue-7bee18af9ea861"
+          ],
+          "reason_refs": [
+            "issue-7bee18af9ea861:kind:runtime_error"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "RUN-P2"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-python_run",
+          "kind": "rerun",
+          "title": "Re-run the same program",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "python_run",
+          "issue_ids": [
+            "issue-7bee18af9ea861"
+          ],
+          "reason_refs": [
+            "issue-7bee18af9ea861:affects:run_project"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B10-local-forged-error-class",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-a4b7a9f073f171"
+          ]
+        },
+        {
+          "name": "no_confirmed_removal",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_named_migration",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_install_command",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-a4b7a9f073f171",
+          "diagnosis": null,
+          "diagnosis_source": null,
+          "diagnosis_rule": null,
+          "prediction": null,
+          "prediction_confidence": null,
+          "prediction_note": ""
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "review-runtime-error",
+          "kind": "manual_fix",
+          "title": "Correct the operation at the reported source location",
+          "explanation": "Start from the last project location in the traceback. Check the named variable, input type, index or operation against the exception message, then change that code or its input. The original output shows the exact failing operation.",
+          "verification": "Re-run the same program with the same Python, arguments and input",
+          "check": null,
+          "issue_ids": [
+            "issue-a4b7a9f073f171"
+          ],
+          "reason_refs": [
+            "issue-a4b7a9f073f171:kind:runtime_error"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "RUN-P2"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-python_run",
+          "kind": "rerun",
+          "title": "Re-run the same program",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "python_run",
+          "issue_ids": [
+            "issue-a4b7a9f073f171"
+          ],
+          "reason_refs": [
+            "issue-a4b7a9f073f171:affects:run_project"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B11-mixed-group-reordered",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-241b29e15549fe"
+          ]
+        },
+        {
+          "name": "no_confirmed_removal",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_named_migration",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_install_command",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-241b29e15549fe",
+          "diagnosis": null,
+          "diagnosis_source": null,
+          "diagnosis_rule": null,
+          "prediction": null,
+          "prediction_confidence": null,
+          "prediction_note": "This saved failure does not record which class supplied the missing attribute. A project class may inherit an API removed from a library. Re-run the failing check to record ownership before choosing a cause or repair."
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "record-removal-ownership-issue-241b29e15549fe",
+          "kind": "inspect",
+          "title": "Re-run the failure before choosing a repair",
+          "explanation": "The saved failure names an attribute also removed from a library, but does not record which class supplied it. A class defined in this project may inherit that API. Re-run the failing check to distinguish a project mistake from a library change.",
+          "verification": "Re-run the same program with the same Python, arguments and input",
+          "check": null,
+          "issue_ids": [
+            "issue-241b29e15549fe"
+          ],
+          "reason_refs": [
+            "issue-241b29e15549fe:removal_owner_unobserved:yes"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 1,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "P_REMOVAL_REOBSERVE"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "review-runtime-error",
+          "kind": "manual_fix",
+          "title": "Correct the operation at the reported source location",
+          "explanation": "Start from the last project location in the traceback. Check the named variable, input type, index or operation against the exception message, then change that code or its input. The original output shows the exact failing operation.",
+          "verification": "Re-run the same program with the same Python, arguments and input",
+          "check": null,
+          "issue_ids": [
+            "issue-241b29e15549fe"
+          ],
+          "reason_refs": [
+            "issue-241b29e15549fe:kind:runtime_error"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "RUN-P2"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-python_run",
+          "kind": "rerun",
+          "title": "Re-run the same program",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "python_run",
+          "issue_ids": [
+            "issue-241b29e15549fe"
+          ],
+          "reason_refs": [
+            "issue-241b29e15549fe:affects:run_project"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 3,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B12-mixed-group-member-incomplete",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-241b29e15549fe"
+          ]
+        },
+        {
+          "name": "no_confirmed_removal",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_named_migration",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_install_command",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-241b29e15549fe",
+          "diagnosis": null,
+          "diagnosis_source": null,
+          "diagnosis_rule": null,
+          "prediction": null,
+          "prediction_confidence": null,
+          "prediction_note": ""
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "review-runtime-error",
+          "kind": "manual_fix",
+          "title": "Correct the operation at the reported source location",
+          "explanation": "Start from the last project location in the traceback. Check the named variable, input type, index or operation against the exception message, then change that code or its input. The original output shows the exact failing operation.",
+          "verification": "Re-run the same program with the same Python, arguments and input",
+          "check": null,
+          "issue_ids": [
+            "issue-241b29e15549fe"
+          ],
+          "reason_refs": [
+            "issue-241b29e15549fe:kind:runtime_error"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "RUN-P2"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-python_run",
+          "kind": "rerun",
+          "title": "Re-run the same program",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "python_run",
+          "issue_ids": [
+            "issue-241b29e15549fe"
+          ],
+          "reason_refs": [
+            "issue-241b29e15549fe:affects:run_project"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B13-old-setuptools-imported",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-97d1e56d7e5fb0"
+          ]
+        },
+        {
+          "name": "no_setuptools_command",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_declaration_edits",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-97d1e56d7e5fb0",
+          "diagnosis": "version_incompatibility",
+          "diagnosis_source": "rule",
+          "diagnosis_rule": "D02",
+          "prediction": null,
+          "prediction_confidence": null,
+          "prediction_note": ""
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "repair-pkg-resources",
+          "kind": "manual_fix",
+          "title": "Review pkg_resources ownership and compatibility before changing setuptools",
+          "explanation": "Refresh the selected environment and project, then rerun the original failure.",
+          "verification": "Check pip output and pip check, then rerun the original check with the same interpreter and execution settings",
+          "check": null,
+          "issue_ids": [
+            "issue-97d1e56d7e5fb0"
+          ],
+          "reason_refs": [
+            "dist:setuptools:package_repair_evidence:unconfirmed",
+            "kb:package-compatibility:pkg_resources:fixed_version",
+            "kb:package-compatibility:pkg_resources:provider_removed",
+            "kb:package-compatibility:pkg_resources:distribution"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 1,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "package-compatibility:pkg_resources"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-python_run",
+          "kind": "rerun",
+          "title": "Re-run the same program",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "python_run",
+          "issue_ids": [
+            "issue-97d1e56d7e5fb0"
+          ],
+          "reason_refs": [
+            "issue-97d1e56d7e5fb0:affects:run_project"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B14-old-setuptools-stale-env",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-97d1e56d7e5fb0"
+          ]
+        },
+        {
+          "name": "no_setuptools_command",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_declaration_edits",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-97d1e56d7e5fb0",
+          "diagnosis": "version_incompatibility",
+          "diagnosis_source": "rule",
+          "diagnosis_rule": "D02",
+          "prediction": null,
+          "prediction_confidence": null,
+          "prediction_note": ""
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "repair-pkg-resources",
+          "kind": "manual_fix",
+          "title": "Review pkg_resources ownership and compatibility before changing setuptools",
+          "explanation": "Refresh the selected environment and project, then rerun the original failure.",
+          "verification": "Check pip output and pip check, then rerun the original check with the same interpreter and execution settings",
+          "check": null,
+          "issue_ids": [
+            "issue-97d1e56d7e5fb0"
+          ],
+          "reason_refs": [
+            "dist:setuptools:package_repair_evidence:unconfirmed",
+            "kb:package-compatibility:pkg_resources:fixed_version",
+            "kb:package-compatibility:pkg_resources:provider_removed",
+            "kb:package-compatibility:pkg_resources:distribution"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 1,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "package-compatibility:pkg_resources"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-python_run",
+          "kind": "rerun",
+          "title": "Re-run the same program",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "python_run",
+          "issue_ids": [
+            "issue-97d1e56d7e5fb0"
+          ],
+          "reason_refs": [
+            "issue-97d1e56d7e5fb0:affects:run_project"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B15-missing-provider-imported",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-f7f2c03aabb511"
+          ]
+        },
+        {
+          "name": "no_setuptools_command",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_declaration_edits",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-f7f2c03aabb511",
+          "diagnosis": null,
+          "diagnosis_source": null,
+          "diagnosis_rule": null,
+          "prediction": null,
+          "prediction_confidence": null,
+          "prediction_note": ""
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "repair-pkg-resources",
+          "kind": "manual_fix",
+          "title": "Review pkg_resources ownership and compatibility before changing setuptools",
+          "explanation": "Refresh the selected environment and project, then rerun the original failure.",
+          "verification": "Check pip output and pip check, then rerun the original check with the same interpreter and execution settings",
+          "check": null,
+          "issue_ids": [
+            "issue-f7f2c03aabb511"
+          ],
+          "reason_refs": [
+            "dist:setuptools:package_repair_evidence:unconfirmed",
+            "kb:package-compatibility:pkg_resources:fixed_version",
+            "kb:package-compatibility:pkg_resources:provider_removed",
+            "kb:package-compatibility:pkg_resources:distribution"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 1,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "package-compatibility:pkg_resources"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "review-import",
+          "kind": "manual_fix",
+          "title": "Check the import path and dependency declarations",
+          "explanation": "The import failed and the recorded evidence does not identify one cause. Compare the failing import with the project layout, the declarations and the installed packages. Do not install a package based on the import name alone.",
+          "verification": "Re-run the same program with the same Python, arguments and input",
+          "check": null,
+          "issue_ids": [
+            "issue-f7f2c03aabb511"
+          ],
+          "reason_refs": [
+            "issue-f7f2c03aabb511:kind:import_failure",
+            "environment:snapshot:available",
+            "project:declarations:available"
+          ],
+          "preconditions": [
+            "environment:snapshot:available"
+          ],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "P40"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-python_run",
+          "kind": "rerun",
+          "title": "Re-run the same program",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "python_run",
+          "issue_ids": [
+            "issue-f7f2c03aabb511"
+          ],
+          "reason_refs": [
+            "issue-f7f2c03aabb511:affects:run_project"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 3,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B16-missing-provider-truncated",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-f7f2c03aabb511"
+          ]
+        },
+        {
+          "name": "no_setuptools_command",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_declaration_edits",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-f7f2c03aabb511",
+          "diagnosis": null,
+          "diagnosis_source": null,
+          "diagnosis_rule": null,
+          "prediction": null,
+          "prediction_confidence": null,
+          "prediction_note": ""
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "repair-pkg-resources",
+          "kind": "manual_fix",
+          "title": "Review pkg_resources ownership and compatibility before changing setuptools",
+          "explanation": "Refresh the selected environment and project, then rerun the original failure.",
+          "verification": "Check pip output and pip check, then rerun the original check with the same interpreter and execution settings",
+          "check": null,
+          "issue_ids": [
+            "issue-f7f2c03aabb511"
+          ],
+          "reason_refs": [
+            "dist:setuptools:package_repair_evidence:unconfirmed",
+            "kb:package-compatibility:pkg_resources:fixed_version",
+            "kb:package-compatibility:pkg_resources:provider_removed",
+            "kb:package-compatibility:pkg_resources:distribution"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 1,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "package-compatibility:pkg_resources"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "review-import",
+          "kind": "manual_fix",
+          "title": "Check the import path and dependency declarations",
+          "explanation": "The import failed and the recorded evidence does not identify one cause. Compare the failing import with the project layout, the declarations and the installed packages. Do not install a package based on the import name alone.",
+          "verification": "Re-run the same program with the same Python, arguments and input",
+          "check": null,
+          "issue_ids": [
+            "issue-f7f2c03aabb511"
+          ],
+          "reason_refs": [
+            "issue-f7f2c03aabb511:kind:import_failure",
+            "environment:snapshot:available",
+            "project:declarations:available"
+          ],
+          "preconditions": [
+            "environment:snapshot:available"
+          ],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "P40"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-python_run",
+          "kind": "rerun",
+          "title": "Re-run the same program",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "python_run",
+          "issue_ids": [
+            "issue-f7f2c03aabb511"
+          ],
+          "reason_refs": [
+            "issue-f7f2c03aabb511:affects:run_project"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 3,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B17-missing-package-observation",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-f7f2c03aabb511"
+          ]
+        },
+        {
+          "name": "no_setuptools_command",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_declaration_edits",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-f7f2c03aabb511",
+          "diagnosis": null,
+          "diagnosis_source": null,
+          "diagnosis_rule": null,
+          "prediction": null,
+          "prediction_confidence": null,
+          "prediction_note": ""
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "repair-pkg-resources",
+          "kind": "manual_fix",
+          "title": "Inspect the recorded pkg_resources failure before changing setuptools",
+          "explanation": "The failed import or receiver was not observed; a direct pkg_resources import or its failing receiver was not verified. Inspect the recorded project frame at main.py:1. Check whether this code uses __import__ or importlib.import_module, or an exception was raised again. Trace those calls to the original failure; these are possibilities to inspect, not observed causes. Traceback text alone cannot select a setuptools repair.",
+          "verification": "Check pip output and pip check, then rerun the original check with the same interpreter and execution settings",
+          "check": null,
+          "issue_ids": [
+            "issue-f7f2c03aabb511"
+          ],
+          "reason_refs": [
+            "dist:setuptools:package_repair_evidence:unconfirmed",
+            "kb:package-compatibility:pkg_resources:fixed_version",
+            "kb:package-compatibility:pkg_resources:provider_removed",
+            "kb:package-compatibility:pkg_resources:distribution"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 1,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "package-compatibility:pkg_resources"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "review-import",
+          "kind": "manual_fix",
+          "title": "Check the import path and dependency declarations",
+          "explanation": "The import failed and the recorded evidence does not identify one cause. Compare the failing import with the project layout, the declarations and the installed packages. Do not install a package based on the import name alone.",
+          "verification": "Re-run the same program with the same Python, arguments and input",
+          "check": null,
+          "issue_ids": [
+            "issue-f7f2c03aabb511"
+          ],
+          "reason_refs": [
+            "issue-f7f2c03aabb511:kind:import_failure",
+            "environment:snapshot:available",
+            "project:declarations:available"
+          ],
+          "preconditions": [
+            "environment:snapshot:available"
+          ],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "P40"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-python_run",
+          "kind": "rerun",
+          "title": "Re-run the same program",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "python_run",
+          "issue_ids": [
+            "issue-f7f2c03aabb511"
+          ],
+          "reason_refs": [
+            "issue-f7f2c03aabb511:affects:run_project"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 3,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B18-project-snapshot-imported",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-f7f2c03aabb511"
+          ]
+        },
+        {
+          "name": "no_setuptools_command",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_declaration_edits",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-f7f2c03aabb511",
+          "diagnosis": null,
+          "diagnosis_source": null,
+          "diagnosis_rule": null,
+          "prediction": null,
+          "prediction_confidence": null,
+          "prediction_note": ""
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "inspect-project",
+          "kind": "inspect",
+          "title": "Read the project's dependency declarations and layout",
+          "explanation": "Read pyproject.toml, requirements files and setup.cfg, and index the project's modules, so FixFirst can tell a declared-but-missing package from a local module. Nothing is installed.",
+          "verification": "Re-run the same program with the same Python, arguments and input",
+          "check": "project",
+          "issue_ids": [
+            "issue-f7f2c03aabb511"
+          ],
+          "reason_refs": [
+            "issue-f7f2c03aabb511:kind:import_failure",
+            "environment:snapshot:available"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 1,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "P03"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "repair-pkg-resources",
+          "kind": "manual_fix",
+          "title": "Review pkg_resources ownership and compatibility before changing setuptools",
+          "explanation": "Refresh the selected environment and project, then rerun the original failure.",
+          "verification": "Check pip output and pip check, then rerun the original check with the same interpreter and execution settings",
+          "check": null,
+          "issue_ids": [
+            "issue-f7f2c03aabb511"
+          ],
+          "reason_refs": [
+            "dist:setuptools:package_repair_evidence:unconfirmed",
+            "kb:package-compatibility:pkg_resources:fixed_version",
+            "kb:package-compatibility:pkg_resources:provider_removed",
+            "kb:package-compatibility:pkg_resources:distribution"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 1,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "package-compatibility:pkg_resources"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-python_run",
+          "kind": "rerun",
+          "title": "Re-run the same program",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "python_run",
+          "issue_ids": [
+            "issue-f7f2c03aabb511"
+          ],
+          "reason_refs": [
+            "issue-f7f2c03aabb511:affects:run_project"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 3,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B19-environment-truncated",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-f7f2c03aabb511"
+          ]
+        },
+        {
+          "name": "no_setuptools_command",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_declaration_edits",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-f7f2c03aabb511",
+          "diagnosis": null,
+          "diagnosis_source": null,
+          "diagnosis_rule": null,
+          "prediction": null,
+          "prediction_confidence": null,
+          "prediction_note": ""
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "repair-pkg-resources",
+          "kind": "manual_fix",
+          "title": "Review pkg_resources ownership and compatibility before changing setuptools",
+          "explanation": "Refresh the selected environment and project, then rerun the original failure.",
+          "verification": "Check pip output and pip check, then rerun the original check with the same interpreter and execution settings",
+          "check": null,
+          "issue_ids": [
+            "issue-f7f2c03aabb511"
+          ],
+          "reason_refs": [
+            "dist:setuptools:package_repair_evidence:unconfirmed",
+            "kb:package-compatibility:pkg_resources:fixed_version",
+            "kb:package-compatibility:pkg_resources:provider_removed",
+            "kb:package-compatibility:pkg_resources:distribution"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 1,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "package-compatibility:pkg_resources"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "review-import",
+          "kind": "manual_fix",
+          "title": "Check the import path and dependency declarations",
+          "explanation": "The import failed and the recorded evidence does not identify one cause. Compare the failing import with the project layout, the declarations and the installed packages. Do not install a package based on the import name alone.",
+          "verification": "Re-run the same program with the same Python, arguments and input",
+          "check": null,
+          "issue_ids": [
+            "issue-f7f2c03aabb511"
+          ],
+          "reason_refs": [
+            "issue-f7f2c03aabb511:kind:import_failure",
+            "environment:snapshot:available",
+            "project:declarations:available"
+          ],
+          "preconditions": [
+            "environment:snapshot:available"
+          ],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "P40"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-python_run",
+          "kind": "rerun",
+          "title": "Re-run the same program",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "python_run",
+          "issue_ids": [
+            "issue-f7f2c03aabb511"
+          ],
+          "reason_refs": [
+            "issue-f7f2c03aabb511:affects:run_project"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 3,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    },
+    {
+      "case_id": "B20-local-owner-list-over-limit",
+      "passed": true,
+      "checks": [
+        {
+          "name": "target_issues_preserved",
+          "passed": true,
+          "detail": [
+            "issue-7bee18af9ea861"
+          ]
+        },
+        {
+          "name": "no_confirmed_removal",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_named_migration",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "name": "no_install_command",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "issue-7bee18af9ea861",
+          "diagnosis": "code_defect",
+          "diagnosis_source": "rule",
+          "diagnosis_rule": "D43",
+          "prediction": null,
+          "prediction_confidence": null,
+          "prediction_note": ""
+        }
+      ],
+      "actions": [
+        {
+          "schema_version": 1,
+          "action_id": "review-runtime-error",
+          "kind": "manual_fix",
+          "title": "Correct the operation at the reported source location",
+          "explanation": "Start from the last project location in the traceback. Check the named variable, input type, index or operation against the exception message, then change that code or its input. The original output shows the exact failing operation.",
+          "verification": "Re-run the same program with the same Python, arguments and input",
+          "check": null,
+          "issue_ids": [
+            "issue-7bee18af9ea861"
+          ],
+          "reason_refs": [
+            "issue-7bee18af9ea861:kind:runtime_error"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 2,
+          "evidence_rank": 2,
+          "cost": 2,
+          "priority": 1,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [
+            "RUN-P2"
+          ],
+          "command": [],
+          "declaration_edits": []
+        },
+        {
+          "schema_version": 1,
+          "action_id": "check-python_run",
+          "kind": "rerun",
+          "title": "Re-run the same program",
+          "explanation": "Only the issues this check covers are updated; others keep their state. If nothing changed and there is no new evidence, running it again adds nothing.",
+          "verification": "Review the new check record and the status changes",
+          "check": "python_run",
+          "issue_ids": [
+            "issue-7bee18af9ea861"
+          ],
+          "reason_refs": [
+            "issue-7bee18af9ea861:affects:run_project"
+          ],
+          "preconditions": [],
+          "blocked_reasons": [],
+          "goal_impact": 1,
+          "evidence_rank": 2,
+          "cost": 3,
+          "priority": 2,
+          "targets": [],
+          "cause": null,
+          "rule_ids": [],
+          "command": [],
+          "declaration_edits": []
+        }
+      ]
+    }
+  ]
+}

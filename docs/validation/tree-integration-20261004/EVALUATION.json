@@ -1,0 +1,377 @@
+{
+  "source_commit": "f5e1ae70f1af53f5142d3aacb347591cf5e8b733",
+  "shipped_model_sha256": "189f712ea75bcb117f96aae879fd0c9bdab9ee6531475d1a95faf01ec2738d30",
+  "feature_data_sha256": "4297023a260dcd99b2581e220c2f866c5c300c1d9dcbbe7295725135b5bcbf83",
+  "labels": [
+    "missing_dependency",
+    "local_module",
+    "version_incompatibility",
+    "config_missing",
+    "code_defect"
+  ],
+  "mode": "Fixed-artifact inference on retained observation features; no fitting, folds, parameter or seed search.",
+  "limits": [
+    "Main215 overlaps base81 training; these scores are in-sample replay, not cross-validation.",
+    "Hard30, toolchain103 and new18 are known development examples, not a new held-out evaluation.",
+    "Five-class macro F1 includes absent labels as zero; use accuracy for within-suite interpretation."
+  ],
+  "suites": {
+    "main": {
+      "prior_default44_tree": {
+        "correct": 195,
+        "count": 215,
+        "accuracy": 0.9069767441860465,
+        "abstentions": 0,
+        "five_class_macro_f1": 0.9132903328555502,
+        "confusion": {
+          "missing_dependency": {
+            "missing_dependency": 30
+          },
+          "local_module": {
+            "local_module": 30
+          },
+          "version_incompatibility": {
+            "missing_dependency": 5,
+            "version_incompatibility": 50,
+            "code_defect": 5,
+            "local_module": 5
+          },
+          "config_missing": {
+            "config_missing": 30
+          },
+          "code_defect": {
+            "code_defect": 55,
+            "local_module": 5
+          }
+        }
+      },
+      "integrated_default81_tree": {
+        "correct": 215,
+        "count": 215,
+        "accuracy": 1.0,
+        "abstentions": 0,
+        "five_class_macro_f1": 1.0,
+        "confusion": {
+          "missing_dependency": {
+            "missing_dependency": 30
+          },
+          "local_module": {
+            "local_module": 30
+          },
+          "version_incompatibility": {
+            "version_incompatibility": 65
+          },
+          "config_missing": {
+            "config_missing": 30
+          },
+          "code_defect": {
+            "code_defect": 60
+          }
+        }
+      },
+      "rules_only": {
+        "correct": 177,
+        "count": 215,
+        "accuracy": 0.8232558139534883,
+        "abstentions": 38,
+        "five_class_macro_f1": 0.9001319991483927,
+        "confusion": {
+          "missing_dependency": {
+            "missing_dependency": 20,
+            "None": 10
+          },
+          "local_module": {
+            "local_module": 30
+          },
+          "version_incompatibility": {
+            "version_incompatibility": 57,
+            "None": 8
+          },
+          "config_missing": {
+            "config_missing": 25,
+            "None": 5
+          },
+          "code_defect": {
+            "code_defect": 45,
+            "None": 15
+          }
+        }
+      },
+      "rules_heuristics": {
+        "correct": 185,
+        "count": 215,
+        "accuracy": 0.8604651162790697,
+        "abstentions": 30,
+        "five_class_macro_f1": 0.9132467532467533,
+        "confusion": {
+          "missing_dependency": {
+            "missing_dependency": 20,
+            "None": 10
+          },
+          "local_module": {
+            "local_module": 30
+          },
+          "version_incompatibility": {
+            "version_incompatibility": 65
+          },
+          "config_missing": {
+            "config_missing": 25,
+            "None": 5
+          },
+          "code_defect": {
+            "code_defect": 45,
+            "None": 15
+          }
+        }
+      },
+      "integrated_product": {
+        "correct": 215,
+        "count": 215,
+        "accuracy": 1.0,
+        "abstentions": 0,
+        "five_class_macro_f1": 1.0,
+        "confusion": {
+          "missing_dependency": {
+            "missing_dependency": 30
+          },
+          "local_module": {
+            "local_module": 30
+          },
+          "version_incompatibility": {
+            "version_incompatibility": 65
+          },
+          "config_missing": {
+            "config_missing": 30
+          },
+          "code_defect": {
+            "code_defect": 60
+          }
+        }
+      }
+    },
+    "hard": {
+      "prior_default44_tree": {
+        "correct": 5,
+        "count": 30,
+        "accuracy": 0.16666666666666666,
+        "abstentions": 0,
+        "five_class_macro_f1": 0.2,
+        "confusion": {
+          "missing_dependency": {},
+          "local_module": {
+            "local_module": 5
+          },
+          "version_incompatibility": {
+            "code_defect": 25
+          },
+          "config_missing": {},
+          "code_defect": {}
+        }
+      },
+      "integrated_default81_tree": {
+        "correct": 15,
+        "count": 30,
+        "accuracy": 0.5,
+        "abstentions": 0,
+        "five_class_macro_f1": 0.3142857142857143,
+        "confusion": {
+          "missing_dependency": {},
+          "local_module": {
+            "local_module": 5
+          },
+          "version_incompatibility": {
+            "code_defect": 15,
+            "version_incompatibility": 10
+          },
+          "config_missing": {},
+          "code_defect": {}
+        }
+      },
+      "rules_only": {
+        "correct": 5,
+        "count": 30,
+        "accuracy": 0.16666666666666666,
+        "abstentions": 25,
+        "five_class_macro_f1": 0.2,
+        "confusion": {
+          "missing_dependency": {},
+          "local_module": {
+            "local_module": 5
+          },
+          "version_incompatibility": {
+            "None": 25
+          },
+          "config_missing": {},
+          "code_defect": {}
+        }
+      },
+      "rules_heuristics": {
+        "correct": 30,
+        "count": 30,
+        "accuracy": 1.0,
+        "abstentions": 0,
+        "five_class_macro_f1": 0.4,
+        "confusion": {
+          "missing_dependency": {},
+          "local_module": {
+            "local_module": 5
+          },
+          "version_incompatibility": {
+            "version_incompatibility": 25
+          },
+          "config_missing": {},
+          "code_defect": {}
+        }
+      },
+      "integrated_product": {
+        "correct": 30,
+        "count": 30,
+        "accuracy": 1.0,
+        "abstentions": 0,
+        "five_class_macro_f1": 0.4,
+        "confusion": {
+          "missing_dependency": {},
+          "local_module": {
+            "local_module": 5
+          },
+          "version_incompatibility": {
+            "version_incompatibility": 25
+          },
+          "config_missing": {},
+          "code_defect": {}
+        }
+      }
+    },
+    "toolchain": {
+      "prior_default44_tree": {
+        "correct": 50,
+        "count": 103,
+        "accuracy": 0.4854368932038835,
+        "abstentions": 0,
+        "five_class_macro_f1": 0.3916971916971917,
+        "confusion": {
+          "missing_dependency": {
+            "missing_dependency": 10,
+            "version_incompatibility": 5
+          },
+          "local_module": {
+            "code_defect": 5
+          },
+          "version_incompatibility": {
+            "code_defect": 10,
+            "config_missing": 23,
+            "version_incompatibility": 10,
+            "missing_dependency": 5
+          },
+          "config_missing": {
+            "config_missing": 25,
+            "code_defect": 5
+          },
+          "code_defect": {
+            "code_defect": 5
+          }
+        }
+      },
+      "integrated_default81_tree": {
+        "correct": 60,
+        "count": 103,
+        "accuracy": 0.5825242718446602,
+        "abstentions": 0,
+        "five_class_macro_f1": 0.4957200229489386,
+        "confusion": {
+          "missing_dependency": {
+            "missing_dependency": 15
+          },
+          "local_module": {
+            "config_missing": 5
+          },
+          "version_incompatibility": {
+            "code_defect": 10,
+            "config_missing": 23,
+            "version_incompatibility": 15
+          },
+          "config_missing": {
+            "config_missing": 25,
+            "code_defect": 5
+          },
+          "code_defect": {
+            "code_defect": 5
+          }
+        }
+      },
+      "rules_only": {
+        "correct": 93,
+        "count": 103,
+        "accuracy": 0.9029126213592233,
+        "abstentions": 10,
+        "five_class_macro_f1": 0.7890109890109891,
+        "confusion": {
+          "missing_dependency": {
+            "missing_dependency": 15
+          },
+          "local_module": {
+            "local_module": 5
+          },
+          "version_incompatibility": {
+            "version_incompatibility": 43,
+            "None": 5
+          },
+          "config_missing": {
+            "config_missing": 30
+          },
+          "code_defect": {
+            "None": 5
+          }
+        }
+      },
+      "rules_heuristics": {
+        "correct": 98,
+        "count": 103,
+        "accuracy": 0.9514563106796117,
+        "abstentions": 5,
+        "five_class_macro_f1": 0.8,
+        "confusion": {
+          "missing_dependency": {
+            "missing_dependency": 15
+          },
+          "local_module": {
+            "local_module": 5
+          },
+          "version_incompatibility": {
+            "version_incompatibility": 48
+          },
+          "config_missing": {
+            "config_missing": 30
+          },
+          "code_defect": {
+            "None": 5
+          }
+        }
+      },
+      "integrated_product": {
+        "correct": 103,
+        "count": 103,
+        "accuracy": 1.0,
+        "abstentions": 0,
+        "five_class_macro_f1": 1.0,
+        "confusion": {
+          "missing_dependency": {
+            "missing_dependency": 15
+          },
+          "local_module": {
+            "local_module": 5
+          },
+          "version_incompatibility": {
+            "version_incompatibility": 48
+          },
+          "config_missing": {
+            "config_missing": 30
+          },
+          "code_defect": {
+            "code_defect": 5
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "source_commit": "f5e1ae70f1af53f5142d3aacb347591cf5e8b733",
+  "source_tree": "f3f8191043910ce0cc7372f38f37e0d41cb637eb",
+  "shipped_model_sha256": "189f712ea75bcb117f96aae879fd0c9bdab9ee6531475d1a95faf01ec2738d30",
+  "shipped_feature_count": 81,
+  "inferences": 391,
+  "all_model_path_null": true,
+  "valid": true,
+  "unexpected_diagnosis_changes": 0,
+  "unexpected_action_changes": 0,
+  "unexpected_view_changes": 0,
+  "expected_p12_changes": [
+    "I02",
+    "main/fixture-orders--lm_src_layout",
+    "main/flat-shop--lm_src_layout",
+    "main/pkg-inventory--lm_src_layout",
+    "main/src-billing--lm_src_layout",
+    "main/unittest-grades--lm_src_layout"
+  ],
+  "actual_vs_prior_explicit81_predictions_identical": true,
+  "all_observations_unchanged": true,
+  "cases": {
+    "existing": 348,
+    "new_scored": 18,
+    "new_healthy": 3,
+    "new_diagnostic": 2,
+    "boundary": 20
+  },
+  "scores": {
+    "existing_product_correct": 348,
+    "new_product_correct": 18,
+    "new_tree_correct": 17,
+    "healthy": 3,
+    "boundary": 20
+  },
+  "forbidden_advice_cases": 0,
+  "I02_editable_recommendation_removed": true,
+  "guard_violations": 0,
+  "negative_controls_rejected": 5,
+  "replay_harness_sha256": "5429d4bda3f2bc5ffc27a0f8c2ab9dd9dc921e63aeef6cfdedd5003c12480e94",
+  "evaluator_sha256": "231a21a10d0ce9ff8ceacf0a7eb86a6fc662ff8f6bdd2947c06d9b6b1d441d82",
+  "run_completion_sha256": "65637d0a6a218a000e94a4ab1c2ad8ab5348c56d5d6adee9054c31c62518ae2e",
+  "fixed_feature_rows_independently_repredicted": 388
+}

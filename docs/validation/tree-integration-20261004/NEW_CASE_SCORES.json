@@ -1,0 +1,1133 @@
+{
+  "scorer_sha256": "824d8dfaf7833f6c9a4a7dd68225b2d7928879de2f193c88b1eb13ae2ee2c828",
+  "rows": [
+    {
+      "case_id": "C01",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "project_operation",
+      "expected_labels": [
+        "code_defect"
+      ],
+      "allow_abstention": false,
+      "active_pytest_issue_ids": [
+        "issue-b25470814e8b4b"
+      ],
+      "labels": [
+        "code_defect"
+      ],
+      "diagnosis_sources": [
+        "model"
+      ],
+      "tree_labels": [
+        "code_defect"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": true,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 1,
+        "verified_pass": false,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "C02",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "project_operation",
+      "expected_labels": [
+        "code_defect"
+      ],
+      "allow_abstention": false,
+      "active_pytest_issue_ids": [
+        "issue-f391192fb7e94c"
+      ],
+      "labels": [
+        "code_defect"
+      ],
+      "diagnosis_sources": [
+        "model"
+      ],
+      "tree_labels": [
+        "code_defect"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": true,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 1,
+        "verified_pass": false,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "C03",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "project_operation",
+      "expected_labels": [
+        "code_defect"
+      ],
+      "allow_abstention": false,
+      "active_pytest_issue_ids": [
+        "issue-884d4a61c808e8"
+      ],
+      "labels": [
+        "code_defect"
+      ],
+      "diagnosis_sources": [
+        "model"
+      ],
+      "tree_labels": [
+        "code_defect"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": true,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 1,
+        "verified_pass": false,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "C04",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "project_operation",
+      "expected_labels": [
+        "code_defect"
+      ],
+      "allow_abstention": false,
+      "active_pytest_issue_ids": [
+        "issue-fe1e83d30ac180"
+      ],
+      "labels": [
+        "code_defect"
+      ],
+      "diagnosis_sources": [
+        "rule"
+      ],
+      "tree_labels": [
+        "code_defect"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": true,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 1,
+        "verified_pass": false,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "C05",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "project_operation",
+      "expected_labels": [
+        "code_defect"
+      ],
+      "allow_abstention": false,
+      "active_pytest_issue_ids": [
+        "issue-9933783a1a34ad"
+      ],
+      "labels": [
+        "code_defect"
+      ],
+      "diagnosis_sources": [
+        "model"
+      ],
+      "tree_labels": [
+        "code_defect"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": true,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 1,
+        "verified_pass": false,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "C06",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "project_operation",
+      "expected_labels": [
+        "code_defect"
+      ],
+      "allow_abstention": false,
+      "active_pytest_issue_ids": [
+        "issue-2189d77ac807a5"
+      ],
+      "labels": [
+        "code_defect"
+      ],
+      "diagnosis_sources": [
+        "model"
+      ],
+      "tree_labels": [
+        "code_defect"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": true,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 1,
+        "verified_pass": false,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "F01",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "required_configuration",
+      "expected_labels": [
+        "config_missing"
+      ],
+      "allow_abstention": true,
+      "active_pytest_issue_ids": [
+        "issue-eb9ab3c0c6c88e"
+      ],
+      "labels": [
+        "config_missing"
+      ],
+      "diagnosis_sources": [
+        "rule"
+      ],
+      "tree_labels": [
+        "config_missing"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": true,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 1,
+        "verified_pass": false,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "F02",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "required_configuration",
+      "expected_labels": [
+        "config_missing"
+      ],
+      "allow_abstention": true,
+      "active_pytest_issue_ids": [
+        "issue-959f4f64a734e3"
+      ],
+      "labels": [
+        "config_missing"
+      ],
+      "diagnosis_sources": [
+        "model"
+      ],
+      "tree_labels": [
+        "config_missing"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": true,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 1,
+        "verified_pass": false,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "F03",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "required_configuration",
+      "expected_labels": [
+        "config_missing"
+      ],
+      "allow_abstention": true,
+      "active_pytest_issue_ids": [
+        "issue-c20aef9550d9d5"
+      ],
+      "labels": [
+        "config_missing"
+      ],
+      "diagnosis_sources": [
+        "rule"
+      ],
+      "tree_labels": [
+        "config_missing"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": true,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 1,
+        "verified_pass": false,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "I01",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "local_import",
+      "expected_labels": [
+        "local_module"
+      ],
+      "allow_abstention": true,
+      "active_pytest_issue_ids": [
+        "issue-d860629ccb6037"
+      ],
+      "labels": [
+        "local_module"
+      ],
+      "diagnosis_sources": [
+        "rule"
+      ],
+      "tree_labels": [
+        "local_module"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": true,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 2,
+        "verified_pass": false,
+        "coverage_complete": false,
+        "test_summary": {
+          "passed": 0,
+          "failed": 0,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 0,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "I02",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "local_import",
+      "expected_labels": [
+        "local_module"
+      ],
+      "allow_abstention": true,
+      "active_pytest_issue_ids": [
+        "issue-9db0851cf8c681"
+      ],
+      "labels": [
+        "local_module"
+      ],
+      "diagnosis_sources": [
+        "rule"
+      ],
+      "tree_labels": [
+        "local_module"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": true,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 2,
+        "verified_pass": false,
+        "coverage_complete": false,
+        "test_summary": {
+          "passed": 0,
+          "failed": 0,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 0,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "I03",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "local_import",
+      "expected_labels": [
+        "local_module"
+      ],
+      "allow_abstention": true,
+      "active_pytest_issue_ids": [
+        "issue-0912687dad8c93"
+      ],
+      "labels": [
+        "local_module"
+      ],
+      "diagnosis_sources": [
+        "rule"
+      ],
+      "tree_labels": [
+        "local_module"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": true,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 2,
+        "verified_pass": false,
+        "coverage_complete": false,
+        "test_summary": {
+          "passed": 0,
+          "failed": 0,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 0,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "A01",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "same_name_ownership",
+      "expected_labels": [
+        "code_defect"
+      ],
+      "allow_abstention": false,
+      "active_pytest_issue_ids": [
+        "issue-a8031d2f2edf25"
+      ],
+      "labels": [
+        "code_defect"
+      ],
+      "diagnosis_sources": [
+        "rule"
+      ],
+      "tree_labels": [
+        "config_missing"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": false,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 1,
+        "verified_pass": false,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "A02",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "same_name_ownership",
+      "expected_labels": [
+        "code_defect"
+      ],
+      "allow_abstention": false,
+      "active_pytest_issue_ids": [
+        "issue-d98c6b30cd2a2e"
+      ],
+      "labels": [
+        "code_defect"
+      ],
+      "diagnosis_sources": [
+        "rule"
+      ],
+      "tree_labels": [
+        "code_defect"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": true,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 1,
+        "verified_pass": false,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "A03",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "same_name_ownership",
+      "expected_labels": [
+        "code_defect"
+      ],
+      "allow_abstention": false,
+      "active_pytest_issue_ids": [
+        "issue-65e6bdceb12066"
+      ],
+      "labels": [
+        "code_defect"
+      ],
+      "diagnosis_sources": [
+        "rule"
+      ],
+      "tree_labels": [
+        "code_defect"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": true,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 1,
+        "verified_pass": false,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "A04",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "same_name_ownership",
+      "expected_labels": [
+        "code_defect"
+      ],
+      "allow_abstention": false,
+      "active_pytest_issue_ids": [
+        "issue-661d86ecbd9d27"
+      ],
+      "labels": [
+        "code_defect"
+      ],
+      "diagnosis_sources": [
+        "rule"
+      ],
+      "tree_labels": [
+        "code_defect"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": true,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 1,
+        "verified_pass": false,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "V01",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "stdlib_removal_control",
+      "expected_labels": [
+        "version_incompatibility"
+      ],
+      "allow_abstention": true,
+      "active_pytest_issue_ids": [
+        "issue-b97708d7f7d60d"
+      ],
+      "labels": [
+        "version_incompatibility"
+      ],
+      "diagnosis_sources": [
+        "rule"
+      ],
+      "tree_labels": [
+        "version_incompatibility"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": true,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 2,
+        "verified_pass": false,
+        "coverage_complete": false,
+        "test_summary": {
+          "passed": 0,
+          "failed": 0,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 0,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "V02",
+      "role": "integrated_default81",
+      "status": "scored",
+      "mechanism": "stdlib_removal_control",
+      "expected_labels": [
+        "version_incompatibility"
+      ],
+      "allow_abstention": true,
+      "active_pytest_issue_ids": [
+        "issue-26d886e9dd4f6e"
+      ],
+      "labels": [
+        "version_incompatibility"
+      ],
+      "diagnosis_sources": [
+        "rule"
+      ],
+      "tree_labels": [
+        "version_incompatibility"
+      ],
+      "primary_correct": true,
+      "tree_primary_correct": true,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 1,
+        "verified_pass": false,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "H01",
+      "role": "integrated_default81",
+      "status": "healthy",
+      "mechanism": "healthy_control",
+      "expected_labels": [
+        "healthy"
+      ],
+      "allow_abstention": false,
+      "active_pytest_issue_ids": [],
+      "labels": [],
+      "diagnosis_sources": [],
+      "tree_labels": [],
+      "primary_correct": null,
+      "tree_primary_correct": null,
+      "accepted_label_or_abstention": null,
+      "abstentions": 0,
+      "active_pytest_issue_count": 0,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": true,
+      "view_status": {
+        "kind": "done",
+        "headline": "All tests pass",
+        "detail": "Verified by test run: 1 test passed."
+      },
+      "displayed_step_count": 0,
+      "acquisition": {
+        "exit_code": 0,
+        "verified_pass": true,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "H02",
+      "role": "integrated_default81",
+      "status": "healthy",
+      "mechanism": "healthy_control",
+      "expected_labels": [
+        "healthy"
+      ],
+      "allow_abstention": false,
+      "active_pytest_issue_ids": [],
+      "labels": [],
+      "diagnosis_sources": [],
+      "tree_labels": [],
+      "primary_correct": null,
+      "tree_primary_correct": null,
+      "accepted_label_or_abstention": null,
+      "abstentions": 0,
+      "active_pytest_issue_count": 0,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": true,
+      "view_status": {
+        "kind": "done",
+        "headline": "All tests pass",
+        "detail": "Verified by test run: 1 test passed."
+      },
+      "displayed_step_count": 0,
+      "acquisition": {
+        "exit_code": 0,
+        "verified_pass": true,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "H03",
+      "role": "integrated_default81",
+      "status": "healthy",
+      "mechanism": "healthy_control",
+      "expected_labels": [
+        "healthy"
+      ],
+      "allow_abstention": false,
+      "active_pytest_issue_ids": [],
+      "labels": [],
+      "diagnosis_sources": [],
+      "tree_labels": [],
+      "primary_correct": null,
+      "tree_primary_correct": null,
+      "accepted_label_or_abstention": null,
+      "abstentions": 0,
+      "active_pytest_issue_count": 0,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": true,
+      "view_status": {
+        "kind": "done",
+        "headline": "All tests pass",
+        "detail": "Verified by test run: 1 test passed."
+      },
+      "displayed_step_count": 0,
+      "acquisition": {
+        "exit_code": 0,
+        "verified_pass": true,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "U01",
+      "role": "integrated_default81",
+      "status": "diagnostic",
+      "mechanism": "ambiguous_diagnostic",
+      "expected_labels": [
+        "config_missing",
+        "code_defect"
+      ],
+      "allow_abstention": true,
+      "active_pytest_issue_ids": [
+        "issue-6630742550855d"
+      ],
+      "labels": [
+        "config_missing"
+      ],
+      "diagnosis_sources": [
+        "model"
+      ],
+      "tree_labels": [
+        "config_missing"
+      ],
+      "primary_correct": null,
+      "tree_primary_correct": null,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 1,
+        "verified_pass": false,
+        "coverage_complete": true,
+        "test_summary": {
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 1,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    },
+    {
+      "case_id": "U02",
+      "role": "integrated_default81",
+      "status": "diagnostic",
+      "mechanism": "ambiguous_diagnostic",
+      "expected_labels": [
+        "local_module",
+        "code_defect"
+      ],
+      "allow_abstention": true,
+      "active_pytest_issue_ids": [
+        "issue-3b42dab7257af9"
+      ],
+      "labels": [
+        "local_module"
+      ],
+      "diagnosis_sources": [
+        "rule"
+      ],
+      "tree_labels": [
+        "local_module"
+      ],
+      "primary_correct": null,
+      "tree_primary_correct": null,
+      "accepted_label_or_abstention": true,
+      "abstentions": 0,
+      "active_pytest_issue_count": 1,
+      "ignored_nonpytest_issue_count": 0,
+      "healthy_no_false_alarm": null,
+      "view_status": {
+        "kind": "todo",
+        "headline": "1 problem to fix",
+        "detail": "Start with step 1. After changing your code, press Check again: a step only counts as fixed when a real check passes."
+      },
+      "displayed_step_count": 1,
+      "acquisition": {
+        "exit_code": 2,
+        "verified_pass": false,
+        "coverage_complete": false,
+        "test_summary": {
+          "passed": 0,
+          "failed": 0,
+          "skipped": 0,
+          "xfail_or_xpass": 0,
+          "selected": 0,
+          "incomplete": 0
+        }
+      },
+      "forbidden_advice_regex_hits": [],
+      "regex_interpretation": "Hits require manual interpretation; a quoted/negated recommendation is not an actionable violation."
+    }
+  ]
+}

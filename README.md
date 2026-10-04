@@ -8,7 +8,7 @@ cause of each failure, ranks what to do next for your goal, and closes an issue 
 completed check of the same scope proves it fixed. It runs locally, never edits your code and
 never installs anything into your environment (it gives you the command instead).
 
-NUS-ISS Intelligent Reasoning Systems practice module, Group 24 · version 0.7.0
+NUS-ISS Intelligent Reasoning Systems practice module, Group 24 · version 0.8.0rc1 (release candidate)
 
 See the [freeze and delivery record](docs/freeze/PUBLIC_DELIVERY.md) for the immutable
 `v0.7.0` identity, source ZIP recipe, actual validation and remaining evaluation gates.
@@ -131,7 +131,7 @@ until a real check shows it.
 | **Rules** (decision automation) | Turn evidence and knowledge into root causes and next actions. A production system with variables, stratified negation and provenance; it concludes only when its conditions hold. | Written by the team: 131 rules in five phases, improved on development projects | `engine.py`, `knowledge/rules.toml`, `reasoning.py` |
 | **Domain knowledge graph** (knowledge representation) | Supplies removal and migration facts (737 removal entries expanding to 1,816 distinct lookup keys), 12 deprecation entries (35 keys), 44 pytest fixtures mapped to their plugins, import name → package, unmaintained packages, and Ruff rules that indicate likely bugs | Curated from official documentation and release notes (190 source records); every entry cites its source. Verification scope and receipts: [scripts/knowledge_verify/README.md](scripts/knowledge_verify/README.md) | `domain.py`, `knowledge/domain.toml` |
 | **Evidence graph** (knowledge representation) | Records, for each session, the goal, issues, facts, causes, rules, actions, runs and sources (10 entity types, 15 relations); answers "why" and "what is left" questions by graph traversal | Built automatically during every check | `knowledge_graph.py` |
-| **Decision tree** (data mining) | Suggests a likely cause when no rule or heuristic applies, shown as unconfirmed | Gini tree trained on 215 generated, executed cases, over 44 evidence features (no labels, no parser category) | `evidence.py`, `classification.py` |
+| **Decision tree** (data mining) | Suggests a likely cause when no rule or heuristic applies, shown as unconfirmed | Gini tree trained on 215 generated, executed cases, over 81 evidence features (no labels, no parser category) | `evidence.py`, `classification.py` |
 | **Message grouping** (data mining) | TF-IDF character n-grams and cosine similarity, complete-link, inside blocks of the same tool, stage and place | One threshold (0.82), fixed before evaluation. So far no measurable gain over exact text matching, because each failing test forms its own block; being revised | `grouping.py` |
 | **Release search** (search) | On request, tries older releases (at most 12 install-and-import trials, in a throwaway environment) and pins a version verified to provide a missing name | Runs at the time of use; nothing is trained | `versions.py` |
 
@@ -174,8 +174,10 @@ Where the data comes from: [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md).
 
 The tables and project results below preserve recorded evaluations from before the v0.8
 integration candidate. They have not been recomputed with its expanded rules and knowledge.
-Descriptions of what the knowledge base covers refer to those recorded versions. The candidate
-retains the bundled 44-feature model; the released v0.7.0 tag and its results remain unchanged.
+Descriptions of what the knowledge base covers refer to those recorded versions. The 0.8.0rc1
+candidate now ships the fixed 81-feature model; the released v0.7.0 tag and its 44-feature model
+remain unchanged. See [candidate validation](docs/validation/2026-10-04-tree-integration.md)
+for the separate current-source evaluation, counterexamples and release checks.
 
 215 executed single-fault cases (5 project templates × 43 scenarios, real libraries, labels from
 the scenario definition). Accuracy of naming the root cause, with 95% bootstrap intervals:
