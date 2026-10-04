@@ -905,8 +905,8 @@ cause = "local_module"
 issue = "?i"
 cost = 2
 title = "Make the project module {?m} importable"
-explanation = "{?p} exists in the project but the test run cannot import {?m}. For a src layout, install the project in editable mode (pip install -e .) or set pytest's pythonpath; otherwise check the package's location and __init__.py."
-verification = "Re-run test collection"
+explanation = "{?p} exists in the project but the test run cannot import {?m}. For a src layout, add the absolute path to the project's src directory to PYTHONPATH in the environment of the same Python interpreter that runs the tests. Preserve any existing PYTHONPATH entries using your platform's path separator. For other layouts, use the directory containing the top-level module or package instead, and check its location and __init__.py. Then re-run the original test command from the project root."
+verification = "Re-run the original test command with the same interpreter and the updated import path"
 
 [[rule]]
 id = "P13"

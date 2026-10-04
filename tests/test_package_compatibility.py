@@ -1,6 +1,5 @@
 """Bounded pkg_resources repair policy and negative provenance boundaries."""
 
-import hashlib
 import json
 from pathlib import Path
 import sys
@@ -232,6 +231,9 @@ def test_actual_wrong_missing_module_manual_raise_and_direct_stdlib_use(tmp_path
         assert any(a.kind != 'rerun' for a in session.actions)
 
 
-def test_policy_never_changes_model_file():
+def test_policy_never_changes_model_file(tmp_path):
     model = Path(__file__).resolve().parents[1] / 'src/fixfirst/knowledge/diagnosis_tree.json'
-    assert hashlib.sha256(model.read_bytes()).hexdigest() == '4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3'
+    before = model.read_bytes()
+    session, _ = setup_case(tmp_path)
+    assert setuptools_requests(session)
+    assert model.read_bytes() == before
