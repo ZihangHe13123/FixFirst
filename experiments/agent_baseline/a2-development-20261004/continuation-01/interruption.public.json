@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "purpose": "Sanitized interruption receipt and planned continuation scope; not a new registration or launch approval.",
+  "recorded_at_utc": "2026-10-04T12:51:23.907504+00:00",
+  "original_registration": {
+    "pull_request": 73,
+    "url": "https://github.com/ZihangHe13123/FixFirst/pull/73",
+    "commit": "232f2ba6d12854439ba61b5d6da89ca104be7340",
+    "merge_commit": "c2da0e78a480385633422aeab324350f59862b90",
+    "registration_sha256": "1a1b107af76f67b44e2e1a50bbd57a5426bb8f86b155173696b179fb40176f41",
+    "driver_sha256": "ecf4608402eeb54d69c708dbb63bd71fb449b0216d7f0b3c2b44a3e97a90de69",
+    "merged_before_inference": true
+  },
+  "interruption": {
+    "parent_started_at_utc": "2026-10-04T12:35:30.494979+00:00",
+    "recorded_at_utc": "2026-10-04T12:38:48.627789+00:00",
+    "status": "interrupted",
+    "phase": "smoke",
+    "error": "GateError: Port 8133 unavailable; will not replace another service",
+    "completed_smoke_runs": 3,
+    "completed_comparison_runs": 0,
+    "next_model": "gemma-4-26B-A4B-it-qat-4bit",
+    "next_batch_started_at_utc": "2026-10-04T12:38:48.578479+00:00",
+    "next_batch_ended_at_utc": "2026-10-04T12:38:48.626723+00:00",
+    "next_batch_rows": 0,
+    "stage": "port availability guard before server Popen, harness dispatch, or model request",
+    "next_batch_dispatch_record_exists": false
+  },
+  "retained_smoke": {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "cachetools",
+    "runs": 3,
+    "arms": [
+      "baseline",
+      "facts",
+      "mcp"
+    ],
+    "status": "validated",
+    "validation_sha256": "e07f5201f25508d20ab9a0fefb72a69486645c06df4cdbbf8f127953b02619ec",
+    "replay_allowed": false,
+    "success_outcomes_omitted": "Smoke success is not the continuation gate; validated identities/tool coverage are retained."
+  },
+  "cleanup": {
+    "partial_results_preserved": true,
+    "cleanup_errors": [],
+    "owned_services_stopped": true,
+    "owned_harness_stopped": true,
+    "sleep_assertion_released": true
+  },
+  "port_diagnosis": {
+    "inference_about_parent": "Clean shutdown followed immediately by a plain bind availability probe is consistent with TIME_WAIT causing a false unavailable-port decision. No contemporaneous errno/socket table was retained at the original failure.",
+    "actual_port_after_interruption": "A later read-only lsof/netstat sample found no matching listener or connection rows; this is not a socket table from the failure instant.",
+    "independent_micro_experiment": {
+      "scope": "Only sockets owned by the diagnostic process on a new random loopback port; no access to the experiment service port.",
+      "observed_tcp_state_after_active_server_close": "TIME_WAIT",
+      "bind_without_reuseaddr_after_close": "EADDRINUSE (48)",
+      "bind_with_reuseaddr_after_close": "succeeded",
+      "live_listener_without_reuseaddr": "EADDRINUSE (48)",
+      "live_listener_with_reuseaddr": "EADDRINUSE (48)",
+      "all_owned_sockets_closed": true
+    },
+    "confidence_boundary": "The independent reproduction establishes the mechanism, not direct observation of TIME_WAIT at the parent service port; a transient competing owner is not retrospectively disproven."
+  },
+  "continuation_scope": {
+    "execution_change": "Launcher port availability detection only; continuation scheduling excludes the three validated smoke positions.",
+    "retained_smoke_runs": 3,
+    "new_smoke_runs": 6,
+    "new_comparison_runs": 78,
+    "new_smoke_models": [
+      "gemma-4-26B-A4B-it-qat-4bit",
+      "Qwen3.8-27B-MLX-4bit"
+    ],
+    "comparison_models": [
+      "Qwen3.6-35B-A3B-6bit",
+      "gemma-4-26B-A4B-it-qat-4bit",
+      "Qwen3.8-27B-MLX-4bit"
+    ],
+    "tasks": [
+      "django-storages",
+      "python-slugify"
+    ],
+    "runs_per_task_arm": [
+      5,
+      5,
+      3
+    ],
+    "arms": [
+      "baseline",
+      "facts",
+      "mcp"
+    ],
+    "product_commit": "804cc3c455061517cbc5edb21a9fe4b66626b453",
+    "product_tree": "14f6efadbfc6681f6d8887a05b994abc8f5c76f6",
+    "protocol": "3bf846ae",
+    "settings": {
+      "max_turns": 20,
+      "run_timeout": 900.0,
+      "temperature": 0.2,
+      "max_tokens": 4096,
+      "seed": 20261001,
+      "call_policy": "server",
+      "network": "on"
+    },
+    "scientific_parameters_changed": false,
+    "completed_positions_replayed": false,
+    "parent_data_modified": false,
+    "new_registration_and_launch_gate_required": true
+  },
+  "parent_evidence_sha256": {
+    "RUN_STATUS.json": "5ec6ab6467af2b40924c8ab13552af703a5c7d111826344f97603a8ae3e20869",
+    "LAST_INCOMPLETE_BATCH.json": "8aeccf492d6e990e8ec634de2e0ec2234b712d4be5c0b1ca13ff73592440fe15",
+    "smoke-1-server.log": "70150dd16cca33a6bd9309f530204198af785ca2cba9c1e4fba9759c1a87e432",
+    "smoke-1-validation.json": "e07f5201f25508d20ab9a0fefb72a69486645c06df4cdbbf8f127953b02619ec"
+  },
+  "privacy": "No local paths, process identifiers, hostnames, secrets, model replies, or conversation text are included."
+}
