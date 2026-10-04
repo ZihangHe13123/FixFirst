@@ -1,0 +1,24 @@
+{
+  "purpose": "no-LLM deterministic tool capability check; not model smoke or results",
+  "rows_sha256": "e37a910f89031e3fd28db03aa23f3b5adba66338d56eacf0c59671d3e290a3f7",
+  "checks": [
+    {
+      "arm": "facts",
+      "grading": "graded",
+      "end": "finish",
+      "fixfirst_calls": 1,
+      "facts_only_verified": true,
+      "fixed": false,
+      "error": null
+    },
+    {
+      "arm": "mcp",
+      "grading": "graded",
+      "end": "finish",
+      "fixfirst_calls": 1,
+      "facts_only_verified": null,
+      "fixed": false,
+      "error": null
+    }
+  ]
+}

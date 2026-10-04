@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "status": "locked_before_inference",
+  "registered_at_utc": "2026-10-04T12:24:34.943974+00:00",
+  "scope": "two-task A2-derived macOS development comparison; no held-out generalization claim",
+  "product_commit": "804cc3c455061517cbc5edb21a9fe4b66626b453",
+  "product_tree": "14f6efadbfc6681f6d8887a05b994abc8f5c76f6",
+  "protocol": "3bf846ae",
+  "tasks": [
+    "django-storages",
+    "python-slugify"
+  ],
+  "source_commits": {
+    "django-storages": "3658c3d2353b778a45b09dd7a55cbabc66d22381",
+    "python-slugify": "025da8e577fd21c37f1794bd5cc2acb954e4c0e0"
+  },
+  "models": [
+    "Qwen3.6-35B-A3B-6bit",
+    "gemma-4-26B-A4B-it-qat-4bit",
+    "Qwen3.8-27B-MLX-4bit"
+  ],
+  "runs_per_task_arm": [
+    5,
+    5,
+    3
+  ],
+  "arms": [
+    "baseline",
+    "facts",
+    "mcp"
+  ],
+  "total_runs": 78,
+  "smoke": {
+    "case": "cachetools",
+    "source_commit": "6c78a8ff67b21834c3873cc918d87b2c5cb22e5c",
+    "models": 3,
+    "arms": 3,
+    "runs": 9,
+    "separate_from_results": true,
+    "repair_success_is_not_a_gate": true
+  },
+  "hard_cases_included": false,
+  "settings": {
+    "max_turns": 20,
+    "run_timeout": 900.0,
+    "temperature": 0.2,
+    "max_tokens": 4096,
+    "seed": 20261001,
+    "call_policy": "server",
+    "network": "on"
+  },
+  "analysis": {
+    "primary": "per-task descriptive outcomes",
+    "mechanical_appendix": "task-level t/10000 bootstrap/Holm k=3 alpha=.05; n=2 does not support population or generalization inference",
+    "seed": 20261001
+  },
+  "user_authorization": "User approved continuing the proposed two-project small-scale development comparison after reading the qualification summary, including local-model smoke before the registered comparison.",
+  "incomplete_publication_checks": "Two historic simulation-publication checker path issues remain pending; not used as validation authority for this descriptive run.",
+  "material_sha256": {
+    "registration/BUNDLE_SHA256.json": "d2aecfb365ed1c8b3f9788c06e5bccb8023623ef698fc33d45717b8348770e85",
+    "registration/MATERIALS_MANIFEST.json": "ca34e91b364d56c769e40a936fa7d7c3351738cbbd079d34ca5e47e5b1c053fa",
+    "registration/PROTOCOL.md": "e9b9e3591666b701b8ff9a476ab803c5a23b99a5232b7c2209f9a5392e6d8acc",
+    "registration/README.md": "6aac668133aa69f7d1064cba4c63de4659508e30d2538c619749289a4c1c7e1b",
+    "registration/SHA256SUMS": "ab94bd46bfe58d9b211b8b9dc7b65709e0e7e0d8c88b16cfc666a95349720a0e",
+    "registration/controller-lock.txt": "1fabc5cc2fb9d547f27ddeca0489183760ae2f3fd77cfa7495ff9c75bfbad952",
+    "registration/environment-current.public.json": "ab012abbf6981c006c34b46dba6953c388a4076c41b742a479f6f61e6914c2b4",
+    "registration/environments/django-storages.txt": "405b92fce302d596d9ea84433c294d47ee2dde9e50c1db1c4c4c377858b62993",
+    "registration/environments/python-slugify.txt": "a82ed2a4e02ce46167d1e1924bce2e47f647795e1686f470c70a216326498210",
+    "registration/family.json": "19a380b98c2db6229ace68831c8b041f72b07b57b5ee7b5bab415ffa30a51455",
+    "registration/inclusion-ledger.public.json": "2f94cb4f4a598a5ea62146f0c311267ed46ba88fd31052ddf1cc58ec3fb3d45b",
+    "registration/mcp-capability.public.json": "dc2165b03a10ed8d34f5809192b3d2a9168668c20ab30267e6920d7701ca1362",
+    "registration/model-identity-current.public.json": "e37df9dd06aeb48a4e3ec17eaf97ee7c4251d0939621ed689b63d696b7ce42f4",
+    "registration/model-stat-recheck.public.json": "576a9d342e971545f70e186e912075f314253697358ffed47c98cde4e3368137",
+    "registration/patches/python-slugify-reference-production.patch": "4f1e188a90c502c31c973dd93e8b9f3867e5967ee96a5845b49508ab5836a59a",
+    "registration/patches/python-slugify-tests-overlay.patch": "5390b0825aa7b1ee14fe1c780df11b1f0c39c976af3828ce984ed3c50479de98",
+    "registration/planned-runs.json": "5eac337d585f948827e05a95bf174b6a3dc3798857c8196b09ecdb39a8572089",
+    "registration/projects.toml": "a878984f5aa6b093a230b08a5b3d5b8ffdcd9c75006e5ecbfff5e44ff9714939",
+    "registration/reference_repairs.toml": "598f4f8c6d1424998ad658b10e68ad1688a2b2add4921104ddf74964ce5dfcca",
+    "registration/run-scope.public.json": "6b5c425594b33866aeb5a338bf35475a61984f2fbf9491dbc792192476f33365",
+    "registration/server-config.public.json": "ca80f9155115de8ccf9ca12be655b9aecfc28b656057376a3f874f10f7b7f777",
+    "registration/source-identities.public.json": "780ca2b33067bc8a9cd665a72224027448b3e4f3e025949b748882e7bfd6be3c",
+    "driver": "ecf4608402eeb54d69c708dbb63bd71fb449b0216d7f0b3c2b44a3e97a90de69",
+    "private-path-map": "f43cd9eb04b9fbf103d572819addde3e38de8c975d522857e06b74a237a778f5",
+    "model-file-stat-and-sha-receipt": "e41c19d7162e90cf02d67532b86d05dd24bf7e521ca491cec3c8a6d28cdf40e1",
+    "controller-environment-receipt": "ab012abbf6981c006c34b46dba6953c388a4076c41b742a479f6f61e6914c2b4",
+    "server-settings-private": "52dd0fdf7c9c40a2b508d2206e823266bd76f61b70ca1fe68cba23c785d5955c",
+    "server-model-settings": "f25d19d0e17b623823dc67a443dfc4a7c3f3fc1505fc4e77d39d80bb3b2fcbbb",
+    "server-entrypoint": "ed89adf6b61ca0c8fd01bc2f2d72765e9d5af2ae32fe9555842fccaf02e7b16c",
+    "controller-pyvenv-cfg": "683d9e733464c7e4052ffbace8cd33652a19294df9c5d84d446a3026b4f79ebe",
+    "smoke-manifest": "8d5a7eed1b0c915e80da4598bedcb8ca3602d62326b9fb82881eeb20f0a6019b",
+    "smoke-repairs": "b9a3ae17420f03e7da605cf027cd92fda3e41d2207fd9b5dff1984e13bce53dc",
+    "smoke-snapshot": "d2ce2873f9fdbea32d72c9d5c7a4c37f329ef346eb22f8186564db16a83ecf59"
+  },
+  "host_specific_materials": "Private path map, runtime configs with a local session secret, and pyvenv.cfg are bound by hash only; public semantic settings and package/model identities are supplied separately."
+}

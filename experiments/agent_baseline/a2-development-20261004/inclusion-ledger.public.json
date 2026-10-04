@@ -1,0 +1,396 @@
+{
+  "schema_version": 1,
+  "status": "registration_materials_pending_final_document",
+  "scope": "A2-derived macOS arm64 development reconstruction; not a Windows reproduction or new held-out evaluation",
+  "product_commit": "804cc3c455061517cbc5edb21a9fe4b66626b453",
+  "selection_basis": "All 12 A2 candidates retained in the ledger; only the two with complete reference passes are included in the proposed 78-run development comparison.",
+  "counts": {
+    "candidates": 12,
+    "selected": 2,
+    "reference_incomplete": 6,
+    "excluded_current_protocol": 3,
+    "healthy_control": 1
+  },
+  "reference_incomplete_is_not_permanent_exclusion": true,
+  "case_count_is_not_run_count": true,
+  "qualification_source_sha256": "eaa5a068a7f5343283bce9a91283528b55aa49c3648371161f9776b090175c7b",
+  "cases": [
+    {
+      "id": "click",
+      "status": "reference_incomplete",
+      "reason": "Same first failure; complete reference retains protected-test encoding failure.",
+      "source_commit": "41f5b7a7967bb65910e8837bd4e8542a18feec6c",
+      "source_tree": "a19acc3d2dfc20be0247d5df124fc31eebe4c405",
+      "original_source_and_test_revisions_named_in_A2_manifest": false,
+      "original_windows_checkout_independently_compared": false,
+      "selection": "pending_reference",
+      "evidence": [
+        {
+          "record": "records/click-start-log.json",
+          "sha256": "e3864ba7960b869616b66280c2f6024d030d315640f0c5148257d92b46519342",
+          "exit_code": 1,
+          "counts": {},
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        },
+        {
+          "record": "records/click-r2.json",
+          "sha256": "909d3ee6ee89568081c649fcf4a595f6dffd40f2fc70bb56d7ace4d4d591267b",
+          "exit_code": 1,
+          "counts": {
+            "passed": 509,
+            "error": 1,
+            "xfailed": 1,
+            "skipped": 21
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": [
+            "py==1.10.0",
+            "pytest==6.2.5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pytest",
+      "status": "reference_incomplete",
+      "reason": "Same first failure; AST production migration leaves 63 failing tests.",
+      "source_commit": "1569fac603d9a50022e1474b494eebf970a2a3af",
+      "source_tree": "ea1753fcf0f091db4f7bae38920715cc3596d7d1",
+      "original_source_and_test_revisions_named_in_A2_manifest": false,
+      "original_windows_checkout_independently_compared": false,
+      "selection": "pending_reference",
+      "evidence": [
+        {
+          "record": "records/pytest-start-log.json",
+          "sha256": "1938af939391fc9857afb36fbb82ebd033cbf5be3ebee87c90ffbdb61a6ca9d7",
+          "exit_code": 4,
+          "counts": {},
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        },
+        {
+          "record": "records/pytest-r2.json",
+          "sha256": "58ccfad05874e7a752e43d40d71bf516508268a7441eb29bef493178e79dd162",
+          "exit_code": 1,
+          "counts": {
+            "passed": 2879,
+            "skipped": 105,
+            "failed": 63,
+            "xfailed": 9
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        }
+      ]
+    },
+    {
+      "id": "dateparser",
+      "status": "reference_incomplete",
+      "reason": "Original snapshot repaired from supplied session pins; installing fasttext leaves many later failures and model-cache preparation.",
+      "source_commit": "507dc6dd775429d89481083db57d56851b704744",
+      "source_tree": "8df8ddf79dd56183574fcb5a264f1064f14d491f",
+      "original_source_and_test_revisions_named_in_A2_manifest": false,
+      "original_windows_checkout_independently_compared": false,
+      "selection": "pending_reference",
+      "evidence": [
+        {
+          "record": "records/dateparser-start-session.json",
+          "sha256": "7f43d2db067cf6ef8f49041f2ce1f84616c9fc5db468bf607903cd15440a137e",
+          "exit_code": 2,
+          "counts": {
+            "error": 2
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        },
+        {
+          "record": "records/dateparser-fasttext.json",
+          "sha256": "bbdb4f73f3eb6d751c3a6a9db57105fb8e22936ebf2fd24ab1104a91e5077772",
+          "exit_code": 1,
+          "counts": {
+            "failed": 2262,
+            "passed": 21282
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        }
+      ]
+    },
+    {
+      "id": "python-qrcode",
+      "status": "excluded_platform_mechanism_changed",
+      "reason": "Windows %-d failure absent on macOS; later protected-test problems remain.",
+      "source_commit": "bee948c1b68a26b97e6e2ba03bb7064ae35342c2",
+      "source_tree": "78727004a42f7978f61a21f560ccac8eb54fcc70",
+      "original_source_and_test_revisions_named_in_A2_manifest": false,
+      "original_windows_checkout_independently_compared": false,
+      "selection": "excluded_current_protocol",
+      "evidence": [
+        {
+          "record": "records/python-qrcode-start.json",
+          "sha256": "a0407cd51fc49bce61808f97b229c21125d9cd586454726386d08037ef0abd03",
+          "exit_code": 1,
+          "counts": {
+            "passed": 62,
+            "skipped": 2,
+            "failed": 9
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        },
+        {
+          "record": "records/python-qrcode-setuptools.json",
+          "sha256": "649a8c80478a9a45add91983c8623adb8a1fa2b27d18378699f6f3c5ae958614",
+          "exit_code": 1,
+          "counts": {
+            "passed": 69,
+            "skipped": 2,
+            "failed": 2
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        }
+      ]
+    },
+    {
+      "id": "httpx",
+      "status": "reference_incomplete",
+      "reason": "Toolchain upgraded; cgi warning still blocks. Local TCP fixture is an additional static sandbox incompatibility.",
+      "source_commit": "716749e3fd3c99cb47cc20b96def280dcb3c8d16",
+      "source_tree": "e5e14bd8e8ddd439522c000c838774d0679fc25e",
+      "original_source_and_test_revisions_named_in_A2_manifest": false,
+      "original_windows_checkout_independently_compared": false,
+      "selection": "pending_reference",
+      "evidence": [
+        {
+          "record": "records/httpx-start-log.json",
+          "sha256": "8b03c63cbb8eba377f938896cdea5ed1ece6c9f49c00bec17ced611f5c02c20a",
+          "exit_code": 4,
+          "counts": {},
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        },
+        {
+          "record": "records/httpx-r1.json",
+          "sha256": "f298f2ad9ab8916a3bcf2d74c928651f025ff9023fac00c7c8059d7da11b906d",
+          "exit_code": 4,
+          "counts": {},
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": [
+            "pytest==6.2.4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "python-ftfy",
+      "status": "healthy_control",
+      "reason": "Already passes, excluded from repair-rate denominator.",
+      "source_commit": "7244641fe77de23ae44794ea71481ab8041af954",
+      "source_tree": "8a7db5e25b9d35705db62df276e45232395383f1",
+      "original_source_and_test_revisions_named_in_A2_manifest": false,
+      "original_windows_checkout_independently_compared": false,
+      "selection": "healthy_control",
+      "evidence": [
+        {
+          "record": "records/python-ftfy-start.json",
+          "sha256": "dbee514d731db9d1217f5b03252a0ffe56d42ab4b766ddad02afa7efad3fdce9",
+          "exit_code": 0,
+          "counts": {
+            "passed": 318,
+            "xfailed": 10
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        }
+      ]
+    },
+    {
+      "id": "robotframework",
+      "status": "reference_incomplete",
+      "reason": "Reference preserves tests but retains 3 failed / 2 errors.",
+      "source_commit": "9f7958d4d74a088835528bdc8ca4b475ca43487f",
+      "source_tree": "a81dd2487f9794744741d9e0f134619702818e12",
+      "original_source_and_test_revisions_named_in_A2_manifest": false,
+      "original_windows_checkout_independently_compared": false,
+      "selection": "pending_reference",
+      "evidence": [
+        {
+          "record": "records/robotframework-start.json",
+          "sha256": "ea5a1caa1263a11cc85f5f2a0c6405320168d91a8d9ee8560187a1ed8f0c92b3",
+          "exit_code": 2,
+          "counts": {
+            "error": 98
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        },
+        {
+          "record": "records/robotframework-ref2.json",
+          "sha256": "80fca1dcadcf6754b4de1259c064f05c80cec862a85712f4ebbd65819d73ea20",
+          "exit_code": 1,
+          "counts": {
+            "passed": 1797,
+            "failed": 3,
+            "error": 2
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        }
+      ]
+    },
+    {
+      "id": "python-slugify",
+      "status": "qualified_candidate",
+      "reason": "Source parent plus registered regression-test overlay; upstream production repair passes complete suite.",
+      "source_commit": "025da8e577fd21c37f1794bd5cc2acb954e4c0e0",
+      "source_tree": "8461312530696a7daf79de90b68ae21e017d759f",
+      "original_source_and_test_revisions_named_in_A2_manifest": true,
+      "original_windows_checkout_independently_compared": false,
+      "selection": "selected",
+      "evidence": [
+        {
+          "record": "records/python-slugify-start.json",
+          "sha256": "2e2eb09f9c0aa62e7e3d542bb7fc3cbd92e676e5f89baa1c089308b5b46c75d9",
+          "exit_code": 1,
+          "counts": {
+            "passed": 123,
+            "failed": 2
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        },
+        {
+          "record": "records/python-slugify-ref1.json",
+          "sha256": "5a0d629e8d1a5858062bba1ad9e199bf92baf5312fd2eeaf2bf91e4de9151b76",
+          "exit_code": 0,
+          "counts": {
+            "passed": 125
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        }
+      ]
+    },
+    {
+      "id": "django-cacheops",
+      "status": "excluded_external_service",
+      "reason": "Requires Redis under the predefined no-external-services condition; no Redis started.",
+      "source_commit": "e2f60db37fb5b0b056d990c9903d9e1f6ca4fb01",
+      "source_tree": "89f471ceb71b4b4e93b652d35d534b3b7c8cb01b",
+      "original_source_and_test_revisions_named_in_A2_manifest": false,
+      "original_windows_checkout_independently_compared": false,
+      "selection": "excluded_current_protocol",
+      "evidence": [
+        {
+          "record": "records/django-cacheops-start.json",
+          "sha256": "01d720fdc83334b6624550768149dec0fe3ac50041b5deb96cfa82bd7736ec32",
+          "exit_code": 2,
+          "counts": {
+            "error": 1
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        }
+      ]
+    },
+    {
+      "id": "seleniumlibrary",
+      "status": "excluded_sandbox_incompatible",
+      "reason": "Complete suite requires local socket bind blocked by offline grader; also directory/reporter failures.",
+      "source_commit": "fed527aebd31bdce14bf89a8b49a30adf77e4bff",
+      "source_tree": "51c3170de2167a59a11c31204781cec3ddf2d2bb",
+      "original_source_and_test_revisions_named_in_A2_manifest": false,
+      "original_windows_checkout_independently_compared": false,
+      "selection": "excluded_current_protocol",
+      "evidence": [
+        {
+          "record": "records/seleniumlibrary-start.json",
+          "sha256": "af5c036d0c7a2a0cc580b2903dc68780d2474f9609ef57be2861106336f18b3a",
+          "exit_code": 2,
+          "counts": {
+            "error": 33
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        },
+        {
+          "record": "records/seleniumlibrary-ref1.json",
+          "sha256": "4e1d641cbf801c5572763eae1bd11aa77966b0837b587f63f2a1840ea657aaad",
+          "exit_code": 1,
+          "counts": {
+            "passed": 233,
+            "failed": 11
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        }
+      ]
+    },
+    {
+      "id": "django-storages",
+      "status": "qualified_candidate",
+      "reason": "pytest-django and non-selecting settings configuration pass all original nodes.",
+      "source_commit": "3658c3d2353b778a45b09dd7a55cbabc66d22381",
+      "source_tree": "3a1ced0cb0b672a3d29ff9089677f3f675a3ee53",
+      "original_source_and_test_revisions_named_in_A2_manifest": false,
+      "original_windows_checkout_independently_compared": false,
+      "selection": "selected",
+      "evidence": [
+        {
+          "record": "records/django-storages-start.json",
+          "sha256": "9e66081897f41077ce45195e0bf2e344c49f36a13993ebef18269a3a2402d5b3",
+          "exit_code": 1,
+          "counts": {
+            "error": 253
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        },
+        {
+          "record": "records/django-storages-ref1.json",
+          "sha256": "a42b4992be9ed8541dd9178e68ea2203c5559d3b8e0c699fb7584a54fdf33d9f",
+          "exit_code": 0,
+          "counts": {
+            "passed": 253
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        }
+      ]
+    },
+    {
+      "id": "python-markdown",
+      "status": "reference_incomplete",
+      "reason": "PyYAML repair exposes protected TestSuite collection warning-as-error.",
+      "source_commit": "be1c2839dd587a858f91c710e56667cba9f5329d",
+      "source_tree": "fcd2aa66247148784fffb79e2cc04f5e1262e5bd",
+      "original_source_and_test_revisions_named_in_A2_manifest": false,
+      "original_windows_checkout_independently_compared": false,
+      "selection": "pending_reference",
+      "evidence": [
+        {
+          "record": "records/python-markdown-start.json",
+          "sha256": "b5269817ebd95dd4cfd62b182580d1ef577976a98e27bf0eae2676b3159995fd",
+          "exit_code": 2,
+          "counts": {
+            "error": 2
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        },
+        {
+          "record": "records/python-markdown-ref1.json",
+          "sha256": "3badb5e0e738774b0588a91ec949651beab2d19e5a71d71a776f8a44f62d3635",
+          "exit_code": 2,
+          "counts": {
+            "error": 1
+          },
+          "protected_files_changed": [],
+          "snapshot_missing_at_end": []
+        }
+      ]
+    }
+  ]
+}

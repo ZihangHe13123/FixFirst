@@ -1,0 +1,229 @@
+{
+  "checked_at_utc": "2026-10-04T12:08:16.365570+00:00",
+  "reference_private_receipt_sha256": "e41c19d7162e90cf02d67532b86d05dd24bf7e521ca491cec3c8a6d28cdf40e1",
+  "kind": "stat recheck against immediately preceding full SHA256 receipt; no weight reads",
+  "files": [
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": ".gitattributes",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "README.md",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "chat_template.jinja",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "config.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "configuration.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "generation_config.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "model-00001-of-00006.safetensors",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "model-00002-of-00006.safetensors",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "model-00003-of-00006.safetensors",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "model-00004-of-00006.safetensors",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "model-00005-of-00006.safetensors",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "model-00006-of-00006.safetensors",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "model.safetensors.index.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "preprocessor_config.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "processor_config.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "tokenizer.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "tokenizer_config.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "video_preprocessor_config.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "file": "vocab.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "file": "chat_template.jinja",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "file": "config.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "file": "generation_config.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "file": "model-00001-of-00003.safetensors",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "file": "model-00002-of-00003.safetensors",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "file": "model-00003-of-00003.safetensors",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "file": "model.safetensors.index.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "file": "processor_config.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "file": "tokenizer.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "file": "tokenizer_config.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "file": ".gitattributes",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "file": "README.md",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "file": "chat_template.jinja",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "file": "config.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "file": "generation_config.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "file": "model-00001-of-00003.safetensors",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "file": "model-00002-of-00003.safetensors",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "file": "model-00003-of-00003.safetensors",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "file": "model.safetensors.index.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "file": "preprocessor_config.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "file": "processor_config.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "file": "tokenizer.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "file": "tokenizer_config.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "file": "video_preprocessor_config.json",
+      "unchanged_from_full_hash": true
+    },
+    {
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "file": "vocab.json",
+      "unchanged_from_full_hash": true
+    }
+  ],
+  "all_registered_files_unchanged": true,
+  "server_started": false
+}

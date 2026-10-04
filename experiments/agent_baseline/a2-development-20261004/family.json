@@ -1,0 +1,29 @@
+{
+  "members": [
+    {
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "protocol": "3bf846ae",
+      "tasks": [
+        "django-storages",
+        "python-slugify"
+      ]
+    },
+    {
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "protocol": "3bf846ae",
+      "tasks": [
+        "django-storages",
+        "python-slugify"
+      ]
+    },
+    {
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "protocol": "3bf846ae",
+      "tasks": [
+        "django-storages",
+        "python-slugify"
+      ]
+    }
+  ],
+  "note": "A2-derived two-task development comparison. Mechanical t/Holm appendix only; not unseen-task or population inference."
+}

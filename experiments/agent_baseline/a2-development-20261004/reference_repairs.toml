@@ -1,0 +1,7 @@
+# Reference answers; keep outside all agent sandboxes.
+
+[django-storages]
+repair = [".venv/bin/python -m pip install 'pytest-django==4.11.1'", "printf '\\nDJANGO_SETTINGS_MODULE = tests.settings\\n' >> tox.ini"]
+
+[python-slugify]
+repair = [".venv/bin/python - <<'PY'\nfrom pathlib import Path\np=Path('slugify/slugify.py')\ns=p.read_text()\nold=\"    parts: list[str] = []\\n    length = 0\\n    for index, word in enumerate(tokens):\\n        delimiter = separator if index else ''\\n        remaining = max_length - length - len(delimiter)\\n        if remaining <= 0:\\n            break\\n        parts.append(delimiter + word[:remaining])\\n        length += len(delimiter) + min(len(word), remaining)\\n        if len(word) > remaining:\\n            break\\n    return ''.join(parts)\"\nnew=\"    parts: list[str] = []\\n    length = 0\\n    previous_index = 0\\n    for index, word in enumerate(tokens):\\n        if not word:\\n            continue\\n        # Keep repeated delimiters with the next nonempty word until it fits.\\n        delimiter = separator * (index - previous_index)\\n        remaining = max_length - length - len(delimiter)\\n        if remaining <= 0:\\n            break\\n        parts.append(delimiter + word[:remaining])\\n        length += len(delimiter) + min(len(word), remaining)\\n        previous_index = index\\n        if len(word) > remaining:\\n            break\\n    return ''.join(parts)\"\nassert s.count(old)==1\np.write_text(s.replace(old,new))\nPY"]
