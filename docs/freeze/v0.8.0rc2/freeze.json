@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "scope": "v0.8.0rc2 product candidate identity; not B7 registration or an experiment result",
+  "product": {
+    "version": "0.8.0rc2",
+    "source_commit": "804cc3c455061517cbc5edb21a9fe4b66626b453",
+    "source_tree": "14f6efadbfc6681f6d8887a05b994abc8f5c76f6",
+    "accepted_candidate_commit": "b1edf8dc66c97361191dd43edf9404771f48b658",
+    "runtime_byte_identical_to_accepted_candidate": true,
+    "runtime_file_count": 77,
+    "runtime_files_sha256": {
+      "src/fixfirst/__init__.py": "3eb393df1082add00d9e68c78785d1a7f1333a9ca2853f622b9d72acfd7f9fd4",
+      "src/fixfirst/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+      "src/fixfirst/_native_runner.py": "fb13a3e1fb13cc7e399b61665c492482417a7dcf16f8f5f53882f93dcf70309c",
+      "src/fixfirst/_notebook_runner.py": "9a16e715352f07284c9952b1b7027920f82691b55fcda1699a64be5c2b5ec154",
+      "src/fixfirst/_runtime_evidence.py": "8e18b05350f097c225a3fa403dd74bce09788ad7767433f9cc9d61b60531b8e3",
+      "src/fixfirst/_unittest_runner.py": "abb94b5f4852a575ecdd0bc8702ce3758724bd55fca00c6e806055a483053356",
+      "src/fixfirst/_winprocess.py": "a57855d492192b3ac29004d1212f135721ac930c6b2bfba30dce1496840ad1b4",
+      "src/fixfirst/behavior.py": "4c308ec9b93854d877dce8d79e8f590916730f64153e7abdf98493c6c50d53d0",
+      "src/fixfirst/binding_advice.py": "8c35e8b9cafd4541189de3283904d4f9707a8344351f87340223359cf1b61059",
+      "src/fixfirst/cases.py": "f4e25213b6902b081bdda50ab896903f91a23280496ff23cc3f587f4809c170d",
+      "src/fixfirst/classification.py": "01c15255662d886121a328f69fca2be67e6c4d605a1f7cbd3c8fcb5a45ab9cfc",
+      "src/fixfirst/cli.py": "20075018501c2922275e00304a325ddaa0c98d8a65c1b80f3cb29d9d86d27257",
+      "src/fixfirst/conda_declarations.py": "9df3ae4263a16b2c328ed5c3838e33423f601a720780e28ae706e02661504ffd",
+      "src/fixfirst/dependency_advice.py": "c3446d727bb8c358e4496ca8845c3591791954e3ccdd670452d005c134cbdc75",
+      "src/fixfirst/dependency_context.py": "b6db45cf119c2fed53d50238a51b750fa226f81eba649f615362eaf8fbd697bb",
+      "src/fixfirst/dependency_resolution.py": "c888fb7c9a774a8133180ea6a6f00cd586c3f82c1d9394a60996e3b34ba8ee29",
+      "src/fixfirst/diagnosis_cases.py": "1ed05b103f758f20ced0739ed12e6b8a58d6ea463c551c3d0326e74b89d19636",
+      "src/fixfirst/django_configuration.py": "83955faabe280cd1095e266b97554383f2f299cf928e8081940748f8c5fd3be7",
+      "src/fixfirst/domain.py": "b7e64334b7e823932f12234434cd884e9a8ca141eecc5c4904f760630a3ac07d",
+      "src/fixfirst/engine.py": "2af0f39c39db97f95d50662a971a0a47a3a6ebc5af517d5c49515de0a289105e",
+      "src/fixfirst/evaluation.py": "11ef4b41e202c12bb925d140bd7b61ef0009f5cf60b14d7c1048f3e1899f0478",
+      "src/fixfirst/evidence.py": "c96658ae4330c549d9d40623c874bc14df5f3cfca021823759cfd90e912794a8",
+      "src/fixfirst/execution.py": "57f91eb3f7416d4eede63ddd16277a1f6a2f83976dcfb9ac4a4c577a1e07fe8f",
+      "src/fixfirst/execution_cases.py": "49d0f5f4d1ac3158101046d205c17602a00cc5f35e9da59c99c9cf71d75f556c",
+      "src/fixfirst/execution_parsers.py": "8486f3065a6c8321c631b32b8945d5217d4f83a62145a0d2ec7ec6121ef36af9",
+      "src/fixfirst/facts.py": "79bd7ae56806090f4a19b54f83277696bc6e472041deee546888d72357c80926",
+      "src/fixfirst/grouping.py": "b432e844d5c6add7c36b24057c7ce3a9dff8b5855d0efb3e5703121848aeed0f",
+      "src/fixfirst/hard_cases.py": "e729c1476e9b8bb4adf3e18f2d419c68173a2cb3bf512539c47224f70daa7833",
+      "src/fixfirst/historical_cases.py": "5d0ed255be14aae2f91dd5bed04ebe92723e46294abd1b6f94d4c20d098cbb90",
+      "src/fixfirst/install_errors.py": "926c57a31ff3c501bf28eb84aced4f39e4a18d5062595753010a2af7747eff2d",
+      "src/fixfirst/install_feedback.py": "394c49e738842602600ecc01ad4365c6b3dc110e8f3fd65ad76b31c1ec36c517",
+      "src/fixfirst/integrity.py": "bbb329a7f70d3bd07f1563378085e6348cf352462623582f5b9f3d2131df2b5e",
+      "src/fixfirst/interactive.py": "5308cb305bf117546f51ee7796accb1515c426f165cd8e823db6024d175dd01a",
+      "src/fixfirst/interface_history.py": "14a7f36f742e08827eeb288af2c88e9b465b858c988c0dcb9b15506095fe7ade",
+      "src/fixfirst/knowledge/diagnosis_tree.json": "189f712ea75bcb117f96aae879fd0c9bdab9ee6531475d1a95faf01ec2738d30",
+      "src/fixfirst/knowledge/diagnosis_tree.txt": "feb6ef7f082a0a88205c2624898427d53f10aa6d0c0709998d57ee01886d4706",
+      "src/fixfirst/knowledge/domain.toml": "9cfaf23d1418a4201159a57fe77f48ab422f73e95b533fe8d1ce17c0479b6398",
+      "src/fixfirst/knowledge/package_compatibility.toml": "2b41dd955805e16b0d8f153f1638d64eb4574110a0606885bfe3a15cc7903185",
+      "src/fixfirst/knowledge/pending_attribution.toml": "57d2708d956452bca856886546efe5fb1065cac025fb87a85d091aa621685808",
+      "src/fixfirst/knowledge/rules.toml": "8a530ca19bd6b7aeb98f2d2fbaa727dcb696f89bb0e0691427d1dcc72e8ebda8",
+      "src/fixfirst/knowledge_graph.py": "ea7b0c3f9f0b1e834f353bc459b48eabd8843a273aa8097718a14b4c413af03d",
+      "src/fixfirst/local_import_advice.py": "1671f746a9cbc1d97f7826eb5315fcf4d5592123515073837791ff1947dd1606",
+      "src/fixfirst/local_import_context.py": "a368999c5986e2229e65c10696eaed93da6134369c302c966350fc611ec58138",
+      "src/fixfirst/local_imports.py": "fb5521b4a3ae7956f2bf8331b9f530d6e1005a1ac946d09b006e3321de7007f4",
+      "src/fixfirst/mcp_server.py": "a507925d1f0ac7d1ea1dd1e5ff0e37ca32e9e23c957d6946e4f487da384d4377",
+      "src/fixfirst/migration_advice.py": "79ce1da4034970c83815b1f69b14457e96601c3a9ec140324535699ea6c19aa9",
+      "src/fixfirst/models.py": "6ba17b1ee1d70d45f903eb20c9ebab1e7ab31f70fc60cbdb9dcd746680e175e5",
+      "src/fixfirst/multi_cases.py": "43d6f7cca66c4056d293a26f4d6fd924c07a55bef03fc074e613cfe6ff36733d",
+      "src/fixfirst/observed_operations.py": "53dbf1342daa8fae41d642895de31fc3c8ec04c99c48d3500240fef4a6a5b71d",
+      "src/fixfirst/package_compatibility.py": "cba054fb9913f694b7c699aeb5cb874493c54464d4f5d417222e7b2d5b5d2fc3",
+      "src/fixfirst/parsers.py": "7f29248ae1230aca246b9f58a19921e6aa9bca161dc18c3f3155e8ed8e52d895",
+      "src/fixfirst/playground.py": "f813c09dc4708672778f53dd6b7c87827121f6f2e11093524a0e9a30d568322d",
+      "src/fixfirst/probe.py": "322a5330f104e22af3827db45ffaee528a458474288dace5e164c4765306c0a4",
+      "src/fixfirst/processes.py": "5ec92fcecab7cb34074a4cf3b5fa2d1efe015e7ae6c514fba2a6810ffc01c9dc",
+      "src/fixfirst/project.py": "281659357647ecac442b019d02cd256349414d425847487197206e3d26cec7b2",
+      "src/fixfirst/pytest_settings.py": "8d3a92a759f689b970aa302bbf76bab1bbf37c7267babc09f0afcb2bd1c750f7",
+      "src/fixfirst/reasoning.py": "912248eb7f5cb5983e6f397006016101054e74b54ae77c790f336345fd03738e",
+      "src/fixfirst/removal_ownership.py": "fb07a3c96eb7c853496a9cb9d3d3b22e6e70a6f6b9e4dc1f8dacaa4fb6fe8b03",
+      "src/fixfirst/report.py": "02f274d1b9999d2861d72997d4b3ad1174bbde259872674c704b665d0d312e07",
+      "src/fixfirst/runner.py": "330d76ff2fff89b353c729f255ad948aebef9163119f6667e3d164053f4653e7",
+      "src/fixfirst/service.py": "63d2b23ba0ea89afbe7571a2e6153e08e5e0bf686661f479f58082e1afb47b0f",
+      "src/fixfirst/source_context.py": "051e4f6a532676d5028ba45f2d1814bb1845d638802dca97a9dc3cea2935055a",
+      "src/fixfirst/storage.py": "590f5dc772005a97d7f16db8772fe23745d2b5d35329c3030e86e003fa08d1cf",
+      "src/fixfirst/symbol_advice.py": "6079ca904ce35bb9428672c596a05279cbdae4167a3a75e98fa854031a3a69ba",
+      "src/fixfirst/symbol_context.py": "71233fd9a0cca3999a50a22efa25f7b0861481f100f63ff8d8d02449a102fffd",
+      "src/fixfirst/templates/base.html": "b724f3c367b1ad1fb5a4be708f921c55523cab221fe5687ae914500e48ec0328",
+      "src/fixfirst/templates/index.html": "fd909dff619acc1182c00dda308c061da804e1cb343ad4048e82331641d4db0d",
+      "src/fixfirst/templates/report.html": "517a33d087422abca24f913a18aad914bed978c5df818ecb92cfe7d7138335f2",
+      "src/fixfirst/templates/workspace.html": "b59fa027565ec668019648e1da8508607303c4dd54e9974caf69fda62a3dbc34",
+      "src/fixfirst/test_results.py": "d4a9d07e116363d0712ab74140e9e897a588b346d5ecd37c3b44d77caf479454",
+      "src/fixfirst/tool_compatibility.py": "949951180fbeab754519803915bd18450fb6f651f603042e6d42052886148551",
+      "src/fixfirst/toolchain_cases.py": "1ae365eb0e6cb7cc595bd6fcb9f887cf3783911195dddd8a087bcc2020e9866d",
+      "src/fixfirst/toolchain_environments.py": "e54842f74ec28248d10d41cd819e9c34a3865e095f4bfbe341da662d88a11515",
+      "src/fixfirst/toolchain_manifest.py": "396d4649d45f16f36648b6e802eb159f77e322455a053fbb7eac146c63fa3838",
+      "src/fixfirst/versions.py": "086258636dd2dddd12a59f5af3d4ec19311c4c4aea56b2365488dc47be03adf7",
+      "src/fixfirst/web.py": "c440b25c10f3fb0c880812e400fd479cab8c6b4f9b68cae3b5a731601be353e8",
+      "src/fixfirst/workspace.py": "4ae36cdccd05b4ca31b99111678cca49f35e52ce437dd4f1033d34d091973c7b"
+    },
+    "runtime_manifest_sha256": "d02dd0bb096d4306912ee4e0e056c2274ade217b0ba44de649de99a1013d2828",
+    "runtime_digest_format": "UTF-8 JSON mapping repo-relative path to SHA-256; sorted keys; separators comma/colon"
+  },
+  "defaults": {
+    "session": {
+      "goal": "collect_tests",
+      "execution": null,
+      "grouping": "tfidf",
+      "threshold": 0.82,
+      "model_path": null,
+      "use_classifier": true,
+      "structured_evidence": false,
+      "bounded_actions": false,
+      "sbert_model": null
+    },
+    "cli_init_options": {
+      "--bounded-actions": false,
+      "--goal": "auto",
+      "--grouping": "tfidf",
+      "--model": null,
+      "--no-classifier": false,
+      "--sbert-model": null,
+      "--structured-evidence": false
+    },
+    "minimum_classifier_confidence": 0.6,
+    "model_selection": "use_classifier=true plus model_path=null loads the bundled decision tree",
+    "goal_note": "CLI init defaults to auto and choose_execution resolves the goal; Session/API default is collect_tests"
+  },
+  "model": {
+    "path": "src/fixfirst/knowledge/diagnosis_tree.json",
+    "sha256": "189f712ea75bcb117f96aae879fd0c9bdab9ee6531475d1a95faf01ec2738d30",
+    "schema_version": 8,
+    "features": 81,
+    "legacy44_path": "tests/fixtures/diagnosis_tree_schema3.json",
+    "legacy44_sha256": "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3"
+  },
+  "knowledge_files_sha256": {
+    "src/fixfirst/knowledge/diagnosis_tree.json": "189f712ea75bcb117f96aae879fd0c9bdab9ee6531475d1a95faf01ec2738d30",
+    "src/fixfirst/knowledge/diagnosis_tree.txt": "feb6ef7f082a0a88205c2624898427d53f10aa6d0c0709998d57ee01886d4706",
+    "src/fixfirst/knowledge/domain.toml": "9cfaf23d1418a4201159a57fe77f48ab422f73e95b533fe8d1ce17c0479b6398",
+    "src/fixfirst/knowledge/package_compatibility.toml": "2b41dd955805e16b0d8f153f1638d64eb4574110a0606885bfe3a15cc7903185",
+    "src/fixfirst/knowledge/pending_attribution.toml": "57d2708d956452bca856886546efe5fb1065cac025fb87a85d091aa621685808",
+    "src/fixfirst/knowledge/rules.toml": "8a530ca19bd6b7aeb98f2d2fbaa727dcb696f89bb0e0691427d1dcc72e8ebda8"
+  },
+  "verification_receipts_sha256": {
+    "scripts/knowledge_verify/receipts/knowledge-receipt-20261003.json": "ced04e2186622fe943ba515322493b200f71e8ee98745b70bef60faa89ae0a7d",
+    "scripts/knowledge_verify/receipts/owners-receipt-20261003.json": "a16d70489bde706f76d2b1fd5ec4b074ec774cbf51d7f1543ca33b3d8b7574ec"
+  },
+  "validation_controller": {
+    "inventory": "controller-inventory.json",
+    "sha256": "91dadaaf3ec9e08696085c5c0694613decd9a51008823261bc6b04fb54fd9087",
+    "scope": "macOS packaging and offline validation controller; not a registered B7 runtime; additional test interpreters are separate"
+  },
+  "artifacts": {
+    "source_commit": "804cc3c455061517cbc5edb21a9fe4b66626b453",
+    "build": {
+      "python": "3.12.13",
+      "build": "1.6.1",
+      "setuptools": "81.0.0",
+      "command": "python -m build --no-isolation"
+    },
+    "items": [
+      {
+        "name": "fixfirst_local-0.8.0rc2-py3-none-any.whl",
+        "sha256": "88c39e3194b047e1b11aabdb8a2fcd7e6d4ebe8c0707f3a3e5b7276a6eb5bad5",
+        "files": 82,
+        "runtime_files": 77,
+        "runtime_matches_commit": true,
+        "runtime_payload_sha256": "432322a6d8ddc8394ea984f43b0ea5a789d3529cccd60d78f77e84ccb97bf2aa"
+      },
+      {
+        "name": "fixfirst_local-0.8.0rc2.tar.gz",
+        "sha256": "b7d4397dd51ea64d536edcba5752870d24f9ce6bf03a1251c100cf26e5fe55f4",
+        "files": 160,
+        "runtime_files": 77,
+        "runtime_matches_commit": true,
+        "runtime_payload_sha256": "432322a6d8ddc8394ea984f43b0ea5a789d3529cccd60d78f77e84ccb97bf2aa"
+      }
+    ],
+    "wheel_smoke": {
+      "version": "0.8.0rc2",
+      "runtime_from_wheel": true,
+      "default_model_sha256": "189f712ea75bcb117f96aae879fd0c9bdab9ee6531475d1a95faf01ec2738d30",
+      "default_features": 81,
+      "explicit_legacy_features": 44,
+      "cli_help_exit": 0,
+      "cases": [
+        {
+          "case": "program",
+          "goal": "run_project",
+          "rule": "D13",
+          "plan": "P12",
+          "before_exit": 1,
+          "after_exit": 0,
+          "after_stdout": "23"
+        },
+        {
+          "case": "nested",
+          "goal": "pass_tests",
+          "rule": "D13-C",
+          "plan": "P12",
+          "before_exit": 2,
+          "after_exit": 0,
+          "after_stdout": ".                                                                        [100%]\n1 passed in 0.01s"
+        }
+      ]
+    }
+  },
+  "publication": {
+    "freeze_effective_when": [
+      "The remote annotated tag v0.8.0rc2 resolves to product.source_commit",
+      "The source CI gate has concluded success for the same source commit"
+    ],
+    "tag_ref": "refs/tags/v0.8.0rc2",
+    "tag_target": "804cc3c455061517cbc5edb21a9fe4b66626b453",
+    "source_ci_gate": {
+      "url": "https://github.com/ZihangHe13123/FixFirst/actions/runs/37196927268",
+      "run_id": 37196927268,
+      "head_sha": "804cc3c455061517cbc5edb21a9fe4b66626b453",
+      "required_conclusion": "success"
+    },
+    "note": "This record is not evidence that the tag already exists; verify the remote tag and CI. Later documentation commits may follow on main."
+  },
+  "evaluation_boundary": {
+    "b7_registered": false,
+    "b7_protocol_id": null,
+    "b7_selection_sha256": null,
+    "new_model_or_experiment_launched": false,
+    "v070_and_sealed_b3_unchanged": true,
+    "scope": "Product identity only; real tasks, model serving environment, selection and protocol registration remain separate."
+  },
+  "integration": [
+    {
+      "pr": 68,
+      "head": "ff92446c5d0de26564f1cbf50e45036c90b87713",
+      "merge": "560fe6915796b5a76b9058cff6d40a07c290b8b1"
+    },
+    {
+      "pr": 70,
+      "head": "ba0636a76036b3efebc89789944606aca24be6ad",
+      "merge": "90444e3d509ef2845ed643455ae4692533b4fa92"
+    },
+    {
+      "pr": 71,
+      "head": "b1edf8dc66c97361191dd43edf9404771f48b658",
+      "merge": "804cc3c455061517cbc5edb21a9fe4b66626b453"
+    }
+  ]
+}
