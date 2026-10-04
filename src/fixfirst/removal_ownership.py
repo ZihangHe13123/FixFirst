@@ -4,12 +4,77 @@ Legacy names remain available as observations/features. Only these extra facts
 authorize D02/D03; another issue's similarly named object cannot supply them.
 """
 
+import json
 import posixpath
 
 from packaging.utils import canonicalize_name
 from packaging.version import InvalidVersion, Version
 
 from . import domain
+
+
+def _incomplete_receiver(row):
+    """An explicit failed observation, rather than ordinary absent metadata."""
+    from .symbol_context import valid_record
+
+    if row.get("exception_type") != "AttributeError":
+        return False
+    record = row.get("symbol_observation")
+    if not record:
+        # The target probe reached the actual attribute opcode and receiver,
+        # but its static namespace exceeded a bound or could not be inspected.
+        return row.get("symbol_observation_status") == "unsupported_receiver"
+    if not isinstance(record, dict) or record.get("kind") not in ("instance", "class"):
+        return False
+    owners = record.get("receiver_owners")
+    if not isinstance(owners, list):
+        return False
+    # A retained oversized record must not gain a model diagnosis just because
+    # the reader discarded its ancestry. Validate the rest of the observation
+    # separately; malformed unrelated fields are not evidence of this limit.
+    if not valid_record({**record, "receiver_owners": []}):
+        return False
+    try:
+        return len(owners) > 128 or len(json.dumps(owners, ensure_ascii=True, separators=(",", ":"))) > 32768
+    except (TypeError, ValueError):
+        return False
+
+
+def classifier_abstention(session, issue, evidence):
+    """Withhold a learned cause when a member's receiver observation is bounded.
+
+    Keep the raw model output for audits. Only this issue's executed, same-run
+    event references count; other failures and missing legacy fields cannot
+    donate an abstention. A grouped valid member cannot erase a bounded member.
+    Confirmed rule diagnoses are selected independently by the caller.
+    """
+    if evidence.get("exception") != "AttributeError":
+        return ""
+    runs = {run.run_id: run for run in session.runs}
+    for event in session.events:
+        if (event.event_id not in issue.event_ids or event.tool != issue.tool
+                or event.code != "AttributeError"):
+            continue
+        for ref in event.evidence_refs:
+            run_id, separator, position = ref.partition(":probe:")
+            run = runs.get(run_id)
+            if (not separator or not position.isdigit() or run is None
+                    or run_id != event.run_id or run.tool != issue.tool
+                    or run.source != "executed" or run.environment_id != issue.environment_id
+                    or run.status != "completed" or run.exit_code in (None, 0) or run.truncated
+                    or int(position) >= len(run.records)):
+                continue
+            row = run.records[int(position)]
+            if (row.get("type") != "exception" or row.get("stage") != event.stage
+                    or not event.location or row.get("nodeid") != event.location
+                    or not _incomplete_receiver(row)):
+                continue
+            return (
+                "The failed attribute receiver could not be inspected within the supported bounds. "
+                "Its library ancestry remains unconfirmed. The classifier prediction is retained "
+                "separately and is not used to choose a cause or repair."
+            )
+    return ""
 
 
 def _within(path, directory):

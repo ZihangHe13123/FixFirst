@@ -481,6 +481,13 @@ def collect_project(session, env_id: str) -> Run:
                     {"name": component, "path": path.relative_to(session.project_root).as_posix()}
                 )
     data["python_files"], data["defined_names"] = index_sources(Path(session.project_root))
+    from .local_imports import index_local_candidates
+    from .local_import_advice import recorded_editable_project
+
+    data["local_module_candidates"] = index_local_candidates(
+        Path(session.project_root), data["python_files"],
+    )
+    data["editable_project"] = recorded_editable_project(Path(session.project_root))
     data["imported_names"] = index_imports(Path(session.project_root), data["python_files"])
     from .source_context import index_source_context
 

@@ -55,7 +55,7 @@ def test_src_advice_repairs_actual_collection_without_installing(tmp_path, monke
     assert "PYTHONPATH" in action.explanation and "same Python interpreter" in action.explanation
     assert "Preserve any existing" in action.explanation and "path separator" in action.explanation
     assert "original test command" in action.verification
-    assert "pip install" not in action.explanation and "editable" not in action.explanation
+    assert ("pip install -e ." in action.explanation) is packaged
     assert not action.command
 
     # Apply the stated route and run exactly the same test command/interpreter.

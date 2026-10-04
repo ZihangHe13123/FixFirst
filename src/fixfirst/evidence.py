@@ -706,7 +706,7 @@ def features(evidence: dict, contexts: dict, project: dict, environment=None, *,
     values["module_mentioned"] = module is not None
     values["module_installed"] = bool(top.get("installed"))
     values["module_stdlib"] = bool(top.get("stdlib"))
-    values["module_local"] = bool(context.get("local"))
+    values["module_local"] = bool(context.get("local") or evidence.get("local_import_candidate"))
     values["module_similar_local"] = bool(context.get("similar"))
     values["module_declared"] = bool(context.get("declared") or top.get("declared"))
     values["missing_module_dotted"] = bool(evidence["missing_module"] and "." in module)
@@ -875,6 +875,12 @@ def observations(session: Session, issues: list[Issue], *, interface_history=Tru
                 facts.append(observed(subject, "callee", "callable:" + qualified, refs))
                 facts.append(observed(subject, "callee_module", "module:" + top, refs))
                 modules.add(top)
+        from .local_import_context import for_issue as local_import_context
+
+        candidate = local_import_context(session, issue, project_run, project, environment)
+        if candidate:
+            evidence["local_import_candidate"] = candidate
+            facts.append(observed(subject, "local_import_candidate", candidate["path"], candidate["refs"]))
         details[subject] = evidence
     # The distributions this project builds. Installed (for example in editable mode), their
     # modules are the project's own code, not another library that a project file hides.
