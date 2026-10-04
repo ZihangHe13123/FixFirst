@@ -19,6 +19,8 @@ take about 25 minutes each. Normal test runs do not execute them; they only chec
 | `receipts/knowledge-receipt-20261003.json` | Full record of the last run of `verify.py`: for every check and probe the snippet, its SHA-256, the environments (interpreter and package versions), the exact exception text or output, and the verdict. Local paths are redacted. |
 | `receipts/owners-receipt-20261003.json` | Full record of the last run of `verify_owners.py`: for every key with owners (and for every merged key) the receiver recipe, the receiver identities in each release, and what FixFirst did with it (issues, rule, the plan with its replacement text, and the project class of the same name). |
 
+The owners receipt was regenerated on 2026-10-04 against the `0.8.0rc1` candidate with the 81-feature default tree and the revised local-import advice. All 155 keys and 23 merged keys passed; the stored-record audit found zero problems. Its existing filename is retained. The knowledge-matrix receipt was unchanged and was not rerun.
+
 ## What a check proves
 
 A **check** runs one snippet in an isolated environment before the stated release (it must work), in the first release without it (it must raise the

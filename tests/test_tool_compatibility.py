@@ -1,6 +1,5 @@
 """Mechanism/ownership tests; no actual model service or reference answers are consulted."""
 
-import hashlib
 import json
 from pathlib import Path
 import sys
@@ -160,9 +159,12 @@ def test_new_startup_probe_retains_project_warning_without_reclassifying_it(tmp_
     assert all(i.diagnosis_rule not in {"D49", "D50"} for i in session.issues)
 
 
-def test_frozen_default_model_is_not_changed():
+def test_tool_compatibility_policy_does_not_change_default_model(tmp_path):
     path = Path(__file__).resolve().parents[1] / "src/fixfirst/knowledge/diagnosis_tree.json"
-    assert hashlib.sha256(path.read_bytes()).hexdigest() == "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3"
+    before = path.read_bytes()
+    session, _ = setup_case(tmp_path)
+    assert any("P85" in action.rule_ids for action in session.actions)
+    assert path.read_bytes() == before
 
 
 def test_startup_observation_cannot_replace_an_exception_whose_stringifier_raises(monkeypatch):

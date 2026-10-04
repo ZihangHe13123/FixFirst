@@ -1,7 +1,10 @@
 """Classifier schema compatibility and contexts from actual failing programs."""
 
 from copy import deepcopy
+import hashlib
+from importlib import resources
 import json
+from pathlib import Path
 import sys
 
 import pytest
@@ -10,6 +13,39 @@ from fixfirst.classification import default_model, load_model, predict_tree, tra
 from fixfirst.diagnosis_cases import CHECKS
 from fixfirst.evidence import FEATURE_NAMES, LEGACY_FEATURE_NAMES, observations
 from fixfirst.service import create_session, scan
+
+
+# Exact default shipped before the v0.8 promotion, from ff92446. Keep the artifact
+# so changing the current default never removes compatibility coverage.
+LEGACY_MODEL = Path(__file__).parent / "fixtures/diagnosis_tree_schema3.json"
+
+
+def test_default_is_the_accepted_base81_artifact():
+    directory = resources.files("fixfirst").joinpath("knowledge")
+    model = default_model()
+    assert hashlib.sha256(directory.joinpath("diagnosis_tree.json").read_bytes()).hexdigest() == (
+        "189f712ea75bcb117f96aae879fd0c9bdab9ee6531475d1a95faf01ec2738d30"
+    )
+    assert hashlib.sha256(directory.joinpath("diagnosis_tree.txt").read_bytes()).hexdigest() == (
+        "feb6ef7f082a0a88205c2624898427d53f10aa6d0c0709998d57ee01886d4706"
+    )
+    assert model["schema_version"] == 8
+    assert model["feature_names"] == FEATURE_NAMES
+    assert len(model["feature_names"]) == 81
+    assert model["training_examples"] == 215
+    assert model["hyperparameters"] == {"max_depth": 6, "min_samples_leaf": 2}
+    with pytest.raises(ValueError, match="wrong length"):
+        predict_tree([0.0] * len(LEGACY_FEATURE_NAMES), model)
+
+
+def test_frozen_legacy44_artifact_is_still_loadable():
+    assert hashlib.sha256(LEGACY_MODEL.read_bytes()).hexdigest() == (
+        "4479864358595024a121b57fdb49f66f6d184c096c5a243a11fb5f1efdfb41e3"
+    )
+    model = load_model(LEGACY_MODEL)
+    assert model["schema_version"] == 3
+    assert model["feature_names"] == LEGACY_FEATURE_NAMES
+    assert len(model["feature_names"]) == 44
 
 
 @pytest.mark.parametrize("source,configuration,data", [
@@ -33,8 +69,11 @@ def test_contexts_preserve_the_difference_between_configuration_and_data(
     assert len(vector) == len(FEATURE_NAMES)
     assert vector[FEATURE_NAMES.index("context_configuration")] == configuration
     assert vector[FEATURE_NAMES.index("context_data_operation")] == data
+    assert predict_tree(vector, default_model())[0] == (
+        "config_missing" if configuration else "code_defect"
+    )
     # Old exports consume the same stable observation prefix.
-    model = default_model()
+    model = load_model(LEGACY_MODEL)
     assert predict_tree(vector, model) == predict_tree(vector[:len(LEGACY_FEATURE_NAMES)], model)
 
 
@@ -61,7 +100,7 @@ def test_old_export_roundtrip_accepts_only_the_known_extension(tmp_path):
 
 
 def test_legacy_node_cannot_read_a_new_context_column():
-    model = deepcopy(default_model())
+    model = deepcopy(load_model(LEGACY_MODEL))
     model["nodes"][0]["feature"] = len(LEGACY_FEATURE_NAMES)
     with pytest.raises(ValueError, match="invalid feature index"):
         predict_tree([0.0] * len(FEATURE_NAMES), model)
