@@ -16,6 +16,7 @@ from .evidence import issue_evidence
 from .models import Session, GOAL_CHECKS, check_scope
 from .processes import ManagedProcess
 from .report import GOALS, TOOL_NAMES, shell
+from .test_results import pytest_options_limited, pytest_options_note
 
 GOAL_DONE = {
     "collect_tests": "All tests load",
@@ -145,6 +146,10 @@ def build_view(session: Session) -> dict:
     ]
     must = [i for i in open_issues if i.issue_id not in optional_ids]
     optional_issues = [i for i in open_issues if i.issue_id in optional_ids]
+    status = _status(session, steps, must, optional_issues)
+    goal_run = next((r for r in reversed(session.runs) if r.tool == GOAL_CHECKS[session.goal]), None)
+    if goal_run and status["kind"] != "scope_limited" and (note := pytest_options_note(goal_run)):
+        status["detail"] += " " + note
     return {
         "project": session.name or Path(session.project_root).name,
         "project_root": session.project_root,
@@ -153,7 +158,7 @@ def build_view(session: Session) -> dict:
         "execution": session.execution.model_dump() if session.execution else None,
         "goal_name": GOALS[session.goal],
         "goal_note": next(note for key, _, note in GOAL_CHOICES if key == session.goal),
-        "status": _status(session, steps, must, optional_issues),
+        "status": status,
         "steps": steps,
         "optional": optional,
         "other": other,
@@ -284,6 +289,15 @@ def _status(session: Session, steps, open_issues, optional_issues=()) -> dict:
             "detail": f"{result}, but {what} changed since the baseline ({integrity.describe(check['changed'])}). "
             "A pass now does not show that the original problem is fixed. Restore them, or accept the changes "
             "as the new baseline if they are intended.",
+        }
+    goal_run = next((r for r in reversed(session.runs) if r.tool == GOAL_CHECKS[session.goal]), None)
+    if goal_run and goal_run.verified_pass and pytest_options_limited(goal_run):
+        count = goal_run.test_summary.get("passed")
+        return {
+            "kind": "scope_limited",
+            "headline": "The checked tests passed" if goal_run.tool == "pytest_run" else "The checked tests load",
+            "detail": (f"{count} test{'s' if count != 1 else ''} passed. " if count else "")
+            + pytest_options_note(goal_run),
         }
     if session.goal_status == "achieved":
         target = GOAL_CHECKS[session.goal]

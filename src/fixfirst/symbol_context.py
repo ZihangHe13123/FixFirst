@@ -4,6 +4,8 @@ Names are retained for explanations, never encoded as case/package identifiers.
 The separate history bit reads existing sourced metadata; it is not a diagnosis.
 """
 
+import json
+
 from packaging.utils import canonicalize_name
 from packaging.version import InvalidVersion, Version
 
@@ -29,7 +31,7 @@ def valid_record(value):
     if not all(type(value.get(key)) is bool for key in ("requested_member_present", "dynamic", "unique")):
         return {}
     kind = value.get("kind")
-    operations = {"module": ("LOAD_ATTR", "LOAD_METHOD", "IMPORT_FROM"),
+    operations = {"module": ("LOAD_ATTR", "LOAD_METHOD", "IMPORT_FROM", "IMPORT_NAME"),
                   "instance": ("LOAD_ATTR", "LOAD_METHOD"), "class": ("LOAD_ATTR", "LOAD_METHOD"),
                   "builtin_call": ("CALL", "CALL_FUNCTION", "CALL_METHOD"),
                   "python_binding": ("CALL", "CALL_FUNCTION", "CALL_METHOD", "CALL_KW"),
@@ -44,6 +46,36 @@ def valid_record(value):
     if any(s and not all(part.isidentifier() for part in s.split(".")) for s in (module, owner)):
         return {}
     if kind == "module" and not module:
+        return {}
+    hook = value.get("import_getattr")
+    if value.get("operation") == "IMPORT_NAME":
+        if (kind != "module" or owner or value["dynamic"] is not True
+                or value["requested_member_present"] is not False
+                or not isinstance(hook, dict)
+                or set(hook) != {"module_file", "getter_file", "getter_line", "argument", "fromlist"}
+                or any(not isinstance(hook.get(k), str) or not hook[k] or len(hook[k]) > 4000
+                       for k in ("module_file", "getter_file"))
+                or hook["module_file"] != hook["getter_file"]
+                or type(hook["getter_line"]) is not int or hook["getter_line"] <= 0
+                or hook["argument"] != name or not isinstance(hook["fromlist"], list)
+                or len(hook["fromlist"]) != 1
+                or any(type(n) is not str or not n.isidentifier() or len(n) > 80 for n in hook["fromlist"])
+                or hook["fromlist"].count(name) != 1):
+            return {}
+    elif hook is not None:
+        return {}
+    owners = value.get("receiver_owners", [])
+    if not isinstance(owners, list) or len(owners) > 128:
+        return {}
+    for row in owners:
+        if (not isinstance(row, dict) or set(row) != {"module", "owner", "file", "direct"}
+                or any(not isinstance(row.get(key), str) or not row[key] or len(row[key]) > 200
+                       or not all(part.isidentifier() for part in row[key].split("."))
+                       for key in ("module", "owner"))
+                or not isinstance(row.get("file"), str) or len(row["file"]) > 4000
+                or type(row.get("direct")) is not bool):
+            return {}
+    if len(json.dumps(owners, ensure_ascii=True, separators=(",", ":"))) > 32768:
         return {}
     candidates = value.get("candidates")
     if not isinstance(candidates, list) or len(candidates) > 5:

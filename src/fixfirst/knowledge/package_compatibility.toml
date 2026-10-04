@@ -1,0 +1,23 @@
+# A mechanism-specific candidate range, not a claim that every release works
+# on every Python. Runtime verification is currently bounded to CPython 3.12.
+[sources.setuptools-pkgutil-fix]
+title = "Setuptools 66.1.0: fix removed pkgutil APIs on Python 3.12"
+url = "https://setuptools.pypa.io/en/stable/history.html#v66-1-0"
+
+[sources.setuptools-pkg-resources-removal]
+title = "Setuptools 82.0.0: removal of pkg_resources"
+url = "https://setuptools.pypa.io/en/stable/history.html#v82-0-0"
+
+[sources.python-312-setuptools]
+title = "Python 3.12: pkgutil removal and setuptools no longer bundled in venv"
+url = "https://docs.python.org/3.12/whatsnew/3.12.html#removed"
+
+[pkg_resources]
+distribution = "setuptools"
+fixed_version = "66.1"
+provider_removed = "82"
+python_specifier = ">=3.12,<3.13"
+implementation = "cpython"
+fix_source = "setuptools-pkgutil-fix"
+removal_source = "setuptools-pkg-resources-removal"
+provider_source = "python-312-setuptools"

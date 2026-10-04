@@ -203,6 +203,10 @@ def snapshot(session, scope: str) -> dict:
         return {"files": {}, "settings": ruff_settings(root), "problems": problems}
     files = _python_files(root, problems)
     settings = pytest_settings(root) if scope == "pytest" else {}
+    if scope == "pytest" and (addopts := os.environ.get("PYTEST_ADDOPTS", "")):
+        # Keep external option changes in the same baseline boundary as file options,
+        # without putting another raw copy of potential option secrets in the baseline.
+        settings["pytest:PYTEST_ADDOPTS"] = hashlib.sha256(addopts.encode("utf-8", "surrogatepass")).hexdigest()
     return {"files": files, "settings": settings, "problems": problems}
 
 

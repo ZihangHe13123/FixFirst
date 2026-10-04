@@ -1,18 +1,20 @@
 """Constrain installation advice using recorded project and environment facts."""
 
+import json
 from packaging.requirements import InvalidRequirement, Requirement
 from packaging.utils import canonicalize_name
 from packaging.specifiers import SpecifierSet
 from packaging.version import InvalidVersion
 import re
 
-from .dependency_context import bounded_adjustment, combined_specifier, context, contradicts, requirements_for
+from .dependency_context import bounded_adjustment, combined_specifier, context, contradicts, range_side, requirements_for
 from .models import Action
 from .install_feedback import declarations_key, has_prepared_wheel, offer_build
 
 
 def refine(session, actions, by_id, facts):
     from .evidence import current_environment, observed, project_index
+    from .package_compatibility import POLICY_ID, load as package_policy
 
     environment = current_environment(session)
     project_run, project = project_index(session)
@@ -102,7 +104,43 @@ def refine(session, actions, by_id, facts):
                 "a separate Python environment compatible with their documented requirements. "
                 f"Keeping this fixed requirement while changing only {name} cannot satisfy both requirements; "
                 "a coordinated declaration and dependency update may work.")
-            trials[action.action_id] = (name, str(Requirement(requested).specifier))
+            if POLICY_ID in action.rule_ids and name == "setuptools":
+                entry = package_policy()["pkg_resources"]
+                side = range_side(combined_specifier(data, name), entry["fixed_version"], entry["provider_removed"])
+                action.explanation = f"The proposed {requested} conflicts with the recorded requirements: {constraints}. "
+                if side == "below":
+                    candidate = f"setuptools>={entry['fixed_version']},<{entry['provider_removed']}"
+                    action.title = "Review the old setuptools requirement for Python 3.12"
+                    action.explanation += (
+                        "The recorded requirements only allow releases below the bounded provider range "
+                        f"for the selected Python {environment.get('python_version', 'unknown')}. Older "
+                        "pkg_resources providers can use pkgutil.ImpImporter, which is absent in Python 3.12. "
+                        f"Review raising the named project declaration into {candidate}, preserving its "
+                        "extras and environment markers. If a dependency supplies the constraint, review "
+                        "a compatible release or patch of that dependency. Coordinate all recorded "
+                        "requirements before installation. If the old dependency stack must remain, "
+                        "review a separate environment using the Python version documented for that stack. "
+                        "This is a proposed declaration change; no compatible dependency set has been "
+                        "verified. Check the complete dependency set and rerun the original failing check.")
+                elif side == "above":
+                    action.explanation += (
+                        "Keep the recorded requirements while identifying the code or dependency that imports "
+                        "pkg_resources. For project code, migrate distribution metadata queries to "
+                        "importlib.metadata and package resource access to importlib.resources; choose the "
+                        "replacement appropriate for each API. For a dependency, review a compatible release "
+                        "or patch that no longer imports pkg_resources. Do not relax the setuptools requirement "
+                        "just to reinstall the legacy provider. Verify the migration with the original failing "
+                        "check and check the complete dependency set.")
+                else:
+                    action.title = "Review the setuptools requirements together before choosing a repair"
+                    action.explanation += (
+                        "The recorded requirements are mutually inconsistent or do not establish a single "
+                        "direction relative to the bounded provider range. Review the named declarations and "
+                        "dependent packages together before choosing a provider update or consumer migration. "
+                        "An upgrade or downgrade alone has not been established as a repair. Coordinate a "
+                        "consistent dependency set, then rerun the original failing check.")
+            elif POLICY_ID not in action.rule_ids:
+                trials[action.action_id] = (name, str(Requirement(requested).specifier))
         elif changed:
             action.command = [session.target_python, "-m", "pip", "install", "--only-binary=:all:", *changed]
             if sources:
@@ -149,7 +187,7 @@ def refine(session, actions, by_id, facts):
                 pass
         if names & missing:
             hosts.append(action)
-    if len(missing) > 1 and hosts:
+    if len(missing) > 1 and hosts and not any(POLICY_ID in a.rule_ids for a in actions):
         host = hosts[0]
         rows = [r for r in data["requirements"] if r["owner"] == "project"]
         requested, extras_by_name = {}, {}
@@ -218,7 +256,7 @@ def refine(session, actions, by_id, facts):
             conflict_ids.add(issue.issue_id)
             historical.add(issue.issue_id)
             continue
-        failed = next((e for e in members if e.code in ("build_failure", "no_distribution", "no_wheel", "python_requires",
+        failed = next((e for e in members if e.code in ("build_failure", "no_distribution", "no_wheel", "python_requires", "index_access", "index_project_missing",
                                                        "missing_build_tool", "legacy_build_config")
                        and e.component), None)
         if not failed:
@@ -310,6 +348,32 @@ def refine(session, actions, by_id, facts):
                     "route, change the psycopg2 declaration to psycopg2-binary, retaining any version range, "
                     "before installing; do not install both distributions. The binary route still needs "
                     "a wheel compatible with this interpreter. Source: https://www.psycopg.org/docs/install/")
+        elif failed.code == "index_access":
+            trial = False
+            blocker.title = f"Restore package index access before retrying {name}"
+            blocker.explanation = (
+                f"The recorded request could not reliably access its package index: {failed.message.strip()}. "
+                "Check the configured index, connectivity, authentication and certificate settings. "
+                "This does not establish that the requested release or a usable wheel is absent. "
+                "Do not replace the pin or start a source build to work around an unverified index result.")
+        elif failed.code == "index_project_missing":
+            trial = False
+            blocker.title = f"Check the {name} package name and expected index"
+            blocker.explanation = (
+                f"The recorded index project endpoint returned HTTP 404: {failed.message.strip()}. "
+                f"Current declaration: {requirements}. Check the package name spelling and whether this "
+                "is the intended public or private index. This records a not-found response from that "
+                "endpoint only; availability on other indexes and private-index permissions remain unknown. "
+                "No source build or version change is justified by this response. Correct the name or "
+                "index configuration as appropriate before retrying the declared requirement.")
+        elif failed.code == "python_requires":
+            trial = False
+            blocker.title = f"Review the Python requirement for {name}"
+            blocker.explanation = (
+                f"The installation reports a Requires-Python rejection: {failed.message.strip()}. "
+                f"Current declaration: {requirements}. A source build does not remove this metadata requirement. "
+                "Review a supported interpreter or a compatible release with the project's other constraints; "
+                "neither alternative has been verified by this failed request.")
         elif failed.code == "no_distribution":
             trial = False
             blocker.title = f"Check the requested {name} release and package index"
@@ -320,8 +384,9 @@ def refine(session, actions, by_id, facts):
                 "No source-build command or replacement version is justified yet; do not repeat the same request.")
         elif failed.code == "no_wheel":
             offered = offer_build(session, blocker, requirement,
-                "The wheel-only installation request found no matching distribution. This may be a "
-                "missing wheel or an unavailable version; it does not establish a Python incompatibility.")
+                "The recorded wheel-only request excluded a matching source archive. A source build is "
+                "needed to prepare a wheel from that archive; this does not establish a Python incompatibility "
+                "or prove that the build and its system prerequisites are available.")
             trial = bool(rows) and not offered
         if not rows:
             blocker.explanation += (
@@ -380,6 +445,10 @@ def refine(session, actions, by_id, facts):
         trials = {}
     from .dependency_resolution import advise
 
+    if any(POLICY_ID in action.rule_ids for action in actions):
+        # Installation feedback must not turn this bounded provider request
+        # into a new unconstrained trial that can remove pkg_resources again.
+        trials = {key: value for key, value in trials.items() if value[0] != "setuptools"}
     for action in result:
         if action.action_id in trials:
             name, direction = trials[action.action_id]
@@ -410,4 +479,34 @@ def refine(session, actions, by_id, facts):
                     "file and documented installer; rebuilding a wheel changes the archive hash. "
                     "FixFirst cannot generate a replacement installation/build command that preserves those "
                     "checks. Review the failed artifact and update the lock through the project's workflow.")
+    # P66 already prevents repeating an inconclusive search. Keep the concrete
+    # source/metadata reason visible on that existing action, without inventing
+    # a compatible release or adding another probe/build action.
+    facts_by_id = {fact.fact_id: fact for fact in facts}
+    for action in result:
+        if "P66" not in action.rule_ids:
+            continue
+        run_ids = {ref.split(":", 1)[0] for key in action.reason_refs
+                   for ref in getattr(facts_by_id.get(key), "evidence_refs", [])}
+        search = next((run for run in reversed(session.runs)
+                       if run.run_id in run_ids and run.tool == "version_search"), None)
+        if not search:
+            continue
+        try:
+            outcome = json.loads(search.stdout)
+        except ValueError:
+            continue
+        if outcome.get("status") == "source_build_required":
+            source_versions = ", ".join(outcome.get("availability", {}).get("source_only", [])[:5])
+            action.explanation += (
+                f" The queried release metadata lists source archives for {outcome.get('dist', 'the package')} "
+                f"({source_versions}), but no eligible wheel was available to this wheel-only search. "
+                "Those archives were not built or checked for the missing API. A reviewed source build in "
+                "a separate environment is a manual option; its build backend, native tools and headers "
+                "remain unverified. No version is recommended until its API and dependency checks pass.")
+        elif outcome.get("status") == "python_requires":
+            action.explanation += (
+                " The recorded release metadata excluded the older artifacts by Requires-Python. "
+                "Building from source does not bypass that requirement; review a supported interpreter "
+                "or another release together with the project constraints.")
     return result

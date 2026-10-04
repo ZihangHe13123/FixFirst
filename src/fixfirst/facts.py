@@ -121,6 +121,9 @@ def facts_view(session: Session) -> dict:
         "goal": session.goal,
         "checks": [
             {"check": run.tool, "status": run.status, "exit_code": run.exit_code,
+             **({"pytest_options": {key: run.pytest_options.get(key) for key in (
+                 "config_complete", "config_file", "config_addopts", "environment_addopts")}}
+                if run.pytest_options else {}),
              **({"counts": counts} if (counts := {k: v for k, v in run.test_summary.items() if isinstance(v, int)})
                 else {})}
             for run in latest.values()

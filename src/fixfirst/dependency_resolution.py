@@ -156,8 +156,17 @@ def collect(session, targets, timeout):
                     raise ValueError("The dependency trial reached its total time limit")
                 part = execute(argv, folder, "dependency_resolve", run.scope, interpreter,
                                remaining, extra_env={"PYTHONPATH": "", "PIP_CONFIG_FILE": os.devnull})
-                result["checks"].append({"step": label, "status": part.status, "exit_code": part.exit_code,
-                                         "output": (part.stdout + part.stderr)[-12000:]})
+                check = {"step": label, "status": part.status, "exit_code": part.exit_code,
+                         "output": (part.stdout + part.stderr)[-12000:]}
+                if label == "install declared set" and part.exit_code not in (None, 0):
+                    from .install_errors import parse_install
+                    from .parsers import event
+
+                    part.records.append({"type": "installation_context", "python_version": result["python"]})
+                    check["blockers"] = [{"code": e.code, "kind": e.kind, "component": e.component,
+                                          "message": e.message[:2000]} for e in parse_install(part, event)
+                                         if e.code or e.kind == "dependency_conflict"][:20]
+                result["checks"].append(check)
                 if part.status != "completed" or part.exit_code != 0:
                     run.status = part.status
                     raise ValueError(f"{label} did not complete successfully; see the recorded output")
@@ -170,7 +179,7 @@ def collect(session, targets, timeout):
             req_file.write_text("\n".join(plan["requests"]) + "\n", encoding="utf-8")
             constraint_file.write_text("\n".join(plan["constraints"]) + "\n", encoding="utf-8")
             install = ([uv, "pip", "install", "--no-config", "--python", python] if uv else
-                       [python, "-I", "-m", "pip", "install", "--disable-pip-version-check"])
+                       [python, "-I", "-m", "pip", "install", "--disable-pip-version-check", "-vv"])
             links = []
             if wheel_files:
                 wheel_dir = Path(folder) / "prepared-wheels"
@@ -224,6 +233,23 @@ def collect(session, targets, timeout):
                 result["trial_restriction"] = "wheels_only"
                 result["blocked_requirement"] = blocked
                 result["error"] = f"The wheel-only trial cannot install {blocked}"
+                result["source_archive_observed"] = False
+            for item in failure.get("blockers", []):
+                if item["code"] in ("index_access", "index_project_missing", "python_requires") or item["kind"] == "dependency_conflict":
+                    result["failure_kind"] = item["code"] or "dependency_conflict"
+                    result["error"] = item["message"]
+                    result.pop("trial_restriction", None)
+                    result.pop("blocked_requirement", None)
+                    break
+                if item["code"] == "no_wheel":
+                    request = re.search(r"No matching distribution found for (\S+)", item["message"], re.I)
+                    if request:
+                        try:
+                            blocked = str(Requirement(request[1].rstrip(".")))
+                        except ValueError:
+                            continue
+                        result.update(trial_restriction="wheels_only", blocked_requirement=blocked,
+                                      source_archive_observed=True, error=item["message"])
     # Listing availability uses uv's local catalog, not an interpreter download.
     if result["status"] != "resolved" and run.status == "completed" and uv and deadline - time.monotonic() > 1:
         for hint in result["python_hints"][:3]:
@@ -288,6 +314,21 @@ def advise(session, action, environment, project, name, direction=""):
         else:
             action.title = f"Review why the {name} dependency trial did not complete"
             action.explanation = "The temporary trial did not produce an installation candidate: " + result.get("error", result["status"]) + "."
+            if result.get("failure_kind") == "index_access":
+                action.explanation += (
+                    " Package index access failed. Check connectivity, index configuration, authentication "
+                    "and certificates; this is not evidence that a release is absent or needs a source build.")
+            elif result.get("failure_kind") == "index_project_missing":
+                action.title = "Check the package name and index reported by the dependency trial"
+                action.explanation += (
+                    " The recorded Simple API project endpoint returned HTTP 404. Check the package "
+                    "name spelling and the intended public or private index. This does not establish "
+                    "absence on other indexes; private-index permissions remain unknown. A source "
+                    "build or arbitrary version change is not justified by this response.")
+            elif result.get("failure_kind") == "python_requires":
+                action.explanation += (
+                    " The recorded Requires-Python metadata rejects the interpreter. Building a source "
+                    "archive cannot bypass that requirement; review the interpreter and declared versions together.")
             if result.get("trial_restriction") == "wheels_only":
                 blocked = result["blocked_requirement"]
                 action.title = f"The wheel-only trial stopped at {blocked}"
@@ -297,6 +338,10 @@ def advise(session, action, environment, project, name, direction=""):
                     "or an unsupported Python, and does not justify changing another package's pin. "
                     "Review that dependency's documented source-build or Conda installation route in a separate "
                     "environment, or obtain a supported wheel, before retrying the complete project setup.")
+                action.explanation += (
+                    " A matching source archive was explicitly observed and excluded by the wheel-only request."
+                    if result.get("source_archive_observed") else
+                    " The resolver's wheel restriction alone does not confirm that a compatible source archive exists.")
                 blocked_name = canonicalize_name(Requirement(blocked).name)
                 # Keep the blocked package's own declared requirement. A wheel
                 # restriction does not authorize dropping its pin to get past it.

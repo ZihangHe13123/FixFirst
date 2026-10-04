@@ -80,6 +80,9 @@ class Run(Record):
     passed_nodes: list[str] = Field(default_factory=list)
     test_summary: dict[str, int] = Field(default_factory=dict)
     execution_kind: str = ""
+    # Original pytest options observed while the bounded check clears addopts.
+    # Empty keeps old saved runs loadable without inventing configuration evidence.
+    pytest_options: dict = Field(default_factory=dict)
 
 
 class Event(Record):

@@ -8,6 +8,7 @@ from .models import Run, Session, now, GOAL_CHECKS
 from .parsers import parse
 from . import integrity
 from .reasoning import infer_and_plan
+from .test_results import pytest_options_limited, pytest_options_note
 from .runner import (
     DEFAULT_CHECKS,
     DEFAULT_TIMEOUT,
@@ -182,7 +183,12 @@ def ingest(session: Session, runs: list[Run]):
                 and set(old.targets).issubset(r.passed_nodes)
                 for r in runs
             )
-        if passed and integrity.affects(session, old.tool):
+        limited = next((r for r in runs if r.tool == old.tool and r.environment_id == old.environment_id
+                        and r.source == "executed" and pytest_options_limited(r)), None)
+        if passed and limited:
+            copy.status, copy.verification = "awaiting_verification", "unverifiable"
+            copy.note = "The recorded check passed. " + pytest_options_note(limited)
+        elif passed and integrity.affects(session, old.tool):
             # The run passed, but not against the tests the problem was found with, or FixFirst
             # cannot tell whether they are the same.
             check = session.baseline_check

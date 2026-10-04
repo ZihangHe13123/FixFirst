@@ -1,0 +1,1072 @@
+# FixFirst domain knowledge base.
+#
+# Curated, source-attributed facts that the rule base queries. Each entry cites the
+# upstream release notes or source it comes from. Removal entries name the release in
+# which a name is gone; tool failures carry bounded ranges for a specific failure.
+# Coverage is intentionally partial: anything missing here falls back to evidence-only
+# rules and the learned classifier.
+
+[meta]
+title = "FixFirst Python troubleshooting knowledge"
+updated = "2026-10-02"
+
+# Tool failures are matched to raw failure mechanisms before their version bounds
+# are applied. They are not classifier features or universal Python support claims.
+# Lower bounds are inclusive; fixed_version/python_before are exclusive. The lower
+# tool bounds limit this knowledge to the registered development range, not the
+# first release that introduced the defect. Python coverage is deliberately 3.12
+# only; it does not assert compatibility or incompatibility outside that interval.
+#
+# py 1.11.0's tagged source preserves __spec__ when replacing a lazy module.
+# Its changelog records the vendored apipkg update from 1.5 to 2.0:
+# https://github.com/pytest-dev/py/blob/1.11.0/CHANGELOG.rst
+# Compare the same source in tag 1.10.0, which does not preserve __spec__.
+[[tool_failure]]
+id = "py-apipkg-spec"
+distribution = "py"
+affected_from = "1.10.0"
+fixed_version = "1.11.0"
+python_from = "3.12"
+python_before = "3.13"
+summary = "py's vendored apipkg can fail with AttributeError: __spec__ while importing the pytest stack; py 1.11.0 preserves this module metadata."
+source = "py-1.11-apipkg-spec"
+
+# Upstream #10977 identifies the ast.Str/ast.NameConstant warning in 7.3.1.
+# PR #10894 uses ast.Constant on Python >=3.8; the 7.3.2 changelog includes it:
+# https://docs.pytest.org/en/7.3.x/changelog.html#pytest-7-3-2-2023-06-10
+# Registered probes cover 6.2.5 and the 7.0--7.3 line, including the failing
+# 7.3.1 / passing 7.3.2 boundary. The diagnosis additionally requires an actual
+# ast.Str DeprecationWarning failure from assertion rewriting, not a warning
+# summary or proof of where the warning filter was configured.
+[[tool_failure]]
+id = "pytest-ast-str"
+distribution = "pytest"
+affected_from = "6.2.5"
+fixed_version = "7.3.2"
+python_from = "3.12"
+python_before = "3.13"
+summary = "pytest assertion rewriting uses deprecated ast.Str on Python 3.12; when that warning terminates the run, pytest 7.3.2's ast.Constant change addresses this specific failure."
+source = "pytest-ast-str-fix"
+
+[[input_error]]
+id = "numpy-shape"
+distribution = "numpy"
+action_title = "Correct the reshape dimensions for the actual array size"
+guidance = "The requested shape must contain the same number of elements as the input array. Compare the size and shape in the error; adjust the requested dimensions to the required result, using one -1 dimension only when the remaining dimensions divide the size. Preserve the input values and the test's intended result."
+source = "numpy-reshape"
+
+[[input_error]]
+id = "numpy-axis"
+distribution = "numpy"
+action_title = "Choose an axis that exists in the input array"
+guidance = "Compare the requested axis with the number of dimensions shown in the error. For ndim dimensions valid axes range from -ndim to ndim-1. Choose the axis matching the intended operation; changing the library version does not add a missing dimension."
+source = "numpy-axis"
+
+[[input_error]]
+id = "yaml-syntax"
+distribution = "pyyaml"
+action_title = "Correct the YAML syntax at the reported line and column"
+guidance = "Inspect the YAML text or file at the parser's marked line and column. Correct the reported brackets, separators or indentation while preserving the required data. Keep safe_load or the selected safe loader; a parser syntax error is not evidence that an older PyYAML is needed."
+source = "pyyaml-input"
+
+[[input_error]]
+id = "click-value"
+distribution = "click"
+action_title = "Correct the value rejected by the Click parameter"
+guidance = "Compare the supplied value with the parameter's required type, choices or bounds reported in the error. Supply a valid value, or correct an incorrectly specified parameter constraint according to the program's requirements. Preserve validation and the tests; do not bypass validation just to make the check pass."
+source = "click-input"
+
+[[input_error]]
+id = "version-string"
+distribution = "packaging"
+action_title = "Handle the non-standard version label before comparing versions"
+guidance = "Version accepts PEP 440 version strings. Validate values before comparing them, handle InvalidVersion explicitly, and separate non-standard labels from release versions according to the intended ordering. Preserve the tests and input meaning."
+source = "packaging-version"
+
+[[input_error]]
+id = "pydantic-missing"
+distribution = "pydantic"
+action_title = "Check the missing model field against the keys actually supplied"
+guidance = "Compare each missing field named in the validation error with the arguments or mapping passed at the reported call. Check whether its value was sent to a different field or a misspelt key. Keep required-field validation. Only if omission is intended and the field permits None should an explicit None default be considered; adding that default does not repair a value sent to the wrong field."
+source = "pydantic-optional-2.0"
+
+[[input_error]]
+id = "sqlalchemy-no-rows"
+distribution = "sqlalchemy"
+action_title = "Check whether the SQL result returns rows before reading it"
+guidance = "Check result.returns_rows before constructing an iterator or fetching rows. DDL and statements without returning rows need an empty result or another return value appropriate to the caller; preserve their SQL effects. A no-row result cannot supply rows on an older release either. The error alone does not establish an upgrade cause."
+source = "sqlalchemy-result-1.4-source"
+
+[[behavior]]
+id = "packaging-legacy-parse"
+distribution = "packaging"
+version = "22.0"
+summary = "packaging 22 removed LegacyVersion: the observed packaging.version.parse call now raises InvalidVersion for a non-standard label instead of returning a legacy comparison object."
+action_title = "Handle legacy version labels before using packaging.version.parse"
+replacement = "Handle InvalidVersion explicitly. If only release versions should participate in comparison, validate with Version and filter non-standard labels before applying max or sorting; if those labels have meaning, give them an explicit ordering separately. Keep the original tests and input values. Version itself was already strict before this change."
+source = "packaging-22.0"
+
+[[behavior]]
+id = "sqlalchemy-eager-result-iterator"
+distribution = "sqlalchemy"
+version = "1.4"
+summary = "SQLAlchemy 1.4 changed result iterator creation from the lazy 1.3 implementation to eager metadata access. The observed generator is being constructed over a result with no rows; iteration now fails immediately. Consuming such a result already failed on older releases."
+action_title = "Check returns_rows before constructing the result iterator"
+replacement = "Check cursor.returns_rows before building the generator. For a statement that produces no rows, return an empty iterator or collection according to the caller's contract; otherwise keep the original row mapping. For example, use (convert(row) for row in cursor) if cursor.returns_rows else iter(()). Keep SQL effects and row values unchanged."
+source = "sqlalchemy-result-1.4-source"
+
+# Behavior changes are matched using observed values/calls and version context.
+# They are compatibility hypotheses, not proof that every failure inside a library
+# was caused by an upgrade.
+[[behavior]]
+id = "numpy-copy-false"
+distribution = "numpy"
+version = "2.0"
+without_version_record = true
+summary = "NumPy 2 makes array(..., copy=False) reject inputs that require a copy; the observed numpy.array call raises that specific error."
+action_title = "Use numpy.asarray when copying the input is allowed"
+replacement = "Replace numpy.array(values, copy=False, ...) with numpy.asarray(values, ...), keeping the dtype and other needed options. If the program truly requires zero copying, keep that requirement and provide a compatible array buffer instead. Do not change the expected values."
+source = "numpy-2.0"
+
+[[behavior]]
+id = "numpy-solve-vector"
+distribution = "numpy"
+version = "2.0"
+without_version_record = true
+summary = "NumPy 2 treats a non-1D b as matrices in linalg.solve. The captured a and b shapes fit the previous batched-vector contract but the call now reports a core-dimension mismatch."
+action_title = "Pass the batch of right-hand vectors as explicit column vectors"
+replacement = "For the observed batched-vector call, replace numpy.linalg.solve(a, b) with numpy.linalg.solve(a, b[..., None])[..., 0]. Preserve a, b and the expected numeric result; the extra dimension makes the vector interpretation explicit."
+source = "numpy-solve-2.0"
+
+[[behavior]]
+id = "pydantic-optional-required"
+distribution = "pydantic"
+version = "2.0"
+without_version_record = true
+summary = "Pydantic V2 requires an Optional field when its declaration has no default. The actual missing field is nullable without a default and the supplied input has no unknown field names."
+action_title = "Give the optional model field an explicit None default"
+replacement = "Locate the missing Optional field in the model declaration, and add = None if omitting that field is intended (for example email: Optional[str] = None). Keep other required fields and validation intact. Optional controls whether None is allowed; the explicit default controls omission."
+source = "pydantic-optional-2.0"
+
+[[behavior]]
+id = "numpy-scalar-repr"
+distribution = "numpy"
+version = "2.0"
+summary = "NumPy 2 includes the scalar type in repr output; the compared strings differ only by that wrapper."
+action_title = "Format the NumPy scalar explicitly when building the output"
+replacement = 'Use str(value), or !s instead of !r in the scalar format, when the required output is the plain numeric text. Keep the expected numeric value and the tests unchanged; avoid replacing all numeric values with strings.'
+source = "numpy-scalar-representation"
+
+[[behavior]]
+id = "numpy-scalar-promotion"
+distribution = "numpy"
+version = "2.0"
+summary = "NumPy 2 preserves a NumPy float scalar when it is combined with a Python float; the observed JSON call rejects the resulting scalar."
+action_title = "Convert the computed NumPy scalar to a Python float before JSON encoding"
+replacement = "Convert the computed numeric result with float(result) at the JSON boundary, preserving the numeric JSON value. Do not stringify it or use default=str; check the required precision and run the unchanged tests."
+source = "numpy-scalar-promotion"
+
+[[behavior]]
+id = "pydantic-number-to-string"
+distribution = "pydantic"
+version = "2.0"
+summary = "Pydantic 2 no longer coerces numeric input into a str field by default; this field rejects a numeric value."
+action_title = "Convert the numeric input to text before validating the string field"
+replacement = "If the field is intended to accept that number as text, pass str(value) for the affected field before validation. Otherwise correct the input to a string. Preserve other field validation and run the unchanged tests; do not downgrade the whole environment just to suppress validation."
+source = "pydantic-number-coercion"
+
+[[behavior]]
+id = "yaml-required-loader"
+distribution = "pyyaml"
+version = "6.0"
+summary = "PyYAML 6 requires a Loader argument for yaml.load; this call omits it."
+action_title = "Choose an explicit safe YAML loader"
+replacement = "For standard YAML data, replace yaml.load(text) with yaml.safe_load(text), or pass Loader=yaml.SafeLoader explicitly. If the application needs custom tags, review the required constructors separately. Keep the tests unchanged and rerun them."
+source = "pyyaml-6-loader"
+
+[[behavior]]
+id = "click-runner-streams"
+distribution = "click"
+version = "8.2"
+summary = "Click 8.2 removed CliRunner's mix_stderr constructor option and exposes captured stdout and stderr separately."
+action_title = "Update CliRunner's stream capture arguments"
+replacement = "Remove mix_stderr from the CliRunner constructor. Use result.stdout and result.stderr when the test needs the separate streams; result.output represents their combined terminal output. Preserve the expected behavior and rerun the unchanged tests."
+source = "click-8.2-streams"
+
+# --------------------------------------------------------------------------------------
+# Root causes (diagnosis classes)
+# --------------------------------------------------------------------------------------
+
+[causes.missing_dependency]
+label = "Missing third-party dependency"
+description = "The code imports a third-party distribution that is not installed in the selected interpreter."
+remedy = "Install the distribution that provides the import name into the target interpreter, and declare it in the project."
+
+[causes.local_module]
+label = "Local module or path problem"
+description = "A project module cannot be resolved: it was renamed or moved, the src layout is not on the path, a circular import, or a project file shadows a library or standard-library module."
+remedy = "Fix the project's module layout or import path; rename files that shadow other modules."
+
+[causes.version_incompatibility]
+label = "Version incompatibility"
+description = "The installed library or Python version no longer provides an API the code uses (removed module, attribute, function or keyword argument)."
+remedy = "Either update the code to the replacement API or pin the dependency / Python version the code was written for."
+
+[causes.config_missing]
+label = "Missing configuration"
+description = "A required environment variable, settings key or configuration file is not available at run time."
+remedy = "Provide the configuration value (environment variable or config file) described by the project; never commit secrets."
+
+[causes.code_defect]
+label = "Defect in project code or tests"
+description = "The failure comes from project logic: a wrong assertion, a bug in a function, a typo or a syntax error."
+remedy = "Inspect the failing location and the test expectation, fix the code, then re-run the affected tests."
+
+# --------------------------------------------------------------------------------------
+# Exception types and the causes they are commonly associated with (for explanations)
+# --------------------------------------------------------------------------------------
+
+[[exception]]
+type = "ModuleNotFoundError"
+candidates = ["missing_dependency", "local_module", "version_incompatibility"]
+hint = "The import system could not find the module. It may be uninstalled, a moved project module, or a module removed from the standard library."
+
+[[exception]]
+type = "ImportError"
+candidates = ["version_incompatibility", "local_module", "code_defect"]
+hint = "The module was found but a name could not be imported: removed API, circular import, or a misspelt name."
+
+[[exception]]
+type = "AttributeError"
+candidates = ["version_incompatibility", "local_module", "code_defect", "config_missing"]
+hint = "An attribute is missing. Library API removals, shadowed modules, typos and unexpected None values all look like this."
+
+[[exception]]
+type = "KeyError"
+candidates = ["config_missing", "code_defect"]
+hint = "A lookup failed. When the mapping is os.environ, a configuration value is missing; otherwise it is usually a data or logic error."
+
+[[exception]]
+type = "FileNotFoundError"
+candidates = ["config_missing", "code_defect"]
+hint = "A path does not exist. Missing settings files are configuration problems; other paths often indicate a code or data defect."
+
+[[exception]]
+type = "TypeError"
+candidates = ["code_defect", "version_incompatibility"]
+hint = "A call used the wrong arguments. An unexpected keyword for a library call often means the library API changed."
+
+[[exception]]
+type = "AssertionError"
+candidates = ["code_defect", "version_incompatibility"]
+hint = "A test expectation did not hold. When the test counts recorded warnings, a newer Python or library that adds deprecation warnings also looks like this."
+
+[[exception]]
+type = "FixtureLookupError"
+candidates = ["missing_dependency", "code_defect"]
+hint = "pytest could not find a fixture the test asks for: the pytest plugin that provides it is not installed, or the fixture is defined where this test cannot see it."
+
+# --------------------------------------------------------------------------------------
+# Import names that differ from the distribution (PyPI project) name
+# Source: the linked PyPI project pages; lists the most frequently confused names.
+# --------------------------------------------------------------------------------------
+
+[import_names]
+yaml = "PyYAML"
+cv2 = "opencv-python"
+sklearn = "scikit-learn"
+skimage = "scikit-image"
+PIL = "Pillow"
+bs4 = "beautifulsoup4"
+dateutil = "python-dateutil"
+dotenv = "python-dotenv"
+jwt = "PyJWT"
+attr = "attrs"
+serial = "pyserial"
+usb = "pyusb"
+Crypto = "pycryptodome"
+docx = "python-docx"
+pptx = "python-pptx"
+fitz = "PyMuPDF"
+OpenSSL = "pyOpenSSL"
+git = "GitPython"
+MySQLdb = "mysqlclient"
+magic = "python-magic"
+zmq = "pyzmq"
+jose = "python-jose"
+multipart = "python-multipart"
+slugify = "python-slugify"
+telegram = "python-telegram-bot"
+gi = "PyGObject"
+wx = "wxPython"
+faiss = "faiss-cpu"
+# Same import and distribution name, listed so that rules can recognise them as third-party.
+requests = "requests"
+numpy = "numpy"
+pandas = "pandas"
+scipy = "scipy"
+flask = "Flask"
+werkzeug = "Werkzeug"
+jinja2 = "Jinja2"
+markupsafe = "MarkupSafe"
+click = "click"
+pydantic = "pydantic"
+packaging = "packaging"
+httpx = "httpx"
+matplotlib = "matplotlib"
+torch = "torch"
+
+# --------------------------------------------------------------------------------------
+# Removed modules, APIs and keyword arguments
+# kind = module | api (module.name) | attribute (distinctive attribute name on any object)
+# | kwarg | usage (matched by its error message); "python" is the interpreter itself.
+# --------------------------------------------------------------------------------------
+
+[[removed]]
+kind = "module"
+names = ["imp"]
+distribution = "python"
+version = "3.12"
+replacement = "importlib (for example importlib.util / importlib.reload)"
+source = "python-3.12"
+
+[[removed]]
+kind = "module"
+names = ["distutils"]
+distribution = "python"
+version = "3.12"
+replacement = "setuptools, sysconfig or packaging"
+source = "python-3.12"
+
+[[removed]]
+kind = "module"
+names = ["asyncore", "asynchat"]
+distribution = "python"
+version = "3.12"
+replacement = "asyncio"
+source = "python-3.12"
+
+[[removed]]
+kind = "module"
+names = ["smtpd"]
+distribution = "python"
+version = "3.12"
+replacement = "the aiosmtpd package"
+source = "python-3.12"
+
+[[removed]]
+kind = "module"
+names = ["aifc", "audioop", "cgi", "cgitb", "chunk", "crypt", "imghdr", "mailcap", "msilib", "nis", "nntplib", "ossaudiodev", "pipes", "sndhdr", "spwd", "sunau", "telnetlib", "uu", "xdrlib"]
+distribution = "python"
+version = "3.13"
+replacement = "the alternatives listed in PEP 594"
+source = "pep-594"
+
+[[removed]]
+kind = "module"
+names = ["lib2to3"]
+distribution = "python"
+version = "3.13"
+replacement = "a maintained parser such as LibCST or parso"
+source = "python-3.13"
+
+[[removed]]
+kind = "api"
+module = "collections"
+names = ["Mapping", "MutableMapping", "Sequence", "MutableSequence", "Iterable", "Iterator", "Callable", "Set", "MutableSet", "Hashable", "Sized", "Container", "Generator", "Awaitable", "Coroutine", "AsyncIterable", "AsyncIterator", "KeysView", "ItemsView", "ValuesView", "MappingView", "ByteString", "Collection", "Reversible"]
+distribution = "python"
+version = "3.10"
+replacement = "the same names from collections.abc"
+source = "python-3.10"
+
+[[removed]]
+kind = "api"
+module = "asyncio"
+names = ["coroutine"]
+distribution = "python"
+version = "3.11"
+replacement = "native async def coroutines"
+source = "python-3.11"
+
+[[removed]]
+kind = "attribute"
+owners = ["unittest.TestCase"]
+names = ["assertEquals", "assertNotEquals", "assertAlmostEquals", "assertNotAlmostEquals", "assert_", "failUnless", "failIf", "failUnlessEqual", "failIfEqual", "failUnlessRaises", "assertRegexpMatches", "assertRaisesRegexp", "assertNotRegexpMatches", "assertDictContainsSubset"]
+distribution = "python"
+version = "3.12"
+replacement = "the current unittest names (assertEqual, assertTrue, assertRegex, ...)"
+source = "python-3.12"
+
+[[removed]]
+kind = "api"
+module = "configparser"
+names = ["SafeConfigParser"]
+distribution = "python"
+version = "3.12"
+replacement = "configparser.ConfigParser instead of configparser.SafeConfigParser; update the import and every SafeConfigParser constructor or reference in the project"
+source = "python-3.12"
+
+[[removed]]
+kind = "api"
+module = "numpy"
+names = ["float", "int", "object", "str", "complex", "long", "unicode"]
+distribution = "numpy"
+version = "1.24"
+replacement = "the builtin type, or an explicit NumPy scalar such as numpy.float64"
+source = "numpy-1.24"
+
+[[removed]]
+kind = "api"
+module = "numpy"
+names = ["asscalar"]
+distribution = "numpy"
+version = "1.23"
+replacement = "ndarray.item()"
+source = "numpy-1.23"
+
+[[removed]]
+kind = "attribute"
+owners = ["numpy.ndarray"]
+names = ["numpy.ndarray.ptp"]
+distribution = "numpy"
+version = "2.0"
+replacement = "numpy.ptp(array, ...) instead of array.ptp(...); preserve the existing axis, out and keepdims arguments"
+source = "numpy-2.0"
+
+[[removed]]
+kind = "attribute"
+owners = ["numpy.ndarray"]
+names = ["numpy.ndarray.newbyteorder"]
+distribution = "numpy"
+version = "2.0"
+replacement = "array.view(array.dtype.newbyteorder(order)) instead of array.newbyteorder(order), preserving the intended byte-order view semantics"
+source = "numpy-2.0"
+
+[[removed]]
+kind = "api"
+module = "numpy"
+names = ["NaN", "Inf", "Infinity", "NINF", "PINF", "NZERO", "PZERO", "infty", "float_", "complex_", "unicode_", "string_", "product", "cumproduct", "sometrue", "alltrue", "asfarray", "round_", "find_common_type"]
+distribution = "numpy"
+version = "2.0"
+replacement = "the names given in the NumPy 2.0 migration guide (for example nan, inf, float64, prod, any, all, round)"
+source = "numpy-2.0"
+
+[[removed]]
+kind = "api"
+module = "sklearn.datasets"
+names = ["load_boston"]
+distribution = "scikit-learn"
+version = "1.2"
+replacement = "another dataset such as fetch_california_housing"
+source = "sklearn-1.2"
+
+[[removed]]
+kind = "api"
+module = "sklearn.metrics"
+names = ["plot_confusion_matrix", "plot_roc_curve", "plot_precision_recall_curve"]
+distribution = "scikit-learn"
+version = "1.2"
+replacement = "ConfusionMatrixDisplay / RocCurveDisplay / PrecisionRecallDisplay"
+source = "sklearn-1.2"
+
+[[removed]]
+kind = "kwarg"
+names = ["OneHotEncoder.sparse"]
+callables = ["sklearn.preprocessing.OneHotEncoder"]
+distribution = "scikit-learn"
+version = "1.4"
+replacement = "sparse_output"
+source = "sklearn-1.4"
+
+[[removed]]
+kind = "kwarg"
+names = ["proxies"]
+callables = ["httpx.Client", "httpx.AsyncClient"]
+distribution = "httpx"
+version = "0.28"
+replacement = "proxy= for one proxy URL, or mounts= with per-scheme transports for a proxy mapping"
+rename_to = "proxy"
+rename_value = "string_literal"
+source = "httpx-0.28-proxies"
+
+[[removed]]
+kind = "kwarg"
+names = ["squared"]
+callables = ["sklearn.metrics.mean_squared_error"]
+distribution = "scikit-learn"
+version = "1.6"
+replacement = "root_mean_squared_error() instead of mean_squared_error(squared=False)"
+source = "sklearn-1.6"
+
+[[removed]]
+kind = "api"
+module = "scipy.integrate"
+names = ["simps", "trapz", "cumtrapz"]
+distribution = "scipy"
+version = "1.14"
+replacement = "simpson, trapezoid and cumulative_trapezoid"
+source = "scipy-1.14"
+
+[[removed]]
+kind = "api"
+module = "jinja2"
+names = ["Markup", "escape"]
+distribution = "Jinja2"
+version = "3.1"
+replacement = "markupsafe.Markup and markupsafe.escape"
+source = "jinja2-3.1"
+
+[[removed]]
+kind = "api"
+module = "jinja2"
+names = ["contextfunction", "contextfilter", "evalcontextfunction", "evalcontextfilter", "environmentfunction", "environmentfilter"]
+distribution = "Jinja2"
+version = "3.1"
+replacement = "pass_context, pass_eval_context and pass_environment"
+source = "jinja2-3.1"
+
+[[removed]]
+kind = "api"
+module = "markupsafe"
+names = ["soft_unicode"]
+distribution = "MarkupSafe"
+version = "2.1"
+replacement = "soft_str"
+source = "markupsafe-2.1"
+
+[[removed]]
+kind = "api"
+module = "packaging.version"
+names = ["LegacyVersion"]
+distribution = "packaging"
+version = "22.0"
+replacement = "packaging.version.Version (PEP 440 versions only)"
+source = "packaging-22.0"
+
+[[removed]]
+kind = "api"
+module = "packaging.specifiers"
+names = ["LegacySpecifier"]
+distribution = "packaging"
+version = "22.0"
+replacement = "packaging.specifiers.Specifier"
+source = "packaging-22.0"
+
+[[removed]]
+kind = "api"
+module = "pydantic"
+names = ["BaseSettings"]
+distribution = "pydantic"
+version = "2.0"
+replacement = "the pydantic-settings package (from pydantic_settings import BaseSettings)"
+source = "pydantic-2.0"
+
+[[removed]]
+kind = "api"
+module = "werkzeug.urls"
+names = ["url_quote", "url_parse", "url_encode", "url_unquote"]
+distribution = "Werkzeug"
+version = "3.0"
+replacement = "urllib.parse, or pin Werkzeug<3 for frameworks that still import it"
+source = "werkzeug-3.0"
+
+[[removed]]
+kind = "api"
+module = "DataFrame"
+owners = ["pandas.DataFrame"]
+names = ["append"]
+distribution = "pandas"
+version = "2.0"
+replacement = "pandas.concat"
+source = "pandas-2.0"
+
+# kind = usage: a way of calling an API that a release stopped accepting. The error does not
+# name the API, so the entry carries the distinctive message it produces instead.
+[[removed]]
+kind = "usage"
+names = ["pytest.warns(None)"]
+pattern = "exceptions must be derived from Warning, not <class 'NoneType'>"
+distribution = "pytest"
+version = "8.0"
+replacement = "pytest.warns(SomeWarning), or the recwarn fixture / warnings.catch_warnings() to record warnings without expecting one"
+source = "pytest-deprecations"
+
+# kind = fixture: a pytest fixture a plugin release stopped providing ("fixture 'x' not found").
+[[removed]]
+kind = "fixture"
+names = ["event_loop"]
+distribution = "pytest-asyncio"
+version = "1.0"
+replacement = "@pytest.mark.asyncio(loop_scope=...) and asyncio.get_running_loop() in the test; a custom loop needs an event_loop_policy fixture"
+source = "pytest-asyncio-1.0"
+
+# --------------------------------------------------------------------------------------
+# Deprecated, still present: from `version` on, using the name emits a DeprecationWarning.
+# A test that counts the warnings it records then sees more than it expects.
+# --------------------------------------------------------------------------------------
+
+[[deprecated]]
+module = "ast"
+names = ["Num", "Str", "Bytes", "NameConstant", "Ellipsis"]
+distribution = "Python"
+version = "3.12"
+removal = "3.14"
+replacement = "ast.Constant"
+source = "python-3.12"
+
+[[deprecated]]
+module = "pkgutil"
+names = ["find_loader", "get_loader"]
+distribution = "Python"
+version = "3.12"
+removal = "3.14"
+replacement = "importlib.util.find_spec()"
+source = "python-3.12"
+
+[[deprecated]]
+module = "datetime.datetime"
+names = ["utcnow", "utcfromtimestamp"]
+distribution = "Python"
+version = "3.12"
+replacement = "timezone-aware datetime.datetime.now(datetime.UTC) / datetime.datetime.fromtimestamp(ts, datetime.UTC)"
+source = "python-3.12"
+
+[[deprecated]]
+module = "locale"
+names = ["getdefaultlocale"]
+distribution = "Python"
+version = "3.11"
+removal = "3.15"
+replacement = "locale.setlocale(), locale.getlocale() and locale.getencoding()"
+source = "python-3.11"
+
+# --------------------------------------------------------------------------------------
+# Unmaintained packages: no newer release fixes them, so "upgrade" is not a remedy.
+# --------------------------------------------------------------------------------------
+
+[[unmaintained]]
+distribution = "nose"
+last = "1.3.7"
+replacement = "pytest (plain assert statements instead of nose.tools, pytest instead of the nose runner)"
+source = "nose-docs"
+
+# --------------------------------------------------------------------------------------
+# pytest fixtures that plugins provide. "fixture 'x' not found" usually means the plugin is
+# not installed in the interpreter that runs the tests. Source: each plugin's PyPI page.
+# Fixture names that several unrelated plugins define (client, app, snapshot) are left out.
+# --------------------------------------------------------------------------------------
+
+[[fixture]]
+names = ["benchmark"]
+distribution = "pytest-benchmark"
+
+[[fixture]]
+names = ["mocker", "class_mocker", "module_mocker", "package_mocker", "session_mocker"]
+distribution = "pytest-mock"
+
+[[fixture]]
+names = ["httpx_mock"]
+distribution = "pytest-httpx"
+
+[[fixture]]
+names = ["respx_mock"]
+distribution = "respx"
+
+[[fixture]]
+names = ["requests_mock"]
+distribution = "requests-mock"
+
+[[fixture]]
+names = ["httpserver"]
+distribution = "pytest-httpserver"
+
+[[fixture]]
+names = ["httpbin"]
+distribution = "pytest-httpbin"
+
+[[fixture]]
+names = ["freezer"]
+distribution = "pytest-freezer"
+
+[[fixture]]
+names = ["time_machine"]
+distribution = "time-machine"
+
+[[fixture]]
+names = ["faker"]
+distribution = "Faker"
+
+[[fixture]]
+names = ["fs"]
+distribution = "pyfakefs"
+
+[[fixture]]
+names = ["datadir", "shared_datadir", "original_datadir"]
+distribution = "pytest-datadir"
+
+[[fixture]]
+names = ["data_regression", "file_regression", "num_regression", "dataframe_regression", "image_regression"]
+distribution = "pytest-regressions"
+
+[[fixture]]
+names = ["cov", "no_cover"]
+distribution = "pytest-cov"
+
+[[fixture]]
+names = ["qtbot", "qapp"]
+distribution = "pytest-qt"
+
+[[fixture]]
+names = ["aiohttp_client", "aiohttp_server", "aiohttp_raw_server"]
+distribution = "pytest-aiohttp"
+
+[[fixture]]
+names = ["db", "transactional_db", "django_db_blocker", "rf", "admin_client", "admin_user", "django_user_model", "django_assert_num_queries"]
+distribution = "pytest-django"
+
+[[fixture]]
+names = ["page", "browser_context_args"]
+distribution = "pytest-playwright"
+
+[[fixture]]
+names = ["selenium"]
+distribution = "pytest-selenium"
+
+[[fixture]]
+names = ["xprocess"]
+distribution = "pytest-xprocess"
+
+[[fixture]]
+names = ["docker_services", "docker_ip"]
+distribution = "pytest-docker"
+
+# --------------------------------------------------------------------------------------
+# Lint rules. `likely_bug` lists Ruff rule codes (or prefixes) that usually mean the code
+# fails or does the wrong thing when it runs; every other finding is clean-up (style,
+# formatting, outdated syntax) that does not change how the code runs. F811 (a name defined
+# twice) is left out on purpose: tests often re-import names deliberately.
+# `categories` gives each rule prefix a plain name; the longest matching prefix wins.
+# Source: the Ruff rule reference.
+# --------------------------------------------------------------------------------------
+
+[lint]
+source = "ruff-rules"
+likely_bug = [
+  "invalid-syntax", "E9",            # syntax errors, files that cannot be read
+  "F501", "F502", "F503", "F505", "F506", "F507", "F508", "F509",   # %-format calls that raise
+  "F521", "F524", "F525",            # str.format() calls that raise (unused arguments do not)
+  "F601", "F602",                    # dictionary keys repeated with different values
+  "F63",                             # assert on a tuple, `is` with a literal, `if` on a tuple
+  "F7",                              # break/continue/return/yield in the wrong place
+  "F82",                             # undefined names
+  "F901",                            # raise NotImplemented
+  "PLE",                             # pylint errors
+  "B006", "B012", "B015", "B023",    # mutable defaults, return in finally, comparison without assert, loop variable in closure
+]
+
+[lint.categories]
+"invalid-syntax" = "Syntax errors"
+E = "Code layout"
+E501 = "Lines too long"
+E9 = "Syntax errors"
+W = "Whitespace and layout"
+F = "Suspicious code (pyflakes)"
+F401 = "Unused imports"
+F403 = "Star imports"
+F405 = "Names from star imports"
+F541 = "f-strings without placeholders"
+F811 = "Names defined twice"
+F841 = "Unused variables"
+F82 = "Undefined names"
+I = "Import order"
+UP = "Outdated syntax that newer Python can write more simply"
+SIM = "Code that could be simpler"
+C4 = "Comprehensions that could be simpler"
+C90 = "Functions that are too complex"
+B = "Bug-prone patterns (bugbear)"
+RUF = "Ruff's own checks"
+S = "Security checks"
+D = "Docstrings"
+N = "Naming"
+Q = "Quotes"
+COM = "Trailing commas"
+PLC = "Pylint conventions"
+PLR = "Pylint refactoring hints"
+PLW = "Pylint warnings"
+PLE = "Pylint errors"
+TRY = "Exception handling style"
+BLE = "Catching every exception"
+EM = "Exception messages"
+DTZ = "Dates without a time zone"
+PT = "pytest style"
+PTH = "os.path where pathlib would do"
+RET = "Return statements"
+ARG = "Unused arguments"
+ERA = "Commented-out code"
+T20 = "print statements"
+PERF = "Performance"
+FURB = "Modernisation"
+A = "Names that shadow built-ins"
+ANN = "Type annotations"
+FBT = "Boolean arguments"
+PIE = "Unnecessary code"
+ISC = "Implicit string concatenation"
+G = "Logging format"
+TID = "Import style"
+TC = "Type-checking imports"
+PGH = "Blanket noqa and type: ignore"
+YTT = "sys.version checks"
+FA = "Future annotations"
+PYI = "Type stubs"
+SLF = "Private member access"
+RSE = "raise statements"
+FLY = "String joins that could be f-strings"
+INP = "Missing __init__.py"
+EXE = "Executable files"
+ASYNC = "async code"
+PD = "pandas usage"
+NPY = "NumPy usage"
+DJ = "Django usage"
+
+# --------------------------------------------------------------------------------------
+# Sources
+# --------------------------------------------------------------------------------------
+
+[sources."python-3.10"]
+title = "What's New In Python 3.10 (removed collections ABC aliases)"
+url = "https://docs.python.org/3/whatsnew/3.10.html"
+
+[sources."python-3.11"]
+title = "What's New In Python 3.11 (removed asyncio.coroutine; deprecated locale.getdefaultlocale)"
+url = "https://docs.python.org/3/whatsnew/3.11.html"
+
+[sources."python-3.12"]
+title = "What's New In Python 3.12 (removed imp, distutils, asyncore, asynchat, smtpd, unittest aliases; new deprecation warnings for ast.Str, pkgutil.get_loader, datetime.utcnow)"
+url = "https://docs.python.org/3/whatsnew/3.12.html"
+
+[sources."python-3.13"]
+title = "What's New In Python 3.13 (removed lib2to3 and PEP 594 modules)"
+url = "https://docs.python.org/3/whatsnew/3.13.html"
+
+[sources."pep-594"]
+title = "PEP 594 - Removing dead batteries from the standard library"
+url = "https://peps.python.org/pep-0594/"
+
+[sources."numpy-1.23"]
+title = "NumPy 1.23.0 release notes (expired deprecations)"
+url = "https://numpy.org/doc/stable/release/1.23.0-notes.html"
+
+[sources."numpy-1.24"]
+title = "NumPy 1.24.0 release notes (removed deprecated type aliases)"
+url = "https://numpy.org/doc/stable/release/1.24.0-notes.html"
+
+[sources."numpy-2.0"]
+title = "NumPy 2.0 migration guide (NEP 52 namespace cleanup)"
+url = "https://numpy.org/doc/stable/numpy_2_0_migration_guide.html"
+
+[sources."numpy-reshape"]
+title = "NumPy reshape: the new shape must be compatible with the original shape"
+url = "https://numpy.org/doc/stable/reference/generated/numpy.reshape.html"
+
+[sources."sqlalchemy-result-1.4-source"]
+title = "SQLAlchemy 1.4.54 Result.__iter__ and _iterator_getter source; contrasted with rel_1_3_24 and verified on SQLite"
+url = "https://github.com/sqlalchemy/sqlalchemy/blob/rel_1_4_54/lib/sqlalchemy/engine/result.py"
+
+[sources."numpy-solve-2.0"]
+title = "NumPy linalg.solve: b vector interpretation changed in 2.0"
+url = "https://numpy.org/doc/stable/reference/generated/numpy.linalg.solve.html"
+
+[sources."pydantic-optional-2.0"]
+title = "Pydantic V2 migration: required, optional and nullable fields"
+url = "https://docs.pydantic.dev/latest/migration/#required-optional-and-nullable-fields"
+
+[sources."numpy-axis"]
+title = "NumPy AxisError: an axis exceeds the array dimensions"
+url = "https://numpy.org/doc/stable/reference/generated/numpy.exceptions.AxisError.html"
+
+[sources."pyyaml-input"]
+title = "PyYAML error conditions and marked input locations"
+url = "https://pyyaml.org/wiki/PyYAMLDocumentation#yamlerror"
+
+[sources."click-input"]
+title = "Click parameter types, choices and integer/float ranges"
+url = "https://click.palletsprojects.com/en/stable/parameter-types/"
+
+[sources."packaging-version"]
+title = "Packaging Version and InvalidVersion"
+url = "https://packaging.pypa.io/en/stable/version.html"
+
+[sources."numpy-scalar-representation"]
+title = "NumPy 2.0 release notes: representation of NumPy scalars changed"
+url = "https://numpy.org/doc/stable/release/2.0.0-notes.html#representation-of-numpy-scalars-changed"
+
+[sources."numpy-scalar-promotion"]
+title = "NumPy 2.0 migration guide: changes to data type promotion"
+url = "https://numpy.org/doc/stable/numpy_2_0_migration_guide.html#changes-to-numpy-data-type-promotion"
+
+[sources."pydantic-number-coercion"]
+title = "Pydantic V2 migration guide: validator behavior changes"
+url = "https://pydantic.dev/docs/validation/latest/get-started/migration/#validator-behavior-changes"
+
+[sources."sklearn-1.2"]
+title = "scikit-learn 1.2 release highlights and changelog"
+url = "https://scikit-learn.org/stable/whats_new/v1.2.html"
+
+[sources."sklearn-1.4"]
+title = "scikit-learn OneHotEncoder 1.3 API: sparse removal in 1.4"
+url = "https://scikit-learn.org/1.3/modules/generated/sklearn.preprocessing.OneHotEncoder.html"
+
+[sources."httpx-0.28-proxies"]
+title = "HTTPX 0.28.0 removed proxies; proxy URL and mounts migration"
+url = "https://github.com/encode/httpx/releases/tag/0.28.0"
+guidance_url = "https://www.python-httpx.org/advanced/proxies/"
+
+[sources."sklearn-1.6"]
+title = "scikit-learn mean_squared_error 1.5 API: squared removal in 1.6"
+url = "https://scikit-learn.org/1.5/modules/generated/sklearn.metrics.mean_squared_error.html"
+
+[sources."scipy-1.14"]
+title = "SciPy 1.14.0 release notes (removed simps, trapz, cumtrapz)"
+url = "https://docs.scipy.org/doc/scipy/release/1.14.0-notes.html"
+
+[sources."jinja2-3.1"]
+title = "Jinja 3.1.0 changes"
+url = "https://jinja.palletsprojects.com/en/stable/changes/#version-3-1-0"
+
+[sources."markupsafe-2.1"]
+title = "MarkupSafe 2.1.0 changes"
+url = "https://markupsafe.palletsprojects.com/en/stable/changes/#version-2-1-0"
+
+[sources."packaging-22.0"]
+title = "packaging 22.0 changelog (LegacyVersion removed)"
+url = "https://packaging.pypa.io/en/stable/changelog.html"
+
+[sources."pydantic-2.0"]
+title = "Pydantic V2 migration guide (BaseSettings moved to pydantic-settings)"
+url = "https://docs.pydantic.dev/latest/migration/#basesettings-has-moved-to-pydantic-settings"
+
+[sources."werkzeug-3.0"]
+title = "Werkzeug 3.0.0 changes (deprecated urls functions removed)"
+url = "https://werkzeug.palletsprojects.com/en/stable/changes/#version-3-0-0"
+
+[sources."pandas-2.0"]
+title = "What's new in pandas 2.0.0 (DataFrame.append removed)"
+url = "https://pandas.pydata.org/docs/whatsnew/v2.0.0.html"
+
+[sources."pytest-deprecations"]
+title = "pytest: Deprecations and Removals (using pytest.warns(None), removed in 8.0)"
+url = "https://docs.pytest.org/en/stable/deprecations.html#using-pytest-warns-none"
+
+[sources."pypi"]
+title = "Python Package Index project pages (import name vs distribution name)"
+url = "https://pypi.org/"
+
+[sources."py-1.11-apipkg-spec"]
+title = "py 1.11.0 vendored apipkg: preserve module __spec__"
+url = "https://github.com/pytest-dev/py/blob/1.11.0/py/_vendored_packages/apipkg/__init__.py"
+
+[sources."pytest-ast-str-fix"]
+title = "pytest PR 10894: avoid deprecated AST nodes on Python 3.12 (released in 7.3.2)"
+url = "https://github.com/pytest-dev/pytest/pull/10894/files"
+
+[sources."pytest-asyncio-1.0"]
+title = "pytest-asyncio 1.0 changelog: the event_loop fixture was removed"
+url = "https://pytest-asyncio.readthedocs.io/en/stable/reference/changelog.html"
+
+[sources."nose-docs"]
+title = "nose documentation: in maintenance mode; new projects should use nose2, pytest or unittest"
+url = "https://nose.readthedocs.io/en/latest/"
+
+[sources."ruff-rules"]
+title = "Ruff: rules reference"
+url = "https://docs.astral.sh/ruff/rules/"
+
+[sources."pyyaml-6-loader"]
+title = "PyYAML 6.0 changelog: yaml.load requires its Loader argument"
+url = "https://github.com/yaml/pyyaml/blob/main/CHANGES"
+
+[sources."click-8.2-streams"]
+title = "Click 8.2 changelog: CliRunner stream capture changes"
+url = "https://click.palletsprojects.com/en/stable/changes/#version-8-2-0"
+
+[[removed]]
+kind = "api"
+module = "flask"
+names = ["_app_ctx_stack", "_request_ctx_stack"]
+distribution = "Flask"
+version = "3.0"
+replacement = "Application code should use Flask's supported context APIs (current_app, request and g). If a traceback shows an installed extension importing the removed stack, migrate that extension and check its own application-facing API changes. Do not edit site-packages."
+source = "flask-context-3.0"
+
+[[consumer_migration]]
+api = "api:flask._app_ctx_stack"
+consumer = "Flask-SQLAlchemy"
+legacy_before = "3.0"
+target_minimum = "3.1"
+target_before = "4"
+source = "flask-sqlalchemy-3"
+
+[sources."flask-context-3.0"]
+title = "Flask 3.0 removed deprecated context stacks (PR 5223); 2.3 still retained top"
+url = "https://github.com/pallets/flask/pull/5223"
+
+[sources."flask-sqlalchemy-3"]
+title = "Flask-SQLAlchemy 3 context changes and SQLAlchemy 2 support"
+url = "https://flask-sqlalchemy.palletsprojects.com/en/stable/changes/"
+
+[[removed]]
+kind = "api"
+module = "flask_sqlalchemy"
+names = ["Model"]
+distribution = "Flask-SQLAlchemy"
+version = "3.0"
+replacement_import = "flask_sqlalchemy.model.Model"
+replacement = "from flask_sqlalchemy.model import Model instead of from flask_sqlalchemy import Model. Preserve an existing alias, and keep other imports such as SQLAlchemy in their original module. This imports the base class for model_class customization; ordinary application models still inherit from the application's db.Model."
+source = "flask-sqlalchemy-model"
+
+[[removed]]
+kind = "api"
+module = "flask_jwt_extended"
+names = ["jwt_optional"]
+distribution = "Flask-JWT-Extended"
+version = "4.0"
+replacement = "import jwt_required and change @jwt_optional to @jwt_required(optional=True). Preserve optional access; do not replace it with a required-token decorator. In the same 3.x-to-4.x migration, bare @jwt_required becomes @jwt_required(). Re-run authentication tests including absent, invalid and valid tokens."
+source = "flask-jwt-4"
+
+[[removed]]
+kind = "api"
+module = "flask_jwt_extended"
+names = ["get_jwt_claims", "get_raw_jwt"]
+distribution = "Flask-JWT-Extended"
+version = "4.0"
+replacement = "get_jwt(). Review the 4.0 token layout and callbacks together: additional claims are at the top level, and get_jwt_claims no longer returns a separate nested claims dictionary. Verify the intended claim keys and token compatibility before using the result."
+source = "flask-jwt-4"
+
+[[removed]]
+kind = "api"
+module = "pandas"
+names = ["Int64Index"]
+distribution = "pandas"
+version = "2.0"
+replacement = "pandas.Index(values, dtype='int64') in place of pandas.Int64Index(values). Preserve the existing pandas alias, input values and any name argument; check the index dtype and expected values with the original tests."
+source = "pandas-2.0"
+
+[[removed]]
+kind = "attribute"
+names = ["sqlalchemy.engine.base.Engine.execute"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "an explicit connection: import text from sqlalchemy; use with engine.connect() as connection: and execute connection.execute(text(sql), parameters) inside that block. Consume the result before closing the connection. For statements that must commit changes, use engine.begin() instead; preserve bound parameters rather than formatting values into SQL."
+source = "sqlalchemy-2-execute"
+
+[sources."flask-sqlalchemy-model"]
+title = "Flask-SQLAlchemy Model base class and model_class customization"
+url = "https://flask-sqlalchemy.palletsprojects.com/en/stable/api/#flask_sqlalchemy.model.Model"
+
+[sources."flask-jwt-4"]
+title = "Flask-JWT-Extended 4.0 API and token migration guide"
+url = "https://flask-jwt-extended.readthedocs.io/en/stable/v4_upgrade_guide.html"
+
+[sources."sqlalchemy-2-execute"]
+title = "SQLAlchemy 2.0 removal of connectionless Engine.execute"
+url = "https://docs.sqlalchemy.org/en/20/changelog/migration_20.html#implicit-and-connectionless-execution-bound-metadata-removed"

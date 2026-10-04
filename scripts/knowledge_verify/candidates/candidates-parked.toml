@@ -1,0 +1,1204 @@
+# Verified knowledge-base additions: file role PARKED (verified, not enabled). This file holds 114 blocks (114 removed, 0 deprecated, 0 unmaintained) and 6 source tables defined in this file.
+# Every block was checked by running the interpreter or library before and after the stated release, and each cites an official
+# release note or API-change page. The checks and the machine-readable record of the last run are in scripts/knowledge_verify
+# (verify.py, receipts/). Tier 1 = the names users hit most often on current releases; tier 2 = the verified long tail. The blocks
+# of candidates.toml and candidates-optional.toml are in src/fixfirst/knowledge/domain.toml; the blocks of candidates-parked.toml
+# are verified too but are NOT enabled (src/fixfirst/knowledge/pending_attribution.toml).
+# Merge the two tier files together: a tier-2 block may use a [sources."id"] table defined in candidates.toml. No source id or
+# removed key is defined twice, or in the domain.toml that preceded these additions (git show 769028d:src/fixfirst/knowledge/domain.toml).
+# Research tracks: Python standard library 3.10-3.14 (and a 3.9 group, tier 2 only); setuptools / pkg_resources / distutils shim;
+# unmaintained packages; NumPy and SciPy; pandas, scikit-learn, matplotlib; Django, Flask, Werkzeug, Jinja2, MarkupSafe,
+# itsdangerous; pydantic, SQLAlchemy, pytest, attrs, click; urllib3, requests, Pillow, networkx, openai, six, beautifulsoup4
+# (requests, six and beautifulsoup4 produced no entry).
+# Left out because a probe showed the replacement text was wrong: the SciPy blocks scipy.signal.barthann + 18 more window names (1.13),
+# scipy.signal.hanning (1.9) and scipy.signal.windows.hanning (1.9) (get_window('hann', M) returns the periodic window, not
+# windows.hann(M); probe sup-sp-1.13-get-window-is-periodic), and the scikit-learn blocks OneHotEncoder.get_feature_names and
+# ColumnTransformer.get_feature_names (1.2) (get_feature_names_out() gives other names for DataFrame input; probe
+# sup-sk12-feature-names-dataframe-differs). Their removal checks still run (listed as checked keys that no entry uses).
+# Corrected after review (2026-10-03): the replacement texts of pkg_resources.resource_* (Traversable has no exists()),
+# pkgutil.ImpImporter/ImpLoader (the setuptools advice is 'setuptools>=66.1,<82'), DataFrame.lookup (no blanket same-dtype promise)
+# and DataFrame.first/last (convert the string offset, guard the empty frame), each with new probes for the reviewer's
+# counterexamples. Blocks that match a bare attribute name or a class name are parked, not enabled: FixFirst cannot yet bind such an
+# error to the object's real module, so a project's own class of the same name would be diagnosed as a version problem.
+
+# ==================================================================================================
+# PARKED - verified entries that must NOT be enabled until FixFirst can bind an attribute error to the object's real module or distribution (they match a bare attribute or a class name, so a project's own class of the same name would be diagnosed as a version problem). Re-enable by moving them back.
+# ==================================================================================================
+
+# --------------------------------------------------------------------------------------------------
+# Python standard library 3.10-3.14
+# --------------------------------------------------------------------------------------------------
+
+# --------------------------------------------------------------------------------------
+# Removed in Python 3.12
+# --------------------------------------------------------------------------------------
+
+[[removed]]
+kind = "attribute"
+owners = ["configparser.ConfigParser", "configparser.RawConfigParser"]
+names = ["readfp"]
+distribution = "python"
+version = "3.12"
+replacement = "read_file(): the same file object argument, and readfp(fp, filename) becomes read_file(fp, source=filename), which keeps the file name shown in parse errors. Keep the parser's other options and re-run the code that reads the configuration"
+source = "python-3.12"
+
+# Two aliases of the 3.12 unittest removal are missing from the existing attribute entry.
+[[removed]]
+kind = "attribute"
+owners = ["unittest.TestCase"]
+names = ["failUnlessAlmostEqual", "failIfAlmostEqual"]
+distribution = "python"
+version = "3.12"
+replacement = "assertAlmostEqual() for failUnlessAlmostEqual and assertNotAlmostEqual() for failIfAlmostEqual, with the same arguments"
+source = "python-3.12"
+
+[[removed]]
+kind = "attribute"
+owners = ["pathlib.Path"]
+names = ["link_to"]
+distribution = "python"
+version = "3.12"
+replacement = "target.hardlink_to(path) in place of path.link_to(target): hardlink_to() takes its arguments in the order of symlink_to(), so the receiver is the new link and the argument is the existing file, the opposite of link_to(); swap the two paths. hardlink_to exists since Python 3.10"
+source = "python-3.12"
+
+[[removed]]
+kind = "api"
+module = "EntryPoints"
+names = ["get", "items", "keys", "values"]
+distribution = "python"
+version = "3.12"
+replacement = "the selection parameters of importlib.metadata.entry_points(): entry_points(group='your.group') returns the entry points of one group (also name=, value=, module=, attr=, extras=), so entry_points().get('your.group', []) becomes entry_points(group='your.group'), the old dict of groups becomes {g: entry_points(group=g) for g in entry_points().groups}, and keys() becomes sorted(entry_points().groups). Since 3.12 entry_points() returns an EntryPoints collection, no longer a dict. Code that must also run on Python 3.9 or older needs the importlib_metadata backport, because selection parameters arrived in 3.10"
+source = "python-3.12-changelog"
+
+# --------------------------------------------------------------------------------------
+# Removed in Python 3.14
+# [[deprecated]] entries for several of these names exist already: the entries below
+# promote them to removed from 3.14 on.
+# --------------------------------------------------------------------------------------
+
+[[removed]]
+kind = "api"
+module = "Constant"
+names = ["n", "s"]
+distribution = "python"
+version = "3.14"
+replacement = "node.value: the n and s attributes of ast.Constant were compatibility aliases of value for the removed ast.Num and ast.Str classes"
+source = "python-3.14"
+
+# --------------------------------------------------------------------------------------------------
+# NumPy and SciPy
+# --------------------------------------------------------------------------------------------------
+
+# --- NumPy 1.23 -------------------------------------------------------------------
+
+[[removed]]
+kind = "api"
+module = "NpzFile"
+names = ["iteritems", "iterkeys"]
+distribution = "numpy"
+version = "1.23"
+replacement = "items() and keys() on the object returned by numpy.load for a .npz file; it is a mapping, so the Python 2 style iteritems() and iterkeys() are simply items() and keys()"
+source = "numpy-1.23"
+
+# --- NumPy 2.0 --------------------------------------------------------------------
+
+[[removed]]
+kind = "attribute"
+owners = ["numpy.ndarray"]
+names = ["numpy.ndarray.itemset"]
+distribution = "numpy"
+version = "2.0"
+replacement = "arr[index] = value in place of arr.itemset(index, value), and arr.flat[i] = value for a flat position i; item reads use arr.item(...)"
+source = "numpy-2.0"
+
+# --- NumPy 2.1 - 2.3 ----------------------------------------------------------------
+
+[[removed]]
+kind = "attribute"
+owners = ["numpy.ndarray"]
+names = ["numpy.ndarray.tostring"]
+distribution = "numpy"
+version = "2.3"
+replacement = "array.tobytes(), which returns the same bytes; tostring was a deprecated alias since NumPy 1.19"
+source = "numpy-2.3"
+
+# --- SciPy 1.14 --------------------------------------------------------------------------
+
+[[removed]]
+kind = "api"
+module = "csr_matrix"
+names = ["A", "H"]
+distribution = "scipy"
+version = "1.14"
+replacement = ".toarray() in place of .A (.todense() gives a numpy matrix instead) and .conj().T in place of .H; both replacements return the same values as before"
+source = "scipy-1.14-expired"
+
+[[removed]]
+kind = "api"
+module = "csc_matrix"
+names = ["A", "H"]
+distribution = "scipy"
+version = "1.14"
+replacement = ".toarray() in place of .A (.todense() gives a numpy matrix instead) and .conj().T in place of .H; both replacements return the same values as before"
+source = "scipy-1.14-expired"
+
+[[removed]]
+kind = "api"
+module = "coo_matrix"
+names = ["A", "H"]
+distribution = "scipy"
+version = "1.14"
+replacement = ".toarray() in place of .A (.todense() gives a numpy matrix instead) and .conj().T in place of .H; both replacements return the same values as before"
+source = "scipy-1.14-expired"
+
+[[removed]]
+kind = "api"
+module = "lil_matrix"
+names = ["A", "H"]
+distribution = "scipy"
+version = "1.14"
+replacement = ".toarray() in place of .A (.todense() gives a numpy matrix instead) and .conj().T in place of .H; both replacements return the same values as before"
+source = "scipy-1.14-expired"
+
+[[removed]]
+kind = "api"
+module = "dok_matrix"
+names = ["A", "H"]
+distribution = "scipy"
+version = "1.14"
+replacement = ".toarray() in place of .A (.todense() gives a numpy matrix instead) and .conj().T in place of .H; both replacements return the same values as before"
+source = "scipy-1.14-expired"
+
+[[removed]]
+kind = "api"
+module = "dia_matrix"
+names = ["A", "H"]
+distribution = "scipy"
+version = "1.14"
+replacement = ".toarray() in place of .A (.todense() gives a numpy matrix instead) and .conj().T in place of .H; both replacements return the same values as before"
+source = "scipy-1.14-expired"
+
+[[removed]]
+kind = "api"
+module = "bsr_matrix"
+names = ["A", "H"]
+distribution = "scipy"
+version = "1.14"
+replacement = ".toarray() in place of .A (.todense() gives a numpy matrix instead) and .conj().T in place of .H; both replacements return the same values as before"
+source = "scipy-1.14-expired"
+
+# --------------------------------------------------------------------------------------------------
+# pandas, scikit-learn and matplotlib
+# --------------------------------------------------------------------------------------------------
+
+# =========================================================================================
+# PANDAS
+# (pandas removes only in major releases: 1.4, 1.5, 2.1, 2.2 and 2.3 list no removals, so the
+#  verified boundaries are 1.5.3 -> 2.0.0 and 2.3.3 -> 3.0.0)
+# =========================================================================================
+
+# ---- pandas 2.0: methods and attributes removed from Series, DataFrame, Index and Styler
+[[removed]]
+kind = "api"
+module = "Series"
+names = ["append"]
+distribution = "pandas"
+version = "2.0"
+replacement = "pandas.concat([series, other]) in place of series.append(other): pass a list for several objects, keep ignore_index and verify_integrity, and assign the returned object, because concat (like append) never modifies its inputs. For two Series the result has the same index, name and dtype as the old append result."
+source = "pandas-2.0-removals"
+
+[[removed]]
+kind = "api"
+module = "DataFrame"
+names = ["iteritems"]
+distribution = "pandas"
+version = "2.0"
+replacement = "items() in place of iteritems(): for name, column in df.items() yields the same (column label, Series) pairs that iteritems() yielded."
+source = "pandas-2.0-removals"
+
+[[removed]]
+kind = "api"
+module = "Series"
+names = ["iteritems"]
+distribution = "pandas"
+version = "2.0"
+replacement = "items() in place of iteritems(): for label, value in ser.items() yields the same (index label, value) pairs that iteritems() yielded."
+source = "pandas-2.0-removals"
+
+[[removed]]
+kind = "api"
+module = "DataFrame"
+names = ["lookup"]
+distribution = "pandas"
+version = "2.0"
+replacement = "NumPy indexing with positional indexers: values = df.to_numpy()[df.index.get_indexer(row_labels), df.columns.get_indexer(col_labels)] selects the same cells as df.lookup(row_labels, col_labels). The dtype is not always the same: lookup inferred a common dtype from the selected cells, but to_numpy() on a frame with mixed column types returns an object array even when every selected cell is a number, and numeric operations such as numpy.sqrt then raise TypeError. If you need the inferred dtype, convert explicitly: pd.Series(values).infer_objects().to_numpy(). get_indexer returns -1 for a missing label instead of raising KeyError, so check for -1 when labels may be absent; the index and the columns must be unique."
+source = "pandas-2.0-removals"
+
+[[removed]]
+kind = "api"
+module = "DataFrame"
+names = ["mad"]
+distribution = "pandas"
+version = "2.0"
+replacement = "(df - df.mean()).abs().mean() in place of df.mad(): the mean absolute deviation around the column means, NaN skipped as before. For axis=1 use df.sub(df.mean(axis=1), axis=0).abs().mean(axis=1); a Series works alike with (ser - ser.mean()).abs().mean()."
+source = "pandas-2.0-removals"
+
+[[removed]]
+kind = "api"
+module = "Series"
+names = ["is_monotonic"]
+distribution = "pandas"
+version = "2.0"
+replacement = "is_monotonic_increasing: is_monotonic was only an alias of it, so the values are identical; use is_monotonic_decreasing when the decreasing direction is meant."
+source = "pandas-2.0-removals"
+
+[[removed]]
+kind = "api"
+module = "Index"
+names = ["is_monotonic"]
+distribution = "pandas"
+version = "2.0"
+replacement = "is_monotonic_increasing: is_monotonic was only an alias of it, so the values are identical; use is_monotonic_decreasing when the decreasing direction is meant."
+source = "pandas-2.0-removals"
+
+[[removed]]
+kind = "api"
+module = "DatetimeProperties"
+names = ["week", "weekofyear"]
+distribution = "pandas"
+version = "2.0"
+replacement = "Series.dt.isocalendar().week in place of Series.dt.week and Series.dt.weekofyear: the same ISO week numbers, returned with the nullable UInt32 dtype (add .astype('int64') when the old integer dtype matters). For a DatetimeIndex use idx.isocalendar().week.to_numpy(), or pandas.Index(idx.isocalendar().week) when an Index is needed."
+source = "pandas-2.0-removals"
+
+[[removed]]
+kind = "api"
+module = "OpenpyxlWriter"
+names = ["save"]
+distribution = "pandas"
+version = "2.0"
+replacement = "close(): ExcelWriter.close() writes the workbook and releases the file, which is what save() did. Better, open the writer in a with block (with pandas.ExcelWriter(path) as writer: df.to_excel(writer)), which closes it and so saves the file on exit."
+source = "pandas-2.0-removals"
+
+[[removed]]
+kind = "api"
+module = "XlsxWriter"
+names = ["save"]
+distribution = "pandas"
+version = "2.0"
+replacement = "close(): ExcelWriter.close() writes the workbook and releases the file, which is what save() did. Better, open the writer in a with block (with pandas.ExcelWriter(path) as writer: df.to_excel(writer)), which closes it and so saves the file on exit."
+source = "pandas-2.0-removals"
+
+[[removed]]
+kind = "api"
+module = "Styler"
+names = ["render"]
+distribution = "pandas"
+version = "2.0"
+replacement = "Styler.to_html(), which returns the same HTML string that render() returned (fix the table id with set_uuid when comparing two outputs)."
+source = "pandas-2.0-removals"
+
+[[removed]]
+kind = "api"
+module = "Styler"
+names = ["hide_index", "hide_columns"]
+distribution = "pandas"
+version = "2.0"
+replacement = "Styler.hide(axis='index') in place of hide_index() and Styler.hide(axis='columns') in place of hide_columns(); the rendered HTML is identical, and hide() also takes subset= to hide only some labels."
+source = "pandas-2.0-removals"
+
+# ---- pandas 3.0: removed methods, attributes, functions and classes
+[[removed]]
+kind = "api"
+module = "DataFrame"
+names = ["applymap"]
+distribution = "pandas"
+version = "3.0"
+replacement = "DataFrame.map(func) (available since pandas 2.1, where applymap was deprecated under the same signature): it applies the function elementwise and returns the same result; keep na_action and the keyword arguments unchanged."
+source = "pandas-3.0-removals"
+
+[[removed]]
+kind = "api"
+module = "Styler"
+names = ["applymap", "applymap_index"]
+distribution = "pandas"
+version = "3.0"
+replacement = "Styler.map(func) and Styler.map_index(func) (pandas 2.1 and later) in place of Styler.applymap and Styler.applymap_index; the arguments are unchanged."
+source = "pandas-3.0-removals"
+
+[[removed]]
+kind = "api"
+module = "DataFrame"
+names = ["first", "last"]
+distribution = "pandas"
+version = "3.0"
+replacement = "a boolean mask on the index. Convert the offset first: offset = pd.tseries.frequencies.to_offset('3D'), then df[df.index < df.index[0] + offset] in place of df.first('3D') and df[df.index > df.index[-1] - offset] in place of df.last('3D'); a Series works alike. The string itself cannot be added to a Timestamp (TypeError). df.index[0] raises IndexError on an empty frame, where first/last returned the empty frame, so test len(df) first. Use this only for fixed-length offsets (days, hours, minutes, seconds): first/last also accepted calendar offsets such as months or years, whose boundary rule the mask does not reproduce. For a fixed-length offset the rows selected are the same."
+source = "pandas-3.0-removals"
+
+[[removed]]
+kind = "api"
+module = "Series"
+names = ["view"]
+distribution = "pandas"
+version = "3.0"
+replacement = "Series.astype(dtype) when a value conversion is wanted (for example datetime64 to int64), or pandas.Series(ser.to_numpy().view(dtype), index=ser.index) for a bit-level reinterpretation of the same buffer (float64 as int64, int32 as uint32)."
+source = "pandas-3.0-removals"
+
+# =========================================================================================
+# SCIKIT-LEARN
+# (macOS arm64 wheels exist only from 1.0.2, so removals before 1.1 cannot be verified; the
+#  changelogs announce a deprecation and a planned removal release, the release below is the
+#  one observed by execution, which is later than announced for KMeans(algorithm="auto"))
+# =========================================================================================
+
+[[removed]]
+kind = "api"
+module = "CountVectorizer"
+names = ["get_feature_names"]
+distribution = "scikit-learn"
+version = "1.2"
+replacement = "get_feature_names_out(): the same vocabulary terms in the same order, returned as a NumPy array of str instead of a list; wrap it in list(...) where a list is required."
+source = "sklearn-1.0-changelog"
+
+[[removed]]
+kind = "api"
+module = "TfidfVectorizer"
+names = ["get_feature_names"]
+distribution = "scikit-learn"
+version = "1.2"
+replacement = "get_feature_names_out(): the same vocabulary terms in the same order, returned as a NumPy array of str instead of a list; wrap it in list(...) where a list is required."
+source = "sklearn-1.0-changelog"
+
+[[removed]]
+kind = "api"
+module = "RandomForestClassifier"
+names = ["n_features_"]
+distribution = "scikit-learn"
+version = "1.2"
+replacement = "n_features_in_: the same number of input features seen during fit (every estimator sets it in fit)."
+source = "sklearn-1.0-changelog"
+
+[[removed]]
+kind = "api"
+module = "RandomForestRegressor"
+names = ["n_features_"]
+distribution = "scikit-learn"
+version = "1.2"
+replacement = "n_features_in_: the same number of input features seen during fit (every estimator sets it in fit)."
+source = "sklearn-1.0-changelog"
+
+[[removed]]
+kind = "api"
+module = "DecisionTreeClassifier"
+names = ["n_features_"]
+distribution = "scikit-learn"
+version = "1.2"
+replacement = "n_features_in_: the same number of input features seen during fit (every estimator sets it in fit)."
+source = "sklearn-1.0-changelog"
+
+[[removed]]
+kind = "api"
+module = "RFECV"
+names = ["grid_scores_"]
+distribution = "scikit-learn"
+version = "1.2"
+replacement = "cv_results_: rfecv.cv_results_['mean_test_score'] holds the mean cross-validation score for each number of selected features, 'std_test_score' its standard deviation and 'split0_test_score', 'split1_test_score', ... the per-split scores; they are the row means, the row standard deviations and the columns of the old grid_scores_ array."
+source = "sklearn-1.0-changelog"
+
+[[removed]]
+kind = "api"
+module = "GaussianNB"
+names = ["sigma_"]
+distribution = "scikit-learn"
+version = "1.2"
+replacement = "var_: the per-class feature variances, the same values sigma_ held (the old name was misleading because they are variances)."
+source = "sklearn-1.0-changelog"
+
+# ---- scikit-learn 1.7: removed private helpers and renames (deprecated in 1.5 and 1.6)
+[[removed]]
+kind = "attribute"
+owners = ["sklearn.base.BaseEstimator"]
+names = ["_validate_data"]
+distribution = "scikit-learn"
+version = "1.7"
+replacement = "sklearn.utils.validation.validate_data(self, X, y, ...) in place of self._validate_data(X, y, ...): the public function (since 1.6) takes the estimator as its first argument and the same options (reset, ensure_2d, dtype, ...) and returns the same validated arrays. It does not exist in scikit-learn 1.5 and older, so code that must support both needs a small compatibility shim. If the traceback is inside an installed estimator package, upgrade that package instead."
+source = "sklearn-1.6-changelog"
+
+# =========================================================================================
+# MATPLOTLIB
+# (macOS arm64 wheels exist only from 3.5.0, so removals of 3.5 and older cannot be verified.
+#  matplotlib.cm.get_cmap is entered at 3.11: 3.9.0 lacked it by mistake, 3.9.1 to 3.10.x have it again)
+# =========================================================================================
+
+[[removed]]
+kind = "attribute"
+owners = ["matplotlib.backend_bases.FigureCanvasBase"]
+names = ["set_window_title", "get_window_title"]
+distribution = "matplotlib"
+version = "3.6"
+replacement = "the figure manager: fig.canvas.manager.set_window_title('title') and fig.canvas.manager.get_window_title() in place of the same methods on fig.canvas. With a non-GUI backend such as Agg there is no window and the call has no effect."
+source = "matplotlib-3.6-removals"
+
+[[removed]]
+kind = "api"
+module = "ArtistList"
+names = ["append", "extend", "insert", "pop", "remove", "clear"]
+distribution = "matplotlib"
+version = "3.7"
+replacement = "Artist.remove() and the Axes.add_* methods: remove an artist with artist.remove() (line.remove(), or ax.lines[0].remove()) in place of ax.lines.remove(line) or ax.lines.pop(0), and add one with ax.add_line(line), ax.add_patch(patch), ax.add_collection(c), ax.add_artist(a) or ax.add_image(img) in place of ax.lines.append(line) and the like. ax.lines, ax.patches, ax.collections and ax.texts are read-only sequences since 3.7."
+source = "matplotlib-3.7-removals"
+
+# ---- matplotlib 3.8
+[[removed]]
+kind = "api"
+module = "XTick"
+names = ["label"]
+distribution = "matplotlib"
+version = "3.8"
+replacement = "label1 (the bottom label of an x tick): tick.label1.set_fontsize(14) in place of tick.label.set_fontsize(14); label2 is the top one. For the common case of styling every tick label of an axis, ax.tick_params(axis='x', labelsize=14) does it in one call."
+source = "matplotlib-3.8-removals"
+
+[[removed]]
+kind = "api"
+module = "YTick"
+names = ["label"]
+distribution = "matplotlib"
+version = "3.8"
+replacement = "label1 (the left label of a y tick): tick.label1.set_fontsize(14) in place of tick.label.set_fontsize(14); label2 is the right one. For the common case of styling every tick label of an axis, ax.tick_params(axis='y', labelsize=14) does it in one call."
+source = "matplotlib-3.8-removals"
+
+[[removed]]
+kind = "api"
+module = "Axes3D"
+names = ["w_xaxis", "w_yaxis", "w_zaxis"]
+distribution = "matplotlib"
+version = "3.8"
+replacement = "xaxis, yaxis and zaxis: ax.xaxis in place of ax.w_xaxis (and yaxis, zaxis in place of w_yaxis, w_zaxis); they are the same axis objects."
+source = "matplotlib-3.8-removals"
+
+[[removed]]
+kind = "api"
+module = "Colorbar"
+names = ["draw_all"]
+distribution = "matplotlib"
+version = "3.8"
+replacement = "fig.draw_without_rendering() in place of cb.draw_all() (the 3.6 deprecation notice names it); an ordinary draw of the figure updates the colorbar too."
+source = "matplotlib-3.8-removals"
+
+[[removed]]
+kind = "api"
+module = "Legend"
+names = ["legendHandles"]
+distribution = "matplotlib"
+version = "3.9"
+replacement = "legend_handles: leg.legend_handles in place of leg.legendHandles (the same list of handles; renamed in 3.7, removed in 3.9)."
+source = "matplotlib-3.9-removals"
+
+# ---- matplotlib 3.10
+[[removed]]
+kind = "attribute"
+owners = ["matplotlib.backends.backend_agg.FigureCanvasAgg", "matplotlib.backends.backend_agg.RendererAgg"]
+names = ["tostring_rgb"]
+distribution = "matplotlib"
+version = "3.10"
+replacement = "buffer_rgba(): np.asarray(fig.canvas.buffer_rgba()) is the (height, width, 4) RGBA array of the drawn canvas, and np.asarray(fig.canvas.buffer_rgba())[..., :3] equals the old tostring_rgb data reshaped to (height, width, 3). Call fig.canvas.draw() first, as before."
+source = "matplotlib-3.10-tostring-rgb"
+
+[[removed]]
+kind = "api"
+module = "QuadContourSet"
+names = ["collections"]
+distribution = "matplotlib"
+version = "3.10"
+replacement = "the contour set itself: a ContourSet is a single Collection with one path per level, so cs.get_paths() or cs.allsegs give the geometry and cs.set_edgecolor(...), cs.set_linewidth(...) or cs.set_hatch(...) work on cs directly instead of looping over cs.collections; cs.legend_elements() builds legend handles, and cs.levels pairs with the paths."
+source = "matplotlib-3.10-removals"
+
+[[removed]]
+kind = "api"
+module = "TriContourSet"
+names = ["collections"]
+distribution = "matplotlib"
+version = "3.10"
+replacement = "the contour set itself: a tricontour result is a single Collection with one path per level, so cs.get_paths() or cs.allsegs give the geometry and cs.set_edgecolor(...), cs.set_linewidth(...) or cs.set_hatch(...) work on cs directly instead of looping over cs.collections."
+source = "matplotlib-3.10-removals"
+
+[[removed]]
+kind = "api"
+module = "Axes"
+names = ["plot_date"]
+distribution = "matplotlib"
+version = "3.11"
+replacement = "plot() with datetime-like data directly: ax.plot(dates, values, 'o') in place of ax.plot_date(dates, values) (plot_date drew markers only, so keep the 'o' format). For plain numbers in Matplotlib date format, or to set a time zone, call ax.xaxis.axis_date(tz) before plot()."
+source = "matplotlib-3.11-plot_date"
+
+# --------------------------------------------------------------------------------------------------
+# Django, Flask, Werkzeug, Jinja2, MarkupSafe, itsdangerous
+# --------------------------------------------------------------------------------------------------
+
+# =========================================================================================
+# FLASK
+# =========================================================================================
+
+[[removed]]
+kind = "api"
+module = "Config"
+names = ["from_json"]
+distribution = "Flask"
+version = "2.1"
+replacement = "app.config.from_file(filename, load=json.load) after import json. It takes the same file name and silent arguments as from_json did and loads the same JSON object into the config; from_file also accepts other loaders such as tomllib.load."
+source = "flask-2.1-changes"
+
+[[removed]]
+kind = "api"
+module = "Flask"
+names = ["json_encoder", "json_decoder"]
+distribution = "Flask"
+version = "2.3"
+replacement = "Flask's JSON provider: set app.json.default to a function that converts your own types, or subclass flask.json.provider.DefaultJSONProvider and assign an instance to app.json. Assigning json_encoder or json_decoder is silently ignored from Flask 2.3 on, so re-test the JSON output after the change."
+source = "flask-2.3-changes"
+
+[[removed]]
+kind = "api"
+module = "Blueprint"
+names = ["json_encoder", "json_decoder"]
+distribution = "Flask"
+version = "2.3"
+replacement = "Flask's JSON provider on the application: set app.json.default to a function that converts your own types, or subclass flask.json.provider.DefaultJSONProvider and assign an instance to app.json. Blueprints no longer carry their own encoder or decoder classes; re-test the JSON output after the change."
+source = "flask-2.3-changes"
+
+[[removed]]
+kind = "api"
+module = "Flask"
+names = ["before_first_request"]
+distribution = "Flask"
+version = "2.3"
+replacement = "setup code that runs while the application is created (inside the application factory, or at import time under with app.app_context():), as the Flask 2.2 deprecation notice advises, instead of a first-request hook"
+source = "flask-2.3-changes"
+
+[[removed]]
+kind = "api"
+module = "Blueprint"
+names = ["before_app_first_request"]
+distribution = "Flask"
+version = "2.3"
+replacement = "Blueprint.record_once(callback), which runs the callback once when the blueprint is registered on the application (the callback receives the setup state, so state.app is the application), as the Flask 2.2 deprecation notice advises, or plain setup code in the application factory"
+source = "flask-2.3-changes"
+
+[[removed]]
+kind = "api"
+module = "Flask"
+names = ["env"]
+distribution = "Flask"
+version = "2.3"
+replacement = "app.debug (a bool) in place of app.env. Flask 2.3 removed the separate development/production environment, the FLASK_ENV variable and the ENV config key; debug mode is switched on with flask run --debug or FLASK_DEBUG=1."
+source = "flask-2.3-changes"
+
+[[removed]]
+kind = "api"
+module = "Flask"
+names = ["session_cookie_name", "send_file_max_age_default", "use_x_sendfile", "propagate_exceptions", "templates_auto_reload"]
+distribution = "Flask"
+version = "2.3"
+replacement = "the matching upper-case key of app.config, read or set through app.config: SESSION_COOKIE_NAME, SEND_FILE_MAX_AGE_DEFAULT, USE_X_SENDFILE, PROPAGATE_EXCEPTIONS and TEMPLATES_AUTO_RELOAD. Assigning to the removed attributes no longer has any effect, so move such assignments to app.config[...]."
+source = "flask-2.3-changes"
+
+# =========================================================================================
+# WERKZEUG
+# =========================================================================================
+
+[[removed]]
+kind = "api"
+module = "Request"
+names = ["is_xhr"]
+distribution = "Werkzeug"
+version = "1.0"
+replacement = "request.headers.get('X-Requested-With') == 'XMLHttpRequest' if your client still sends that header, although Werkzeug's own deprecation notice calls the header non-standard and unreliable; request.accept_mimetypes (for example whether JSON is the preferred type) is often the better test."
+source = "werkzeug-1.0-changes"
+
+[[removed]]
+kind = "api"
+module = "FlaskClient"
+names = ["cookie_jar"]
+distribution = "Werkzeug"
+version = "3.0"
+replacement = "the test client's cookie methods: client.get_cookie(key) returns the stored cookie (read its value or decoded_value attribute) or None, and client.set_cookie(key, value) and client.delete_cookie(key) change cookies. Werkzeug 2.3 stopped using http.cookiejar for storage and deprecated the cookie_jar attribute; 3.0 removed it."
+source = "werkzeug-3.0-removed"
+
+# =========================================================================================
+# DJANGO
+# =========================================================================================
+
+[[removed]]
+kind = "api"
+module = "Library"
+names = ["assignment_tag"]
+distribution = "Django"
+version = "2.0"
+replacement = "simple_tag: rename @register.assignment_tag to @register.simple_tag. Since Django 1.9 simple_tag can store its result in a template variable with the same {% tag_name args as variable %} syntax, so the templates stay unchanged."
+source = "django-2.0-removed"
+
+[[removed]]
+kind = "attribute"
+owners = ["django.http.HttpRequest"]
+names = ["is_ajax"]
+distribution = "Django"
+version = "4.0"
+replacement = "request.headers.get('x-requested-with') == 'XMLHttpRequest', which reproduces is_ajax() exactly, or request.accepts('application/json') when the code really depends on the client's Accept header (the method relied on a jQuery-specific header, so Django removed it)"
+source = "django-4.0-removed"
+
+[[removed]]
+kind = "api"
+module = "EmailValidator"
+names = ["domain_whitelist"]
+distribution = "Django"
+version = "4.1"
+replacement = "the domain_allowlist attribute (renamed together with the allowlist argument)"
+source = "django-4.1-removed"
+
+[[removed]]
+kind = "attribute"
+owners = ["django.contrib.auth.base_user.BaseUserManager"]
+names = ["make_random_password"]
+distribution = "Django"
+version = "5.1"
+replacement = "Python's secrets module, as the Django documentation recommends, for example secrets.token_urlsafe(12), or django.utils.crypto.get_random_string(12, allowed_chars) when a specific alphabet is needed"
+source = "django-5.1-removed"
+
+[[removed]]
+kind = "attribute"
+owners = ["django.test.TransactionTestCase"]
+names = ["assertQuerysetEqual"]
+distribution = "Django"
+version = "5.1"
+replacement = "assertQuerySetEqual (capital S) with the same arguments. Since Django 4.1 it no longer applies repr() to the queryset, so expected values written as repr strings such as '<Book: A>' need transform=repr, or compare model instances or values_list() results instead."
+source = "django-5.1-removed"
+
+[[removed]]
+kind = "attribute"
+owners = ["django.test.SimpleTestCase"]
+names = ["assertFormsetError"]
+distribution = "Django"
+version = "5.1"
+replacement = "assertFormSetError (capital S). It takes the formset object, for example response.context['formset'], instead of the response and a formset name (Django 5.0 removed the old call style)."
+source = "django-5.1-removed"
+
+[[removed]]
+kind = "api"
+module = "Settings"
+names = ["DEFAULT_FILE_STORAGE"]
+distribution = "Django"
+version = "5.1"
+replacement = "settings.STORAGES['default']['BACKEND'] (the STORAGES setting, available since Django 4.2). A DEFAULT_FILE_STORAGE value assigned in settings.py is ignored from Django 5.1 on, so move it into STORAGES; if a traceback shows an installed package reading settings.DEFAULT_FILE_STORAGE, upgrade that package."
+source = "django-5.1-removed"
+
+[[removed]]
+kind = "api"
+module = "Settings"
+names = ["STATICFILES_STORAGE"]
+distribution = "Django"
+version = "5.1"
+replacement = "settings.STORAGES['staticfiles']['BACKEND'] (the STORAGES setting, available since Django 4.2). A STATICFILES_STORAGE value assigned in settings.py is ignored from Django 5.1 on, so move it into STORAGES; if a traceback shows an installed package reading settings.STATICFILES_STORAGE, upgrade that package."
+source = "django-5.1-removed"
+
+# ---- Django 4.0 / 5.0 settings
+[[removed]]
+kind = "api"
+module = "Settings"
+names = ["PASSWORD_RESET_TIMEOUT_DAYS"]
+distribution = "Django"
+version = "4.0"
+replacement = "settings.PASSWORD_RESET_TIMEOUT, which counts seconds instead of days (3 days is 259200). A PASSWORD_RESET_TIMEOUT_DAYS value assigned in settings.py is ignored from Django 4.0 on, so convert it; if a traceback shows an installed package reading the old setting, upgrade that package."
+source = "django-4.0-removed"
+
+[[removed]]
+kind = "api"
+module = "Settings"
+names = ["USE_L10N"]
+distribution = "Django"
+version = "5.0"
+replacement = "no setting: localized formatting of dates and numbers is always on since Django 5.0 (a USE_L10N = False in settings.py is ignored; the {% localize off %} tag and the unlocalize filter still switch it off for a template), so delete the reads and assume True. If a traceback shows an installed package reading settings.USE_L10N, upgrade that package."
+source = "django-5.0-removed"
+
+# --------------------------------------------------------------------------------------------------
+# pydantic, SQLAlchemy, pytest, attrs, click
+# --------------------------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------------------
+# pydantic 1.10 -> 2.0: ModelField is gone, model_fields holds FieldInfo objects
+# ------------------------------------------------------------------------------------------
+
+[[removed]]
+kind = "api"
+module = "FieldInfo"
+names = ["required"]
+distribution = "pydantic"
+version = "2.0"
+replacement = "FieldInfo.is_required(), a method returning the same boolean: write field.is_required() where V1 read field.required. model_fields[name] holds the FieldInfo objects in V2 (BaseModel.__fields__ is a deprecated alias of it)."
+source = "pydantic-2.0-validator-signatures"
+
+[[removed]]
+kind = "api"
+module = "FieldInfo"
+names = ["type_", "outer_type_"]
+distribution = "pydantic"
+version = "2.0"
+replacement = "FieldInfo.annotation, the declared type including its generic parameters. V1 stripped Optional from type_ and outer_type_ and set allow_none, while V2 keeps Optional[X] in annotation, so unwrap it where the old code saw the bare X; the element type that type_ gave for a container field comes from typing.get_args(field.annotation)."
+source = "pydantic-2.0-fieldinfo-api"
+
+[[removed]]
+kind = "api"
+module = "FieldInfo"
+names = ["name"]
+distribution = "pydantic"
+version = "2.0"
+replacement = "the key the field is stored under: iterate model_fields.items() to get (name, FieldInfo) pairs, and inside a @field_validator read info.field_name. FieldInfo objects do not carry their own name."
+source = "pydantic-2.0-validator-signatures"
+
+[[removed]]
+kind = "api"
+module = "FieldInfo"
+names = ["field_info"]
+distribution = "pydantic"
+version = "2.0"
+replacement = "the FieldInfo itself: in V2 model_fields[name] already is the FieldInfo, so drop the .field_info step and read default, alias, metadata or json_schema_extra (V1's field_info.extra) from it directly."
+source = "pydantic-2.0-fieldinfo-api"
+
+# ------------------------------------------------------------------------------------------
+# SQLAlchemy 1.4 -> 2.0: removed methods, attributes, names and modules
+# ------------------------------------------------------------------------------------------
+
+[[removed]]
+kind = "api"
+module = "Engine"
+names = ["table_names"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "sqlalchemy.inspect(engine).get_table_names() (from sqlalchemy import inspect), which returns the table names of the default schema."
+source = "sqlalchemy-2.0-changelog-general"
+
+[[removed]]
+kind = "api"
+module = "Engine"
+names = ["has_table"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "sqlalchemy.inspect(engine).has_table('name') (Inspector.has_table), which checks for a table by name."
+source = "sqlalchemy-2.0-changelog-general"
+
+[[removed]]
+kind = "api"
+module = "Engine"
+names = ["scalar", "execute"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "an explicit connection: with engine.connect() as conn: conn.scalar(text(sql)) for engine.scalar(sql), and conn.execute(text(sql), params) for engine.execute(sql, params). Use the result inside the with block, use engine.begin() for statements that must commit, and bind parameters instead of formatting values into the SQL."
+source = "sqlalchemy-2-execute"
+
+[[removed]]
+kind = "api"
+module = "MetaData"
+names = ["bind"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "no attribute: keep the Engine in your own variable and pass it explicitly (metadata.create_all(engine), metadata.reflect(bind=engine), connection.execute(select(table))); in 2.0 assigning metadata.bind silently does nothing."
+source = "sqlalchemy-2-execute"
+
+[[removed]]
+kind = "api"
+module = "Table"
+names = ["exists"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "sqlalchemy.inspect(engine).has_table('table_name') (or inspect(connection).has_table(...)), which checks for the table by name; Table.exists() and its bind argument were removed."
+source = "sqlalchemy-2-execute"
+
+[[removed]]
+kind = "api"
+module = "Select"
+names = ["apply_labels"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "select(...).set_label_style(LABEL_STYLE_TABLENAME_PLUS_COL) (from sqlalchemy import LABEL_STYLE_TABLENAME_PLUS_COL), the 1.4+ form that labels columns as table_column; Select is immutable, so use the statement the call returns."
+source = "sqlalchemy-2.0-changelog-general"
+
+[[removed]]
+kind = "api"
+module = "Query"
+names = ["from_self"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "an explicit subquery with aliased(): subq = select(User, Address.email_address).join(User.addresses).subquery(); ua = aliased(User, subq); aa = aliased(Address, subq); stmt = select(ua, aa).order_by(aa.email_address), executed with session.execute(stmt); the same works with session.query(ua, aa)."
+source = "sqlalchemy-2.0-from-self"
+
+[[removed]]
+kind = "api"
+module = "Session"
+names = ["transaction"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "Session.get_transaction() for the current SessionTransaction (None when no transaction is active), or Session.in_transaction() for a boolean; the Session.transaction attribute was removed in 2.0."
+source = "sqlalchemy-2.0-session-autocommit"
+
+[[removed]]
+kind = "api"
+module = "Insert"
+names = ["execute"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits."
+source = "sqlalchemy-2-execute"
+
+[[removed]]
+kind = "api"
+module = "Update"
+names = ["execute"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits."
+source = "sqlalchemy-2-execute"
+
+[[removed]]
+kind = "api"
+module = "Delete"
+names = ["execute"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits."
+source = "sqlalchemy-2-execute"
+
+[[removed]]
+kind = "api"
+module = "Select"
+names = ["execute"]
+distribution = "SQLAlchemy"
+version = "2.0"
+replacement = "executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits."
+source = "sqlalchemy-2-execute"
+
+# ------------------------------------------------------------------------------------------
+# SQLAlchemy 2.0 -> 2.1
+# ------------------------------------------------------------------------------------------
+
+[[removed]]
+kind = "api"
+module = "Select"
+names = ["c", "columns", "select"]
+distribution = "SQLAlchemy"
+version = "2.1"
+replacement = "Select.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery."
+source = "sqlalchemy-2.1-changelog"
+
+[[removed]]
+kind = "api"
+module = "CompoundSelect"
+names = ["c", "columns", "select"]
+distribution = "SQLAlchemy"
+version = "2.1"
+replacement = "CompoundSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery."
+source = "sqlalchemy-2.1-changelog"
+
+[[removed]]
+kind = "api"
+module = "TextualSelect"
+names = ["c", "columns", "select"]
+distribution = "SQLAlchemy"
+version = "2.1"
+replacement = "TextualSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery."
+source = "sqlalchemy-2.1-changelog"
+
+# ------------------------------------------------------------------------------------------
+# click 7.1 -> 8.0 and 8.0 -> 8.1
+# ------------------------------------------------------------------------------------------
+
+[[removed]]
+kind = "api"
+module = "Group"
+names = ["resultcallback"]
+distribution = "click"
+version = "8.1"
+replacement = "result_callback, the renamed decorator: @cli.result_callback() on the group, keeping the function that receives the result of the subcommands followed by the group's parameters."
+source = "click-8.1-changes"
+
+# --------------------------------------------------------------------------------------------------
+# urllib3, requests, Pillow, networkx, openai and others
+# --------------------------------------------------------------------------------------------------
+
+# ======================================================================================
+# urllib3 2.0 (2023-04-26). 2.0.0 and 2.0.1 are yanked on PyPI because of an unrelated streaming bug,
+# but 2.0.0 is the first 2.x release and the one the changelog documents.
+# ======================================================================================
+
+[[removed]]
+kind = "api"
+module = "HTTPResponse"
+names = ["strict"]
+distribution = "urllib3"
+version = "2.0"
+replacement = "no strict argument or attribute at all: urllib3 2.0 removed it from HTTPResponse, HTTPConnection and the connection pools because Python 3 does not need it. Delete the strict= argument or the .strict access, and upgrade any installed library that still reads it."
+source = "urllib3-2.0"
+
+# ======================================================================================
+# Pillow 10.0 (2023-07-01): the removals announced by the 9.1 and 9.2 deprecations
+# ======================================================================================
+
+[[removed]]
+kind = "api"
+module = "FreeTypeFont"
+names = ["getsize"]
+distribution = "Pillow"
+version = "10.0"
+replacement = "font.getbbox(text), which returns (left, top, right, bottom) relative to the drawing origin, or font.getlength(text) for the advance width. The old getsize() result was (right - left, bottom): its height included the top offset, so keep width = right - left and height = bottom to get the old numbers, or use bottom - top for the tight height of the ink that Pillow's documentation suggests. Re-check centring or box sizing that used the old height, or position the text with draw.text(xy, text, font=font, anchor='mm') instead."
+source = "pillow-10.0"
+
+[[removed]]
+kind = "api"
+module = "FreeTypeFont"
+names = ["getoffset"]
+distribution = "Pillow"
+version = "10.0"
+replacement = "the first two values of font.getbbox(text): left, top = font.getbbox(text)[:2] gives the same offset that getoffset(text) returned. getbbox() returns the right and bottom edges too, so it replaces getsize() and getoffset() together."
+source = "pillow-10.0"
+
+[[removed]]
+kind = "api"
+module = "FreeTypeFont"
+names = ["getsize_multiline"]
+distribution = "Pillow"
+version = "10.0"
+replacement = "ImageDraw.multiline_textbbox((0, 0), text, font=font), which returns (left, top, right, bottom) for the whole text including its newlines; for ordinary left-aligned text the old width (the widest line) equals right - left. The old height was the line count times the height of 'A' plus the spacing, minus one spacing, whereas the box follows the real ink (descenders in the last line, top offset), so heights can differ by a few pixels: compare bottom - top and re-check layouts that depend on it."
+source = "pillow-10.0"
+
+[[removed]]
+kind = "api"
+module = "ImageDraw"
+names = ["textsize"]
+distribution = "Pillow"
+version = "10.0"
+replacement = "draw.textbbox((0, 0), text, font=font), which returns (left, top, right, bottom), or draw.textlength(text, font=font) for the advance width as a float (it can differ from the old width by a pixel or two). The old textsize() result was (right - left, bottom): its height included the top offset, so use bottom - top for the tight ink height. textbbox() accepts texts with newlines too. For centring, draw.text(xy, text, font=font, anchor='mm') avoids measuring at all."
+source = "pillow-10.0"
+
+[[removed]]
+kind = "api"
+module = "ImageDraw"
+names = ["multiline_textsize"]
+distribution = "Pillow"
+version = "10.0"
+replacement = "draw.multiline_textbbox((0, 0), text, font=font), which returns (left, top, right, bottom) for the whole text; for ordinary left-aligned text the old width (the widest line) equals right - left. The old height was the line count times the height of 'A' plus the spacing, minus one spacing, whereas the box follows the real ink, so heights can differ by a few pixels: compare bottom - top and re-check layouts that depend on it."
+source = "pillow-10.0"
+
+# ======================================================================================
+# networkx 2.4 (2019-10-16): graph methods and *_component_subgraphs functions that were deprecated in 2.1
+# ======================================================================================
+
+[[removed]]
+kind = "api"
+module = "Graph"
+names = ["node"]
+distribution = "networkx"
+version = "2.4"
+replacement = "G.nodes, the node view that has existed since NetworkX 2.0: G.node[n]['attr'] becomes G.nodes[n]['attr'], and G.node.items() becomes G.nodes.items() (or G.nodes(data=True)). G.node was deprecated in 2.1 and removed in 2.4."
+source = "networkx-2.4"
+
+[[removed]]
+kind = "api"
+module = "DiGraph"
+names = ["node"]
+distribution = "networkx"
+version = "2.4"
+replacement = "G.nodes, the node view that has existed since NetworkX 2.0: G.node[n]['attr'] becomes G.nodes[n]['attr'], and G.node.items() becomes G.nodes.items() (or G.nodes(data=True)). G.node was deprecated in 2.1 and removed in 2.4."
+source = "networkx-2.4"
+
+[[removed]]
+kind = "api"
+module = "MultiGraph"
+names = ["node"]
+distribution = "networkx"
+version = "2.4"
+replacement = "G.nodes, the node view that has existed since NetworkX 2.0: G.node[n]['attr'] becomes G.nodes[n]['attr'], and G.node.items() becomes G.nodes.items() (or G.nodes(data=True)). G.node was deprecated in 2.1 and removed in 2.4."
+source = "networkx-2.4"
+
+[[removed]]
+kind = "api"
+module = "MultiDiGraph"
+names = ["node"]
+distribution = "networkx"
+version = "2.4"
+replacement = "G.nodes, the node view that has existed since NetworkX 2.0: G.node[n]['attr'] becomes G.nodes[n]['attr'], and G.node.items() becomes G.nodes.items() (or G.nodes(data=True)). G.node was deprecated in 2.1 and removed in 2.4."
+source = "networkx-2.4"
+
+[[removed]]
+kind = "api"
+module = "Graph"
+names = ["selfloop_edges", "nodes_with_selfloops", "number_of_selfloops", "add_path", "add_cycle", "add_star"]
+distribution = "networkx"
+version = "2.4"
+replacement = "the NetworkX function of the same name with the graph as the first argument: nx.selfloop_edges(G, data=True), nx.nodes_with_selfloops(G), nx.number_of_selfloops(G), nx.add_path(G, nodes), nx.add_cycle(G, nodes) and nx.add_star(G, nodes). The graph methods were deprecated in 2.1 and removed in 2.4; arguments and results are otherwise unchanged."
+source = "networkx-2.4"
+
+[[removed]]
+kind = "api"
+module = "DiGraph"
+names = ["selfloop_edges", "nodes_with_selfloops", "number_of_selfloops", "add_path", "add_cycle", "add_star"]
+distribution = "networkx"
+version = "2.4"
+replacement = "the NetworkX function of the same name with the graph as the first argument: nx.selfloop_edges(G, data=True), nx.nodes_with_selfloops(G), nx.number_of_selfloops(G), nx.add_path(G, nodes), nx.add_cycle(G, nodes) and nx.add_star(G, nodes). The graph methods were deprecated in 2.1 and removed in 2.4; arguments and results are otherwise unchanged."
+source = "networkx-2.4"
+
+[[removed]]
+kind = "api"
+module = "MultiGraph"
+names = ["selfloop_edges", "nodes_with_selfloops", "number_of_selfloops", "add_path", "add_cycle", "add_star"]
+distribution = "networkx"
+version = "2.4"
+replacement = "the NetworkX function of the same name with the graph as the first argument: nx.selfloop_edges(G, data=True), nx.nodes_with_selfloops(G), nx.number_of_selfloops(G), nx.add_path(G, nodes), nx.add_cycle(G, nodes) and nx.add_star(G, nodes). The graph methods were deprecated in 2.1 and removed in 2.4; arguments and results are otherwise unchanged."
+source = "networkx-2.4"
+
+[[removed]]
+kind = "api"
+module = "MultiDiGraph"
+names = ["selfloop_edges", "nodes_with_selfloops", "number_of_selfloops", "add_path", "add_cycle", "add_star"]
+distribution = "networkx"
+version = "2.4"
+replacement = "the NetworkX function of the same name with the graph as the first argument: nx.selfloop_edges(G, data=True), nx.nodes_with_selfloops(G), nx.number_of_selfloops(G), nx.add_path(G, nodes), nx.add_cycle(G, nodes) and nx.add_star(G, nodes). The graph methods were deprecated in 2.1 and removed in 2.4; arguments and results are otherwise unchanged."
+source = "networkx-2.4"
+
+# ======================================================================================
+# openai 1.7.2 (2024-01-12): 'remove deprecated endpoints'. The 1.0 migration guide still names these two
+# resources (client.edits, client.fine_tunes); they exist in 1.0 to 1.7.1 only.
+# ======================================================================================
+
+[[removed]]
+kind = "api"
+module = "OpenAI"
+names = ["edits"]
+distribution = "openai"
+version = "1.7.2"
+replacement = "client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints."
+source = "openai-1.7.2"
+
+[[removed]]
+kind = "api"
+module = "OpenAI"
+names = ["fine_tunes"]
+distribution = "openai"
+version = "1.7.2"
+replacement = "client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints."
+source = "openai-1.7.2"
+
+[[removed]]
+kind = "api"
+module = "AsyncOpenAI"
+names = ["edits"]
+distribution = "openai"
+version = "1.7.2"
+replacement = "client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints."
+source = "openai-1.7.2"
+
+[[removed]]
+kind = "api"
+module = "AsyncOpenAI"
+names = ["fine_tunes"]
+distribution = "openai"
+version = "1.7.2"
+replacement = "client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints."
+source = "openai-1.7.2"
+
+# --------------------------------------------------------------------------------------------------
+# Python 3.9 removals (outside the requested range)
+# --------------------------------------------------------------------------------------------------
+
+# ======================================================================================
+# BONUS, OUTSIDE THE REQUESTED RANGE: names removed in Python 3.9 (verified against 3.8).
+# Included because these are among the most frequent breakages of legacy code that is run
+# on a current interpreter. The whole section can be dropped without affecting the rest.
+# ======================================================================================
+
+[[removed]]
+kind = "attribute"
+owners = ["threading.Thread"]
+names = ["isAlive"]
+distribution = "python"
+version = "3.9"
+replacement = "is_alive(): the same method under its PEP 8 name"
+source = "python-3.9"
+
+[[removed]]
+kind = "api"
+module = "HTMLParser"
+names = ["unescape"]
+distribution = "python"
+version = "3.9"
+replacement = "html.unescape(s), the module-level function that the removed method called (import html)"
+source = "python-3.9"
+
+[[removed]]
+kind = "api"
+module = "ElementTree"
+names = ["getiterator"]
+distribution = "python"
+version = "3.9"
+replacement = "tree.iter(), or list(tree.iter()) where a list was relied on"
+source = "python-3.9"
+
+[[removed]]
+kind = "attribute"
+owners = ["xml.etree.ElementTree.Element"]
+names = ["xml.etree.ElementTree.Element.getchildren"]
+distribution = "python"
+version = "3.9"
+replacement = "list(elem), or iteration over elem directly, in place of elem.getchildren()"
+source = "python-3.9"
+
+[[removed]]
+kind = "attribute"
+owners = ["xml.etree.ElementTree.Element"]
+names = ["xml.etree.ElementTree.Element.getiterator"]
+distribution = "python"
+version = "3.9"
+replacement = "elem.iter(), or list(elem.iter()) where a list was relied on, in place of elem.getiterator()"
+source = "python-3.9"
+
+[[removed]]
+kind = "attribute"
+owners = ["array.array"]
+names = ["array.array.tostring"]
+distribution = "python"
+version = "3.9"
+replacement = "tobytes(): the same bytes result under the current name"
+source = "python-3.9"
+
+[[removed]]
+kind = "attribute"
+owners = ["array.array"]
+names = ["array.array.fromstring"]
+distribution = "python"
+version = "3.9"
+replacement = "frombytes(): the same operation under the current name"
+source = "python-3.9"
+
+# ==================================================================================================
+# SOURCES defined by this file (existing ids of domain.toml are only referenced, never redefined)
+# ==================================================================================================
+
+[sources."matplotlib-3.10-removals"]
+title = "Matplotlib API changes for 3.10.0: Removals (ContourSet.collections)"
+url = "https://matplotlib.org/stable/api/prev_api_changes/api_changes_3.10.0.html#removals"
+
+[sources."matplotlib-3.10-tostring-rgb"]
+title = "Matplotlib API changes for 3.10.0: RendererAgg.tostring_rgb and FigureCanvasAgg.tostring_rgb removed"
+url = "https://matplotlib.org/stable/api/prev_api_changes/api_changes_3.10.0.html#rendereragg-tostring-rgb-and-figurecanvasagg-tostring-rgb"
+
+[sources."openai-1.7.2"]
+title = "openai-python 1.7.2 release notes (2024-01-12): api: remove deprecated endpoints (the edits and fine_tunes resources)"
+url = "https://github.com/openai/openai-python/releases/tag/v1.7.2"
+
+[sources."pydantic-2.0-fieldinfo-api"]
+title = "Pydantic API documentation: pydantic.fields.FieldInfo (annotation, is_required, json_schema_extra)"
+url = "https://docs.pydantic.dev/latest/api/fields/#pydantic.fields.FieldInfo"
+
+[sources."python-3.12-changelog"]
+title = "Python 3.12 changelog (importlib.metadata: entry points no longer a dictionary, gh-97781)"
+url = "https://docs.python.org/3.12/whatsnew/changelog.html"
+
+[sources."sqlalchemy-2.0-from-self"]
+title = "SQLAlchemy 2.0 migration guide: selecting from the query itself as a subquery, from_self() removed"
+url = "https://docs.sqlalchemy.org/en/20/changelog/migration_20.html#selecting-from-the-query-itself-as-a-subquery-e-g-from-self"
