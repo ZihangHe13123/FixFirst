@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "scope": "Source trees for the A2-derived development reconstruction",
+  "original_platform": "Windows",
+  "execution_platform": "macOS arm64",
+  "original_windows_checkout_independently_compared": false,
+  "cases": [
+    {
+      "id": "django-storages",
+      "repository": "https://github.com/jschneier/django-storages.git",
+      "requested_ref": "1.14.6",
+      "source_commit": "3658c3d2353b778a45b09dd7a55cbabc66d22381",
+      "source_tree": "3a1ced0cb0b672a3d29ff9089677f3f675a3ee53",
+      "claim": "Ref resolved and retrieved for this reconstruction; not proof of original A2 HEAD",
+      "actual_python": "3.12.7",
+      "snapshot": "environments/django-storages.txt",
+      "snapshot_sha256": "405b92fce302d596d9ea84433c294d47ee2dde9e50c1db1c4c4c377858b62993",
+      "full_reference_counts": {
+        "passed": 253
+      },
+      "reference_protected_files_changed": []
+    },
+    {
+      "id": "python-slugify",
+      "repository": "https://github.com/un33k/python-slugify.git",
+      "requested_ref": "v9.1.0",
+      "source_commit": "025da8e577fd21c37f1794bd5cc2acb954e4c0e0",
+      "source_tree": "8461312530696a7daf79de90b68ae21e017d759f",
+      "source_commit_scope": "Local unpushed overlay commit; reproduce its content tree from the parent and upstream test overlay below. A newly created commit may have a different hash.",
+      "original_source_parent": "c442cd4cb61763c85b078d6ea83b5959c3ff364a",
+      "source_parent_tree": "75daf4e7cb353aaa18bf9c6aa799aa7bcbd81e82",
+      "test_overlay_from_commit": "8f9a550a906701412c8fc93e731582098f2caee2",
+      "test_overlay_files_sha256": {
+        "tests/test_release.py": "40533c17177a6cbabbc3e549817b29baf3b7ee954e5ca73475ea6aa159eb8273"
+      },
+      "test_overlay_patch": "patches/python-slugify-tests-overlay.patch",
+      "test_overlay_patch_sha256": "5390b0825aa7b1ee14fe1c780df11b1f0c39c976af3828ce984ed3c50479de98",
+      "reference_production_from_commit": "8f9a550a906701412c8fc93e731582098f2caee2",
+      "reference_production_patch": "patches/python-slugify-reference-production.patch",
+      "reference_production_patch_sha256": "4f1e188a90c502c31c973dd93e8b9f3867e5967ee96a5845b49508ab5836a59a",
+      "actual_python": "3.12.7",
+      "snapshot": "environments/python-slugify.txt",
+      "snapshot_sha256": "a82ed2a4e02ce46167d1e1924bce2e47f647795e1686f470c70a216326498210",
+      "full_reference_counts": {
+        "passed": 125
+      },
+      "full_reference_pytest_summary": "125 passed, 115 subtests passed",
+      "reference_protected_files_changed": []
+    }
+  ]
+}

@@ -1,0 +1,408 @@
+{
+  "status": "preparation_only",
+  "product_commit": "804cc3c455061517cbc5edb21a9fe4b66626b453",
+  "product_tree": "14f6efadbfc6681f6d8887a05b994abc8f5c76f6",
+  "git_status_clean": true,
+  "python": "3.12.13",
+  "implementation": "CPython",
+  "os": "Darwin",
+  "architecture": "arm64",
+  "packages": [
+    {
+      "name": "annotated-types",
+      "version": "0.8.0"
+    },
+    {
+      "name": "anyio",
+      "version": "4.15.1"
+    },
+    {
+      "name": "appnope",
+      "version": "1.0.0"
+    },
+    {
+      "name": "asttokens",
+      "version": "3.0.2"
+    },
+    {
+      "name": "attrs",
+      "version": "26.1.0"
+    },
+    {
+      "name": "build",
+      "version": "1.6.1"
+    },
+    {
+      "name": "certifi",
+      "version": "2026.7.22"
+    },
+    {
+      "name": "click",
+      "version": "8.5.0"
+    },
+    {
+      "name": "cloudpickle",
+      "version": "3.1.2"
+    },
+    {
+      "name": "comm",
+      "version": "0.2.3"
+    },
+    {
+      "name": "debugpy",
+      "version": "1.8.22"
+    },
+    {
+      "name": "executing",
+      "version": "2.2.1"
+    },
+    {
+      "name": "fastjsonschema",
+      "version": "2.22.2"
+    },
+    {
+      "name": "fixfirst-local",
+      "version": "0.8.0rc2"
+    },
+    {
+      "name": "h11",
+      "version": "0.16.0"
+    },
+    {
+      "name": "httpcore",
+      "version": "1.0.9"
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1"
+    },
+    {
+      "name": "idna",
+      "version": "3.20"
+    },
+    {
+      "name": "iniconfig",
+      "version": "2.3.0"
+    },
+    {
+      "name": "ipykernel",
+      "version": "7.4.0"
+    },
+    {
+      "name": "ipython",
+      "version": "9.17.1"
+    },
+    {
+      "name": "ipython-pygments-lexers",
+      "version": "1.1.1"
+    },
+    {
+      "name": "jedi",
+      "version": "0.20.0"
+    },
+    {
+      "name": "jinja2",
+      "version": "3.1.6"
+    },
+    {
+      "name": "joblib",
+      "version": "1.6.0"
+    },
+    {
+      "name": "jsonschema",
+      "version": "4.26.0"
+    },
+    {
+      "name": "jsonschema-specifications",
+      "version": "2025.9.1"
+    },
+    {
+      "name": "jupyter-client",
+      "version": "8.10.0"
+    },
+    {
+      "name": "jupyter-core",
+      "version": "5.9.1"
+    },
+    {
+      "name": "markupsafe",
+      "version": "3.0.4"
+    },
+    {
+      "name": "matplotlib-inline",
+      "version": "0.2.2"
+    },
+    {
+      "name": "narwhals",
+      "version": "2.26.0"
+    },
+    {
+      "name": "nbclient",
+      "version": "0.11.0"
+    },
+    {
+      "name": "nbformat",
+      "version": "5.11.1"
+    },
+    {
+      "name": "nest-asyncio2",
+      "version": "1.7.3"
+    },
+    {
+      "name": "numpy",
+      "version": "2.5.3"
+    },
+    {
+      "name": "packaging",
+      "version": "26.3"
+    },
+    {
+      "name": "pandas",
+      "version": "2.3.3"
+    },
+    {
+      "name": "parso",
+      "version": "0.8.7"
+    },
+    {
+      "name": "pexpect",
+      "version": "4.9.0"
+    },
+    {
+      "name": "pip",
+      "version": "26.2.1"
+    },
+    {
+      "name": "platformdirs",
+      "version": "4.12.2"
+    },
+    {
+      "name": "pluggy",
+      "version": "1.6.0"
+    },
+    {
+      "name": "prompt-toolkit",
+      "version": "3.0.53"
+    },
+    {
+      "name": "psutil",
+      "version": "7.2.2"
+    },
+    {
+      "name": "ptyprocess",
+      "version": "0.7.0"
+    },
+    {
+      "name": "pure-eval",
+      "version": "0.2.4"
+    },
+    {
+      "name": "pydantic",
+      "version": "2.13.5"
+    },
+    {
+      "name": "pydantic-core",
+      "version": "2.46.5"
+    },
+    {
+      "name": "pygments",
+      "version": "2.21.0"
+    },
+    {
+      "name": "pyproject-hooks",
+      "version": "1.3.3"
+    },
+    {
+      "name": "pytest",
+      "version": "9.1.1"
+    },
+    {
+      "name": "python-dateutil",
+      "version": "2.9.0.post0"
+    },
+    {
+      "name": "pytz",
+      "version": "2026.4"
+    },
+    {
+      "name": "pyyaml",
+      "version": "6.0.3"
+    },
+    {
+      "name": "pyzmq",
+      "version": "27.2.0"
+    },
+    {
+      "name": "referencing",
+      "version": "0.37.0"
+    },
+    {
+      "name": "rpds-py",
+      "version": "2026.6.3"
+    },
+    {
+      "name": "ruff",
+      "version": "0.16.10"
+    },
+    {
+      "name": "scikit-learn",
+      "version": "1.9.1"
+    },
+    {
+      "name": "scipy",
+      "version": "1.18.1"
+    },
+    {
+      "name": "setuptools",
+      "version": "81.0.0"
+    },
+    {
+      "name": "six",
+      "version": "1.17.0"
+    },
+    {
+      "name": "stack-data",
+      "version": "0.6.3"
+    },
+    {
+      "name": "threadpoolctl",
+      "version": "3.7.0"
+    },
+    {
+      "name": "tornado",
+      "version": "6.5.10"
+    },
+    {
+      "name": "traitlets",
+      "version": "5.16.1"
+    },
+    {
+      "name": "typing-extensions",
+      "version": "4.16.0"
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.4"
+    },
+    {
+      "name": "tzdata",
+      "version": "2026.4"
+    },
+    {
+      "name": "uv",
+      "version": "0.12.22"
+    },
+    {
+      "name": "wcwidth",
+      "version": "0.9.1"
+    }
+  ],
+  "matches_frozen_controller_inventory": true,
+  "hard_environment": {
+    "python": "3.12.13",
+    "interpreter": "cpython-3.12.13-macos-aarch64-none",
+    "distributions": [
+      "annotated-types==0.8.0",
+      "anyio==4.15.1",
+      "appnope==1.0.0",
+      "asttokens==3.0.2",
+      "attrs==26.1.0",
+      "build==1.6.1",
+      "certifi==2026.7.22",
+      "click==8.5.0",
+      "cloudpickle==3.1.2",
+      "comm==0.2.3",
+      "debugpy==1.8.22",
+      "executing==2.2.1",
+      "fastjsonschema==2.22.2",
+      "fixfirst-local==0.8.0rc2",
+      "h11==0.16.0",
+      "httpcore==1.0.9",
+      "httpx==0.28.1",
+      "idna==3.20",
+      "iniconfig==2.3.0",
+      "ipykernel==7.4.0",
+      "ipython-pygments-lexers==1.1.1",
+      "ipython==9.17.1",
+      "jedi==0.20.0",
+      "jinja2==3.1.6",
+      "joblib==1.6.0",
+      "jsonschema-specifications==2025.9.1",
+      "jsonschema==4.26.0",
+      "jupyter-client==8.10.0",
+      "jupyter-core==5.9.1",
+      "markupsafe==3.0.4",
+      "matplotlib-inline==0.2.2",
+      "narwhals==2.26.0",
+      "nbclient==0.11.0",
+      "nbformat==5.11.1",
+      "nest-asyncio2==1.7.3",
+      "numpy==2.5.3",
+      "packaging==26.3",
+      "pandas==2.3.3",
+      "parso==0.8.7",
+      "pexpect==4.9.0",
+      "pip==26.2.1",
+      "platformdirs==4.12.2",
+      "pluggy==1.6.0",
+      "prompt-toolkit==3.0.53",
+      "psutil==7.2.2",
+      "ptyprocess==0.7.0",
+      "pure-eval==0.2.4",
+      "pydantic-core==2.46.5",
+      "pydantic==2.13.5",
+      "pygments==2.21.0",
+      "pyproject-hooks==1.3.3",
+      "pytest==9.1.1",
+      "python-dateutil==2.9.0.post0",
+      "pytz==2026.4",
+      "pyyaml==6.0.3",
+      "pyzmq==27.2.0",
+      "referencing==0.37.0",
+      "rpds-py==2026.6.3",
+      "ruff==0.16.10",
+      "scikit-learn==1.9.1",
+      "scipy==1.18.1",
+      "setuptools==81.0.0",
+      "six==1.17.0",
+      "stack-data==0.6.3",
+      "threadpoolctl==3.7.0",
+      "tornado==6.5.10",
+      "traitlets==5.16.1",
+      "typing-extensions==4.16.0",
+      "typing-inspection==0.4.4",
+      "tzdata==2026.4",
+      "uv==0.12.22",
+      "wcwidth==0.9.1"
+    ],
+    "sha256": "e9a8de43f200901ee1ebb8c72072f75ac5bd465eb5034eb67b37ac0a01395117"
+  },
+  "code_identity": {
+    "fixfirst/diagnosis_cases.py": "1ed05b103f758f20ced0739ed12e6b8a58d6ea463c551c3d0326e74b89d19636",
+    "fixfirst/hard_cases.py": "e729c1476e9b8bb4adf3e18f2d419c68173a2cb3bf512539c47224f70daa7833",
+    "agent_baseline/agent_pilot.py": "7c0d5689eaf8f699654ed65b0062d203aaffdae2332266b4f07c62426905a670",
+    "agent_baseline/real_cases.py": "34091380c87486f54dafa7e05a6b5c886860a538d995847e0350d30bc00245c2",
+    "agent_baseline/isolation.py": "1a502035d7e5b257e45ad5b56e8456e695f30bde64ff2b487d4e5c6c1089745d",
+    "agent_baseline/hard_instances.py": "3c6980694881efbf1abc7a77ef51047cc3a25e4db3de4f5d242edeccc612fb82",
+    "agent_baseline/hard_cases.toml": "42b31aadc8b939ec0724b0941bc94fb039f6aa81b169980197e6f68f956bec3f",
+    "agent_baseline/qualify_hard.py": "01ccfa340f13e11b2cb7389bdf9053d7db704577e62e10fe3cbe352c09e2ec89"
+  },
+  "commands": [
+    "uv 0.12.22: venv --seed --python 3.12.13 .venv",
+    "UV_LINK_MODE=copy uv 0.12.22: pip install --python .venv/bin/python -r controller-lock.txt",
+    "UV_LINK_MODE=copy .venv/bin/uv pip install --python .venv/bin/python --no-deps --no-build-isolation -e ."
+  ],
+  "creator_uv": "0.12.22",
+  "runtime_uv": "0.12.22",
+  "interpreter_executable_sha256": "7b05d803bbc1bbfc81644af4faf2b88f0a37b8de96b9f42c1e08033e2cd0848a",
+  "pyvenv_cfg_fields": {
+    "implementation": "CPython",
+    "uv": "0.12.22",
+    "version_info": "3.12.13",
+    "include-system-site-packages": "false",
+    "seed": "true"
+  },
+  "controller_lock_sha256": "1fabc5cc2fb9d547f27ddeca0489183760ae2f3fd77cfa7495ff9c75bfbad952",
+  "commands_are_summaries": true,
+  "exact_bootstrap_and_run_parameters": "COMMANDS.private.md"
+}

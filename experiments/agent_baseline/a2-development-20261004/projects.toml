@@ -1,0 +1,15 @@
+# Qualified candidates for no-model pipeline check only; not final selection.
+
+[[project]]
+id = "django-storages"
+repo = "jschneier/django-storages"
+ref = "1.14.6"
+python = "3.12.7"
+install = ["-e .[azure,boto3,dropbox,google,libcloud,sftp]", "django~=5.1.0", "cryptography", "moto<5", "pytest", "pytest-cov", "rsa"]
+
+[[project]]
+id = "python-slugify"
+repo = "un33k/python-slugify"
+ref = "v9.1.0"
+python = "3.12"
+install = ["-e .", "pytest>=8", "coverage[toml]>=7"]

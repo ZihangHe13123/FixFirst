@@ -1,0 +1,548 @@
+[
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "django-storages",
+    "run": 1,
+    "arm": "baseline",
+    "order": 1
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "django-storages",
+    "run": 1,
+    "arm": "facts",
+    "order": 2
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "django-storages",
+    "run": 1,
+    "arm": "mcp",
+    "order": 3
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "django-storages",
+    "run": 2,
+    "arm": "facts",
+    "order": 1
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "django-storages",
+    "run": 2,
+    "arm": "mcp",
+    "order": 2
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "django-storages",
+    "run": 2,
+    "arm": "baseline",
+    "order": 3
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "django-storages",
+    "run": 3,
+    "arm": "mcp",
+    "order": 1
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "django-storages",
+    "run": 3,
+    "arm": "baseline",
+    "order": 2
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "django-storages",
+    "run": 3,
+    "arm": "facts",
+    "order": 3
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "django-storages",
+    "run": 4,
+    "arm": "baseline",
+    "order": 1
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "django-storages",
+    "run": 4,
+    "arm": "facts",
+    "order": 2
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "django-storages",
+    "run": 4,
+    "arm": "mcp",
+    "order": 3
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "django-storages",
+    "run": 5,
+    "arm": "facts",
+    "order": 1
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "django-storages",
+    "run": 5,
+    "arm": "mcp",
+    "order": 2
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "django-storages",
+    "run": 5,
+    "arm": "baseline",
+    "order": 3
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "python-slugify",
+    "run": 1,
+    "arm": "facts",
+    "order": 1
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "python-slugify",
+    "run": 1,
+    "arm": "mcp",
+    "order": 2
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "python-slugify",
+    "run": 1,
+    "arm": "baseline",
+    "order": 3
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "python-slugify",
+    "run": 2,
+    "arm": "mcp",
+    "order": 1
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "python-slugify",
+    "run": 2,
+    "arm": "baseline",
+    "order": 2
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "python-slugify",
+    "run": 2,
+    "arm": "facts",
+    "order": 3
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "python-slugify",
+    "run": 3,
+    "arm": "baseline",
+    "order": 1
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "python-slugify",
+    "run": 3,
+    "arm": "facts",
+    "order": 2
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "python-slugify",
+    "run": 3,
+    "arm": "mcp",
+    "order": 3
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "python-slugify",
+    "run": 4,
+    "arm": "facts",
+    "order": 1
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "python-slugify",
+    "run": 4,
+    "arm": "mcp",
+    "order": 2
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "python-slugify",
+    "run": 4,
+    "arm": "baseline",
+    "order": 3
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "python-slugify",
+    "run": 5,
+    "arm": "mcp",
+    "order": 1
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "python-slugify",
+    "run": 5,
+    "arm": "baseline",
+    "order": 2
+  },
+  {
+    "model": "Qwen3.6-35B-A3B-6bit",
+    "case": "python-slugify",
+    "run": 5,
+    "arm": "facts",
+    "order": 3
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "django-storages",
+    "run": 1,
+    "arm": "baseline",
+    "order": 1
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "django-storages",
+    "run": 1,
+    "arm": "facts",
+    "order": 2
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "django-storages",
+    "run": 1,
+    "arm": "mcp",
+    "order": 3
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "django-storages",
+    "run": 2,
+    "arm": "facts",
+    "order": 1
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "django-storages",
+    "run": 2,
+    "arm": "mcp",
+    "order": 2
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "django-storages",
+    "run": 2,
+    "arm": "baseline",
+    "order": 3
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "django-storages",
+    "run": 3,
+    "arm": "mcp",
+    "order": 1
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "django-storages",
+    "run": 3,
+    "arm": "baseline",
+    "order": 2
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "django-storages",
+    "run": 3,
+    "arm": "facts",
+    "order": 3
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "django-storages",
+    "run": 4,
+    "arm": "baseline",
+    "order": 1
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "django-storages",
+    "run": 4,
+    "arm": "facts",
+    "order": 2
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "django-storages",
+    "run": 4,
+    "arm": "mcp",
+    "order": 3
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "django-storages",
+    "run": 5,
+    "arm": "facts",
+    "order": 1
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "django-storages",
+    "run": 5,
+    "arm": "mcp",
+    "order": 2
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "django-storages",
+    "run": 5,
+    "arm": "baseline",
+    "order": 3
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "python-slugify",
+    "run": 1,
+    "arm": "facts",
+    "order": 1
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "python-slugify",
+    "run": 1,
+    "arm": "mcp",
+    "order": 2
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "python-slugify",
+    "run": 1,
+    "arm": "baseline",
+    "order": 3
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "python-slugify",
+    "run": 2,
+    "arm": "mcp",
+    "order": 1
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "python-slugify",
+    "run": 2,
+    "arm": "baseline",
+    "order": 2
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "python-slugify",
+    "run": 2,
+    "arm": "facts",
+    "order": 3
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "python-slugify",
+    "run": 3,
+    "arm": "baseline",
+    "order": 1
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "python-slugify",
+    "run": 3,
+    "arm": "facts",
+    "order": 2
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "python-slugify",
+    "run": 3,
+    "arm": "mcp",
+    "order": 3
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "python-slugify",
+    "run": 4,
+    "arm": "facts",
+    "order": 1
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "python-slugify",
+    "run": 4,
+    "arm": "mcp",
+    "order": 2
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "python-slugify",
+    "run": 4,
+    "arm": "baseline",
+    "order": 3
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "python-slugify",
+    "run": 5,
+    "arm": "mcp",
+    "order": 1
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "python-slugify",
+    "run": 5,
+    "arm": "baseline",
+    "order": 2
+  },
+  {
+    "model": "gemma-4-26B-A4B-it-qat-4bit",
+    "case": "python-slugify",
+    "run": 5,
+    "arm": "facts",
+    "order": 3
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "django-storages",
+    "run": 1,
+    "arm": "baseline",
+    "order": 1
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "django-storages",
+    "run": 1,
+    "arm": "facts",
+    "order": 2
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "django-storages",
+    "run": 1,
+    "arm": "mcp",
+    "order": 3
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "django-storages",
+    "run": 2,
+    "arm": "facts",
+    "order": 1
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "django-storages",
+    "run": 2,
+    "arm": "mcp",
+    "order": 2
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "django-storages",
+    "run": 2,
+    "arm": "baseline",
+    "order": 3
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "django-storages",
+    "run": 3,
+    "arm": "mcp",
+    "order": 1
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "django-storages",
+    "run": 3,
+    "arm": "baseline",
+    "order": 2
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "django-storages",
+    "run": 3,
+    "arm": "facts",
+    "order": 3
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "python-slugify",
+    "run": 1,
+    "arm": "facts",
+    "order": 1
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "python-slugify",
+    "run": 1,
+    "arm": "mcp",
+    "order": 2
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "python-slugify",
+    "run": 1,
+    "arm": "baseline",
+    "order": 3
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "python-slugify",
+    "run": 2,
+    "arm": "mcp",
+    "order": 1
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "python-slugify",
+    "run": 2,
+    "arm": "baseline",
+    "order": 2
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "python-slugify",
+    "run": 2,
+    "arm": "facts",
+    "order": 3
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "python-slugify",
+    "run": 3,
+    "arm": "baseline",
+    "order": 1
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "python-slugify",
+    "run": 3,
+    "arm": "facts",
+    "order": 2
+  },
+  {
+    "model": "Qwen3.8-27B-MLX-4bit",
+    "case": "python-slugify",
+    "run": 3,
+    "arm": "mcp",
+    "order": 3
+  }
+]

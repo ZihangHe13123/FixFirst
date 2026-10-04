@@ -1,0 +1,268 @@
+{
+  "status": "prepared_not_started",
+  "prepared_at_utc": "2026-10-04T12:05:07.272639+00:00",
+  "model_identity_receipt_sha256": "e37df9dd06aeb48a4e3ec17eaf97ee7c4251d0939621ed689b63d696b7ce42f4",
+  "settings_sha256": "52dd0fdf7c9c40a2b508d2206e823266bd76f61b70ca1fe68cba23c785d5955c",
+  "model_settings_sha256": "f25d19d0e17b623823dc67a443dfc4a7c3f3fc1505fc4e77d39d80bb3b2fcbbb",
+  "endpoint": "http://127.0.0.1:8133/v1",
+  "model_ids": [
+    "Qwen3.6-35B-A3B-6bit",
+    "gemma-4-26B-A4B-it-qat-4bit",
+    "Qwen3.8-27B-MLX-4bit"
+  ],
+  "condition_scope": "New batch service configuration, not a claim to reproduce incompletely recorded historical B7 settings.",
+  "thinking_policy": "No enable_thinking override; registered template defaults (Qwen3.6 on, Gemma off, Qwen3.8 on with xhigh effort). oMLX auto-preserve_thinking=true for these three templates.",
+  "authentication": "Launcher must inject the same newly generated secret into OMLX_API_KEY and LLM_API_KEY; none stored here.",
+  "launch_environment_keys": [
+    "OMLX_API_KEY",
+    "LLM_API_KEY",
+    "LLM_BASE_URL",
+    "HF_HUB_OFFLINE",
+    "TRANSFORMERS_OFFLINE",
+    "TOKENIZERS_PARALLELISM"
+  ],
+  "server_started": false,
+  "live_template_verified": false,
+  "inference_tested": false,
+  "settings_with_local_paths_replaced": {
+    "version": "1.0",
+    "server": {
+      "host": "127.0.0.1",
+      "port": 8133,
+      "log_level": "info",
+      "cors_origins": [
+        "*"
+      ],
+      "server_aliases": [
+        "localhost",
+        "127.0.0.1"
+      ],
+      "sse_keepalive_mode": "chunk",
+      "auto_start_on_launch": false,
+      "burst_decode_mode": "balanced",
+      "preserve_mid_system_cache": true,
+      "distributed_inference_enabled": false,
+      "max_audio_upload_size": "100MB"
+    },
+    "model": {
+      "model_dirs": [
+        "<batch-server-models>"
+      ],
+      "model_dir": "<batch-server-models>",
+      "model_fallback": false,
+      "hide_helper_models": false
+    },
+    "memory": {
+      "prefill_memory_guard": true,
+      "memory_guard_tier": "custom",
+      "memory_guard_custom_ceiling_gb": 38.0,
+      "soft_threshold": 0.85,
+      "hard_threshold": 0.95,
+      "prefill_safe_zone_ratio": 0.8,
+      "prefill_min_chunk_tokens": 32
+    },
+    "scheduler": {
+      "max_concurrent_requests": 1,
+      "embedding_batch_size": 32,
+      "chunked_prefill": true,
+      "prefill_priority": "context",
+      "decode_fairness": true
+    },
+    "cache": {
+      "enabled": false,
+      "hot_cache_only": false,
+      "gdn_ssd_split_enabled": false,
+      "gdn_snapshot_storage": "auto",
+      "gdn_ssd_pending_max_size": "512MB",
+      "gdn_sidecar_precision": "fp32",
+      "ssd_cache_dir": null,
+      "ssd_cache_max_size": "auto",
+      "hot_cache_max_size": "0",
+      "hot_cache_write_through": false,
+      "ane_compile_cache": false,
+      "initial_cache_blocks": 256
+    },
+    "auth": {
+      "api_key": null,
+      "secret_key": "<redacted-local-session-secret>",
+      "skip_api_key_verification": false,
+      "sub_keys": []
+    },
+    "mcp": {
+      "config_path": null,
+      "expose_tools": true
+    },
+    "huggingface": {
+      "endpoint": "",
+      "hf_cache_enabled": false
+    },
+    "modelscope": {
+      "endpoint": ""
+    },
+    "network": {
+      "http_proxy": "",
+      "https_proxy": "",
+      "no_proxy": "",
+      "ca_bundle": ""
+    },
+    "sampling": {
+      "max_context_window": 262144,
+      "max_context_window_policy": 262144,
+      "max_tokens": 4096,
+      "temperature": 0.2,
+      "top_p": 1.0,
+      "top_k": 0,
+      "repetition_penalty": 1.0
+    },
+    "logging": {
+      "log_dir": null,
+      "retention_days": 7
+    },
+    "claude_code": {
+      "mode": "cloud",
+      "opus_model": null,
+      "sonnet_model": null,
+      "haiku_model": null
+    },
+    "integrations": {
+      "codex_model": null,
+      "opencode_model": null,
+      "openclaw_model": null,
+      "hermes_model": null,
+      "pi_model": null,
+      "copilot_model": null,
+      "openclaw_tools_profile": "coding",
+      "markitdown_enabled": true,
+      "markitdown_expose_model": false,
+      "markitdown_max_file_size_mb": 25,
+      "markitdown_max_files_per_request": 5,
+      "markitdown_pdf_processing_engine": "markitdown",
+      "web_search_provider": "ddgs",
+      "web_search_brave_api_key": "",
+      "web_search_searxng_url": "",
+      "web_search_ddgs_backends": "",
+      "web_search_max_results": 3,
+      "web_search_content_mode": "snippet",
+      "web_search_content_truncate": true,
+      "web_search_content_max_chars": 20000
+    },
+    "ui": {
+      "language": "en"
+    },
+    "idle_timeout": {
+      "idle_timeout_seconds": null
+    }
+  },
+  "model_settings": {
+    "version": 1,
+    "models": {
+      "Qwen3.6-35B-A3B-6bit": {
+        "max_context_window": 262144,
+        "force_sampling": false,
+        "enable_thinking": null,
+        "preserve_thinking": null,
+        "chat_template_kwargs": {},
+        "forced_ct_kwargs": [],
+        "thinking_budget_enabled": false,
+        "thinking_budget_tokens": null,
+        "guided_grammar_enabled": false,
+        "guided_grammar": null,
+        "mtp_enabled": false,
+        "mtp_num_draft_tokens": null,
+        "vlm_mtp_enabled": false,
+        "vlm_mtp_draft_model": null,
+        "vlm_mtp_draft_block_size": null,
+        "specprefill_enabled": false,
+        "specprefill_draft_model": null,
+        "dflash_enabled": false,
+        "dflash_draft_model": null,
+        "dflash_draft_quant_enabled": false,
+        "dflash_in_memory_cache": false,
+        "dflash_ssd_cache": false,
+        "turboquant_kv_enabled": false,
+        "qwen4_ple_ssd_offload": false,
+        "qwen35_ane_prefill_enabled": false,
+        "qwen35_ane_prefill_cpu_enabled": false,
+        "trust_remote_code": false,
+        "is_pinned": false,
+        "is_default": false,
+        "active_profile_name": null
+      },
+      "gemma-4-26B-A4B-it-qat-4bit": {
+        "max_context_window": 262144,
+        "force_sampling": false,
+        "enable_thinking": null,
+        "preserve_thinking": null,
+        "chat_template_kwargs": {},
+        "forced_ct_kwargs": [],
+        "thinking_budget_enabled": false,
+        "thinking_budget_tokens": null,
+        "guided_grammar_enabled": false,
+        "guided_grammar": null,
+        "mtp_enabled": false,
+        "mtp_num_draft_tokens": null,
+        "vlm_mtp_enabled": false,
+        "vlm_mtp_draft_model": null,
+        "vlm_mtp_draft_block_size": null,
+        "specprefill_enabled": false,
+        "specprefill_draft_model": null,
+        "dflash_enabled": false,
+        "dflash_draft_model": null,
+        "dflash_draft_quant_enabled": false,
+        "dflash_in_memory_cache": false,
+        "dflash_ssd_cache": false,
+        "turboquant_kv_enabled": false,
+        "qwen4_ple_ssd_offload": false,
+        "qwen35_ane_prefill_enabled": false,
+        "qwen35_ane_prefill_cpu_enabled": false,
+        "trust_remote_code": false,
+        "is_pinned": false,
+        "is_default": false,
+        "active_profile_name": null
+      },
+      "Qwen3.8-27B-MLX-4bit": {
+        "max_context_window": 262144,
+        "force_sampling": false,
+        "enable_thinking": null,
+        "preserve_thinking": null,
+        "chat_template_kwargs": {},
+        "forced_ct_kwargs": [],
+        "thinking_budget_enabled": false,
+        "thinking_budget_tokens": null,
+        "guided_grammar_enabled": false,
+        "guided_grammar": null,
+        "mtp_enabled": false,
+        "mtp_num_draft_tokens": null,
+        "vlm_mtp_enabled": false,
+        "vlm_mtp_draft_model": null,
+        "vlm_mtp_draft_block_size": null,
+        "specprefill_enabled": false,
+        "specprefill_draft_model": null,
+        "dflash_enabled": false,
+        "dflash_draft_model": null,
+        "dflash_draft_quant_enabled": false,
+        "dflash_in_memory_cache": false,
+        "dflash_ssd_cache": false,
+        "turboquant_kv_enabled": false,
+        "qwen4_ple_ssd_offload": false,
+        "qwen35_ane_prefill_enabled": false,
+        "qwen35_ane_prefill_cpu_enabled": false,
+        "trust_remote_code": false,
+        "is_pinned": false,
+        "is_default": false,
+        "active_profile_name": null
+      }
+    }
+  },
+  "path_substitutions": [
+    "model.model_dir",
+    "model.model_dirs"
+  ],
+  "settings_normalization": {
+    "method": "Installed GlobalSettings loader/save_cli_overrides with host, port, hf_cache_enabled=False; repeated save byte-identical.",
+    "time_utc": "2026-10-04T12:08:16.362078+00:00",
+    "startup_cli_resave_expected_byte_identical": true,
+    "session_secret_preseeded": true,
+    "api_key_persisted": false
+  }
+}

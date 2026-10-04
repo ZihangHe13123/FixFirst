@@ -1,0 +1,34 @@
+{
+  "status": "materials_only_pending_final_registration",
+  "product_commit": "804cc3c455061517cbc5edb21a9fe4b66626b453",
+  "tasks": [
+    "django-storages",
+    "python-slugify"
+  ],
+  "arms": [
+    "baseline",
+    "facts",
+    "mcp"
+  ],
+  "repetitions": {
+    "Qwen3.6-35B-A3B-6bit": 5,
+    "gemma-4-26B-A4B-it-qat-4bit": 5,
+    "Qwen3.8-27B-MLX-4bit": 3
+  },
+  "planned_scored_runs": 78,
+  "generated_hard_tasks": 0,
+  "purpose": "small development comparison on reconstructed A2 tasks; no claim about unseen projects",
+  "no_language_model_runs_performed_by_material_preparation": true,
+  "registered_files_only_model_check": true,
+  "statistical_evidence_publication": {
+    "status": "pending_two_r12_path_checks",
+    "branch": "claude/b7-evidence-3e72647952c4",
+    "head": "67e1077acf51bf38b62e4a57133b07a8e1722e95",
+    "remaining": [
+      "reject results directory or result file links escaping their own package",
+      "reject a dangling .git entry instead of treating it as a no-history archive"
+    ],
+    "simulation_rerun_required_for_these_checks": false,
+    "note": "This material preparation neither fixes nor integrates those evidence checkers."
+  }
+}
