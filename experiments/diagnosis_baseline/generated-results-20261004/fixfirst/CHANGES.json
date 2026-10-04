@@ -1,0 +1,1230 @@
+[
+  {
+    "case_id": "flat-shop--vi_library_runtime",
+    "suite": "diagnosis",
+    "v070": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "rule",
+      "diagnosis_rule": "D02"
+    },
+    "v08": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "model",
+      "diagnosis_rule": "F01"
+    },
+    "old_first_step": {
+      "schema_version": 1,
+      "action_id": "update-sklearn.datasets.load_boston",
+      "kind": "manual_fix",
+      "title": "Replace sklearn.datasets.load_boston: removed in scikit-learn 1.2",
+      "explanation": "Observed project location: app.py:14. The target interpreter has scikit-learn 1.9.0, which no longer provides sklearn.datasets.load_boston (removed in 1.2). Change the code to use another dataset such as fetch_california_housing. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "verification": "Re-run the affected tests with the same interpreter",
+      "check": null,
+      "issue_ids": [
+        "issue-dc04c7303f2c0c"
+      ],
+      "reason_refs": [
+        "issue-dc04c7303f2c0c:remedy:replace_removed",
+        "issue-dc04c7303f2c0c:because:api:sklearn.datasets.load_boston",
+        "kb:api:sklearn.datasets.load_boston:removed_from",
+        "kb:api:sklearn.datasets.load_boston:removed_in_version",
+        "kb:api:sklearn.datasets.load_boston:replacement",
+        "dist:scikit-learn:installed_version:1.9.0"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 3,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": "version_incompatibility",
+      "rule_ids": [
+        "P10"
+      ],
+      "command": [],
+      "declaration_edits": []
+    },
+    "new_first_step": {
+      "schema_version": 1,
+      "action_id": "review-import",
+      "kind": "manual_fix",
+      "title": "Check the import path and dependency declarations",
+      "explanation": "The import failed and the recorded evidence does not identify one cause. Compare the failing import with the project layout, the declarations and the installed packages. Do not install a package based on the import name alone.",
+      "verification": "Re-run test collection; pip check passing does not prove the import works",
+      "check": null,
+      "issue_ids": [
+        "issue-dc04c7303f2c0c"
+      ],
+      "reason_refs": [
+        "issue-dc04c7303f2c0c:kind:import_failure",
+        "environment:snapshot:available",
+        "project:declarations:available"
+      ],
+      "preconditions": [
+        "environment:snapshot:available"
+      ],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 2,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": null,
+      "rule_ids": [
+        "P40"
+      ],
+      "command": [],
+      "declaration_edits": []
+    }
+  },
+  {
+    "case_id": "flat-shop--vi_unittest_alias",
+    "suite": "diagnosis",
+    "v070": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "rule",
+      "diagnosis_rule": "D03"
+    },
+    "v08": {
+      "diagnosis": null,
+      "diagnosis_source": null,
+      "diagnosis_rule": null
+    },
+    "old_first_step": {
+      "schema_version": 1,
+      "action_id": "update-assertequals",
+      "kind": "manual_fix",
+      "title": "Replace assertEquals: removed in Python 3.12",
+      "explanation": "Observed project location: test_app.py:18. The target interpreter has Python 3.12.14, which no longer provides assertEquals (removed in 3.12). Change the code to use the current unittest names (assertEqual, assertTrue, assertRegex, ...). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "verification": "Re-run the affected tests with the same interpreter",
+      "check": null,
+      "issue_ids": [
+        "issue-9ccede600e7cd0"
+      ],
+      "reason_refs": [
+        "issue-9ccede600e7cd0:remedy:replace_removed",
+        "issue-9ccede600e7cd0:because:attribute:assertEquals",
+        "kb:attribute:assertEquals:removed_from",
+        "kb:attribute:assertEquals:removed_in_version",
+        "kb:attribute:assertEquals:replacement",
+        "dist:python:installed_version:3.12.14"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 3,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": "version_incompatibility",
+      "rule_ids": [
+        "P10"
+      ],
+      "command": [],
+      "declaration_edits": []
+    },
+    "new_first_step": {
+      "schema_version": 1,
+      "action_id": "record-removal-ownership-issue-9ccede600e7cd0",
+      "kind": "inspect",
+      "title": "Re-run the failure before choosing a repair",
+      "explanation": "The saved failure names an attribute also removed from a library, but does not record which class supplied it. A class defined in this project may inherit that API. Re-run the failing check to distinguish a project mistake from a library change.",
+      "verification": "Use the same interpreter and failing check; inspect the newly recorded ownership before choosing a repair",
+      "check": null,
+      "issue_ids": [
+        "issue-9ccede600e7cd0"
+      ],
+      "reason_refs": [
+        "issue-9ccede600e7cd0:removal_owner_unobserved:yes"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 2,
+      "cost": 1,
+      "priority": 1,
+      "targets": [],
+      "cause": null,
+      "rule_ids": [
+        "P_REMOVAL_REOBSERVE"
+      ],
+      "command": [],
+      "declaration_edits": []
+    }
+  },
+  {
+    "case_id": "flat-shop--vi_unknown_attribute",
+    "suite": "diagnosis",
+    "v070": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "heuristic",
+      "diagnosis_rule": "H02"
+    },
+    "v08": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "rule",
+      "diagnosis_rule": "D02"
+    },
+    "old_first_step": {
+      "schema_version": 1,
+      "action_id": "check-failed-tests",
+      "kind": "rerun",
+      "title": "Re-run only the related failing tests",
+      "explanation": "Runs just the failing test nodes already observed and keeps other issues. When they all pass, the full suite still has to confirm the goal.",
+      "verification": "Check setup, call and teardown for each node; skipped and xfail do not count as fixed",
+      "check": "pytest_run",
+      "issue_ids": [
+        "issue-d6c80b19088fd5"
+      ],
+      "reason_refs": [
+        "issue-d6c80b19088fd5:affects:pass_tests"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 2,
+      "cost": 2,
+      "priority": 1,
+      "targets": [
+        "test_app.py::test_order_total"
+      ],
+      "cause": null,
+      "rule_ids": [],
+      "command": [],
+      "declaration_edits": []
+    },
+    "new_first_step": {
+      "schema_version": 1,
+      "action_id": "update-numpy.msort",
+      "kind": "manual_fix",
+      "title": "Replace numpy.msort: removed in numpy 2.0",
+      "explanation": "Observed project location: app.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.msort (removed in 2.0). Change the code to use numpy.sort(a, axis=0), which sorts along the first axis exactly as msort did. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "verification": "Re-run the affected tests with the same interpreter",
+      "check": null,
+      "issue_ids": [
+        "issue-d6c80b19088fd5"
+      ],
+      "reason_refs": [
+        "issue-d6c80b19088fd5:remedy:replace_removed",
+        "issue-d6c80b19088fd5:because:api:numpy.msort",
+        "kb:api:numpy.msort:removed_from",
+        "kb:api:numpy.msort:removed_in_version",
+        "kb:api:numpy.msort:replacement",
+        "dist:numpy:installed_version:2.5.3"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 3,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": "version_incompatibility",
+      "rule_ids": [
+        "P10"
+      ],
+      "command": [],
+      "declaration_edits": []
+    }
+  },
+  {
+    "case_id": "flat-shop--vi_unknown_import",
+    "suite": "diagnosis",
+    "v070": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "heuristic",
+      "diagnosis_rule": "H01"
+    },
+    "v08": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "rule",
+      "diagnosis_rule": "D02"
+    },
+    "old_first_step": {
+      "schema_version": 1,
+      "action_id": "find-release-scipy.stats.itemfreq",
+      "kind": "inspect",
+      "title": "Find a compatible scipy release that provides scipy.stats.itemfreq",
+      "explanation": "scipy.stats.itemfreq is unavailable in scipy 1.18.1; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole application.",
+      "verification": "The search result appears as the next step",
+      "check": "version_search",
+      "issue_ids": [
+        "issue-7898d93c6174e5"
+      ],
+      "reason_refs": [
+        "issue-7898d93c6174e5:likely:version_incompatibility",
+        "issue-7898d93c6174e5:likely_because:dist:scipy",
+        "issue-7898d93c6174e5:api:api:scipy.stats.itemfreq",
+        "dist:scipy:installed_version:1.18.1"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 2,
+      "evidence_rank": 0,
+      "cost": 1,
+      "priority": 1,
+      "targets": [
+        "scipy",
+        "scipy.stats.itemfreq"
+      ],
+      "cause": null,
+      "rule_ids": [
+        "P58"
+      ],
+      "command": [],
+      "declaration_edits": []
+    },
+    "new_first_step": {
+      "schema_version": 1,
+      "action_id": "update-scipy.stats.itemfreq",
+      "kind": "manual_fix",
+      "title": "Replace scipy.stats.itemfreq: removed in scipy 1.9",
+      "explanation": "Observed project location: app.py:2. The target interpreter has scipy 1.18.1, which no longer provides scipy.stats.itemfreq (removed in 1.9). Change the code to use numpy.unique(a, return_counts=True), which returns the values and their counts as two arrays; numpy.column_stack((values, counts)) rebuilds the two-column array that itemfreq returned. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "verification": "Re-run the affected tests with the same interpreter",
+      "check": null,
+      "issue_ids": [
+        "issue-7898d93c6174e5"
+      ],
+      "reason_refs": [
+        "issue-7898d93c6174e5:remedy:replace_removed",
+        "issue-7898d93c6174e5:because:api:scipy.stats.itemfreq",
+        "kb:api:scipy.stats.itemfreq:removed_from",
+        "kb:api:scipy.stats.itemfreq:removed_in_version",
+        "kb:api:scipy.stats.itemfreq:replacement",
+        "dist:scipy:installed_version:1.18.1"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 2,
+      "evidence_rank": 3,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": "version_incompatibility",
+      "rule_ids": [
+        "P10"
+      ],
+      "command": [],
+      "declaration_edits": []
+    }
+  },
+  {
+    "case_id": "src-billing--vi_unittest_alias",
+    "suite": "diagnosis",
+    "v070": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "rule",
+      "diagnosis_rule": "D03"
+    },
+    "v08": {
+      "diagnosis": null,
+      "diagnosis_source": null,
+      "diagnosis_rule": null
+    },
+    "old_first_step": {
+      "schema_version": 1,
+      "action_id": "update-assertnotequals",
+      "kind": "manual_fix",
+      "title": "Replace assertNotEquals: removed in Python 3.12",
+      "explanation": "Observed project location: tests/test_invoice.py:18. The target interpreter has Python 3.12.14, which no longer provides assertNotEquals (removed in 3.12). Change the code to use the current unittest names (assertEqual, assertTrue, assertRegex, ...). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "verification": "Re-run the affected tests with the same interpreter",
+      "check": null,
+      "issue_ids": [
+        "issue-ed7bd3b9652170"
+      ],
+      "reason_refs": [
+        "issue-ed7bd3b9652170:remedy:replace_removed",
+        "issue-ed7bd3b9652170:because:attribute:assertNotEquals",
+        "kb:attribute:assertNotEquals:removed_from",
+        "kb:attribute:assertNotEquals:removed_in_version",
+        "kb:attribute:assertNotEquals:replacement",
+        "dist:python:installed_version:3.12.14"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 3,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": "version_incompatibility",
+      "rule_ids": [
+        "P10"
+      ],
+      "command": [],
+      "declaration_edits": []
+    },
+    "new_first_step": {
+      "schema_version": 1,
+      "action_id": "record-removal-ownership-issue-ed7bd3b9652170",
+      "kind": "inspect",
+      "title": "Re-run the failure before choosing a repair",
+      "explanation": "The saved failure names an attribute also removed from a library, but does not record which class supplied it. A class defined in this project may inherit that API. Re-run the failing check to distinguish a project mistake from a library change.",
+      "verification": "Use the same interpreter and failing check; inspect the newly recorded ownership before choosing a repair",
+      "check": null,
+      "issue_ids": [
+        "issue-ed7bd3b9652170"
+      ],
+      "reason_refs": [
+        "issue-ed7bd3b9652170:removal_owner_unobserved:yes"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 2,
+      "cost": 1,
+      "priority": 1,
+      "targets": [],
+      "cause": null,
+      "rule_ids": [
+        "P_REMOVAL_REOBSERVE"
+      ],
+      "command": [],
+      "declaration_edits": []
+    }
+  },
+  {
+    "case_id": "src-billing--vi_unknown_attribute",
+    "suite": "diagnosis",
+    "v070": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "heuristic",
+      "diagnosis_rule": "H02"
+    },
+    "v08": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "rule",
+      "diagnosis_rule": "D02"
+    },
+    "old_first_step": {
+      "schema_version": 1,
+      "action_id": "check-failed-tests",
+      "kind": "rerun",
+      "title": "Re-run only the related failing tests",
+      "explanation": "Runs just the failing test nodes already observed and keeps other issues. When they all pass, the full suite still has to confirm the goal.",
+      "verification": "Check setup, call and teardown for each node; skipped and xfail do not count as fixed",
+      "check": "pytest_run",
+      "issue_ids": [
+        "issue-77a454a0c99c49"
+      ],
+      "reason_refs": [
+        "issue-77a454a0c99c49:affects:pass_tests"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 2,
+      "cost": 2,
+      "priority": 1,
+      "targets": [
+        "tests/test_invoice.py::test_invoice_amount"
+      ],
+      "cause": null,
+      "rule_ids": [],
+      "command": [],
+      "declaration_edits": []
+    },
+    "new_first_step": {
+      "schema_version": 1,
+      "action_id": "update-numpy.in1d",
+      "kind": "manual_fix",
+      "title": "Replace numpy.in1d: removed in numpy 2.4",
+      "explanation": "Observed project location: src/billing/invoice.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.in1d (removed in 2.4). Change the code to use numpy.isin(ar1, ar2), which takes the same assume_unique and invert arguments; isin returns an array shaped like ar1 while in1d always returned a flat 1-D array, so add .ravel() where a 1-D result is needed. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "verification": "Re-run the affected tests with the same interpreter",
+      "check": null,
+      "issue_ids": [
+        "issue-77a454a0c99c49"
+      ],
+      "reason_refs": [
+        "issue-77a454a0c99c49:remedy:replace_removed",
+        "issue-77a454a0c99c49:because:api:numpy.in1d",
+        "kb:api:numpy.in1d:removed_from",
+        "kb:api:numpy.in1d:removed_in_version",
+        "kb:api:numpy.in1d:replacement",
+        "dist:numpy:installed_version:2.5.3"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 3,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": "version_incompatibility",
+      "rule_ids": [
+        "P10"
+      ],
+      "command": [],
+      "declaration_edits": []
+    }
+  },
+  {
+    "case_id": "src-billing--vi_private_moved",
+    "suite": "diagnosis",
+    "v070": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "heuristic",
+      "diagnosis_rule": "H01"
+    },
+    "v08": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "rule",
+      "diagnosis_rule": "D02"
+    },
+    "old_first_step": {
+      "schema_version": 1,
+      "action_id": "find-release-pydantic.fields.modelfield",
+      "kind": "inspect",
+      "title": "Find a compatible pydantic release that provides pydantic.fields.ModelField",
+      "explanation": "pydantic.fields.ModelField is unavailable in pydantic 2.13.5; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole application.",
+      "verification": "The search result appears as the next step",
+      "check": "version_search",
+      "issue_ids": [
+        "issue-e5b32f33f31fdd"
+      ],
+      "reason_refs": [
+        "issue-e5b32f33f31fdd:likely:version_incompatibility",
+        "issue-e5b32f33f31fdd:likely_because:dist:pydantic",
+        "issue-e5b32f33f31fdd:api:api:pydantic.fields.ModelField",
+        "dist:pydantic:installed_version:2.13.5"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 2,
+      "evidence_rank": 0,
+      "cost": 1,
+      "priority": 1,
+      "targets": [
+        "pydantic",
+        "pydantic.fields.ModelField"
+      ],
+      "cause": null,
+      "rule_ids": [
+        "P58"
+      ],
+      "command": [],
+      "declaration_edits": []
+    },
+    "new_first_step": {
+      "schema_version": 1,
+      "action_id": "update-pydantic.fields.modelfield",
+      "kind": "manual_fix",
+      "title": "Replace pydantic.fields.ModelField: removed in pydantic 2.0",
+      "explanation": "Observed project location: src/billing/invoice.py:2. The target interpreter has pydantic 2.13.5, which no longer provides pydantic.fields.ModelField (removed in 2.0). Change the code to use pydantic.fields.FieldInfo (from pydantic.fields import FieldInfo), the V2 per-field object stored in model_fields; validators that took a ModelField argument now receive info: ValidationInfo (info.field_name, info.config, info.data). If the import is inside an installed library, that library needs a release that supports pydantic 2 (or pin pydantic<2); pydantic.v1.fields.ModelField keeps the old class for V1 models only.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "verification": "Re-run the affected tests with the same interpreter",
+      "check": null,
+      "issue_ids": [
+        "issue-e5b32f33f31fdd"
+      ],
+      "reason_refs": [
+        "issue-e5b32f33f31fdd:remedy:replace_removed",
+        "issue-e5b32f33f31fdd:because:api:pydantic.fields.ModelField",
+        "kb:api:pydantic.fields.ModelField:removed_from",
+        "kb:api:pydantic.fields.ModelField:removed_in_version",
+        "kb:api:pydantic.fields.ModelField:replacement",
+        "dist:pydantic:installed_version:2.13.5"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 2,
+      "evidence_rank": 3,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": "version_incompatibility",
+      "rule_ids": [
+        "P10"
+      ],
+      "command": [],
+      "declaration_edits": []
+    }
+  },
+  {
+    "case_id": "pkg-inventory--vi_unittest_alias",
+    "suite": "diagnosis",
+    "v070": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "rule",
+      "diagnosis_rule": "D03"
+    },
+    "v08": {
+      "diagnosis": null,
+      "diagnosis_source": null,
+      "diagnosis_rule": null
+    },
+    "old_first_step": {
+      "schema_version": 1,
+      "action_id": "update-assertregexpmatches",
+      "kind": "manual_fix",
+      "title": "Replace assertRegexpMatches: removed in Python 3.12",
+      "explanation": "Observed project location: tests/test_stock.py:18. The target interpreter has Python 3.12.14, which no longer provides assertRegexpMatches (removed in 3.12). Change the code to use the current unittest names (assertEqual, assertTrue, assertRegex, ...). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "verification": "Re-run the affected tests with the same interpreter",
+      "check": null,
+      "issue_ids": [
+        "issue-71e4bd3ce3e103"
+      ],
+      "reason_refs": [
+        "issue-71e4bd3ce3e103:remedy:replace_removed",
+        "issue-71e4bd3ce3e103:because:attribute:assertRegexpMatches",
+        "kb:attribute:assertRegexpMatches:removed_from",
+        "kb:attribute:assertRegexpMatches:removed_in_version",
+        "kb:attribute:assertRegexpMatches:replacement",
+        "dist:python:installed_version:3.12.14"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 3,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": "version_incompatibility",
+      "rule_ids": [
+        "P10"
+      ],
+      "command": [],
+      "declaration_edits": []
+    },
+    "new_first_step": {
+      "schema_version": 1,
+      "action_id": "record-removal-ownership-issue-71e4bd3ce3e103",
+      "kind": "inspect",
+      "title": "Re-run the failure before choosing a repair",
+      "explanation": "The saved failure names an attribute also removed from a library, but does not record which class supplied it. A class defined in this project may inherit that API. Re-run the failing check to distinguish a project mistake from a library change.",
+      "verification": "Use the same interpreter and failing check; inspect the newly recorded ownership before choosing a repair",
+      "check": null,
+      "issue_ids": [
+        "issue-71e4bd3ce3e103"
+      ],
+      "reason_refs": [
+        "issue-71e4bd3ce3e103:removal_owner_unobserved:yes"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 2,
+      "cost": 1,
+      "priority": 1,
+      "targets": [],
+      "cause": null,
+      "rule_ids": [
+        "P_REMOVAL_REOBSERVE"
+      ],
+      "command": [],
+      "declaration_edits": []
+    }
+  },
+  {
+    "case_id": "pkg-inventory--vi_unknown_attribute",
+    "suite": "diagnosis",
+    "v070": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "heuristic",
+      "diagnosis_rule": "H02"
+    },
+    "v08": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "rule",
+      "diagnosis_rule": "D02"
+    },
+    "old_first_step": {
+      "schema_version": 1,
+      "action_id": "check-failed-tests",
+      "kind": "rerun",
+      "title": "Re-run only the related failing tests",
+      "explanation": "Runs just the failing test nodes already observed and keeps other issues. When they all pass, the full suite still has to confirm the goal.",
+      "verification": "Check setup, call and teardown for each node; skipped and xfail do not count as fixed",
+      "check": "pytest_run",
+      "issue_ids": [
+        "issue-d7e35eea5bc58b"
+      ],
+      "reason_refs": [
+        "issue-d7e35eea5bc58b:affects:pass_tests"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 2,
+      "cost": 2,
+      "priority": 1,
+      "targets": [
+        "tests/test_stock.py::test_stock_value"
+      ],
+      "cause": null,
+      "rule_ids": [],
+      "command": [],
+      "declaration_edits": []
+    },
+    "new_first_step": {
+      "schema_version": 1,
+      "action_id": "update-numpy.row_stack",
+      "kind": "manual_fix",
+      "title": "Replace numpy.row_stack: removed in numpy 2.5",
+      "explanation": "Observed project location: inventory/stock.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.row_stack (removed in 2.5). Change the code to use numpy.vstack, which row_stack was an alias for; the arguments and the result are the same. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "verification": "Re-run the affected tests with the same interpreter",
+      "check": null,
+      "issue_ids": [
+        "issue-d7e35eea5bc58b"
+      ],
+      "reason_refs": [
+        "issue-d7e35eea5bc58b:remedy:replace_removed",
+        "issue-d7e35eea5bc58b:because:api:numpy.row_stack",
+        "kb:api:numpy.row_stack:removed_from",
+        "kb:api:numpy.row_stack:removed_in_version",
+        "kb:api:numpy.row_stack:replacement",
+        "dist:numpy:installed_version:2.5.3"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 3,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": "version_incompatibility",
+      "rule_ids": [
+        "P10"
+      ],
+      "command": [],
+      "declaration_edits": []
+    }
+  },
+  {
+    "case_id": "pkg-inventory--vi_private_moved",
+    "suite": "diagnosis",
+    "v070": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "heuristic",
+      "diagnosis_rule": "H01"
+    },
+    "v08": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "rule",
+      "diagnosis_rule": "D02"
+    },
+    "old_first_step": {
+      "schema_version": 1,
+      "action_id": "find-release-scipy.sparse.sputils.isdense",
+      "kind": "inspect",
+      "title": "Find a compatible scipy release that provides scipy.sparse.sputils.isdense",
+      "explanation": "scipy.sparse.sputils.isdense is unavailable in scipy 1.18.1; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole application.",
+      "verification": "The search result appears as the next step",
+      "check": "version_search",
+      "issue_ids": [
+        "issue-dcb4acb70dbc69"
+      ],
+      "reason_refs": [
+        "issue-dcb4acb70dbc69:likely:version_incompatibility",
+        "issue-dcb4acb70dbc69:likely_because:dist:scipy",
+        "issue-dcb4acb70dbc69:api:api:scipy.sparse.sputils.isdense",
+        "dist:scipy:installed_version:1.18.1"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 2,
+      "evidence_rank": 0,
+      "cost": 1,
+      "priority": 1,
+      "targets": [
+        "scipy",
+        "scipy.sparse.sputils.isdense"
+      ],
+      "cause": null,
+      "rule_ids": [
+        "P58"
+      ],
+      "command": [],
+      "declaration_edits": []
+    },
+    "new_first_step": {
+      "schema_version": 1,
+      "action_id": "update-scipy.sparse.sputils.isdense",
+      "kind": "manual_fix",
+      "title": "Replace scipy.sparse.sputils.isdense: removed in scipy 1.14",
+      "explanation": "Observed project location: inventory/stock.py:2. The target interpreter has scipy 1.18.1, which no longer provides scipy.sparse.sputils.isdense (removed in 1.14). Change the code to use no public replacement: these helpers are private and live only in scipy.sparse._sputils; use the public scipy.sparse API (issparse, isspmatrix_csr and so on) and NumPy (numpy.result_type, numpy.issubdtype, numpy.can_cast), or copy the few lines you need into your own code. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "verification": "Re-run the affected tests with the same interpreter",
+      "check": null,
+      "issue_ids": [
+        "issue-dcb4acb70dbc69"
+      ],
+      "reason_refs": [
+        "issue-dcb4acb70dbc69:remedy:replace_removed",
+        "issue-dcb4acb70dbc69:because:api:scipy.sparse.sputils.isdense",
+        "kb:api:scipy.sparse.sputils.isdense:removed_from",
+        "kb:api:scipy.sparse.sputils.isdense:removed_in_version",
+        "kb:api:scipy.sparse.sputils.isdense:replacement",
+        "dist:scipy:installed_version:1.18.1"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 2,
+      "evidence_rank": 3,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": "version_incompatibility",
+      "rule_ids": [
+        "P10"
+      ],
+      "command": [],
+      "declaration_edits": []
+    }
+  },
+  {
+    "case_id": "unittest-grades--vi_library_import",
+    "suite": "diagnosis",
+    "v070": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "rule",
+      "diagnosis_rule": "D02"
+    },
+    "v08": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "model",
+      "diagnosis_rule": "F01"
+    },
+    "old_first_step": {
+      "schema_version": 1,
+      "action_id": "update-pydantic.basesettings",
+      "kind": "manual_fix",
+      "title": "Replace pydantic.BaseSettings: removed in pydantic 2.0",
+      "explanation": "Observed project location: grades.py:2. The target interpreter has pydantic 2.13.5, which no longer provides pydantic.BaseSettings (removed in 2.0). Change the code to use the pydantic-settings package (from pydantic_settings import BaseSettings). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "verification": "Re-run the affected tests with the same interpreter",
+      "check": null,
+      "issue_ids": [
+        "issue-77a1f892cba1a9"
+      ],
+      "reason_refs": [
+        "issue-77a1f892cba1a9:remedy:replace_removed",
+        "issue-77a1f892cba1a9:because:api:pydantic.BaseSettings",
+        "kb:api:pydantic.BaseSettings:removed_from",
+        "kb:api:pydantic.BaseSettings:removed_in_version",
+        "kb:api:pydantic.BaseSettings:replacement",
+        "dist:pydantic:installed_version:2.13.5"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 2,
+      "evidence_rank": 3,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": "version_incompatibility",
+      "rule_ids": [
+        "P10"
+      ],
+      "command": [],
+      "declaration_edits": []
+    },
+    "new_first_step": {
+      "schema_version": 1,
+      "action_id": "review-other_unknown",
+      "kind": "manual_fix",
+      "title": "Read the original output and investigate by hand",
+      "explanation": "The recorded evidence does not support an automatic judgement. Read the original output; business-logic repair is outside FixFirst's scope.",
+      "verification": "Re-run the checks for the affected scope",
+      "check": null,
+      "issue_ids": [
+        "issue-77a1f892cba1a9"
+      ],
+      "reason_refs": [
+        "issue-77a1f892cba1a9:kind:other_unknown"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 2,
+      "evidence_rank": 2,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": null,
+      "rule_ids": [
+        "P51"
+      ],
+      "command": [],
+      "declaration_edits": []
+    }
+  },
+  {
+    "case_id": "unittest-grades--vi_unittest_alias",
+    "suite": "diagnosis",
+    "v070": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "rule",
+      "diagnosis_rule": "D03"
+    },
+    "v08": {
+      "diagnosis": null,
+      "diagnosis_source": null,
+      "diagnosis_rule": null
+    },
+    "old_first_step": {
+      "schema_version": 1,
+      "action_id": "update-assertalmostequals",
+      "kind": "manual_fix",
+      "title": "Replace assertAlmostEquals: removed in Python 3.12",
+      "explanation": "Observed project location: tests/test_grades.py:20. The target interpreter has Python 3.12.14, which no longer provides assertAlmostEquals (removed in 3.12). Change the code to use the current unittest names (assertEqual, assertTrue, assertRegex, ...). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "verification": "Re-run the affected tests with the same interpreter",
+      "check": null,
+      "issue_ids": [
+        "issue-67eb6b02d4f8e9"
+      ],
+      "reason_refs": [
+        "issue-67eb6b02d4f8e9:remedy:replace_removed",
+        "issue-67eb6b02d4f8e9:because:attribute:assertAlmostEquals",
+        "kb:attribute:assertAlmostEquals:removed_from",
+        "kb:attribute:assertAlmostEquals:removed_in_version",
+        "kb:attribute:assertAlmostEquals:replacement",
+        "dist:python:installed_version:3.12.14"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 3,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": "version_incompatibility",
+      "rule_ids": [
+        "P10"
+      ],
+      "command": [],
+      "declaration_edits": []
+    },
+    "new_first_step": {
+      "schema_version": 1,
+      "action_id": "record-removal-ownership-issue-67eb6b02d4f8e9",
+      "kind": "inspect",
+      "title": "Re-run the failure before choosing a repair",
+      "explanation": "The saved failure names an attribute also removed from a library, but does not record which class supplied it. A class defined in this project may inherit that API. Re-run the failing check to distinguish a project mistake from a library change.",
+      "verification": "Use the same interpreter and failing check; inspect the newly recorded ownership before choosing a repair",
+      "check": null,
+      "issue_ids": [
+        "issue-67eb6b02d4f8e9"
+      ],
+      "reason_refs": [
+        "issue-67eb6b02d4f8e9:removal_owner_unobserved:yes"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 2,
+      "cost": 1,
+      "priority": 1,
+      "targets": [],
+      "cause": null,
+      "rule_ids": [
+        "P_REMOVAL_REOBSERVE"
+      ],
+      "command": [],
+      "declaration_edits": []
+    }
+  },
+  {
+    "case_id": "unittest-grades--vi_unknown_attribute",
+    "suite": "diagnosis",
+    "v070": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "model",
+      "diagnosis_rule": "F01"
+    },
+    "v08": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "rule",
+      "diagnosis_rule": "D02"
+    },
+    "old_first_step": {
+      "schema_version": 1,
+      "action_id": "review-test_runtime_error",
+      "kind": "manual_fix",
+      "title": "Inspect the exception raised while running the test",
+      "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+      "verification": "Re-run the related test nodes, then the full suite",
+      "check": null,
+      "issue_ids": [
+        "issue-c96eddc7c7d369"
+      ],
+      "reason_refs": [
+        "issue-c96eddc7c7d369:kind:test_runtime_error"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 2,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": null,
+      "rule_ids": [
+        "P50"
+      ],
+      "command": [],
+      "declaration_edits": []
+    },
+    "new_first_step": {
+      "schema_version": 1,
+      "action_id": "update-numpy.cast",
+      "kind": "manual_fix",
+      "title": "Replace numpy.cast: removed in numpy 2.0",
+      "explanation": "Observed project location: grades.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.cast (removed in 2.0). Change the code to use numpy.asarray(arr, dtype=dtype) in place of numpy.cast[dtype](arr), for example numpy.asarray(arr, dtype=numpy.float32). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "verification": "Re-run the affected tests with the same interpreter",
+      "check": null,
+      "issue_ids": [
+        "issue-c96eddc7c7d369"
+      ],
+      "reason_refs": [
+        "issue-c96eddc7c7d369:remedy:replace_removed",
+        "issue-c96eddc7c7d369:because:api:numpy.cast",
+        "kb:api:numpy.cast:removed_from",
+        "kb:api:numpy.cast:removed_in_version",
+        "kb:api:numpy.cast:replacement",
+        "dist:numpy:installed_version:2.5.3"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 3,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": "version_incompatibility",
+      "rule_ids": [
+        "P10"
+      ],
+      "command": [],
+      "declaration_edits": []
+    }
+  },
+  {
+    "case_id": "fixture-orders--vi_unittest_alias",
+    "suite": "diagnosis",
+    "v070": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "rule",
+      "diagnosis_rule": "D03"
+    },
+    "v08": {
+      "diagnosis": null,
+      "diagnosis_source": null,
+      "diagnosis_rule": null
+    },
+    "old_first_step": {
+      "schema_version": 1,
+      "action_id": "update-failunless",
+      "kind": "manual_fix",
+      "title": "Replace failUnless: removed in Python 3.12",
+      "explanation": "Observed project location: tests/test_service.py:18. The target interpreter has Python 3.12.14, which no longer provides failUnless (removed in 3.12). Change the code to use the current unittest names (assertEqual, assertTrue, assertRegex, ...). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "verification": "Re-run the affected tests with the same interpreter",
+      "check": null,
+      "issue_ids": [
+        "issue-55ee90e02cb230"
+      ],
+      "reason_refs": [
+        "issue-55ee90e02cb230:remedy:replace_removed",
+        "issue-55ee90e02cb230:because:attribute:failUnless",
+        "kb:attribute:failUnless:removed_from",
+        "kb:attribute:failUnless:removed_in_version",
+        "kb:attribute:failUnless:replacement",
+        "dist:python:installed_version:3.12.14"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 3,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": "version_incompatibility",
+      "rule_ids": [
+        "P10"
+      ],
+      "command": [],
+      "declaration_edits": []
+    },
+    "new_first_step": {
+      "schema_version": 1,
+      "action_id": "record-removal-ownership-issue-55ee90e02cb230",
+      "kind": "inspect",
+      "title": "Re-run the failure before choosing a repair",
+      "explanation": "The saved failure names an attribute also removed from a library, but does not record which class supplied it. A class defined in this project may inherit that API. Re-run the failing check to distinguish a project mistake from a library change.",
+      "verification": "Use the same interpreter and failing check; inspect the newly recorded ownership before choosing a repair",
+      "check": null,
+      "issue_ids": [
+        "issue-55ee90e02cb230"
+      ],
+      "reason_refs": [
+        "issue-55ee90e02cb230:removal_owner_unobserved:yes"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 2,
+      "cost": 1,
+      "priority": 1,
+      "targets": [],
+      "cause": null,
+      "rule_ids": [
+        "P_REMOVAL_REOBSERVE"
+      ],
+      "command": [],
+      "declaration_edits": []
+    }
+  },
+  {
+    "case_id": "fixture-orders--vi_unknown_attribute",
+    "suite": "diagnosis",
+    "v070": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "model",
+      "diagnosis_rule": "F01"
+    },
+    "v08": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "rule",
+      "diagnosis_rule": "D02"
+    },
+    "old_first_step": {
+      "schema_version": 1,
+      "action_id": "review-test_runtime_error",
+      "kind": "manual_fix",
+      "title": "Inspect the exception raised while running the test",
+      "explanation": "Use the setup / call / teardown stage to separate fixture preparation, the test body and cleanup. Start from the location where the exception was raised.",
+      "verification": "Re-run the related test nodes, then the full suite",
+      "check": null,
+      "issue_ids": [
+        "issue-a3f78af9a87d00"
+      ],
+      "reason_refs": [
+        "issue-a3f78af9a87d00:kind:test_runtime_error"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 2,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": null,
+      "rule_ids": [
+        "P50"
+      ],
+      "command": [],
+      "declaration_edits": []
+    },
+    "new_first_step": {
+      "schema_version": 1,
+      "action_id": "update-numpy.mat",
+      "kind": "manual_fix",
+      "title": "Replace numpy.mat: removed in numpy 2.0",
+      "explanation": "Observed project location: orders/service.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.mat (removed in 2.0). Change the code to use numpy.asmatrix(data), the same function (numpy.mat was an alias). The numpy.matrix class itself is discouraged, so plain 2-D ndarrays with the @ operator are the usual choice in new code. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "verification": "Re-run the affected tests with the same interpreter",
+      "check": null,
+      "issue_ids": [
+        "issue-a3f78af9a87d00"
+      ],
+      "reason_refs": [
+        "issue-a3f78af9a87d00:remedy:replace_removed",
+        "issue-a3f78af9a87d00:because:api:numpy.mat",
+        "kb:api:numpy.mat:removed_from",
+        "kb:api:numpy.mat:removed_in_version",
+        "kb:api:numpy.mat:replacement",
+        "dist:numpy:installed_version:2.5.3"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 1,
+      "evidence_rank": 3,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": "version_incompatibility",
+      "rule_ids": [
+        "P10"
+      ],
+      "command": [],
+      "declaration_edits": []
+    }
+  },
+  {
+    "case_id": "fixture-orders--vi_unknown_import",
+    "suite": "diagnosis",
+    "v070": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "heuristic",
+      "diagnosis_rule": "H01"
+    },
+    "v08": {
+      "diagnosis": "version_incompatibility",
+      "diagnosis_source": "rule",
+      "diagnosis_rule": "D02"
+    },
+    "old_first_step": {
+      "schema_version": 1,
+      "action_id": "find-release-scipy.stats.binom_test",
+      "kind": "inspect",
+      "title": "Find a compatible scipy release that provides scipy.stats.binom_test",
+      "explanation": "scipy.stats.binom_test is unavailable in scipy 1.18.1; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole application.",
+      "verification": "The search result appears as the next step",
+      "check": "version_search",
+      "issue_ids": [
+        "issue-ddc7495cfed96e"
+      ],
+      "reason_refs": [
+        "issue-ddc7495cfed96e:likely:version_incompatibility",
+        "issue-ddc7495cfed96e:likely_because:dist:scipy",
+        "issue-ddc7495cfed96e:api:api:scipy.stats.binom_test",
+        "dist:scipy:installed_version:1.18.1"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 2,
+      "evidence_rank": 0,
+      "cost": 1,
+      "priority": 1,
+      "targets": [
+        "scipy",
+        "scipy.stats.binom_test"
+      ],
+      "cause": null,
+      "rule_ids": [
+        "P58"
+      ],
+      "command": [],
+      "declaration_edits": []
+    },
+    "new_first_step": {
+      "schema_version": 1,
+      "action_id": "update-scipy.stats.binom_test",
+      "kind": "manual_fix",
+      "title": "Replace scipy.stats.binom_test: removed in scipy 1.12",
+      "explanation": "Observed project location: orders/service.py:2. The target interpreter has scipy 1.18.1, which no longer provides scipy.stats.binom_test (removed in 1.12). Change the code to use scipy.stats.binomtest(k, n, p, alternative=...).pvalue; binomtest returns a result object where binom_test returned the p-value itself, and for a (successes, failures) pair x passed with n=None use k=x[0] and n=sum(x). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "verification": "Re-run the affected tests with the same interpreter",
+      "check": null,
+      "issue_ids": [
+        "issue-ddc7495cfed96e"
+      ],
+      "reason_refs": [
+        "issue-ddc7495cfed96e:remedy:replace_removed",
+        "issue-ddc7495cfed96e:because:api:scipy.stats.binom_test",
+        "kb:api:scipy.stats.binom_test:removed_from",
+        "kb:api:scipy.stats.binom_test:removed_in_version",
+        "kb:api:scipy.stats.binom_test:replacement",
+        "dist:scipy:installed_version:1.18.1"
+      ],
+      "preconditions": [],
+      "blocked_reasons": [],
+      "goal_impact": 2,
+      "evidence_rank": 3,
+      "cost": 2,
+      "priority": 1,
+      "targets": [],
+      "cause": "version_incompatibility",
+      "rule_ids": [
+        "P10"
+      ],
+      "command": [],
+      "declaration_edits": []
+    }
+  }
+]

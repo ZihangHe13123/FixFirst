@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "base": "2daf920ebbebacbea7a9239ab44475be806b7d50",
+  "files": {
+    "run/answers/input-cases.jsonl": {
+      "source": "workbench/codex-b3-night-run-20261003/answers/input-cases.jsonl",
+      "sha256": "31b1dfcd0a6295c02ef9c1e945aeb8c1da5e310d4f9237824c100b467277b274",
+      "transformation": "none"
+    },
+    "run/answers/input-manifest.json": {
+      "source": "workbench/codex-b3-night-run-20261003/answers/input-manifest.json",
+      "sha256": "48d1fd3ff3d86b4b498eb517adee58b78b24838d5b95c88d7056e7c5d93620a1",
+      "transformation": "none"
+    },
+    "run/answers/config.json": {
+      "source": "workbench/codex-b3-night-run-20261003/answers/config.json",
+      "sha256": "cc0d3c56bcfc4b117911e0994553ac030bc43e569a781707d13cd883974e06fb",
+      "transformation": "none"
+    },
+    "run/answers/SEALED.json": {
+      "source": "workbench/codex-b3-night-run-20261003/answers/SEALED.json",
+      "sha256": "3aa78c66788a0bea1e8f598ad10e7edb33c290f60b079cbc52cd0a6f82a4870b",
+      "transformation": "none"
+    },
+    "run/answers/results.jsonl": {
+      "source": "workbench/codex-b3-night-run-20261003/answers/results.jsonl",
+      "sha256": "fb755b0311563c5ee2dadcfa10419a9198f76814141b2a51a02dc8daa6c9e7dc",
+      "transformation": "none"
+    },
+    "run/answers/manifest.json": {
+      "source": "workbench/codex-b3-night-run-20261003/answers/manifest.json",
+      "sha256": "81a610e517556ee2a2c02c000c8a0d236a32e41b9a79a122a9b5bc771a5e9ae8",
+      "transformation": "none"
+    },
+    "run/REGISTRATION.json": {
+      "source": "workbench/codex-b3-night-run-20261003/REGISTRATION.json",
+      "sha256": "e6e886dac688811d0f4fef641fdf66262b55075d0374afb2735877f7988e037a",
+      "transformation": "none"
+    },
+    "run/REGISTRATION_SHA256.json": {
+      "source": "workbench/codex-b3-night-run-20261003/REGISTRATION_SHA256.json",
+      "sha256": "97f42e50e71b53d06bd8676dac350aff34c648df48443eee25278367c29c5ac8",
+      "transformation": "none"
+    },
+    "run/RUN_STATUS.json": {
+      "source": "workbench/codex-b3-night-run-20261003/RUN_STATUS.json",
+      "sha256": "70868a196b661743ce5822d5ccf3641f76ab8d6721715bb77429d7265cf4a7e7",
+      "transformation": "none"
+    },
+    "run/SCORES.json": {
+      "source": "workbench/codex-b3-night-run-20261003/SCORES.json",
+      "sha256": "6330a485fe30ed631596d9ce273e6d6e2e5a08f2af16979d881efcbe92815859",
+      "transformation": "none"
+    },
+    "inputs/labels.json": {
+      "source": "workbench/codex-b3-generated-preparation-20261003/labels.json",
+      "sha256": "b66463810b614cbdfeed002a69fd86119bd379199f471abe8faabee381bbce76",
+      "transformation": "none"
+    },
+    "inputs/MODEL_IDENTITY.json": {
+      "source": "workbench/codex-b3-generated-preparation-20261003/MODEL_IDENTITY.json",
+      "sha256": "d772cba813706aa4ab5f753d6b86574b79ac766d68b9e986ae9218a2f0ddc94f",
+      "transformation": "none"
+    },
+    "inputs/data/snapshots/hard/cases.jsonl": {
+      "source": "workbench/codex-b3-generated-preparation-20261003/data/snapshots/hard/cases.jsonl",
+      "sha256": "7c9523fab3adb4061b332e0496c95930aa327da7a2ee3946f6931404e0b8bf63",
+      "transformation": "none"
+    },
+    "inputs/data/snapshots/hard/manifest.json": {
+      "source": "workbench/codex-b3-generated-preparation-20261003/data/snapshots/hard/manifest.json",
+      "sha256": "cfaf13242a3989096f399f3be62162a397fd2a7936dd46eb36a1a4b3d60127cf",
+      "transformation": "none"
+    },
+    "inputs/data/snapshots/hard/environment.json": {
+      "source": "workbench/codex-b3-generated-preparation-20261003/data/snapshots/hard/environment.json",
+      "sha256": "44526557107960bd1041eb31c57745343840c5c2170095ae10fe30ad975b1c0e",
+      "transformation": "none"
+    },
+    "inputs/data/snapshots/diagnosis/cases.jsonl": {
+      "source": "workbench/codex-b3-generated-preparation-20261003/data/snapshots/diagnosis/cases.jsonl",
+      "sha256": "881bdf1d8a73ad533c58b035626b96b3470f03c438ec7e6c8ea3b96184a30b6a",
+      "transformation": "none"
+    },
+    "inputs/data/snapshots/diagnosis/manifest.json": {
+      "source": "workbench/codex-b3-generated-preparation-20261003/data/snapshots/diagnosis/manifest.json",
+      "sha256": "bf689a5e899ac5d2da6f955c5cf6e42a391f1b398041611644d481c2dc7ec21d",
+      "transformation": "none"
+    },
+    "inputs/data/snapshots/diagnosis/environment.json": {
+      "source": "workbench/codex-b3-generated-preparation-20261003/data/snapshots/diagnosis/environment.json",
+      "sha256": "44526557107960bd1041eb31c57745343840c5c2170095ae10fe30ad975b1c0e",
+      "transformation": "none"
+    },
+    "fixfirst/v070-replay.json": {
+      "source": "workbench/codex-b3-generated-results-20261004/fixfirst/v070-replay.json",
+      "sha256": "9fb6957b65d8c0c318710620b6d7321fd2aadaa06f1aef0c9d3221094554c475",
+      "transformation": "none"
+    },
+    "fixfirst/v08-replay.json": {
+      "source": "workbench/codex-b3-generated-results-20261004/fixfirst/v08-replay.json",
+      "sha256": "9f94232e9bfcabd280847d825a12b2d8e9ac2d4ef172f1d9e66c763acf4cdc4f",
+      "transformation": "none"
+    },
+    "fixfirst/SOURCE_INPUT_IDENTITY.json": {
+      "source": "workbench/codex-b3-generated-results-20261004/fixfirst/SOURCE_INPUT_IDENTITY.json",
+      "sha256": "8324b4520a7153e65aa2df074e440ee5d25bf5ab8964e099405b313cbf578938",
+      "transformation": "none"
+    },
+    "fixfirst/SCORES.json": {
+      "source": "workbench/codex-b3-generated-results-20261004/fixfirst/SCORES.json",
+      "sha256": "9b0b4309ef6afeb6aaf5063575f4af0c378dae50f5a9674aa0bc256165a8e863",
+      "transformation": "none"
+    },
+    "fixfirst/CHANGES.json": {
+      "source": "workbench/codex-b3-generated-results-20261004/fixfirst/CHANGES.json",
+      "sha256": "bd5efe59c43db4bba389773bbb70d218c5f5a0af524687f68709876d30eb952f",
+      "transformation": "none"
+    },
+    "fixfirst/PROTOCOL.md": {
+      "source": "workbench/codex-b3-generated-results-20261004/fixfirst/PROTOCOL.md",
+      "sha256": "91007249da1e6a96920c7d05b72227211923b8f323e429bea1932b72e9e3bbda",
+      "transformation": "none"
+    },
+    "fixfirst/PROTOCOL_LOCK.json": {
+      "source": "workbench/codex-b3-generated-results-20261004/fixfirst/PROTOCOL_LOCK.json",
+      "sha256": "eb6d136b277facdd2261ca0f22deb55ac0ee65289c8a477b96f6b90f5df7b8de",
+      "transformation": "none"
+    },
+    "fixfirst/timing/SUMMARY.json": {
+      "source": "workbench/codex-b3-generated-results-20261004/fixfirst/timing/SUMMARY.json",
+      "sha256": "7c03a233944882f8b8e02c363a85aa42b23977e791035daf7c642d20d2858422",
+      "transformation": "none"
+    },
+    "fixfirst/timing/v070.json": {
+      "source": "workbench/codex-b3-generated-results-20261004/fixfirst/timing/v070.json",
+      "sha256": "29c22857e7f753deb9a60f9c5ae80e09a30d11fdf9e03ac758702c497fe37ed0",
+      "transformation": "none"
+    },
+    "fixfirst/timing/v08.json": {
+      "source": "workbench/codex-b3-generated-results-20261004/fixfirst/timing/v08.json",
+      "sha256": "8b9ee0ed6bd59b80e89ea7f410f9fae22ba16464a17265e09bbe9f4b9941350f",
+      "transformation": "none"
+    },
+    "fixfirst/timing/TIMING_LOCK.json": {
+      "source": "workbench/codex-b3-generated-results-20261004/fixfirst/timing/TIMING_LOCK.json",
+      "sha256": "4598b878fa0cb640ac798ba2d8e44aa4ebbca7f1b54950265125b8b27a903291",
+      "transformation": "none"
+    },
+    "recorded-audit/FIXFIRST_AUDIT.json": {
+      "source": "workbench/codex-b3-generated-results-20261004/audit/FIXFIRST_AUDIT.json",
+      "sha256": "464ad4adcc52ddb0338479acd9d6fabeab40b16a5e37259aa7e0870eb5ebf281",
+      "transformation": "none"
+    },
+    "recorded-audit/FINAL_REPORT_CHECK.json": {
+      "source": "workbench/codex-b3-generated-results-20261004/audit/FINAL_REPORT_CHECK.json",
+      "sha256": "c226e46156d08b25c0f6939b3202d519529d6efa21303d42851e6c8bb422f074",
+      "transformation": "none"
+    },
+    "original-report/REPORT.md": {
+      "source": "workbench/codex-b3-generated-results-20261004/REPORT.md",
+      "sha256": "338ad240cb97bda7e75a31d76164add33f757b91630bc687308607ba00a89a87",
+      "transformation": "none"
+    },
+    "original-report/COMPARISON.json": {
+      "source": "workbench/codex-b3-generated-results-20261004/COMPARISON.json",
+      "sha256": "4b1215c9f284ddde401d2845d014e20e6c51cbe1e201b8f1e9dd03f80b5d62ff",
+      "transformation": "none"
+    },
+    "original-report/case-matrix.csv": {
+      "source": "workbench/codex-b3-generated-results-20261004/case-matrix.csv",
+      "sha256": "92768d113743cc3c755af1e53556c5448e2acbc3173669b6afad95c22ab98f8e",
+      "transformation": "none"
+    },
+    "fixfirst/replay_portable.py": {
+      "source": "workbench/codex-b3-generated-results-20261004/fixfirst/replay.py",
+      "original_sha256": "34ca4797af1d40eeb1dc3555f074e4f45b27e5fab724d2b4b70d706b0813a5a6",
+      "transformation": "path setup uses packaged inputs and explicit B3_V070_CHECKOUT/B3_V08_CHECKOUT/B3_REPLAY_OUTPUT; controller creates a new output directory. Inference worker unchanged. Unused imports removed and two semicolons split for lint; worker AST unchanged."
+    },
+    "build_report.py": {
+      "source": "workbench/codex-b3-generated-results-20261004/build_report.py",
+      "original_sha256": "962cc406a0b51ae8a96088e89328d4f193397d20a07b952b266848d1d75a81ad",
+      "transformation": "package-relative input and provenance paths only"
+    },
+    "REPORT.template.md": {
+      "source": "workbench/codex-b3-generated-results-20261004/REPORT.template.md",
+      "original_sha256": "bc6992816410ae0efa6991e76e44fb97bd39e5f502a1f8c4bb8014c8c4d3b97b",
+      "transformation": "public artifact locations and delivery status only; scientific claims/tables unchanged"
+    },
+    "recorded-audit/LLM_AUDIT.sanitized.json": {
+      "source": "workbench/codex-b3-generated-results-20261004/audit/LLM_AUDIT.json",
+      "transformation": "One local interpreter environment prefix in a recorded server warning replaced with <LOCAL_MODEL_ENV>; no score or response modified.",
+      "original_sha256": "533f5b54befe8497ab36dfe3fce52e19d87fe4fd9d15cbc7cf1c458f9b41374f"
+    }
+  },
+  "dependency_prs": [
+    53,
+    61,
+    66
+  ]
+}

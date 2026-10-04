@@ -1,0 +1,23 @@
+{
+  "status": "complete",
+  "completed_requests": 750,
+  "total_requests": 750,
+  "started_at": "2026-10-03T16:04:14.260237+00:00",
+  "pid": 1358,
+  "caffeinate_pid": 1372,
+  "checked_at": "2026-10-03T20:25:30.088605+00:00",
+  "current_model": "Qwen3.8-27B-MLX-4bit",
+  "server_pid": 32841,
+  "current_case": "fixture-orders--ml_renamed_then_alias",
+  "current_request": 750,
+  "request_started_at": "2026-10-03T20:24:32.132524+00:00",
+  "last_answer_status": "ok",
+  "last_latency_s": 57.010185,
+  "answer_seal_sha256": "3aa78c66788a0bea1e8f598ad10e7edb33c290f60b079cbc52cd0a6f82a4870b",
+  "scores_sha256": "6330a485fe30ed631596d9ce273e6d6e2e5a08f2af16979d881efcbe92815859",
+  "completed_at": "2026-10-03T20:25:30.079262+00:00",
+  "server_stopped": true,
+  "cleanup_error": null,
+  "sleep_assertion_released": true,
+  "user_settings_unchanged": true
+}

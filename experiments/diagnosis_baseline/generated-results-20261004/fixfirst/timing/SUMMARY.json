@@ -1,0 +1,47 @@
+{
+  "versions": {
+    "v070": {
+      "commit": "c8151af7bd6c19d71605dd3add38ea2dcda98ec2",
+      "worker_process_wall_seconds": 2.9625093329232186,
+      "matching_primary_diagnosis_triplets": 250,
+      "suites": {
+        "diagnosis": {
+          "n": 220,
+          "infer_and_plan_seconds_total": 2.352581660845317,
+          "infer_and_plan_seconds_median": 0.010525770543608814,
+          "infer_and_plan_seconds_min": 0.010222584009170532,
+          "infer_and_plan_seconds_max": 0.015018542064353824
+        },
+        "hard": {
+          "n": 30,
+          "infer_and_plan_seconds_total": 0.323011334403418,
+          "infer_and_plan_seconds_median": 0.010570624959655106,
+          "infer_and_plan_seconds_min": 0.010353417019359767,
+          "infer_and_plan_seconds_max": 0.014917374937795103
+        }
+      }
+    },
+    "v08": {
+      "commit": "ff92446c5d0de26564f1cbf50e45036c90b87713",
+      "worker_process_wall_seconds": 3.1924025409389287,
+      "matching_primary_diagnosis_triplets": 250,
+      "suites": {
+        "diagnosis": {
+          "n": 220,
+          "infer_and_plan_seconds_total": 2.5331233685137704,
+          "infer_and_plan_seconds_median": 0.011338770971633494,
+          "infer_and_plan_seconds_min": 0.010932208970189095,
+          "infer_and_plan_seconds_max": 0.015923916012980044
+        },
+        "hard": {
+          "n": 30,
+          "infer_and_plan_seconds_total": 0.3469568763393909,
+          "infer_and_plan_seconds_median": 0.011355854046996683,
+          "infer_and_plan_seconds_min": 0.011092292028479278,
+          "infer_and_plan_seconds_max": 0.016089166048914194
+        }
+      }
+    }
+  },
+  "scope": "Report-stage supplemental timing with preloaded Python modules/model/knowledge. Excludes observation collection, HTTP, tokenization and generation. Not a common end-to-end speed benchmark."
+}

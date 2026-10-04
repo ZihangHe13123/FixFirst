@@ -1,0 +1,9 @@
+{
+  "locked_at_utc": "2026-10-04T04:28:16.554311+00:00",
+  "attempt": 2,
+  "previous_lock_sha256": "0b3f9f2a3495dfa21edd7e0076fe4e92061abadc5cf6b3c33a0366be76770e15",
+  "files": {
+    "PROTOCOL.md": "91007249da1e6a96920c7d05b72227211923b8f323e429bea1932b72e9e3bbda",
+    "replay.py": "34ca4797af1d40eeb1dc3555f074e4f45b27e5fab724d2b4b70d706b0813a5a6"
+  }
+}
