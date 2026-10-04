@@ -1,0 +1,9 @@
+# PR70 acceptance follow-ups
+
+Respond to Claude's independent acceptance at ba0636a. Keep the fixed81 model bytes and the archived v0.7/B3 data unchanged. No training, LLM, new heldout input or B7 launch. Implement in an isolated follow-up branch; old candidate and acceptance records remain intact.
+
+Scope: O1 unify P12 guidance across supported execution goals; N2 retain an evidence-supported optional own-project installation route for projects whose tests need installedmetadata; N4 explain quoting and preservePYTHONPATH. N1/O2 add boundedstatic discovery of nonstandardimportroots without treating arbitrarynestedfiles as provenrootshadowing. N3 prevent incomplete receiver provenance being adopted as a model diagnosis; retainrawpredictionwithanexplanation. Other legacy O3–O5 stay documented, not silently included.
+
+Design: preserve existing root/srcmoduleindex contracts; separate candidate importroots where needed and require actualmissingimport, wholemodulepath and unambiguousrecordedcandidate beforeusingD13/P12. Excludeenvironment/build/vendor/private paths, bound traversal and rejectsymlinkescape. Guidance consumes the latestsameenvironment/project/scope snapshot, never readsprojectfilesduringreplay; config-onlypackagingfilenames are insufficient for installation advice. Receiverguard is perissue/member and suppresses only the learnedfallback for explicitlyunusableownership, notvalidrulesorunrelatedfailures.
+
+Validation: freeze targetedcontrols beforecandidateexecution; reproduceClaude's sixlayouts, run_project/no-metadata, own-installedmetadata, quoting and MRO64/65boundaries, plus ambiguity/provenance negatives. Then runexisting391+availableClaudecontrols, fulltests/Ruff, actuallyregenerateownersbinding afterproductioncodefixed, build/installsmoke andCI. NoDefaultTreeChange:SHA189f712ea75bcb117f96aae879fd0c9bdab9ee6531475d1a95faf01ec2738d30. Do notfakeupdatedreceipts; do notweakenoldchecksfornewcode.
