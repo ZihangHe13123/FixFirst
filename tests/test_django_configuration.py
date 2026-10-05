@@ -320,6 +320,71 @@ def test_plugin_configuration_is_not_effective_merely_because_it_exists(tmp_path
     assert expected in action.explanation
 
 
+def django_actions():
+    from fixfirst.models import Action
+    actions = [Action(action_id=f"review-{i}", kind="inspect", title="Review Django settings", explanation="same",
+                      verification="rerun original tests", issue_ids=[f"issue-{i}"], reason_refs=[f"evidence-{i}"],
+                      preconditions=[f"fact-{i}"], rule_ids=["P86"], cause="config_missing",
+                      goal_impact=i, evidence_rank=i + 1, cost=4 - i) for i in range(3)]
+    context = {"mechanism": "settings_unconfigured", "configuration": {
+        "candidates": [{"module": "suite.config", "source": "tox.ini [testenv]", "entrypoint": "tox"}],
+        "unknown_sources": []}, "plugin_installed": False, "argv": ["python", "-m", "pytest", "-q"]}
+    details = {f"issue-{i}": {"django_configuration": json.loads(json.dumps(context))} for i in range(3)}
+    return actions, details
+
+
+def test_identical_django_reviews_keep_every_issue_evidence_and_precondition():
+    from fixfirst.django_configuration import _group_identical
+    from fixfirst.models import Fact
+    from fixfirst.reasoning import order_actions
+    actions, details = django_actions()
+    result = _group_identical(actions, details)
+    assert len(result) == 1 and result[0].action_id == "review-0"
+    action = result[0]
+    assert action.issue_ids == [f"issue-{i}" for i in range(3)]
+    assert action.reason_refs == [f"evidence-{i}" for i in range(3)]
+    assert action.preconditions == [f"fact-{i}" for i in range(3)]
+    assert (action.goal_impact, action.evidence_rank, action.cost) == (2, 3, 2)
+    facts = [Fact(fact_id=f"fact-{i}", subject="x", predicate="x", value="x") for i in range(2)]
+    assert order_actions(result, facts)[0].blocked_reasons == ["fact-2"]
+    assert _group_identical(result, details) == result
+
+
+@pytest.mark.parametrize("field,value", [
+    ("mechanism", "apps_not_ready"), ("configuration", {"candidates": []}),
+    ("plugin_installed", True), ("argv", ["python", "-m", "pytest", "-c", "different.ini"]),
+    ("configuration", {"candidates": [], "unknown_sources": ["dynamic runner"]}),
+])
+def test_equal_titles_with_different_configuration_evidence_are_not_merged(field, value):
+    from fixfirst.django_configuration import _group_identical
+    actions, details = django_actions()
+    details["issue-1"]["django_configuration"][field] = value
+    result = _group_identical(actions, details)
+    assert [a.issue_ids for a in result] == [["issue-0", "issue-2"], ["issue-1"]]
+
+
+@pytest.mark.parametrize("field,value", [
+    ("explanation", "different next step"), ("verification", "different runner"),
+    ("command", ["python", "-m", "pip", "install", "pytest-django"]),
+    ("targets", ["different.ini"]), ("declaration_edits", [{"file": "requirements.txt"}]),
+    ("rule_ids", ["P86", "other"]), ("kind", "manual_fix"),
+])
+def test_equal_titles_with_different_repairs_are_not_merged(field, value):
+    from fixfirst.django_configuration import _group_identical
+    actions, details = django_actions()
+    setattr(actions[1], field, value)
+    result = _group_identical(actions, details)
+    assert [a.issue_ids for a in result] == [["issue-0", "issue-2"], ["issue-1"]]
+
+
+def test_missing_evidence_and_other_rules_remain_separate():
+    from fixfirst.django_configuration import _group_identical
+    actions, details = django_actions()
+    del details["issue-1"]
+    actions[2].rule_ids = ["P12"]
+    assert _group_identical(actions, details) == actions
+
+
 REAL_PYTHON = os.environ.get("FIXFIRST_DJANGO_PYTHON")
 
 

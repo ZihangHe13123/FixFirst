@@ -26,7 +26,7 @@
    "dependency_advice.py": "ad5adf9a8b240ad5aea4e1bb6790b4ef34d8ab462fef5d115c456ff4c01124e6",
    "dependency_context.py": "14b93bc96c3f3fa4e8fd8e58190f068a1be21799ea6a997ef7e2471563564a59",
    "dependency_resolution.py": "d628304aa86d37a65d8684d043ce7c9d696e856baa5490fdab1296bc605b61cf",
-   "django_configuration.py": "6ebcff8c10c324cdf9c443d48733acdce3f7f8248c292452caa26924ea55a3eb",
+   "django_configuration.py": "7d48390b8dc32be48395d44d601b5efb75df821a00a807862207d67c6ea92210",
    "domain.py": "19de9cfd100c8db3c0b7fe9fe4db72552d5d928d8ea80f6724dcd042e4cd3df5",
    "engine.py": "e9ad8da35f3657a9c07868e15bea36e443079f8a84c5dc5ada621f83586c0ca7",
    "evidence.py": "ad02582f8bc99e8024b71388f2cefa783315e932f0d6a0ca8add9d3980ee2af0",
@@ -196,8 +196,8 @@
    "P85": "4055cd0e29ce8d1f0a0f7cd326cb779e9b967d3b167f15f429006d41aa76eb41",
    "P86": "51cd2258277caa9d8a6cb4c71d1877fd7117ec326faa788800f5de449dad16d8"
   },
-  "package_sha256": "ce9d4df218d97e9d5399fc8834f283d58eb2e24080dceb07da664e7a20f2447b",
-  "generated": "2026-10-04",
+  "package_sha256": "82285a8502875f6bc228ee0c37d91644707b7844291c539d8c44833d9d817b39",
+  "generated": "2026-10-05",
   "python": "3.12.13"
  },
  "results": [
