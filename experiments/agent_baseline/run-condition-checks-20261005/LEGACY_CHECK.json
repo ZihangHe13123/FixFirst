@@ -1,0 +1,16 @@
+[
+  {
+    "rows": 6,
+    "input_sha256": "987b43d30b7eaad6efa365b86ec46c996f27cc8a52bc66b67afb6ed8b5588e49",
+    "protocols_match": true,
+    "arm_summary_match": true,
+    "pair_summary_match": true
+  },
+  {
+    "rows": 78,
+    "input_sha256": "d45882aaf23f5e3a5809c7d7e713ed3e159fac0966f3fe1d32a1a9116e7c351e",
+    "protocols_match": true,
+    "arm_summary_match": true,
+    "pair_summary_match": true
+  }
+]

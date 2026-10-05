@@ -107,6 +107,34 @@ def test_a_real_fix_is_still_fixed_and_green(tmp_path):
         True, "graded", 2, "finish", {})
 
 
+def test_a_length_continuation_can_reach_a_persistent_fix_and_fresh_grading(tmp_path):
+    [row] = run(tmp_path, [{"say": "The file was renamed; I will", "finish_reason": "length"},
+                           call("run_command", command=FIX), call("finish", summary="renamed the module back")])
+    assert (row["fixed"], row["grading"], row["first_green_turn"], row["end"]) == (True, "graded", 2, "finish")
+    assert row["length_continuations"] == 1 and row["length_responses"] == 1
+    records = [json.loads(line) for line in (tmp_path / "out" / row["run_dir"] / "responses.jsonl").read_text().splitlines()]
+    assert len(records) == row["model_responses"] == row["turns"] == 3
+    assert records[0]["response"]["choices"][0]["finish_reason"] == "length"
+
+
+def test_each_command_really_starts_in_a_fresh_shell_and_project_directory(tmp_path):
+    [row] = run(tmp_path, [call("run_command", command="export HARNESS_EPHEMERAL=yes; cd /; pwd"),
+                           call("run_command", command="test -z \"$HARNESS_EPHEMERAL\" && test -f pyproject.toml && echo CLEAN"),
+                           call("finish", summary="x")])
+    transcript = json.loads((tmp_path / "out" / row["run_dir"] / "transcript.json").read_text())
+    assert "CLEAN" in [m["content"] for m in transcript if m["role"] == "tool"][1]
+
+
+def test_every_arm_gets_the_same_persistence_and_integrity_instructions(tmp_path):
+    rows_ = run(tmp_path, [call("finish", summary="x")], arms=("baseline", "facts", "mcp"))
+    common = agent_pilot.system_prompt(False)
+    assert "new shell" in common and "conftest.py" in common and "restore it later" in common
+    for row in rows_:
+        transcript = json.loads((tmp_path / "out" / row["run_dir"] / "transcript.json").read_text())
+        assert transcript[0]["content"].startswith(common)
+        assert row["settings"]["max_length_continuations"] == 2
+
+
 # ---- R2: the agent cannot read the answers, labels, references or other runs ------------------------
 
 def test_the_agent_cannot_read_repairs_labels_references_or_other_runs(tmp_path):
@@ -116,13 +144,14 @@ def test_the_agent_cannot_read_repairs_labels_references_or_other_runs(tmp_path)
     peek = [str(repo / "experiments" / "agent_baseline" / "reference_repairs.toml"),
             str(repo / "examples" / "real-world" / "LABELS.md"),
             str(out / first["run_dir"] / "transcript.json"),
+            str(out / first["run_dir"] / "responses.jsonl"),
             str(next((out / "_templates").glob("*--reference--*")) / "reference.json")]
     command = "; ".join(f"cat {p} >/dev/null 2>&1 && echo READ {Path(p).name} || echo DENIED" for p in peek)
     second = run(tmp_path, [call("run_command", command=command), call("run_command", command="python -m pytest -q"),
                             call("finish", summary="x")], out=out, name="second")[-1]
     transcript = json.loads((out / second["run_dir"] / "transcript.json").read_text())
     outputs = [m["content"] for m in transcript if m["role"] == "tool"]
-    assert outputs[0].count("DENIED") == 4 and "READ" not in outputs[0]
+    assert outputs[0].count("DENIED") == 5 and "READ" not in outputs[0]
     # The project's own tests still run: collection fails on the renamed module, not on a permission.
     assert "error during collection" in outputs[1] and "not permitted" not in outputs[1]
 
@@ -440,7 +469,8 @@ def test_a_model_reply_that_keeps_trickling_is_cut_at_the_deadline(monkeypatch):
         with pytest.raises(agent_pilot.ModelTimeout):
             agent_pilot.chat("stub", [], [], agent_pilot.Settings(), None, 0.2)
         assert time.monotonic() - started < 0.45
-        message, _ = agent_pilot.chat("stub", [], [], agent_pilot.Settings(), None, 5)  # enough time: normal reply
+        data = agent_pilot.chat("stub", [], [], agent_pilot.Settings(), None, 5)  # enough time: normal reply
+        message, _, _ = agent_pilot.reply_parts(data)
         assert message["tool_calls"][0]["function"]["name"] == "finish"
     finally:
         server.shutdown()
