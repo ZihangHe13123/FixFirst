@@ -5,10 +5,9 @@ import os
 from pathlib import Path
 import shlex
 
-import pytest
-
 ALLOWED = {"pythonpath", "DJANGO_SETTINGS_MODULE"}
-_record = {"schema": 1, "policy": "h5-v1", "complete": False, "errors": [], "nodes": [], "outcomes": {}}
+_record = {"schema": 1, "policy": "h5-v1", "started": True, "complete": False,
+           "errors": [], "nodes": [], "outcomes": {}}
 _root = None
 
 
@@ -33,6 +32,10 @@ def _value(value):
 def _save():
     path = Path(os.environ["FIXFIRST_H5_REPORT"])
     path.write_text(json.dumps(_record, sort_keys=True), encoding="utf-8")
+
+
+_save()  # A broken/missing pytest is a failed check, even before its hooks can run.
+import pytest  # noqa: E402
 
 
 @pytest.hookimpl(trylast=True)

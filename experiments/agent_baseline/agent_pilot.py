@@ -332,7 +332,8 @@ class Run:
     def reference_fields(self, suite):
         if self.ctx.grading_policy != pp.H5:
             return {}
-        return {**{k: suite[k] for k in ("grading_policy", "grading_policy_sha256", "h5_observation", "h5_state", "h5_process_stopped")},
+        return {**{k: suite[k] for k in ("grading_policy", "grading_policy_sha256", "h5_observation", "h5_state",
+                                       "h5_process_stopped", "h5_junit_error")},
                 "h5_baseline": self.baseline, "h5_violations": self.violations}
 
     def check_integrity(self, turn, tool: str):

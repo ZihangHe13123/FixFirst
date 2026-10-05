@@ -161,7 +161,8 @@ def violations(before: dict, after: dict) -> dict:
 
 def observation_problems(data, code) -> list[str]:
     """Validate the independent probe before a result may be graded."""
-    if not isinstance(data, dict) or data.get("schema") != 1 or data.get("policy") != H5:
+    if (not isinstance(data, dict) or data.get("schema") != 1 or data.get("policy") != H5
+            or data.get("started") is not True):
         return ["missing or invalid H5 grader observation"]
     if data.get("complete") is not True or data.get("exit_code") != code or type(code) is not int:
         return ["H5 grader observation did not complete with the process exit code"]
@@ -187,6 +188,20 @@ def observation_problems(data, code) -> list[str]:
                 or type(value["registered"]) is not bool):
             return ["H5 effective option observation is malformed"]
     return []
+
+
+def failed_check(suite: dict) -> bool:
+    """A trusted probe started, and the pytest process returned failure normally.
+
+    Complete settings/nodes are necessary to prove success, not to turn pytest's
+    nonzero exit into a failure. No completion inference from a missing startup record.
+    """
+    observation = suite.get("h5_observation")
+    return (suite.get("grading_policy") == H5 and suite.get("grading_policy_sha256") == identity()
+            and suite.get("h5_process_stopped") is False and type(suite.get("exit_code")) is int
+            and suite["exit_code"] in {1, 2, 3, 4, 5} and isinstance(observation, dict)
+            and observation.get("schema") == 1 and observation.get("policy") == H5
+            and observation.get("started") is True)
 
 
 def state_problems(state) -> list[str]:

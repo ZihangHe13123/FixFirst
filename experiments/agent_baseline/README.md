@@ -535,7 +535,10 @@ reference caches and protocol IDs keep their original interpretation.
   settings, and every reference-passing node to pass, as well as the JUnit checks.
   Incomplete observations produce `grading_error`, `fixed=null`, except that a
   confirmed static protection breach is already a graded failure and remains in
-  the denominator even if its observation breaks. A pytest version
+  the denominator even if its observation breaks. A trusted startup record plus
+  a normal pytest failure exit (1–5) also establishes failure, including broken
+  pytest imports and usage/configuration errors. Missing startup, stopped
+  processes, and incomplete exit-0 observations remain ungraded. A pytest version
   that ignores the highest-priority configuration format or cannot recognize an
   active protected option also cannot grade; unchanged version-dependent defaults
   are not compared across tool upgrades.

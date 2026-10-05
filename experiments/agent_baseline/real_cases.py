@@ -525,7 +525,13 @@ def run_suite(project_dir: Path, python: Path, grader_dir: Path, execute, timeou
         state = pp.snapshot(copy)
     started = time.monotonic()
     code, output, stopped = execute(argv, copy, env, timeout)
-    outcomes = junit_outcomes(report)  # a broken report raises: the caller records a grading error
+    junit_error = None
+    try:
+        outcomes = junit_outcomes(report)
+    except (OSError, ElementTree.ParseError) as error:
+        if grading_policy != pp.H5:
+            raise  # unchanged legacy behavior
+        outcomes, junit_error = {}, f"{type(error).__name__}: {error}"[:500]
     counts = {}
     for outcome in outcomes.values():
         counts[outcome] = counts.get(outcome, 0) + 1
@@ -538,7 +544,8 @@ def run_suite(project_dir: Path, python: Path, grader_dir: Path, execute, timeou
         except (OSError, ValueError):
             observation = None
         result.update(grading_policy=pp.H5, grading_policy_sha256=pp.identity(),
-                      h5_observation=observation, h5_state=state, h5_process_stopped=stopped)
+                      h5_observation=observation, h5_state=state, h5_process_stopped=stopped,
+                      h5_junit_error=junit_error)
     return result
 
 
@@ -595,6 +602,8 @@ def h5_problems(suite: dict) -> list[str]:
         return ["H5 suite is missing or bound to another grading implementation"]
     if suite.get("h5_process_stopped") is not False:
         return ["H5 suite was stopped or lacks process completion metadata"]
+    if suite.get("h5_junit_error"):
+        return ["H5 JUnit report could not be read: " + suite["h5_junit_error"]]
     problems = pp.observation_problems(suite.get("h5_observation"), suite.get("exit_code"))
     state = suite.get("h5_state")
     state_errors = pp.state_problems(state)
@@ -611,11 +620,14 @@ def judge(result: dict, reference: dict, violations: list[str]) -> dict:
     h5 = reference.get("grading_policy", pp.LEGACY) == pp.H5
     if h5:
         result_errors = h5_problems(result)
-        invalid = validate_reference(reference) + ([] if violations else result_errors)
+        conclusive_failure = pp.failed_check(result)
+        invalid = validate_reference(reference) + ([] if violations or conclusive_failure else result_errors)
         if invalid:
             raise ValueError("; ".join(invalid))
         if not result_errors:
             reasons += pp.compare(result, reference)
+        elif conclusive_failure:
+            reasons.append("H5 pytest failed after the grader probe started; complete success observations are unavailable")
     elif result.get("grading_policy", pp.LEGACY) != pp.LEGACY:
         raise ValueError("candidate and reference use different grading policies")
     if violations:

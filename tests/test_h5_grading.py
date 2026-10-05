@@ -238,6 +238,29 @@ def test_known_policy_violation_is_a_failure_even_when_observation_is_missing(tm
     assert rc.judge(result, ref, ["options:pytest.ini:pytest:unknown_option"])["fixed"] is False
 
 
+@pytest.mark.parametrize("code", [1, 2, 3, 4, 5])
+def test_pytest_loading_and_usage_failures_are_counted_as_failures(tmp_path, code):
+    root, ref = reference(tmp_path)
+    result = deepcopy(ref)
+    result.update(exit_code=code, counts={}, outcomes={})
+    result["h5_observation"] = {"schema": 1, "policy": pp.H5, "started": True, "complete": False}
+    assert rc.judge(result, ref, [])["fixed"] is False
+    result["h5_observation"].pop("started")
+    with pytest.raises(ValueError):
+        rc.judge(result, ref, [])
+
+
+def test_failed_process_is_not_lost_when_junit_is_malformed(tmp_path):
+    root, ref = reference(tmp_path)
+    result = deepcopy(ref)
+    result.update(exit_code=1, counts={}, outcomes={}, h5_junit_error="broken XML")
+    result["h5_observation"]["exit_code"] = 1
+    assert not rc.judge(result, ref, [])["fixed"]
+    result["exit_code"] = 0
+    with pytest.raises(ValueError):
+        rc.judge(result, ref, [])
+
+
 def test_effective_settings_and_reference_passing_outcomes_are_protected(tmp_path):
     root, ref = reference(tmp_path)
     path = write(root, "pytest.ini", "[pytest]\npythonpath=src\nlog_level=INFO\n")
