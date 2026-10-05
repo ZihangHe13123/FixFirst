@@ -212,5 +212,10 @@
     "source edits and elapsed/model/tool time"
   ],
   "scope_boundary": "Two known development tasks, one model, one repeat: do not pool with the old 78 runs, B3, or held-out tasks; do not estimate generalization or significance.",
-  "next_gate": "Review all six rows and raw response receipts before any expansion or protocol change."
+  "next_gate": "Review all six rows and raw response receipts before any expansion or protocol change.",
+  "service_configuration_sha256": {
+    "settings": "463def385eee802ce3dff3be53ea2a473cf338d8f4c9f2e379636665424bb23f",
+    "model_settings": "df2dec5cc28b8998f9456fbd71df2fb211e9cd4525632673e40c513137347402",
+    "launcher": "ed89adf6b61ca0c8fd01bc2f2d72765e9d5af2ae32fe9555842fccaf02e7b16c"
+  }
 }
