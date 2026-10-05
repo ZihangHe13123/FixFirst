@@ -1,8 +1,44 @@
 # H5 validation, 2026-10-05
 
+## Warning-as-error repair
+
+Source candidate: `c7701adf713e5d8eb45f70575be54afcc4cb1c32` (tree
+`3d333cefe0c9c242e257349550d1ac530fc77e92`). Current grading identity:
+`6ce80357f3336b55b2e08ad598bc6e46990d104207d8b9daae05e480abed0d6a`.
+
+pytest 9 warns when the probe reads its compatibility configuration API. The
+probe now suppresses only pytest deprecations during that read, then restores
+the project's warning filters before collection and test execution.
+
+- Seven new real-process regressions failed before this repair with pytest exit
+  3. All seven now pass; all **71 ordinary H5 tests** pass.
+- `filterwarnings=error` works with setup.cfg, pytest.ini and pyproject.toml.
+  Both UserWarning and PytestDeprecationWarning from project code still fail,
+  during collection as well as test execution.
+- A real macOS sandbox checks the failing start, valid reference repair,
+  unrepaired failure and repaired success without changing the warning policy.
+- Public development task c1: upgrading to pytest **7.3.2** or **9.1.1** is
+  graded fixed under both legacy and H5 (**4/4**). H5 keeps the same five nodes
+  and protected warning/testpath settings as the reference; pytest versions are
+  checked against each run's final package snapshot.
+- Fresh synthetic Django checks still pass in **3/3** arms. Real pytest
+  6.2.5 / py 1.10.0 startup failure still counts as graded, fixed=false.
+
+Content receipt: `WARNING_ERROR_FIX.json`. The new tests are in
+`tests/test_h5_grading.py` and `experiments/agent_baseline/test_h5_harness.py`.
+Full-suite and CI completion are recorded in the PR delivery report. No language
+model or sealed task was used; these are grading checks, not uplift estimates.
+
+The two allowed option names stay explicit and identical in every arm. PR #75's
+broader configuration instruction must be reconciled when integrating that PR.
+New qualifications, freezing and registration must use the final content identity.
+
+## Initial validation (historical)
+
 Source candidate: `bb77c63d02ba376cbc0e4195babe2c01ae15d475` (tree
-`d7481d600f6f73dad836b9415553a157cef824bf`). Later commits in this directory
-only save validation records; the grading code identity stays the same.
+`d7481d600f6f73dad836b9415553a157cef824bf`). The records below predate the
+warning-as-error repair; their identity is historical and does not authorize
+an experiment batch with the corrected probe.
 
 - Full development suite: **2057 passed, 75 skipped**, zero failures. One existing
   pkg_resources deprecation warning. The log lists every skip: optional live
