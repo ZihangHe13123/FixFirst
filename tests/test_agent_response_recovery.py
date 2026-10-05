@@ -273,8 +273,58 @@ def test_explicit_sampling_values_are_sent_and_protocols_remain_distinct(monkeyp
 
 
 @pytest.mark.parametrize("options", [["--top-p", "nan"], ["--top-p", "inf"], ["--top-p", "0"],
-                                    ["--top-p", "1.01"], ["--top-k", "-1"], ["--max-no-tool-reminders", "2"]])
+                                    ["--top-p", "1.01"], ["--top-k", "-1"], ["--max-no-tool-reminders", "4"]])
 def test_invalid_sampling_and_reminder_values_fail_before_setup(tmp_path, options):
     with pytest.raises(SystemExit) as error:
         ap.main(["--model", "stub", "--cases", "pkg-inventory:lm_renamed", "--out", str(tmp_path / "out"), *options])
     assert error.value.code == 2 and not (tmp_path / "out").exists()
+
+
+def test_three_reminders_are_per_run_even_with_tools_between_them(tmp_path, monkeypatch):
+    steps = [{"say": "plan"}, {"call": "read_file", "arguments": {"path": "core.py"}},
+             {"say": "second plan"}, {"call": "read_file", "arguments": {"path": "core.py"}},
+             {"say": "third plan"}, {"call": "finish"}]
+    stats, records, _, calls = perform(tmp_path, monkeypatch, steps, max_no_tool_reminders=3)
+    assert stats["end"] == "finish" and stats["no_tool_reminders"] == 3
+    assert stats["turns"] == len(records) == 6 and len(calls) == 3
+    assert stats["finish_called"] and stats["finish_turn"] == 6
+
+
+def test_fourth_complete_stop_exhausts_three_reminders(tmp_path, monkeypatch):
+    stats, records, _, calls = perform(tmp_path, monkeypatch,
+        [{"say": "plan"}] * 4 + [{"call": "finish"}], max_no_tool_reminders=3)
+    assert stats["end"] == "stopped_without_tool" and stats["no_tool_reminders"] == 3
+    assert len(records) == 4 and not calls and not stats["finish_called"]
+
+
+def test_budget_continuation_can_pass_two_cutoffs_but_never_the_turn_cap(tmp_path, monkeypatch):
+    steps = [{"say": "partial", "finish_reason": "length"}] * 4 + [{"call": "finish"}]
+    stats, records, _, _ = perform(tmp_path, monkeypatch, steps, max_length_continuations=None, max_turns=5)
+    assert stats["end"] == "finish" and stats["length_continuations"] == 4 and len(records) == 5
+    capped = tmp_path / "capped"
+    capped.mkdir()
+    stats, records, _, calls = perform(capped, monkeypatch, steps, max_length_continuations=None, max_turns=3)
+    assert stats["end"] == "turn_cap" and stats["length_continuations"] == 2
+    assert len(records) == 3 and not calls
+
+
+def test_budget_continuation_does_not_retry_partial_actions_or_timeouts(tmp_path, monkeypatch):
+    partial = response("partial", "length", tool_calls=[{"function": {"name": "write_file",
+                                                                       "arguments": '{"path":"core.py"}'}}])
+    stats, _, _, calls = perform(tmp_path, monkeypatch,
+        [{"raw_response": partial}, {"call": "finish"}], max_length_continuations=None)
+    assert stats["end"] == "response_truncated" and not calls
+    timed = tmp_path / "timed"
+    timed.mkdir()
+    stats, records, _, calls = perform(timed, monkeypatch,
+        [{"say": "partial", "finish_reason": "length"}, {"delay": 1, "call": "finish"}],
+        max_length_continuations=None, run_timeout=0.05)
+    assert stats["end"] == "time_cap" and len(records) == 1 and not calls
+
+
+def test_finish_is_terminal_even_inside_a_multiple_call_reply(tmp_path, monkeypatch):
+    stats, _, messages, calls = perform(tmp_path, monkeypatch, [{"calls": [
+        {"call": "finish"}, {"call": "write_file", "arguments": {"path": "core.py", "content": "wrong"}}]}])
+    assert stats["end"] == "finish" and calls == [("finish", {})]
+    assert stats["tool_calls"] == 1 and stats["finish_turn"] == 1
+    assert messages[-1]["content"] == "not run: finish ended the episode"

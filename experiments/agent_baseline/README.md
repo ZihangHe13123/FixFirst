@@ -237,6 +237,40 @@ held-out projects are added only after A2's results are merged.
   most queries. These are candidate conditions for a separately registered run, not measured
   improvements. Keep the same conditions across baseline/facts/mcp, and record remaining service
   defaults, model/template identity and the ordinary 20-turn / 900-second budget.
+- **G1 interfaces (5 Oct; explicitly selected for new registrations).**
+  `--file-read-mode lines` adds one-based `read_file(path, start_line=1, line_count=100)`;
+  responses include `text`, `start_line`, `line_count`, `next_line`, `total_lines`, `eof`
+  and `omitted_chars`. Counts may be 1–1000. For an unusually long line, use the mutually
+  exclusive `offset`/`limit` character pages to recover the middle without losing Unicode
+  or changing newline bytes. Long selected pages, command output and MCP output retain
+  their beginning and end, with the exact number of omitted characters.
+  Only this mode offers `edit_file(path, old, new, expected_count=1)`: exact replacement
+  in an existing regular UTF-8 file of at most 16 MiB. Missing or ambiguous matches do
+  not write; replacing multiple matches requires their exact count (1–1000). The tools
+  reject links, special files and paths outside the project, preserve newline spelling
+  and permissions, and refuse a concurrently changed file. They require macOS/Linux
+  directory-relative file APIs. H5 still records forbidden edits, even when restored.
+  The existing `tail` and `paged` interfaces and all defaults remain unchanged.
+
+  `--max-no-tool-reminders` now accepts 0–3; each reminder is charged to the original
+  turn/time budget. `--max-length-continuations budget` means no additional numerical
+  allowance beyond that budget (stored as JSON `null`); numeric allowances still work.
+  Truncated choices containing tool calls remain terminal and never execute those calls.
+  These choices enter protocol identity; they do not change historical results.
+
+  Every row records `diagnose_called`, `diagnose_calls`, `diagnose_first_turn` and the
+  corresponding `check_again_*` fields. Count actual dispatch attempts, including failed
+  calls; an invalid or unexecuted call does not count. Turn 0 denotes a scheduled call
+  before the first model reply. Facts-mode `observe` is not called `diagnose`.
+  `finish` ends the episode; later calls in the same reply are saved but not executed.
+  `finish_called` and `finish_turn` record the claim. The existing independent final
+  grader supplies `finish_check_status`: `not_called`, `passed`, `failed`, or
+  `not_checked` (missing/untrusted evidence or cleanup failure). The raw exit code is
+  `finish_check_exit_code`; `finish_fixed` separately records policy-qualified repair
+  credit. Restored violations can leave the check passing but repair credit false.
+  No extra grader run is charged to the agent. These offline harness checks do not
+  establish that a model service adopts the requested sampling or output parameters;
+  G1 must verify that separately before calibration.
 - **Files the agent leaves.** The harness reads the agent's files outside the sandbox (integrity,
   digests, pip freeze, the JUnit report, the `read_file` and `write_file` tools), so it reads only
   regular files, opens them without waiting and never reads without limit: a test file replaced by a
