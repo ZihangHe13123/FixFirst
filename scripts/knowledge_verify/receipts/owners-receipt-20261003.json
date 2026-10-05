@@ -25,7 +25,7 @@
    "classification.py": "632eb57a91437c93966eeab3f509ee8cc28d084f2c92474a26c5cb17a94af1d0",
    "dependency_advice.py": "25ed1c015d89760a169eebddc61c49bc33941da6227d63464094edc73354fd02",
    "dependency_context.py": "14b93bc96c3f3fa4e8fd8e58190f068a1be21799ea6a997ef7e2471563564a59",
-   "dependency_resolution.py": "d628304aa86d37a65d8684d043ce7c9d696e856baa5490fdab1296bc605b61cf",
+   "dependency_resolution.py": "91a9084efb4682ef253e14a746805676bc11340c0355bfbdbe35803ca779e5ba",
    "django_configuration.py": "e4a7c8a194d9b3fc855395d473e02beddbee08b4eb262a5879f3f9585bd1752f",
    "domain.py": "19de9cfd100c8db3c0b7fe9fe4db72552d5d928d8ea80f6724dcd042e4cd3df5",
    "engine.py": "e9ad8da35f3657a9c07868e15bea36e443079f8a84c5dc5ada621f83586c0ca7",
@@ -36,7 +36,7 @@
    "install_feedback.py": "ed1d545d09e4b9b8637bb65e5640744ac7681ebab281446bcae4f9bbf85b4e49",
    "integrity.py": "b1c4db634ce1cddc4619ef18e8429d04d90adf943f4f07f7ad3de4a146173877",
    "interface_history.py": "1ffa8f2b04967bb3391b1b5336eb9f889449569e9cf62b1e384cf0bb59a4aa4b",
-   "local_import_advice.py": "812019032aa77ff13e5cb3debc3fac0016e88676f79191a34f24f9d337aa721e",
+   "local_import_advice.py": "c8bc96137ddb2b521e003279452a212259a8ec50646fb185993dd05bf646d663",
    "local_import_context.py": "adaf9d2e3a5f28362adf17dcf2872f9fe06cb1d84cb53617b0da4650fbad3f17",
    "local_imports.py": "6a11416c9235dd02f43e0317e8628ec2d6d11eadb26f59a1ed7b2f59c912489c",
    "migration_advice.py": "c1c945aa97cbc7e4e38f290d7236a7abb744f8ed2235ce9219e0c1a41804e655",
@@ -50,12 +50,12 @@
    "pytest_settings.py": "992945f2a49ed93c831959914d3c45547ce6428bdacb35462fe46a2084000efb",
    "reasoning.py": "b630e872aa6706d07df2a8f3057e61d0887fad4903f26b581d684fcf66632d33",
    "removal_ownership.py": "ba69c6a520a174d855b78ed038a2a7c317c91352473de181b435b48b335af05f",
-   "runner.py": "9ae25e16798a11fa5757853c52a0e5ebed9297c046983b59f19d50835258765e",
-   "service.py": "d64dbd9bd4e771dac0640ea63774e81ee91850c9a60a65c57829322ea1858e4e",
+   "runner.py": "36db465fa24799bd3f501a516020e04971833353a3b18787e08c6200bb54323b",
+   "service.py": "d851a4b40bdef3af9fe1adb2ab51a13ad990866b2c27d631cb56ce6e25b3ed5e",
    "source_context.py": "c174ddc9e7c8a614f534caf6ae1537a38a2c9092a71889c48b30d8e9c4a06cfb",
    "symbol_advice.py": "66b5da1923f94b973940f340155587d0c3fdd85a61652e85fef1bbfd222e65e4",
    "symbol_context.py": "8c718adc90c4780ac0e3357a08a607a545e7e70f618a958382f7408c5f7da85d",
-   "test_results.py": "6ed57dec1935278ca94b4d7708cde10372b86a1b497a5e2660caf0efdd40e6b2",
+   "test_results.py": "3d3248cf0a30e4916caccf264dbb7a591745e31da91492c7a4e790ba557ab3ba",
    "tool_compatibility.py": "e2f38799f69e027930a255ae1372256c07b33874f1a3e2f627cb16d9c915b4f2"
   },
   "e2e_data_sha256": {
@@ -197,7 +197,7 @@
    "P85": "4055cd0e29ce8d1f0a0f7cd326cb779e9b967d3b167f15f429006d41aa76eb41",
    "P86": "51cd2258277caa9d8a6cb4c71d1877fd7117ec326faa788800f5de449dad16d8"
   },
-  "package_sha256": "07606bbe4badd61460dc6e47f67f0d28ce3fbf574879a9f87f49db1d7993040d",
+  "package_sha256": "6ca01e0d59ca179a8b14d76d769b3e12eaf4e3b8fbb1f3f5d97588c3b0525f86",
   "generated": "2026-10-05",
   "python": "3.12.13"
  },
