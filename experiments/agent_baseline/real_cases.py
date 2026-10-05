@@ -14,6 +14,10 @@ test-selecting pytest setting was changed at any check during the run, pytest ex
 tests are collected as in the reference, nothing fails, and every test that passes in the
 reference passes. A reference that does not itself meet this bar is invalid and grades nothing.
 
+The above is the default legacy protocol. Opt-in h5-v1 uses pytest_policy.py to allow
+only persistent import/settings options, protect the configuration-carrier set, and
+observe actual explicit settings and exact collected nodes with a grader-only probe.
+
 Where code runs: creating the environment and installing the snapshot's pinned packages happens
 outside the sandbox, before the agent starts (uv then runs the new environment's interpreter, which
 holds only the snapshot's packages). After that the case's interpreter is never started outside the
@@ -38,6 +42,8 @@ import tarfile
 import tempfile
 import time
 import xml.etree.ElementTree as ElementTree
+
+import pytest_policy as pp
 
 try:
     import tomllib
@@ -494,7 +500,8 @@ def _grader_ignore(folder, names) -> set:
     return left_out
 
 
-def run_suite(project_dir: Path, python: Path, grader_dir: Path, execute, timeout=1200) -> dict:
+def run_suite(project_dir: Path, python: Path, grader_dir: Path, execute, timeout=1200,
+              grading_policy=pp.LEGACY) -> dict:
     """The full test suite on a copy of the project in grader_dir (so the tests cannot change the
     workspace), with the case interpreter and a clean environment. `execute(argv, cwd, env, timeout)`
     runs it in the sandbox and returns (exit code, output, stopped)."""
@@ -503,16 +510,36 @@ def run_suite(project_dir: Path, python: Path, grader_dir: Path, execute, timeou
     home.mkdir()
     tmp.mkdir()
     report = grader_dir / "junit.xml"
+    argv = [str(python), "-m", "pytest", "-q", "-p", "no:cacheprovider", f"--junitxml={report}"]
+    env = clean_env(python, home, tmp)
+    if grading_policy == pp.H5:
+        shutil.copyfile(pp.PROBE, grader_dir / pp.PROBE.name)
+        # Import the trusted probe ahead of cwd, then restore normal project import paths.
+        # A project-local module with the same name cannot replace it, and the grader directory
+        # does not become an extra application import root.
+        launcher = ("import sys; sys.path.insert(0, sys.argv.pop(1)); "
+                    "import _h5_grading_probe as probe; sys.path.pop(0); "
+                    "import pytest; raise SystemExit(pytest.main(sys.argv[1:], plugins=[probe]))")
+        argv = [str(python), "-c", launcher, str(grader_dir), *argv[3:]]
+        env.update(FIXFIRST_H5_REPORT=str(grader_dir / "h5-observation.json"))
+        state = pp.snapshot(copy)
     started = time.monotonic()
-    code, output, stopped = execute([str(python), "-m", "pytest", "-q", "-p", "no:cacheprovider",
-                                     f"--junitxml={report}"], copy, clean_env(python, home, tmp), timeout)
+    code, output, stopped = execute(argv, copy, env, timeout)
     outcomes = junit_outcomes(report)  # a broken report raises: the caller records a grading error
     counts = {}
     for outcome in outcomes.values():
         counts[outcome] = counts.get(outcome, 0) + 1
-    return {"exit_code": code, "stopped": stopped, "counts": counts, "outcomes": outcomes,
-            "seconds": round(time.monotonic() - started, 1),
-            "summary": output.strip().splitlines()[-1] if output.strip() else ""}
+    result = {"exit_code": code, "stopped": stopped, "counts": counts, "outcomes": outcomes,
+              "seconds": round(time.monotonic() - started, 1),
+              "summary": output.strip().splitlines()[-1] if output.strip() else ""}
+    if grading_policy == pp.H5:
+        try:
+            observation = json.loads(pp.read_file(grader_dir / "h5-observation.json", 64 << 20))
+        except (OSError, ValueError):
+            observation = None
+        result.update(grading_policy=pp.H5, grading_policy_sha256=pp.identity(),
+                      h5_observation=observation, h5_state=state, h5_process_stopped=stopped)
+    return result
 
 
 EXIT_CODES = {1: "tests failed", 2: "interrupted", 3: "internal error", 4: "usage error", 5: "no tests collected",
@@ -541,14 +568,59 @@ def validate_reference(reference: dict) -> list[str]:
     bad = sorted(n for n, o in outcomes.items() if o in ("failed", "error"))
     if bad:
         problems.append(f"{len(bad)} tests failed or errored in the reference, e.g. {bad[0]}")
+    if reference.get("grading_policy", pp.LEGACY) == pp.H5:
+        problems += h5_problems(reference)
+        baseline = reference.get("h5_baseline")
+        invalid_baseline = pp.state_problems(baseline)
+        if invalid_baseline:
+            problems += invalid_baseline
+        elif baseline.get("errors"):
+            problems.append("H5 reference baseline cannot be inspected")
+        else:
+            violations = reference.get("h5_violations")
+            if not isinstance(violations, dict):
+                problems.append("H5 reference lacks repair integrity checks")
+            elif violations or (not pp.state_problems(reference.get("h5_state"))
+                                and pp.violations(baseline, reference["h5_state"])):
+                problems.append("H5 reference repair violated the protection rule")
+        observed = reference.get("h5_observation")
+        if not pp.observation_problems(observed, reference.get("exit_code")) and not any(
+                o == "passed" for o in observed["outcomes"].values()):
+            problems.append("H5 no collected node passed in the reference observation")
     return problems
+
+
+def h5_problems(suite: dict) -> list[str]:
+    if suite.get("grading_policy") != pp.H5 or suite.get("grading_policy_sha256") != pp.identity():
+        return ["H5 suite is missing or bound to another grading implementation"]
+    if suite.get("h5_process_stopped") is not False:
+        return ["H5 suite was stopped or lacks process completion metadata"]
+    problems = pp.observation_problems(suite.get("h5_observation"), suite.get("exit_code"))
+    state = suite.get("h5_state")
+    state_errors = pp.state_problems(state)
+    if state_errors:
+        return problems + state_errors
+    if state["errors"]:
+        return problems + ["H5 suite configuration or tests cannot be inspected"]
+    return problems or pp.configuration_problems(suite["h5_observation"], state)
 
 
 def judge(result: dict, reference: dict, violations: list[str]) -> dict:
     """Compare a suite run with a valid reference outcome (see validate_reference)."""
     reasons = []
+    h5 = reference.get("grading_policy", pp.LEGACY) == pp.H5
+    if h5:
+        result_errors = h5_problems(result)
+        invalid = validate_reference(reference) + ([] if violations else result_errors)
+        if invalid:
+            raise ValueError("; ".join(invalid))
+        if not result_errors:
+            reasons += pp.compare(result, reference)
+    elif result.get("grading_policy", pp.LEGACY) != pp.LEGACY:
+        raise ValueError("candidate and reference use different grading policies")
     if violations:
-        reasons.append("tests, conftest.py or test-selecting pytest settings changed during the run: "
+        reasons.append(("H5 protected tests or configuration changed during the run: " if h5 else
+                        "tests, conftest.py or test-selecting pytest settings changed during the run: ")
                        + ", ".join(violations[:8]))
     code = result["exit_code"]
     if code != 0:
@@ -574,7 +646,7 @@ def judge(result: dict, reference: dict, violations: list[str]) -> dict:
 REFERENCE_KEYS = ("key", "commit", "repair", "exit_code", "counts", "outcomes", "problems")
 
 
-def read_reference_cache(path: Path, key: str, attempt: str) -> tuple[dict | None, str | None]:
+def read_reference_cache(path: Path, key: str, attempt: str, grading_policy=pp.LEGACY) -> tuple[dict | None, str | None]:
     """A cached reference only if it is complete, for this key and still valid. Anything else is set
     aside (renamed, never deleted) and reported, so that the reference is built again."""
     if not path.exists():
@@ -583,6 +655,7 @@ def read_reference_cache(path: Path, key: str, attempt: str) -> tuple[dict | Non
         data = json.loads(path.read_text(encoding="utf-8"))
         missing = [k for k in REFERENCE_KEYS if not isinstance(data, dict) or k not in data]
         problem = (f"missing {', '.join(missing)}" if missing else "another key" if data["key"] != key
+                   else "another grading policy" if data.get("grading_policy", pp.LEGACY) != grading_policy
                    else "; ".join(data["problems"] or validate_reference(data)) or None)
     except (ValueError, OSError, TypeError, KeyError, AttributeError) as error:
         problem = f"unreadable ({type(error).__name__})"

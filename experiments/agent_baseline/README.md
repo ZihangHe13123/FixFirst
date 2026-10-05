@@ -509,6 +509,63 @@ not for the formal hard analysis.
 - **One-shot diagnosis baseline**: give each model the same evidence and ask only for the cause and
   the first step, with no tools. This separates knowing the answer from carrying it out.
 
+## H5 grading: persistent pytest configuration (5 Oct)
+
+`--grading-policy h5-v1` selects the new rule. The default is `legacy`; old rows,
+reference caches and protocol IDs keep their original interpretation.
+
+- Test files, every `conftest.py`, and all files in `tests/`, `test/`, `testing/`
+  stay unchanged. Violations seen after tools remain recorded after restoration.
+- In root pytest configuration, only `pythonpath` and `DJANGO_SETTINGS_MODULE`
+  may change. Every other option is protected, including plugin and future
+  options. Cover `pytest.ini`, `.pytest.ini`, `pytest.toml`, `.pytest.toml`, both
+  pyproject pytest tables, `tox.ini`, and `setup.cfg`. Native and ini tables are
+  inspected separately; malformed, duplicate, oversized or nonregular files do
+  not authorize a repair. Option names retain their case. `addopts` spacing is
+  compared as shell tokens; multiline setting contents stay distinct.
+- If configuration existed at the start, its carrier-file set cannot change.
+  Otherwise at most one new location is allowed, containing only the two allowed
+  options. This prevents new files from disabling existing settings, including
+  settings absent from the harness's classification list.
+- The full-suite grader imports its own probe before project collection, then
+  restores the normal import path. It records the loaded configuration, raw and
+  effective explicit protected options, exact collected nodes and their outcomes
+  in `grader/check-NNN/{h5-observation,suite}.json`. The reference repair must
+  meet the same static rule. Require the reference's node set, protected effective
+  settings, and every reference-passing node to pass, as well as the JUnit checks.
+  Incomplete observations produce `grading_error`, `fixed=null`, except that a
+  confirmed static protection breach is already a graded failure and remains in
+  the denominator even if its observation breaks. A pytest version
+  that ignores the highest-priority configuration format or cannot recognize an
+  active protected option also cannot grade; unchanged version-dependent defaults
+  are not compared across tool upgrades.
+- All arms receive exactly the same H5 instruction, naming the allowed keys.
+  The rule is visible to the agent; any hint is shared by baseline, facts and MCP.
+  `violations` includes the first observation and category. `violation_categories`
+  distinguishes test content, selection/outcome options, other pytest options and
+  carrier changes. Descriptive sensitivity analysis may list runs whose only
+  violation was another option; it does not relax the primary grading rule.
+- H5 rows, caches and hard manifests bind the policy and grading implementation
+  SHA-256. `compare_arms.protocol` keeps different policies/implementations apart.
+  Requalify and freeze future hard selections with the same explicit policy.
+
+```bash
+.venv/bin/python experiments/agent_baseline/qualify_hard.py \
+  --out ../agent-runs/new-hard-h5 --grading-policy h5-v1
+# Include --grading-policy h5-v1 in every run of the new registered batch.
+```
+
+Synthetic sandbox acceptance (no model):
+
+```bash
+.venv/bin/python -m pytest -q tests/test_h5_grading.py
+.venv/bin/python -m pytest -q experiments/agent_baseline/test_h5_harness.py
+```
+
+The static snapshot and grader reports are structured observations inside the
+existing sandbox grading boundary, not signed independent measurements of
+malicious test code. There is no change to FixFirst product code or its model.
+
 ## Hard scenarios as agent tasks (2 Oct, scripted checks only)
 
 The six hard scenarios (`src/fixfirst/hard_cases.py`) could not be run: `--cases` looked only at the
