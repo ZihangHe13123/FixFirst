@@ -1,0 +1,50 @@
+{
+  "source_commit": "d410eb02cde78bb2926aa94378d95668f659afed",
+  "source_tree": "194d8ab69f845449cd8a7a786da8cbb035f147f6",
+  "grading_policy": "h5-v1",
+  "grading_policy_sha256": "711760885bd4b6a991865c4bdf50869b15051ffc35a0d474ef29a5ec8bd1e235",
+  "python": "3.12.13",
+  "platform": "darwin",
+  "machine": "arm64",
+  "full": {
+    "passed": 2051,
+    "skipped": 75,
+    "failed": 0,
+    "log": "full-final.txt"
+  },
+  "sandbox": {
+    "passed": 116,
+    "failed": 0,
+    "legacy": 107,
+    "h5": 9,
+    "log": "sandbox-final.txt"
+  },
+  "h5_targeted": {
+    "passed": 67,
+    "ordinary": 58,
+    "sandbox": 9
+  },
+  "knowledge_tests": 170,
+  "claude_spec": {
+    "matched": 29,
+    "total": 29
+  },
+  "synthetic_django": {
+    "accepted": 3,
+    "arms": [
+      "baseline",
+      "facts",
+      "mcp"
+    ]
+  },
+  "ruff": "passed",
+  "diff_check": "passed",
+  "product_source_changed": false,
+  "model_sha256": "189f712ea75bcb117f96aae879fd0c9bdab9ee6531475d1a95faf01ec2738d30",
+  "language_model_started": false,
+  "sealed_task_pack_read": false,
+  "logs_sha256": {
+    "full-final.txt": "f4cd4e430ed2e6647ee362c19b86d120be6fb0876cc6e764c3e4918953eb4b94",
+    "sandbox-final.txt": "3551b12535bcb6c583e52ec001cb377f716776eec798c257ee61b657e4a6ffb0"
+  }
+}

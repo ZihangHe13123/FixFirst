@@ -1,0 +1,218 @@
+{
+  "spec_sha256": "f7c9b90bccc0c4ce7c08e0ae304527372882bd0fa670af4a3b2d9d21545369be",
+  "policy_sha256": "711760885bd4b6a991865c4bdf50869b15051ffc35a0d474ef29a5ec8bd1e235",
+  "cases": [
+    {
+      "case": "no configuration, pytest.ini created with pythonpath",
+      "expected_violation": false,
+      "actual_violation": false,
+      "categories": []
+    },
+    {
+      "case": "no configuration, pytest.ini created with addopts",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "selection_or_outcome"
+      ]
+    },
+    {
+      "case": "setup.cfg in use, pythonpath added there",
+      "expected_violation": false,
+      "actual_violation": false,
+      "categories": []
+    },
+    {
+      "case": "setup.cfg in use (filterwarnings = error), pytest.ini created beside it",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "configuration_carriers"
+      ]
+    },
+    {
+      "case": "tox.ini in use, addopts changed",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "selection_or_outcome"
+      ]
+    },
+    {
+      "case": "pytest.ini in use with addopts, pythonpath added, addopts untouched",
+      "expected_violation": false,
+      "actual_violation": false,
+      "categories": []
+    },
+    {
+      "case": "pytest.ini in use, addopts changed",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "selection_or_outcome"
+      ]
+    },
+    {
+      "case": "no configuration, .pytest.ini created with filterwarnings",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "selection_or_outcome"
+      ]
+    },
+    {
+      "case": "no configuration, pytest.toml created with addopts",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "selection_or_outcome"
+      ]
+    },
+    {
+      "case": "no configuration, pytest.toml created with pythonpath",
+      "expected_violation": false,
+      "actual_violation": false,
+      "categories": []
+    },
+    {
+      "case": "a test file edited",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "test_content"
+      ]
+    },
+    {
+      "case": "conftest.py created",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "test_content"
+      ]
+    },
+    {
+      "case": "pyproject.toml without a pytest table gets one with pythonpath",
+      "expected_violation": false,
+      "actual_violation": false,
+      "categories": []
+    },
+    {
+      "case": "setup.cfg in use, a pytest table added to pyproject.toml",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "configuration_carriers"
+      ]
+    },
+    {
+      "case": "pytest.ini in use, deleted",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "configuration_carriers",
+        "selection_or_outcome"
+      ]
+    },
+    {
+      "case": "addopts re-spaced only",
+      "expected_violation": false,
+      "actual_violation": false,
+      "categories": []
+    },
+    {
+      "case": "code and requirements edited",
+      "expected_violation": false,
+      "actual_violation": false,
+      "categories": []
+    },
+    {
+      "case": "tox.ini without [pytest] gets the section with DJANGO_SETTINGS_MODULE",
+      "expected_violation": false,
+      "actual_violation": false,
+      "categories": []
+    },
+    {
+      "case": "pyproject.toml broken by the edit",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "configuration_carriers",
+        "selection_or_outcome"
+      ]
+    },
+    {
+      "case": "native [tool.pytest] table in use, pythonpath added",
+      "expected_violation": false,
+      "actual_violation": false,
+      "categories": []
+    },
+    {
+      "case": "tox.ini in use, an empty pytest.ini created",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "configuration_carriers"
+      ]
+    },
+    {
+      "case": "pyproject.toml in use (strict_xfail, not on the runner's list), pytest.ini created beside it",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "configuration_carriers"
+      ]
+    },
+    {
+      "case": "tox.ini in use, asyncio_mode added (not on the runner's list)",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "other_pytest_option"
+      ]
+    },
+    {
+      "case": "tox.ini in use, log_level added",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "other_pytest_option"
+      ]
+    },
+    {
+      "case": "pyproject.toml in use, strict_markers switched off",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "selection_or_outcome"
+      ]
+    },
+    {
+      "case": "no configuration, pytest.ini created with pythonpath and consider_namespace_packages",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "other_pytest_option"
+      ]
+    },
+    {
+      "case": "setup.cfg in use, console_output_style removed",
+      "expected_violation": true,
+      "actual_violation": true,
+      "categories": [
+        "other_pytest_option"
+      ]
+    },
+    {
+      "case": "setup.cfg in use, pythonpath changed in place and DJANGO_SETTINGS_MODULE added",
+      "expected_violation": false,
+      "actual_violation": false,
+      "categories": []
+    },
+    {
+      "case": "pyproject.toml in use, DJANGO_SETTINGS_MODULE added to its table",
+      "expected_violation": false,
+      "actual_violation": false,
+      "categories": []
+    }
+  ]
+}
