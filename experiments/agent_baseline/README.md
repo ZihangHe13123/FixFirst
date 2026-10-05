@@ -250,6 +250,10 @@ held-out projects are added only after A2's results are merged.
   reject links, special files and paths outside the project, preserve newline spelling
   and permissions, and refuse a concurrently changed file. They require macOS/Linux
   directory-relative file APIs. H5 still records forbidden edits, even when restored.
+  The 6 Oct follow-up accepts project-relative paths and absolute paths inside the
+  project, including the trusted root's canonical system spelling. It does not resolve
+  requested links inside the project. All file-tool descriptions explain the path forms;
+  `project/` is not an automatically stripped prefix for relative paths.
   The existing `tail` and `paged` interfaces and all defaults remain unchanged.
 
   `--max-no-tool-reminders` now accepts 0–3; each reminder is charged to the original
@@ -268,6 +272,14 @@ held-out projects are added only after A2's results are merged.
   `not_checked` (missing/untrusted evidence or cleanup failure). The raw exit code is
   `finish_check_exit_code`; `finish_fixed` separately records policy-qualified repair
   credit. Restored violations can leave the check passing but repair credit false.
+  New H5 rows additionally record `final_violations` and `final_violation_categories`
+  for the protected state at final grading, plus `final_state_fixed`,
+  `final_state_reasons` and `final_state_observation_error`. This separate observation
+  reuses the same independent suite: success still requires the full reference nodes,
+  effective settings, passing outcomes and verified process completion. Restoring an
+  earlier forbidden edit can yield `final_state_fixed=true` while strict `fixed=false`.
+  Missing evidence yields null, not success; later cleanup/harness errors clear credit.
+  Legacy runs leave these H5-specific fields null. Historical rows are not rewritten.
   No extra grader run is charged to the agent. These offline harness checks do not
   establish that a model service adopts the requested sampling or output parameters;
   G1 must verify that separately before calibration.
