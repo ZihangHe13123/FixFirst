@@ -1,0 +1,52 @@
+........................................................................ [  3%]
+........................................................................ [  6%]
+........................................................................ [ 10%]
+........................................................................ [ 13%]
+...........................ssssssssss................................... [ 16%]
+........................................................................ [ 20%]
+........................................................................ [ 23%]
+........................................................................ [ 27%]
+........................................................................ [ 30%]
+........................................................................ [ 33%]
+........................................................................ [ 37%]
+........................................................................ [ 40%]
+........................................................................ [ 43%]
+........................................................................ [ 47%]
+.................................................sssssssssssssssssssssss [ 50%]
+sssssss.....s........................................................... [ 54%]
+.........................ssssssssssssssssssssssssssssssss............... [ 57%]
+........................................................................ [ 60%]
+........................................................................ [ 64%]
+........................................................................ [ 67%]
+........................................................................ [ 70%]
+........................................................................ [ 74%]
+........................................................................ [ 77%]
+........................................................................ [ 81%]
+........................................................................ [ 84%]
+........................................................................ [ 87%]
+........................................................................ [ 91%]
+.........................s.............................................. [ 94%]
+........................................................................ [ 97%]
+.........................................s..                             [100%]
+=============================== warnings summary ===============================
+tests/test_nested_conftest_package.py::test_actual_pytest_wrapper_raised_by_project_does_not_capture_a_cause
+  conftest.py:1: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [10] tests/test_django_configuration.py:427: requires an explicitly supplied isolated Django interpreter
+SKIPPED [4] tests/test_nested_conftest_package.py:26: FIXFIRST_PKG_RESOURCES_ABSENT_PYTHON needs a disposable CPython 3.12 environment with pytest
+SKIPPED [4] tests/test_nested_conftest_package.py:26: FIXFIRST_PKG_RESOURCES_REMOVED_PYTHON needs a disposable CPython 3.12 environment with pytest
+SKIPPED [4] tests/test_nested_conftest_package.py:26: FIXFIRST_PKG_RESOURCES_OLD_PYTHON needs a disposable CPython 3.12 environment with pytest
+SKIPPED [18] tests/test_nested_conftest_package.py:61: A disposable provider-absent Python is needed for this nested conftest probe
+SKIPPED [1] tests/test_nested_conftest_package.py:143: Provider-absent host Python needed for this exact-type guard
+SKIPPED [6] tests/test_package_collection.py:79: FIXFIRST_PKG_RESOURCES_ABSENT_PYTHON needs a disposable CPython 3.12 environment with pytest
+SKIPPED [1] tests/test_package_collection.py:98: FIXFIRST_PKG_RESOURCES_ABSENT_PYTHON needs a disposable CPython 3.12 environment with pytest
+SKIPPED [6] tests/test_package_collection.py:79: FIXFIRST_PKG_RESOURCES_REMOVED_PYTHON needs a disposable CPython 3.12 environment with pytest
+SKIPPED [1] tests/test_package_collection.py:98: FIXFIRST_PKG_RESOURCES_REMOVED_PYTHON needs a disposable CPython 3.12 environment with pytest
+SKIPPED [6] tests/test_package_collection.py:79: FIXFIRST_PKG_RESOURCES_OLD_PYTHON needs a disposable CPython 3.12 environment with pytest
+SKIPPED [1] tests/test_package_collection.py:98: FIXFIRST_PKG_RESOURCES_OLD_PYTHON needs a disposable CPython 3.12 environment with pytest
+SKIPPED [11] tests/test_package_collection.py:119: An absent pkg_resources provider is needed for this live collection probe
+SKIPPED [1] tests/test_toolchain_cases.py:107: builds real environments; needs uv and network
+SKIPPED [1] tests/test_windows_adaptation.py:265: Windows PowerShell quoting
+2057 passed, 75 skipped, 1 warning in 231.89s (0:03:51)

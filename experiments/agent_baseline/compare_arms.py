@@ -91,6 +91,8 @@ def protocol(row) -> str:
     data = {key: settings.get(key) for key in PROTOCOL_SETTINGS}
     data.update(call_policy=policy(row), network=row.get("network"), harness=row.get("harness_commit"),
                 uncommitted=bool(row.get("uncommitted_changes")))
+    if row.get("grading_policy", "legacy") != "legacy":
+        data.update(grading_policy=row["grading_policy"], grading_policy_sha256=row.get("grading_policy_sha256"))
     return hashlib.sha256(json.dumps(data, sort_keys=True, default=str).encode()).hexdigest()[:8]
 
 

@@ -43,6 +43,7 @@ import agent_pilot as ap  # noqa: E402
 import hard_instances as hi  # noqa: E402
 import isolation as iso  # noqa: E402
 import real_cases as rc  # noqa: E402
+import pytest_policy as pp  # noqa: E402
 
 
 def qualify(ctx: ap.Context, template: str, scenario_id: str) -> dict:
@@ -78,6 +79,9 @@ def qualify(ctx: ap.Context, template: str, scenario_id: str) -> dict:
     record["start"] = {"exit_code": suite["exit_code"], "outcomes": suite["outcomes"],
                        "said": {node: text.strip()[-3000:] for node, text in said.items()}}  # its end names the error
     interrupted = "; ".join(run.cleanup_problems) or hi.not_completed(suite["exit_code"], suite["stopped"])
+    if ctx.grading_policy == pp.H5:
+        record["start"].update(h5_observation=suite.get("h5_observation"))
+        interrupted = interrupted or "; ".join(rc.h5_problems(suite))
     if interrupted:
         return {**record, "result": "not_checked", "reason": f"the start's suite could not be completed: {interrupted}"[:500]}
     problems = hi.start_problems(suite, said, t, entry)
@@ -90,9 +94,10 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--out", required=True, help="a folder outside the repository; never overwritten")
     parser.add_argument("--cases", nargs="*", default=[], help="template:scenario: only check these instances, select nothing")
+    parser.add_argument("--grading-policy", choices=pp.POLICIES, default=pp.LEGACY)
     args = parser.parse_args(argv)
     out = Path(args.out).resolve()
-    problem = ap.check_output_folder(out)
+    problem = ap.check_output_folder(out, args.grading_policy)
     if problem:
         parser.error(problem)
     try:
@@ -112,7 +117,7 @@ def main(argv=None):
     def check(template: str, scenario_id: str) -> dict:
         calls.append(None)  # every check has folders of its own, so that a second try starts clean
         ctx = ap.Context(out, "qualification", f"{attempt}-{len(calls):02d}", False,
-                         denied=(Path(ap.HOME), out, ap.FIXFIRST, *iso.SYSTEM_TEMP))
+                         denied=(Path(ap.HOME), out, ap.FIXFIRST, *iso.SYSTEM_TEMP), grading_policy=args.grading_policy)
         return qualify(ctx, template, scenario_id)
 
     git = lambda *command: subprocess.run(["git", *command], cwd=ap.FIXFIRST, capture_output=True, text=True).stdout  # noqa: E731
@@ -121,6 +126,8 @@ def main(argv=None):
               "uncommitted_changes": [line for line in git("status", "--porcelain", "--", "src",
                                                            "experiments/agent_baseline").splitlines() if line.strip()],
               "code": hi.code_identity(), "environment": hi.environment(ap.PYTHON), "registry": registry}
+    if args.grading_policy == pp.H5:
+        record.update(grading_policy=pp.H5, grading_policy_sha256=pp.identity())
     if given:
         record["attempts"] = [{"scenario": scenario_id, "template": template, **check(template, scenario_id)}
                               for template, scenario_id in given]

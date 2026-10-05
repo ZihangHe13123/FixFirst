@@ -1,0 +1,448 @@
+{
+  "source_commit": "c7701adf713e5d8eb45f70575be54afcc4cb1c32",
+  "source_tree": "3d333cefe0c9c242e257349550d1ac530fc77e92",
+  "grading_policy": "h5-v1",
+  "grading_policy_sha256": "6ce80357f3336b55b2e08ad598bc6e46990d104207d8b9daae05e480abed0d6a",
+  "probe_sha256": "e9d49072cddc6c53b8a3b889df526eb1baa4f82e37808226c12bb59e7f0ac3aa",
+  "python": "3.12.13",
+  "pytest": "9.1.1",
+  "platform": "darwin",
+  "before": {
+    "probe_commit": "54c543fef4a5e2743eaf6409de56961f64438962",
+    "new_regressions_failed": 7,
+    "pytest_exit_code": 3,
+    "log_sha256": "0765a32d678718f59eac6668c2691434ad7254911d7565eb9ed714be57337f24"
+  },
+  "after": {
+    "ordinary_h5_passed": 71,
+    "new_warning_regressions_passed": 7,
+    "sandbox_warning_case_passed": 1,
+    "project_warning_errors_preserved": true,
+    "ordinary_log_sha256": "29bc0527457ac9cf97e865c56697333d82d49421b1a9bdb2b67cbf2ca5843817",
+    "sandbox_log_sha256": "66cfdc3704fab8d13ea83af369c710bcf5c7ed9422caee34cc28b70d204e55bb"
+  },
+  "public_development_c1": [
+    {
+      "pytest": "7.3.2",
+      "grading_policy": "legacy",
+      "grading": "graded",
+      "fixed": true,
+      "violations": {},
+      "counts": {
+        "passed": 5
+      },
+      "reference_counts": {
+        "passed": 5
+      },
+      "start": 1791200273.922751,
+      "finish": 1791200276.391663,
+      "exit_code": 0,
+      "script_sha256": "2a30b39cf85293709a4e927334bd221545f644497804392b090225fc4d5a927b",
+      "result_sha256": "92b5baf269f0d16fbea279c9659e25efc59126a4beafdd8a26c43bc7f095da46",
+      "freeze_end_sha256": "86ce72d2c7f0233ad050eec78ad6e995e0a63559201b7c375ecbf8c5fb7bf5c6",
+      "reference_sha256": "4f5b39a24f257cf0f2cc1f15a86b33189ae72a2c9ea89582fc688d20afec3684",
+      "reference_valid": true
+    },
+    {
+      "pytest": "7.3.2",
+      "grading_policy": "h5-v1",
+      "grading": "graded",
+      "fixed": true,
+      "violations": {},
+      "counts": {
+        "passed": 5
+      },
+      "reference_counts": {
+        "passed": 5
+      },
+      "start": 1791200276.392085,
+      "finish": 1791200278.677635,
+      "exit_code": 0,
+      "script_sha256": "2a30b39cf85293709a4e927334bd221545f644497804392b090225fc4d5a927b",
+      "result_sha256": "7a57032860319f31d128fbe29883d00e92e3f1ce7a7dc7d4fa021b9c7525f030",
+      "freeze_end_sha256": "86ce72d2c7f0233ad050eec78ad6e995e0a63559201b7c375ecbf8c5fb7bf5c6",
+      "reference_sha256": "ca1330f38aa096d659652ac9a9415a128ce4b6f1390aaba082c976367db4711e",
+      "reference_valid": true,
+      "complete": true,
+      "config": {
+        "effective": {
+          "filterwarnings": {
+            "registered": true,
+            "value": [
+              "error"
+            ]
+          },
+          "testpaths": {
+            "registered": true,
+            "value": [
+              "tests"
+            ]
+          }
+        },
+        "file": "setup.cfg",
+        "raw": {
+          "filterwarnings": "error",
+          "testpaths": "tests"
+        }
+      },
+      "nodes": [
+        "tests/test_scale.py::test_freezing_point",
+        "tests/test_scale.py::test_boiling_point",
+        "tests/test_scale.py::test_round_trip",
+        "tests/test_scale.py::test_kelvin_offset",
+        "tests/test_scale.py::test_below_absolute_zero"
+      ],
+      "outcomes": {
+        "tests/test_scale.py::test_below_absolute_zero": "passed",
+        "tests/test_scale.py::test_boiling_point": "passed",
+        "tests/test_scale.py::test_freezing_point": "passed",
+        "tests/test_scale.py::test_kelvin_offset": "passed",
+        "tests/test_scale.py::test_round_trip": "passed"
+      },
+      "observation_errors": [],
+      "grading_policy_sha256": "6ce80357f3336b55b2e08ad598bc6e46990d104207d8b9daae05e480abed0d6a"
+    },
+    {
+      "pytest": "9.1.1",
+      "grading_policy": "legacy",
+      "grading": "graded",
+      "fixed": true,
+      "violations": {},
+      "counts": {
+        "passed": 5
+      },
+      "reference_counts": {
+        "passed": 5
+      },
+      "start": 1791200278.678088,
+      "finish": 1791200281.356492,
+      "exit_code": 0,
+      "script_sha256": "994fd5209ba5549cb3e247104a6122e64543b45785bf73ed99ac7220ecc1fe95",
+      "result_sha256": "dc0b4298d3bc613de01ad59dab3f436f61b35bd4e68b9c908a637903ed001ba5",
+      "freeze_end_sha256": "546d72d15187f0fbfc614c030b84a35f05950ffcc1e0cf426e1454754d272e5b",
+      "reference_sha256": "4f5b39a24f257cf0f2cc1f15a86b33189ae72a2c9ea89582fc688d20afec3684",
+      "reference_valid": true
+    },
+    {
+      "pytest": "9.1.1",
+      "grading_policy": "h5-v1",
+      "grading": "graded",
+      "fixed": true,
+      "violations": {},
+      "counts": {
+        "passed": 5
+      },
+      "reference_counts": {
+        "passed": 5
+      },
+      "start": 1791200281.356962,
+      "finish": 1791200284.034822,
+      "exit_code": 0,
+      "script_sha256": "994fd5209ba5549cb3e247104a6122e64543b45785bf73ed99ac7220ecc1fe95",
+      "result_sha256": "8bbeefd0c9afc627f6747ef2152705b379df31f6988eff28a7819871b8f6a671",
+      "freeze_end_sha256": "546d72d15187f0fbfc614c030b84a35f05950ffcc1e0cf426e1454754d272e5b",
+      "reference_sha256": "ca1330f38aa096d659652ac9a9415a128ce4b6f1390aaba082c976367db4711e",
+      "reference_valid": true,
+      "complete": true,
+      "config": {
+        "effective": {
+          "filterwarnings": {
+            "registered": true,
+            "value": [
+              "error"
+            ]
+          },
+          "testpaths": {
+            "registered": true,
+            "value": [
+              "tests"
+            ]
+          }
+        },
+        "file": "setup.cfg",
+        "raw": {
+          "filterwarnings": "error",
+          "testpaths": "tests"
+        }
+      },
+      "nodes": [
+        "tests/test_scale.py::test_freezing_point",
+        "tests/test_scale.py::test_boiling_point",
+        "tests/test_scale.py::test_round_trip",
+        "tests/test_scale.py::test_kelvin_offset",
+        "tests/test_scale.py::test_below_absolute_zero"
+      ],
+      "outcomes": {
+        "tests/test_scale.py::test_below_absolute_zero": "passed",
+        "tests/test_scale.py::test_boiling_point": "passed",
+        "tests/test_scale.py::test_freezing_point": "passed",
+        "tests/test_scale.py::test_kelvin_offset": "passed",
+        "tests/test_scale.py::test_round_trip": "passed"
+      },
+      "observation_errors": [],
+      "grading_policy_sha256": "6ce80357f3336b55b2e08ad598bc6e46990d104207d8b9daae05e480abed0d6a"
+    }
+  ],
+  "synthetic_django": {
+    "synthetic": true,
+    "language_model_started": false,
+    "grading_policy": "h5-v1",
+    "grading_policy_sha256": "6ce80357f3336b55b2e08ad598bc6e46990d104207d8b9daae05e480abed0d6a",
+    "packages": [
+      "asgiref==3.12.1",
+      "django==5.2.17",
+      "iniconfig==2.3.0",
+      "packaging==26.3",
+      "pip==26.2.1",
+      "pluggy==1.6.0",
+      "pygments==2.21.0",
+      "pytest-django==4.11.1",
+      "pytest==9.1.1",
+      "sqlparse==0.6.0"
+    ],
+    "start_exit_code": 1,
+    "rows": [
+      {
+        "arm": "baseline",
+        "stage": "grading",
+        "turns": 2,
+        "tool_calls": 2,
+        "pytest_runs": 0,
+        "fixfirst_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "model_s": 0.0,
+        "tool_s": 0.0,
+        "end": "finish",
+        "bad_calls": 0,
+        "first_green_turn": 1,
+        "first_green_s": 0.0,
+        "error": null,
+        "mcp_arguments_filled": 0,
+        "mcp_arguments_overridden": 0,
+        "mcp_goal_filled": 0,
+        "mcp_goal_overridden": 0,
+        "fixfirst_reports": 0,
+        "fixfirst_s": 0.0,
+        "fixfirst_output_chars": 0,
+        "usage_reported": false,
+        "agent_s": 0.0,
+        "harness_s": 0.46,
+        "processes_stopped_at_end": 0,
+        "total_s": 0.5,
+        "violations": {},
+        "violation_categories": [],
+        "grading": "graded",
+        "fixed": true,
+        "reasons": [],
+        "grader_counts": {
+          "passed": 1
+        },
+        "reference_counts": {
+          "passed": 1
+        },
+        "tests_changed": [],
+        "h5_grader_report": "grader/check-002/suite.json",
+        "files_changed": [
+          "pytest.ini"
+        ],
+        "commands": 0,
+        "install_commands": 0,
+        "grader_checks": 2
+      },
+      {
+        "arm": "facts",
+        "stage": "grading",
+        "turns": 2,
+        "tool_calls": 2,
+        "pytest_runs": 0,
+        "fixfirst_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "model_s": 0.0,
+        "tool_s": 0.0,
+        "end": "finish",
+        "bad_calls": 0,
+        "first_green_turn": 1,
+        "first_green_s": 0.09,
+        "error": null,
+        "mcp_arguments_filled": 0,
+        "mcp_arguments_overridden": 0,
+        "mcp_goal_filled": 0,
+        "mcp_goal_overridden": 0,
+        "fixfirst_reports": 0,
+        "fixfirst_s": 0.0,
+        "fixfirst_output_chars": 0,
+        "usage_reported": false,
+        "agent_s": 0.11,
+        "harness_s": 0.51,
+        "processes_stopped_at_end": 0,
+        "total_s": 0.6,
+        "violations": {},
+        "violation_categories": [],
+        "grading": "graded",
+        "fixed": true,
+        "reasons": [],
+        "grader_counts": {
+          "passed": 1
+        },
+        "reference_counts": {
+          "passed": 1
+        },
+        "tests_changed": [],
+        "h5_grader_report": "grader/check-002/suite.json",
+        "files_changed": [
+          "pytest.ini"
+        ],
+        "commands": 0,
+        "install_commands": 0,
+        "grader_checks": 2
+      },
+      {
+        "arm": "mcp",
+        "stage": "grading",
+        "turns": 2,
+        "tool_calls": 2,
+        "pytest_runs": 0,
+        "fixfirst_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "model_s": 0.0,
+        "tool_s": 0.0,
+        "end": "finish",
+        "bad_calls": 0,
+        "first_green_turn": 1,
+        "first_green_s": 0.12,
+        "error": null,
+        "mcp_arguments_filled": 0,
+        "mcp_arguments_overridden": 0,
+        "mcp_goal_filled": 0,
+        "mcp_goal_overridden": 0,
+        "fixfirst_reports": 0,
+        "fixfirst_s": 0.0,
+        "fixfirst_output_chars": 0,
+        "usage_reported": false,
+        "agent_s": 0.13,
+        "harness_s": 0.47,
+        "processes_stopped_at_end": 0,
+        "total_s": 0.6,
+        "violations": {},
+        "violation_categories": [],
+        "grading": "graded",
+        "fixed": true,
+        "reasons": [],
+        "grader_counts": {
+          "passed": 1
+        },
+        "reference_counts": {
+          "passed": 1
+        },
+        "tests_changed": [],
+        "h5_grader_report": "grader/check-002/suite.json",
+        "files_changed": [
+          "pytest.ini"
+        ],
+        "commands": 0,
+        "install_commands": 0,
+        "grader_checks": 2
+      }
+    ]
+  },
+  "old_pytest_startup": {
+    "synthetic": true,
+    "language_model_started": false,
+    "grading_policy_sha256": "6ce80357f3336b55b2e08ad598bc6e46990d104207d8b9daae05e480abed0d6a",
+    "packages": [
+      "attrs==26.1.0",
+      "iniconfig==2.3.0",
+      "packaging==26.3",
+      "pip==26.2.1",
+      "pluggy==1.6.0",
+      "py==1.10.0",
+      "pytest==6.2.5",
+      "toml==0.10.2"
+    ],
+    "row": {
+      "stage": "grading",
+      "turns": 1,
+      "tool_calls": 1,
+      "pytest_runs": 0,
+      "fixfirst_calls": 0,
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "model_s": 0.0,
+      "tool_s": 0.0,
+      "end": "finish",
+      "bad_calls": 0,
+      "first_green_turn": null,
+      "first_green_s": null,
+      "error": null,
+      "mcp_arguments_filled": 0,
+      "mcp_arguments_overridden": 0,
+      "mcp_goal_filled": 0,
+      "mcp_goal_overridden": 0,
+      "fixfirst_reports": 0,
+      "fixfirst_s": 0.0,
+      "fixfirst_output_chars": 0,
+      "usage_reported": false,
+      "agent_s": 0.0,
+      "harness_s": 0.0,
+      "processes_stopped_at_end": 0,
+      "total_s": 0.0,
+      "violations": {},
+      "violation_categories": [],
+      "grading": "graded",
+      "fixed": false,
+      "reasons": [
+        "H5 pytest failed after the grader probe started; complete success observations are unavailable",
+        "pytest exited with 1 (tests failed): AttributeError: __spec__",
+        "1 tests of the reference were not run, e.g. test_value::test_value"
+      ],
+      "grader_counts": {},
+      "reference_counts": {
+        "passed": 1
+      },
+      "tests_changed": [],
+      "h5_grader_report": "grader/check-001/suite.json",
+      "files_changed": [],
+      "commands": 0,
+      "install_commands": 0,
+      "grader_checks": 1
+    },
+    "suite": {
+      "exit_code": 1,
+      "stopped": false,
+      "counts": {},
+      "outcomes": {},
+      "seconds": 0.1,
+      "summary": "AttributeError: __spec__",
+      "grading_policy": "h5-v1",
+      "grading_policy_sha256": "6ce80357f3336b55b2e08ad598bc6e46990d104207d8b9daae05e480abed0d6a",
+      "h5_observation": {
+        "complete": false,
+        "errors": [],
+        "nodes": [],
+        "outcomes": {},
+        "policy": "h5-v1",
+        "schema": 1,
+        "started": true
+      },
+      "h5_state": {
+        "tests": {
+          "test_value.py": "9987c2d90dbc599ee36ccaf34a71139e78082511200eeb322f5188b469d8b0f9"
+        },
+        "options": {},
+        "carriers": [],
+        "tables": {},
+        "errors": []
+      },
+      "h5_process_stopped": false,
+      "h5_junit_error": null
+    }
+  },
+  "product_source_changed": false,
+  "model_sha256": "189f712ea75bcb117f96aae879fd0c9bdab9ee6531475d1a95faf01ec2738d30",
+  "language_model_started": false,
+  "sealed_task_pack_read": false,
+  "old_results_regraded": false
+}

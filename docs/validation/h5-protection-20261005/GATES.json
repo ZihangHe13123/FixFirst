@@ -1,0 +1,57 @@
+{
+  "source_commit": "bb77c63d02ba376cbc0e4195babe2c01ae15d475",
+  "source_tree": "d7481d600f6f73dad836b9415553a157cef824bf",
+  "grading_policy": "h5-v1",
+  "grading_policy_sha256": "a7af78542fafd4c3c3469ccb49113a052a9fd265fb7a83fb6beae32f64217e5f",
+  "python": "3.12.13",
+  "platform": "darwin",
+  "machine": "arm64",
+  "full": {
+    "passed": 2057,
+    "skipped": 75,
+    "failed": 0,
+    "log": "full-final.txt"
+  },
+  "sandbox": {
+    "passed": 116,
+    "failed": 0,
+    "legacy": 107,
+    "h5": 9,
+    "log": "sandbox-final.txt"
+  },
+  "h5_targeted": {
+    "passed": 73,
+    "ordinary": 64,
+    "sandbox": 9
+  },
+  "knowledge_tests": 170,
+  "claude_spec": {
+    "matched": 29,
+    "total": 29
+  },
+  "synthetic_django": {
+    "accepted": 3,
+    "arms": [
+      "baseline",
+      "facts",
+      "mcp"
+    ]
+  },
+  "real_old_pytest": {
+    "pytest": "6.2.5",
+    "py": "1.10.0",
+    "python": "3.12.13",
+    "grading": "graded",
+    "fixed": false
+  },
+  "ruff": "passed",
+  "diff_check": "passed",
+  "product_source_changed": false,
+  "model_sha256": "189f712ea75bcb117f96aae879fd0c9bdab9ee6531475d1a95faf01ec2738d30",
+  "language_model_started": false,
+  "sealed_task_pack_read": false,
+  "logs_sha256": {
+    "full-final.txt": "4ea7f734b0b6a353ac439fe3d2a8deadd975e0b3425309cb141f9fcd186e1221",
+    "sandbox-final.txt": "fd546a248e71cf800b27a0ef8018ab3c95839a9a5fd03e22ab5210a7bc3d665b"
+  }
+}

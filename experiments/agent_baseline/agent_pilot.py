@@ -81,6 +81,7 @@ sys.path.insert(0, str(HERE))
 import hard_instances as hi  # noqa: E402
 import isolation as iso  # noqa: E402
 import real_cases as rc  # noqa: E402
+import pytest_policy as pp  # noqa: E402
 
 FIXFIRST = HERE.parents[1]
 PYTHON = Path(os.environ.get("FIXFIRST_TARGET_PYTHON", str(FIXFIRST / ".venv" / "bin" / "python")))
@@ -97,7 +98,7 @@ INSTALL = re.compile(r"\b(pip|uv)\b.*\b(install|uninstall)\b")
 PYTEST_FILES = ("pytest.ini", "pyproject.toml", "tox.ini", "setup.cfg", "conftest.py")
 
 
-def system_prompt(network: bool) -> str:
+def system_prompt(network: bool, grading_policy=pp.LEGACY) -> str:
     packages = ("You may install, upgrade or remove packages with `python -m pip`; the machine is online."
                 if network else "The machine is offline, so packages cannot be installed.")
     return (
@@ -105,7 +106,7 @@ def system_prompt(network: bool) -> str:
         "failing tests. Make the full test suite pass by fixing the root cause in the project. "
         f"Do not edit, delete or skip tests. {packages} Use the tools; do not guess what a command "
         "would print. When the full test suite passes, call finish with one sentence on the cause and the fix."
-    )
+    ) + (pp.PROMPT if grading_policy == pp.H5 else "")
 
 
 BASIC_TOOLS = [
@@ -209,6 +210,11 @@ class Context:
     denied: tuple = ()
     protected: tuple = ()  # files with answers (known repairs, a frozen selection): unreadable in every sandbox
     protected_folders: tuple = ()  # folders with answers (the source clones): the same, with all below them
+    grading_policy: str = pp.LEGACY
+
+    def __post_init__(self):
+        if self.grading_policy not in pp.POLICIES:
+            raise ValueError(f"unknown grading policy {self.grading_policy!r}")
 
     def check(self, policy: iso.Policy):
         """Hold what a sandbox would be given against the answers: nothing that shares a path with a folder
@@ -312,9 +318,29 @@ class Run:
                     self.cleanup_problems.append(f"grader check {self.checks}: {stopped['error']}")
                     raise iso.CleanupError(f"the grader check's processes could not be stopped: {stopped['error']}")
 
-        return rc.run_suite(self.project, self.python, grader, execute)
+        suite = rc.run_suite(self.project, self.python, grader, execute, grading_policy=self.ctx.grading_policy)
+        if self.ctx.grading_policy == pp.H5:
+            rc.write_json(grader / "suite.json", suite)
+        return suite
+
+    def set_baseline(self, source=None):
+        source = source or self.project
+        self.baseline = pp.snapshot(source) if self.ctx.grading_policy == pp.H5 else rc.integrity(source)
+        if self.ctx.grading_policy == pp.H5:
+            rc.write_json(self.folder / "h5-baseline.json", self.baseline)
+
+    def reference_fields(self, suite):
+        if self.ctx.grading_policy != pp.H5:
+            return {}
+        return {**{k: suite[k] for k in ("grading_policy", "grading_policy_sha256", "h5_observation", "h5_state",
+                                       "h5_process_stopped", "h5_junit_error")},
+                "h5_baseline": self.baseline, "h5_violations": self.violations}
 
     def check_integrity(self, turn, tool: str):
+        if self.ctx.grading_policy == pp.H5:
+            for key, detail in pp.violations(self.baseline, pp.snapshot(self.project)).items():
+                self.violations.setdefault(key, {**detail, "turn": turn, "after": tool})
+            return
         for key in rc.changed(self.baseline, rc.integrity(self.project)):
             self.violations.setdefault(key, {"turn": turn, "after": tool})
 
@@ -538,7 +564,7 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
              "usage_reported": False}
     budget = iso.Budget(settings.run_timeout)
     tools = BASIC_TOOLS + ([FIXFIRST_TOOL] if arm == "fixfirst" else [])
-    system = system_prompt(run.network) + (FIXFIRST_INSTRUCTIONS if arm == "fixfirst" else "")
+    system = system_prompt(run.network, run.ctx.grading_policy) + (FIXFIRST_INSTRUCTIONS if arm == "fixfirst" else "")
     messages = []
     mcp = None
     first_tool, again_tool = FIXFIRST_ARMS.get(arm, (None, None))
@@ -807,17 +833,22 @@ def run_tool(name, args, run: Run, stats, mcp, budget: iso.Budget, turn):
 
 def generated_reference(ctx: Context, template: str, pristine: Path, cache: dict) -> dict:
     """The healthy template's own outcome, run like a grader run."""
-    if template in cache:
-        return cache[template]
+    cache_key = template if ctx.grading_policy == pp.LEGACY else (template, pp.H5, pp.identity())
+    if cache_key in cache:
+        return cache[cache_key]
     folder = ctx.out / "_templates" / f"{template}--reference--{ctx.attempt}"
     run = Run(ctx, folder, False, False, PYTHON, interpreters(PYTHON.parent.parent))
     shutil.copytree(pristine, run.project)
+    if ctx.grading_policy == pp.H5:
+        run.set_baseline()
     suite = run.suite()
+    if ctx.grading_policy == pp.H5:
+        run.check_integrity("reference", "full suite")
     data = {"template": template, "exit_code": suite["exit_code"], "counts": suite["counts"],
-            "summary": suite["summary"], "outcomes": suite["outcomes"]}
+            "summary": suite["summary"], "outcomes": suite["outcomes"], **run.reference_fields(suite)}
     data["problems"] = rc.validate_reference(data)
     (folder / "reference.json").write_text(json.dumps(data, indent=1) + "\n", encoding="utf-8")
-    cache[template] = data
+    cache[cache_key] = data
     return data
 
 
@@ -827,12 +858,13 @@ def hard_instance(ctx: Context, t, scenario_id: str, cache: dict, frozen: dict |
     under that digest. `end` says why it cannot be run: unsupported_case when the start is not admitted,
     reference_invalid when the reference cannot grade or the instance is not the frozen one."""
     spec = f"{t.name}:{scenario_id}"
-    if ("hard", spec) in cache:
-        return cache[("hard", spec)]
+    cache_key = ("hard", spec) if ctx.grading_policy == pp.LEGACY else ("hard", spec, pp.H5, pp.identity())
+    if cache_key in cache:
+        return cache[cache_key]
     entry = hi.load_registry()[scenario_id]
     folder = ctx.out / "_hard" / f"{iso.slug(spec, 40)}--{ctx.attempt}"
     built = hi.build(folder, t, hi.scenario(scenario_id))
-    data = cache[("hard", spec)] = {"start": built["start"], "required": hi.required_node(t, entry), "digest": None,
+    data = cache[cache_key] = {"start": built["start"], "required": hi.required_node(t, entry), "digest": None,
                                     "manifest": None, "reference": None, "problems": [], "end": None}
     problems = hi.admit(built["pristine"], built["start"], t, entry)
     if problems:
@@ -843,7 +875,10 @@ def hard_instance(ctx: Context, t, scenario_id: str, cache: dict, frozen: dict |
     if problems:
         data.update(problems=problems, end="reference_invalid")
         return data
-    manifest = hi.manifest(t, scenario_id, entry, built["start"], run.project, hi.environment(PYTHON), hi.code_identity())
+    if ctx.grading_policy == pp.H5:
+        run.set_baseline(built["start"])
+    manifest = hi.manifest(t, scenario_id, entry, built["start"], run.project, hi.environment(PYTHON), hi.code_identity(),
+                           grading_policy=ctx.grading_policy)
     digest = hi.digest(manifest)
     rc.write_json(folder / "manifest.json", {"digest": digest, **manifest})
     data.update(digest=digest, manifest=manifest)
@@ -853,7 +888,7 @@ def hard_instance(ctx: Context, t, scenario_id: str, cache: dict, frozen: dict |
         return data
     (ctx.out / "_reference").mkdir(parents=True, exist_ok=True)
     cached = ctx.out / "_reference" / f"hard--{iso.slug(spec, 40)}--{digest[:12]}.json"
-    reference, note = rc.read_reference_cache(cached, digest, ctx.attempt)
+    reference, note = rc.read_reference_cache(cached, digest, ctx.attempt, ctx.grading_policy)
     if reference and hi.reference_problems(reference, t, entry):  # passes as a reference, not as a hard instance's
         aside = cached.with_name(f"{cached.name}.unusable-{ctx.attempt}")
         cached.rename(aside)
@@ -862,8 +897,10 @@ def hard_instance(ctx: Context, t, scenario_id: str, cache: dict, frozen: dict |
         reference = {"key": digest, "commit": "", "repair": [], "cache_note": note}
         try:
             suite = run.suite()
+            if ctx.grading_policy == pp.H5:
+                run.check_integrity("reference", "full suite")
             reference.update(exit_code=suite["exit_code"], stopped=suite["stopped"], counts=suite["counts"],
-                             summary=suite["summary"], outcomes=suite["outcomes"])
+                             summary=suite["summary"], outcomes=suite["outcomes"], **run.reference_fields(suite))
         except (RuntimeError, OSError, subprocess.SubprocessError, ParseError) as error:
             reference.update(exit_code=None, stopped=None, counts={}, outcomes={}, summary="",
                              setup_error=f"{type(error).__name__}: {error}"[:500])
@@ -893,11 +930,13 @@ def real_reference(ctx: Context, project: dict, source: Path, snapshot: Path, re
     parts = [commit, snapshot.read_text(encoding="utf-8"), repair]
     if project.get("install_fails"):  # a registered failing install is part of the start
         parts.append(project["install_fails"])
+    if ctx.grading_policy == pp.H5:
+        parts.append({"grading_policy": pp.H5, "grading_policy_sha256": pp.identity()})
     key = hashlib.sha256(json.dumps(parts).encode()).hexdigest()
     name = f"{iso.slug(project['id'], 30)}--{key[:12]}"
     (ctx.out / "_reference").mkdir(parents=True, exist_ok=True)
     cached = ctx.out / "_reference" / f"{name}.json"
-    data, note = rc.read_reference_cache(cached, key, ctx.attempt)
+    data, note = rc.read_reference_cache(cached, key, ctx.attempt, ctx.grading_policy)
     if data:
         return data
     folder = ctx.out / "_reference" / f"{name}--{ctx.attempt}"
@@ -913,12 +952,18 @@ def real_reference(ctx: Context, project: dict, source: Path, snapshot: Path, re
             data["repair"].append({"command": "install the project: " + " ".join(step["argv"][-2:]), "exit_code": code,
                                    "stopped": stopped, "expected_failure": step["expected_failure"],
                                    "output": output[-1000:]})
+        if ctx.grading_policy == pp.H5:
+            run.set_baseline()
         for command in repair:
             code, output, stopped = run.execute(["/bin/bash", "-c", command], "install", INSTALL_SECONDS)
             data["repair"].append({"command": command, "exit_code": code, "stopped": stopped, "output": output[-1000:]})
+            if ctx.grading_policy == pp.H5:
+                run.check_integrity("reference", command)
         suite = run.suite()
+        if ctx.grading_policy == pp.H5:
+            run.check_integrity("reference", "full suite")
         data.update(exit_code=suite["exit_code"], counts=suite["counts"], summary=suite["summary"],
-                    outcomes=suite["outcomes"])
+                    outcomes=suite["outcomes"], **run.reference_fields(suite))
     except (RuntimeError, OSError, subprocess.SubprocessError, ParseError) as error:
         data.update(exit_code=None, counts={}, outcomes={}, summary="",
                     setup_error=f"{type(error).__name__}: {error}"[:500])
@@ -939,13 +984,29 @@ def grade(run: Run, reference: dict, row: dict):
     row["stage"] = "grading"
     try:
         run.check_integrity("end", "final state")
+        if run.ctx.grading_policy == pp.H5:
+            row.update(violations=run.violations,
+                       violation_categories=sorted({v["category"] for v in run.violations.values()}))
+        if run.ctx.grading_policy == pp.H5 and run.baseline != reference.get("h5_baseline"):
+            raise ValueError("H5 run's starting protection snapshot differs from the reference's start")
         verdict = rc.judge(run.suite(), reference, sorted(run.violations))
     except (OSError, ParseError, KeyError, ValueError) as error:
+        # A confirmed policy breach is already a failed attempt. A broken report caused by
+        # that attempt must not remove it from the success-rate denominator.
+        if (run.ctx.grading_policy == pp.H5 and run.violations
+                and run.baseline == reference.get("h5_baseline") and not rc.validate_reference(reference)):
+            row.update(grading="graded", fixed=False, reasons=["H5 protection violated during the run"],
+                       tests_changed=sorted(run.violations), grader_counts={}, reference_counts=reference["counts"],
+                       grading_observation_error=f"{type(error).__name__}: {error}"[:500])
+            return
         row.update(grading="grading_error", fixed=None, grading_error=f"{type(error).__name__}: {error}"[:500])
         return
     row.update(grading="graded", fixed=verdict["fixed"], reasons=verdict["reasons"],
                grader_counts=verdict["counts"], reference_counts=verdict["reference_counts"],
                tests_changed=verdict["tests_changed"], violations=run.violations)
+    if run.ctx.grading_policy == pp.H5:
+        row["violation_categories"] = sorted({v["category"] for v in run.violations.values()})
+        row["h5_grader_report"] = f"grader/check-{run.checks:03d}/suite.json"
 
 
 def close_run(run: Run, row: dict):
@@ -981,9 +1042,11 @@ def play(model, arm, run: Run, settings, fake_path, reference, row, state_digest
     def green():
         if run.violations:
             return False
+        if run.ctx.grading_policy == pp.H5 and run.baseline != reference.get("h5_baseline"):
+            return False
         try:
             return rc.judge(run.suite(), reference, [])["fixed"]
-        except (OSError, ParseError):
+        except (OSError, ParseError, KeyError, ValueError):
             return False
 
     row["stage"] = "episode"
@@ -1045,7 +1108,7 @@ def prepare_and_play_real(ctx: Context, run: Run, row: dict, settings, project, 
         (run.folder / "setup.json").write_text(json.dumps(setup_log, indent=1), encoding="utf-8")
     start = rc.freeze(run.python)
     (run.folder / "freeze-start.txt").write_text("\n".join(start) + "\n", encoding="utf-8")
-    run.baseline = rc.integrity(run.project)
+    run.set_baseline()
     row.update(snapshot_mismatch=rc.snapshot_mismatch(snapshot, start),
                start_digest=rc.workspace_digest(run.project, run.python)[:16])
     try:
@@ -1097,7 +1160,7 @@ def run_hard(ctx: Context, row: dict, settings, spec, t, scenario, arm, run_inde
             row.update(end="setup_failed", error="the run's copy is not the instance's start", grading="not_graded",
                        fixed=None)
             return
-        run.baseline = rc.integrity(run.project)
+        run.set_baseline()
         play(ctx.model, arm, run, settings, fake_path, instance["reference"], row,
              lambda: rc.workspace_digest(run.project, None))
     finally:
@@ -1111,11 +1174,12 @@ def prepare_and_play_generated(ctx: Context, run: Run, row: dict, settings, t, s
         return
     shutil.copytree(pristine, run.project)
     s.apply(dc.Project(run.project, t, dc.TEMPLATES.index(t)))
-    if rc.integrity(run.project) != rc.integrity(pristine):
+    if (pp.snapshot(run.project) != pp.snapshot(pristine) if ctx.grading_policy == pp.H5 else
+            rc.integrity(run.project) != rc.integrity(pristine)):
         row.update(end="unsupported_case", grading="not_graded", fixed=None,
                    error="the scenario changes test files or pytest settings, so the healthy template is no reference")
         return
-    run.baseline = rc.integrity(run.project)
+    run.set_baseline()
     play(ctx.model, arm, run, settings, fake_path, reference, row, lambda: rc.workspace_digest(run.project, None))
 
 
@@ -1125,13 +1189,14 @@ def arm_order(arms: list[str], case_index: int, run_index: int) -> list[str]:
     return list(arms[shift:]) + list(arms[:shift])
 
 
-def check_output_folder(out: Path) -> str | None:
+def check_output_folder(out: Path, grading_policy=pp.LEGACY) -> str | None:
     """Runs must not sit below a folder with pytest settings: pytest would read them."""
     out = out.resolve()
     if out == FIXFIRST or FIXFIRST in out.parents:
         return f"{out} is inside the FixFirst repository; choose a folder outside it (default: {FIXFIRST.parent / 'agent-runs'})"
-    for folder in out.parents:
-        found = [name for name in PYTEST_FILES if (folder / name).exists()]
+    for folder in ((out, *out.parents) if grading_policy == pp.H5 else out.parents):
+        names = (*pp.CONFIG_FILES, "conftest.py") if grading_policy == pp.H5 else PYTEST_FILES
+        found = [name for name in names if os.path.lexists(folder / name)]
         if found:
             return f"{folder} has {', '.join(found)}; pytest in the runs would read it"
     return None
@@ -1178,6 +1243,8 @@ def main(argv=None):
                         help="facts: FixFirst's observations only; mcp: its full diagnosis (both over MCP)")
     parser.add_argument("--call-policy", choices=CALL_POLICIES, default="server",
                         help="how the facts and mcp arms call FixFirst (see CALL_POLICIES)")
+    parser.add_argument("--grading-policy", choices=pp.POLICIES, default=pp.LEGACY,
+                        help="legacy: original grading; h5-v1: allow only persistent import/settings options")
     parser.add_argument("--runs", type=int, default=1)
     parser.add_argument("--network", choices=["off", "on"], default="off")
     parser.add_argument("--max-turns", type=int, default=20)
@@ -1216,7 +1283,7 @@ def main(argv=None):
     if args.attempt and not re.fullmatch(r"[A-Za-z0-9._-]+", args.attempt):
         parser.error("--attempt may use letters, digits, dot, dash and underscore")
     out = Path(args.out).resolve()
-    problem = check_output_folder(out)
+    problem = check_output_folder(out, args.grading_policy)
     if problem:
         parser.error(problem)
     # What holds answers (a frozen selection carries the registered repairs; the known repairs; the source
@@ -1241,7 +1308,7 @@ def main(argv=None):
     fake_path = Path(args.model.split(":", 1)[1]).resolve() if args.model.startswith("fake:") else None
     identity = f"fake-{fake_path.stem}-{iso.slug(str(fake_path))[-8:]}" if fake_path else args.model
     ctx = Context(out, identity, attempt, args.network == "on", denied=denied, protected=protected,
-                  protected_folders=protected_folders)
+                  protected_folders=protected_folders, grading_policy=args.grading_policy)
     settings = Settings(args.max_turns, args.run_timeout, args.temperature, args.max_tokens, args.seed,
                         args.call_policy)
     manifest_path = Path(args.manifest).resolve()
@@ -1280,6 +1347,8 @@ def main(argv=None):
                        "network": "on" if (ctx.network and kind == "real") else "off", "settings": vars(settings),
                        "harness_commit": harness, "uncommitted_changes": dirty, "end": None, "error": None,
                        "grading": None, "fixed": None}
+                if args.grading_policy == pp.H5:
+                    row.update(grading_policy=pp.H5, grading_policy_sha256=pp.identity())
                 if kind == "real":  # every real row, also when its reference or setup failed
                     row["install_fails_registered"] = rc.install_fails_registered(project)
                 elif is_hard(name):  # every row of a hard instance says under which selection it ran, if any

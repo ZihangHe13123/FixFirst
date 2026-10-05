@@ -47,12 +47,13 @@ from fixfirst import diagnosis_cases as dc
 from fixfirst import hard_cases as hc
 
 import real_cases as rc
+import pytest_policy as pp
 
 HERE = Path(__file__).resolve().parent
 REGISTRY_FILE = HERE / "hard_cases.toml"
 ENTRY_KEYS = {"check", "check_body", "fails_with", "repair"}
 CODE_FILES = ("agent_pilot.py", "real_cases.py", "isolation.py", "hard_instances.py", "hard_cases.toml",
-              "qualify_hard.py")
+              "qualify_hard.py", "pytest_policy.py", "_h5_grading_probe.py")
 GENERATOR_FILES = ("diagnosis_cases.py", "hard_cases.py")
 GRADING = "python -m pytest -q -p no:cacheprovider --junitxml=REPORT: the whole suite, offline, on a copy, in a clean environment"
 ROLES = ("formal", "development")
@@ -221,17 +222,22 @@ def code_identity() -> dict:
             **{f"agent_baseline/{name}": rc.file_hash(HERE / name) for name in CODE_FILES}}
 
 
-def manifest(t: dc.Template, scenario_id: str, entry: dict, start: Path, reference: Path, env: dict, code: dict) -> dict:
+def manifest(t: dc.Template, scenario_id: str, entry: dict, start: Path, reference: Path, env: dict, code: dict,
+             grading_policy=pp.LEGACY) -> dict:
     """What an instance is. Its digest is the instance's identity: the cache key of its reference outcome,
     and what a frozen selection compares."""
     addition = appended_check(t, entry)
-    return {"template": t.name, "scenario": scenario_id, "registration": entry,
+    data = {"template": t.name, "scenario": scenario_id, "registration": entry,
             "appended_check": None if addition is None else {"file": t.test, "node": required_node(t, entry),
                                                              "sha256": sha256(addition)},
             "start": tree(start), "reference": tree(reference), "tests_and_settings": rc.integrity(start),
             "code": code, "environment": {"python": env["python"], "interpreter": env["interpreter"],
                                           "distributions_sha256": env["sha256"]},
             "grading": GRADING}
+    if grading_policy == pp.H5:
+        data.update(grading_policy=pp.H5, grading_policy_sha256=pp.identity(),
+                    tests_and_settings=pp.snapshot(start), grading=GRADING + "; H5 config and collected-node probe")
+    return data
 
 
 def digest(data: dict) -> str:
