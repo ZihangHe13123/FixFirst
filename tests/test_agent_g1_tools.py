@@ -77,6 +77,74 @@ def test_exact_edit_preserves_unrelated_bytes_newlines_and_mode(tmp_path):
 
 
 @file_test
+@pytest.mark.parametrize("absolute", [False, True])
+def test_project_relative_and_absolute_paths_preserve_bytes(tmp_path, absolute):
+    project = tmp_path / "project with 空格"
+    target = project / "src" / "module.py"
+    target.parent.mkdir(parents=True)
+    original = "# 一🙂\r\nVALUE = 1\r\n".encode()
+    target.write_bytes(original)
+    target.chmod(0o751)
+    path = str(target) if absolute else "src/module.py"
+    page = aft.read_page(project, {"path": path, "start_line": 2, "line_count": 1})
+    assert page["text"] == "VALUE = 1\r\n"
+    aft.exact_edit(project, {"path": path, "old": "VALUE = 1", "new": "VALUE = 23"})
+    assert target.read_bytes() == original.replace(b"VALUE = 1", b"VALUE = 23")
+    assert stat.S_IMODE(target.stat().st_mode) == 0o751
+
+
+@file_test
+def test_canonical_absolute_path_of_trusted_root_alias_is_accepted(tmp_path):
+    real = tmp_path / "real"
+    project = real / "project"
+    project.mkdir(parents=True)
+    alias = tmp_path / "system-alias"
+    alias.symlink_to(real, target_is_directory=True)
+    root = alias / "project"
+    (project / "code.py").write_text("old\n")
+    assert aft.read_page(root, {"path": str(project / "code.py")})["text"] == "old\n"
+    aft.exact_edit(root, {"path": str(root / "code.py"), "old": "old", "new": "new"})
+    assert (project / "code.py").read_text() == "new\n"
+
+
+@file_test
+@pytest.mark.parametrize("kind", ["outside", "sibling_prefix", "parent_traversal", "link_file", "link_dir", "root"])
+def test_absolute_path_acceptance_does_not_weaken_project_boundary(tmp_path, kind):
+    project = tmp_path / "project"
+    project.mkdir()
+    (project / "actual.txt").write_text("inside")
+    outside = tmp_path / "project-other" / "private.txt"
+    outside.parent.mkdir()
+    outside.write_text("outside")
+    if kind in {"outside", "sibling_prefix"}:
+        path = outside if kind == "sibling_prefix" else tmp_path / "private.txt"
+        if kind == "outside":
+            path.write_text("outside")
+    elif kind == "parent_traversal":
+        path = project / ".." / "project" / "actual.txt"
+    elif kind == "root":
+        path = project
+    elif kind == "link_file":
+        path = project / "link"
+        path.symlink_to(project / "actual.txt")
+    else:
+        (project / "link").symlink_to(project, target_is_directory=True)
+        path = project / "link" / "actual.txt"
+    for action in (lambda: aft.read_page(project, {"path": str(path)}),
+                   lambda: aft.exact_edit(project, {"path": str(path), "old": "inside", "new": "wrong"})):
+        with pytest.raises((OSError, ValueError)):
+            action()
+    assert outside.read_text() == "outside" and (project / "actual.txt").read_text() == "inside"
+
+
+@file_test
+@pytest.mark.parametrize("path", ["", ".", "../outside", "C:\\outside.txt", "//server/share/file"])
+def test_path_rejection_explains_accepted_forms(tmp_path, path):
+    with pytest.raises(ValueError, match="project-relative.*absolute path inside"):
+        aft.read_page(tmp_path, {"path": path})
+
+
+@file_test
 @pytest.mark.parametrize("values", [{"old": "absent"}, {"old": "x"}, {"old": ""},
                                      {"expected_count": True}, {"expected_count": 0}, {"expected_count": 1001}])
 def test_ambiguous_missing_or_invalid_edits_leave_file_unchanged(tmp_path, values):
@@ -164,6 +232,10 @@ def test_lines_mode_contract_is_explicit_and_legacy_tools_are_unchanged():
     assert "edit_file" in {t["function"]["name"] for t in tools}
     assert "edit_file" not in {t["function"]["name"] for t in ap.basic_tools("paged")}
     assert ap.basic_tools("tail") == ap.BASIC_TOOLS
+    for mode in ("tail", "paged", "lines"):
+        for tool in ap.basic_tools(mode):
+            if tool["function"]["name"] in {"read_file", "write_file", "edit_file"}:
+                assert aft.PATH_HELP in tool["function"]["description"]
 
 
 def test_file_tool_content_binds_h5_and_hard_instance_identities(tmp_path, monkeypatch):
@@ -190,7 +262,8 @@ def test_g1_choices_separate_new_protocols_from_existing_defaults():
 
 def test_post_grading_harness_error_invalidates_finish_measurement(tmp_path, monkeypatch):
     def crash(ctx, row, *args):
-        row.update(finish_called=True, finish_check_status="passed", finish_fixed=True, fixed=True)
+        row.update(finish_called=True, finish_check_status="passed", finish_fixed=True, fixed=True,
+                   final_violations={}, final_violation_categories=[], final_state_fixed=True, final_state_reasons=[])
         raise RuntimeError("failure while saving final files")
 
     monkeypatch.setattr(ap, "run_generated", crash)
@@ -199,6 +272,7 @@ def test_post_grading_harness_error_invalidates_finish_measurement(tmp_path, mon
     row = json.loads((output / "results.jsonl").read_text())
     assert row["grading"] == "not_graded" and row["fixed"] is None
     assert row["finish_check_status"] == "not_checked" and row["finish_fixed"] is None
+    assert row["final_state_fixed"] is None and row["final_violations"] is None
 
 
 def test_mcp_calls_record_first_dispatch_and_failures_without_counting_unexecuted_calls(tmp_path):
@@ -257,3 +331,54 @@ def test_finish_verification_distinguishes_failed_missing_and_restored_violation
     suite["h5_state"]["tests"]["test_value.py"] = '0' * 64
     ap.finish_verification(run, ref, suite, row)
     assert row["finish_check_status"] == "not_checked"
+
+
+@pytest.mark.parametrize("mutation", ["missing_observation", "missing_state", "different_state", "invalid_reference",
+                                     "unfinished", "other_identity", "unreadable_state"])
+def test_final_state_cannot_retain_credit_after_evidence_becomes_unknown(tmp_path, mutation):
+    import test_h5_grading as hg
+    root, reference = hg.reference(tmp_path)
+    run = SimpleNamespace(ctx=SimpleNamespace(grading_policy=ap.pp.H5), baseline=reference["h5_baseline"])
+    suite, state, ref, row = deepcopy(reference), ap.pp.snapshot(root), deepcopy(reference), {}
+    ap.final_state_verification(run, ref, suite, state, row)
+    assert row["final_state_fixed"] is True
+    if mutation == "missing_observation":
+        suite.pop("h5_observation")
+    elif mutation == "missing_state":
+        state = None
+    elif mutation == "different_state":
+        suite["h5_state"]["tables"]["pytest.ini"]["pytest"]["pythonpath"] = "other"
+    elif mutation == "invalid_reference":
+        ref["exit_code"] = 1
+    elif mutation == "unfinished":
+        suite["h5_observation"]["complete"] = False
+    elif mutation == "other_identity":
+        suite["grading_policy_sha256"] = "0" * 64
+    else:
+        state["errors"] = ["pytest.ini could not be read"]
+    ap.final_state_verification(run, ref, suite, state, row)
+    assert row["final_state_fixed"] is None and row["final_state_reasons"] is None
+    assert row["final_state_observation_error"]
+
+
+def test_final_state_requires_complete_reference_nodes_even_with_no_file_violation(tmp_path):
+    import test_h5_grading as hg
+    root, ref = hg.reference(tmp_path)
+    run = SimpleNamespace(ctx=SimpleNamespace(grading_policy=ap.pp.H5), baseline=ref["h5_baseline"])
+    suite, row = deepcopy(ref), {}
+    suite["h5_observation"].update(nodes=[], outcomes={})
+    ap.final_state_verification(run, ref, suite, ap.pp.snapshot(root), row)
+    assert row["final_violations"] == {} and row["final_state_fixed"] is False
+    assert any("nodes" in reason for reason in row["final_state_reasons"])
+
+
+def test_final_state_rejects_unmatched_effective_configuration(tmp_path):
+    import test_h5_grading as hg
+    root, ref = hg.reference(tmp_path)
+    run = SimpleNamespace(ctx=SimpleNamespace(grading_policy=ap.pp.H5), baseline=ref["h5_baseline"])
+    suite, row = deepcopy(ref), {}
+    suite["h5_observation"]["config"].update(
+        raw={"log_level": "INFO"}, effective={"log_level": {"registered": True, "value": "INFO"}})
+    ap.final_state_verification(run, ref, suite, ap.pp.snapshot(root), row)
+    assert row["final_violations"] == {} and row["final_state_fixed"] is None
+    assert row["final_state_observation_error"]

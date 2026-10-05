@@ -7,6 +7,9 @@ import stat
 import uuid
 
 MAX_BYTES = 16 << 20
+PATH_HELP = ("Paths may be relative to the project directory or absolute paths inside it. "
+             "The project directory is already the base; project/ is not an automatically stripped prefix.")
+PATH_ERROR = "Use a project-relative file path (such as src/module.py) or an absolute path inside the project; parent traversal and outside paths are not allowed."
 
 
 def head_tail(text, limit=6000):
@@ -29,10 +32,24 @@ def head_tail(text, limit=6000):
 @contextmanager
 def parent(root, relative):
     if not isinstance(relative, str) or not relative:
-        raise ValueError("path must be a nonempty relative string")
+        raise ValueError("path must be a nonempty string. " + PATH_ERROR)
     path = Path(relative)
-    if path.is_absolute() or PureWindowsPath(relative).drive or not path.parts or ".." in path.parts:
-        raise ValueError("path must stay inside the project")
+    if PureWindowsPath(relative).drive or not path.parts or ".." in path.parts:
+        raise ValueError(PATH_ERROR)
+    if path.is_absolute():
+        project = Path(root).absolute()
+        # Canonicalize only the trusted root: requested links inside it must still be
+        # visited with O_NOFOLLOW. macOS may spell the same root under /var or /private/var.
+        for base in (project, project.resolve()):
+            try:
+                path = path.relative_to(base)
+                break
+            except ValueError:
+                continue
+        else:
+            raise ValueError(PATH_ERROR)
+        if not path.parts:
+            raise ValueError("path must name a file inside the project. " + PATH_ERROR)
     if os.open not in os.supports_dir_fd:
         raise ValueError("lines-mode file tools require directory-relative file APIs")
     flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
