@@ -75,6 +75,18 @@ def test_runs_under_different_protocols_are_neither_pooled_nor_paired():
     assert ca.paired([short, dirty]) == []  # a harness with uncommitted changes is another version
 
 
+def test_response_recovery_is_a_new_protocol_without_changing_legacy_ids():
+    settings = {"max_turns": 20, "run_timeout": 900.0, "temperature": 0.2, "max_tokens": 4096, "seed": 20261001}
+    old = row("baseline", "c", False, call_policy="server", network="on", harness_commit="a" * 40, settings=settings)
+    # Calculated with the pre-recovery compare_arms.py, rather than another copy of the new function.
+    assert ca.protocol(old) == "cd69c93b"
+    disabled = {**old, "arm": "mcp", "settings": {**settings, "max_length_continuations": 0}}
+    enabled = {**disabled, "settings": {**settings, "max_length_continuations": 2}}
+    assert len({ca.protocol(r) for r in (old, disabled, enabled)}) == 3
+    assert ca.paired([old, enabled]) == []
+    assert ca.paired([{**old, "settings": enabled["settings"]}, enabled])[0]["pairs"] == 1
+
+
 def test_the_same_run_read_twice_counts_once_and_conflicting_results_are_refused(tmp_path, capsys):
     rows = [row("baseline", "c", False), row("mcp", "c", True)]
     [baseline, mcp] = ca.summarise(rows + rows)

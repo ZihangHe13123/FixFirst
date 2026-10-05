@@ -89,6 +89,10 @@ def protocol(row) -> str:
     """What must match for runs to be pooled or paired, as a short id."""
     settings = row.get("settings") or {}
     data = {key: settings.get(key) for key in PROTOCOL_SETTINGS}
+    # Historical rows have no recovery setting: retain their exact protocol id.
+    for key in ("max_length_continuations", "max_no_tool_reminders", "file_read_mode", "top_p", "top_k"):
+        if key in settings:
+            data[key] = settings[key]
     data.update(call_policy=policy(row), network=row.get("network"), harness=row.get("harness_commit"),
                 uncommitted=bool(row.get("uncommitted_changes")))
     if row.get("grading_policy", "legacy") != "legacy":

@@ -12,7 +12,7 @@ dependencies = ["pydantic>=2.8,<3", "Jinja2>=3.1,<4", "scikit-learn>=1.5,<2", "p
 
 [project.optional-dependencies]
 # PyYAML is also a runtime parser; Click 8.2 is needed by API regression fixtures.
-dev = ["pytest>=8,<10", "ruff>=0.9,<1", "build>=1,<2", "click>=8.2,<9"]
+dev = ["pytest>=8,<10", "ruff>=0.9,<1", "build>=1,<2", "click>=8.2,<9", "httpx>=0.28,<1"]
 semantic = ["sentence-transformers>=3,<6"]
 notebooks = ["nbclient>=0.10,<1", "nbformat>=5.10,<6", "ipykernel>=6,<8"]
 
