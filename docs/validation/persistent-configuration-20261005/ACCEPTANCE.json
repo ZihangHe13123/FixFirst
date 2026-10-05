@@ -1,0 +1,103 @@
+{
+  "INDEPENDENT_NO_CONFIG": [
+    {
+      "case": "local-independent-no-config",
+      "fixed": true,
+      "configuration": "pytest.ini",
+      "title": "Save the import path in pytest.ini"
+    },
+    {
+      "case": "django-independent-no-config",
+      "fixed": true,
+      "configuration": "pytest.ini",
+      "title": "Save DJANGO_SETTINGS_MODULE=suite_config in pytest.ini"
+    }
+  ],
+  "VERSION_MATRIX": [
+    {
+      "label": "legacy",
+      "python": "3.10.20",
+      "pytest": "7.3.2",
+      "django": "4.2.26",
+      "format": "toml_ini",
+      "plugin": "pytest-django==4.11.1",
+      "full_test_command_passed": true,
+      "test_files_unchanged": true
+    },
+    {
+      "label": "current",
+      "python": "3.13.14",
+      "pytest": "9.1.1",
+      "django": "5.2.1",
+      "format": "ini",
+      "plugin": "pytest-django==4.11.1",
+      "full_test_command_passed": true,
+      "test_files_unchanged": true
+    },
+    {
+      "label": "new",
+      "python": "3.14.6",
+      "pytest": "9.1.1",
+      "django": "6.0.1",
+      "format": "toml_native",
+      "plugin": "pytest-django==4.14.0",
+      "full_test_command_passed": true,
+      "test_files_unchanged": true
+    }
+  ],
+  "SPACE_ACCEPTANCE": {
+    "project_root_with_spaces": true,
+    "existing_path_with_spaces_preserved": true,
+    "original_tests_unchanged": true,
+    "new_shell_code": 0
+  },
+  "FROZEN_PRESERVE_ACCEPTANCE": {
+    "case": "local-ini-preserve-space",
+    "original_frozen_generator": true,
+    "passed": true,
+    "original_tests_unchanged": true
+  },
+  "PLUGIN_ACCEPTANCE": {
+    "missing_plugin_fixed": true,
+    "command": [
+      "<same-python>",
+      "-m",
+      "pip",
+      "install",
+      "--log",
+      "<project>/.fixfirst/installation/<receipt>.log",
+      "--disable-pip-version-check",
+      "--only-binary=:all:",
+      "pytest-django==4.11.1",
+      "Django==5.2.1",
+      "pytest==9.1.1"
+    ],
+    "test_files_unchanged": true,
+    "fixed_output": "..                                                                       [100%]",
+    "constraint": {
+      "command": false,
+      "title": "Resolve the pytest-django version constraints before changing it",
+      "review_route": "dependency_resolve"
+    },
+    "optional_constraint": {
+      "command": false,
+      "title": "Resolve the pytest-django version constraints before changing it",
+      "review_route": null
+    },
+    "autoload": {
+      "command": false,
+      "title": "Review prerequisites for saving DJANGO_SETTINGS_MODULE=suite_config",
+      "review_route": null
+    }
+  },
+  "ordinary_formats": {
+    "cases": 14,
+    "original_complete_command_passed_after_recipe": 14
+  },
+  "parent_configuration_controls": {
+    "cases": 2,
+    "overriding_write_recipe_refused": 2
+  },
+  "model_requests": 0,
+  "source_commit": "5117e56"
+}
