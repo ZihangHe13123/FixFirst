@@ -183,7 +183,7 @@ def test_the_digest_is_the_same_for_the_same_instance_and_changes_with_each_of_i
 
 def test_the_code_identity_covers_the_generator_the_harness_and_the_qualification():
     identity = hi.code_identity()
-    assert sorted(identity) == ["agent_baseline/_h5_grading_probe.py", "agent_baseline/agent_pilot.py", "agent_baseline/hard_cases.toml",
+    assert sorted(identity) == ["agent_baseline/_h5_grading_probe.py", "agent_baseline/agent_file_tools.py", "agent_baseline/agent_pilot.py", "agent_baseline/hard_cases.toml",
                                 "agent_baseline/hard_instances.py", "agent_baseline/isolation.py",
                                 "agent_baseline/pytest_policy.py", "agent_baseline/qualify_hard.py", "agent_baseline/real_cases.py",
                                 "fixfirst/diagnosis_cases.py", "fixfirst/hard_cases.py"]

@@ -44,7 +44,7 @@ def identity() -> str:
     """Bind both the rule and the executed probe; changing either starts a new protocol/cache."""
     h = hashlib.sha256()
     for path in (Path(__file__), PROBE, *[Path(__file__).with_name(n) for n in
-                                       ("agent_pilot.py", "real_cases.py", "isolation.py", "hard_instances.py")]):
+                                       ("agent_pilot.py", "agent_file_tools.py", "real_cases.py", "isolation.py", "hard_instances.py")]):
         h.update(path.name.encode())
         h.update(path.read_bytes())
     return h.hexdigest()

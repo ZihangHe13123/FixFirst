@@ -52,7 +52,7 @@ import pytest_policy as pp
 HERE = Path(__file__).resolve().parent
 REGISTRY_FILE = HERE / "hard_cases.toml"
 ENTRY_KEYS = {"check", "check_body", "fails_with", "repair"}
-CODE_FILES = ("agent_pilot.py", "real_cases.py", "isolation.py", "hard_instances.py", "hard_cases.toml",
+CODE_FILES = ("agent_pilot.py", "agent_file_tools.py", "real_cases.py", "isolation.py", "hard_instances.py", "hard_cases.toml",
               "qualify_hard.py", "pytest_policy.py", "_h5_grading_probe.py")
 GENERATOR_FILES = ("diagnosis_cases.py", "hard_cases.py")
 GRADING = "python -m pytest -q -p no:cacheprovider --junitxml=REPORT: the whole suite, offline, on a copy, in a clean environment"

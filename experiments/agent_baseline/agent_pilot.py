@@ -83,6 +83,7 @@ import hard_instances as hi  # noqa: E402
 import isolation as iso  # noqa: E402
 import real_cases as rc  # noqa: E402
 import pytest_policy as pp  # noqa: E402
+import agent_file_tools as aft  # noqa: E402
 
 FIXFIRST = HERE.parents[1]
 PYTHON = Path(os.environ.get("FIXFIRST_TARGET_PYTHON", str(FIXFIRST / ".venv" / "bin" / "python")))
@@ -154,6 +155,24 @@ def basic_tools(file_read_mode):
     read["parameters"]["properties"].update(
         offset={"type": "integer", "minimum": 0},
         limit={"type": "integer", "minimum": 1, "maximum": OUTPUT_LIMIT})
+    if file_read_mode == "lines":
+        read["description"] = (
+            "Read UTF-8 project text, preserving newlines. start_line is one-based (default 1), "
+            "line_count is 1–1000 (default 100). JSON gives text, next_line, total_lines, eof and "
+            "omitted_chars; reduce line_count to inspect an omitted middle. For a long individual line, "
+            "use zero-based character offset/limit instead; do not mix line and character parameters.")
+        read["parameters"]["properties"].update(
+            start_line={"type": "integer", "minimum": 1},
+            line_count={"type": "integer", "minimum": 1, "maximum": 1000})
+        tools.insert(-1, {"type": "function", "function": {
+            "name": "edit_file", "description": (
+                "Replace exact old text with new text in an existing UTF-8 project file. "
+                "Default expected_count=1; specify the exact count for multiple matches. "
+                "Missing or ambiguous matches leave the file unchanged. Newlines and permissions are preserved."),
+            "parameters": {"type": "object", "properties": {
+                "path": {"type": "string"}, "old": {"type": "string"}, "new": {"type": "string"},
+                "expected_count": {"type": "integer", "minimum": 1, "maximum": 1000}},
+                "required": ["path", "old", "new"]}}})
     return tools
 
 # What an MCP client adds to the system prompt from the server's "instructions" field.
@@ -189,7 +208,7 @@ class Settings:
     max_tokens: int = 4096
     seed: int = 20261001
     call_policy: str = "server"
-    max_length_continuations: int = 2
+    max_length_continuations: int | None = 2
     max_no_tool_reminders: int = 0
     file_read_mode: str = "tail"
     top_p: float | None = None
@@ -464,7 +483,9 @@ class MCPClient:
         self.log.close()
 
 
-def clip(text):
+def clip(text, mode="tail"):
+    if mode == "lines":
+        return aft.head_tail(text, OUTPUT_LIMIT)[0]
     return text if len(text) <= OUTPUT_LIMIT else "...(earlier output cut)...\n" + text[-OUTPUT_LIMIT:]
 
 
@@ -616,6 +637,22 @@ def count(value) -> int:
 
 # ---- The episode --------------------------------------------------------------------------------
 
+def measurement_defaults():
+    return {"diagnose_called": False, "diagnose_calls": 0, "diagnose_first_turn": None,
+            "check_again_called": False, "check_again_calls": 0, "check_again_first_turn": None,
+            "finish_called": False, "finish_turn": None, "finish_check_status": "not_called",
+            "finish_check_exit_code": None, "finish_fixed": None}
+
+
+def note_mcp_call(stats, name, turn):
+    if name not in ("diagnose", "check_again"):
+        return
+    stats[name + "_called"] = True
+    stats[name + "_calls"] = stats.get(name + "_calls", 0) + 1
+    if stats.get(name + "_first_turn") is None:
+        stats[name + "_first_turn"] = turn
+
+
 def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest) -> dict:
     stats = {"turns": 0, "tool_calls": 0, "pytest_runs": 0, "fixfirst_calls": 0, "prompt_tokens": 0,
              "completion_tokens": 0, "model_s": 0.0, "tool_s": 0.0, "end": "turn_cap", "bad_calls": 0,
@@ -624,6 +661,7 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
              "usage_reported": False, "model_responses": 0, "finish_reasons": {}, "last_finish_reason": None,
              "length_responses": 0, "length_continuations": 0, "empty_responses": 0,
              "no_tool_reminders": 0, "file_read_mode": settings.file_read_mode}
+    stats.update(measurement_defaults())
     budget = iso.Budget(settings.run_timeout)
     tools = basic_tools(settings.file_read_mode) + ([FIXFIRST_TOOL] if arm == "fixfirst" else [])
     system = system_prompt(run.network, run.ctx.grading_policy) + (FIXFIRST_INSTRUCTIONS if arm == "fixfirst" else "")
@@ -649,7 +687,7 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
                      {"role": "user", "content": f"The project is in {run.project}. Its tests fail. Fix it."}]
         if scheduled:
             try:
-                report = fixfirst_report(first_tool, run, mcp, budget, stats)
+                report = fixfirst_report(first_tool, run, mcp, budget, stats, 0)
             except ToolTimeout as error:
                 stats.update(end="time_cap", error=f"ToolTimeout: {error}"[:500])
                 return stats
@@ -707,7 +745,13 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
                 stats["length_responses"] += 1
                 stats["end"] = "response_truncated"
                 # Even a syntactically valid action in a truncated choice may be incomplete.
-                if calls or stats["length_continuations"] >= settings.max_length_continuations or turn == settings.max_turns:
+                limited = (settings.max_length_continuations is not None
+                           and stats["length_continuations"] >= settings.max_length_continuations)
+                if calls or limited:
+                    break
+                if turn == settings.max_turns:
+                    if settings.max_length_continuations is None:
+                        stats["end"] = "turn_cap"
                     break
                 if budget.remaining() <= 0:
                     stats["end"] = "time_cap"
@@ -740,6 +784,10 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
             finished = timed_out = False
             for index, call in enumerate(calls):
                 call_id = call.get("id") if isinstance(call, dict) and isinstance(call.get("id"), str) else f"call-{turn}-{index}"
+                if finished:
+                    messages.append({"role": "tool", "tool_call_id": call_id,
+                                     "content": "not run: finish ended the episode"})
+                    continue
                 if timed_out or budget.remaining() <= 0:
                     timed_out = True
                     messages.append({"role": "tool", "tool_call_id": call_id, "content": "not run: the run's time is up"})
@@ -765,6 +813,7 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
                         run.check_integrity(turn, name)
                 if name == "finish" and not problem and not timed_out and budget.remaining() > 0:
                     finished = True
+                    stats.update(finish_called=True, finish_turn=turn, finish_check_status="not_checked")
             save()
             if timed_out or budget.remaining() <= 0:
                 stats["end"] = "time_cap"
@@ -783,7 +832,7 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
                 break
             if scheduled and changed:
                 try:
-                    report = fixfirst_report(again_tool, run, mcp, budget, stats)
+                    report = fixfirst_report(again_tool, run, mcp, budget, stats, turn)
                 except ToolTimeout:
                     stats["end"] = "time_cap"
                     break
@@ -817,20 +866,22 @@ def policy_text(policy: str, mcp, first_tool: str, again_tool: str) -> str:
     return f"\n\nFixFirst's tools ({', '.join(t['name'] for t in mcp.tools)}) are available; use them when they help."
 
 
-def fixfirst_report(tool: str, run: Run, mcp, budget: iso.Budget, stats) -> str:
+def fixfirst_report(tool: str, run: Run, mcp, budget: iso.Budget, stats, turn=0) -> str:
     """A FixFirst call the harness makes itself (scheduled policy): the same arguments in both arms,
     and its time counts against the agent's budget like a tool call's."""
     arguments = ({} if tool == "check_again"
                  else {"project": str(run.project), "python": str(run.python), "goal": GRADING_GOAL})
     started = time.monotonic()
+    note_mcp_call(stats, tool, turn)
     try:
         text = mcp.call(tool, arguments, budget.remaining())
     finally:
         stats["fixfirst_s"] += time.monotonic() - started
     stats["fixfirst_reports"] += 1
     note_fixfirst_output(text, run, mcp, stats)
-    stats["fixfirst_output_chars"] += len(clip(text))
-    return clip(text)
+    mode = stats.get("file_read_mode", "tail")
+    stats["fixfirst_output_chars"] += len(clip(text, mode))
+    return clip(text, mode)
 
 
 def note_fixfirst_output(text: str, run: Run, mcp, stats):
@@ -874,13 +925,15 @@ def run_tool(name, args, run: Run, stats, mcp, budget: iso.Budget, turn):
                     stats["mcp_arguments_overridden"] += 1
             args = {**args, **forced}
         started = time.monotonic()
+        note_mcp_call(stats, name, turn)
         try:
             text = mcp.call(name, args, budget.remaining())
         finally:  # FixFirst's cost, also when the call fails or runs out of time
             stats["fixfirst_s"] = stats.get("fixfirst_s", 0) + time.monotonic() - started
         note_fixfirst_output(text, run, mcp, stats)
-        stats["fixfirst_output_chars"] = stats.get("fixfirst_output_chars", 0) + len(clip(text))
-        return clip(text)
+        mode = stats.get("file_read_mode", "tail")
+        stats["fixfirst_output_chars"] = stats.get("fixfirst_output_chars", 0) + len(clip(text, mode))
+        return clip(text, mode)
     if name == "run_command":
         command = args["command"]
         if not isinstance(command, str):
@@ -897,9 +950,13 @@ def run_tool(name, args, run: Run, stats, mcp, budget: iso.Budget, turn):
                          "seconds": round(time.monotonic() - started, 2), "install": install})
         if stopped and budget.remaining() <= 0:
             raise ToolTimeout("the command was stopped at the deadline")
-        return f"exit code {code}\n{clip(output)}"
+        return f"exit code {code}\n{clip(output, stats.get('file_read_mode', 'tail'))}"
     # The file tools run in the harness, so they never wait on a named pipe and never read without limit.
     if name == "read_file":
+        if stats.get("file_read_mode") == "lines":
+            return json.dumps(aft.read_page(run.project, args, OUTPUT_LIMIT), ensure_ascii=False)
+        if {"start_line", "line_count"} & args.keys():
+            return "error: start_line and line_count require --file-read-mode lines"
         target = inside(run.project, str(args["path"]))
         if not target or not target.is_file():
             return "error: no such file in the project"
@@ -919,6 +976,10 @@ def run_tool(name, args, run: Run, stats, mcp, budget: iso.Budget, turn):
         end = min(offset + limit, len(text))
         return json.dumps({"text": text[offset:end], "offset": offset, "next_offset": end,
                            "total_chars": len(text), "eof": end == len(text)}, ensure_ascii=False)
+    if name == "edit_file":
+        if stats.get("file_read_mode") != "lines":
+            return "error: edit_file requires --file-read-mode lines"
+        return json.dumps(aft.exact_edit(run.project, args), ensure_ascii=False)
     if name == "write_file":
         target = inside(run.project, str(args["path"]))
         if not target:
@@ -937,7 +998,8 @@ def run_tool(name, args, run: Run, stats, mcp, budget: iso.Budget, turn):
             stats["fixfirst_s"] = stats.get("fixfirst_s", 0) + time.monotonic() - started
         if stopped and budget.remaining() <= 0:
             raise ToolTimeout("FixFirst's check was stopped at the deadline")
-        return clip(output) if code == 0 else f"fixfirst failed (exit {code}):\n{clip(output)}"
+        output = clip(output, stats.get("file_read_mode", "tail"))
+        return output if code == 0 else f"fixfirst failed (exit {code}):\n{output}"
     if name == "finish":
         return "ok"
     stats["bad_calls"] += 1
@@ -1095,8 +1157,43 @@ def real_reference(ctx: Context, project: dict, source: Path, snapshot: Path, re
 
 # ---- Runs ---------------------------------------------------------------------------------------
 
+def finish_verification(run, reference, suite, row):
+    if not row.get("finish_called"):
+        return
+    row.update(finish_check_status="not_checked", finish_check_exit_code=None,
+               finish_fixed=row.get("fixed"))
+    if not isinstance(suite, dict):
+        return
+    row["finish_check_exit_code"] = suite.get("exit_code")
+    try:
+        if rc.validate_reference(reference):
+            return
+        h5 = run.ctx.grading_policy == pp.H5
+        if h5:
+            if run.baseline != reference.get("h5_baseline"):
+                return
+            if pp.failed_check(suite):
+                row["finish_check_status"] = "failed"
+                return
+            if rc.h5_problems(suite) or suite["h5_state"]["tests"] != run.baseline["tests"]:
+                return
+        else:
+            if suite.get("stopped") is not False:
+                return
+            if suite.get("exit_code") in (1, 2, 3, 4, 5):
+                row["finish_check_status"] = "failed"
+                return
+            if rc.integrity(run.project) != run.baseline:
+                return
+        if suite.get("exit_code") == 0 and rc.judge(suite, reference, [])["fixed"]:
+            row["finish_check_status"] = "passed"
+    except (OSError, KeyError, ValueError, TypeError):
+        pass  # The model's completion claim cannot fill in missing verification.
+
+
 def grade(run: Run, reference: dict, row: dict):
     row["stage"] = "grading"
+    suite = None
     try:
         run.check_integrity("end", "final state")
         if run.ctx.grading_policy == pp.H5:
@@ -1104,7 +1201,8 @@ def grade(run: Run, reference: dict, row: dict):
                        violation_categories=sorted({v["category"] for v in run.violations.values()}))
         if run.ctx.grading_policy == pp.H5 and run.baseline != reference.get("h5_baseline"):
             raise ValueError("H5 run's starting protection snapshot differs from the reference's start")
-        verdict = rc.judge(run.suite(), reference, sorted(run.violations))
+        suite = run.suite()
+        verdict = rc.judge(suite, reference, sorted(run.violations))
     except (OSError, ParseError, KeyError, ValueError) as error:
         # A confirmed policy breach is already a failed attempt. A broken report caused by
         # that attempt must not remove it from the success-rate denominator.
@@ -1113,8 +1211,10 @@ def grade(run: Run, reference: dict, row: dict):
             row.update(grading="graded", fixed=False, reasons=["H5 protection violated during the run"],
                        tests_changed=sorted(run.violations), grader_counts={}, reference_counts=reference["counts"],
                        grading_observation_error=f"{type(error).__name__}: {error}"[:500])
+            finish_verification(run, reference, suite, row)
             return
         row.update(grading="grading_error", fixed=None, grading_error=f"{type(error).__name__}: {error}"[:500])
+        finish_verification(run, reference, suite, row)
         return
     row.update(grading="graded", fixed=verdict["fixed"], reasons=verdict["reasons"],
                grader_counts=verdict["counts"], reference_counts=verdict["reference_counts"],
@@ -1122,6 +1222,7 @@ def grade(run: Run, reference: dict, row: dict):
     if run.ctx.grading_policy == pp.H5:
         row["violation_categories"] = sorted({v["category"] for v in run.violations.values()})
         row["h5_grader_report"] = f"grader/check-{run.checks:03d}/suite.json"
+    finish_verification(run, reference, suite, row)
 
 
 def close_run(run: Run, row: dict):
@@ -1137,6 +1238,8 @@ def close_run(run: Run, row: dict):
                    error="; ".join(run.cleanup_problems)[:500])
         for key in ("reasons", "grader_counts", "tests_changed"):
             row.pop(key, None)
+        if row.get("finish_called"):
+            row.update(finish_check_status="not_checked", finish_fixed=None)
 
 
 def file_hashes(project_dir: Path) -> dict:
@@ -1344,6 +1447,10 @@ def redact(text: str, out: Path) -> str:
     return text
 
 
+def continuation_allowance(value):
+    return None if value == "budget" else int(value)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", required=True, help="model name, or fake:SCRIPT.json")
@@ -1366,12 +1473,12 @@ def main(argv=None):
     parser.add_argument("--run-timeout", type=float, default=1800, help="the agent's seconds per run")
     parser.add_argument("--temperature", type=float, default=0.2)
     parser.add_argument("--max-tokens", type=int, default=4096)
-    parser.add_argument("--max-length-continuations", type=int, default=2,
-                        help="maximum continuations of a length-truncated reply without calls; uses the same turn/time budget")
-    parser.add_argument("--max-no-tool-reminders", type=int, choices=[0, 1], default=0,
-                        help="one optional reminder after a complete nonempty stop without tool calls; uses the original budget")
-    parser.add_argument("--file-read-mode", choices=["tail", "paged"], default="tail",
-                        help="legacy tail clipping, or character pages starting at offset 0")
+    parser.add_argument("--max-length-continuations", type=continuation_allowance, default=2,
+                        help="nonnegative limit, or budget for only the original turn/time caps; partial calls are never continued")
+    parser.add_argument("--max-no-tool-reminders", type=int, choices=[0, 1, 2, 3], default=0,
+                        help="up to three reminders after complete nonempty stops without calls; uses the original budget")
+    parser.add_argument("--file-read-mode", choices=["tail", "paged", "lines"], default="tail",
+                        help="legacy tail, character pages, or line pages plus exact edit_file and head/tail output")
     parser.add_argument("--top-p", type=float, help="explicit nucleus sampling parameter; otherwise the server default")
     parser.add_argument("--top-k", type=int, help="explicit top-k sampling parameter; otherwise the server default")
     parser.add_argument("--seed", type=int, default=20261001)
@@ -1381,7 +1488,7 @@ def main(argv=None):
                                                  "hard cases then run only as selected and only with the frozen content")
     parser.add_argument("--hard-role", choices=hi.ROLES, help="which instances of the selection: formal or development")
     args = parser.parse_args(argv)
-    if args.max_length_continuations < 0:
+    if args.max_length_continuations is not None and args.max_length_continuations < 0:
         parser.error("--max-length-continuations must be nonnegative")
     if args.top_p is not None and (not math.isfinite(args.top_p) or not 0 < args.top_p <= 1):
         parser.error("--top-p must be finite and in (0, 1]")
@@ -1477,6 +1584,7 @@ def main(argv=None):
                        "network": "on" if (ctx.network and kind == "real") else "off", "settings": vars(settings),
                        "harness_commit": harness, "uncommitted_changes": dirty, "end": None, "error": None,
                        "grading": None, "fixed": None}
+                row.update(measurement_defaults())
                 if args.grading_policy == pp.H5:
                     row.update(grading_policy=pp.H5, grading_policy_sha256=pp.identity())
                 if kind == "real":  # every real row, also when its reference or setup failed
@@ -1496,6 +1604,8 @@ def main(argv=None):
                     row.update(end=row.get("end") or "harness_error", grading="not_graded", fixed=None,
                                error=f"{type(error).__name__}: {error}"[:500],
                                traceback=traceback.format_exc()[-3000:])
+                    if row.get("finish_called"):
+                        row.update(finish_check_status="not_checked", finish_fixed=None)
                 finally:
                     text = redact(json.dumps(row, ensure_ascii=False, default=str), out)
                     print(text, flush=True)
