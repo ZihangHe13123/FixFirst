@@ -1,0 +1,20 @@
+{
+  "source_commit": "ea03f56874686c8f6e4d3777ef8e4ffcf6b8d26a",
+  "wheel_sha256": "618dfab56d1f01e8e694b13c1578299352eb64da43321216a8f778f9cc7dd9f0",
+  "runtime_files_byte_equal": 78,
+  "clean_wheel_install": true,
+  "default_entries": [
+    {
+      "entry": "cli",
+      "initial_recipe": true,
+      "recheck_recipe": true,
+      "default_bundled_model": true
+    },
+    {
+      "entry": "mcp",
+      "initial_recipe": true,
+      "recheck_recipe": true,
+      "default_bundled_model": true
+    }
+  ]
+}

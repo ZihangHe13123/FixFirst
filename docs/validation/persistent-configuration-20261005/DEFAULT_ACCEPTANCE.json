@@ -1,0 +1,433 @@
+{
+  "default_checks": [
+    "environment",
+    "project",
+    "pip_check",
+    "pytest",
+    "ruff"
+  ],
+  "cases": [
+    {
+      "kind": "local",
+      "format": "ini",
+      "goal": "pass_tests",
+      "config_file": "pytest.ini",
+      "rule": "P12",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest_run",
+        "ruff"
+      ],
+      "recipe": "[pytest]\npythonpath =\n    \"src\"\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "local",
+      "format": "ini",
+      "goal": "collect_tests",
+      "config_file": "pytest.ini",
+      "rule": "P12",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest",
+        "ruff"
+      ],
+      "recipe": "[pytest]\npythonpath =\n    \"src\"\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "local",
+      "format": "hidden_ini",
+      "goal": "pass_tests",
+      "config_file": ".pytest.ini",
+      "rule": "P12",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest_run",
+        "ruff"
+      ],
+      "recipe": "[pytest]\npythonpath =\n    \"src\"\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "local",
+      "format": "hidden_ini",
+      "goal": "collect_tests",
+      "config_file": ".pytest.ini",
+      "rule": "P12",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest",
+        "ruff"
+      ],
+      "recipe": "[pytest]\npythonpath =\n    \"src\"\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "local",
+      "format": "tox",
+      "goal": "pass_tests",
+      "config_file": "tox.ini",
+      "rule": "P12",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest_run",
+        "ruff"
+      ],
+      "recipe": "[pytest]\npythonpath =\n    \"src\"\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "local",
+      "format": "tox",
+      "goal": "collect_tests",
+      "config_file": "tox.ini",
+      "rule": "P12",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest",
+        "ruff"
+      ],
+      "recipe": "[pytest]\npythonpath =\n    \"src\"\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "local",
+      "format": "cfg",
+      "goal": "pass_tests",
+      "config_file": "setup.cfg",
+      "rule": "P12",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest_run",
+        "ruff"
+      ],
+      "recipe": "[tool:pytest]\npythonpath =\n    \"src\"\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "local",
+      "format": "cfg",
+      "goal": "collect_tests",
+      "config_file": "setup.cfg",
+      "rule": "P12",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest",
+        "ruff"
+      ],
+      "recipe": "[tool:pytest]\npythonpath =\n    \"src\"\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "local",
+      "format": "toml_ini",
+      "goal": "pass_tests",
+      "config_file": "pyproject.toml",
+      "rule": "P12",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest_run",
+        "ruff"
+      ],
+      "recipe": "[tool.pytest.ini_options]\npythonpath = [\"src\"]\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "local",
+      "format": "toml_ini",
+      "goal": "collect_tests",
+      "config_file": "pyproject.toml",
+      "rule": "P12",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest",
+        "ruff"
+      ],
+      "recipe": "[tool.pytest.ini_options]\npythonpath = [\"src\"]\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "local",
+      "format": "toml_native",
+      "goal": "pass_tests",
+      "config_file": "pyproject.toml",
+      "rule": "P12",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest_run",
+        "ruff"
+      ],
+      "recipe": "[tool.pytest]\npythonpath = [\"src\"]\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "local",
+      "format": "toml_native",
+      "goal": "collect_tests",
+      "config_file": "pyproject.toml",
+      "rule": "P12",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest",
+        "ruff"
+      ],
+      "recipe": "[tool.pytest]\npythonpath = [\"src\"]\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "local",
+      "format": "pytest_toml",
+      "goal": "pass_tests",
+      "config_file": "pytest.toml",
+      "rule": "P12",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest_run",
+        "ruff"
+      ],
+      "recipe": "[pytest]\npythonpath = [\"src\"]\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "local",
+      "format": "pytest_toml",
+      "goal": "collect_tests",
+      "config_file": "pytest.toml",
+      "rule": "P12",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest",
+        "ruff"
+      ],
+      "recipe": "[pytest]\npythonpath = [\"src\"]\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "local",
+      "format": "none",
+      "goal": "pass_tests",
+      "config_file": "pytest.ini",
+      "rule": "P12",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest_run",
+        "ruff"
+      ],
+      "recipe": "[pytest]\npythonpath =\n    \"src\"\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "local",
+      "format": "none",
+      "goal": "collect_tests",
+      "config_file": "pytest.ini",
+      "rule": "P12",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest",
+        "ruff"
+      ],
+      "recipe": "[pytest]\npythonpath =\n    \"src\"\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "django",
+      "format": "ini",
+      "goal": "pass_tests",
+      "config_file": "pytest.ini",
+      "rule": "P86",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest_run",
+        "ruff"
+      ],
+      "recipe": "[pytest]\nDJANGO_SETTINGS_MODULE = suite_config\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "django",
+      "format": "hidden_ini",
+      "goal": "pass_tests",
+      "config_file": ".pytest.ini",
+      "rule": "P86",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest_run",
+        "ruff"
+      ],
+      "recipe": "[pytest]\nDJANGO_SETTINGS_MODULE = suite_config\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "django",
+      "format": "tox",
+      "goal": "pass_tests",
+      "config_file": "tox.ini",
+      "rule": "P86",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest_run",
+        "ruff"
+      ],
+      "recipe": "[pytest]\nDJANGO_SETTINGS_MODULE = suite_config\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "django",
+      "format": "cfg",
+      "goal": "pass_tests",
+      "config_file": "setup.cfg",
+      "rule": "P86",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest_run",
+        "ruff"
+      ],
+      "recipe": "[tool:pytest]\nDJANGO_SETTINGS_MODULE = suite_config\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "django",
+      "format": "toml_ini",
+      "goal": "pass_tests",
+      "config_file": "pyproject.toml",
+      "rule": "P86",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest_run",
+        "ruff"
+      ],
+      "recipe": "[tool.pytest.ini_options]\nDJANGO_SETTINGS_MODULE = \"suite_config\"\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "django",
+      "format": "toml_native",
+      "goal": "pass_tests",
+      "config_file": "pyproject.toml",
+      "rule": "P86",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest_run",
+        "ruff"
+      ],
+      "recipe": "[tool.pytest]\nDJANGO_SETTINGS_MODULE = \"suite_config\"\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "django",
+      "format": "pytest_toml",
+      "goal": "pass_tests",
+      "config_file": "pytest.toml",
+      "rule": "P86",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest_run",
+        "ruff"
+      ],
+      "recipe": "[pytest]\nDJANGO_SETTINGS_MODULE = \"suite_config\"\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    },
+    {
+      "kind": "django",
+      "format": "none",
+      "goal": "pass_tests",
+      "config_file": "pytest.ini",
+      "rule": "P86",
+      "default_checks": [
+        "environment",
+        "project",
+        "pip_check",
+        "pytest_run",
+        "ruff"
+      ],
+      "recipe": "[pytest]\nDJANGO_SETTINGS_MODULE = suite_config\n",
+      "fresh_process_exit_code": 0,
+      "test_files_unchanged": true
+    }
+  ],
+  "language_models_called": false,
+  "source_commit": "ea03f56874686c8f6e4d3777ef8e4ffcf6b8d26a",
+  "scope": "Synthetic default-entry product acceptance; no uplift or held-out experiment.",
+  "controller": {
+    "python": "3.12.13",
+    "pytest": "9.1.1",
+    "platform": "macOS arm64"
+  },
+  "django_environment": {
+    "python": "3.12.13",
+    "Django": "5.2.1",
+    "pytest": "9.1.1",
+    "pytest-django": "4.11.1"
+  }
+}
