@@ -1,0 +1,342 @@
+{
+  "schema_version": 1,
+  "scope": "Two previously seen development tasks, Qwen3.6 once per arm; descriptive only.",
+  "registration_commit": "23db9938c0c236dbb4248e1149820383eea1fbda",
+  "candidate_commit": "7c9a7fb54c35e91f7c0d7ec977afc1676fdca229",
+  "protocol": "f65d80fd",
+  "completed_runs": 6,
+  "graded_runs": 6,
+  "fixed_runs": 1,
+  "source_results_sha256": "987b43d30b7eaad6efa365b86ec46c996f27cc8a52bc66b67afb6ed8b5588e49",
+  "audit": {
+    "rows": 6,
+    "completed_response_receipts": 79,
+    "length_responses": 11,
+    "length_continuations": 8,
+    "empty_responses": 0,
+    "all_receipt_counts_and_token_totals_match": true,
+    "all_within_original_budget": true,
+    "language_model_requests_in_this_audit": 0,
+    "results_sha256": "987b43d30b7eaad6efa365b86ec46c996f27cc8a52bc66b67afb6ed8b5588e49"
+  },
+  "rows": [
+    {
+      "case": "django-storages",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "arm": "baseline",
+      "run": 1,
+      "commit": "3658c3d2353b778a45b09dd7a55cbabc66d22381",
+      "harness_commit": "7c9a7fb54c35e91f7c0d7ec977afc1676fdca229",
+      "settings": {
+        "max_turns": 20,
+        "run_timeout": 900.0,
+        "temperature": 0.2,
+        "max_tokens": 4096,
+        "seed": 20261001,
+        "call_policy": "server",
+        "max_length_continuations": 2
+      },
+      "network": "on",
+      "grading": "graded",
+      "fixed": false,
+      "end": "stopped_without_tool",
+      "turns": 11,
+      "tool_calls": 15,
+      "pytest_runs": 4,
+      "fixfirst_calls": 0,
+      "fixfirst_reports": 0,
+      "prompt_tokens": 88609,
+      "completion_tokens": 11748,
+      "usage_reported": true,
+      "model_s": 272.84,
+      "tool_s": 16.92,
+      "agent_s": 289.76,
+      "harness_s": 1.6,
+      "length_responses": 1,
+      "length_continuations": 1,
+      "empty_responses": 0,
+      "finish_reasons": {
+        "tool_calls": 9,
+        "length": 1,
+        "stop": 1
+      },
+      "last_finish_reason": "stop",
+      "model_responses": 11,
+      "grader_counts": {
+        "error": 253
+      },
+      "reference_counts": {
+        "passed": 253
+      },
+      "files_changed": [
+        "pyproject.toml"
+      ],
+      "violations": {
+        "pyproject.toml:testpaths": {
+          "turn": 5,
+          "after": "write_file"
+        }
+      }
+    },
+    {
+      "case": "django-storages",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "arm": "facts",
+      "run": 1,
+      "commit": "3658c3d2353b778a45b09dd7a55cbabc66d22381",
+      "harness_commit": "7c9a7fb54c35e91f7c0d7ec977afc1676fdca229",
+      "settings": {
+        "max_turns": 20,
+        "run_timeout": 900.0,
+        "temperature": 0.2,
+        "max_tokens": 4096,
+        "seed": 20261001,
+        "call_policy": "server",
+        "max_length_continuations": 2
+      },
+      "network": "on",
+      "grading": "graded",
+      "fixed": true,
+      "end": "finish",
+      "turns": 15,
+      "tool_calls": 20,
+      "pytest_runs": 6,
+      "fixfirst_calls": 0,
+      "fixfirst_reports": 0,
+      "prompt_tokens": 207030,
+      "completion_tokens": 5960,
+      "usage_reported": true,
+      "model_s": 257.72,
+      "tool_s": 17.1,
+      "agent_s": 275.23,
+      "harness_s": 13.19,
+      "length_responses": 0,
+      "length_continuations": 0,
+      "empty_responses": 0,
+      "finish_reasons": {
+        "tool_calls": 15
+      },
+      "last_finish_reason": "tool_calls",
+      "model_responses": 15,
+      "grader_counts": {
+        "passed": 253
+      },
+      "reference_counts": {
+        "passed": 253
+      },
+      "files_changed": [
+        "tox.ini"
+      ],
+      "violations": {}
+    },
+    {
+      "case": "django-storages",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "arm": "mcp",
+      "run": 1,
+      "commit": "3658c3d2353b778a45b09dd7a55cbabc66d22381",
+      "harness_commit": "7c9a7fb54c35e91f7c0d7ec977afc1676fdca229",
+      "settings": {
+        "max_turns": 20,
+        "run_timeout": 900.0,
+        "temperature": 0.2,
+        "max_tokens": 4096,
+        "seed": 20261001,
+        "call_policy": "server",
+        "max_length_continuations": 2
+      },
+      "network": "on",
+      "grading": "graded",
+      "fixed": false,
+      "end": "stopped_without_tool",
+      "turns": 8,
+      "tool_calls": 10,
+      "pytest_runs": 3,
+      "fixfirst_calls": 2,
+      "fixfirst_reports": 0,
+      "prompt_tokens": 53299,
+      "completion_tokens": 7747,
+      "usage_reported": true,
+      "model_s": 165.15,
+      "tool_s": 32.09,
+      "agent_s": 197.52,
+      "harness_s": 1.3,
+      "length_responses": 1,
+      "length_continuations": 1,
+      "empty_responses": 0,
+      "finish_reasons": {
+        "tool_calls": 6,
+        "length": 1,
+        "stop": 1
+      },
+      "last_finish_reason": "stop",
+      "model_responses": 8,
+      "grader_counts": {
+        "error": 253
+      },
+      "reference_counts": {
+        "passed": 253
+      },
+      "files_changed": [],
+      "violations": {}
+    },
+    {
+      "case": "python-slugify",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "arm": "facts",
+      "run": 1,
+      "commit": "025da8e577fd21c37f1794bd5cc2acb954e4c0e0",
+      "harness_commit": "7c9a7fb54c35e91f7c0d7ec977afc1676fdca229",
+      "settings": {
+        "max_turns": 20,
+        "run_timeout": 900.0,
+        "temperature": 0.2,
+        "max_tokens": 4096,
+        "seed": 20261001,
+        "call_policy": "server",
+        "max_length_continuations": 2
+      },
+      "network": "on",
+      "grading": "graded",
+      "fixed": false,
+      "end": "response_truncated",
+      "turns": 12,
+      "tool_calls": 14,
+      "pytest_runs": 1,
+      "fixfirst_calls": 0,
+      "fixfirst_reports": 0,
+      "prompt_tokens": 224277,
+      "completion_tokens": 15265,
+      "usage_reported": true,
+      "model_s": 480.37,
+      "tool_s": 0.99,
+      "agent_s": 481.55,
+      "harness_s": 0.12,
+      "length_responses": 3,
+      "length_continuations": 2,
+      "empty_responses": 0,
+      "finish_reasons": {
+        "tool_calls": 9,
+        "length": 3
+      },
+      "last_finish_reason": "length",
+      "model_responses": 12,
+      "grader_counts": {
+        "passed": 123,
+        "failed": 2
+      },
+      "reference_counts": {
+        "passed": 125
+      },
+      "files_changed": [],
+      "violations": {}
+    },
+    {
+      "case": "python-slugify",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "arm": "mcp",
+      "run": 1,
+      "commit": "025da8e577fd21c37f1794bd5cc2acb954e4c0e0",
+      "harness_commit": "7c9a7fb54c35e91f7c0d7ec977afc1676fdca229",
+      "settings": {
+        "max_turns": 20,
+        "run_timeout": 900.0,
+        "temperature": 0.2,
+        "max_tokens": 4096,
+        "seed": 20261001,
+        "call_policy": "server",
+        "max_length_continuations": 2
+      },
+      "network": "on",
+      "grading": "graded",
+      "fixed": false,
+      "end": "response_truncated",
+      "turns": 17,
+      "tool_calls": 16,
+      "pytest_runs": 2,
+      "fixfirst_calls": 1,
+      "fixfirst_reports": 0,
+      "prompt_tokens": 271743,
+      "completion_tokens": 26110,
+      "usage_reported": true,
+      "model_s": 696.59,
+      "tool_s": 4.65,
+      "agent_s": 701.58,
+      "harness_s": 0.23,
+      "length_responses": 3,
+      "length_continuations": 2,
+      "empty_responses": 0,
+      "finish_reasons": {
+        "tool_calls": 14,
+        "length": 3
+      },
+      "last_finish_reason": "length",
+      "model_responses": 17,
+      "grader_counts": {
+        "passed": 123,
+        "failed": 2
+      },
+      "reference_counts": {
+        "passed": 125
+      },
+      "files_changed": [],
+      "violations": {}
+    },
+    {
+      "case": "python-slugify",
+      "model": "Qwen3.6-35B-A3B-6bit",
+      "arm": "baseline",
+      "run": 1,
+      "commit": "025da8e577fd21c37f1794bd5cc2acb954e4c0e0",
+      "harness_commit": "7c9a7fb54c35e91f7c0d7ec977afc1676fdca229",
+      "settings": {
+        "max_turns": 20,
+        "run_timeout": 900.0,
+        "temperature": 0.2,
+        "max_tokens": 4096,
+        "seed": 20261001,
+        "call_policy": "server",
+        "max_length_continuations": 2
+      },
+      "network": "on",
+      "grading": "graded",
+      "fixed": false,
+      "end": "response_truncated",
+      "turns": 16,
+      "tool_calls": 15,
+      "pytest_runs": 2,
+      "fixfirst_calls": 0,
+      "fixfirst_reports": 0,
+      "prompt_tokens": 252527,
+      "completion_tokens": 16331,
+      "usage_reported": true,
+      "model_s": 499.11,
+      "tool_s": 1.13,
+      "agent_s": 500.26,
+      "harness_s": 0.18,
+      "length_responses": 3,
+      "length_continuations": 2,
+      "empty_responses": 0,
+      "finish_reasons": {
+        "tool_calls": 13,
+        "length": 3
+      },
+      "last_finish_reason": "length",
+      "model_responses": 16,
+      "grader_counts": {
+        "passed": 123,
+        "failed": 2
+      },
+      "reference_counts": {
+        "passed": 125
+      },
+      "files_changed": [],
+      "violations": {}
+    }
+  ],
+  "notes": [
+    "The sole success, django-storages/facts, called no FixFirst tool. Do not attribute it to an observation report.",
+    "Do not pool with the previous 78 runs, B3, or held-out tasks. No inference about generalization or significance.",
+    "No automatic retry, resumption, budget increase, or grading relaxation. Raw private receipts are retained locally."
+  ]
+}
