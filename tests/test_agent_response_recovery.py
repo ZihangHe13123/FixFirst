@@ -133,3 +133,114 @@ def test_negative_continuation_limit_is_rejected_before_setup(tmp_path, capsys):
                  "--out", str(tmp_path / "out")])
     assert error.value.code == 2 and "must be nonnegative" in capsys.readouterr().err
     assert not (tmp_path / "out").exists()
+
+
+def test_one_complete_stop_can_be_reminded_then_finish(tmp_path, monkeypatch):
+    stats, records, messages, calls = perform(tmp_path, monkeypatch,
+        [{"say": "I will now apply the repair"}, {"call": "finish"}], max_no_tool_reminders=1)
+    assert stats["end"] == "finish" and stats["turns"] == len(records) == 2
+    assert stats["no_tool_reminders"] == 1 and stats["length_continuations"] == 0
+    assert calls == [("finish", {})]
+    assert "original turn and time budget" in messages[3]["content"]
+
+
+def test_a_reminder_is_once_per_episode_not_once_between_actions(tmp_path, monkeypatch):
+    stats, records, _, calls = perform(tmp_path, monkeypatch,
+        [{"say": "plan"}, {"call": "read_file", "arguments": {"path": "core.py"}},
+         {"say": "another plan"}, {"call": "finish"}], max_no_tool_reminders=1)
+    assert stats["end"] == "stopped_without_tool" and stats["no_tool_reminders"] == 1
+    assert stats["turns"] == len(records) == 3 and len(calls) == 1
+
+
+@pytest.mark.parametrize("data,end", [
+    (response("", "stop"), "empty_response"),
+    (response("plan", None), "stopped_without_tool"),
+    (response("plan", "content_filter"), "stopped_without_tool"),
+    (response("plan", "stop", refusal="declined"), "stopped_without_tool"),
+    (response("plan", "length"), "response_truncated"),
+])
+def test_a_reminder_does_not_retry_empty_unknown_filtered_refused_or_truncated_replies(tmp_path, monkeypatch, data, end):
+    stats, records, _, calls = perform(tmp_path, monkeypatch,
+        [{"raw_response": data}, {"call": "finish"}], max_no_tool_reminders=1, max_length_continuations=0)
+    assert stats["end"] == end and len(records) == 1 and not calls
+    assert stats["no_tool_reminders"] == 0
+
+
+def test_a_reminder_never_extends_the_turn_or_time_cap(tmp_path, monkeypatch):
+    stats, records, _, calls = perform(tmp_path, monkeypatch, [{"say": "plan"}, {"call": "finish"}],
+                                      max_turns=1, max_no_tool_reminders=1)
+    assert stats["end"] == "stopped_without_tool" and len(records) == 1 and not calls
+    assert stats["no_tool_reminders"] == 0
+    timed = tmp_path / "timed"
+    timed.mkdir()
+    stats, records, _, calls = perform(timed, monkeypatch,
+        [{"say": "plan"}, {"delay": 1, "call": "finish"}], run_timeout=0.05, max_no_tool_reminders=1)
+    assert stats["end"] == "time_cap" and stats["no_tool_reminders"] == len(records) == 1 and not calls
+
+
+@pytest.mark.parametrize("text", ["", "START\n" + "x" * 19000 + "\nEND", "开头\r\n" + "🙂é\r" * 6500 + "结尾"])
+def test_file_pages_reconstruct_the_entire_file_without_skipping_long_lines_or_unicode(tmp_path, text):
+    (tmp_path / "code.py").write_bytes(text.encode())
+    run = SimpleNamespace(project=tmp_path)
+    offset, chunks = 0, []
+    while True:
+        page = json.loads(ap.run_tool("read_file", {"path": "code.py", "offset": offset}, run,
+                                      {"file_read_mode": "paged"}, None, None, 1))
+        assert page["offset"] == offset and len(page["text"]) <= ap.OUTPUT_LIMIT
+        chunks.append(page["text"])
+        assert page["next_offset"] == offset + len(page["text"])
+        if page["eof"]:
+            assert page["next_offset"] == page["total_chars"]
+            break
+        assert page["next_offset"] > offset
+        offset = page["next_offset"]
+    assert "".join(chunks) == text.replace("\r\n", "\n").replace("\r", "\n")
+
+
+@pytest.mark.parametrize("values", [{"offset": -1}, {"offset": True}, {"offset": 4}, {"offset": 0.5},
+                                  {"limit": 0}, {"limit": 6001}, {"limit": False}, {"limit": "2"}])
+def test_invalid_page_ranges_are_refused(tmp_path, values):
+    (tmp_path / "code.py").write_text("abc")
+    reply = ap.run_tool("read_file", {"path": "code.py", **values}, SimpleNamespace(project=tmp_path),
+                        {"file_read_mode": "paged"}, None, None, 1)
+    assert reply.startswith("error:")
+
+
+def test_pages_and_legacy_tail_have_distinct_tool_contracts_and_respect_project_boundaries(tmp_path):
+    (tmp_path / "code.py").write_text("head" + "x" * 6000 + "tail")
+    run = SimpleNamespace(project=tmp_path)
+    legacy = ap.run_tool("read_file", {"path": "code.py"}, run, {}, None, None, 1)
+    assert legacy.startswith("...(earlier output cut)...") and legacy.endswith("tail")
+    page = json.loads(ap.run_tool("read_file", {"path": "code.py", "limit": 4}, run,
+                                  {"file_read_mode": "paged"}, None, None, 1))
+    assert page["text"] == "head" and page["next_offset"] == 4 and not page["eof"]
+    outside = tmp_path.parent / "outside.py"
+    outside.write_text("private")
+    (tmp_path / "link.py").symlink_to(outside)
+    assert ap.run_tool("read_file", {"path": "link.py"}, run, {"file_read_mode": "paged"}, None, None, 1).startswith("error:")
+    assert ap.basic_tools("tail") == ap.BASIC_TOOLS
+    read = next(t["function"] for t in ap.basic_tools("paged") if t["function"]["name"] == "read_file")
+    assert {"offset", "limit"} <= read["parameters"]["properties"].keys()
+    assert "offset" not in ap.BASIC_TOOLS[1]["function"]["parameters"]["properties"]
+
+
+def test_explicit_sampling_values_are_sent_and_protocols_remain_distinct(monkeypatch):
+    import compare_arms as ca
+    requests = []
+    monkeypatch.setattr(ap, "post_before", lambda url, body, timeout: (requests.append(body), response())[1])
+    ap.chat("stub", [], [], ap.Settings(max_tokens=32768, temperature=0.6, top_p=0.95, top_k=20), None, 7)
+    assert {k: requests[0][k] for k in ("max_tokens", "temperature", "top_p", "top_k")} == {
+        "max_tokens": 32768, "temperature": 0.6, "top_p": 0.95, "top_k": 20}
+    row = {"settings": {"max_turns": 20, "run_timeout": 900.0, "temperature": 0.2, "max_tokens": 4096,
+                        "seed": 20261001}, "harness_commit": "fixed", "network": "on"}
+    legacy = ca.protocol(row)
+    for field, value in (("top_p", 0.95), ("top_k", 20), ("file_read_mode", "paged"), ("max_no_tool_reminders", 1)):
+        assert ca.protocol({**row, "settings": {**row["settings"], field: value}}) != legacy
+
+
+@pytest.mark.parametrize("options", [["--top-p", "nan"], ["--top-p", "inf"], ["--top-p", "0"],
+                                    ["--top-p", "1.01"], ["--top-k", "-1"], ["--max-no-tool-reminders", "2"]])
+def test_invalid_sampling_and_reminder_values_fail_before_setup(tmp_path, options):
+    with pytest.raises(SystemExit) as error:
+        ap.main(["--model", "stub", "--cases", "pkg-inventory:lm_renamed", "--out", str(tmp_path / "out"), *options])
+    assert error.value.code == 2 and not (tmp_path / "out").exists()

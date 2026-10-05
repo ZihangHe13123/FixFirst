@@ -57,6 +57,7 @@ import argparse
 from dataclasses import dataclass, field
 import hashlib
 import json
+import math
 import os
 import queue
 import re
@@ -137,6 +138,21 @@ BASIC_TOOLS = [
         "parameters": {"type": "object", "properties": {"summary": {"type": "string"}}, "required": ["summary"]}}},
 ]
 
+
+def basic_tools(file_read_mode):
+    if file_read_mode == "tail":
+        return BASIC_TOOLS
+    tools = json.loads(json.dumps(BASIC_TOOLS))
+    read = next(t["function"] for t in tools if t["function"]["name"] == "read_file")
+    read["description"] = (
+        "Read a page of a project text file. offset is a zero-based character offset (not bytes), "
+        "default 0; limit is 1 to 6000 characters, default 6000. The JSON result gives text, "
+        "next_offset, total_chars and eof. Use next_offset to read the next page; a long file is not returned in full.")
+    read["parameters"]["properties"].update(
+        offset={"type": "integer", "minimum": 0},
+        limit={"type": "integer", "minimum": 1, "maximum": OUTPUT_LIMIT})
+    return tools
+
 # What an MCP client adds to the system prompt from the server's "instructions" field.
 FIXFIRST_INSTRUCTIONS = (
     "\n\nThe connected FixFirst server says: call fixfirst_check before changing anything, "
@@ -171,6 +187,10 @@ class Settings:
     seed: int = 20261001
     call_policy: str = "server"
     max_length_continuations: int = 2
+    max_no_tool_reminders: int = 0
+    file_read_mode: str = "tail"
+    top_p: float | None = None
+    top_k: int | None = None
 
 
 class ModelError(Exception):
@@ -489,6 +509,10 @@ def chat(model, messages, tools, settings: Settings, fake: FakeModel | None, tim
         return fake.reply(timeout)
     body = {"model": model, "messages": messages, "tools": tools, "max_tokens": settings.max_tokens,
             "temperature": settings.temperature, "seed": settings.seed}
+    if settings.top_p is not None:
+        body["top_p"] = settings.top_p
+    if settings.top_k is not None:
+        body["top_k"] = settings.top_k
     return post_before(f"{BASE}/chat/completions", body, timeout)
 
 
@@ -570,9 +594,10 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
              "first_green_turn": None, "first_green_s": None, "error": None, "mcp_arguments_filled": 0,
              "mcp_arguments_overridden": 0, "mcp_goal_filled": 0, "mcp_goal_overridden": 0, "fixfirst_reports": 0, "fixfirst_s": 0.0, "fixfirst_output_chars": 0,
              "usage_reported": False, "model_responses": 0, "finish_reasons": {}, "last_finish_reason": None,
-             "length_responses": 0, "length_continuations": 0, "empty_responses": 0}
+             "length_responses": 0, "length_continuations": 0, "empty_responses": 0,
+             "no_tool_reminders": 0, "file_read_mode": settings.file_read_mode}
     budget = iso.Budget(settings.run_timeout)
-    tools = BASIC_TOOLS + ([FIXFIRST_TOOL] if arm == "fixfirst" else [])
+    tools = basic_tools(settings.file_read_mode) + ([FIXFIRST_TOOL] if arm == "fixfirst" else [])
     system = system_prompt(run.network) + (FIXFIRST_INSTRUCTIONS if arm == "fixfirst" else "")
     messages = []
     mcp = None
@@ -672,6 +697,16 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
                     stats["end"] = "empty_response"
                 else:
                     stats["end"] = "stopped_without_tool"
+                    if (reason == "stop" and not message.get("refusal")
+                            and stats["no_tool_reminders"] < settings.max_no_tool_reminders
+                            and turn < settings.max_turns and budget.remaining() > 0):
+                        stats["no_tool_reminders"] += 1
+                        messages.append({"role": "user", "content": (
+                            "Your last response did not call a tool. Use the tools to carry out your next step; "
+                            "if the full original test suite passes after a persistent repair, call finish. "
+                            "The original turn and time budget still applies.")})
+                        save()
+                        continue
                 break
             stats["end"] = "turn_cap"
             finished = timed_out = False
@@ -843,7 +878,19 @@ def run_tool(name, args, run: Run, stats, mcp, budget: iso.Budget, turn):
         data = rc.read_regular(target)
         if data is None:
             return "error: not a regular file of at most 16 MB"
-        return clip(data.decode("utf-8", "replace").replace("\r\n", "\n").replace("\r", "\n"))
+        text = data.decode("utf-8", "replace").replace("\r\n", "\n").replace("\r", "\n")
+        if stats.get("file_read_mode", "tail") == "tail":
+            if "offset" in args or "limit" in args:
+                return "error: offset and limit require --file-read-mode paged"
+            return clip(text)
+        offset, limit = args.get("offset", 0), args.get("limit", OUTPUT_LIMIT)
+        if type(offset) is not int or offset < 0 or offset > len(text):
+            return f"error: offset must be an integer from 0 to {len(text)}"
+        if type(limit) is not int or not 1 <= limit <= OUTPUT_LIMIT:
+            return f"error: limit must be an integer from 1 to {OUTPUT_LIMIT}"
+        end = min(offset + limit, len(text))
+        return json.dumps({"text": text[offset:end], "offset": offset, "next_offset": end,
+                           "total_chars": len(text), "eof": end == len(text)}, ensure_ascii=False)
     if name == "write_file":
         target = inside(run.project, str(args["path"]))
         if not target:
@@ -1252,6 +1299,12 @@ def main(argv=None):
     parser.add_argument("--max-tokens", type=int, default=4096)
     parser.add_argument("--max-length-continuations", type=int, default=2,
                         help="maximum continuations of a length-truncated reply without calls; uses the same turn/time budget")
+    parser.add_argument("--max-no-tool-reminders", type=int, choices=[0, 1], default=0,
+                        help="one optional reminder after a complete nonempty stop without tool calls; uses the original budget")
+    parser.add_argument("--file-read-mode", choices=["tail", "paged"], default="tail",
+                        help="legacy tail clipping, or character pages starting at offset 0")
+    parser.add_argument("--top-p", type=float, help="explicit nucleus sampling parameter; otherwise the server default")
+    parser.add_argument("--top-k", type=int, help="explicit top-k sampling parameter; otherwise the server default")
     parser.add_argument("--seed", type=int, default=20261001)
     parser.add_argument("--attempt", help="a name for this invocation (default: time and a random suffix)")
     parser.add_argument("--out", default=str(FIXFIRST.parent / "agent-runs"))
@@ -1261,6 +1314,10 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if args.max_length_continuations < 0:
         parser.error("--max-length-continuations must be nonnegative")
+    if args.top_p is not None and (not math.isfinite(args.top_p) or not 0 < args.top_p <= 1):
+        parser.error("--top-p must be finite and in (0, 1]")
+    if args.top_k is not None and args.top_k < 0:
+        parser.error("--top-k must be nonnegative (0 disables top-k)")
     if not args.cases and not args.projects:
         parser.error("give --cases or --projects")
     known = {t.name for t in dc.TEMPLATES}, {s.scenario_id for s in dc.SCENARIOS} | set(hi.hard_scenarios())
@@ -1313,7 +1370,8 @@ def main(argv=None):
     ctx = Context(out, identity, attempt, args.network == "on", denied=denied, protected=protected,
                   protected_folders=protected_folders)
     settings = Settings(args.max_turns, args.run_timeout, args.temperature, args.max_tokens, args.seed,
-                        args.call_policy, args.max_length_continuations)
+                        args.call_policy, args.max_length_continuations, args.max_no_tool_reminders,
+                        args.file_read_mode, args.top_p, args.top_k)
     manifest_path = Path(args.manifest).resolve()
     manifest = rc.load_manifest(manifest_path) if args.projects else {}
     repairs = rc.tomllib.loads(Path(args.repairs).read_text(encoding="utf-8")) if args.projects else {}
