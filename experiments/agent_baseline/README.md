@@ -218,6 +218,25 @@ held-out projects are added only after A2's results are merged.
   `stopped_without_tool`. Neither empty replies nor timed-out requests are retried.
   The allowance is recorded in settings and protocol identity when present; legacy rows without it
   retain their previous identity. Old and new runs must be reported separately.
+- **Optional run-condition follow-up (5 Oct).** `--file-read-mode paged` offers character pages
+  from the start of a file: `read_file(path, offset=0, limit=6000)` returns JSON with `text`,
+  `next_offset`, `total_chars` and `eof`. Use the returned next offset for the following page.
+  Unicode and long lines are not skipped. The default `tail` mode retains the old clipping contract.
+  `--max-no-tool-reminders 1` permits one reminder per episode after a complete, nonempty
+  `finish_reason=stop` response without tools. It uses the same turn/time budget; a later such
+  response ends normally. Empty, refused, unknown/filtered and timed-out responses do not qualify.
+  Default 0 keeps the old stopping behavior. Length recovery remains a separate allowance and
+  truncated tool calls are still never executed.
+  `--top-p` and `--top-k` explicitly send sampling values; omitting them leaves server defaults.
+  Settings and protocol identity include these choices. The server's effective settings must be
+  checked at registration: sending a field alone does not prove the backend honors it.
+  New settings do not change any saved row or its historical protocol id.
+
+  Qwen's [official model card](https://huggingface.co/Qwen/Qwen3.6-35B-A3B) suggests temperature
+  0.6, top_p 0.95 and top_k 20 for thinking on precise coding tasks, with 32768 output tokens for
+  most queries. These are candidate conditions for a separately registered run, not measured
+  improvements. Keep the same conditions across baseline/facts/mcp, and record remaining service
+  defaults, model/template identity and the ordinary 20-turn / 900-second budget.
 - **Files the agent leaves.** The harness reads the agent's files outside the sandbox (integrity,
   digests, pip freeze, the JUnit report, the `read_file` and `write_file` tools), so it reads only
   regular files, opens them without waiting and never reads without limit: a test file replaced by a
