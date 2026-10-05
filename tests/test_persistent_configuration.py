@@ -1,5 +1,7 @@
 """Configuration recipes preserve scope and require the current execution snapshot."""
 
+import json
+import shlex
 import subprocess
 import sys
 
@@ -253,8 +255,9 @@ def test_disabled_or_overridden_django_configuration_never_produces_an_install_c
         ("pytest.toml", "pytest", True),
     ],
 )
+@pytest.mark.parametrize("goal", ["pass_tests", "collect_tests"])
 def test_real_local_import_recipe_survives_a_new_process_without_pythonpath(
-    tmp_path, monkeypatch, filename, section, toml
+    tmp_path, monkeypatch, filename, section, toml, goal
 ):
     monkeypatch.delenv("PYTHONPATH", raising=False)
     monkeypatch.delenv("PYTEST_ADDOPTS", raising=False)
@@ -263,11 +266,12 @@ def test_real_local_import_recipe_survives_a_new_process_without_pythonpath(
     test = "from ledger import VALUE\ndef test_value():\n    assert VALUE == 17\n"
     (tmp_path / "test_value.py").write_text(test)
     (tmp_path / filename).write_text(f"[{section}]\n")
-    session = create_session(tmp_path, sys.executable, goal="pass_tests")
+    session = create_session(tmp_path, sys.executable, goal=goal)
     session.use_classifier = False
-    scan(session, ["environment", "project", "pytest_run"])
+    scan(session)
     action = next(a for a in session.actions if "P12" in a.rule_ids)
     assert f"Update {filename} [{section}]" in action.explanation
+    assert "including paths outside this project" in action.explanation
     (tmp_path / filename).write_text(
         f"[{section}]\npythonpath = " + ('["src"]\n' if toml else '"src"\n')
     )
@@ -280,3 +284,61 @@ def test_real_local_import_recipe_survives_a_new_process_without_pythonpath(
     )
     assert result.returncode == 0, result.stdout + result.stderr
     assert (tmp_path / "test_value.py").read_text() == test
+
+
+@pytest.mark.parametrize("entry", ["cli", "mcp"])
+@pytest.mark.parametrize("has_config", [True, False])
+def test_default_user_entries_and_their_rechecks_offer_the_saved_import_path(
+    tmp_path, monkeypatch, entry, has_config
+):
+    monkeypatch.delenv("PYTHONPATH", raising=False)
+    monkeypatch.delenv("PYTEST_ADDOPTS", raising=False)
+    project = tmp_path / "project"
+    (project / "src" / "ledger").mkdir(parents=True)
+    (project / "src" / "ledger" / "__init__.py").write_text("VALUE=17\n")
+    (project / "test_value.py").write_text(
+        "from ledger import VALUE\ndef test_value():\n    assert VALUE == 17\n"
+    )
+    if has_config:
+        (project / "pytest.ini").write_text("[pytest]\naddopts = -ra -q\n")
+    store = tmp_path / "store"
+    monkeypatch.setenv("FIXFIRST_STORE", str(store))
+    prefix = [sys.executable, "-m", "fixfirst"]
+    if entry == "cli":
+        created = subprocess.run(
+            [*prefix, "init", str(project), "--python", sys.executable, "--goal", "pass_tests"],
+            capture_output=True, text=True, timeout=60, check=True,
+        )
+        session_id = created.stdout.splitlines()[0]
+        first = subprocess.run(
+            [*prefix, "scan", session_id], capture_output=True, text=True, timeout=60, check=True
+        )
+        command = next(line.removeprefix("Check again: ") for line in first.stdout.splitlines()
+                       if line.startswith("Check again: "))
+        # Execute exactly the printed arguments, through this installed interpreter.
+        second = subprocess.run(
+            [sys.executable, "-m", *shlex.split(command)],
+            capture_output=True, text=True, timeout=60, check=True,
+        )
+        texts = [first.stdout, second.stdout]
+    else:
+        requests = [
+            {"jsonrpc": "2.0", "id": 1, "method": "initialize",
+             "params": {"protocolVersion": "2025-06-18"}},
+            {"jsonrpc": "2.0", "method": "notifications/initialized"},
+            {"jsonrpc": "2.0", "id": 2, "method": "tools/call",
+             "params": {"name": "diagnose", "arguments": {
+                 "project": str(project), "python": sys.executable, "goal": "pass_tests"}}},
+            {"jsonrpc": "2.0", "id": 3, "method": "tools/call",
+             "params": {"name": "check_again", "arguments": {}}},
+        ]
+        result = subprocess.run(
+            [*prefix, "mcp"], input="".join(json.dumps(r) + "\n" for r in requests),
+            capture_output=True, text=True, timeout=120, check=True,
+        )
+        answers = [json.loads(line) for line in result.stdout.splitlines()]
+        tools = [a["result"] for a in answers if a.get("id") in {2, 3}]
+        assert len(tools) == 2 and all(t["isError"] is False for t in tools)
+        texts = [t["content"][0]["text"] for t in tools]
+    assert all("Save the import path in pytest.ini" in text for text in texts), texts
+    assert (project / "pytest.ini").exists() is has_config  # Advice did not write the file.

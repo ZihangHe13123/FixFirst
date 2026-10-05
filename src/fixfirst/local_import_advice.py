@@ -212,7 +212,12 @@ def refine(session, actions, by_id):
             recipe = import_recipe(selected, relative) if selected else None
             if recipe:
                 action.title = f"Save the import path in {selected['file']}"
-                action.explanation = recipe + action.explanation
+                action.explanation = (
+                    recipe
+                    + "This saves the project's import root; keep any other PYTHONPATH entries "
+                    "your original command needs, including paths outside this project. "
+                    + action.explanation
+                )
             else:
                 action.explanation += " A shell PYTHONPATH assignment is temporary. " + (
                     problem or "The import root is already configured or could not be selected uniquely; review why the current run still cannot import it.")

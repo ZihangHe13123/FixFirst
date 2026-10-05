@@ -27,7 +27,7 @@ MAX_SECONDS = 300
 
 
 def fingerprint(environment, project, wheels=()):
-    value = {"trial_protocol": 5, "context": context(environment, project)["fingerprint"],
+    value = {"trial_protocol": 6, "context": context(environment, project)["fingerprint"],
              "prepared_wheels": list(wheels),
              "files": project.get("files", []), "notes": project.get("notes", []),
              "conda": project.get("conda_declarations", []),
@@ -71,6 +71,13 @@ def inputs(environment, project, name, direction=""):
     dependencies = context(environment, project)
     if dependencies["notes"]:
         raise ValueError("Installed dependency metadata is incomplete: " + "; ".join(dependencies["notes"][:3]))
+    if name == "pytest-django":
+        # Trying this plugin must preserve the core versions used to choose it,
+        # including when Django/pytest are declared without version constraints.
+        # An incompatible set fails resolution instead of silently upgrading them.
+        for core in ("django", "pytest"):
+            if installed := dependencies["installed"].get(core):
+                constraints.append(str(Requirement(core + "==" + installed)))
     graph = {}
     for row in dependencies["requirements"]:
         if row["owner"] != "project":
@@ -388,5 +395,7 @@ def advise(session, action, environment, project, name, direction=""):
         "constraints stay in force, declared dependencies resolve together, and unrelated installed packages "
         "stay at their current versions. Downloads wheels; at most 5 minutes. Installation success is "
         "separate from running the original program/tests. The trial does not change your project or environment.")
+    if name == "pytest-django":
+        action.explanation += " This plugin trial also holds installed Django and pytest at their recorded versions."
     action.explanation += " The trial ignores pip/uv configuration files; environment index settings still apply."
     return None

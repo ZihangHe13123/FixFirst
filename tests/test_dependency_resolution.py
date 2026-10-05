@@ -104,6 +104,35 @@ def test_resolution_keeps_other_pin_and_retains_real_resolver_failure(tmp_path, 
     assert all(not p.exists() for p in offline_resolver[0])
 
 
+@pytest.mark.parametrize("new_core_required", [False, True])
+def test_pytest_plugin_trial_keeps_the_observed_django_and_pytest(
+    tmp_path, offline_resolver, new_core_required
+):
+    session, _ = fixture_session(tmp_path / "project", "pytest-django<4\nDjango\npytest\n")
+    session.environment["packages"] += [
+        {"name": "Django", "version": "5.2.17", "requires": []},
+        {"name": "pytest", "version": "8.3.5", "requires": []},
+    ]
+    wheels = offline_resolver[2]
+    for name, versions in (("Django", ("5.2.17", "6.1.1")), ("pytest", ("8.3.5", "9.1.1"))):
+        for version in versions:
+            wheel(wheels, name, version)
+    wheel(wheels, "pytest-django", "4.11.1",
+          ["Django>=6.1" if new_core_required else "Django>=4.2", "pytest>=7"])
+    original = (tmp_path / "project" / "requirements.txt").read_bytes()
+    result = json.loads(collect(session, ["pytest-django", "==4.11.1"], 20).stdout)
+    if new_core_required:
+        assert result["status"] == "not_resolved"
+        assert "install_requests" not in result
+        assert result["checks"][-1]["exit_code"] != 0
+    else:
+        assert result["status"] == "resolved", result
+        assert {"django==5.2.17", "pytest==8.3.5", "pytest-django==4.11.1"} <= set(result["install_requests"])
+        assert "django==6.1.1" not in result["install_requests"]
+        assert "pytest==9.1.1" not in result["install_requests"]
+    assert (tmp_path / "project" / "requirements.txt").read_bytes() == original
+
+
 def test_transitive_dependency_can_update_but_unrelated_package_stays_pinned(tmp_path, offline_resolver):
     session, _ = fixture_session(tmp_path / "project", "ff-trial-base==1.0\nff-trial-ext\n")
     session.environment["packages"][0]["requires"] = ["ff-trial-helper>=1"]

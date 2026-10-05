@@ -86,7 +86,9 @@ def test_execution_changing_options_require_original_command_verification(tmp_pa
     assert session.goal_status == "unknown" and not session.issues
 
 
-@pytest.mark.parametrize("addopts", ["", "   ", "-q", "-vv", "--color=yes --tb=short",
+@pytest.mark.parametrize("addopts", ["", "   ", "-q", "-vv", "-ra -q", "-r fEsxXpPaAN",
+                                    "--report-chars=fs", "--report-chars wW",
+                                    "--color=yes --tb=short",
                                     "--no-header --show-capture=no"])
 def test_empty_and_display_options_preserve_success(tmp_path, addopts):
     session = project(tmp_path, addopts)
@@ -197,7 +199,7 @@ def test_legacy_run_defaults_remain_compatible_but_new_unknown_is_limited(tmp_pa
 
 
 @pytest.mark.parametrize("value", ['"unterminated', None, {"addopts": "-q"}, ["-q", 1], "--color",
-                                   "--color=invalid"])
+                                   "--color=invalid", "-r", "-r?", "-r=k", "-r fz"])
 def test_unreadable_options_cannot_claim_equivalence(value):
     assert pytest_option_coverage(observed(value)) == "unknown"
 

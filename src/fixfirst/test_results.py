@@ -11,6 +11,7 @@ DISPLAY_OPTIONS = {"--quiet", "--verbose", "--no-header", "--no-summary", "--ful
 DISPLAY_VALUES = {"--color": {"yes", "no", "auto"},
                   "--tb": {"auto", "long", "short", "line", "native", "no"},
                   "--show-capture": {"no", "stdout", "stderr", "log", "all"}}
+REPORT_CHARS = frozenset("fEsxXpPaANwW")
 
 
 def _display_only(value) -> bool | None:
@@ -30,14 +31,18 @@ def _display_only(value) -> bool | None:
             index += 1
             continue
         option, equals, selected = word.partition("=")
-        if option not in DISPLAY_VALUES:
+        if word.startswith("-r") and word != "-r":
+            option, equals, selected = "-r", True, word[2:]
+        report = option in {"-r", "--report-chars"}
+        if not report and option not in DISPLAY_VALUES:
             return False
         if not equals:
             index += 1
             if index == len(words):
                 return None
             selected = words[index]
-        if selected not in DISPLAY_VALUES[option]:
+        if (report and not set(selected).issubset(REPORT_CHARS)
+                or not report and selected not in DISPLAY_VALUES[option]):
             return None
         index += 1
     return True
