@@ -4,6 +4,8 @@ import json
 import os
 import importlib.util
 from pathlib import Path
+import shlex
+import stat
 import sys
 import traceback
 
@@ -65,6 +67,10 @@ def record_pytest_options(config):
         if len(json.dumps(value)) > 16000 or len(record["config_file"]) > 4096:
             raise ValueError("Original pytest options exceed the observation limit")
         record.update(config_addopts=value, config_complete=True)
+        try:
+            record["persistent_config"] = persistent_config(config, path, values)
+        except BaseException:
+            record["persistent_config"] = {"schema_version": 1, "complete": False}
     except BaseException:
         # Observing configuration must not alter the check or its exception outcome.
         record["observation_error"] = "The original pytest options could not be recorded"
@@ -72,6 +78,72 @@ def record_pytest_options(config):
         emit(record)
     except BaseException:
         pass
+
+
+def persistent_config(config, path, values):
+    """Observe only the selected file and two settings; never import project modules."""
+    syntax, section, safe = "ini", "pytest", True
+    if path:
+        path = Path(path)
+        safe = not path.is_symlink() and stat.S_ISREG(path.stat().st_mode)
+        if not safe or path.stat().st_size > 128000:
+            raise ValueError("Unsafe configuration")
+        if path.suffix == ".cfg":
+            section = "tool:pytest"
+        elif path.suffix == ".toml":
+            try:
+                import tomllib
+            except ModuleNotFoundError:
+                import tomli as tomllib
+            fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0))
+            try:
+                if not stat.S_ISREG(os.fstat(fd).st_mode):
+                    raise ValueError("Unsafe configuration")
+                with os.fdopen(fd, "rb", closefd=False) as stream:
+                    text = stream.read(128001)
+            finally:
+                os.close(fd)
+            if len(text) > 128000:
+                raise ValueError("Large configuration")
+            data = tomllib.loads(text.decode("utf-8"))
+            syntax = "toml"
+            if path.name in {"pytest.toml", ".pytest.toml"}:
+                section = "pytest"
+            elif path.name == "pyproject.toml":
+                table = data.get("tool", {}).get("pytest", {})
+                native = {k: v for k, v in table.items() if k != "ini_options"}
+                section = "tool.pytest" if native else "tool.pytest.ini_options"
+            else:
+                raise ValueError("Unknown TOML configuration")
+        elif path.suffix != ".ini":
+            raise ValueError("Unknown configuration format")
+    selected = {}
+    for name, default in (("pythonpath", []), ("DJANGO_SETTINGS_MODULE", "")):
+        value = values.get(name, default)
+        value = getattr(value, "value", value)
+        if name == "pythonpath" and isinstance(value, str):
+            value = shlex.split(value)
+        if name == "pythonpath":
+            if not isinstance(value, list) or len(value) > 50 or not all(isinstance(v, str) for v in value):
+                raise ValueError("Unknown import paths")
+        elif not isinstance(value, str):
+            raise ValueError("Unknown settings module")
+        selected[name] = value
+    plugins = {id(p): p for _, p in config.pluginmanager.list_name_plugin()
+               if getattr(p, "__name__", None) == "pytest_django.plugin"}
+    plugin_file = getattr(next(iter(plugins.values())), "__file__", "") if len(plugins) == 1 else ""
+    result = {"schema_version": 1, "complete": True, "safe_file": safe,
+              "rootdir": str(getattr(config, "rootpath", None) or config.rootdir),
+              "pytest_version": str(getattr(sys.modules.get("pytest"), "__version__", "")),
+              "syntax": syntax, "section": section, "values": selected,
+              "django_plugin_file": plugin_file,
+              "django_option_registered": "DJANGO_SETTINGS_MODULE" in config._parser._inidict,
+              "plugin_autoload_disabled": bool(os.environ.get("PYTEST_DISABLE_PLUGIN_AUTOLOAD")),
+              "settings_environment": os.environ.get("DJANGO_SETTINGS_MODULE", ""),
+              "settings_cli": getattr(config.option, "ds", None) or ""}
+    if len(json.dumps(result)) > 16000:
+        raise ValueError("Large configuration observation")
+    return result
 
 
 def pytest_load_initial_conftests(early_config):

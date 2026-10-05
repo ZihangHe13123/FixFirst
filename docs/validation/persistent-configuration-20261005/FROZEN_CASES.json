@@ -1,0 +1,376 @@
+{
+  "before_source_commit": "546c78a99b074c231811bda7357d90f077dd912a",
+  "generator_sha256": "52891bd4135956aa1cda3318423afa431aed61a90d82a5c65d77bfcb07556a94",
+  "python": "3.12.13",
+  "pytest": "9.1.1",
+  "django": "5.2.1",
+  "plugin": "4.11.1",
+  "model_requests": 0,
+  "cases": [
+    {
+      "case": "local-ini",
+      "kind": "local",
+      "format": "ini",
+      "baseline_code": 2,
+      "reference_code": 0,
+      "source_sha256": {
+        "test_import.py": "1b7c85bc714d7c03a9fc2387df17597aca13b92296057aff311e9c85dce415db",
+        "src/ledger/__init__.py": "3e29430f1f5190ce5b49d92306ff0a807804a34c425ce0eca201f29817ad5015"
+      },
+      "reference_sha256": "4d31ef80a5ca15e394c8e109c5c2c5092754ceb1d26a891b4d96d46ebcc715ff",
+      "expected": "persistent advice for the same option and original test nodes, or explicit prerequisite review",
+      "command": [
+        "<same-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ]
+    },
+    {
+      "case": "local-ini-preserve-space",
+      "kind": "local",
+      "format": "ini",
+      "baseline_code": 2,
+      "reference_code": 0,
+      "source_sha256": {
+        "test_import.py": "cc56aa2ccf0105ebe7bf092dca326b005ea99616bc51ae32bdec691291f3cdb3",
+        "helpers/aux.py": "c8574e450abd1de5059506d3042d554f9756d66e71fe1a6e2d0a97cdfae8e99c",
+        "src/ledger/__init__.py": "3e29430f1f5190ce5b49d92306ff0a807804a34c425ce0eca201f29817ad5015"
+      },
+      "reference_sha256": "954091b88d205dfc57520c0fb0a63d4fe7de1655262d2856e5264a4c72be8532",
+      "expected": "persistent advice for the same option and original test nodes, or explicit prerequisite review",
+      "command": [
+        "<same-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ]
+    },
+    {
+      "case": "local-hidden_ini",
+      "kind": "local",
+      "format": "hidden_ini",
+      "baseline_code": 2,
+      "reference_code": 0,
+      "source_sha256": {
+        "test_import.py": "1b7c85bc714d7c03a9fc2387df17597aca13b92296057aff311e9c85dce415db",
+        "src/ledger/__init__.py": "3e29430f1f5190ce5b49d92306ff0a807804a34c425ce0eca201f29817ad5015"
+      },
+      "reference_sha256": "4d31ef80a5ca15e394c8e109c5c2c5092754ceb1d26a891b4d96d46ebcc715ff",
+      "expected": "persistent advice for the same option and original test nodes, or explicit prerequisite review",
+      "command": [
+        "<same-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ]
+    },
+    {
+      "case": "local-tox",
+      "kind": "local",
+      "format": "tox",
+      "baseline_code": 2,
+      "reference_code": 0,
+      "source_sha256": {
+        "test_import.py": "1b7c85bc714d7c03a9fc2387df17597aca13b92296057aff311e9c85dce415db",
+        "src/ledger/__init__.py": "3e29430f1f5190ce5b49d92306ff0a807804a34c425ce0eca201f29817ad5015"
+      },
+      "reference_sha256": "4d31ef80a5ca15e394c8e109c5c2c5092754ceb1d26a891b4d96d46ebcc715ff",
+      "expected": "persistent advice for the same option and original test nodes, or explicit prerequisite review",
+      "command": [
+        "<same-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ]
+    },
+    {
+      "case": "local-cfg",
+      "kind": "local",
+      "format": "cfg",
+      "baseline_code": 2,
+      "reference_code": 0,
+      "source_sha256": {
+        "test_import.py": "1b7c85bc714d7c03a9fc2387df17597aca13b92296057aff311e9c85dce415db",
+        "src/ledger/__init__.py": "3e29430f1f5190ce5b49d92306ff0a807804a34c425ce0eca201f29817ad5015"
+      },
+      "reference_sha256": "9e5e542dc8782db616d6804f2a56bb0316f25653e95e4514fcac75526b6ef055",
+      "expected": "persistent advice for the same option and original test nodes, or explicit prerequisite review",
+      "command": [
+        "<same-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ]
+    },
+    {
+      "case": "local-toml_ini",
+      "kind": "local",
+      "format": "toml_ini",
+      "baseline_code": 2,
+      "reference_code": 0,
+      "source_sha256": {
+        "test_import.py": "1b7c85bc714d7c03a9fc2387df17597aca13b92296057aff311e9c85dce415db",
+        "src/ledger/__init__.py": "3e29430f1f5190ce5b49d92306ff0a807804a34c425ce0eca201f29817ad5015"
+      },
+      "reference_sha256": "9619050c42f993bc097319ae4b8243ab893970d61e7ce53d41d2c1bf27ce3b37",
+      "expected": "persistent advice for the same option and original test nodes, or explicit prerequisite review",
+      "command": [
+        "<same-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ]
+    },
+    {
+      "case": "local-toml_native",
+      "kind": "local",
+      "format": "toml_native",
+      "baseline_code": 2,
+      "reference_code": 0,
+      "source_sha256": {
+        "test_import.py": "1b7c85bc714d7c03a9fc2387df17597aca13b92296057aff311e9c85dce415db",
+        "src/ledger/__init__.py": "3e29430f1f5190ce5b49d92306ff0a807804a34c425ce0eca201f29817ad5015"
+      },
+      "reference_sha256": "321e14a850843485cedcb0c31e344a566dd8a5d61325da5cc6b77467d362cee3",
+      "expected": "persistent advice for the same option and original test nodes, or explicit prerequisite review",
+      "command": [
+        "<same-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ]
+    },
+    {
+      "case": "local-pytest_toml",
+      "kind": "local",
+      "format": "pytest_toml",
+      "baseline_code": 2,
+      "reference_code": 0,
+      "source_sha256": {
+        "test_import.py": "1b7c85bc714d7c03a9fc2387df17597aca13b92296057aff311e9c85dce415db",
+        "src/ledger/__init__.py": "3e29430f1f5190ce5b49d92306ff0a807804a34c425ce0eca201f29817ad5015"
+      },
+      "reference_sha256": "220df603bb607af4dec6fc29dac23c2089292b2c8077ff4980e2839d7fe01708",
+      "expected": "persistent advice for the same option and original test nodes, or explicit prerequisite review",
+      "command": [
+        "<same-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ]
+    },
+    {
+      "case": "local-none",
+      "kind": "local",
+      "format": "none",
+      "baseline_code": 2,
+      "reference_code": 0,
+      "source_sha256": {
+        "test_import.py": "1b7c85bc714d7c03a9fc2387df17597aca13b92296057aff311e9c85dce415db",
+        "src/ledger/__init__.py": "3e29430f1f5190ce5b49d92306ff0a807804a34c425ce0eca201f29817ad5015"
+      },
+      "reference_sha256": "4d31ef80a5ca15e394c8e109c5c2c5092754ceb1d26a891b4d96d46ebcc715ff",
+      "expected": "persistent advice for the same option and original test nodes, or explicit prerequisite review",
+      "command": [
+        "<same-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ]
+    },
+    {
+      "case": "django-ini",
+      "kind": "django",
+      "format": "ini",
+      "baseline_code": 1,
+      "reference_code": 0,
+      "source_sha256": {
+        "suite_config.py": "53f3648d20e36ab3aac61e34406ee51c0be5a120616b5df3a11c5f52ea495367",
+        "test_config.py": "ecc32cb3f62c76f2931ede850b7e4d91f6c7c4d15188bc019b368422f1f1457e",
+        "runtests.py": "c68ef9ea57b6310fc9a094d6441c4a65b3cf802dd5367e23f1989b324a4c1fbf"
+      },
+      "reference_sha256": "ed437f34a25e2ebd7938a4c0924f8fb67db89aeb9dc75b1ae000f9a8cfe862f2",
+      "expected": "persistent advice for the same option and original test nodes, or explicit prerequisite review",
+      "command": [
+        "<same-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ]
+    },
+    {
+      "case": "django-hidden_ini",
+      "kind": "django",
+      "format": "hidden_ini",
+      "baseline_code": 1,
+      "reference_code": 0,
+      "source_sha256": {
+        "suite_config.py": "53f3648d20e36ab3aac61e34406ee51c0be5a120616b5df3a11c5f52ea495367",
+        "test_config.py": "ecc32cb3f62c76f2931ede850b7e4d91f6c7c4d15188bc019b368422f1f1457e",
+        "runtests.py": "c68ef9ea57b6310fc9a094d6441c4a65b3cf802dd5367e23f1989b324a4c1fbf"
+      },
+      "reference_sha256": "ed437f34a25e2ebd7938a4c0924f8fb67db89aeb9dc75b1ae000f9a8cfe862f2",
+      "expected": "persistent advice for the same option and original test nodes, or explicit prerequisite review",
+      "command": [
+        "<same-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ]
+    },
+    {
+      "case": "django-tox",
+      "kind": "django",
+      "format": "tox",
+      "baseline_code": 1,
+      "reference_code": 0,
+      "source_sha256": {
+        "suite_config.py": "53f3648d20e36ab3aac61e34406ee51c0be5a120616b5df3a11c5f52ea495367",
+        "test_config.py": "ecc32cb3f62c76f2931ede850b7e4d91f6c7c4d15188bc019b368422f1f1457e"
+      },
+      "reference_sha256": "6927c7011e3994325d9647957cbecb53763018ed82c55bd3eed28f0beb035829",
+      "expected": "persistent advice for the same option and original test nodes, or explicit prerequisite review",
+      "command": [
+        "<same-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ]
+    },
+    {
+      "case": "django-cfg",
+      "kind": "django",
+      "format": "cfg",
+      "baseline_code": 1,
+      "reference_code": 0,
+      "source_sha256": {
+        "suite_config.py": "53f3648d20e36ab3aac61e34406ee51c0be5a120616b5df3a11c5f52ea495367",
+        "test_config.py": "ecc32cb3f62c76f2931ede850b7e4d91f6c7c4d15188bc019b368422f1f1457e",
+        "runtests.py": "c68ef9ea57b6310fc9a094d6441c4a65b3cf802dd5367e23f1989b324a4c1fbf"
+      },
+      "reference_sha256": "efa9526b47019a50ce5c548a0c372c7be2e7a76293e9760cc340f2f67fe7cfe8",
+      "expected": "persistent advice for the same option and original test nodes, or explicit prerequisite review",
+      "command": [
+        "<same-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ]
+    },
+    {
+      "case": "django-toml_ini",
+      "kind": "django",
+      "format": "toml_ini",
+      "baseline_code": 1,
+      "reference_code": 0,
+      "source_sha256": {
+        "suite_config.py": "53f3648d20e36ab3aac61e34406ee51c0be5a120616b5df3a11c5f52ea495367",
+        "test_config.py": "ecc32cb3f62c76f2931ede850b7e4d91f6c7c4d15188bc019b368422f1f1457e",
+        "runtests.py": "c68ef9ea57b6310fc9a094d6441c4a65b3cf802dd5367e23f1989b324a4c1fbf"
+      },
+      "reference_sha256": "3947c92761308eda2c6113796d1f8f5636ffbcb8d058780b656f87747f4223d8",
+      "expected": "persistent advice for the same option and original test nodes, or explicit prerequisite review",
+      "command": [
+        "<same-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ]
+    },
+    {
+      "case": "django-toml_native",
+      "kind": "django",
+      "format": "toml_native",
+      "baseline_code": 1,
+      "reference_code": 0,
+      "source_sha256": {
+        "suite_config.py": "53f3648d20e36ab3aac61e34406ee51c0be5a120616b5df3a11c5f52ea495367",
+        "test_config.py": "ecc32cb3f62c76f2931ede850b7e4d91f6c7c4d15188bc019b368422f1f1457e",
+        "runtests.py": "c68ef9ea57b6310fc9a094d6441c4a65b3cf802dd5367e23f1989b324a4c1fbf"
+      },
+      "reference_sha256": "ad9001d89444b4538ad47e5ae3681a3b2aae1861d8dd92a0ea66d39ef9e22048",
+      "expected": "persistent advice for the same option and original test nodes, or explicit prerequisite review",
+      "command": [
+        "<same-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ]
+    },
+    {
+      "case": "django-pytest_toml",
+      "kind": "django",
+      "format": "pytest_toml",
+      "baseline_code": 1,
+      "reference_code": 0,
+      "source_sha256": {
+        "suite_config.py": "53f3648d20e36ab3aac61e34406ee51c0be5a120616b5df3a11c5f52ea495367",
+        "test_config.py": "ecc32cb3f62c76f2931ede850b7e4d91f6c7c4d15188bc019b368422f1f1457e",
+        "runtests.py": "c68ef9ea57b6310fc9a094d6441c4a65b3cf802dd5367e23f1989b324a4c1fbf"
+      },
+      "reference_sha256": "c02f682feb169625f842d78b91281625dd3d15cca350e7b4437dc8b937023556",
+      "expected": "persistent advice for the same option and original test nodes, or explicit prerequisite review",
+      "command": [
+        "<same-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ]
+    },
+    {
+      "case": "django-none",
+      "kind": "django",
+      "format": "none",
+      "baseline_code": 1,
+      "reference_code": 0,
+      "source_sha256": {
+        "suite_config.py": "53f3648d20e36ab3aac61e34406ee51c0be5a120616b5df3a11c5f52ea495367",
+        "test_config.py": "ecc32cb3f62c76f2931ede850b7e4d91f6c7c4d15188bc019b368422f1f1457e",
+        "runtests.py": "c68ef9ea57b6310fc9a094d6441c4a65b3cf802dd5367e23f1989b324a4c1fbf"
+      },
+      "reference_sha256": "ed437f34a25e2ebd7938a4c0924f8fb67db89aeb9dc75b1ae000f9a8cfe862f2",
+      "expected": "persistent advice for the same option and original test nodes, or explicit prerequisite review",
+      "command": [
+        "<same-python>",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ]
+    }
+  ]
+}

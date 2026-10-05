@@ -284,6 +284,13 @@ def scan(session, checks=None, timeout=DEFAULT_TIMEOUT, targets=None):
             if not any(p.get("name", "").lower() == package
                        for p in session.environment.get("packages", [])):
                 continue
+        if check in ("pytest", "pytest_run"):
+            # A test-only rescan must not reuse declarations the user may have
+            # edited since the previous scan. Planning continues to use records.
+            if not any(r.tool == "environment" for r in runs):
+                runs.append(collect(session, "environment", timeout))
+            if not any(r.tool == "project" for r in runs):
+                runs.append(collect(session, "project", timeout))
         # Declaration checks compare installed metadata. Always refresh that metadata as part
         # of this operation, including when a user runs the single project action after a fix.
         if check == "project" and not any(r.tool == "environment" for r in runs):

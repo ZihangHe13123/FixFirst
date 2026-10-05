@@ -1,0 +1,27 @@
+{
+  "initial_declaration": "pytest-django>=4.5",
+  "edited_declaration": "pytest-django<4",
+  "after_edit_command": "fixfirst scan SESSION --checks pytest_run",
+  "before_source": "3321b550b09392ef0bb9e384180e166022fc4e94",
+  "after_source": "ea03f56874686c8f6e4d3777ef8e4ffcf6b8d26a",
+  "python": "3.12.13",
+  "Django": "5.2.1",
+  "pytest": "9.1.1",
+  "plugin_installed": false,
+  "before": {
+    "default_scan_has_candidate": true,
+    "after_edit_test_only_has_command": true,
+    "after_edit_title": "Install pytest-django and save DJANGO_SETTINGS_MODULE=shopcfg in pytest.ini",
+    "after_edit_has_old_range": true,
+    "test_file_unchanged": true,
+    "project_declaration_unchanged": true
+  },
+  "after": {
+    "default_scan_has_candidate": true,
+    "after_edit_test_only_has_command": false,
+    "after_edit_title": "Resolve the pytest-django version constraints before changing it",
+    "after_edit_has_old_range": false,
+    "test_file_unchanged": true,
+    "project_declaration_unchanged": true
+  }
+}

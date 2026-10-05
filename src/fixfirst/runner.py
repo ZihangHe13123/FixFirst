@@ -16,7 +16,9 @@ from .processes import ManagedProcess, ProcessCancelled
 MAX_OUTPUT = 1_000_000
 # Real test suites can take minutes; a check that runs longer is stopped and reported.
 DEFAULT_TIMEOUT = 600
-DEFAULT_CHECKS = ("environment", "pip_check", "pytest", "ruff", "project")
+# Capture declarations before project tests can run or alter them. Advice binds
+# the failure to this preceding environment/project snapshot on every default entry.
+DEFAULT_CHECKS = ("environment", "project", "pip_check", "pytest", "ruff")
 TOOLS = (*DEFAULT_CHECKS, "pytest_run", "version_search", "python_run", "unittest_run", "dependency_resolve")
 SEARCH_TARGET = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$")
 
@@ -438,7 +440,7 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
                                   "environment_addopts": redact(original_addopts) if len(original_addopts) <= 16000 else None}
             if len(configurations) == 1:
                 run.pytest_options.update({key: value for key, value in configurations[0].items()
-                                           if key in {"config_complete", "config_file", "config_addopts", "observation_error"}})
+                                           if key in {"config_complete", "config_file", "config_addopts", "observation_error", "persistent_config"}})
             from .test_results import pytest_options_note
 
             if note := pytest_options_note(run):
