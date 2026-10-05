@@ -204,6 +204,20 @@ held-out projects are added only after A2's results are merged.
   stays recorded even if it is undone later; a run with a violation is never green and never fixed.
   The check sees the state between tool calls: a change made and undone inside one command is not
   seen.
+- **Persistent repairs and response recovery (5 Oct).** All arms are explicitly told that each
+  command starts a new shell in the project with a clean environment, and the grader uses another
+  fresh environment. Shell exports and `cd` do not persist; repairs must persist in source,
+  installed packages, or allowed configuration. The common prompt names the protected test files,
+  `conftest.py`, and selection/outcome settings, including the rule against changing and restoring them.
+  A completed API choice with `finish_reason=length` and no tool calls may continue at most
+  `--max-length-continuations` times (default 2). Each continuation consumes an ordinary turn and
+  the same time budget; the per-request token cap stays unchanged. If the allowance or turn cap is
+  reached, or the truncated choice contains tool calls, it ends as `response_truncated` without
+  executing those calls. Missing finish reasons never authorize recovery. Empty messages without
+  calls end as `empty_response`; ordinary nonempty messages without calls retain
+  `stopped_without_tool`. Neither empty replies nor timed-out requests are retried.
+  The allowance is recorded in settings and protocol identity when present; legacy rows without it
+  retain their previous identity. Old and new runs must be reported separately.
 - **Files the agent leaves.** The harness reads the agent's files outside the sandbox (integrity,
   digests, pip freeze, the JUnit report, the `read_file` and `write_file` tools), so it reads only
   regular files, opens them without waiting and never reads without limit: a test file replaced by a
@@ -214,9 +228,14 @@ held-out projects are added only after A2's results are merged.
   the attempt is the invocation's time and a random suffix (or `--attempt NAME`, which is refused if
   already used). The folder keeps the transcript and `commands.jsonl` written as they happen, pip
   freeze at start and end, `setup.json`, the sandbox profiles, every grader check and `row.json`; the
-  row in `results.jsonl` names its folder (`run_dir`). Every planned run gets a row, also when setup,
+  row in `results.jsonl` names its folder (`run_dir`). `responses.jsonl` saves each complete API body
+  before any action is executed, including malformed bodies and provider-specific message fields;
+  it is outside the agent's readable folders. No request headers or credentials are recorded.
+  These raw responses, like transcripts, may contain local paths and need sanitization before
+  publication. Rows record `model_responses`, `finish_reasons`, `last_finish_reason`,
+  `length_responses`, `length_continuations`, and `empty_responses`. Every planned run gets a row, also when setup,
   the model, FixFirst's server, the harness or the grader fails: `end` (`finish`, `turn_cap`,
-  `time_cap`, `stopped_without_tool`, `model_error`, `mcp_start_failed`, `setup_failed`,
+  `time_cap`, `stopped_without_tool`, `response_truncated`, `empty_response`, `model_error`, `mcp_start_failed`, `setup_failed`,
   `reference_invalid`, `unsupported_case`, `harness_error`, `cleanup_failed`), `error` with the stage, and `grading`
   (`graded`, `not_graded`, `grading_error`); `fixed` is empty unless the run was graded. Arms
   alternate per case and run.

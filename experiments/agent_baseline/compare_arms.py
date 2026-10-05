@@ -89,6 +89,9 @@ def protocol(row) -> str:
     """What must match for runs to be pooled or paired, as a short id."""
     settings = row.get("settings") or {}
     data = {key: settings.get(key) for key in PROTOCOL_SETTINGS}
+    # Historical rows have no recovery setting: retain their exact protocol id.
+    if "max_length_continuations" in settings:
+        data["max_length_continuations"] = settings["max_length_continuations"]
     data.update(call_policy=policy(row), network=row.get("network"), harness=row.get("harness_commit"),
                 uncommitted=bool(row.get("uncommitted_changes")))
     return hashlib.sha256(json.dumps(data, sort_keys=True, default=str).encode()).hexdigest()[:8]

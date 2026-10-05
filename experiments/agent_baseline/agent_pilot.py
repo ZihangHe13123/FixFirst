@@ -103,15 +103,24 @@ def system_prompt(network: bool) -> str:
     return (
         "You are an autonomous coding agent. The Python project in your working directory has "
         "failing tests. Make the full test suite pass by fixing the root cause in the project. "
-        f"Do not edit, delete or skip tests. {packages} Use the tools; do not guess what a command "
-        "would print. When the full test suite passes, call finish with one sentence on the cause and the fix."
+        "Every run_command starts a new shell in the project directory with a clean environment. "
+        "An export or cd affects only that command; it does not persist to the next command or grading. "
+        "The grader reruns the full original suite in a fresh environment. Save a persistent repair "
+        "in production code, installed packages, or allowed project configuration. "
+        "Do not add, edit, delete or skip tests or conftest.py. Keep these pytest selection and "
+        f"outcome settings unchanged: {', '.join(sorted(rc.SELECTING_KEYS))}. "
+        "Changing protected content invalidates the run even if you restore it later. "
+        "Other configuration changes may persist a repair, but must not remove or weaken any test. "
+        f"{packages} Use the tools; do not guess what a command would print. "
+        "When the full test suite passes without temporary shell settings, call finish with one "
+        "sentence on the cause and the persistent fix."
     )
 
 
 BASIC_TOOLS = [
     {"type": "function", "function": {
         "name": "run_command",
-        "description": "Run a bash command in the project directory (python and pytest are on PATH). Returns the exit code and output.",
+        "description": "Run a command in a new bash shell in the project directory with a clean environment (python and pytest are on PATH). Shell exports and cd do not persist. Returns the exit code and output.",
         "parameters": {"type": "object", "properties": {"command": {"type": "string"}}, "required": ["command"]}}},
     {"type": "function", "function": {
         "name": "read_file",
@@ -161,6 +170,7 @@ class Settings:
     max_tokens: int = 4096
     seed: int = 20261001
     call_policy: str = "server"
+    max_length_continuations: int = 2
 
 
 class ModelError(Exception):
@@ -256,6 +266,7 @@ class Run:
     # FixFirst's sessions (its diagnoses too) stay out of the agent's reach: only its server writes here.
     fixfirst_store = property(lambda self: self.folder / "fixfirst-store")
     commands_log = property(lambda self: self.folder / "commands.jsonl")
+    responses_log = property(lambda self: self.folder / "responses.jsonl")
 
     def policy(self, kind: str) -> iso.Policy:
         agent = iso.Policy((self.project, self.state, self.tmp), tuple(self.interpreters), self.network,
@@ -421,7 +432,8 @@ class FakeModel:
     """Scripted replies, to check the harness without a model. The script is a JSON list; each step
     is {"call": name, "arguments": {...}}, {"calls": [...]} for several, {"say": text} for an answer
     without a tool call, {"fail": text} for a failed request or {"raw": message} for a message sent as
-    it is (to test malformed replies). "delay": seconds makes the reply take that long. The call names
+    it is (to test malformed replies). "raw_response" supplies the full API body; "finish_reason"
+    overrides stop/tool_calls. "delay": seconds makes the reply take that long. The call names
     "fixfirst:first" and "fixfirst:again" stand for the arm's FixFirst tools (with the harness's
     default arguments when the step gives none); in an arm that offers none, such calls are left out
     (and a step with nothing left is skipped)."""
@@ -433,7 +445,7 @@ class FakeModel:
 
     def reply(self, timeout: float):
         if self.index >= len(self.steps):
-            return {"content": "(script finished)"}, {}
+            return self.response({"content": "(script finished)"}, {})
         step = self.steps[self.index]
         self.index += 1
         delay = float(step.get("delay", 0))
@@ -443,10 +455,12 @@ class FakeModel:
         time.sleep(delay)
         if "fail" in step:
             raise ModelError(step["fail"])
+        if "raw_response" in step:
+            return step["raw_response"]
         if "raw" in step:
-            return step["raw"], step.get("usage", {})
+            return self.response(step["raw"], step)
         if "say" in step:
-            return {"content": step["say"]}, {}
+            return self.response({"content": step["say"]}, step)
         calls = []
         for c in step.get("calls") or [step]:
             if str(c.get("call", "")).startswith("fixfirst:"):
@@ -457,22 +471,42 @@ class FakeModel:
             calls.append(c)
         if not calls:
             return self.reply(timeout)
-        return {"content": "", "tool_calls": [
+        return self.response({"content": "", "tool_calls": [
             {"id": f"call-{self.index}-{n}", "type": "function",
              "function": {"name": c["call"], "arguments": json.dumps(c.get("arguments", {}))}}
-            for n, c in enumerate(calls)]}, {}
+            for n, c in enumerate(calls)]}, step)
+
+    @staticmethod
+    def response(message, step):
+        reason = "tool_calls" if isinstance(message, dict) and message.get("tool_calls") else "stop"
+        return {"choices": [{"message": message, "finish_reason": step.get("finish_reason", reason)}],
+                "usage": step.get("usage", {})}
 
 
 def chat(model, messages, tools, settings: Settings, fake: FakeModel | None, timeout: float):
+    """Return the complete API body, before validation, so the episode can save its evidence."""
     if fake:
         return fake.reply(timeout)
     body = {"model": model, "messages": messages, "tools": tools, "max_tokens": settings.max_tokens,
             "temperature": settings.temperature, "seed": settings.seed}
-    data = post_before(f"{BASE}/chat/completions", body, timeout)
+    return post_before(f"{BASE}/chat/completions", body, timeout)
+
+
+def reply_parts(data) -> tuple:
     choices = data.get("choices") if isinstance(data, dict) else None
     if not isinstance(choices, list) or not choices or not isinstance(choices[0], dict):
         raise ModelError("the response has no choices")
-    return choices[0].get("message"), data.get("usage")
+    reason = choices[0].get("finish_reason")
+    return choices[0].get("message"), data.get("usage"), reason if isinstance(reason, str) else None
+
+
+def save_response(run: Run, turn: int, data):
+    """Save a completed response outside the agent's readable folders, before executing any call."""
+    line = json.dumps({"turn": turn, "response": data}, ensure_ascii=False, allow_nan=False) + "\n"
+    with run.responses_log.open("a", encoding="utf-8") as stream:
+        stream.write(line)
+        stream.flush()
+        os.fsync(stream.fileno())
 
 
 def post_before(url: str, body: dict, timeout: float) -> dict:
@@ -535,7 +569,8 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
              "completion_tokens": 0, "model_s": 0.0, "tool_s": 0.0, "end": "turn_cap", "bad_calls": 0,
              "first_green_turn": None, "first_green_s": None, "error": None, "mcp_arguments_filled": 0,
              "mcp_arguments_overridden": 0, "mcp_goal_filled": 0, "mcp_goal_overridden": 0, "fixfirst_reports": 0, "fixfirst_s": 0.0, "fixfirst_output_chars": 0,
-             "usage_reported": False}
+             "usage_reported": False, "model_responses": 0, "finish_reasons": {}, "last_finish_reason": None,
+             "length_responses": 0, "length_continuations": 0, "empty_responses": 0}
     budget = iso.Budget(settings.run_timeout)
     tools = BASIC_TOOLS + ([FIXFIRST_TOOL] if arm == "fixfirst" else [])
     system = system_prompt(run.network) + (FIXFIRST_INSTRUCTIONS if arm == "fixfirst" else "")
@@ -577,7 +612,7 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
                 break
             started = time.monotonic()
             try:
-                message, usage = chat(model, messages, tools, settings, fake, budget.remaining())
+                data = chat(model, messages, tools, settings, fake, budget.remaining())
             except ModelTimeout as error:
                 stats["end"] = "time_cap" if budget.remaining() <= 0 else "model_error"
                 stats["error"] = f"{type(error).__name__}: {error}"[:500]
@@ -587,6 +622,16 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
                 break
             finally:
                 stats["model_s"] += time.monotonic() - started
+            save_response(run, turn, data)
+            stats["model_responses"] += 1
+            try:
+                message, usage, reason = reply_parts(data)
+            except ModelError as error:
+                stats["end"], stats["error"] = "model_error", str(error)
+                break
+            stats["last_finish_reason"] = reason
+            key = reason if reason is not None else "unknown"
+            stats["finish_reasons"][key] = stats["finish_reasons"].get(key, 0) + 1
             if not isinstance(message, dict):
                 stats["end"], stats["error"] = "model_error", "the reply has no message object"
                 break
@@ -605,9 +650,30 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
             if calls:
                 assistant["tool_calls"] = calls
             messages.append(assistant)
+            if reason == "length":
+                stats["length_responses"] += 1
+                stats["end"] = "response_truncated"
+                # Even a syntactically valid action in a truncated choice may be incomplete.
+                if calls or stats["length_continuations"] >= settings.max_length_continuations or turn == settings.max_turns:
+                    break
+                if budget.remaining() <= 0:
+                    stats["end"] = "time_cap"
+                    break
+                stats["length_continuations"] += 1
+                messages.append({"role": "user", "content": (
+                    "The server cut off your previous response at its output length limit. "
+                    "No tool action from it was executed. Continue from the returned response and "
+                    "use the tools to carry out the next step within the remaining turn and time budget.")})
+                save()
+                continue
             if not calls:
-                stats["end"] = "stopped_without_tool"
+                if not assistant["content"].strip():
+                    stats["empty_responses"] += 1
+                    stats["end"] = "empty_response"
+                else:
+                    stats["end"] = "stopped_without_tool"
                 break
+            stats["end"] = "turn_cap"
             finished = timed_out = False
             for index, call in enumerate(calls):
                 call_id = call.get("id") if isinstance(call, dict) and isinstance(call.get("id"), str) else f"call-{turn}-{index}"
@@ -1184,6 +1250,8 @@ def main(argv=None):
     parser.add_argument("--run-timeout", type=float, default=1800, help="the agent's seconds per run")
     parser.add_argument("--temperature", type=float, default=0.2)
     parser.add_argument("--max-tokens", type=int, default=4096)
+    parser.add_argument("--max-length-continuations", type=int, default=2,
+                        help="maximum continuations of a length-truncated reply without calls; uses the same turn/time budget")
     parser.add_argument("--seed", type=int, default=20261001)
     parser.add_argument("--attempt", help="a name for this invocation (default: time and a random suffix)")
     parser.add_argument("--out", default=str(FIXFIRST.parent / "agent-runs"))
@@ -1191,6 +1259,8 @@ def main(argv=None):
                                                  "hard cases then run only as selected and only with the frozen content")
     parser.add_argument("--hard-role", choices=hi.ROLES, help="which instances of the selection: formal or development")
     args = parser.parse_args(argv)
+    if args.max_length_continuations < 0:
+        parser.error("--max-length-continuations must be nonnegative")
     if not args.cases and not args.projects:
         parser.error("give --cases or --projects")
     known = {t.name for t in dc.TEMPLATES}, {s.scenario_id for s in dc.SCENARIOS} | set(hi.hard_scenarios())
@@ -1243,7 +1313,7 @@ def main(argv=None):
     ctx = Context(out, identity, attempt, args.network == "on", denied=denied, protected=protected,
                   protected_folders=protected_folders)
     settings = Settings(args.max_turns, args.run_timeout, args.temperature, args.max_tokens, args.seed,
-                        args.call_policy)
+                        args.call_policy, args.max_length_continuations)
     manifest_path = Path(args.manifest).resolve()
     manifest = rc.load_manifest(manifest_path) if args.projects else {}
     repairs = rc.tomllib.loads(Path(args.repairs).read_text(encoding="utf-8")) if args.projects else {}
