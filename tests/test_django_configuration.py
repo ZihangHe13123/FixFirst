@@ -24,6 +24,8 @@ UNCONFIGURED = (
     ("tox.ini", "[pytest]\nDJANGO_SETTINGS_MODULE = suite.config\n", "tox.ini [pytest]"),
     ("pyproject.toml", '[tool.pytest.ini_options]\nDJANGO_SETTINGS_MODULE = "suite.config"\n', "pyproject.toml [tool.pytest.ini_options]"),
     ("pyproject.toml", '[tool.pytest]\nDJANGO_SETTINGS_MODULE = "suite.config"\n', "pyproject.toml [tool.pytest]"),
+    ("pytest.toml", '[pytest]\nDJANGO_SETTINGS_MODULE = "suite.config"\n', "pytest.toml [pytest]"),
+    (".pytest.toml", '[pytest]\nDJANGO_SETTINGS_MODULE = "suite.config"\n', ".pytest.toml [pytest]"),
 ])
 def test_records_literal_plugin_settings_without_claiming_precedence(tmp_path, filename, text, source):
     (tmp_path / filename).write_text(text)
@@ -386,6 +388,40 @@ def test_missing_evidence_and_other_rules_remain_separate():
 
 
 REAL_PYTHON = os.environ.get("FIXFIRST_DJANGO_PYTHON")
+
+
+@pytest.mark.parametrize("context,command", [("absent_declarations", True), ("dynamic_declarations", False),
+                                           ("python_mismatch", False), ("optional_constraint", False)])
+def test_persistent_plugin_command_respects_the_complete_declaration_context(tmp_path, context, command):
+    from packaging.markers import default_environment
+
+    def change(environment, project, run):
+        environment["markers"] = default_environment()
+        project["files"] = []
+        project["notes"] = ["No supported static declaration file was found"]
+        if context == "dynamic_declarations":
+            project["files"] = ["pyproject.toml"]
+            project["notes"] = ["pyproject.toml declares dynamic dependencies, which are not executed or parsed"]
+        elif context == "python_mismatch":
+            project["requires_python"] = [{"source": "pyproject.toml", "specifier": ">=3.14", "status": "python_mismatch"}]
+        elif context == "optional_constraint":
+            project["declarations"] = [{"name": "pytest-django", "requirement": "pytest-django<4", "installer": "pip",
+                                         "group": "optional:test", "source": "pyproject.toml test group", "status": "missing"}]
+        run.pytest_options = {"config_complete": True, "config_file": str(tmp_path / "pytest.ini"),
+                              "config_addopts": "", "environment_addopts": "",
+                              "persistent_config": {"schema_version": 1, "complete": True, "safe_file": True,
+                                  "rootdir": str(tmp_path), "pytest_version": "8.3.5", "syntax": "ini", "section": "pytest",
+                                  "values": {"pythonpath": [], "DJANGO_SETTINGS_MODULE": ""},
+                                  "django_plugin_file": "", "django_option_registered": False,
+                                  "plugin_autoload_disabled": False, "settings_environment": "", "settings_cli": ""}}
+    config = {"candidates": [{"module": "suite.config", "source": "runtests.py:2", "entrypoint": "runtests.py"}], "unknown_sources": []}
+    session = saved_case(tmp_path, config=config, mutate=change)
+    action = next(a for a in session.actions if "P86" in a.rule_ids)
+    assert bool(action.command) is command
+    if command:
+        assert "pytest-django==4.11.1" in action.command and "Django==5.2.1" in action.command
+    else:
+        assert "Review" in action.title or "Resolve" in action.title
 
 
 @pytest.mark.skipif(not REAL_PYTHON, reason="requires an explicitly supplied isolated Django interpreter")

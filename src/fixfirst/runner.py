@@ -438,7 +438,7 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
                                   "environment_addopts": redact(original_addopts) if len(original_addopts) <= 16000 else None}
             if len(configurations) == 1:
                 run.pytest_options.update({key: value for key, value in configurations[0].items()
-                                           if key in {"config_complete", "config_file", "config_addopts", "observation_error"}})
+                                           if key in {"config_complete", "config_file", "config_addopts", "observation_error", "persistent_config"}})
             from .test_results import pytest_options_note
 
             if note := pytest_options_note(run):

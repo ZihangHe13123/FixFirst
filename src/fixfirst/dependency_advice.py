@@ -18,7 +18,14 @@ def refine(session, actions, by_id, facts):
 
     environment = current_environment(session)
     project_run, project = project_index(session)
-    data = context(environment, {**project, "_run_id": project_run.run_id if project_run else None})
+    declarations = project.get("declarations", [])
+    if any("P86" in a.rule_ids and a.command[:4] == [session.target_python, "-m", "pip", "install"] for a in actions):
+        # Choosing a pytest plugin opts into its named test-dependency constraints,
+        # even when the project stores them in an optional test group.
+        declarations = [{**r, "group": "required"} if canonicalize_name(r.get("name", "")) == "pytest-django"
+                        else r for r in declarations]
+    data = context(environment, {**project, "declarations": declarations,
+                                "_run_id": project_run.run_id if project_run else None})
     consumer_context = {a.action_id: a.explanation for a in actions if "P83" in a.rule_ids}
     migrated_issues = {i for a in actions if a.action_id in consumer_context for i in a.issue_ids}
     if migrated_issues:

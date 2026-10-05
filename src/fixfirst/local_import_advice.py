@@ -205,6 +205,17 @@ def refine(session, actions, by_id):
             "including paths containing spaces; do not paste an unquoted path into a shell assignment. "
             f"Then re-run the {original} from the project root, preserving its arguments and input."
         )
+        if session.goal in {"pass_tests", "collect_tests"}:
+            from .persistent_configuration import import_recipe, selection
+
+            selected, problem = selection(session, action, environment)
+            recipe = import_recipe(selected, relative) if selected else None
+            if recipe:
+                action.title = f"Save the import path in {selected['file']}"
+                action.explanation = recipe + action.explanation
+            else:
+                action.explanation += " A shell PYTHONPATH assignment is temporary. " + (
+                    problem or "The import root is already configured or could not be selected uniquely; review why the current run still cannot import it.")
         if session.goal == "run_project" and (not session.execution or session.execution.kind != "notebook"):
             action.explanation += (
                 " If the entry is a module inside a package, use Python module mode with its package.module "
@@ -222,5 +233,7 @@ def refine(session, actions, by_id):
         action.verification = (
             f"Re-run the {original} with the same interpreter, arguments and input and the updated import path"
         )
+        if session.goal in {"pass_tests", "collect_tests"}:
+            action.verification += "; repeat it in a new shell without the temporary PYTHONPATH assignment and keep the original test nodes"
         action.command = []
     return actions

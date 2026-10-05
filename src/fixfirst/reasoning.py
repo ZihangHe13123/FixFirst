@@ -465,15 +465,15 @@ def infer_and_plan(session: Session):
     from .package_compatibility import refine as refine_packages
 
     actions = refine_packages(session, actions, by_id, base.facts)
+    from .django_configuration import refine as refine_django
+
+    actions = refine_django(session, actions, details)
     from .dependency_advice import refine
 
     actions = refine(session, actions, by_id, base.facts)
     from .tool_compatibility import refine as refine_tools
 
     actions = refine_tools(session, actions, details, base.facts)
-    from .django_configuration import refine as refine_django
-
-    actions = refine_django(session, actions, details)
     from .install_feedback import bind_commands
     from .evidence import project_index
 

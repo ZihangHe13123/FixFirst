@@ -73,8 +73,9 @@ def recorded_configuration(root: Path) -> dict:
             else:
                 unknown("additional configuration candidates exceed the snapshot limit")
 
+    configs = (*CONFIGS, ("pytest.toml", "pytest"), (".pytest.toml", "pytest"))
     texts = {}
-    for name in dict.fromkeys([n for n, _ in CONFIGS] + ["Makefile", "runtests.py"]):
+    for name in dict.fromkeys([n for n, _ in configs] + ["Makefile", "runtests.py"]):
         text = _read(root, name)
         if text is None:
             if (root / name).exists() or (root / name).is_symlink():
@@ -82,11 +83,13 @@ def recorded_configuration(root: Path) -> dict:
             continue
         texts[name] = text
 
-    for name, section in CONFIGS:
+    for name, section in configs:
         if name not in texts:
             continue
         try:
-            if name == "pyproject.toml":
+            if name in {"pytest.toml", ".pytest.toml"}:
+                tables = [(section, tomllib.loads(texts[name]).get("pytest", {}))]
+            elif name == "pyproject.toml":
                 options = tomllib.loads(texts[name]).get("tool", {}).get("pytest", {})
                 # Preserve both forms as separate sources; do not infer the
                 # installed pytest version's selected configuration format.
@@ -282,6 +285,11 @@ def observations(session, issues):
 
 
 def refine(session, actions, details):
+    from .evidence import current_environment, project_index
+    from .persistent_configuration import SUPPORT_SOURCE, django_recipe, selection
+
+    environment = current_environment(session)
+    _, project = project_index(session)
     for action in actions:
         if "P86" not in action.rule_ids:
             continue
@@ -330,6 +338,45 @@ def refine(session, actions, details):
                 "production imports or call it again during initialization.")
         action.explanation += " Sources: " + SETTINGS_SOURCE + " ; " + APPS_SOURCE + " ; " + PLUGIN_SOURCE
         action.verification = "Rerun the intended test entrypoint with the confirmed configuration, then repeat the original failing scope; an alternative runner passing does not verify the unchanged pytest invocation"
+        if len(modules) == 1 and not config.get("unknown_sources"):
+            selected, problem = selection(session, action, environment)
+            recipe, requests = None, []
+            if selected:
+                recipe, requests, problem = django_recipe(selected, next(iter(modules)), environment, session.project_root)
+            if recipe:
+                action.kind = "manual_fix"
+                action.title = f"Save DJANGO_SETTINGS_MODULE={next(iter(modules))} in {selected['file']}"
+                if requests:
+                    from .dependency_context import context
+
+                    dependency_data = context(environment, project)
+                    # An un-packaged script can have no dependency declaration at
+                    # all; that absence is not a partially parsed constraint file.
+                    project_notes = [n for n in project.get("notes", [])
+                                     if n != "No supported static declaration file was found" or project.get("files")]
+                    notes = [*dependency_data["notes"], *project_notes]
+                    notes += [f"{row.get('source', 'project')} requires Python {row.get('specifier', 'unknown')}"
+                              for row in project.get("requires_python", []) if row.get("status") != "satisfied"]
+                    if notes:
+                        problem = "Review the recorded dependency context before installing the plugin: " + "; ".join(notes)
+                        recipe = None
+                    else:
+                        action.command = [session.target_python, "-m", "pip", "install", *requests]
+                        action.title = f"Install pytest-django and save DJANGO_SETTINGS_MODULE={next(iter(modules))} in {selected['file']}"
+                        recipe = ("First apply the companion installation command, which keeps the observed Django and pytest versions. "
+                                  "Record pytest-django in the project's reviewed test dependencies for future environments. " + recipe
+                                  + "The fixed plugin version is a compatibility candidate, not the earliest supported release or a verified project repair. "
+                                  + f"Plugin compatibility source: {SUPPORT_SOURCE}. ")
+                if recipe:
+                    action.explanation = recipe + (
+                        "pytest-django reads this setting and initializes Django; plain pytest does not. "
+                        "Shell exports do not persist to a new shell. ") + action.explanation
+                    action.verification = ("Run pip check and the original complete test command in a new shell with the same interpreter, "
+                                           "without a temporary DJANGO_SETTINGS_MODULE export; keep the original test nodes and configuration policy")
+            if not recipe:
+                action.command = []
+                action.title = f"Review prerequisites for saving DJANGO_SETTINGS_MODULE={next(iter(modules))}"
+                action.explanation = (problem or "The recorded configuration cannot be selected safely.") + " " + action.explanation
     return _group_identical(actions, details)
 
 
