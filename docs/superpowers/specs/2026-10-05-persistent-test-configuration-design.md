@@ -36,3 +36,13 @@ probe 在项目 conftest 执行前记录原配置的段名、语法、已有 pyt
 来源：[pytest 配置](https://docs.pytest.org/en/stable/reference/customize.html)、[pytest-django 配置](https://pytest-django.readthedocs.io/en/latest/configuring_django.html)、[4.11.1 元数据](https://pypi.org/pypi/pytest-django/4.11.1/json)、[更新记录](https://pytest-django.readthedocs.io/en/latest/changelog.html)、[Django/Python 支持](https://docs.djangoproject.com/en/5.2/faq/install/)。
 
 所有写文件步骤均为建议；只有来源、原检查及依赖约束同时明确时给具体操作。无自动写入、无新的正式实验，模块身份与模型不因建议更具体而放宽。没有实现占位项。
+
+## 独立验收后的默认入口修复
+
+验收发现默认 pytest 批次在测试后才检查项目，与本方案的证据时序要求冲突。采用先 environment、project，再 pip_check、pytest、ruff 的默认顺序；显式指定顺序保持原样。相比放宽时序校验或额外重复检查，这样能让 CLI、Web、MCP 共用正确入口，同时继续拒绝测试后的项目记录及旧快照。
+
+补默认 service.scan、CLI scan/打印的 Check again、MCP diagnose/check_again 的真实进程测试。B3 已封存记录保持原样；B7 修复判分按原完整测试及保护摘要，不依赖问题列表的首项，首因指标仍来自排序后的行动。
+
+标准 -ra/-r a 只改变 pytest 汇总显示，接受官方列出的报告字符，未知字符和影响选测的选项继续保持未核对或不同。pytest-django 的依赖试装也固定当前已装 Django、pytest；项目声明冲突则拒绝候选，不能借试装升级这两个包。旧试装缓存用新的协议身份失效。补真实离线 resolver 对照，证明有新版可选时也保留已装版本、与固定版本不兼容的候选不产出安装命令。
+
+持久导入建议提醒保留项目仍依赖的外部 PYTHONPATH 条目。没有配置时创建 pytest.ini 与 B7 保护规则冲突，属于实验方案 H5，正式冻结前另定；本次不放宽原判分或重写旧结果。
