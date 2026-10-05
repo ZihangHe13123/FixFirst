@@ -342,3 +342,30 @@ def test_default_user_entries_and_their_rechecks_offer_the_saved_import_path(
         texts = [t["content"][0]["text"] for t in tools]
     assert all("Save the import path in pytest.ini" in text for text in texts), texts
     assert (project / "pytest.ini").exists() is has_config  # Advice did not write the file.
+
+
+def test_test_only_rescan_uses_the_edited_declaration_instead_of_the_previous_one(
+    tmp_path, monkeypatch
+):
+    monkeypatch.delenv("PYTHONPATH", raising=False)
+    monkeypatch.delenv("PYTEST_ADDOPTS", raising=False)
+    (tmp_path / "src" / "ledger").mkdir(parents=True)
+    (tmp_path / "src" / "ledger" / "__init__.py").write_text("VALUE=17\n")
+    (tmp_path / "test_value.py").write_text(
+        "from ledger import VALUE\ndef test_value():\n    assert VALUE == 17\n"
+    )
+    (tmp_path / "pytest.ini").write_text("[pytest]\n")
+    requirements = tmp_path / "requirements.txt"
+    requirements.write_text("pytest-django>=4.5\n")
+    session = create_session(tmp_path, sys.executable, goal="pass_tests")
+    session.use_classifier = False
+    scan(session)
+    old_project = next(r for r in reversed(session.runs) if r.tool == "project")
+    requirements.write_text("pytest-django<4\n")
+    scan(session, ["pytest_run"])
+    recorded = next(r for r in reversed(session.runs) if r.tool == "project")
+    rows = json.loads(recorded.stdout)["declarations"]
+    assert recorded.run_id != old_project.run_id
+    assert [r["requirement"] for r in rows if r["name"] == "pytest-django"] == ["pytest-django<4"]
+    assert requirements.read_text() == "pytest-django<4\n"
+    assert any("P12" in a.rule_ids and a.title.startswith("Save ") for a in session.actions)
