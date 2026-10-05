@@ -7,6 +7,7 @@ application-registry docs; an early import during setup is a different cause.
 
 import ast
 import configparser
+import json
 from pathlib import Path
 import re
 import shlex
@@ -329,4 +330,37 @@ def refine(session, actions, details):
                 "production imports or call it again during initialization.")
         action.explanation += " Sources: " + SETTINGS_SOURCE + " ; " + APPS_SOURCE + " ; " + PLUGIN_SOURCE
         action.verification = "Rerun the intended test entrypoint with the confirmed configuration, then repeat the original failing scope; an alternative runner passing does not verify the unchanged pytest invocation"
-    return actions
+    return _group_identical(actions, details)
+
+
+def _group_identical(actions, details):
+    """One configuration review can cover several failures, without dropping their evidence."""
+    grouped, result = {}, []
+    repair_fields = ("kind", "title", "explanation", "verification", "check", "targets", "cause",
+                     "rule_ids", "command", "declaration_edits")
+    for action in actions:
+        key = None
+        if "P86" in action.rule_ids and action.issue_ids:
+            matches = [details.get(i, {}).get("django_configuration") for i in action.issue_ids]
+            if all(isinstance(m, dict) and m.get("mechanism") in {"settings_unconfigured", "apps_not_ready"}
+                   and isinstance(m.get("configuration"), dict) and isinstance(m.get("plugin_installed"), bool)
+                   and isinstance(m.get("argv"), list) for m in matches):
+                try:
+                    context = [json.dumps(m, sort_keys=True, allow_nan=False) for m in matches]
+                    if len(set(context)) == 1:
+                        repair = {field: getattr(action, field) for field in repair_fields}
+                        key = context[0], json.dumps(repair, sort_keys=True, allow_nan=False)
+                except (TypeError, ValueError):
+                    pass
+        if key is None or key not in grouped:
+            result.append(action)
+            if key is not None:
+                grouped[key] = action
+            continue
+        first = grouped[key]
+        for field in ("issue_ids", "reason_refs", "preconditions"):
+            setattr(first, field, list(dict.fromkeys([*getattr(first, field), *getattr(action, field)])))
+        first.goal_impact = max(first.goal_impact, action.goal_impact)
+        first.evidence_rank = max(first.evidence_rank, action.evidence_rank)
+        first.cost = min(first.cost, action.cost)
+    return result
