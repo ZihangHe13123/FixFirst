@@ -1,20 +1,26 @@
 # H5 validation, 2026-10-05
 
-Source candidate: `d410eb02cde78bb2926aa94378d95668f659afed` (tree
-`194d8ab69f845449cd8a7a786da8cbb035f147f6`). Later commits in this directory
+Source candidate: `bb77c63d02ba376cbc0e4195babe2c01ae15d475` (tree
+`d7481d600f6f73dad836b9415553a157cef824bf`). Later commits in this directory
 only save validation records; the grading code identity stays the same.
 
-- Full development suite: **2051 passed, 75 skipped**, zero failures. One existing
+- Full development suite: **2057 passed, 75 skipped**, zero failures. One existing
   pkg_resources deprecation warning. The log lists every skip: optional live
   interpreter fixtures, environment generation, and Windows-specific checks.
 - Explicit macOS sandbox suite: **116 passed** (107 legacy, 9 H5).
-- H5 targeted tests: **67 passed** (58 ordinary, 9 sandbox).
+- H5 targeted tests: **73 passed** (64 ordinary, 9 sandbox).
 - Knowledge guard tests: **170 passed**. Ruff and diff checks passed.
 - The supplied executable H5 specification: **29/29** agree. Its content digest
   and individual results are in `CLAUDE_SPEC_CHECK.json`.
 - Synthetic Django: **3/3** arms accept a saved settings module, then pass the
   original test in a fresh, clean sandboxed grader process. Packages and scripted
   run receipts are in `DJANGO_SANDBOX.json`.
+
+- Real old-tool startup: pytest 6.2.5 / py 1.10.0 on Python 3.12.13 fails with
+  `AttributeError: __spec__` before pytest hooks run. The trusted startup record
+  plus its normal exit 1 keeps it **graded, fixed=false**; it is not removed from
+  the denominator. Receipt: `EARLY_FAILURE_SANDBOX.json`; reproduction script:
+  `early_failure_acceptance.py --python OLD_ENV/bin/python --out NEW_DIR`.
 
 Only synthetic projects and scripted replies were used for H5. No language model
 was started, no sealed task contents were read, no old results were regraded, and

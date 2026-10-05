@@ -1,0 +1,92 @@
+{
+  "synthetic": true,
+  "language_model_started": false,
+  "grading_policy_sha256": "a7af78542fafd4c3c3469ccb49113a052a9fd265fb7a83fb6beae32f64217e5f",
+  "packages": [
+    "attrs==26.1.0",
+    "iniconfig==2.3.0",
+    "packaging==26.3",
+    "pip==26.2.1",
+    "pluggy==1.6.0",
+    "py==1.10.0",
+    "pytest==6.2.5",
+    "toml==0.10.2"
+  ],
+  "row": {
+    "stage": "grading",
+    "turns": 1,
+    "tool_calls": 1,
+    "pytest_runs": 0,
+    "fixfirst_calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "model_s": 0.0,
+    "tool_s": 0.0,
+    "end": "finish",
+    "bad_calls": 0,
+    "first_green_turn": null,
+    "first_green_s": null,
+    "error": null,
+    "mcp_arguments_filled": 0,
+    "mcp_arguments_overridden": 0,
+    "mcp_goal_filled": 0,
+    "mcp_goal_overridden": 0,
+    "fixfirst_reports": 0,
+    "fixfirst_s": 0.0,
+    "fixfirst_output_chars": 0,
+    "usage_reported": false,
+    "agent_s": 0.0,
+    "harness_s": 0.0,
+    "processes_stopped_at_end": 0,
+    "total_s": 0.0,
+    "violations": {},
+    "violation_categories": [],
+    "grading": "graded",
+    "fixed": false,
+    "reasons": [
+      "H5 pytest failed after the grader probe started; complete success observations are unavailable",
+      "pytest exited with 1 (tests failed): AttributeError: __spec__",
+      "1 tests of the reference were not run, e.g. test_value::test_value"
+    ],
+    "grader_counts": {},
+    "reference_counts": {
+      "passed": 1
+    },
+    "tests_changed": [],
+    "h5_grader_report": "grader/check-001/suite.json",
+    "files_changed": [],
+    "commands": 0,
+    "install_commands": 0,
+    "grader_checks": 1
+  },
+  "suite": {
+    "exit_code": 1,
+    "stopped": false,
+    "counts": {},
+    "outcomes": {},
+    "seconds": 0.1,
+    "summary": "AttributeError: __spec__",
+    "grading_policy": "h5-v1",
+    "grading_policy_sha256": "a7af78542fafd4c3c3469ccb49113a052a9fd265fb7a83fb6beae32f64217e5f",
+    "h5_observation": {
+      "complete": false,
+      "errors": [],
+      "nodes": [],
+      "outcomes": {},
+      "policy": "h5-v1",
+      "schema": 1,
+      "started": true
+    },
+    "h5_state": {
+      "tests": {
+        "test_value.py": "9987c2d90dbc599ee36ccaf34a71139e78082511200eeb322f5188b469d8b0f9"
+      },
+      "options": {},
+      "carriers": [],
+      "tables": {},
+      "errors": []
+    },
+    "h5_process_stopped": false,
+    "h5_junit_error": null
+  }
+}
