@@ -69,6 +69,38 @@ def test_legacy_still_rejects_new_pytest_ini(tmp_path):
     assert "pytest.ini" in run.violations
 
 
+def test_warning_error_project_is_graded_without_silencing_its_warning(tmp_path):
+    config = CONFIG + "filterwarnings=error\n"
+    broken = 'import warnings\nwarnings.warn("project warning must fail", UserWarning)\nVALUE=23\n'
+
+    def project(name):
+        run = build(tmp_path, name)
+        (run.project / "pytest.ini").write_text(config, encoding="utf-8")
+        (run.project / "src/ledger.py").write_text(broken, encoding="utf-8")
+        run.set_baseline()
+        return run
+
+    ref_run, bad, good = [project(name) for name in ("warning-ref", "warning-bad", "warning-good")]
+    try:
+        initial = ref_run.suite()
+        assert initial["exit_code"] == 2 and initial["h5_observation"]["complete"]
+        (ref_run.project / "src/ledger.py").write_text(FILES["src/ledger.py"], encoding="utf-8")
+        ref = ref_run.suite()
+        ref.update(ref_run.reference_fields(ref))
+        assert not rc.validate_reference(ref)
+        bad_row = {}
+        ap.grade(bad, ref, bad_row)
+        assert bad_row["grading"] == "graded" and bad_row["fixed"] is False
+        (good.project / "src/ledger.py").write_text(FILES["src/ledger.py"], encoding="utf-8")
+        good_row = {}
+        ap.grade(good, ref, good_row)
+        assert good_row["grading"] == "graded" and good_row["fixed"] is True
+        assert good_row["violations"] == {}
+    finally:
+        for run in (ref_run, bad, good):
+            ap.close_run(run, {})
+
+
 def test_violations_survive_restoration_and_appear_in_the_row(tmp_path):
     ref = reference(tmp_path)
     run = build(tmp_path, "restore")

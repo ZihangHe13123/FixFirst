@@ -160,6 +160,53 @@ def test_persistent_import_config_works_in_a_clean_fresh_process(tmp_path):
     assert suite(tmp_path, root)["exit_code"] == 2
 
 
+WARNING_CONFIGS = [
+    ("setup.cfg", "[tool:pytest]\npythonpath=src\nfilterwarnings=error\n"),
+    ("pytest.ini", "[pytest]\npythonpath=src\nfilterwarnings=error\n"),
+    ("pyproject.toml", '[tool.pytest.ini_options]\npythonpath=["src"]\nfilterwarnings=["error"]\n'),
+]
+
+
+def warning_reference(tmp_path, name, text):
+    root = tmp_path / "project"
+    write(root, "src/ledger.py", "def total(amounts): return round(sum(amounts), 2)\n")
+    write(root, "test_value.py", "from ledger import total\ndef test_value(): assert total([10, 13])==23\n")
+    write(root, name, text)
+    baseline = pp.snapshot(root)
+    data = suite(tmp_path, root)
+    assert data["exit_code"] == 0
+    data.update(h5_baseline=baseline, h5_violations={}, repair=[])
+    assert not rc.validate_reference(data)
+    return root, data
+
+
+@pytest.mark.parametrize("name,text", WARNING_CONFIGS)
+def test_probe_does_not_turn_its_own_pytest_deprecation_into_a_project_failure(tmp_path, name, text):
+    root, ref = warning_reference(tmp_path, name, text)
+    observation = ref["h5_observation"]
+    assert observation["complete"] and not observation["errors"]
+    assert observation["config"]["effective"]["filterwarnings"] == {"registered": True, "value": ["error"]}
+    assert rc.judge(suite(tmp_path, root), ref, [])["fixed"]
+    assert (root / name).read_text() == text
+
+
+@pytest.mark.parametrize("category", ["UserWarning", "pytest.PytestDeprecationWarning"])
+@pytest.mark.parametrize("phase,code", [("collection", 2), ("call", 1)])
+def test_probe_restores_warning_errors_for_project_collection_and_tests(tmp_path, category, phase, code):
+    root, ref = warning_reference(tmp_path, *WARNING_CONFIGS[0])
+    warning = f'warnings.warn("project warning must fail", {category})\n'
+    imports = "import warnings\nimport pytest\n"
+    body = "def total(amounts):\n"
+    body += "    " + warning if phase == "call" else ""
+    body += "    return round(sum(amounts), 2)\n"
+    write(root, "src/ledger.py", imports + (warning if phase == "collection" else "") + body)
+    result = suite(tmp_path, root)
+    assert result["exit_code"] == code
+    assert result["h5_observation"]["complete"] and not result["h5_observation"]["errors"]
+    assert result["h5_observation"]["config"] == ref["h5_observation"]["config"]
+    assert rc.judge(result, ref, [])["fixed"] is False
+
+
 def test_project_cannot_replace_the_grader_probe_by_module_name(tmp_path):
     root, ref = reference(tmp_path)
     write(root, "_h5_grading_probe.py", 'raise RuntimeError("project probe loaded")\n')

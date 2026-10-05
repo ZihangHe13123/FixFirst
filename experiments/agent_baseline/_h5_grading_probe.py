@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import shlex
+import warnings
 
 ALLOWED = {"pythonpath", "DJANGO_SETTINGS_MODULE"}
 _record = {"schema": 1, "policy": "h5-v1", "started": True, "complete": False,
@@ -46,7 +47,13 @@ def pytest_configure(config):
         ini = getattr(config, "inipath", None) or getattr(config, "inifile", None)
         name = Path(str(ini)).relative_to(_root).as_posix() if ini else None
         raw, effective = {}, {}
-        for key, value in config.inicfg.items():
+        # pytest 9 deprecates this compatibility API. Ignore only pytest's own
+        # deprecation during the read; restore project warning policy before
+        # collecting or running any application code.
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", pytest.PytestDeprecationWarning)
+            recorded = list(config.inicfg.items())
+        for key, value in recorded:
             if key in ALLOWED:
                 continue
             raw[key] = _value(value)
