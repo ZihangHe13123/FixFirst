@@ -214,23 +214,30 @@ held-out projects are added only after A2's results are merged.
   the same time budget; the per-request token cap stays unchanged. If the allowance or turn cap is
   reached, or the truncated choice contains tool calls, it ends as `response_truncated` without
   executing those calls. Missing finish reasons never authorize recovery. Empty messages without
-  calls end as `empty_response`; ordinary nonempty messages without calls retain
-  `stopped_without_tool`. Neither empty replies nor timed-out requests are retried.
+  calls end as `empty_response` when no eligible reminder remains; ordinary nonempty messages
+  without calls retain `stopped_without_tool`. A positive `--max-no-tool-reminders` allowance
+  can recover either kind of complete stop. Timed-out requests are never retried.
   The allowance is recorded in settings and protocol identity when present; legacy rows without it
   retain their previous identity. Old and new runs must be reported separately.
-- **Optional run-condition follow-up (5 Oct).** `--file-read-mode paged` offers character pages
+- **Optional run-condition follow-up (5–6 Oct).** `--file-read-mode paged` offers character pages
   from the start of a file: `read_file(path, offset=0, limit=6000)` returns JSON with `text`,
   `next_offset`, `total_chars` and `eof`. Use the returned next offset for the following page.
   Unicode and long lines are not skipped. The default `tail` mode retains the old clipping contract.
-  `--max-no-tool-reminders 1` permits one reminder per episode after a complete, nonempty
-  `finish_reason=stop` response without tools. It uses the same turn/time budget; a later such
-  response ends normally. Empty, refused, unknown/filtered and timed-out responses do not qualify.
+  `--max-no-tool-reminders` accepts 0–3 reminders per episode after a complete
+  `finish_reason=stop` response without tools, including empty replies. Empty and nonempty
+  replies share this allowance; reminders consume turns and use the original time budget.
+  Once the allowance is exhausted, the next such response ends the run. Explicit refusals,
+  unknown/filtered finish reasons and timed-out responses do not qualify.
   Default 0 keeps the old stopping behavior. Length recovery remains a separate allowance and
   truncated tool calls are still never executed.
   `--top-p` and `--top-k` explicitly send sampling values; omitting them leaves server defaults.
   Settings and protocol identity include these choices. The server's effective settings must be
   checked at registration: sending a field alone does not prove the backend honors it.
   New settings do not change any saved row or its historical protocol id.
+  `--reasoning-effort low/medium/xhigh` optionally sends the chat-template reasoning effort.
+  When omitted, neither the request nor the settings record gains this field. When supplied,
+  it is recorded and separates protocols. Check that the actual model template adopts it;
+  accepting the request alone does not prove that it took effect.
 
   Qwen's [official model card](https://huggingface.co/Qwen/Qwen3.6-35B-A3B) suggests temperature
   0.6, top_p 0.95 and top_k 20 for thinking on precise coding tasks, with 32768 output tokens for
