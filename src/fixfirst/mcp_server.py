@@ -70,7 +70,9 @@ TOOLS = [
                 },
                 "execution": {
                     "type": "object",
-                    "description": "Program entry or unittest settings. No shell command parsing.",
+                    "description": "Program entry or unittest settings for run_project or pass_unittest "
+                    "(auto selects one of these when an execution entry is supplied). "
+                    "Omit execution for pass_tests, collect_tests or check_style. No shell command parsing.",
                     "properties": {
                         "kind": {"type": "string", "enum": ["script", "module", "notebook", "unittest"]},
                         "entry": {"type": "string"},
@@ -164,6 +166,14 @@ def _check_arguments(name, arguments):
         )
 
 
+def _check_execution_goal(goal, execution):
+    if execution is not None and goal not in ("auto", "run_project", "pass_unittest"):
+        raise ToolError(
+            f"For goal {goal!r}, remove the execution parameter and retry with the same goal. "
+            "Execution settings are only for run_project or pass_unittest."
+        )
+
+
 class Server:
     def __init__(self, store_root, mode="full"):
         if mode not in ("full", "facts"):
@@ -220,6 +230,7 @@ class Server:
     def diagnose(self, project, python=None, goal="auto", execution=None):
         if goal not in ["auto", *GOALS]:
             raise ToolError(f"Unknown goal {goal!r}; use one of {', '.join(GOALS)}")
+        _check_execution_goal(goal, execution)
         folder = inspect_folder(str(project), python or None)
         if not folder["ok"]:
             raise ToolError(folder.get("error") or "; ".join(folder["warnings"]))
@@ -289,6 +300,7 @@ class Server:
         what they showed."""
         if goal not in ["auto", *GOALS]:
             raise ToolError(f"Unknown goal {goal!r}; use one of {', '.join(GOALS)}")
+        _check_execution_goal(goal, execution)
         folder = inspect_folder(str(project), python or None)
         if not folder["ok"]:
             raise ToolError(folder.get("error") or "; ".join(folder["warnings"]))

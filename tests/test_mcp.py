@@ -3,8 +3,10 @@ from pathlib import Path
 import subprocess
 import sys
 
+import pytest
+
 from fixfirst.cli import default_store
-from fixfirst.mcp_server import PROTOCOL_VERSIONS, Server
+from fixfirst.mcp_server import PROTOCOL_VERSIONS, Server, TOOLS
 
 
 def call(server, name, arguments=None):
@@ -56,6 +58,31 @@ def test_mistakes_come_back_as_tool_errors_and_leave_no_records(tmp_path):
     assert failed and "does not exist" in text
     text, failed = call(server, "diagnose", {"project": str(tmp_path), "goal": "fast"})
     assert failed and "Unknown goal" in text
+
+
+@pytest.mark.parametrize("mode,tool", [("full", "diagnose"), ("facts", "observe")])
+@pytest.mark.parametrize("goal", ["pass_tests", "collect_tests", "check_style"])
+def test_execution_for_test_goals_tells_the_agent_to_remove_it_without_scanning(tmp_path, monkeypatch, mode, tool, goal):
+    from fixfirst import mcp_server
+
+    def unexpected(*args, **kwargs):
+        raise AssertionError("incompatible execution must be rejected before any project check")
+    monkeypatch.setattr(mcp_server, "inspect_folder", unexpected)
+    server = Server(tmp_path / "store", mode=mode)
+    text, failed = call(server, tool, {"project": str(tmp_path), "goal": goal,
+                                     "execution": {"kind": "module", "entry": "pytest"}})
+    assert failed and "remove the execution parameter" in text and "same goal" in text
+    assert goal in text and server.latest is None and not (tmp_path / "store").exists()
+
+
+def test_execution_help_and_auto_and_native_goals_keep_their_contract():
+    from fixfirst.mcp_server import _check_execution_goal
+
+    help_text = TOOLS[0]["inputSchema"]["properties"]["execution"]["description"]
+    assert "Omit execution for pass_tests" in help_text
+    for goal in ("auto", "run_project", "pass_unittest"):
+        _check_execution_goal(goal, {"kind": "module", "entry": "app"})
+    _check_execution_goal("pass_tests", None)
 
 
 def test_diagnose_check_again_and_explain_follow_one_fix(tmp_path):

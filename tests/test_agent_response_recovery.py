@@ -187,17 +187,72 @@ def test_a_reminder_is_once_per_episode_not_once_between_actions(tmp_path, monke
 
 
 @pytest.mark.parametrize("data,end", [
-    (response("", "stop"), "empty_response"),
     (response("plan", None), "stopped_without_tool"),
     (response("plan", "content_filter"), "stopped_without_tool"),
     (response("plan", "stop", refusal="declined"), "stopped_without_tool"),
     (response("plan", "length"), "response_truncated"),
 ])
-def test_a_reminder_does_not_retry_empty_unknown_filtered_refused_or_truncated_replies(tmp_path, monkeypatch, data, end):
+def test_a_reminder_does_not_retry_unknown_filtered_refused_or_truncated_replies(tmp_path, monkeypatch, data, end):
     stats, records, _, calls = perform(tmp_path, monkeypatch,
         [{"raw_response": data}, {"call": "finish"}], max_no_tool_reminders=1, max_length_continuations=0)
     assert stats["end"] == end and len(records) == 1 and not calls
     assert stats["no_tool_reminders"] == 0
+
+
+@pytest.mark.parametrize("message", [{"role": "assistant"},
+    {"role": "assistant", "content": "  \n"},
+    {"role": "assistant", "reasoning_content": '<tool_call>{"name":"finish"}</tool_call>'}])
+def test_empty_replies_are_saved_and_reminded_without_executing_thinking(tmp_path, monkeypatch, message):
+    data = {"choices": [{"message": message, "finish_reason": "stop"}], "usage": {"completion_tokens": 3}}
+    stats, records, messages, calls = perform(tmp_path, monkeypatch,
+        [{"raw_response": data}, {"call": "finish"}], max_no_tool_reminders=3)
+    assert (stats["end"], stats["empty_responses"], stats["no_tool_reminders"], stats["turns"]) == ("finish", 1, 1, 2)
+    assert records[0]["response"] == data
+    assert messages[2] == {"role": "assistant", "content": "  \n" if message.get("content") else ""}
+    assert messages[3]["role"] == "user" and "original turn and time budget" in messages[3]["content"]
+    assert calls == [("finish", {})]
+
+
+def test_empty_and_text_replies_share_the_three_reminder_limit(tmp_path, monkeypatch):
+    stats, records, _, calls = perform(tmp_path, monkeypatch,
+        [{"say": ""}, {"say": "plan"}, {"say": ""}, {"say": ""}, {"call": "finish"}],
+        max_no_tool_reminders=3)
+    assert (stats["end"], stats["no_tool_reminders"], stats["empty_responses"]) == ("empty_response", 3, 3)
+    assert len(records) == stats["turns"] == 4 and not calls
+
+
+@pytest.mark.parametrize("reason,refusal", [("stop", "declined"), ("content_filter", None), (None, None)])
+def test_empty_refusal_or_non_stop_is_not_reminded(tmp_path, monkeypatch, reason, refusal):
+    stats, _, _, calls = perform(tmp_path, monkeypatch,
+        [{"raw_response": response("", reason, refusal=refusal)}, {"call": "finish"}], max_no_tool_reminders=3)
+    assert stats["end"] == "empty_response" and stats["no_tool_reminders"] == 0 and not calls
+
+
+def test_empty_reminders_do_not_extend_the_turn_limit(tmp_path, monkeypatch):
+    stats, records, _, calls = perform(tmp_path, monkeypatch,
+        [{"say": ""}] * 3 + [{"call": "finish"}], max_turns=3, max_no_tool_reminders=3)
+    assert (stats["end"], stats["turns"], stats["no_tool_reminders"]) == ("empty_response", 3, 2)
+    assert len(records) == 3 and not calls
+
+
+@pytest.mark.parametrize("effort", [None, "low", "medium", "xhigh"])
+def test_reasoning_effort_is_only_sent_and_recorded_when_explicit(monkeypatch, effort):
+    requests = []
+    monkeypatch.setattr(ap, "post_before", lambda url, body, timeout: (requests.append(body), response())[1])
+    settings = ap.Settings(reasoning_effort=effort)
+    ap.chat("stub", [], [], settings, None, 7)
+    assert requests[0].get("reasoning_effort") == settings.record().get("reasoning_effort") == effort
+    if effort is None:
+        assert "reasoning_effort" not in requests[0] and "reasoning_effort" not in settings.record()
+
+
+def test_reasoning_effort_separates_protocols_but_none_keeps_the_old_protocol():
+    import compare_arms as ca
+    row = {"settings": ap.Settings().record(), "harness_commit": "fixed", "network": "on"}
+    old = ca.protocol(row)
+    assert ca.protocol({**row, "settings": {**row["settings"], "reasoning_effort": None}}) == old
+    assert ca.protocol({**row, "settings": {**row["settings"], "reasoning_effort": "low"}}) != old
+    assert ca.protocol({**row, "settings": {**row["settings"], "reasoning_effort": "xhigh"}}) != old
 
 
 def test_a_reminder_never_extends_the_turn_or_time_cap(tmp_path, monkeypatch):
@@ -273,7 +328,8 @@ def test_explicit_sampling_values_are_sent_and_protocols_remain_distinct(monkeyp
 
 
 @pytest.mark.parametrize("options", [["--top-p", "nan"], ["--top-p", "inf"], ["--top-p", "0"],
-                                    ["--top-p", "1.01"], ["--top-k", "-1"], ["--max-no-tool-reminders", "4"]])
+                                    ["--top-p", "1.01"], ["--top-k", "-1"], ["--max-no-tool-reminders", "4"],
+                                    ["--reasoning-effort", "high"], ["--reasoning-effort", "unsupported"]])
 def test_invalid_sampling_and_reminder_values_fail_before_setup(tmp_path, options):
     with pytest.raises(SystemExit) as error:
         ap.main(["--model", "stub", "--cases", "pkg-inventory:lm_renamed", "--out", str(tmp_path / "out"), *options])

@@ -114,7 +114,9 @@ def system_prompt(network: bool, grading_policy=pp.LEGACY) -> str:
         "failing tests. Make the full test suite pass by fixing the root cause in the project. "
         "Every run_command starts a new shell in the project directory with a clean environment. "
         "An export or cd affects only that command; it does not persist to the next command or grading. "
-        "The grader reruns the full original suite in a fresh environment. Save a persistent repair "
+        "The grader reruns the full original suite in a fresh environment. "
+        "It runs python -m pytest in the project directory with the project's Python interpreter. "
+        "Save a persistent repair "
         "in production code, installed packages, or allowed project configuration. "
         f"{protection}{packages} Use the tools; do not guess what a command would print. "
         "When the full test suite passes without temporary shell settings, call finish with one "
@@ -216,6 +218,13 @@ class Settings:
     file_read_mode: str = "tail"
     top_p: float | None = None
     top_k: int | None = None
+    reasoning_effort: str | None = None
+
+    def record(self):
+        result = vars(self).copy()
+        if self.reasoning_effort is None:
+            result.pop("reasoning_effort")
+        return result
 
 
 class ModelError(Exception):
@@ -566,6 +575,8 @@ def chat(model, messages, tools, settings: Settings, fake: FakeModel | None, tim
         body["top_p"] = settings.top_p
     if settings.top_k is not None:
         body["top_k"] = settings.top_k
+    if settings.reasoning_effort is not None:
+        body["reasoning_effort"] = settings.reasoning_effort
     return post_before(f"{BASE}/chat/completions", body, timeout)
 
 
@@ -778,16 +789,16 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
                     stats["end"] = "empty_response"
                 else:
                     stats["end"] = "stopped_without_tool"
-                    if (reason == "stop" and not message.get("refusal")
-                            and stats["no_tool_reminders"] < settings.max_no_tool_reminders
-                            and turn < settings.max_turns and budget.remaining() > 0):
-                        stats["no_tool_reminders"] += 1
-                        messages.append({"role": "user", "content": (
-                            "Your last response did not call a tool. Use the tools to carry out your next step; "
-                            "if the full original test suite passes after a persistent repair, call finish. "
-                            "The original turn and time budget still applies.")})
-                        save()
-                        continue
+                if (reason == "stop" and not message.get("refusal")
+                        and stats["no_tool_reminders"] < settings.max_no_tool_reminders
+                        and turn < settings.max_turns and budget.remaining() > 0):
+                    stats["no_tool_reminders"] += 1
+                    messages.append({"role": "user", "content": (
+                        "Your last response did not call a tool. Use the tools to carry out your next step; "
+                        "if the full original test suite passes after a persistent repair, call finish. "
+                        "The original turn and time budget still applies.")})
+                    save()
+                    continue
                 break
             stats["end"] = "turn_cap"
             finished = timed_out = False
@@ -1520,11 +1531,13 @@ def main(argv=None):
     parser.add_argument("--max-length-continuations", type=continuation_allowance, default=2,
                         help="nonnegative limit, or budget for only the original turn/time caps; partial calls are never continued")
     parser.add_argument("--max-no-tool-reminders", type=int, choices=[0, 1, 2, 3], default=0,
-                        help="up to three reminders after complete nonempty stops without calls; uses the original budget")
+                        help="up to three reminders after complete stops without calls, including empty replies; uses the original budget")
     parser.add_argument("--file-read-mode", choices=["tail", "paged", "lines"], default="tail",
                         help="legacy tail, character pages, or line pages plus exact edit_file and head/tail output")
     parser.add_argument("--top-p", type=float, help="explicit nucleus sampling parameter; otherwise the server default")
     parser.add_argument("--top-k", type=int, help="explicit top-k sampling parameter; otherwise the server default")
+    parser.add_argument("--reasoning-effort", choices=["low", "medium", "xhigh"],
+                        help="explicit chat-template reasoning effort; omitted unless specified")
     parser.add_argument("--seed", type=int, default=20261001)
     parser.add_argument("--attempt", help="a name for this invocation (default: time and a random suffix)")
     parser.add_argument("--out", default=str(FIXFIRST.parent / "agent-runs"))
@@ -1591,7 +1604,7 @@ def main(argv=None):
                   protected_folders=protected_folders, grading_policy=args.grading_policy)
     settings = Settings(args.max_turns, args.run_timeout, args.temperature, args.max_tokens, args.seed,
                         args.call_policy, args.max_length_continuations, args.max_no_tool_reminders,
-                        args.file_read_mode, args.top_p, args.top_k)
+                        args.file_read_mode, args.top_p, args.top_k, args.reasoning_effort)
     manifest_path = Path(args.manifest).resolve()
     manifest = rc.load_manifest(manifest_path) if args.projects else {}
     repairs = rc.tomllib.loads(Path(args.repairs).read_text(encoding="utf-8")) if args.projects else {}
@@ -1625,7 +1638,7 @@ def main(argv=None):
                 row = {"model": args.model, "model_slug": iso.slug(identity), "attempt": attempt, "case": name,
                        "kind": kind, "arm": arm, "call_policy": args.call_policy, "run": run_index, "order": order,
                        "seed": args.seed,
-                       "network": "on" if (ctx.network and kind == "real") else "off", "settings": vars(settings),
+                       "network": "on" if (ctx.network and kind == "real") else "off", "settings": settings.record(),
                        "harness_commit": harness, "uncommitted_changes": dirty, "end": None, "error": None,
                        "grading": None, "fixed": None}
                 row.update(measurement_defaults())

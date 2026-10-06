@@ -93,6 +93,8 @@ def protocol(row) -> str:
     for key in ("max_length_continuations", "max_no_tool_reminders", "file_read_mode", "top_p", "top_k"):
         if key in settings:
             data[key] = settings[key]
+    if settings.get("reasoning_effort") is not None:
+        data["reasoning_effort"] = settings["reasoning_effort"]
     data.update(call_policy=policy(row), network=row.get("network"), harness=row.get("harness_commit"),
                 uncommitted=bool(row.get("uncommitted_changes")))
     if row.get("grading_policy", "legacy") != "legacy":
