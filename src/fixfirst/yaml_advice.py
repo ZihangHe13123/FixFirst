@@ -94,6 +94,7 @@ def refine(session, actions, details, issues):
     for issue_id, evidence in details.items():
         issue = issues.get(issue_id)
         if (not issue or issue.status != "open" or issue.diagnosis != "code_defect"
+                or issue.diagnosis_source not in ("rule", "heuristic", "model")
                 or evidence.get("exception") != "TypeError"):
             continue
         item = evidence.get("operation_context", {})
@@ -135,6 +136,8 @@ def refine(session, actions, details, issues):
                             "Keep all tests and existing value checks unchanged.")
         text = " ".join(instructions)
         related = [a for a in originals if set(a.issue_ids) & set(selected)]
+        proof = [f.fact_id for f in session.facts if f.subject in selected
+                 and f.predicate in ("call_binding_observed", "call_missing_parameter", "call_binding_location")]
         kept.append(Action(
             action_id="yaml-loader-" + source, kind="manual_fix",
             title="Choose an explicit safe YAML loader", instructions=text,
@@ -142,9 +145,11 @@ def refine(session, actions, details, issues):
                         "This is a call-site correction, not evidence that an older release is needed. "
                         "safe_load reads one document and safe_load_all yields multiple documents; "
                         f"both use SafeLoader. Source: {SOURCE}",
-            verification="Re-run the original complete tests with the same interpreter",
+            verification=("Re-run the same program with the same Python, arguments and input"
+                          if session.goal == "run_project" else
+                          "Re-run the original complete tests with the same interpreter"),
             issue_ids=selected, cause="code_defect", rule_ids=["observed-yaml-loader"],
-            reason_refs=list(dict.fromkeys(r for a in related for r in a.reason_refs)),
+            reason_refs=list(dict.fromkeys([*(r for a in related for r in a.reason_refs), *proof])),
             goal_impact=max(a.goal_impact for a in related),
             evidence_rank=max(a.evidence_rank for a in related), cost=1,
         ))
