@@ -39,8 +39,8 @@
    "local_import_advice.py": "c8bc96137ddb2b521e003279452a212259a8ec50646fb185993dd05bf646d663",
    "local_import_context.py": "adaf9d2e3a5f28362adf17dcf2872f9fe06cb1d84cb53617b0da4650fbad3f17",
    "local_imports.py": "6a11416c9235dd02f43e0317e8628ec2d6d11eadb26f59a1ed7b2f59c912489c",
-   "migration_advice.py": "c1c945aa97cbc7e4e38f290d7236a7abb744f8ed2235ce9219e0c1a41804e655",
-   "models.py": "808ee3b29a6c7cbaaadf0c2b12995443bf0847138e83577c05923f5067ac917e",
+   "migration_advice.py": "d8af09ff5521fbf6ad42b059f7ee83ef965cd2747243227534190a947a2c4635",
+   "models.py": "6402399abf2e11df9ec7ed79b054cf130126300809e325354b34fa2be36df398",
    "observed_operations.py": "e4ea76ee418542adbf3d7adaacbe2e83d27467cfee0da540a773d555820d95d8",
    "package_compatibility.py": "8bcefc2ee9c4bfc9b4bb6aecddc841b2d1c3a39b71609b60c96c331416b55c91",
    "parsers.py": "ab00032f1b0324554df364d388f3d7eb9f5ffc002bef0e344442535690842375",
@@ -48,7 +48,7 @@
    "processes.py": "ed5fe143fac256bdbe79f4eba15b1919064967a8cbb9c7a5db21727f97a0f852",
    "project.py": "04a5f9595d696491b03b47fbde9b6a0a5c14c65de026f53b2c035b3f1c61bd78",
    "pytest_settings.py": "992945f2a49ed93c831959914d3c45547ce6428bdacb35462fe46a2084000efb",
-   "reasoning.py": "b630e872aa6706d07df2a8f3057e61d0887fad4903f26b581d684fcf66632d33",
+   "reasoning.py": "4e8f6e2bb5ab2af91b1fa2cd24a10129310257aa8ee04f7654b0ce52baa5fd4e",
    "removal_ownership.py": "ba69c6a520a174d855b78ed038a2a7c317c91352473de181b435b48b335af05f",
    "runner.py": "36db465fa24799bd3f501a516020e04971833353a3b18787e08c6200bb54323b",
    "service.py": "d851a4b40bdef3af9fe1adb2ab51a13ad990866b2c27d631cb56ce6e25b3ed5e",
@@ -56,7 +56,8 @@
    "symbol_advice.py": "66b5da1923f94b973940f340155587d0c3fdd85a61652e85fef1bbfd222e65e4",
    "symbol_context.py": "8c718adc90c4780ac0e3357a08a607a545e7e70f618a958382f7408c5f7da85d",
    "test_results.py": "3d3248cf0a30e4916caccf264dbb7a591745e31da91492c7a4e790ba557ab3ba",
-   "tool_compatibility.py": "e2f38799f69e027930a255ae1372256c07b33874f1a3e2f627cb16d9c915b4f2"
+   "tool_compatibility.py": "e2f38799f69e027930a255ae1372256c07b33874f1a3e2f627cb16d9c915b4f2",
+   "yaml_advice.py": "2ef554ac3f5db4ee6287c71a37a76b0c25a05edec433342b289de854b08add99"
   },
   "e2e_data_sha256": {
    "knowledge/diagnosis_tree.json": "12b6b6516b3787a93fe62632509edad054da186a40212dd93e06429baf5c3778",
@@ -137,7 +138,7 @@
    "P55": "2db6ddc5f1e4b2f8a36ddf297cdd29a93399ff476193934f720759ba9b0f8ad9",
    "P56": "05e382afc62972b78dded354be5690e78f6c395cae53f3a5401e071035cc0e23",
    "P07": "9f8e591f30d6fa3a39b8e8ffbe1e7dea167aff06d3cfbcdb83091a494bf4fd1a",
-   "P10": "1373bd8c100e159b43d78718d984d53c052dc125a8f6b3922b928f9abb5cda77",
+   "P10": "58c54c7b788057e1928b6e23d3034068fcc784138f25234a22f7da28c03876cd",
    "P11": "b9036d515fc68e3cdad2f4025964af85a6dddfb3fd775c586232b8c4dd577212",
    "P12": "c6206ddd47711db16bc340f1fd61b801deee603ceb8d2e25d10cac6451cca18d",
    "P13": "5363420ad352be6ce6867a369f4d9c81497209641fe287038c7dcdd9bc314d2f",
@@ -153,10 +154,10 @@
    "P59": "4251666d832ea250d2d9eb570279ee0e23bbc82e786ed704c87365a0d1609a94",
    "P66": "ba836d8bbdf9b9df0f5443e6c2e4ee77f719524ce76c599943df2f769b34e2f0",
    "P61": "e7217359bcf1c72d359992cec1922c2a35b0e75791ba2cc245b4ede7c7616adb",
-   "P67": "e0c4a5e02f2a5b4fe4e4f498f51ef8256f4335be8aceacb030de52c8d70a2544",
+   "P67": "e3f107a0e528d2d4e4753763302fced4f2e0e974f6d4f1dca72641c0af1fd4aa",
    "P63": "bcb7890ea343f9a63cc5fd4f422e3219b6a2303b13f3ee276af491abfc2ba9a0",
    "P65": "a8c1aaaca15c09e7ca3e092c7b4ea7743a106932979507beb462727766d90268",
-   "P64": "38bbc0ce1f9462f022ada75818e19601449741057d29e3ab9131df3a9fba066c",
+   "P64": "7ee1daa3180b7378b8f0824c2996b566372160633c9171ba94e15f3032393549",
    "P31": "8cd65c7d1e583578db1b479545e4a55514a46a3c779b8f7b3d118a3058f77c22",
    "P32": "a02291b027585644e46f0fd735323e42618261867728d6fe68f30fd40f203c7d",
    "P21": "2b1c61a4b9da53ecea0bb5d3f675ce8f9dfc72598e417bd83cafb8e08e1d83a9",
@@ -197,8 +198,8 @@
    "P85": "4055cd0e29ce8d1f0a0f7cd326cb779e9b967d3b167f15f429006d41aa76eb41",
    "P86": "51cd2258277caa9d8a6cb4c71d1877fd7117ec326faa788800f5de449dad16d8"
   },
-  "package_sha256": "6ca01e0d59ca179a8b14d76d769b3e12eaf4e3b8fbb1f3f5d97588c3b0525f86",
-  "generated": "2026-10-05",
+  "package_sha256": "ebb959b673c67ae4cecc93b7c3184befb054cfd3e10e09db6bfdf811b1d032bf",
+  "generated": "2026-10-07",
   "python": "3.12.13"
  },
  "results": [
@@ -22829,7 +22830,7 @@
       "django.template.library.Library"
      ],
      "dists": {
-      "Django": "6.1.1"
+      "Django": "6.1.2"
      }
     }
    },
@@ -22851,7 +22852,7 @@
      "steps": [
       [
        "Replace Library.assignment_tag: removed in django 2.0",
-       "Observed project location: main.py:3. The target interpreter has django 6.1.1, which no longer provides Library.assignment_tag (removed in 2.0). Change the code to use simple_tag: rename @register.assignment_tag to @register.simple_tag. Since Django 1.9 simple_tag can store its result in a template variable with the same {% tag_name args as variable %} syntax, so the templates stay unchanged.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has django 6.1.2, which no longer provides Library.assignment_tag (removed in 2.0). Change the code to use simple_tag: rename @register.assignment_tag to @register.simple_tag. Since Django 1.9 simple_tag can store its result in a template variable with the same {% tag_name args as variable %} syntax, so the templates stay unchanged.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -23005,7 +23006,7 @@
       "django.http.HttpRequest"
      ],
      "dists": {
-      "Django": "6.1.1"
+      "Django": "6.1.2"
      }
     }
    },
@@ -23027,7 +23028,7 @@
      "steps": [
       [
        "Replace is_ajax: removed in django 4.0",
-       "Observed project location: main.py:7. The target interpreter has django 6.1.1, which no longer provides is_ajax (removed in 4.0). Change the code to use request.headers.get('x-requested-with') == 'XMLHttpRequest', which reproduces is_ajax() exactly, or request.accepts('application/json') when the code really depends on the client's Accept header (the method relied on a jQuery-specific header, so Django removed it). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:7. The target interpreter has django 6.1.2, which no longer provides is_ajax (removed in 4.0). Change the code to use request.headers.get('x-requested-with') == 'XMLHttpRequest', which reproduces is_ajax() exactly, or request.accepts('application/json') when the code really depends on the client's Accept header (the method relied on a jQuery-specific header, so Django removed it). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -23178,7 +23179,7 @@
       "django.core.validators.EmailValidator"
      ],
      "dists": {
-      "Django": "6.1.1"
+      "Django": "6.1.2"
      }
     }
    },
@@ -23200,7 +23201,7 @@
      "steps": [
       [
        "Replace EmailValidator.domain_whitelist: removed in django 4.1",
-       "Observed project location: main.py:3. The target interpreter has django 6.1.1, which no longer provides EmailValidator.domain_whitelist (removed in 4.1). Change the code to use the domain_allowlist attribute (renamed together with the allowlist argument). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has django 6.1.2, which no longer provides EmailValidator.domain_whitelist (removed in 4.1). Change the code to use the domain_allowlist attribute (renamed together with the allowlist argument). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -23361,7 +23362,7 @@
       "django.contrib.auth.base_user.BaseUserManager"
      ],
      "dists": {
-      "Django": "6.1.1"
+      "Django": "6.1.2"
      }
     }
    },
@@ -23383,7 +23384,7 @@
      "steps": [
       [
        "Replace make_random_password: removed in django 5.1",
-       "Observed project location: main.py:7. The target interpreter has django 6.1.1, which no longer provides make_random_password (removed in 5.1). Change the code to use Python's secrets module, as the Django documentation recommends, for example secrets.token_urlsafe(12), or django.utils.crypto.get_random_string(12, allowed_chars) when a specific alphabet is needed. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:7. The target interpreter has django 6.1.2, which no longer provides make_random_password (removed in 5.1). Change the code to use Python's secrets module, as the Django documentation recommends, for example secrets.token_urlsafe(12), or django.utils.crypto.get_random_string(12, allowed_chars) when a specific alphabet is needed. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -23559,7 +23560,7 @@
       "django.test.TransactionTestCase"
      ],
      "dists": {
-      "Django": "6.1.1"
+      "Django": "6.1.2"
      }
     }
    },
@@ -23581,7 +23582,7 @@
      "steps": [
       [
        "Replace assertQuerysetEqual: removed in django 5.1",
-       "Observed project location: main.py:10. The target interpreter has django 6.1.1, which no longer provides assertQuerysetEqual (removed in 5.1). Change the code to use assertQuerySetEqual (capital S) with the same arguments. Since Django 4.1 it no longer applies repr() to the queryset, so expected values written as repr strings such as '<Book: A>' need transform=repr, or compare model instances or values_list() results instead.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:10. The target interpreter has django 6.1.2, which no longer provides assertQuerysetEqual (removed in 5.1). Change the code to use assertQuerySetEqual (capital S) with the same arguments. Since Django 4.1 it no longer applies repr() to the queryset, so expected values written as repr strings such as '<Book: A>' need transform=repr, or compare model instances or values_list() results instead.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -23757,7 +23758,7 @@
       "django.test.SimpleTestCase"
      ],
      "dists": {
-      "Django": "6.1.1"
+      "Django": "6.1.2"
      }
     }
    },
@@ -23779,7 +23780,7 @@
      "steps": [
       [
        "Replace assertFormsetError: removed in django 5.1",
-       "Observed project location: main.py:10. The target interpreter has django 6.1.1, which no longer provides assertFormsetError (removed in 5.1). Change the code to use assertFormSetError (capital S). It takes the formset object, for example response.context['formset'], instead of the response and a formset name (Django 5.0 removed the old call style).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:10. The target interpreter has django 6.1.2, which no longer provides assertFormsetError (removed in 5.1). Change the code to use assertFormSetError (capital S). It takes the formset object, for example response.context['formset'], instead of the response and a formset name (Django 5.0 removed the old call style).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -29612,7 +29613,7 @@
       "openai.OpenAI"
      ],
      "dists": {
-      "openai": "3.24.0"
+      "openai": "3.26.0"
      }
     }
    },
@@ -29634,7 +29635,7 @@
      "steps": [
       [
        "Replace OpenAI.edits: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.24.0, which no longer provides OpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.26.0, which no longer provides OpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -29847,7 +29848,7 @@
       "openai.OpenAI"
      ],
      "dists": {
-      "openai": "3.24.0"
+      "openai": "3.26.0"
      }
     }
    },
@@ -29869,7 +29870,7 @@
      "steps": [
       [
        "Replace OpenAI.fine_tunes: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.24.0, which no longer provides OpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.26.0, which no longer provides OpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -30082,7 +30083,7 @@
       "openai.AsyncOpenAI"
      ],
      "dists": {
-      "openai": "3.24.0"
+      "openai": "3.26.0"
      }
     }
    },
@@ -30104,7 +30105,7 @@
      "steps": [
       [
        "Replace AsyncOpenAI.edits: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.24.0, which no longer provides AsyncOpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.26.0, which no longer provides AsyncOpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -30317,7 +30318,7 @@
       "openai.AsyncOpenAI"
      ],
      "dists": {
-      "openai": "3.24.0"
+      "openai": "3.26.0"
      }
     }
    },
@@ -30339,7 +30340,7 @@
      "steps": [
       [
        "Replace AsyncOpenAI.fine_tunes: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.24.0, which no longer provides AsyncOpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.26.0, which no longer provides AsyncOpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
