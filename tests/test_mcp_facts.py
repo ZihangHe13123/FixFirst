@@ -67,7 +67,7 @@ def test_observe_reports_what_the_checks_showed_without_any_conclusion(tmp_path)
     project = missing_module_project(tmp_path)
     full, failed = call(Server(tmp_path / "full"), "diagnose", {"project": str(project), "python": sys.executable})
     # The full mode concludes something about this failure and advises what to do.
-    assert not failed and "cause" in full.lower() and "Why:" in full and "Confirm:" in full
+    assert not failed and "cause" in full.lower() and "Action:" in full and "Confirm:" in full
     server = Server(tmp_path / "facts", mode="facts")
     text, failed = call(server, "observe", {"project": str(project), "python": sys.executable})
     assert not failed
