@@ -107,6 +107,10 @@ def build_view(session: Session) -> dict:
                 "possible": cause_name(action.cause) if hedged else None,
                 "title": action.title,
                 "explanation": action.explanation,
+                "instructions": action.instructions,
+                "confirmed_code_defect": bool(related) and all(
+                    i.diagnosis == "code_defect" and i.diagnosis_source == "rule" for i in related
+                ),
                 "command": shell(action.command) if action.command else None,
                 "confirm": action.verification,
                 # Only a rule's conclusion is shown as the cause; guesses are marked as such.

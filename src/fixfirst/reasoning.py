@@ -280,6 +280,7 @@ def rule_actions(session: Session, base: engine.FactBase, by_id) -> list[Action]
                 kind=template["kind"],
                 title=engine.render(template["title"], bindings, filters=filters),
                 explanation=engine.render(template["explanation"], bindings, filters=filters),
+                instructions=engine.render(template.get("instructions", ""), bindings, filters=filters),
                 verification=engine.render(template["verification"], bindings, filters=filters),
                 check=template.get("check"),
                 issue_ids=proposal.issue_ids,
@@ -450,6 +451,9 @@ def infer_and_plan(session: Session):
     summarise_diagnoses(session, observed_active, base.facts)
     by_id = {i.issue_id: i for i in observed_active}
     actions = rule_actions(session, base, by_id) + verification_actions(session, active, base.facts)
+    from .yaml_advice import refine as refine_yaml
+
+    actions = refine_yaml(session, actions, details, by_id)
     from . import observed_operations
 
     generic_actions = observed_operations.generic_snapshots(actions)
@@ -479,6 +483,11 @@ def infer_and_plan(session: Session):
 
     bind_commands(session, actions, project_index(session)[1])
     outcomes = observed_operations.refine(session, actions, details, by_id, generic_actions)
+    for action in actions:
+        # Older/custom rules and refinements already put their operation in the
+        # explanation. Keep it complete rather than guessing a sentence boundary.
+        if action.kind == "manual_fix" and not action.command and not action.instructions:
+            action.instructions = action.explanation
     session.actions = order_actions(actions, session.facts)
     session.inference_trace = observed_operations.trace(session, by_id, details, outcomes)
     session.goal_status = goal_status(session, active)
