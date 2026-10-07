@@ -91,12 +91,17 @@ def test_diagnose_check_again_and_explain_follow_one_fix(tmp_path):
     text, failed = call(server, "diagnose", {"project": str(project), "python": sys.executable})
     assert not failed and "1 problem to fix" in text and "call check_again" in text
     assert "1. " in text and "test_app.py:5" in text and "Defect in project code or tests" in text
-    # Ruff's finding on `1 == 2` is mentioned, but not as a step towards the test goal.
-    assert "Other findings that do not block this goal (1)" in text
+    # An unrelated lint finding is available on request, not in every diagnosis.
+    assert "Other findings that do not block" not in text
+    assert "FixFirst suggests no environment change for this failure" in text
+    assert "Look at the project's own code or tests" in text
+    assert "not an environment problem" not in text
+    assert "will not repair" not in text
     session_id = text.split()[2]
     assert (tmp_path / "store" / session_id / "session.json").is_file()
     explained, failed = call(server, "explain", {"step": 1})
     assert not failed and "Error:" in explained and "pytest_run" in explained
+    assert "Other findings that do not block this goal (1)" in explained
     assert call(server, "explain", {"step": 9})[1]
     (project / "app.py").write_text("def ready():\n    return 1 == 1\n")
     text, failed = call(server, "check_again", {"session_id": session_id})

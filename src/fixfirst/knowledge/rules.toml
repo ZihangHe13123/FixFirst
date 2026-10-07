@@ -882,6 +882,7 @@ cause = "version_incompatibility"
 issue = "?i"
 cost = 2
 title = "Replace {?x}: removed in {?d} {?v}"
+instructions = "Change the code to use {?r} in place of {?x}. Keep the original tests unchanged."
 explanation = "The target interpreter has {?d} {?iv}, which no longer provides {?x} (removed in {?v}). Change the code to use {?r}. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
 verification = "Re-run the affected tests with the same interpreter"
 
@@ -1150,6 +1151,7 @@ issue = "?i"
 cost = 1
 title = "{?title}"
 explanation = "{?guide} The recorded exception shows a rejected input; verify the intended correction with the original checks."
+instructions = "{?guide}"
 verification = "Rerun the affected program or tests without weakening the test expectations"
 
 [[rule]]
@@ -1205,6 +1207,7 @@ issue = "?i"
 cost = 1
 title = "{?title}"
 explanation = "{?why} This environment has {?d} {?iv}. {?fix} The compatibility diagnosis is a hypothesis supported by this symptom and version context; verify the result with the original test suite."
+instructions = "{?fix}"
 verification = "Run the affected tests and then the full suite, without changing the tests"
 
 [[rule]]

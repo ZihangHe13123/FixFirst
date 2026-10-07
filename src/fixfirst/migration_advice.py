@@ -86,4 +86,7 @@ def refine(actions, details):
                 action.explanation = (
                     f"{item['source_location']}: replace `{statement}` with `{replacement}`. "
                     "Keep the surrounding indentation and other code unchanged. " + action.explanation)
+        # Exact imports/keywords and all restrictions on the documented replacement
+        # are part of the operation; an abbreviated rationale must not lose them.
+        action.instructions = action.explanation
     return actions

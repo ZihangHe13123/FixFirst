@@ -149,6 +149,8 @@ class Action(Record):
     title: str
     explanation: str
     verification: str
+    # The complete operation, including conditions; MCP never truncates this text.
+    instructions: str = ""
     check: Tool | None = None
     issue_ids: list[str] = Field(default_factory=list)
     reason_refs: list[str] = Field(default_factory=list)

@@ -275,6 +275,11 @@ dependency). An agent gets three tools:
 | `check_again` | re-runs the checks after the agent changed the code and reports what is now fixed and what is new; the goal counts as reached only when a real check passes |
 | `explain` | the error, rules and documentation behind a step, and the checks that ran; runs nothing |
 
+Replies put complete commands and source edits before their explanations. The operation and its
+conditions are kept intact even when a long rationale is shortened. Unrelated findings are available
+through `explain`. When a rule confirms a code defect, the reply recommends inspecting the
+project's own code or tests and suggests no environment change for that failure.
+
 The server's instructions tell the agent to diagnose first, fix the first step, check again, and
 stop once the goal is reached. The agent edits the code; FixFirst never does. Sessions are kept in
 `~/.fixfirst/sessions`, outside the project being fixed, and `fixfirst --store

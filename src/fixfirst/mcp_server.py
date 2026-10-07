@@ -288,6 +288,9 @@ class Server:
                              "from similar cases. Check it against the error before acting on it.")
         else:
             lines.append("No step is open for this goal.")
+        if view["other"]:
+            shown = "; ".join(s["title"] for s in view["other"])
+            lines.append(f"Other findings that do not block this goal ({len(view['other'])}): {shown}")
         lines.append("Checks recorded (latest last):")
         for run in session.runs[-6:]:
             summary = run.test_summary or {}
@@ -342,6 +345,16 @@ def _numbered(view) -> list[dict]:
 
 def _step(number, step, explanation_limit=600) -> list[str]:
     lines = [f"{number}. {step['title']}" + (" (optional)" if step["optional"] else "")]
+    instructions = step.get("instructions") or ""
+    if step["command"]:
+        lines.append(f"   Command: {step['command']}")
+    if instructions:
+        lines.append(f"   Action: {_plain(instructions)}")
+    elif not step["command"] and step["explanation"]:
+        # Old saved actions have no separate operation. Do not cut a working
+        # recipe out of their only text, even if the rule predates this field.
+        instructions = _plain(step["explanation"])
+        lines.append(f"   Action: {instructions}")
     if step["optional"]:
         lines.append("   Optional: this does not change how the code runs; fix it if every test must pass.")
         if step["impact"]:
@@ -355,13 +368,16 @@ def _step(number, step, explanation_limit=600) -> list[str]:
         lines.append(f"   Cause: {step['cause']}" + (f" (rule {', '.join(rules)})" if rules else ""))
     if step["possible"]:
         lines.append(f"   Likely cause, not confirmed: {step['possible']}")
+    if step.get("confirmed_code_defect"):
+        lines.append("   Scope: FixFirst suggests no environment change for this failure. "
+                     "Look at the project's own code or tests.")
     explanation = step["explanation"] or ""
+    if _plain(explanation) == instructions:
+        explanation = ""
     if explanation_limit and len(explanation) > explanation_limit:
         explanation = explanation[:explanation_limit].rsplit(" ", 1)[0] + " ... (explain shows the rest)"
     if explanation:
-        lines.append(f"   Why: {explanation}")
-    if step["command"]:
-        lines.append(f"   Command: {step['command']}")
+        lines.append(f"   Why: {_plain(explanation)}")
     if step["gather"]:
         lines.append("   FixFirst collects this itself: call check_again.")
     if step["search"]:
@@ -390,10 +406,6 @@ def render(session, view, notes=()) -> str:
             lines += _step(number, step)
         if len(steps) > MAX_STEPS:
             lines.append(f"({len(steps) - MAX_STEPS} more steps; fix these first, then check again.)")
-    if view["other"]:
-        other = view["other"]
-        shown = "; ".join(s["title"] for s in other[:3]) + ("; ..." if len(other) > 3 else "")
-        lines += ["", f"Other findings that do not block this goal ({len(other)}): {shown}"]
     if view["pending"]:
         lines.append(f"Waiting to be re-checked ({len(view['pending'])}): an earlier error stopped the check "
                      "before these; they are checked again once the steps above are fixed.")
