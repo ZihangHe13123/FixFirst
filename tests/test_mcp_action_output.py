@@ -45,7 +45,9 @@ def test_old_saved_action_keeps_its_entire_only_recipe():
 @pytest.mark.parametrize("confirmed", [False, True])
 def test_environment_boundary_is_only_stated_for_confirmed_code_defects(confirmed):
     lines = _step(1, step(confirmed_code_defect=confirmed, cause="Defect in project code or tests"))
-    assert any("not an environment problem" in line for line in lines) is confirmed
+    assert any("FixFirst suggests no environment change for this failure" in line
+               for line in lines) is confirmed
+    assert not any("not an environment problem" in line or "will not repair" in line for line in lines)
 
 
 def test_web_button_instruction_is_translated_in_the_operation():

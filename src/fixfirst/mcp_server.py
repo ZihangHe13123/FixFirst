@@ -369,8 +369,8 @@ def _step(number, step, explanation_limit=600) -> list[str]:
     if step["possible"]:
         lines.append(f"   Likely cause, not confirmed: {step['possible']}")
     if step.get("confirmed_code_defect"):
-        lines.append("   Scope: This is a project code or test defect, not an environment problem. "
-                     "Changing the environment will not repair the reported defect.")
+        lines.append("   Scope: FixFirst suggests no environment change for this failure. "
+                     "Look at the project's own code or tests.")
     explanation = step["explanation"] or ""
     if _plain(explanation) == instructions:
         explanation = ""

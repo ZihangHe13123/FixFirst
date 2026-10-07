@@ -57,7 +57,7 @@
    "symbol_context.py": "8c718adc90c4780ac0e3357a08a607a545e7e70f618a958382f7408c5f7da85d",
    "test_results.py": "3d3248cf0a30e4916caccf264dbb7a591745e31da91492c7a4e790ba557ab3ba",
    "tool_compatibility.py": "e2f38799f69e027930a255ae1372256c07b33874f1a3e2f627cb16d9c915b4f2",
-   "yaml_advice.py": "2ef554ac3f5db4ee6287c71a37a76b0c25a05edec433342b289de854b08add99"
+   "yaml_advice.py": "939ba924e6f6635c1eaf8e57e27a926132b094b4263c3306da5e321c83a7977b"
   },
   "e2e_data_sha256": {
    "knowledge/diagnosis_tree.json": "12b6b6516b3787a93fe62632509edad054da186a40212dd93e06429baf5c3778",
@@ -198,7 +198,7 @@
    "P85": "4055cd0e29ce8d1f0a0f7cd326cb779e9b967d3b167f15f429006d41aa76eb41",
    "P86": "51cd2258277caa9d8a6cb4c71d1877fd7117ec326faa788800f5de449dad16d8"
   },
-  "package_sha256": "ebb959b673c67ae4cecc93b7c3184befb054cfd3e10e09db6bfdf811b1d032bf",
+  "package_sha256": "92e5c7268f1f239aa45d7dafcbd7c20cb81e1d6fbd1cf3e34ec0774cd300bd41",
   "generated": "2026-10-07",
   "python": "3.12.13"
  },

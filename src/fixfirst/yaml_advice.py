@@ -123,14 +123,14 @@ def refine(session, actions, details, issues):
     for source in sorted({issues[i].diagnosis_source for i in eligible}):
         selected = [i for i in eligible if issues[i].diagnosis_source == source]
         locations = {eligible[i]["location"]: eligible[i] for i in selected}
-        instructions = [
-            "For standard YAML data, make these changes; applications that require custom tags "
-            "must review their constructors and select a suitable loader instead:"]
+        instructions = []
         for edit in locations.values():
             if edit["import"]:
                 instructions.append(f"At {edit['location']}, add `{edit['import']}` immediately before the "
                                     "failing statement, keeping its indentation.")
             instructions.append(f"At {edit['location']}, replace `{edit['before']}` with `{edit['after']}`.")
+        instructions.append("These changes apply to standard YAML data. Applications that require custom tags "
+                            "must review their constructors and select a suitable loader instead.")
         instructions.append("For any other observed multi-document yaml.load_all omission, use "
                             "yaml.safe_load_all, retaining the surrounding generator consumption. "
                             "Keep all tests and existing value checks unchanged.")

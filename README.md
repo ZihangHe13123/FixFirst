@@ -277,8 +277,8 @@ dependency). An agent gets three tools:
 
 Replies put complete commands and source edits before their explanations. The operation and its
 conditions are kept intact even when a long rationale is shortened. Unrelated findings are available
-through `explain`. When a rule confirms a code defect, the reply explains that changing the
-environment will not repair it.
+through `explain`. When a rule confirms a code defect, the reply recommends inspecting the
+project's own code or tests and suggests no environment change for that failure.
 
 The server's instructions tell the agent to diagnose first, fix the first step, check again, and
 stop once the goal is reached. The agent edits the code; FixFirst never does. Sessions are kept in

@@ -35,7 +35,8 @@ def test_real_loader_omission_has_an_executable_source_recipe(tmp_path, name, ex
     steps = build_view(session)["steps"]
     assert steps[0]["title"] == "Choose an explicit safe YAML loader"
     assert ("safe_load_all" if name == "load_all" else "safe_load") in steps[0]["instructions"]
-    assert steps[0]["instructions"].startswith("For standard YAML data")
+    assert steps[0]["instructions"].startswith("At app.py:3,")
+    assert steps[0]["instructions"].index("replace `") < steps[0]["instructions"].index("standard YAML data")
     assert "custom tags" in steps[0]["instructions"]
     assert not steps[0]["command"]
     before = hashlib.sha256(test.read_bytes()).hexdigest()
