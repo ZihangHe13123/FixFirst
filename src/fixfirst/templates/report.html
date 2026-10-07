@@ -61,8 +61,9 @@ input[type=search],input[type=text]{border:1px solid var(--line);border-radius:8
 {% for action in session.actions %}<article class="card {{ 'featured' if loop.first and session.goal_status != 'achieved' }}">
 <span class="number">{{ '%02d'|format(loop.index) }}</span><span class="kind">{{ {'inspect':'Gather evidence','rerun':'Verify','manual_fix':'Manual fix'}[action.kind] }}</span>
 <h3>{{ action.title }}</h3>
+{% if action.instructions %}<p>{{ action.instructions }}</p>{% endif %}
 {% if action.cause %}<span class="badge cause {{ 'model' if action.evidence_rank == 0 and action.kind == 'inspect' }}">{{ causes[action.cause].label if action.cause in causes else action.cause }}</span>{% endif %}
-<p>{{ action.explanation }}</p>{% if action.command %}<small>Run in {{ command_shell }}</small><pre>{{ action.command|shell }}</pre>{% endif %}<small>How to confirm</small><p class="muted">{{ action.verification }}</p>
+{% if action.explanation != action.instructions %}<p>{{ action.explanation }}</p>{% endif %}{% if action.command %}<small>Run in {{ command_shell }}</small><pre>{{ action.command|shell }}</pre>{% endif %}<small>How to confirm</small><p class="muted">{{ action.verification }}</p>
 {% if action.blocked_reasons %}<p class="badge blocked">Precondition not met</p><p class="note">{{ action.blocked_reasons|join(' · ') }}</p>{% endif %}
 {% if commands.get(action.action_id) and not live %}<div class="command"><code>{{ commands[action.action_id] }}</code><button class="copy" data-command="{{ commands[action.action_id] }}">Copy</button></div>
 {% elif not live %}<p class="note">{{ 'Read-only shared report' if public else 'Make the change by hand, then verify from the command line' }}</p>{% endif %}

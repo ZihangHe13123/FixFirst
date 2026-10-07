@@ -177,9 +177,12 @@ def show(session):
     print("\nNext steps (manual fixes are never run for you):")
     for rank, step in enumerate(build_view(session)["steps"][:5], 1):
         print(f"  {rank}. {step['id']} — {step['title']}")
-        print(f"     {step['explanation']}")
         if step["command"]:
             print(f"     {step['command']}")
+        if step.get("instructions"):
+            print(f"     {step['instructions']}")
+        if step["explanation"] != step.get("instructions"):
+            print(f"     {step['explanation']}")
         action = next(a for a in session.actions if a.action_id == step["id"])
         if action.check:
             print(f"     Run check: fixfirst run {session.session_id} {action.action_id}")
