@@ -1,0 +1,6 @@
+﻿model_alias,id,answer_status,disposition
+model-1,django-storages,invalid,service_no_answer
+model-1,robotframework,invalid,service_no_answer
+model-2,django-storages,invalid,service_no_answer
+model-2,python-markdown,request_error,service_no_answer
+model-3,django-storages,invalid,service_no_answer
