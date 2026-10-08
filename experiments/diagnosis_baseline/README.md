@@ -1,5 +1,13 @@
 # One-shot diagnosis baseline (task B3)
 
+## Real-project results (3 October 2026)
+
+The 12-project batch has completed A/C scoring, reconciliation and unblinding.
+See [the report](real-results-20261003/REPORT.md) and its reproducible public summary.
+The original blank delivery is retained in [real-scoring-20261003](real-scoring-20261003/).
+The generated-data and 30-hard-case formal runs remain outstanding; the development
+trials below do not complete those runs.
+
 A local model gets the same evidence as FixFirst and names the root cause and the first step,
 with no tools and no chance to run anything. This measures what the model *knows*, independently
 of how well it can act as an agent (that is B7's question).
