@@ -1,12 +1,11 @@
 # Report and guide completion checklist
 
-Version 0.2 contains the completed A2, B3 and local B7 results, system description, verified literature, limitations and the full installation guide. It is a review draft, not the final submission.
+Version 0.3 contains the completed A2, B3, local B7 and independently recomputed DeepSeek results, system description, verified literature, limitations and the full installation guide. The cloud comparison is reported separately. It is a review draft, not the final submission.
 
 ## Evidence still needed
 
 | Item | Required completion |
 |---|---|
-| DeepSeek comparison | Finish the registered 132 runs, obtain independent recomputation, add the separate cloud result with its protocol differences |
 | User study C2 | Human-run sessions, anonymous source tables and reviewed analysis; demonstration fixtures must remain excluded |
 | Windows C3 | Teammate installs the frozen release and follows the guide on a real machine; record problems and screenshots |
 | Independent guide installation | A person who did not write the guide follows it on macOS and Windows |

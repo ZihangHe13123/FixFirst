@@ -4,11 +4,11 @@
 
 ## Current review version
 
-`FixFirst_Report_v0.2_20261009.docx` is the current populated review draft. Its PDF contains the full B14 guide in Appendix C. The separate `FixFirst_User_Guide_v0.1_20261009.docx` and PDF contain the same guide; `docs/USER_GUIDE.md` is its repository copy.
+`FixFirst_Report_v0.3_20261009.docx` is the current populated review draft. It adds the independently recomputed DeepSeek result as a separate cloud comparison. Its PDF contains the full B14 guide in Appendix C. The separate `FixFirst_User_Guide_v0.1_20261009.docx` and PDF contain the same guide; `docs/USER_GUIDE.md` is its repository copy.
 
-The v0.2 Markdown file records the source used to generate this draft. After manual Word edits, the Word file remains authoritative; do not regenerate it without reconciling those edits. Version 0.2 uses a static Contents list, rather than the original empty field. Remaining evidence and human contributions are listed in [COMPLETION-CHECKLIST.md](COMPLETION-CHECKLIST.md).
+The v0.3 Markdown file records the content used to edit this draft. After manual Word edits, the Word file remains authoritative; do not regenerate it without reconciling those edits. Versions 0.2 and 0.3 use a static Contents list. The earlier reports and standalone guide are preserved unchanged. Remaining evidence and human contributions are listed in [COMPLETION-CHECKLIST.md](COMPLETION-CHECKLIST.md).
 
-The report has 22 pages and the standalone guide has eight. Every rendered page was inspected, and PDF text extraction was checked. Artifact identities and source checks are recorded in [DOCUMENT-QA-20261009.json](../report-assets/DOCUMENT-QA-20261009.json).
+The report has 23 pages and the standalone guide has eight. Every final report page was visually reviewed or confirmed byte-identical to an already reviewed page, and PDF text extraction was checked. Artifact identities and source checks are recorded in [DOCUMENT-QA-v0.3-20261009.json](../report-assets/DOCUMENT-QA-v0.3-20261009.json). The previous [QA record](../report-assets/DOCUMENT-QA-20261009.json) covers the unchanged guide and v0.2 report.
 
 | 文件 | 内容 |
 |---|---|
@@ -19,7 +19,7 @@ The report has 22 pages and the standalone guide has eight. Every rendered page 
 
 **从 v0.1 起以 docx 为准**，直接在 Word 或 WPS 里改。`report-skeleton.md` 只用来生成第一版，之后不再同步。
 
-- **目录**：打开文件后在目录上右键，选"更新域"（WPS 里叫"更新目录"），目录就会填上。
+- **目录**：v0.2 起使用静态目录，改章节标题时一并核对。v0.1 的空目录域可在 Word/WPS 里更新。
 - **占位**：`[PLACEHOLDER: …]` 是待写的正文；`[PENDING: 任务, 来源]` 是还没跑出来的数字，由对应任务交结果后填。定稿前全文搜索这两个词，确认一个不剩。
 - **版本**：每到一个节点（初稿 10/19、定稿 10/23、提交版 10/24），另存为新文件 `FixFirst_Report_v0.<n>_<日期>.docx`，并在 `VERSIONS.md` 里加一行。旧版本不删。
 - **只用英文**：正文和文件名都用英文。导出 PDF 的机器没有中文字体时，中文会显示成空白（v0.1 第一次生成时第 3、6 页的 `docs/技术原理详解.md` 就是这样）。要引用中文文档，写 "technical guide §n"，对照见 `SOURCES.md`。每次导出 PDF 后逐页看一遍。

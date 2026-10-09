@@ -1,5 +1,25 @@
 # 报告中图、表和数字的来源
 
+## Version 0.3 cloud addition checked 9 October 2026
+
+Version 0.3 carries forward the version 0.2 evidence below and adds section 5.6. Aggregate values and source identities are in `docs/report-assets/B11-results-v0.3-20261009.json`. The local and cloud results are separate: local cells have five repetitions and cloud cells have three.
+
+| Evidence | Source and interpretation |
+|---|---|
+| Cloud primary result | Local `workbench/codex-deepseek-comparison-20261009/analysis-20261009/UPLIFT-MAIN.json`: 132 runs, 54/54 scope repairs in each arm; ratios 0.82 turns, 0.71 time and 0.72 tokens over 18 tasks. First-attempt analysis is byte-identical because no retries occurred |
+| Independent recomputation and record check | Local `workbench/claude-h5-acceptance-20261005/DEEPSEEK-RESULTS-CHECK-20261009.md`; matches the registered analysis and independently checks 14,321 archived files and 1,320 requests/replies. This is independent AI review, not human replication |
+| Exploratory descriptions and cost | The same review and its retained per-task tables: five-task savings partition is post hoc; F totals use a different aggregation. CNY 4.73 formal / 5.05 with probes are peak-price usage accounting, not the actual off-peak bill |
+| Conditions | Registration `7dca2f77...` bound protocol v1.15 at launch. Protocol v1.16 subsequently records results only. Frozen product `5c224cf`, H5 and task pack remain unchanged; provider sampling, reasoning amount, cache and model alias are not frozen |
+
+Source SHA256 values:
+
+- Primary analysis: `c35b345f48ae2813f4fc35826271affc4711fefff7325d9d0c13bb6eb455b1e0`.
+- Completion audit: `81a8076e95a748fa4c6b50febf61f39df33aa5396ad22e33adfab4e91155858f`.
+- Independent review: `959cdc6556ee6f109827a88e898172f7beb5294a4be98c11f95951ba2269aec3`.
+- Launch registration: `7dca2f775447bcb5c572c3606c15b99894a27ac175e5510eda2430617c55dc17`.
+- Launch protocol v1.15: `ca950b0d50ed62a1da4712449b6a63729420fb25010c222d9a7c4774b62cee48`.
+- Results-only protocol v1.16: `50110399fb763b96a68c6c7f95ba17ff33745f3e9f2d9b208928e441c1291461`.
+
 ## Version 0.2 source register checked 9 October 2026
 
 The original skeleton register below is historical. This table identifies the populated version 0.2. Aggregate values and source SHA256 values are retained in `docs/report-assets/B11-results-20261009.json`. Workbench artifacts are local records, not files assumed to be present in public main.
