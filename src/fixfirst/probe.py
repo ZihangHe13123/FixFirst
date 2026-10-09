@@ -15,6 +15,8 @@ _runtime = importlib.util.module_from_spec(_runtime_spec)
 _runtime_spec.loader.exec_module(_runtime)
 
 _dropped = False
+# Project fixtures may replace or clear os.environ after the probe is loaded.
+_probe_path = os.environ.get("FIXFIRST_PROBE")
 
 # Pytest's streams already use UTF-8. Its tests' children must inherit the user's
 # encoding policy, not FixFirst's transport setting.
@@ -28,7 +30,7 @@ if "FIXFIRST_USER_IOENCODING" in os.environ:
 
 def emit(data, final=False):
     global _dropped
-    path = os.environ.get("FIXFIRST_PROBE")
+    path = _probe_path
     if not path:
         return
     text = json.dumps(data, ensure_ascii=True) + "\n"
