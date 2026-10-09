@@ -44,6 +44,7 @@ def cause_name(label: str | None) -> str | None:
 def build_view(session: Session) -> dict:
     """Status headline, ordered steps and fixed issues for one session."""
     issues = {i.issue_id: i for i in session.issues}
+    from .test_selection import comparable_scopes
     events = {e.event_id: e for e in session.events}
     facts = {f.fact_id: f for f in session.facts}
     rule_text = _rule_descriptions()
@@ -137,11 +138,13 @@ def build_view(session: Session) -> dict:
     fixed = [
         {"title": i.title, "cause": cause_name(i.diagnosis), "note": i.note}
         for i in session.issues
-        if i.status == "resolved"
+        if i.status == "resolved" and (i.tool != "pytest_run" or comparable_scopes(
+            i.scope, check_scope(session, "pytest_run")))
     ]
     pending = [i.title for i in session.issues if i.status in ("not_observed", "unknown")
                and (i.tool not in ("python_run", "unittest_run")
-                    or i.scope == check_scope(session, i.tool))]
+                    or i.scope == check_scope(session, i.tool))
+               and (i.tool != "pytest_run" or comparable_scopes(i.scope, check_scope(session, "pytest_run")))]
     # Only problems that stand between the user and the chosen goal count in the headline.
     blocking = {f.subject for f in session.facts if f.predicate == "affects" and f.value == session.goal}
     open_issues = [
@@ -151,7 +154,7 @@ def build_view(session: Session) -> dict:
     must = [i for i in open_issues if i.issue_id not in optional_ids]
     optional_issues = [i for i in open_issues if i.issue_id in optional_ids]
     status = _status(session, steps, must, optional_issues)
-    goal_run = next((r for r in reversed(session.runs) if r.tool == GOAL_CHECKS[session.goal]), None)
+    goal_run = _goal_run(session)
     if goal_run and status["kind"] != "scope_limited" and (note := pytest_options_note(goal_run)):
         status["detail"] += " " + note
     return {
@@ -160,6 +163,7 @@ def build_view(session: Session) -> dict:
         "python": session.target_python,
         "goal": session.goal,
         "execution": session.execution.model_dump() if session.execution else None,
+        "tests": list(session.test_targets),
         "goal_name": GOALS[session.goal],
         "goal_note": next(note for key, _, note in GOAL_CHOICES if key == session.goal),
         "status": status,
@@ -261,6 +265,14 @@ def _rule_descriptions() -> dict:
     return {r.rule_id: r.description for r in rule_base()}
 
 
+def _goal_run(session):
+    from .test_selection import comparable_scopes
+
+    target = GOAL_CHECKS[session.goal]
+    return next((r for r in reversed(session.runs) if r.tool == target and (
+        target != "pytest_run" or comparable_scopes(r.scope, check_scope(session, target)))), None)
+
+
 def _status(session: Session, steps, open_issues, optional_issues=()) -> dict:
     if not session.runs:
         return {
@@ -272,7 +284,7 @@ def _status(session: Session, steps, open_issues, optional_issues=()) -> dict:
     if integrity.affects(session, GOAL_CHECKS[session.goal]):
         # Execution result, baseline change and verification are three different things.
         target, check = GOAL_CHECKS[session.goal], session.baseline_check
-        run = next((r for r in reversed(session.runs) if r.tool == target), None)
+        run = _goal_run(session)
         passed = run.test_summary.get("passed") if run else None
         result = (
             "The last check passed" + (f" ({passed} test{'s' if passed != 1 else ''})" if passed else "")
@@ -294,7 +306,7 @@ def _status(session: Session, steps, open_issues, optional_issues=()) -> dict:
             "A pass now does not show that the original problem is fixed. Restore them, or accept the changes "
             "as the new baseline if they are intended.",
         }
-    goal_run = next((r for r in reversed(session.runs) if r.tool == GOAL_CHECKS[session.goal]), None)
+    goal_run = _goal_run(session)
     if goal_run and goal_run.verified_pass and pytest_options_limited(goal_run):
         count = goal_run.test_summary.get("passed")
         return {
@@ -305,14 +317,17 @@ def _status(session: Session, steps, open_issues, optional_issues=()) -> dict:
         }
     if session.goal_status == "achieved":
         target = GOAL_CHECKS[session.goal]
-        run = next((r for r in reversed(session.runs) if r.tool == target), None)
+        run = _goal_run(session)
         summary = run.test_summary if run else {}
         detail = f"Verified by {TOOL_NAMES[target].lower()}"
         if summary.get("passed"):
             detail += f": {summary['passed']} test{'s' if summary['passed'] != 1 else ''} passed"
         if session.goal == "run_project":
             detail += ". The selected entry completed with exit code 0 using the saved arguments and input"
-        return {"kind": "done", "headline": GOAL_DONE[session.goal], "detail": detail + "."}
+        if session.goal == "pass_tests" and session.test_targets:
+            detail += ". This verifies only the saved test selection: " + ", ".join(session.test_targets)
+        headline = "The selected tests pass" if session.goal == "pass_tests" and session.test_targets else GOAL_DONE[session.goal]
+        return {"kind": "done", "headline": headline, "detail": detail + "."}
     # Count problems, not steps: steps merge issues that share a remedy, and one problem can
     # have a step that gathers evidence as well as one that fixes it.
     count = len({tuple(sorted(s["issue_ids"])) for s in steps}) if steps else len(open_issues)

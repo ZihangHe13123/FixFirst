@@ -73,6 +73,7 @@ class App:
             python,
             goal=body.get("goal") or "auto",
             execution=body.get("execution"),
+            tests=body.get("tests"),
         )
         with self.store.lock(session.session_id):
             infer_and_plan(session)
@@ -125,15 +126,19 @@ class App:
                 session.goal, session.execution = choose_execution(
                     Path(session.project_root), body["goal"],
                     session.execution if body["goal"] == session.goal else None)
+                if session.goal != "pass_tests":
+                    session.test_targets = []
                 session.history.append({"time": now(), "kind": "goal_change"})
                 infer_and_plan(session)
                 session.goal_status = "unknown"
             elif op == "configure":
                 updated = create_session(
                     session.project_root, body.get("python") or session.target_python,
-                    goal=body.get("goal") or session.goal, execution=body.get("execution"))
+                    goal=body.get("goal") or session.goal, execution=body.get("execution"),
+                    tests=body.get("tests", session.test_targets if body.get("goal", session.goal) == session.goal else None))
                 session.target_python = updated.target_python
                 session.goal, session.execution = updated.goal, updated.execution
+                session.test_targets = updated.test_targets
                 session.environment = {}
                 session.history.append({"time": now(), "kind": "execution_change"})
                 infer_and_plan(session)

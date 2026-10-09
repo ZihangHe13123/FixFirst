@@ -34,13 +34,13 @@
    "execution_parsers.py": "4a202ff067b4585d8d8d123cad40913f2d8ee3a0c348d7b5b844c37ce911fc7e",
    "grouping.py": "86aff75b2eae071e8619a72a66651b810b1c79382f73f8f0371feee32a4bc1a8",
    "install_feedback.py": "ed1d545d09e4b9b8637bb65e5640744ac7681ebab281446bcae4f9bbf85b4e49",
-   "integrity.py": "b1c4db634ce1cddc4619ef18e8429d04d90adf943f4f07f7ad3de4a146173877",
+   "integrity.py": "7ec9691c63ed86c1c913dbe56eb4fa6dfbb0a5e9d19b28323b29580348d7cd4a",
    "interface_history.py": "1ffa8f2b04967bb3391b1b5336eb9f889449569e9cf62b1e384cf0bb59a4aa4b",
    "local_import_advice.py": "c8bc96137ddb2b521e003279452a212259a8ec50646fb185993dd05bf646d663",
    "local_import_context.py": "adaf9d2e3a5f28362adf17dcf2872f9fe06cb1d84cb53617b0da4650fbad3f17",
    "local_imports.py": "6a11416c9235dd02f43e0317e8628ec2d6d11eadb26f59a1ed7b2f59c912489c",
    "migration_advice.py": "d8af09ff5521fbf6ad42b059f7ee83ef965cd2747243227534190a947a2c4635",
-   "models.py": "6402399abf2e11df9ec7ed79b054cf130126300809e325354b34fa2be36df398",
+   "models.py": "9284e6968bb5d18eaccbba162c41e4e58eeb8917bbc53ec0de1e73ef575042a0",
    "observed_operations.py": "e4ea76ee418542adbf3d7adaacbe2e83d27467cfee0da540a773d555820d95d8",
    "package_compatibility.py": "8bcefc2ee9c4bfc9b4bb6aecddc841b2d1c3a39b71609b60c96c331416b55c91",
    "parsers.py": "ab00032f1b0324554df364d388f3d7eb9f5ffc002bef0e344442535690842375",
@@ -48,14 +48,15 @@
    "processes.py": "ed5fe143fac256bdbe79f4eba15b1919064967a8cbb9c7a5db21727f97a0f852",
    "project.py": "04a5f9595d696491b03b47fbde9b6a0a5c14c65de026f53b2c035b3f1c61bd78",
    "pytest_settings.py": "992945f2a49ed93c831959914d3c45547ce6428bdacb35462fe46a2084000efb",
-   "reasoning.py": "4e8f6e2bb5ab2af91b1fa2cd24a10129310257aa8ee04f7654b0ce52baa5fd4e",
+   "reasoning.py": "d9c43d26448967f18ce92cc3ae3009a039274a96e525afd84831e92a0a03d35a",
    "removal_ownership.py": "ba69c6a520a174d855b78ed038a2a7c317c91352473de181b435b48b335af05f",
-   "runner.py": "36db465fa24799bd3f501a516020e04971833353a3b18787e08c6200bb54323b",
-   "service.py": "d851a4b40bdef3af9fe1adb2ab51a13ad990866b2c27d631cb56ce6e25b3ed5e",
+   "runner.py": "980dbb68b47488df1951a7461cb4ef558a1dbbd412624736fd89eae00b0910a3",
+   "service.py": "fa4ee08e17a53975f4d9919b8a90b99c44c2c04cae761ae8963861e6e982a16c",
    "source_context.py": "c174ddc9e7c8a614f534caf6ae1537a38a2c9092a71889c48b30d8e9c4a06cfb",
    "symbol_advice.py": "66b5da1923f94b973940f340155587d0c3fdd85a61652e85fef1bbfd222e65e4",
    "symbol_context.py": "8c718adc90c4780ac0e3357a08a607a545e7e70f618a958382f7408c5f7da85d",
-   "test_results.py": "3d3248cf0a30e4916caccf264dbb7a591745e31da91492c7a4e790ba557ab3ba",
+   "test_results.py": "34623cdb9d69cd1ec6a3f47fa8f1b1a6b710b42c27de27ceb84ae6489c9943c4",
+   "test_selection.py": "f9969b1446f69eff455b67519e77d8d22dcc90b83b8955fc11d745714bcb11b0",
    "tool_compatibility.py": "e2f38799f69e027930a255ae1372256c07b33874f1a3e2f627cb16d9c915b4f2",
    "yaml_advice.py": "939ba924e6f6635c1eaf8e57e27a926132b094b4263c3306da5e321c83a7977b"
   },
@@ -198,8 +199,8 @@
    "P85": "4055cd0e29ce8d1f0a0f7cd326cb779e9b967d3b167f15f429006d41aa76eb41",
    "P86": "51cd2258277caa9d8a6cb4c71d1877fd7117ec326faa788800f5de449dad16d8"
   },
-  "package_sha256": "92e5c7268f1f239aa45d7dafcbd7c20cb81e1d6fbd1cf3e34ec0774cd300bd41",
-  "generated": "2026-10-07",
+  "package_sha256": "a3e352237ede7f8dfc3c6cf07e3e486f72db43876a66057aeeb94a90b6b07847",
+  "generated": "2026-10-09",
   "python": "3.12.13"
  },
  "results": [
@@ -23969,7 +23970,7 @@
       "pydantic.fields.FieldInfo"
      ],
      "dists": {
-      "pydantic": "2.13.5"
+      "pydantic": "2.14.0"
      }
     }
    },
@@ -23991,7 +23992,7 @@
      "steps": [
       [
        "Replace FieldInfo.required: removed in pydantic 2.0",
-       "Observed project location: main.py:5. The target interpreter has pydantic 2.13.5, which no longer provides FieldInfo.required (removed in 2.0). Change the code to use FieldInfo.is_required(), a method returning the same boolean: write field.is_required() where V1 read field.required. model_fields[name] holds the FieldInfo objects in V2 (BaseModel.__fields__ is a deprecated alias of it).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:5. The target interpreter has pydantic 2.14.0, which no longer provides FieldInfo.required (removed in 2.0). Change the code to use FieldInfo.is_required(), a method returning the same boolean: write field.is_required() where V1 read field.required. model_fields[name] holds the FieldInfo objects in V2 (BaseModel.__fields__ is a deprecated alias of it).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -24180,7 +24181,7 @@
       "pydantic.fields.FieldInfo"
      ],
      "dists": {
-      "pydantic": "2.13.5"
+      "pydantic": "2.14.0"
      }
     }
    },
@@ -24202,7 +24203,7 @@
      "steps": [
       [
        "Replace FieldInfo.type_: removed in pydantic 2.0",
-       "Observed project location: main.py:5. The target interpreter has pydantic 2.13.5, which no longer provides FieldInfo.type_ (removed in 2.0). Change the code to use FieldInfo.annotation, the declared type including its generic parameters. V1 stripped Optional from type_ and outer_type_ and set allow_none, while V2 keeps Optional[X] in annotation, so unwrap it where the old code saw the bare X; the element type that type_ gave for a container field comes from typing.get_args(field.annotation).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:5. The target interpreter has pydantic 2.14.0, which no longer provides FieldInfo.type_ (removed in 2.0). Change the code to use FieldInfo.annotation, the declared type including its generic parameters. V1 stripped Optional from type_ and outer_type_ and set allow_none, while V2 keeps Optional[X] in annotation, so unwrap it where the old code saw the bare X; the element type that type_ gave for a container field comes from typing.get_args(field.annotation).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -24391,7 +24392,7 @@
       "pydantic.fields.FieldInfo"
      ],
      "dists": {
-      "pydantic": "2.13.5"
+      "pydantic": "2.14.0"
      }
     }
    },
@@ -24413,7 +24414,7 @@
      "steps": [
       [
        "Replace FieldInfo.outer_type_: removed in pydantic 2.0",
-       "Observed project location: main.py:5. The target interpreter has pydantic 2.13.5, which no longer provides FieldInfo.outer_type_ (removed in 2.0). Change the code to use FieldInfo.annotation, the declared type including its generic parameters. V1 stripped Optional from type_ and outer_type_ and set allow_none, while V2 keeps Optional[X] in annotation, so unwrap it where the old code saw the bare X; the element type that type_ gave for a container field comes from typing.get_args(field.annotation).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:5. The target interpreter has pydantic 2.14.0, which no longer provides FieldInfo.outer_type_ (removed in 2.0). Change the code to use FieldInfo.annotation, the declared type including its generic parameters. V1 stripped Optional from type_ and outer_type_ and set allow_none, while V2 keeps Optional[X] in annotation, so unwrap it where the old code saw the bare X; the element type that type_ gave for a container field comes from typing.get_args(field.annotation).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -24602,7 +24603,7 @@
       "pydantic.fields.FieldInfo"
      ],
      "dists": {
-      "pydantic": "2.13.5"
+      "pydantic": "2.14.0"
      }
     }
    },
@@ -24624,7 +24625,7 @@
      "steps": [
       [
        "Replace FieldInfo.name: removed in pydantic 2.0",
-       "Observed project location: main.py:5. The target interpreter has pydantic 2.13.5, which no longer provides FieldInfo.name (removed in 2.0). Change the code to use the key the field is stored under: iterate model_fields.items() to get (name, FieldInfo) pairs, and inside a @field_validator read info.field_name. FieldInfo objects do not carry their own name.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:5. The target interpreter has pydantic 2.14.0, which no longer provides FieldInfo.name (removed in 2.0). Change the code to use the key the field is stored under: iterate model_fields.items() to get (name, FieldInfo) pairs, and inside a @field_validator read info.field_name. FieldInfo objects do not carry their own name.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -24813,7 +24814,7 @@
       "pydantic.fields.FieldInfo"
      ],
      "dists": {
-      "pydantic": "2.13.5"
+      "pydantic": "2.14.0"
      }
     }
    },
@@ -24835,7 +24836,7 @@
      "steps": [
       [
        "Replace FieldInfo.field_info: removed in pydantic 2.0",
-       "Observed project location: main.py:5. The target interpreter has pydantic 2.13.5, which no longer provides FieldInfo.field_info (removed in 2.0). Change the code to use the FieldInfo itself: in V2 model_fields[name] already is the FieldInfo, so drop the .field_info step and read default, alias, metadata or json_schema_extra (V1's field_info.extra) from it directly.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:5. The target interpreter has pydantic 2.14.0, which no longer provides FieldInfo.field_info (removed in 2.0). Change the code to use the FieldInfo itself: in V2 model_fields[name] already is the FieldInfo, so drop the .field_info step and read default, alias, metadata or json_schema_extra (V1's field_info.extra) from it directly.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -25074,7 +25075,7 @@
       "sqlalchemy.engine.base.Engine"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -25096,7 +25097,7 @@
      "steps": [
       [
        "Replace Engine.table_names: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides Engine.table_names (removed in 2.0). Change the code to use sqlalchemy.inspect(engine).get_table_names() (from sqlalchemy import inspect), which returns the table names of the default schema.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Engine.table_names (removed in 2.0). Change the code to use sqlalchemy.inspect(engine).get_table_names() (from sqlalchemy import inspect), which returns the table names of the default schema.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -25335,7 +25336,7 @@
       "sqlalchemy.engine.base.Engine"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -25357,7 +25358,7 @@
      "steps": [
       [
        "Replace Engine.has_table: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides Engine.has_table (removed in 2.0). Change the code to use sqlalchemy.inspect(engine).has_table('name') (Inspector.has_table), which checks for a table by name.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Engine.has_table (removed in 2.0). Change the code to use sqlalchemy.inspect(engine).has_table('name') (Inspector.has_table), which checks for a table by name.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -25596,7 +25597,7 @@
       "sqlalchemy.engine.base.Engine"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -25618,7 +25619,7 @@
      "steps": [
       [
        "Replace Engine.scalar: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides Engine.scalar (removed in 2.0). Change the code to use an explicit connection: with engine.connect() as conn: conn.scalar(text(sql)) for engine.scalar(sql), and conn.execute(text(sql), params) for engine.execute(sql, params). Use the result inside the with block, use engine.begin() for statements that must commit, and bind parameters instead of formatting values into the SQL.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Engine.scalar (removed in 2.0). Change the code to use an explicit connection: with engine.connect() as conn: conn.scalar(text(sql)) for engine.scalar(sql), and conn.execute(text(sql), params) for engine.execute(sql, params). Use the result inside the with block, use engine.begin() for statements that must commit, and bind parameters instead of formatting values into the SQL.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -25825,7 +25826,7 @@
       "sqlalchemy.sql.schema.MetaData"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -25847,7 +25848,7 @@
      "steps": [
       [
        "Replace MetaData.bind: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides MetaData.bind (removed in 2.0). Change the code to use no attribute: keep the Engine in your own variable and pass it explicitly (metadata.create_all(engine), metadata.reflect(bind=engine), connection.execute(select(table))); in 2.0 assigning metadata.bind silently does nothing.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides MetaData.bind (removed in 2.0). Change the code to use no attribute: keep the Engine in your own variable and pass it explicitly (metadata.create_all(engine), metadata.reflect(bind=engine), connection.execute(select(table))); in 2.0 assigning metadata.bind silently does nothing.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -26053,7 +26054,7 @@
       "sqlalchemy.orm.session.Session"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -26075,7 +26076,7 @@
      "steps": [
       [
        "Replace Session.transaction: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:4. The target interpreter has sqlalchemy 2.1.3, which no longer provides Session.transaction (removed in 2.0). Change the code to use Session.get_transaction() for the current SessionTransaction (None when no transaction is active), or Session.in_transaction() for a boolean; the Session.transaction attribute was removed in 2.0.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:4. The target interpreter has sqlalchemy 2.1.4, which no longer provides Session.transaction (removed in 2.0). Change the code to use Session.get_transaction() for the current SessionTransaction (None when no transaction is active), or Session.in_transaction() for a boolean; the Session.transaction attribute was removed in 2.0.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -29613,7 +29614,7 @@
       "openai.OpenAI"
      ],
      "dists": {
-      "openai": "3.26.0"
+      "openai": "3.26.1"
      }
     }
    },
@@ -29635,7 +29636,7 @@
      "steps": [
       [
        "Replace OpenAI.edits: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.26.0, which no longer provides OpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.26.1, which no longer provides OpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -29848,7 +29849,7 @@
       "openai.OpenAI"
      ],
      "dists": {
-      "openai": "3.26.0"
+      "openai": "3.26.1"
      }
     }
    },
@@ -29870,7 +29871,7 @@
      "steps": [
       [
        "Replace OpenAI.fine_tunes: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.26.0, which no longer provides OpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.26.1, which no longer provides OpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -30083,7 +30084,7 @@
       "openai.AsyncOpenAI"
      ],
      "dists": {
-      "openai": "3.26.0"
+      "openai": "3.26.1"
      }
     }
    },
@@ -30105,7 +30106,7 @@
      "steps": [
       [
        "Replace AsyncOpenAI.edits: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.26.0, which no longer provides AsyncOpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.26.1, which no longer provides AsyncOpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -30318,7 +30319,7 @@
       "openai.AsyncOpenAI"
      ],
      "dists": {
-      "openai": "3.26.0"
+      "openai": "3.26.1"
      }
     }
    },
@@ -30340,7 +30341,7 @@
      "steps": [
       [
        "Replace AsyncOpenAI.fine_tunes: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.26.0, which no longer provides AsyncOpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.26.1, which no longer provides AsyncOpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -32092,7 +32093,7 @@
       "sqlalchemy.sql.schema.Table"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -32114,7 +32115,7 @@
      "steps": [
       [
        "Replace Table.exists: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides Table.exists (removed in 2.0). Change the code to use sqlalchemy.inspect(engine).has_table('table_name') (or inspect(connection).has_table(...)), which checks for the table by name; Table.exists() and its bind argument were removed.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Table.exists (removed in 2.0). Change the code to use sqlalchemy.inspect(engine).has_table('table_name') (or inspect(connection).has_table(...)), which checks for the table by name; Table.exists() and its bind argument were removed.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -32473,7 +32474,7 @@
       "sqlalchemy.sql.selectable.Select"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -32495,7 +32496,7 @@
      "steps": [
       [
        "Replace Select.apply_labels: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides Select.apply_labels (removed in 2.0). Change the code to use select(...).set_label_style(LABEL_STYLE_TABLENAME_PLUS_COL) (from sqlalchemy import LABEL_STYLE_TABLENAME_PLUS_COL), the 1.4+ form that labels columns as table_column; Select is immutable, so use the statement the call returns.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Select.apply_labels (removed in 2.0). Change the code to use select(...).set_label_style(LABEL_STYLE_TABLENAME_PLUS_COL) (from sqlalchemy import LABEL_STYLE_TABLENAME_PLUS_COL), the 1.4+ form that labels columns as table_column; Select is immutable, so use the statement the call returns.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -32787,7 +32788,7 @@
       "sqlalchemy.orm.query.Query"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -32809,7 +32810,7 @@
      "steps": [
       [
        "Replace Query.from_self: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:10. The target interpreter has sqlalchemy 2.1.3, which no longer provides Query.from_self (removed in 2.0). Change the code to use an explicit subquery with aliased(): subq = select(User, Address.email_address).join(User.addresses).subquery(); ua = aliased(User, subq); aa = aliased(Address, subq); stmt = select(ua, aa).order_by(aa.email_address), executed with session.execute(stmt); the same works with session.query(ua, aa).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:10. The target interpreter has sqlalchemy 2.1.4, which no longer provides Query.from_self (removed in 2.0). Change the code to use an explicit subquery with aliased(): subq = select(User, Address.email_address).join(User.addresses).subquery(); ua = aliased(User, subq); aa = aliased(Address, subq); stmt = select(ua, aa).order_by(aa.email_address), executed with session.execute(stmt); the same works with session.query(ua, aa).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -33124,7 +33125,7 @@
       "sqlalchemy.sql.dml.Insert"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -33146,7 +33147,7 @@
      "steps": [
       [
        "Replace Insert.execute: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides Insert.execute (removed in 2.0). Change the code to use executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Insert.execute (removed in 2.0). Change the code to use executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -33464,7 +33465,7 @@
       "sqlalchemy.sql.dml.Update"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -33486,7 +33487,7 @@
      "steps": [
       [
        "Replace Update.execute: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides Update.execute (removed in 2.0). Change the code to use executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Update.execute (removed in 2.0). Change the code to use executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -33798,7 +33799,7 @@
       "sqlalchemy.sql.dml.Delete"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -33820,7 +33821,7 @@
      "steps": [
       [
        "Replace Delete.execute: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides Delete.execute (removed in 2.0). Change the code to use executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Delete.execute (removed in 2.0). Change the code to use executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -34179,7 +34180,7 @@
       "sqlalchemy.sql.selectable.Select"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -34201,7 +34202,7 @@
      "steps": [
       [
        "Replace Select.execute: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides Select.execute (removed in 2.0). Change the code to use executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Select.execute (removed in 2.0). Change the code to use executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -34542,7 +34543,7 @@
       "sqlalchemy.sql.selectable.Select"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -34564,7 +34565,7 @@
      "steps": [
       [
        "Replace Select.c: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides Select.c (removed in 2.1). Change the code to use Select.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Select.c (removed in 2.1). Change the code to use Select.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -34905,7 +34906,7 @@
       "sqlalchemy.sql.selectable.Select"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -34927,7 +34928,7 @@
      "steps": [
       [
        "Replace Select.columns: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides Select.columns (removed in 2.1). Change the code to use Select.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Select.columns (removed in 2.1). Change the code to use Select.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -35268,7 +35269,7 @@
       "sqlalchemy.sql.selectable.Select"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -35290,7 +35291,7 @@
      "steps": [
       [
        "Replace Select.select: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides Select.select (removed in 2.1). Change the code to use Select.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Select.select (removed in 2.1). Change the code to use Select.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -35611,7 +35612,7 @@
       "sqlalchemy.sql.selectable.CompoundSelect"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -35633,7 +35634,7 @@
      "steps": [
       [
        "Replace CompoundSelect.c: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides CompoundSelect.c (removed in 2.1). Change the code to use CompoundSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides CompoundSelect.c (removed in 2.1). Change the code to use CompoundSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -35954,7 +35955,7 @@
       "sqlalchemy.sql.selectable.CompoundSelect"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -35976,7 +35977,7 @@
      "steps": [
       [
        "Replace CompoundSelect.columns: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides CompoundSelect.columns (removed in 2.1). Change the code to use CompoundSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides CompoundSelect.columns (removed in 2.1). Change the code to use CompoundSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -36297,7 +36298,7 @@
       "sqlalchemy.sql.selectable.CompoundSelect"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -36319,7 +36320,7 @@
      "steps": [
       [
        "Replace CompoundSelect.select: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides CompoundSelect.select (removed in 2.1). Change the code to use CompoundSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides CompoundSelect.select (removed in 2.1). Change the code to use CompoundSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -36615,7 +36616,7 @@
       "sqlalchemy.sql.selectable.TextualSelect"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -36637,7 +36638,7 @@
      "steps": [
       [
        "Replace TextualSelect.c: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides TextualSelect.c (removed in 2.1). Change the code to use TextualSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides TextualSelect.c (removed in 2.1). Change the code to use TextualSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -36933,7 +36934,7 @@
       "sqlalchemy.sql.selectable.TextualSelect"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -36955,7 +36956,7 @@
      "steps": [
       [
        "Replace TextualSelect.columns: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides TextualSelect.columns (removed in 2.1). Change the code to use TextualSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides TextualSelect.columns (removed in 2.1). Change the code to use TextualSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -37251,7 +37252,7 @@
       "sqlalchemy.sql.selectable.TextualSelect"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -37273,7 +37274,7 @@
      "steps": [
       [
        "Replace TextualSelect.select: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides TextualSelect.select (removed in 2.1). Change the code to use TextualSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides TextualSelect.select (removed in 2.1). Change the code to use TextualSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -43453,7 +43454,7 @@
       "sqlalchemy.engine.base.Engine"
      ],
      "dists": {
-      "sqlalchemy": "2.1.3"
+      "sqlalchemy": "2.1.4"
      }
     }
    },
@@ -43475,7 +43476,7 @@
      "steps": [
       [
        "Replace sqlalchemy.engine.base.Engine.execute: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.3, which no longer provides sqlalchemy.engine.base.Engine.execute (removed in 2.0). Change the code to use an explicit connection: import text from sqlalchemy; use with engine.connect() as connection: and execute connection.execute(text(sql), parameters) inside that block. Consume the result before closing the connection. For statements that must commit changes, use engine.begin() instead; preserve bound parameters rather than formatting values into SQL.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides sqlalchemy.engine.base.Engine.execute (removed in 2.0). Change the code to use an explicit connection: import text from sqlalchemy; use with engine.connect() as connection: and execute connection.execute(text(sql), parameters) inside that block. Consume the result before closing the connection. For statements that must commit changes, use engine.begin() instead; preserve bound parameters rather than formatting values into SQL.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",

@@ -4,7 +4,7 @@ from pathlib import Path
 import os
 
 from .grouping import group_events, digest, member_key
-from .models import Run, Session, now, GOAL_CHECKS
+from .models import Run, Session, now, GOAL_CHECKS, check_scope
 from .parsers import parse
 from . import integrity
 from .reasoning import infer_and_plan
@@ -22,7 +22,7 @@ from .runner import (
 
 def create_session(
     project, python, name=None, goal="collect_tests", grouping="tfidf", model=None, sbert_model=None,
-    execution=None, *, structured_evidence=False, bounded_actions=False,
+    execution=None, *, tests=None, structured_evidence=False, bounded_actions=False,
 ):
     root = Path(project).expanduser().resolve()
     interpreter = Path(os.path.abspath(os.path.expanduser(python)))
@@ -33,8 +33,14 @@ def create_session(
     if not interpreter.is_file() or not os.access(interpreter, os.X_OK):
         raise ValueError("Python interpreter does not exist or is not executable")
     from .execution import choose_execution
+    from .test_selection import normalize_tests
 
+    if tests and goal == "auto":
+        goal = "pass_tests"
     goal, execution = choose_execution(root, goal, execution)
+    if tests and goal != "pass_tests":
+        raise ValueError("Test selection is only available for the pass_tests goal")
+    selected = normalize_tests(root, tests)
     if grouping == "sbert" and not sbert_model:
         raise ValueError("SBERT grouping needs a local model path")
     if model:
@@ -51,6 +57,7 @@ def create_session(
         target_python=str(interpreter),
         goal=goal,
         execution=execution,
+        test_targets=selected,
         grouping=grouping,
         model_path=model,
         structured_evidence=structured_evidence,
@@ -60,6 +67,8 @@ def create_session(
 
 
 def ingest(session: Session, runs: list[Run]):
+    from .test_selection import comparable_scopes
+
     fresh = []
     event_batch = []
     for run in runs:
@@ -77,6 +86,7 @@ def ingest(session: Session, runs: list[Run]):
         if issue.issue_id in by_id and (
             by_id[issue.issue_id].environment_id != issue.environment_id
             or (issue.tool in ("python_run", "unittest_run") and by_id[issue.issue_id].scope != issue.scope)
+            or (issue.tool == "pytest_run" and not comparable_scopes(by_id[issue.issue_id].scope, issue.scope))
         ):
             issue.issue_id = "issue-" + digest(issue.fingerprint + issue.environment_id + issue.scope)
         if issue.tool not in ("pytest_run", "unittest_run") or not issue.targets:
@@ -89,6 +99,7 @@ def ingest(session: Session, runs: list[Run]):
             == (issue.tool, issue.environment_id, issue.kind, issue.stage, issue.component)
             and set(old.targets) & set(issue.targets)
             and (issue.tool != "unittest_run" or old.scope == issue.scope)
+            and (issue.tool != "pytest_run" or comparable_scopes(old.scope, issue.scope))
         ]
         if len(candidates) != 1:
             continue
@@ -101,6 +112,7 @@ def ingest(session: Session, runs: list[Run]):
             if run.tool == issue.tool
             and run.environment_id == issue.environment_id
             and run.source == "executed"
+            and (issue.tool != "pytest_run" or comparable_scopes(issue.scope, run.scope))
             for node in run.passed_nodes
         }
         represented = {
@@ -111,6 +123,7 @@ def ingest(session: Session, runs: list[Run]):
             and other.kind == issue.kind
             and other.stage == issue.stage
             and other.component == issue.component
+            and (issue.tool != "pytest_run" or comparable_scopes(issue.scope, other.scope))
             for node in other.targets
         }
         pending = set(old.targets) - passed - represented if old.status != "resolved" else set()
@@ -169,7 +182,8 @@ def ingest(session: Session, runs: list[Run]):
                 r.tool == old.tool
                 and r.environment_id == old.environment_id
                 and r.source == "executed"
-                and r.scope == "tests:project"
+                and r.scope == check_scope(session, "pytest_run")
+                and comparable_scopes(old.scope, r.scope)
                 and r.coverage_complete
                 for r in runs
             )
@@ -179,12 +193,14 @@ def ingest(session: Session, runs: list[Run]):
                 and r.environment_id == old.environment_id
                 and r.source == "executed"
                 and (old.tool != "unittest_run" or r.scope == old.scope)
+                and (old.tool != "pytest_run" or comparable_scopes(old.scope, r.scope))
                 and r.coverage_complete
                 and set(old.targets).issubset(r.passed_nodes)
                 for r in runs
             )
         limited = next((r for r in runs if r.tool == old.tool and r.environment_id == old.environment_id
-                        and r.source == "executed" and pytest_options_limited(r)), None)
+                        and r.source == "executed" and comparable_scopes(old.scope, r.scope)
+                        and pytest_options_limited(r)), None)
         if passed and limited:
             copy.status, copy.verification = "awaiting_verification", "unverifiable"
             copy.note = "The recorded check passed. " + pytest_options_note(limited)
@@ -260,7 +276,7 @@ def scan(session, checks=None, timeout=DEFAULT_TIMEOUT, targets=None):
                 "pytest_run" if c == "pytest" and session.goal == "pass_tests" else c
                 for c in DEFAULT_CHECKS
             ]
-        optional_tools = session.goal in ("run_project", "pass_unittest")
+        optional_tools = True
     else:
         optional_tools = False
     if targets:
@@ -279,10 +295,10 @@ def scan(session, checks=None, timeout=DEFAULT_TIMEOUT, targets=None):
             # even if it was selected from yesterday's report.
             refresh = [collect(session, "environment", timeout), collect(session, "project", timeout)]
             ingest(session, refresh)
-        if optional_tools and check in ("pip_check", "ruff"):
+        if optional_tools and check in ("pip_check", "ruff") and GOAL_CHECKS[session.goal] != check:
             package = "pip" if check == "pip_check" else "ruff"
-            if not any(p.get("name", "").lower() == package
-                       for p in session.environment.get("packages", [])):
+            if session.environment and not any(p.get("name", "").lower() == package
+                                               for p in session.environment.get("packages", [])):
                 continue
         if check in ("pytest", "pytest_run"):
             # A test-only rescan must not reuse declarations the user may have
