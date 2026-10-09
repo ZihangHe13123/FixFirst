@@ -768,7 +768,7 @@ def renamed_module_candidates(session: Session, evidence: dict, candidates: list
     location = (evidence.get("source_location") or "") if evidence.get("raised_in") in ("project", "test") else ""
     importer = path_key(location.rsplit(":", 1)[0]) if location else None
     return [path for path in candidates
-            if path_key(path) != importer and PurePosixPath(path).stem not in test_names]
+            if path_key(path) != importer and (PurePosixPath(path).parent.name if PurePosixPath(path).name == "__init__.py" else PurePosixPath(path).stem) not in test_names]
 
 
 def observations(session: Session, issues: list[Issue], *, interface_history=True) -> tuple[list[Fact], dict]:

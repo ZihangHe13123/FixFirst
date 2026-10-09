@@ -93,3 +93,32 @@ def test_an_outer_project_caller_is_not_the_library_importer():
     session = Session(name="candidate", project_root="/project", target_python="python")
     evidence = {"missing_module": "value", "source_location": "values.py:1", "raised_in": "third_party"}
     assert renamed_module_candidates(session, evidence, ["values.py"]) == ["values.py"]
+
+
+@pytest.mark.parametrize("name, module", [
+    ("test_settings", "settings"),
+    ("settings_test", "settings"),
+    ("tests_configuration", "configuration"),
+    ("configuration_tests", "configuration"),
+])
+def test_a_test_package_is_not_a_renamed_module(tmp_path, name, module):
+    package = tmp_path / name
+    package.mkdir()
+    (package / "__init__.py").write_text("VALUE = 23\n")
+    (tmp_path / "report.py").write_text(f"import {module}\n")
+    (tmp_path / "test_entry.py").write_text("import report\n")
+    session, issue = diagnose(tmp_path)
+    assert_generic_review(session, issue)
+    assert any(f.predicate == "similar_local" and f.value == f"{name}/__init__.py" for f in session.facts)
+    _, details = observations(session, [issue])
+    assert details[issue.issue_id]["features"][FEATURE_NAMES.index("module_similar_local")] == 1
+
+
+def test_a_genuinely_renamed_package_still_gets_the_import_advice(tmp_path):
+    (tmp_path / "helpers").mkdir()
+    (tmp_path / "helpers" / "__init__.py").write_text("VALUE = 23\n")
+    (tmp_path / "test_entry.py").write_text("from helper import VALUE\n")
+    session, issue = diagnose(tmp_path)
+    assert (issue.diagnosis, issue.diagnosis_rule) == ("local_module", "D16")
+    step = next(a for a in session.actions if "P13" in a.rule_ids)
+    assert "helpers/__init__.py" in step.title
