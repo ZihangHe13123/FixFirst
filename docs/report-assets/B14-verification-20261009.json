@@ -1,0 +1,35 @@
+{
+  "product_commit": "5c224cf28896e487015106a7a7acd84f69f7ba26",
+  "package_version": "0.8.0rc2",
+  "platform": "macOS arm64",
+  "python": "3.12.13",
+  "fresh_setup": "scripts/setup.sh completed in a new tool environment",
+  "cli": [
+    "version",
+    "documented command help",
+    "native init",
+    "failing scan",
+    "passing recheck",
+    "show",
+    "redacted HTML export"
+  ],
+  "mcp": [
+    "initialize",
+    "tools/list",
+    "execution parameter error",
+    "script diagnose",
+    "explain",
+    "passing check_again"
+  ],
+  "sample": {
+    "source_edits": 4,
+    "tests_passed": 4,
+    "unchanged_test_files": 4
+  },
+  "language_model_requests": 0,
+  "independent_human_installation": "pending",
+  "windows_real_device": "pending",
+  "linux_real_device": "not run in this check",
+  "notebook_execution": "not run in this check",
+  "evidence_sha256": "e770ebfd7032bd1956062a6b7b59b0597554f1cf56a3ff8d1c443a2e04f7efac"
+}

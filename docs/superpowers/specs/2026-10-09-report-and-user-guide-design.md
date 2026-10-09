@@ -27,8 +27,8 @@ Use the existing report's section order and Word styles, with black headings, re
 
 - [x] Review the course requirements and retained report.
 - [x] Confirm the approved scope and isolate a documentation branch.
-- [ ] Extract and bind the completed experiment results.
-- [ ] Write the report and usage guide.
-- [ ] Verify the sample, CLI and MCP commands.
-- [ ] Render and inspect all document pages.
-- [ ] Commit the documentation and provide a concise review handoff.
+- [x] Extract and bind the completed experiment results.
+- [x] Write the report and usage guide.
+- [x] Verify the sample, CLI and MCP commands.
+- [x] Render and inspect all document pages.
+- [x] Commit the documentation and provide a concise review handoff.

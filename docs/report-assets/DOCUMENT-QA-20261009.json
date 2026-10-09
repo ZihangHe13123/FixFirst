@@ -1,0 +1,135 @@
+{
+  "date": "2026-10-09",
+  "product_commit": "5c224cf28896e487015106a7a7acd84f69f7ba26",
+  "original_template_unchanged": true,
+  "production_change_files": [],
+  "source_artifacts_checked": [
+    {
+      "artifact": "workbench/codex-b7-formal-20261007/analysis-20261009/UPLIFT-ANALYSIS.json",
+      "sha256": "0b72ef81fc580e34ab06cfea2fdc364a511d10b14b870c46aade9b90b244eaad",
+      "matched": true
+    },
+    {
+      "artifact": "workbench/claude-h5-acceptance-20261005/FORMAL-RESULTS-CHECK-20261009.md",
+      "sha256": "fe9aa520939605a9550eb1ab661a4577980eaa451edcdcd32a7ccd05e08a6cb1",
+      "matched": true
+    },
+    {
+      "artifact": "workbench/codex-b3-generated-results-20261004/COMPARISON.json",
+      "sha256": "4b1215c9f284ddde401d2845d014e20e6c51cbe1e201b8f1e9dd03f80b5d62ff",
+      "matched": true
+    },
+    {
+      "artifact": "examples/heldout-2026-10/scores-summary.md",
+      "sha256": "0cbf5b0631e9111402e4474e7d5e5435400dc68d879cf24557f29b6adc7d98ab",
+      "matched": true
+    },
+    {
+      "artifact": "examples/heldout-2026-10/scores-review.md",
+      "sha256": "01b197548eed74653319873af6b93ec5946ee6c0733adf0c4a6821dd7602b6dd",
+      "matched": true
+    },
+    {
+      "artifact": "docs/validation/2026-10-04-tree-integration.md",
+      "sha256": "011da48441740fdec8c4b7d68996ff9f5d29d799f42064c51dbd60a54371b3e7",
+      "matched": true
+    },
+    {
+      "artifact": "examples/diagnosis-evaluation/metrics.json",
+      "sha256": "2997d0151b404a591c8daf1a99f7ed26965c95098e6ad580fd2dcacda9c6f96b",
+      "matched": true
+    },
+    {
+      "artifact": "examples/grouping-evaluation/collection/metrics.json",
+      "sha256": "fdb2917a1d2ffd00b943d07b7a62464e14d39ee15ba7ff0fee46d7831620da02",
+      "matched": true
+    },
+    {
+      "artifact": "examples/grouping-evaluation/execution/metrics.json",
+      "sha256": "1bb0ecd5f996c930b437f939cfbd533e75e02f2b9e34fc5471ea189ea7bbefd8",
+      "matched": true
+    },
+    {
+      "artifact": "src/fixfirst/knowledge/domain.toml",
+      "sha256": "9cfaf23d1418a4201159a57fe77f48ab422f73e95b533fe8d1ce17c0479b6398",
+      "matched": true
+    },
+    {
+      "artifact": "src/fixfirst/knowledge/rules.toml",
+      "sha256": "c04c9591b92e7cc093f6d49b29c49ca31a26d8e2952b5922d0df72b485fe10e3",
+      "matched": true
+    },
+    {
+      "artifact": "B3 real-project report at ebe2a709abbf82bbf2988c6fdd6fdd2ba693469b",
+      "sha256": "e3ea37d419466159913c1f7a6d2dfb6a3ec7e79c261fa1c3cb8c5b4ac9f30e16",
+      "matched": true
+    }
+  ],
+  "guide_fence_checks": [
+    {
+      "block": 1,
+      "language": "bash",
+      "syntax": "passed"
+    },
+    {
+      "block": 2,
+      "language": "powershell",
+      "syntax": "not executed on Windows"
+    },
+    {
+      "block": 3,
+      "language": "bash",
+      "syntax": "passed"
+    },
+    {
+      "block": 4,
+      "language": "bash",
+      "syntax": "passed"
+    },
+    {
+      "block": 5,
+      "language": "bash",
+      "syntax": "passed"
+    },
+    {
+      "block": 6,
+      "language": "json",
+      "syntax": "passed"
+    },
+    {
+      "block": 7,
+      "language": "json",
+      "syntax": "passed"
+    },
+    {
+      "block": 8,
+      "language": "bash",
+      "syntax": "passed"
+    }
+  ],
+  "local_links": "all resolve",
+  "outputs": [
+    {
+      "document": "docs/report/FixFirst_Report_v0.2_20261009.docx",
+      "docx_sha256": "0343ccec76ffaed20ae943c809c28e227beae04ef10f11043cf0636431c96fb5",
+      "pdf": "docs/report/FixFirst_Report_v0.2_20261009.pdf",
+      "pdf_sha256": "44d0ed4c7e91f1965e237cb2f111464e3a70a5e058d3dda1132059dd9a9a7b7f",
+      "pages": 22,
+      "visual_inspection": "all pages inspected; identical page images compared byte for byte across final renders",
+      "text_extraction": "no corrupt control characters"
+    },
+    {
+      "document": "docs/report/FixFirst_User_Guide_v0.1_20261009.docx",
+      "docx_sha256": "f801ec59876cdeb4b5ebb154a6bf3dd707950daa4aa13eccf18dab792a5b103e",
+      "pdf": "docs/report/FixFirst_User_Guide_v0.1_20261009.pdf",
+      "pdf_sha256": "da1c33bdaa8e7f0b25c88c336c9a8749ec4f5a324565ad03452a15b5d58f01f2",
+      "pages": 8,
+      "visual_inspection": "all pages inspected; identical page images compared byte for byte across final renders",
+      "text_extraction": "no corrupt control characters"
+    }
+  ],
+  "limitations": [
+    "Review draft; external and human evidence remains on completion checklist",
+    "Windows, Linux and notebook execution not performed in this documentation check"
+  ]
+}

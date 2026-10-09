@@ -2,6 +2,14 @@
 
 报告用 **Word 或 WPS** 编辑，最终导出 PDF 提交。
 
+## Current review version
+
+`FixFirst_Report_v0.2_20261009.docx` is the current populated review draft. Its PDF contains the full B14 guide in Appendix C. The separate `FixFirst_User_Guide_v0.1_20261009.docx` and PDF contain the same guide; `docs/USER_GUIDE.md` is its repository copy.
+
+The v0.2 Markdown file records the source used to generate this draft. After manual Word edits, the Word file remains authoritative; do not regenerate it without reconciling those edits. Version 0.2 uses a static Contents list, rather than the original empty field. Remaining evidence and human contributions are listed in [COMPLETION-CHECKLIST.md](COMPLETION-CHECKLIST.md).
+
+The report has 22 pages and the standalone guide has eight. Every rendered page was inspected, and PDF text extraction was checked. Artifact identities and source checks are recorded in [DOCUMENT-QA-20261009.json](../report-assets/DOCUMENT-QA-20261009.json).
+
 | 文件 | 内容 |
 |---|---|
 | `FixFirst_Report_v0.1_20260929.docx` | 报告骨架：按课程要求排好的章节、证据表和占位 |
