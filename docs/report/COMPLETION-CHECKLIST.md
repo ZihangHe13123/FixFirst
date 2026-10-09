@@ -1,6 +1,6 @@
 # Report and guide completion checklist
 
-Version 0.3 contains the completed A2, B3, local B7 and independently recomputed DeepSeek results, system description, verified literature, limitations and the full installation guide. The cloud comparison is reported separately. It is a review draft, not the final submission.
+Version 0.4 is an incomplete working draft for group discussion. It contains the recorded A2, B3, local B7 and independently recomputed DeepSeek results, system description, literature, limitations and the full installation guide. The cloud comparison is reported separately. All three members should discuss the wording and remaining work before finalising; see [TEAM-REVIEW.md](TEAM-REVIEW.md).
 
 ## Evidence still needed
 

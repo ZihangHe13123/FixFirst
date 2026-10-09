@@ -4,11 +4,11 @@
 
 ## Current review version
 
-`FixFirst_Report_v0.3_20261009.docx` is the current populated review draft. It adds the independently recomputed DeepSeek result as a separate cloud comparison. Its PDF contains the full B14 guide in Appendix C. The separate `FixFirst_User_Guide_v0.1_20261009.docx` and PDF contain the same guide; `docs/USER_GUIDE.md` is its repository copy.
+`FixFirst_Report_DRAFT_v0.4_20261009.docx` is the current incomplete working draft for group discussion. Its cover and every page are marked **DRAFT — INCOMPLETE — FOR TEAM DISCUSSION**. It includes the separately reported DeepSeek comparison and the full B14 guide in Appendix C. The separate `FixFirst_User_Guide_v0.1_20261009.docx` and PDF contain the same guide; `docs/USER_GUIDE.md` is its repository copy.
 
-The v0.3 Markdown file records the content used to edit this draft. After manual Word edits, the Word file remains authoritative; do not regenerate it without reconciling those edits. Versions 0.2 and 0.3 use a static Contents list. The earlier reports and standalone guide are preserved unchanged. Remaining evidence and human contributions are listed in [COMPLETION-CHECKLIST.md](COMPLETION-CHECKLIST.md).
+The v0.4 Markdown file records the content used to edit this draft. After manual Word edits, the Word file remains authoritative; do not regenerate it without reconciling those edits. The draft uses a static Contents list. The earlier reports and standalone guide are preserved unchanged. Discuss changes using [TEAM-REVIEW.md](TEAM-REVIEW.md); remaining evidence is listed in [COMPLETION-CHECKLIST.md](COMPLETION-CHECKLIST.md).
 
-The report has 23 pages and the standalone guide has eight. Every final report page was visually reviewed or confirmed byte-identical to an already reviewed page, and PDF text extraction was checked. Artifact identities and source checks are recorded in [DOCUMENT-QA-v0.3-20261009.json](../report-assets/DOCUMENT-QA-v0.3-20261009.json). The previous [QA record](../report-assets/DOCUMENT-QA-20261009.json) covers the unchanged guide and v0.2 report.
+The report has 24 pages and the standalone guide has eight. Page bodies and the repeated draft header were checked, and PDF text extraction was checked. Artifact identities are in [DOCUMENT-QA-v0.4-20261009.json](../report-assets/DOCUMENT-QA-v0.4-20261009.json). Source values remain those checked in the [v0.3 QA record](../report-assets/DOCUMENT-QA-v0.3-20261009.json); the standalone guide is unchanged.
 
 | 文件 | 内容 |
 |---|---|

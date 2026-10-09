@@ -1,5 +1,9 @@
 # 报告中图、表和数字的来源
 
+## Version 0.4 draft status
+
+Version 0.4 keeps the v0.3 numerical evidence unchanged and adds draft notices and the team review agenda. Its coverage limitation follows protocol v1.16 sections 4 and 5: A to D use supported mechanisms, E has two uncovered environment faults, and F has two code defect controls. Proposed additional tests have not been run.
+
 ## Version 0.3 cloud addition checked 9 October 2026
 
 Version 0.3 carries forward the version 0.2 evidence below and adds section 5.6. Aggregate values and source identities are in `docs/report-assets/B11-results-v0.3-20261009.json`. The local and cloud results are separate: local cells have five repetitions and cloud cells have three.
