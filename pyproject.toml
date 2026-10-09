@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fixfirst-local"
-version = "0.8.0rc2"
+version = "0.8.0rc3"
 description = "Evidence-based local Python troubleshooting assistant"
 readme = "README.md"
 requires-python = ">=3.10"
