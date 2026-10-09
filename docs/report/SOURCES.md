@@ -4,6 +4,15 @@
 
 Version 0.4 keeps the v0.3 numerical evidence unchanged and adds draft notices and the team review agenda. Its coverage limitation follows protocol v1.16 sections 4 and 5: A to D use supported mechanisms, E has two uncovered environment faults, and F has two code defect controls. Proposed additional tests have not been run.
 
+## New evidence for the next team revision
+
+The frozen product's scripted follow check, reported on 9 October 2026, repaired 17/18 A to D tasks, 0/2 E tasks and 0/2 F tasks, with no protected edits. Counts were checked against the 22 per-task records. The script executes printed commands or preregistered interpretations of named source changes, for at most six rounds. This is a product follow check on constructed instances, not a human usability study or a measurement of real environment-fault coverage.
+
+- Report: local `workbench/claude-h5-acceptance-20261005/EVAL-FOLLOW-CHECK-20261009.md`, SHA256 `eb09e549aa075ab1bde6741d7f16f0f7144de62fe8e28af95e41a49e4c278916`.
+- Per-task record: local `workbench/claude-h5-acceptance-20261005/results/eval-follow-wt-fixedC4-h5.json`, SHA256 `d258600cd587b5a5d0a6eaa8a62282062297a631e7625c74a04109d66c5f17a7`.
+- Caveats to discuss: eb1 lacks an executable replacement; ec3 succeeds using the alternative editable install; ee1's passing headline can mislead; ee2 falls back to unconfirmed generic advice.
+- BugsInPy phase one has 27 reproduced code defects excluding the separately marked PySnooper-2 development case. Phase two can measure wrong environment advice and premature resolution; new real environment failures still need independent selection.
+
 ## Version 0.3 cloud addition checked 9 October 2026
 
 Version 0.3 carries forward the version 0.2 evidence below and adds section 5.6. Aggregate values and source identities are in `docs/report-assets/B11-results-v0.3-20261009.json`. The local and cloud results are separate: local cells have five repetitions and cloud cells have three.
