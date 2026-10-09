@@ -19,7 +19,7 @@ take about 25 minutes each. Normal test runs do not execute them; they only chec
 | `receipts/knowledge-receipt-20261003.json` | Full record of the last run of `verify.py`: for every check and probe the snippet, its SHA-256, the environments (interpreter and package versions), the exact exception text or output, and the verdict. Local paths are redacted. |
 | `receipts/owners-receipt-20261003.json` | Full record of the last run of `verify_owners.py`: for every key with owners (and for every merged key) the receiver recipe, the receiver identities in each release, and what FixFirst did with it (issues, rule, the plan with its replacement text, and the project class of the same name). |
 
-The owners receipt was regenerated on 2026-10-09 against the saved-test-selection candidate based on `5c224cf`, and again after its D16/P13 candidate filtering. All 155 keys and 23 merged keys passed; the stored-record audit found zero problems. The domain entries and 81-feature tree weights are unchanged; only D16/P13's rule conditions changed. Its existing filename is retained. The knowledge-matrix receipt was unchanged and was not rerun.
+The owners receipt was regenerated on 2026-10-09 against the saved-test-selection candidate based on `5c224cf`, after its D16/P13 candidate filtering, and finally after the exited-helper cleanup repair. All 155 keys and 23 merged keys passed; the stored-record audit found zero problems. The domain entries and 81-feature tree weights are unchanged; only D16/P13's rule conditions changed. Its existing filename is retained. The knowledge-matrix receipt was unchanged and was not rerun.
 
 ## What a check proves
 
