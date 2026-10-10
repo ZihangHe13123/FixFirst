@@ -4,6 +4,12 @@ from .models import Action, GOAL_CHECKS
 from .runner import environment_id
 
 
+COLLECTION_HINT = (
+    "This check stopped during collection and no tests ran; if you only need a particular test, "
+    "you can specify its test range."
+)
+
+
 def refine(session, actions):
     target = GOAL_CHECKS[session.goal]
     if target not in ("pytest", "pytest_run"):
@@ -15,12 +21,36 @@ def refine(session, actions):
                   or "Structured test events were incomplete" in run.notes)
     unsupported = run.pytest_options.get("support_error") == "minimum_pytest_version"
     internal_error = run.status == "completed" and run.exit_code == 3
-    if not incomplete and not unsupported and not internal_error:
+    collection_events = {
+        event.event_id for event in session.events
+        if event.run_id == run.run_id and event.stage == "collect" and event.kind == "import_failure"
+        and "No module named" in event.message
+    }
+    collection_stopped = (
+        session.goal == "pass_tests" and not session.test_targets and run.scope == "tests:project"
+        and run.status == "completed" and run.exit_code == 2 and bool(collection_events)
+        and not any(record.get("type") == "outcome" for record in run.records)
+    )
+    if not incomplete and not unsupported and not internal_error and not collection_stopped:
         return actions
     issues = [i for i in session.issues if i.tool == target and i.status == "open"
               and any(e.run_id == run.run_id and e.event_id in i.event_ids for e in session.events)]
     if not issues:
         return actions
+    if collection_stopped and not (incomplete or unsupported or internal_error):
+        missing_ids = {issue.issue_id for issue in issues if collection_events.intersection(issue.event_ids)}
+        hinted = []
+        for action in actions:
+            if missing_ids.intersection(action.issue_ids) and COLLECTION_HINT not in action.instructions:
+                # Preserve the renderer's existing fallback and duplicate-text suppression.
+                # Changing a separate explanation would also change its truncation boundary.
+                value = action.instructions or (action.explanation if not action.command else "")
+                update = {"instructions": (value + " " if value else "") + COLLECTION_HINT}
+                if value and action.explanation == value:
+                    update["explanation"] = update["instructions"]
+                action = action.model_copy(update=update)
+            hinted.append(action)
+        return hinted
     ids = {i.issue_id for i in issues}
     kept = []
     for action in actions:
