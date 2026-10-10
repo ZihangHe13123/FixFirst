@@ -1,6 +1,7 @@
 """Explain narrowly observed limits of an executed pytest check."""
 
 from .models import Action, GOAL_CHECKS
+from .parsers import IMPORT
 from .runner import environment_id
 
 
@@ -26,9 +27,11 @@ def refine(session, actions):
         if event.run_id == run.run_id and event.stage == "collect" and event.kind == "import_failure"
         and "No module named" in event.message
     }
+    missing_modules = {match.group(1) for event in session.events if event.event_id in collection_events
+                       for match in [IMPORT.search(event.message)] if match}
     collection_stopped = (
         session.goal == "pass_tests" and not session.test_targets and run.scope == "tests:project"
-        and run.status == "completed" and run.exit_code == 2 and bool(collection_events)
+        and run.status == "completed" and run.exit_code == 2 and len(missing_modules) >= 2
         and not any(record.get("type") == "outcome" for record in run.records)
     )
     if not incomplete and not unsupported and not internal_error and not collection_stopped:

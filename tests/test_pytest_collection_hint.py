@@ -15,11 +15,13 @@ def example(tmp_path):
               environment_id=environment_id(sys.executable))
     event = Event(run_id=run.run_id, tool="pytest_run", stage="collect", kind="import_failure",
                   message="ModuleNotFoundError: No module named 'a_missing_library'")
+    another = Event(run_id=run.run_id, tool="pytest_run", stage="collect", kind="import_failure",
+                    message="ModuleNotFoundError: No module named 'another_missing_library'")
     issue = Issue(issue_id="missing", fingerprint="missing", tool="pytest_run", stage="collect",
                   kind="import_failure", title=event.message, event_ids=[event.event_id],
                   evidence_refs=[], member_keys=[], scope=run.scope, environment_id=run.environment_id,
                   status="open", diagnosis="missing_dependency", diagnosis_source="rule")
-    session.runs, session.events, session.issues = [run], [event], [issue]
+    session.runs, session.events, session.issues = [run], [event, another], [issue]
     actions = [Action(action_id="install", kind="manual_fix", title="Install a_missing_library",
                       explanation="The library is missing.", instructions="Install the declared dependency.",
                       verification="Check again", command=[sys.executable, "-m", "pip", "install", "a_missing_library"],
@@ -66,7 +68,8 @@ def test_mcp_text_only_gains_the_hint_even_near_the_explanation_limit(tmp_path, 
 
 
 @pytest.mark.parametrize("change", ["imported", "selected", "executed_tests", "wrong_exit",
-                                    "old_environment", "old_event", "non_missing_import", "setup_failure"])
+                                    "old_environment", "old_event", "non_missing_import", "setup_failure",
+                                    "one_module", "same_module_twice"])
 def test_other_checks_keep_their_steps(tmp_path, change):
     session, actions = example(tmp_path)
     run, event = session.runs[0], session.events[0]
@@ -87,6 +90,10 @@ def test_other_checks_keep_their_steps(tmp_path, change):
         event.message = "ImportError: cannot import name 'x'"
     elif change == "setup_failure":
         event.stage = "setup"
+    elif change == "one_module":
+        session.events = [event]
+    elif change == "same_module_twice":
+        session.events[1].message = event.message
     assert [a.model_dump() for a in refine(session, actions)] == [a.model_dump() for a in actions]
 
 
@@ -94,8 +101,20 @@ def test_default_real_collection_failure_gets_the_hint(tmp_path, monkeypatch):
     monkeypatch.delenv("PYTEST_PLUGINS", raising=False)
     monkeypatch.delenv("PYTEST_ADDOPTS", raising=False)
     (tmp_path / "test_app.py").write_text("import a_missing_library\n")
+    (tmp_path / "test_other.py").write_text("import another_missing_library\n")
     session = create_session(tmp_path, sys.executable, goal="pass_tests")
     scan(session, ["pytest_run"])
     assert session.runs[-1].exit_code == 2
     assert any(COLLECTION_HINT in step["instructions"] for step in build_view(session)["steps"])
     assert session.goal_status != "achieved"
+
+
+def test_real_repeated_missing_module_does_not_get_the_hint(tmp_path, monkeypatch):
+    monkeypatch.delenv("PYTEST_PLUGINS", raising=False)
+    monkeypatch.delenv("PYTEST_ADDOPTS", raising=False)
+    for name in ("test_app.py", "test_other.py"):
+        (tmp_path / name).write_text("import a_missing_library\n")
+    session = create_session(tmp_path, sys.executable, goal="pass_tests")
+    scan(session, ["pytest_run"])
+    assert session.runs[-1].exit_code == 2
+    assert all(COLLECTION_HINT not in step["instructions"] for step in build_view(session)["steps"])
