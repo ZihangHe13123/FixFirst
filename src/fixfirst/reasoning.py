@@ -492,6 +492,8 @@ def infer_and_plan(session: Session):
         # explanation. Keep it complete rather than guessing a sentence boundary.
         if action.kind == "manual_fix" and not action.command and not action.instructions:
             action.instructions = action.explanation
-    session.actions = refine_empty_discovery(session, order_actions(actions, session.facts))
+    from .pytest_diagnostics import refine as refine_pytest_limits
+
+    session.actions = refine_pytest_limits(session, refine_empty_discovery(session, order_actions(actions, session.facts)))
     session.inference_trace = observed_operations.trace(session, by_id, details, outcomes)
     session.goal_status = goal_status(session, active)

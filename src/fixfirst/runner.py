@@ -10,7 +10,9 @@ import tempfile
 import threading
 import time
 
-from .models import Run, Session
+from packaging.version import Version
+
+from .models import Run, Session, check_scope
 from .processes import ManagedProcess, ProcessCancelled
 
 MAX_OUTPUT = 1_000_000
@@ -338,6 +340,22 @@ def validate_targets(session: Session, targets: list[str]):
             raise ValueError("Only nodes observed in this project with the current interpreter can be re-run")
 
 
+def pytest_version(session):
+    """Use the current interpreter's metadata, without importing its pytest."""
+    from packaging.version import InvalidVersion, Version
+
+    if session.environment.get("_environment_id") != environment_id(session.target_python):
+        return None
+    versions = [p.get("version") for p in session.environment.get("packages", [])
+                if p.get("name", "").lower() == "pytest"]
+    if len(versions) != 1:
+        return None
+    try:
+        return Version(versions[0])
+    except (InvalidVersion, TypeError):
+        return None
+
+
 def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targets=None) -> Run:
     if tool == "dependency_resolve":
         from .dependency_resolution import collect as resolve_dependencies
@@ -395,9 +413,17 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
         ],
     }
     commands["pytest_run"] = [arg for arg in commands["pytest"] if arg != "--collect-only"]
-    commands["pytest_run"] += ["--rootdir", cwd]
+    version = pytest_version(session) if tool in ("pytest", "pytest_run") else None
+    if version is not None and version < Version("3.2.1"):
+        return Run(tool=tool, cwd=cwd, scope=check_scope(session, tool),
+                   environment_id=environment_id(python), status="launch_failed", tool_version=str(version),
+                   requested_tests=list(session.test_targets) if tool == "pytest_run" else [],
+                   stderr="pytest is too old for this check; the minimum supported version is 3.2.1.",
+                   pytest_options={"support_error": "minimum_pytest_version", "minimum_version": "3.2.1"})
+    # --rootdir was added in pytest 3.5. Earlier versions find it from cwd/config.
+    if version is None or version >= Version("3.5"):
+        commands["pytest_run"] += ["--rootdir", cwd]
     if tool == "pytest_run" and session.test_targets:
-        from .models import check_scope
         from .test_selection import normalize_tests
 
         scope = check_scope(session, tool)
@@ -419,8 +445,6 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
         "pytest_run": "tests:selected" if targets else "tests:project",
     }[tool]
     if tool == "pytest_run" and session.test_targets:
-        from .models import check_scope
-
         scope = check_scope(session, tool) + (":partial" if targets else "")
     if tool in ("pytest", "pytest_run"):
         original_addopts = os.environ.get("PYTEST_ADDOPTS", "")
