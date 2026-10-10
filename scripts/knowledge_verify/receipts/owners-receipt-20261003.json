@@ -23,7 +23,7 @@
    "behavior.py": "f2ad929a528c043c1f393fd02967b4eae12c47eb5dbb3a9aa78bd26597931208",
    "binding_advice.py": "388ec311b49b71ff85e13f1634ac4bf6017c51209111a082f552e35a4372b773",
    "classification.py": "632eb57a91437c93966eeab3f509ee8cc28d084f2c92474a26c5cb17a94af1d0",
-   "configured_pytest.py": "bfe7bb52c21f5e60543c15b2317523932a263f6e270e9d3f563acb72521a4dda",
+   "configured_pytest.py": "d4eb16fd0c65b8085705a2b98d9c678cccf727b844fbfd1c030b74e9f8ce35df",
    "dependency_advice.py": "25ed1c015d89760a169eebddc61c49bc33941da6227d63464094edc73354fd02",
    "dependency_context.py": "14b93bc96c3f3fa4e8fd8e58190f068a1be21799ea6a997ef7e2471563564a59",
    "dependency_resolution.py": "91a9084efb4682ef253e14a746805676bc11340c0355bfbdbe35803ca779e5ba",
@@ -202,7 +202,7 @@
    "P85": "4055cd0e29ce8d1f0a0f7cd326cb779e9b967d3b167f15f429006d41aa76eb41",
    "P86": "51cd2258277caa9d8a6cb4c71d1877fd7117ec326faa788800f5de449dad16d8"
   },
-  "package_sha256": "f90756639150c1d7b4a21dc289e73b97919fa898f9252c5419f45a7a576edff6",
+  "package_sha256": "524dbdfc890f933b942dbea088413bb481d9ddef74fe37d949590fdfd021e959",
   "generated": "2026-10-10",
   "python": "3.12.13"
  },

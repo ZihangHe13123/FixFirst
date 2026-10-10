@@ -29,6 +29,8 @@ MAX_CONFIG_BYTES = 128000
 MAX_CONFIG_FILES = 256
 NOTICE = ("This confirmation uses the project's pytest options and may write coverage data "
           "or test reports. Those reports do not replace verification of the original tests.")
+TESTS_CHANGED = "The tests or their settings changed, or could not be compared with the baseline."
+NOT_STARTED = "The project pytest options check did not start or was interrupted; inspect its recorded output."
 BLOCKED = {"--collect-only", "--co", "--setup-only", "--setup-plan", "--help", "-h", "--version", "-V",
            "--pdb", "--trace", "--pdbcls", "--debug", "--rootdir", "--confcutdir", "--noconftest",
            "--override-ini", "--config-file", "-c", "-o", "-p", "--pyargs",
@@ -169,7 +171,7 @@ def _integrity_reason(session, before, runs=()):
     finally:
         session.runs = original
     if checked["changed"] or checked["unverifiable"]:
-        return "The tests or their settings changed, or could not be compared with the baseline."
+        return TESTS_CHANGED
     return ""
 
 
@@ -193,6 +195,31 @@ def _annotate(run, state, reason, **evidence):
                                                      "reason": reason, **evidence}
     if reason and reason not in run.notes:
         run.notes.append(reason)
+
+
+def _failure_reason(session, first, second, before, reason):
+    """Describe an already rejected confirmation; never change its verdict."""
+    finish = [row for row in second.records if row.get("type") == "finish"]
+    if second.status != "completed" or second.truncated or len(finish) != 1:
+        return reason
+    final = finish[0]
+    nodes = final.get("nodes")
+    if (not isinstance(nodes, list) or not all(isinstance(node, str) for node in nodes)
+            or len(set(nodes)) != len(nodes) or len(nodes) != final.get("collected")
+            or final.get("exit_code") != second.exit_code or final.get("collect_only") is not False
+            or final.get("records_dropped") is not False):
+        return reason
+    if reason == NOT_STARTED and second.exit_code == 5 and not nodes:
+        return "The original tests did not run with the project pytest options."
+    expected, observed = set(first.passed_nodes), set(nodes)
+    if (reason == TESTS_CHANGED and second.exit_code in (0, 1) and observed - expected
+            # A source repair can become a newly collected doctest, or a document
+            # can be outside the baseline's Python files. Keep actual changes to
+            # the original tests/configuration ahead of this node-set explanation.
+            and not _integrity_reason(session, before, [first])):
+        return (f"The project pytest options ran a different node set: {len(expected - observed)} original node(s) missing, "
+                f"{len(observed - expected)} additional node(s).")
+    return reason
 
 
 def follow_up(session, first, before, timeout, started, collect, targets=None):
@@ -235,7 +262,7 @@ def follow_up(session, first, before, timeout, started, collect, targets=None):
     if not reason and second.status != "completed":
         reason = "The project pytest options check did not complete: " + second.status + "."
     if not reason and second.exit_code not in (0, 1):
-        reason = "The project pytest options check did not start or was interrupted; inspect its recorded output."
+        reason = NOT_STARTED
     reason = reason or _observe_reason(session, second, before)
     if not reason and (second.environment_id != first.environment_id or second.scope != first.scope
                        or second.cwd != first.cwd or words(second.pytest_options.get("config_addopts")) != tokens):
@@ -247,7 +274,7 @@ def follow_up(session, first, before, timeout, started, collect, targets=None):
         if second.status != "completed" or second.truncated:
             reason = "The project pytest options check did not complete: " + second.status + "."
         elif second.exit_code not in (0, 1):
-            reason = "The project pytest options check did not start or was interrupted; inspect its recorded output."
+            reason = NOT_STARTED
         elif second.exit_code != 0:
             reason = "Tests still failed with the project pytest options."
         elif nodes != expected:
@@ -255,7 +282,10 @@ def follow_up(session, first, before, timeout, started, collect, targets=None):
                       f"{len(nodes - expected)} additional node(s).")
         elif not second.coverage_complete or not second.verified_pass or set(second.passed_nodes) != expected:
             reason = "The project pytest options did not prove every original node passed with complete records; skips and xfail are not fixes."
-    _annotate(second, "failed" if reason else "confirmed", reason, **proof)
+    verdict = "failed" if reason else "confirmed"
+    if reason:
+        reason = _failure_reason(session, first, second, before, reason)
+    _annotate(second, verdict, reason, **proof)
     if not reason:
         second.notes = [n for n in second.notes if not n.startswith("This result covers FixFirst's check without")]
     return second

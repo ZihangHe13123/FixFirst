@@ -77,6 +77,9 @@ def test_excluded_original_tests_never_close(tmp_path, options):
     assert not confirmed(pytest_runs(session)[-1])
     assert session.goal_status != "achieved"
     assert all(i.status != "resolved" for i in session.issues if i.issue_id in original)
+    detail = build_view(session)["status"]["detail"]
+    assert "The original tests did not run with the project pytest options" in detail
+    assert "did not start" not in detail
 
 
 def test_additional_doctests_are_not_silently_accepted(tmp_path):
@@ -88,6 +91,63 @@ def test_additional_doctests_are_not_silently_accepted(tmp_path):
     assert second.verified_pass and second.test_summary["passed"] == 2
     assert not confirmed(second) and session.goal_status != "achieved"
     assert "1 additional node(s)" in build_view(session)["status"]["detail"]
+
+
+@pytest.mark.parametrize("extra", ["repaired_source", "text_document"])
+def test_newly_collected_tests_explain_the_node_difference(tmp_path, extra):
+    options = "--doctest-modules" if extra == "repaired_source" else "--doctest-glob=*.txt"
+    session = project(tmp_path, options)
+    doc = '""">>> 1 + 1\n2\n"""\n' if extra == "repaired_source" else ""
+    (tmp_path / "app.py").write_text(doc + "READY = False\n")
+    if extra == "text_document":
+        (tmp_path / "example.txt").write_text(">>> 1 + 1\n2\n")
+    scan(session, ["pytest_run"])
+    original = [i.issue_id for i in session.issues if i.tool == "pytest_run"]
+    (tmp_path / "app.py").write_text(doc + "READY = True\n")
+    scan(session, ["pytest_run"])
+    first, second = pytest_runs(session)[-2:]
+    assert first.passed_nodes == ["test_app.py::test_ready"]
+    assert second.verified_pass and second.test_summary["passed"] == 2
+    assert state(second)["state"] == "failed" and not confirmed(second)
+    assert session.goal_status != "achieved"
+    assert all(i.status != "resolved" for i in session.issues if i.issue_id in original)
+    detail = build_view(session)["status"]["detail"]
+    assert "0 original node(s) missing, 1 additional node(s)" in detail
+    assert "tests or their settings changed" not in detail
+
+
+def test_actual_test_changes_keep_priority_over_extra_node_wording(tmp_path):
+    session = project(tmp_path, "--doctest-modules")
+    (tmp_path / "app.py").write_text('""">>> 1 + 1\n2\n"""\nREADY = False\n')
+    (tmp_path / "conftest.py").write_text(
+        "from pathlib import Path\ndef pytest_sessionfinish(session, exitstatus):\n"
+        "    if session.config.getini('addopts'):\n"
+        "        Path('test_app.py').write_text('def test_ready():\\n    pass\\n')\n")
+    scan(session, ["pytest_run"])
+    original = [i.issue_id for i in session.issues if i.tool == "pytest_run"]
+    (tmp_path / "app.py").write_text('""">>> 1 + 1\n2\n"""\nREADY = True\n')
+    scan(session, ["pytest_run"])
+    second = pytest_runs(session)[-1]
+    assert second.test_summary["passed"] == 2
+    assert state(second)["state"] == "failed" and not confirmed(second)
+    assert session.goal_status != "achieved"
+    assert all(i.status != "resolved" for i in session.issues if i.issue_id in original)
+    detail = build_view(session)["status"]["detail"]
+    assert "The tests or their settings changed, or could not be compared with the baseline." in detail
+    assert "additional node(s)" not in detail
+    assert "test_app.py" in json.dumps(build_view(session))
+
+
+@pytest.mark.parametrize("options", ["--cov=app", "--uninstalled-fixfirst-plugin-option"])
+def test_missing_plugin_or_unknown_option_keeps_the_startup_reason(tmp_path, options):
+    session = project(tmp_path, options)
+    original = fix(tmp_path, session)
+    second = pytest_runs(session)[-1]
+    assert second.exit_code == 4 and state(second)["state"] == "failed" and not confirmed(second)
+    assert session.goal_status != "achieved"
+    assert all(i.status != "resolved" for i in session.issues if i.issue_id in original)
+    assert state(second)["reason"] == (
+        "The project pytest options check did not start or was interrupted; inspect its recorded output.")
 
 
 @pytest.mark.parametrize("outcome", ["skip", "xfail", "xpass"])
