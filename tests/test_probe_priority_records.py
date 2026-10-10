@@ -51,8 +51,12 @@ def test_real_large_suite_keeps_a_late_failure_and_reports_incompleteness(tmp_pa
     assert run.test_summary["failed"] == 1
     assert any(r.get("type") == "failure" and "TAIL_FAILURE_WAS_RECORDED" in r.get("message", "") for r in run.records)
     assert any(r.get("type") == "exception" and r.get("exception_type") == "ValueError" for r in run.records)
-    first = build_view(session)["steps"][0]
+    steps = build_view(session)["steps"]
+    first = steps[0]
     assert first["title"] == "Test records are incomplete; select a smaller test range"
     assert "--tests" in first["instructions"]
+    assert first["cause"] is None and first["possible"] is None
+    assert first["rules"] == [] and not first["confirmed_code_defect"]
+    assert any(step["id"] != first["id"] and step["issue_ids"] for step in steps)
     assert all("Test records are incomplete" in issue.note for issue in session.issues if issue.status == "open")
     assert session.goal_status != "achieved"
