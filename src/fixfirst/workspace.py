@@ -134,6 +134,11 @@ def build_view(session: Session) -> dict:
                 "breakdown": breakdown,
             }
         )
+        if action.action_id == "pytest-incomplete-records":
+            # Missing observation is not the related test failure's diagnosis.
+            # Keep that diagnosis on its own repair step and issue.
+            target[-1].update(cause=None, possible=None, confirmed_code_defect=False,
+                              suspected=False, rules=[])
     steps, optional, other = _fold_suggestions(steps), _fold_suggestions(optional), _fold_suggestions(other)
     fixed = [
         {"title": i.title, "cause": cause_name(i.diagnosis), "note": i.note}
@@ -244,7 +249,9 @@ def _fold_suggestions(steps: list[dict]) -> list[dict]:
     kept = []
     for step in steps:
         if step["suspected"]:
-            hosts = [s for s in steps if not s["suspected"] and set(step["issue_ids"]) <= set(s["issue_ids"])]
+            hosts = [s for s in steps if not s["suspected"]
+                     and s["id"] != "pytest-incomplete-records"
+                     and set(step["issue_ids"]) <= set(s["issue_ids"])]
             if hosts:
                 for host in hosts:
                     if host["cause"] != step["cause"]:
@@ -307,6 +314,12 @@ def _status(session: Session, steps, open_issues, optional_issues=()) -> dict:
             "as the new baseline if they are intended.",
         }
     goal_run = _goal_run(session)
+    if goal_run:
+        from .configured_pytest import state, note
+
+        if state(goal_run).get("state") in {"blocked", "failed"}:
+            return {"kind": "scope_limited", "headline": "Project pytest options were not verified",
+                    "detail": note(goal_run)}
     if goal_run and goal_run.verified_pass and pytest_options_limited(goal_run):
         count = goal_run.test_summary.get("passed")
         return {

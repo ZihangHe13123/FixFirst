@@ -321,6 +321,19 @@ def observed_changes(evidence: dict, project: dict) -> list[tuple[str, str]]:
     providers -= set(project.get("own_names", []))
     providers -= {row["name"] for row in project.get("local_modules", [])}
     found = []
+    if ("sqlalchemy" in providers and evidence["exception"] == "ModuleNotFoundError"
+            and evidence["missing_module"] == "sqlalchemy.databases"
+            and evidence["message"] == "No module named 'sqlalchemy.databases'"
+            and evidence["raised_in"] == "project"):
+        try:
+            body = ast.parse(evidence.get("source_statement", "")).body
+            statement = body[0] if len(body) == 1 else None
+            if (isinstance(statement, ast.ImportFrom) and statement.level == 0
+                    and statement.module == "sqlalchemy.databases"
+                    and len(statement.names) == 1 and statement.names[0].name == "sqlite"):
+                found.append(("sqlalchemy-sqlite-dialect-import", "sqlalchemy"))
+        except (SyntaxError, ValueError, RecursionError):
+            pass
     if (evidence["exception"] == "ResourceClosedError" and evidence["library"] == "sqlalchemy"
             and evidence["exception_module"] == "sqlalchemy.exc" and "sqlalchemy" in providers
             and evidence["message"] == "This result object does not return rows. It has been closed automatically."
@@ -343,6 +356,13 @@ def observed_changes(evidence: dict, project: dict) -> list[tuple[str, str]]:
     # APIs which cannot contribute their own Python traceback frame.
     location = evidence.get("source_location") or evidence.get("where", "")
     site_calls = set(project.get("source_context", {}).get("calls", {}).get(location, []))
+    if ("xlrd" in providers and evidence["exception"] == "XLRDError"
+            and evidence["exception_module"] == "xlrd.biffh" and evidence["library"] == "xlrd"
+            and evidence["raised_in"] == "third_party"
+            and evidence["message"] == "Excel xlsx file; not supported"
+            and site_calls == {"xlrd.open_workbook"}
+            and "xlrd.open_workbook" in evidence.get("library_calls", [])):
+        found.append(("xlrd-xlsx-reading", "xlrd"))
     if (evidence["exception"] == "InvalidVersion" and evidence["library"] == "packaging"
             and "packaging.version.parse" in evidence.get("library_calls", [])
             and "packaging" in providers):

@@ -10,7 +10,9 @@ import tempfile
 import threading
 import time
 
-from .models import Run, Session
+from packaging.version import Version
+
+from .models import Run, Session, check_scope
 from .processes import ManagedProcess, ProcessCancelled
 
 MAX_OUTPUT = 1_000_000
@@ -308,6 +310,8 @@ def search_releases(session: Session, targets: list[str]) -> Run:
 
 
 def validate_targets(session: Session, targets: list[str]):
+    from .test_selection import canonical_nodeid
+
     if not targets or len(targets) > 200 or len(targets) != len(set(targets)):
         raise ValueError("Choose 1-200 distinct, previously observed test nodes")
     known = {
@@ -333,12 +337,30 @@ def validate_targets(session: Session, targets: list[str]):
         if (
             path.is_absolute()
             or not (root / path).resolve().is_relative_to(root)
-            or node not in known
+            or node not in known and canonical_nodeid(node) not in known
         ):
             raise ValueError("Only nodes observed in this project with the current interpreter can be re-run")
 
 
-def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targets=None) -> Run:
+def pytest_version(session):
+    """Use the current interpreter's metadata, without importing its pytest."""
+    from packaging.version import InvalidVersion, Version
+
+    if session.environment.get("_environment_id") != environment_id(session.target_python):
+        return None
+    versions = [p.get("version") for p in session.environment.get("packages", [])
+                if p.get("name", "").lower() == "pytest"]
+    if len(versions) != 1:
+        return None
+    try:
+        return Version(versions[0])
+    except (InvalidVersion, TypeError):
+        return None
+
+
+def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targets=None, *, _configured=False) -> Run:
+    if _configured and tool != "pytest_run":
+        raise ValueError("Project pytest options only apply to a pytest execution check")
     if tool == "dependency_resolve":
         from .dependency_resolution import collect as resolve_dependencies
 
@@ -395,9 +417,20 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
         ],
     }
     commands["pytest_run"] = [arg for arg in commands["pytest"] if arg != "--collect-only"]
-    commands["pytest_run"] += ["--rootdir", cwd]
+    if _configured:
+        index = commands["pytest_run"].index("-o")
+        del commands["pytest_run"][index:index + 2]
+    version = pytest_version(session) if tool in ("pytest", "pytest_run") else None
+    if version is not None and version < Version("3.2.1"):
+        return Run(tool=tool, cwd=cwd, scope=check_scope(session, tool),
+                   environment_id=environment_id(python), status="launch_failed", tool_version=str(version),
+                   requested_tests=list(session.test_targets) if tool == "pytest_run" else [],
+                   stderr="pytest is too old for this check; the minimum supported version is 3.2.1.",
+                   pytest_options={"support_error": "minimum_pytest_version", "minimum_version": "3.2.1"})
+    # --rootdir was added in pytest 3.5. Earlier versions find it from cwd/config.
+    if version is None or version >= Version("3.5"):
+        commands["pytest_run"] += ["--rootdir", cwd]
     if tool == "pytest_run" and session.test_targets:
-        from .models import check_scope
         from .test_selection import normalize_tests
 
         scope = check_scope(session, tool)
@@ -419,8 +452,6 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
         "pytest_run": "tests:selected" if targets else "tests:project",
     }[tool]
     if tool == "pytest_run" and session.test_targets:
-        from .models import check_scope
-
         scope = check_scope(session, tool) + (":partial" if targets else "")
     if tool in ("pytest", "pytest_run"):
         original_addopts = os.environ.get("PYTEST_ADDOPTS", "")
@@ -440,8 +471,15 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
             }
             run = execute(argv, cwd, tool, scope, python, timeout, extra_env=extra)
             configurations = []
-            if records_file.exists():
-                raw = records_file.read_bytes()[:MAX_OUTPUT]
+            streams = [(records_file, MAX_OUTPUT), (Path(str(records_file) + ".important"), 8_000_000)]
+            for stream, limit in streams:
+                if not stream.exists():
+                    continue
+                with stream.open("rb") as file:
+                    raw = file.read(limit + 1)
+                if len(raw) > limit:
+                    run.notes.append("Structured test events were incomplete")
+                    raw = raw[:limit]
                 for line in raw.decode("utf-8", "replace").splitlines():
                     try:
                         record = redact_data(json.loads(line))
@@ -456,7 +494,7 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
                                   "environment_addopts": redact(original_addopts) if len(original_addopts) <= 16000 else None}
             if len(configurations) == 1:
                 run.pytest_options.update({key: value for key, value in configurations[0].items()
-                                           if key in {"config_complete", "config_file", "config_addopts", "observation_error", "persistent_config"}})
+                                           if key in {"config_complete", "config_file", "config_addopts", "config_file_sha256", "observation_error", "persistent_config"}})
             from .test_results import pytest_options_note
 
             if note := pytest_options_note(run):
@@ -475,7 +513,7 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
     run.targets = targets
     if tool == "pytest_run":
         run.requested_tests = list(session.test_targets)
-    if tool == "pytest_run":
+    if tool == "pytest_run" and not _configured:
         run.notes.append("This run executed test bodies and fixtures; the result covers the recorded nodes using FixFirst's fixed options.")
     if tool == "environment" and run.status == "completed" and run.exit_code == 0:
         try:

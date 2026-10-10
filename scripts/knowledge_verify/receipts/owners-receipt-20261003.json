@@ -15,14 +15,15 @@
   "recipes_sha256": "c788f0accd524d57820c5a86c9ff0a52b7d3bfd8020fdce88e5a75fbce20ef5b",
   "identity_functions_sha256": "6c205b733438f19bcdd73271884e2e6c8f88f7e81c7750b3ff797d380dfe0987",
   "e2e_files_sha256": {
-   "__init__.py": "9b7925bcacc5199acc7904b40b3a6a41f6b7fb3b46d9ee8e511e0ed7d4fa35a9",
+   "__init__.py": "26aaa36539e3cb74601063925d9a0a53e4ac73cba74f1c0bd64235ab48f4178f",
    "_native_runner.py": "98b3ba8de8a949e2185b05fa1fd36cfd9cd0267bb9b2f5a20f2fd9b1ec3482f1",
    "_notebook_runner.py": "896b692b9fb49a6f6b605ecb9292e63e179cfda9865f559244bca9e0d448cf14",
    "_runtime_evidence.py": "71f32ae4933e362cafa4b2ffa850e126fbd8243c8d3e65256afb919b02d56bef",
    "_unittest_runner.py": "ca5e745e05f5c0146cefb5e94d9335e465fcceaff5c3eef18a1840a897da4f54",
-   "behavior.py": "db1a26d8cf5bd5ad33659c8b6a97e7459b3199994015cc33b0710dc4005de72a",
+   "behavior.py": "f2ad929a528c043c1f393fd02967b4eae12c47eb5dbb3a9aa78bd26597931208",
    "binding_advice.py": "388ec311b49b71ff85e13f1634ac4bf6017c51209111a082f552e35a4372b773",
    "classification.py": "632eb57a91437c93966eeab3f509ee8cc28d084f2c92474a26c5cb17a94af1d0",
+   "configured_pytest.py": "d4eb16fd0c65b8085705a2b98d9c678cccf727b844fbfd1c030b74e9f8ce35df",
    "dependency_advice.py": "25ed1c015d89760a169eebddc61c49bc33941da6227d63464094edc73354fd02",
    "dependency_context.py": "14b93bc96c3f3fa4e8fd8e58190f068a1be21799ea6a997ef7e2471563564a59",
    "dependency_resolution.py": "91a9084efb4682ef253e14a746805676bc11340c0355bfbdbe35803ca779e5ba",
@@ -36,6 +37,7 @@
    "install_feedback.py": "ed1d545d09e4b9b8637bb65e5640744ac7681ebab281446bcae4f9bbf85b4e49",
    "integrity.py": "7ec9691c63ed86c1c913dbe56eb4fa6dfbb0a5e9d19b28323b29580348d7cd4a",
    "interface_history.py": "1ffa8f2b04967bb3391b1b5336eb9f889449569e9cf62b1e384cf0bb59a4aa4b",
+   "legacy_pytest.py": "cff78961be3f8194fc5dd9f01cc45ec543dd28525bfe9c0aa109b2d4e19eb493",
    "local_import_advice.py": "c8bc96137ddb2b521e003279452a212259a8ec50646fb185993dd05bf646d663",
    "local_import_context.py": "adaf9d2e3a5f28362adf17dcf2872f9fe06cb1d84cb53617b0da4650fbad3f17",
    "local_imports.py": "6a11416c9235dd02f43e0317e8628ec2d6d11eadb26f59a1ed7b2f59c912489c",
@@ -43,20 +45,21 @@
    "models.py": "9284e6968bb5d18eaccbba162c41e4e58eeb8917bbc53ec0de1e73ef575042a0",
    "observed_operations.py": "e4ea76ee418542adbf3d7adaacbe2e83d27467cfee0da540a773d555820d95d8",
    "package_compatibility.py": "8bcefc2ee9c4bfc9b4bb6aecddc841b2d1c3a39b71609b60c96c331416b55c91",
-   "parsers.py": "ab00032f1b0324554df364d388f3d7eb9f5ffc002bef0e344442535690842375",
+   "parsers.py": "3656642bd3ff988d0ad9370e285914f55d974786bb0e066ef0375fe21e24ebef",
    "persistent_configuration.py": "ae82c03e8982037912d05d3129979c488351f985ca0d235892bf140186679f95",
    "processes.py": "c2a74d7f354b168117d7a4f34a2f34fefdb42698e5891010aaa15593c00c4ca2",
    "project.py": "04a5f9595d696491b03b47fbde9b6a0a5c14c65de026f53b2c035b3f1c61bd78",
+   "pytest_diagnostics.py": "6c5691736be93513de6fe3d8665b9b5a39006df881541e1057f78d1feacbac4c",
    "pytest_settings.py": "992945f2a49ed93c831959914d3c45547ce6428bdacb35462fe46a2084000efb",
-   "reasoning.py": "d9c43d26448967f18ce92cc3ae3009a039274a96e525afd84831e92a0a03d35a",
+   "reasoning.py": "5d93dd543cc30308c2cc65785b33ed5dd5f6fc85411c348bff24865e2aa0d803",
    "removal_ownership.py": "ba69c6a520a174d855b78ed038a2a7c317c91352473de181b435b48b335af05f",
-   "runner.py": "980dbb68b47488df1951a7461cb4ef558a1dbbd412624736fd89eae00b0910a3",
-   "service.py": "fa4ee08e17a53975f4d9919b8a90b99c44c2c04cae761ae8963861e6e982a16c",
+   "runner.py": "435cc0bad180b81d1a9496ea7b84592a24baa573dc3029c9796801d562cf9ed2",
+   "service.py": "0c4f1350d9b129a096df959b7d1a4cd14dbcfdd0db9627770910e755dbff77e1",
    "source_context.py": "c174ddc9e7c8a614f534caf6ae1537a38a2c9092a71889c48b30d8e9c4a06cfb",
    "symbol_advice.py": "66b5da1923f94b973940f340155587d0c3fdd85a61652e85fef1bbfd222e65e4",
    "symbol_context.py": "8c718adc90c4780ac0e3357a08a607a545e7e70f618a958382f7408c5f7da85d",
-   "test_results.py": "34623cdb9d69cd1ec6a3f47fa8f1b1a6b710b42c27de27ceb84ae6489c9943c4",
-   "test_selection.py": "f9969b1446f69eff455b67519e77d8d22dcc90b83b8955fc11d745714bcb11b0",
+   "test_results.py": "4c4f92950e237a1e75dd1ce658b51a01e7df1b7bd13f050bb116f48b43c567b4",
+   "test_selection.py": "6aea62a9fc2e672076b125ed25c87f0fc1a6aad034cd1459aa217519e310cc14",
    "tool_compatibility.py": "e2f38799f69e027930a255ae1372256c07b33874f1a3e2f627cb16d9c915b4f2",
    "yaml_advice.py": "939ba924e6f6635c1eaf8e57e27a926132b094b4263c3306da5e321c83a7977b"
   },
@@ -199,8 +202,8 @@
    "P85": "4055cd0e29ce8d1f0a0f7cd326cb779e9b967d3b167f15f429006d41aa76eb41",
    "P86": "51cd2258277caa9d8a6cb4c71d1877fd7117ec326faa788800f5de449dad16d8"
   },
-  "package_sha256": "4a38c758c808ceb730e5135b752b70d6cbeceb602a02114edfe2286a6d61902b",
-  "generated": "2026-10-09",
+  "package_sha256": "524dbdfc890f933b942dbea088413bb481d9ddef74fe37d949590fdfd021e959",
+  "generated": "2026-10-10",
   "python": "3.12.13"
  },
  "results": [
@@ -29614,7 +29617,7 @@
       "openai.OpenAI"
      ],
      "dists": {
-      "openai": "3.27.0"
+      "openai": "3.28.0"
      }
     }
    },
@@ -29636,7 +29639,7 @@
      "steps": [
       [
        "Replace OpenAI.edits: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.27.0, which no longer provides OpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.28.0, which no longer provides OpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -29849,7 +29852,7 @@
       "openai.OpenAI"
      ],
      "dists": {
-      "openai": "3.27.0"
+      "openai": "3.28.0"
      }
     }
    },
@@ -29871,7 +29874,7 @@
      "steps": [
       [
        "Replace OpenAI.fine_tunes: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.27.0, which no longer provides OpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.28.0, which no longer provides OpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -30084,7 +30087,7 @@
       "openai.AsyncOpenAI"
      ],
      "dists": {
-      "openai": "3.27.0"
+      "openai": "3.28.0"
      }
     }
    },
@@ -30106,7 +30109,7 @@
      "steps": [
       [
        "Replace AsyncOpenAI.edits: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.27.0, which no longer provides AsyncOpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.28.0, which no longer provides AsyncOpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -30319,7 +30322,7 @@
       "openai.AsyncOpenAI"
      ],
      "dists": {
-      "openai": "3.27.0"
+      "openai": "3.28.0"
      }
     }
    },
@@ -30341,7 +30344,7 @@
      "steps": [
       [
        "Replace AsyncOpenAI.fine_tunes: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.27.0, which no longer provides AsyncOpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.28.0, which no longer provides AsyncOpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",

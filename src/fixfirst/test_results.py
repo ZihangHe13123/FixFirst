@@ -55,6 +55,10 @@ def pytest_option_coverage(run: Run) -> str:
     """
     if run.tool not in ("pytest", "pytest_run") or not run.pytest_options:
         return "legacy"
+    from .configured_pytest import confirmed
+
+    if confirmed(run):
+        return "equivalent"
     observed = run.pytest_options
     if observed.get("config_complete") is not True:
         return "unknown"
@@ -69,6 +73,10 @@ def pytest_options_limited(run: Run) -> bool:
 
 
 def pytest_options_note(run: Run) -> str:
+    from .configured_pytest import note
+
+    if explanation := note(run):
+        return explanation
     state = pytest_option_coverage(run)
     if state == "different":
         return ("This result covers FixFirst's check without the usual pytest options. "
@@ -129,7 +137,7 @@ def summarize_tests(run: Run):
     if not isinstance(nodes, list) or not all(isinstance(n, str) for n in nodes):
         return
     selected = set(nodes)
-    from .test_selection import selection_observed
+    from .test_selection import canonical_nodeid, selection_observed
 
     run.test_summary["selected"] = len(selected)
     run.test_summary["incomplete"] = len(selected - complete)
@@ -143,7 +151,7 @@ def summarize_tests(run: Run):
         and run.exit_code in (0, 1)
         and complete == selected
         and set(phases) == selected
-        and (not run.targets or set(run.targets) == selected)
+        and (not run.targets or {canonical_nodeid(node) for node in run.targets} == selected)
         and (not run.requested_tests or run.targets or selection_observed(run.requested_tests, selected))
         and not any(r.get("type") == "failure" and r.get("stage") == "collect" for r in run.records)
     )

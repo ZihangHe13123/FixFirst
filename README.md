@@ -306,10 +306,16 @@ environment says about the modules involved) as JSON, with no cause, ranking or 
 
 - Pytest checks use fixed options. FixFirst records the active configuration's original
   `addopts` and any `PYTEST_ADDOPTS` it leaves out. Empty options and known display options
-  such as `-q` still allow verification. If the omitted options change execution (for example
-  `--cov`, `-k`, `-m`, or `--ignore`), or cannot be read, a pass is shown as a pass of the recorded
-  check. The original command and earlier problems remain unverified; run your usual pytest
-  command to confirm them. Older saved checks without this observation keep their existing status.
+  such as `-q` still allow verification. For `pass_tests`, a complete pass with unchanged tests
+  can trigger one further check with the project's original `addopts`, within the remaining
+  timeout. It uses the same interpreter, directory and saved test selection. Only the identical
+  node set, entirely passed with complete records and unchanged configuration, confirms a fix.
+  Filtering out nodes, adding nodes, skips, missing plugins, parallel-worker options, unknown
+  configuration or a failed confirmation leave it unverified. The configured check may write
+  coverage data or XML/HTML reports; ordinary reports do not count as changed tests. It never
+  installs anything or runs a shell command. Non-display `PYTEST_ADDOPTS` remains a manual check.
+  Older sessions without a complete configuration baseline need a new session or a user-accepted
+  baseline before this confirmation; saved checks never gain evidence of a run that did not happen.
 
 - Changing tests is not taken as fixing them. Before the first check runs anything, FixFirst records
   the tests (by the project's own test file patterns and the files tests are collected from),
