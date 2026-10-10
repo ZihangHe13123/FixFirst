@@ -51,6 +51,11 @@
     </div>
   </div>
 
+  <div class="field" id="test-fields" hidden>
+    <label class="label" for="tests">Tests to run (optional, one file or pytest node ID per line)</label>
+    <textarea id="tests" rows="3" placeholder="tests/test_example.py&#10;tests/test_example.py::test_case"></textarea>
+    <p class="small muted">Use files inside this project. Leave blank for default pytest discovery. Check again reuses your selection.</p>
+  </div>
   <div class="field" id="execution-fields" hidden>
     <p id="discovery-note" class="small muted"></p>
     <label class="label" for="entry-pick">Suggested entries</label>
@@ -90,6 +95,7 @@ function goal(){const selected=document.querySelector('input[name=goal]:checked'
 function updateControls(){
   const g=goal(),active=g==='run_project'||g==='pass_unittest';
   el('execution-fields').hidden=!active;
+  el('test-fields').hidden=g!=='pass_tests';
   if(g==='pass_unittest'){el('entry-kind').value='unittest';if(!entryEdited)el('entry').value=checked?.discovery.unittest_entry||'.'}
   else if(el('entry-kind').value==='unittest'){el('entry-kind').value='script';if(!entryEdited)el('entry').value=checked?.discovery.default_entry?.entry||''}
   el('entry-kind').disabled=g==='pass_unittest';
@@ -150,6 +156,7 @@ el('up').onclick=()=>parent&&openFolder(parent);el('choose-here').onclick=()=>ch
 start.onclick=async()=>{
   if(!checked)return;
   const g=goal(),body={project:checked.path,python:checked.python.path,goal:g};
+  if(g==='pass_tests')body.tests=el('tests').value.split(/\r?\n/).map(v=>v.trim()).filter(Boolean);
   if(g==='run_project'||g==='pass_unittest'){
     const kind=g==='pass_unittest'?'unittest':el('entry-kind').value;
     body.execution={kind,entry:el('entry').value.trim(),pattern:el('pattern').value||'test*.py'};

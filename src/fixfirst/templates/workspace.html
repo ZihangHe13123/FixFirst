@@ -40,6 +40,7 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
   <span class="goal-note">{{ view.goal_note }}</span>
 </div>
 
+{% if view.tests %}<p class="small muted">Tests to run: <code>{{ view.tests|join(', ') }}</code>. Results cover this saved selection.</p>{% endif %}
 <section class="status {{ view.status.kind }}">
   <div>
     <h1>{% if view.status.kind == 'done' %}<span class="icon" aria-hidden="true">✓</span>{% endif %}{{ view.status.headline }}</h1>
@@ -56,6 +57,11 @@ details h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:va
   <summary>Python and run settings</summary>
   <label class="label" for="settings-python">Python interpreter</label>
   <input id="settings-python" value="{{ view.python }}" spellcheck="false">
+  <div id="settings-tests">
+    <label class="label" for="settings-test-paths">Tests to run (one file or pytest node ID per line)</label>
+    <textarea id="settings-test-paths" rows="3">{{ view.tests|join('\n') }}</textarea>
+    <p class="small muted">Project files only. Leave blank for default pytest discovery. Check again reuses this selection.</p>
+  </div>
   <div id="settings-execution">
     <label class="label" for="settings-kind">Run as</label>
     <select id="settings-kind">
@@ -171,6 +177,7 @@ if(get('accept-baseline'))get('accept-baseline').onclick=async()=>{
 function settingsVisibility(){
   const g=get('goal').value,k=get('settings-kind');
   get('settings-execution').hidden=!['run_project','pass_unittest'].includes(g);
+  get('settings-tests').hidden=g!=='pass_tests';
   if(g==='pass_unittest')k.value='unittest';
   else if(g==='run_project'&&k.value==='unittest')k.value='script';
   k.disabled=g==='pass_unittest';
@@ -182,6 +189,7 @@ get('goal').onchange=settingsChanged;
 get('run-settings').addEventListener('input',settingsChanged);
 get('save-settings').onclick=async()=>{
   const goal=get('goal').value,body={goal,python:get('settings-python').value.trim()};
+  if(goal==='pass_tests')body.tests=get('settings-test-paths').value.split(/\r?\n/).map(v=>v.trim()).filter(Boolean);
   if(['run_project','pass_unittest'].includes(goal)){
     const kind=goal==='pass_unittest'?'unittest':get('settings-kind').value;
     body.execution={kind,entry:get('settings-entry').value.trim(),pattern:get('settings-pattern').value||'test*.py'};

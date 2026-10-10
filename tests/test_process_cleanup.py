@@ -10,6 +10,7 @@ from unittest.mock import Mock
 import pytest
 
 from fixfirst.processes import ManagedProcess, ProcessCancelled, ProcessScope
+from fixfirst import processes
 
 
 def fake_process():
@@ -56,10 +57,14 @@ def test_permission_failure_is_not_reported_as_success(monkeypatch, returncode):
     denied = PermissionError("cannot terminate this group")
     kill = Mock(side_effect=denied)
     monkeypatch.setattr(os, "killpg", kill)
+    # The simulated denied group must also be unverifiable by the new query.
+    gone = Mock(return_value=False)
+    monkeypatch.setattr(processes, "_group_has_exited", gone)
     with pytest.raises(PermissionError) as exc:
         process.close()
     assert exc.value is denied
     assert kill.call_count == (1 if returncode is None else 2)
+    assert gone.call_count == (0 if returncode is None else 1)
     assert not process.closed and process in process.scope.children
     process.proc.wait.assert_not_called()
 
@@ -102,6 +107,7 @@ def test_real_exited_child_is_reaped_and_unregistered():
             time.sleep(.01)
         else:
             pytest.fail("the child did not reach its exited, unreaped state")
+        assert processes._group_has_exited(process.pid)
         process.close()
         assert process.returncode == 0
         assert process.closed and process not in scope.children

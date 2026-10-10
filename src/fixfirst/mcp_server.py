@@ -144,6 +144,15 @@ FACTS_TOOLS = [
     },
 ]
 
+# Keep observe and every pre-existing parameter unchanged; only diagnose gains selection.
+FACTS_TOOLS[0]["inputSchema"] = {**TOOLS[0]["inputSchema"],
+                               "properties": dict(TOOLS[0]["inputSchema"]["properties"])}
+TOOLS[0]["inputSchema"]["properties"]["tests"] = {
+    "type": "array", "items": {"type": "string"}, "maxItems": 200,
+    "description": "Optional project test files or pytest node IDs for pass_tests. "
+    "They need not have been observed before. check_again reuses this selection. No commands or options.",
+}
+
 
 class ToolError(Exception):
     """A problem the agent can act on; reported in the tool result, not as a protocol error."""
@@ -227,17 +236,19 @@ class Server:
 
     # ----- tools ------------------------------------------------------------------------------
 
-    def diagnose(self, project, python=None, goal="auto", execution=None):
+    def diagnose(self, project, python=None, goal="auto", execution=None, tests=None):
         if goal not in ["auto", *GOALS]:
             raise ToolError(f"Unknown goal {goal!r}; use one of {', '.join(GOALS)}")
         _check_execution_goal(goal, execution)
+        if tests and goal not in ("auto", "pass_tests"):
+            raise ToolError("The tests parameter is only available for pass_tests; remove it for this goal.")
         folder = inspect_folder(str(project), python or None)
         if not folder["ok"]:
             raise ToolError(folder.get("error") or "; ".join(folder["warnings"]))
         interpreter = folder["python"]["path"]
-        session = create_session(folder["path"], interpreter, goal=goal, execution=execution)
+        session = create_session(folder["path"], interpreter, goal=goal, execution=execution, tests=tests)
         key = (folder["path"], interpreter, session.goal,
-               session.execution.model_dump_json() if session.execution else "")
+               session.execution.model_dump_json() if session.execution else "", tuple(session.test_targets))
         notes = [f"Python: {interpreter} ({folder['python']['origin']})", *folder["warnings"]]
         if key in self.sessions:
             # A second diagnose continues the session, so earlier fixes stay verified.
@@ -393,6 +404,8 @@ def render(session, view, notes=()) -> str:
         f"FixFirst session {session.session_id} · project {view['project']} · goal: {view['goal_name']}",
         f"Status: {status['headline']}. {_plain(status['detail'])}",
     ]
+    if session.test_targets:
+        lines.append("Tests to run: " + ", ".join(session.test_targets) + " (saved selection only)")
     if status["kind"] == "done":
         lines.append("The goal is reached and verified by a real check. Nothing else is needed for it.")
     if status["kind"] in ("baseline_changed", "baseline_unverifiable"):

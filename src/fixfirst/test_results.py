@@ -129,6 +129,8 @@ def summarize_tests(run: Run):
     if not isinstance(nodes, list) or not all(isinstance(n, str) for n in nodes):
         return
     selected = set(nodes)
+    from .test_selection import selection_observed
+
     run.test_summary["selected"] = len(selected)
     run.test_summary["incomplete"] = len(selected - complete)
     coverage = bool(
@@ -142,6 +144,7 @@ def summarize_tests(run: Run):
         and complete == selected
         and set(phases) == selected
         and (not run.targets or set(run.targets) == selected)
+        and (not run.requested_tests or run.targets or selection_observed(run.requested_tests, selected))
         and not any(r.get("type") == "failure" and r.get("stage") == "collect" for r in run.records)
     )
     run.coverage_complete = coverage

@@ -49,6 +49,36 @@ _scope = ContextVar("fixfirst_process_scope", default=_default)
 atexit.register(_default.cancel)
 
 
+def _group_has_exited(group_id):
+    """Confirm absent/zombie-only members; failed or changing observations prove nothing."""
+    def snapshot():
+        try:
+            result = subprocess.run(["/bin/ps", "-A", "-o", "pid=,pgid=,stat="],
+                                    capture_output=True, text=True, encoding="ascii", timeout=2)
+            if result.returncode != 0 or not result.stdout.strip():
+                return None
+            members, seen = set(), set()
+            for line in result.stdout.splitlines():
+                pid, group, state = line.split()
+                pid, group = int(pid), int(group)
+                if pid <= 0 or group < 0 or pid in seen:
+                    return None
+                seen.add(pid)
+                if group == group_id:
+                    if not state.startswith("Z"):
+                        return None
+                    members.add(pid)
+            return members
+        except (OSError, subprocess.TimeoutExpired, UnicodeError, ValueError):
+            return None
+
+    before = snapshot()
+    if before is None:
+        return False
+    after = snapshot()
+    return after is not None and after <= before
+
+
 class ManagedProcess:
     def __init__(self, argv, **kwargs):
         self.scope = _scope.get()
@@ -98,13 +128,18 @@ class ManagedProcess:
                     # On macOS, a group containing only an unreaped exited leader
                     # can report EPERM. poll() reaps it; still signal the group
                     # again because a finished leader may have live descendants.
-                    # A live leader or a second EPERM is a real cleanup failure.
+                    # A live leader is a real cleanup failure.
                     if self.proc.poll() is None:
                         raise
                     try:
                         os.killpg(self.proc.pid, signal.SIGKILL)
                     except ProcessLookupError:
                         pass
+                    except PermissionError:
+                        # Exited helper processes can also linger in the group.
+                        # Only observed absence/death permits successful cleanup.
+                        if not _group_has_exited(self.proc.pid):
+                            raise
 
     def close(self):
         with self.scope.lock:

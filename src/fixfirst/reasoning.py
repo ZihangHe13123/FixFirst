@@ -433,6 +433,8 @@ def goal_status(session: Session, active) -> str:
 
 
 def infer_and_plan(session: Session):
+    from .test_selection import comparable_scopes, missing_optional_tool, refine_empty_discovery
+
     current = environment_id(session.target_python)
     active = [
         i
@@ -440,6 +442,8 @@ def infer_and_plan(session: Session):
         if i.status != "resolved" and i.environment_id in (current, "unknown")
         and (i.tool not in ("python_run", "unittest_run") or i.environment_id == "unknown"
              or i.scope == check_scope(session, i.tool))
+        and (i.tool != "pytest_run" or comparable_scopes(i.scope, check_scope(session, "pytest_run")))
+        and not missing_optional_tool(session, i)
     ]
     observed_active = [i for i in active if i.status in ("open", "awaiting_verification")]
     facts, details = base_facts(session, observed_active)
@@ -488,6 +492,6 @@ def infer_and_plan(session: Session):
         # explanation. Keep it complete rather than guessing a sentence boundary.
         if action.kind == "manual_fix" and not action.command and not action.instructions:
             action.instructions = action.explanation
-    session.actions = order_actions(actions, session.facts)
+    session.actions = refine_empty_discovery(session, order_actions(actions, session.facts))
     session.inference_trace = observed_operations.trace(session, by_id, details, outcomes)
     session.goal_status = goal_status(session, active)

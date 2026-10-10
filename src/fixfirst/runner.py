@@ -396,6 +396,18 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
     }
     commands["pytest_run"] = [arg for arg in commands["pytest"] if arg != "--collect-only"]
     commands["pytest_run"] += ["--rootdir", cwd]
+    if tool == "pytest_run" and session.test_targets:
+        from .models import check_scope
+        from .test_selection import normalize_tests
+
+        scope = check_scope(session, tool)
+        try:
+            normalize_tests(cwd, session.test_targets)
+        except ValueError as exc:
+            return Run(tool=tool, cwd=cwd, scope=scope, environment_id=environment_id(python),
+                       status="launch_failed", stderr=str(exc), requested_tests=session.test_targets)
+        if not targets:
+            commands["pytest_run"] += ["--", *session.test_targets]
     if targets:
         commands["pytest_run"] += ["--", *targets]
     argv = commands[tool]
@@ -406,6 +418,10 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
         "environment": "environment",
         "pytest_run": "tests:selected" if targets else "tests:project",
     }[tool]
+    if tool == "pytest_run" and session.test_targets:
+        from .models import check_scope
+
+        scope = check_scope(session, tool) + (":partial" if targets else "")
     if tool in ("pytest", "pytest_run"):
         original_addopts = os.environ.get("PYTEST_ADDOPTS", "")
         with tempfile.TemporaryDirectory(prefix="fixfirst-probe-", ignore_cleanup_errors=True) as directory:
@@ -457,6 +473,8 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
     else:
         run = execute(argv, cwd, tool, scope, python, timeout)
     run.targets = targets
+    if tool == "pytest_run":
+        run.requested_tests = list(session.test_targets)
     if tool == "pytest_run":
         run.notes.append("This run executed test bodies and fixtures; the result covers the recorded nodes using FixFirst's fixed options.")
     if tool == "environment" and run.status == "completed" and run.exit_code == 0:
