@@ -1,6 +1,7 @@
 """Copied into an isolated temporary directory; imports only stdlib in the target env."""
 
 import json
+import hashlib
 import os
 import importlib.util
 from pathlib import Path
@@ -80,6 +81,25 @@ def record_pytest_options(config):
         if len(json.dumps(value)) > 16000 or len(record["config_file"]) > 4096:
             raise ValueError("Original pytest options exceed the observation limit")
         record.update(config_addopts=value, config_complete=True)
+        if path:
+            try:
+                path = Path(path)
+                if path.is_symlink():
+                    raise ValueError("Linked configuration")
+                fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+                             | getattr(os, "O_BINARY", 0))
+                try:
+                    if not stat.S_ISREG(os.fstat(fd).st_mode):
+                        raise ValueError("Unsafe configuration")
+                    with os.fdopen(fd, "rb", closefd=False) as stream:
+                        data = stream.read(128001)
+                finally:
+                    os.close(fd)
+                if len(data) <= 128000:
+                    record["config_file_sha256"] = hashlib.sha256(data).hexdigest()
+            except BaseException:
+                # Optional binding must not change existing option observation.
+                pass
         try:
             record["persistent_config"] = persistent_config(config, path, values)
         except BaseException:

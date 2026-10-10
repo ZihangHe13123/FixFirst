@@ -54,36 +54,45 @@ def test_missing_coverage_option_keeps_pass_fact_without_claiming_original_succe
     original = original_pytest(tmp_path)
     assert original.returncode == 4 and "unrecognized arguments: --cov=app" in original.stderr
     scan(session, ["pytest_run"])
-    run = session.runs[-1]
-    assert run.exit_code == 0 and run.verified_pass and run.coverage_complete
-    assert run.passed_nodes == ["test_app.py::test_ready"]
-    assert run.pytest_options["config_addopts"] == "--cov=app"
-    assert run.pytest_options["config_file"] == str(tmp_path / "pytest.ini")
+    first, run = [r for r in session.runs if r.tool == "pytest_run"]
+    assert first.exit_code == 0 and first.verified_pass and first.coverage_complete
+    assert first.passed_nodes == ["test_app.py::test_ready"]
+    assert run.exit_code == 4 and not run.verified_pass
+    assert "unrecognized arguments: --cov=app" in run.stderr
+    assert first.pytest_options["config_addopts"] == "--cov=app"
+    assert first.pytest_options["config_file"] == str(tmp_path / "pytest.ini")
     assert not any(r["type"] == "pytest_config" for r in run.records)
-    assert session.goal_status == "unknown" and not session.issues
+    assert session.goal_status != "achieved"
     view = build_view(session)
     assert view["status"]["kind"] == "scope_limited"
     text = mcp_render(session, view)
-    assert "The checked tests passed" in text and "Run your usual pytest command" in text
+    assert "Project pytest options were not verified" in text
+    assert "did not start" in text and "The checked tests passed" not in text
     assert "All tests pass" not in text and "Nothing else is needed" not in text
     page, exported, _ = html(session, tmp_path / "store")
-    assert "recorded check passed" in page and "Run your usual pytest command" in page
+    assert "project pytest options check did not start" in page
     assert exported["runs"][-1]["pytest_options"] == run.pytest_options
     check = next(row for row in facts_view(session)["checks"] if row["check"] == "pytest_run")
+    assert check["pytest_options"]["config_complete"] is True
     assert check["pytest_options"]["config_addopts"] == "--cov=app"
     assert "usual pytest command" not in json.dumps(check)
 
 
-@pytest.mark.parametrize("addopts", [
-    "-k ready", "-m slow", "--ignore=test_app.py", "--maxfail=1", "-x", "--cov=app",
+@pytest.mark.parametrize(("addopts", "confirmed"), [
+    ("-k ready", True), ("-m slow", False), ("--ignore=test_app.py", False),
+    ("--maxfail=1", True), ("-x", True), ("--cov=app", False),
 ])
-def test_execution_changing_options_require_original_command_verification(tmp_path, addopts):
+def test_execution_changing_options_require_original_command_verification(tmp_path, addopts, confirmed):
     session = project(tmp_path, addopts)
     scan(session, ["pytest_run"])
-    run = session.runs[-1]
-    assert run.verified_pass and run.test_summary["passed"] == 1
-    assert pytest_option_coverage(run) == "different"
-    assert session.goal_status == "unknown" and not session.issues
+    first, run = [r for r in session.runs if r.tool == "pytest_run"]
+    assert first.verified_pass and first.test_summary["passed"] == 1
+    assert pytest_option_coverage(first) == "different"
+    assert (session.goal_status == "achieved") is confirmed
+    assert run.pytest_options["configured_verification"]["state"] == ("confirmed" if confirmed else "failed")
+    if confirmed:
+        assert run.verified_pass and run.passed_nodes == first.passed_nodes
+        assert pytest_option_coverage(run) == "equivalent" and not session.issues
 
 
 @pytest.mark.parametrize("addopts", ["", "   ", "-q", "-vv", "-ra -q", "-r fEsxXpPaAN",
@@ -118,7 +127,8 @@ def test_selected_config_formats_are_observed_by_pytest(tmp_path, filename, cont
     scan(session, ["pytest_run"])
     assert session.runs[-1].pytest_options["config_addopts"] == expected
     assert session.runs[-1].pytest_options["config_file"] == str(tmp_path / filename)
-    assert session.runs[-1].verified_pass and session.goal_status == "unknown"
+    assert session.runs[-1].verified_pass and session.goal_status == "achieved"
+    assert session.runs[-1].pytest_options["configured_verification"]["state"] == "confirmed"
 
 
 def test_external_options_are_recorded_but_not_executed(tmp_path, monkeypatch):
@@ -160,11 +170,11 @@ def test_selected_pass_preserves_nodes_but_does_not_close_the_original_problem(t
     assert session.goal_status == "blocked"
     (tmp_path / "app.py").write_text("READY = True\n")
     scan(session, ["pytest_run"], targets=["test_app.py::test_ready"])
-    run = session.runs[-1]
+    first, run = [r for r in session.runs if r.tool == "pytest_run"][-2:]
     issue = next(issue for issue in session.issues if issue.issue_id == original)
-    assert run.scope == "tests:selected" and run.passed_nodes == ["test_app.py::test_ready"]
-    assert run.verified_pass and issue.status == "awaiting_verification"
-    assert issue.verification == "unverifiable" and "usual pytest command" in issue.note
+    assert first.scope == run.scope == "tests:selected" and first.passed_nodes == ["test_app.py::test_ready"]
+    assert first.verified_pass and run.exit_code == 4 and issue.status == "awaiting_verification"
+    assert issue.verification == "unverifiable" and "did not start" in issue.note
     assert session.goal_status == "unknown" and not build_view(session)["fixed"]
 
 

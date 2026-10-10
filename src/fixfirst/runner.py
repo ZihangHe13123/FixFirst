@@ -358,7 +358,9 @@ def pytest_version(session):
         return None
 
 
-def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targets=None) -> Run:
+def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targets=None, *, _configured=False) -> Run:
+    if _configured and tool != "pytest_run":
+        raise ValueError("Project pytest options only apply to a pytest execution check")
     if tool == "dependency_resolve":
         from .dependency_resolution import collect as resolve_dependencies
 
@@ -415,6 +417,9 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
         ],
     }
     commands["pytest_run"] = [arg for arg in commands["pytest"] if arg != "--collect-only"]
+    if _configured:
+        index = commands["pytest_run"].index("-o")
+        del commands["pytest_run"][index:index + 2]
     version = pytest_version(session) if tool in ("pytest", "pytest_run") else None
     if version is not None and version < Version("3.2.1"):
         return Run(tool=tool, cwd=cwd, scope=check_scope(session, tool),
@@ -489,7 +494,7 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
                                   "environment_addopts": redact(original_addopts) if len(original_addopts) <= 16000 else None}
             if len(configurations) == 1:
                 run.pytest_options.update({key: value for key, value in configurations[0].items()
-                                           if key in {"config_complete", "config_file", "config_addopts", "observation_error", "persistent_config"}})
+                                           if key in {"config_complete", "config_file", "config_addopts", "config_file_sha256", "observation_error", "persistent_config"}})
             from .test_results import pytest_options_note
 
             if note := pytest_options_note(run):
@@ -508,7 +513,7 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
     run.targets = targets
     if tool == "pytest_run":
         run.requested_tests = list(session.test_targets)
-    if tool == "pytest_run":
+    if tool == "pytest_run" and not _configured:
         run.notes.append("This run executed test bodies and fixtures; the result covers the recorded nodes using FixFirst's fixed options.")
     if tool == "environment" and run.status == "completed" and run.exit_code == 0:
         try:

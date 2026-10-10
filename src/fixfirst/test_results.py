@@ -55,6 +55,10 @@ def pytest_option_coverage(run: Run) -> str:
     """
     if run.tool not in ("pytest", "pytest_run") or not run.pytest_options:
         return "legacy"
+    from .configured_pytest import confirmed
+
+    if confirmed(run):
+        return "equivalent"
     observed = run.pytest_options
     if observed.get("config_complete") is not True:
         return "unknown"
@@ -69,6 +73,10 @@ def pytest_options_limited(run: Run) -> bool:
 
 
 def pytest_options_note(run: Run) -> str:
+    from .configured_pytest import note
+
+    if explanation := note(run):
+        return explanation
     state = pytest_option_coverage(run)
     if state == "different":
         return ("This result covers FixFirst's check without the usual pytest options. "

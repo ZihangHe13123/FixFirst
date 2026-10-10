@@ -314,6 +314,12 @@ def _status(session: Session, steps, open_issues, optional_issues=()) -> dict:
             "as the new baseline if they are intended.",
         }
     goal_run = _goal_run(session)
+    if goal_run:
+        from .configured_pytest import state, note
+
+        if state(goal_run).get("state") in {"blocked", "failed"}:
+            return {"kind": "scope_limited", "headline": "Project pytest options were not verified",
+                    "detail": note(goal_run)}
     if goal_run and goal_run.verified_pass and pytest_options_limited(goal_run):
         count = goal_run.test_summary.get("passed")
         return {
