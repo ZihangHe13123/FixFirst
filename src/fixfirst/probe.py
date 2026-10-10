@@ -17,6 +17,8 @@ _runtime_spec.loader.exec_module(_runtime)
 _dropped = False
 # Project fixtures may replace or clear os.environ after the probe is loaded.
 _probe_path = os.environ.get("FIXFIRST_PROBE")
+_important_path = _probe_path + ".important" if _probe_path else None
+IMPORTANT_BYTES = 8_000_000
 
 # Pytest's streams already use UTF-8. Its tests' children must inherit the user's
 # encoding policy, not FixFirst's transport setting.
@@ -34,11 +36,20 @@ def emit(data, final=False):
     if not path:
         return
     text = json.dumps(data, ensure_ascii=True) + "\n"
-    if not final and (
+    over_limit = not final and (
         len(text) > 100000 or (os.path.exists(path) and os.path.getsize(path) + len(text) > 800000)
-    ):
-        _dropped = True
-        return
+    )
+    if over_limit:
+        important = data.get("type") in ("failure", "exception") or (
+            data.get("type") == "outcome" and data.get("outcome") == "failed")
+        if not important:
+            _dropped = True
+            return
+        # Passing phases cannot spend the independent budget for failure evidence.
+        path = _important_path
+        if len(text) > IMPORTANT_BYTES or (os.path.exists(path) and os.path.getsize(path) + len(text) > IMPORTANT_BYTES):
+            _dropped = True
+            return
     with open(path, "a", encoding="utf-8") as file:
         file.write(text)
 

@@ -466,8 +466,15 @@ def collect(session: Session, tool: str, timeout: float = DEFAULT_TIMEOUT, targe
             }
             run = execute(argv, cwd, tool, scope, python, timeout, extra_env=extra)
             configurations = []
-            if records_file.exists():
-                raw = records_file.read_bytes()[:MAX_OUTPUT]
+            streams = [(records_file, MAX_OUTPUT), (Path(str(records_file) + ".important"), 8_000_000)]
+            for stream, limit in streams:
+                if not stream.exists():
+                    continue
+                with stream.open("rb") as file:
+                    raw = file.read(limit + 1)
+                if len(raw) > limit:
+                    run.notes.append("Structured test events were incomplete")
+                    raw = raw[:limit]
                 for line in raw.decode("utf-8", "replace").splitlines():
                     try:
                         record = redact_data(json.loads(line))
