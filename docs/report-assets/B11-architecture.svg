@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="620" height="240" preserveAspectRatio="xMinYMin meet" viewBox="0 0 620 240" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="620" height="240"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-240)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="15" y="164" width="190" height="60" rx="4" ry="0" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1; fill: rgb(94%,96%,95%); fill-rule: evenodd;"/>
+			<text x="76.37299999999999" y="199" style="font-family: Helvetica-Bold; font-size: 11px;fill: rgb(14%,29%,25%); stroke:none;" transform="translate(0,398) scale(1,-1)">Select a goal</text>
+			<text x="67.755" y="181" style="font-family: Helvetica; font-size: 10px;fill: rgb(40%,44%,42%); stroke:none;" transform="translate(0,362) scale(1,-1)">Project and Python</text>
+			<rect x="215" y="164" width="190" height="60" rx="4" ry="0" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1; fill: rgb(94%,96%,95%); fill-rule: evenodd;"/>
+			<text x="279.1285" y="199" style="font-family: Helvetica-Bold; font-size: 11px;fill: rgb(14%,29%,25%); stroke:none;" transform="translate(0,398) scale(1,-1)">Run checks</text>
+			<text x="267.2" y="181" style="font-family: Helvetica; font-size: 10px;fill: rgb(40%,44%,42%); stroke:none;" transform="translate(0,362) scale(1,-1)">Observe and group</text>
+			<rect x="415" y="164" width="190" height="60" rx="4" ry="0" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1; fill: rgb(94%,96%,95%); fill-rule: evenodd;"/>
+			<text x="451.315" y="199" style="font-family: Helvetica-Bold; font-size: 11px;fill: rgb(14%,29%,25%); stroke:none;" transform="translate(0,398) scale(1,-1)">Reason from evidence</text>
+			<text x="453.305" y="181" style="font-family: Helvetica; font-size: 10px;fill: rgb(40%,44%,42%); stroke:none;" transform="translate(0,362) scale(1,-1)">Knowledge rules and tree</text>
+			<rect x="415" y="52" width="190" height="60" rx="4" ry="0" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1; fill: rgb(94%,96%,95%); fill-rule: evenodd;"/>
+			<text x="462.3205" y="87" style="font-family: Helvetica-Bold; font-size: 11px;fill: rgb(14%,29%,25%); stroke:none;" transform="translate(0,174) scale(1,-1)">Propose an action</text>
+			<text x="454.40999999999997" y="69" style="font-family: Helvetica; font-size: 10px;fill: rgb(40%,44%,42%); stroke:none;" transform="translate(0,138) scale(1,-1)">Location and explanation</text>
+			<rect x="215" y="52" width="190" height="60" rx="4" ry="0" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1; fill: rgb(94%,96%,95%); fill-rule: evenodd;"/>
+			<text x="260.181" y="87" style="font-family: Helvetica-Bold; font-size: 11px;fill: rgb(14%,29%,25%); stroke:none;" transform="translate(0,174) scale(1,-1)">User or agent edits</text>
+			<text x="259.425" y="69" style="font-family: Helvetica; font-size: 10px;fill: rgb(40%,44%,42%); stroke:none;" transform="translate(0,138) scale(1,-1)">Source or environment</text>
+			<rect x="15" y="52" width="190" height="60" rx="4" ry="0" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1; fill: rgb(94%,96%,95%); fill-rule: evenodd;"/>
+			<text x="77.5995" y="87" style="font-family: Helvetica-Bold; font-size: 11px;fill: rgb(14%,29%,25%); stroke:none;" transform="translate(0,174) scale(1,-1)">Check again</text>
+			<text x="60.535" y="69" style="font-family: Helvetica; font-size: 10px;fill: rgb(40%,44%,42%); stroke:none;" transform="translate(0,138) scale(1,-1)">Verify the same scope</text>
+			<path d="M 205,194 L 215,194 Z" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<polygon points="215 194, 208 197, 208 191" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,25%); fill-rule: evenodd;"/>
+			<path d="M 405,194 L 415,194 Z" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<polygon points="415 194, 408 197, 408 191" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,25%); fill-rule: evenodd;"/>
+			<path d="M 510,164 L 510,112 Z" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<polygon points="510 112, 513 119, 507 119" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,25%); fill-rule: evenodd;"/>
+			<path d="M 415,82 L 405,82 Z" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<polygon points="405 82, 412 79, 412 85" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,25%); fill-rule: evenodd;"/>
+			<path d="M 215,82 L 205,82 Z" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<polygon points="205 82, 212 79, 212 85" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,25%); fill-rule: evenodd;"/>
+			<path d="M 110,112 L 110,164 Z" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<polygon points="110 164, 107 157, 113 157" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,25%); fill-rule: evenodd;"/>
+			<text x="206.3635" y="15" style="font-family: Helvetica; font-size: 11px;fill: rgb(40%,44%,42%); stroke:none;" transform="translate(0,30) scale(1,-1)">A passing run verifies that scope and input</text>
+		</g>
+	</g>
+</svg>

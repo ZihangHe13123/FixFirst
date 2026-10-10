@@ -1,5 +1,59 @@
 # 报告中图、表和数字的来源
 
+## Version 0.4 draft status
+
+Version 0.4 keeps the v0.3 numerical evidence unchanged and adds draft notices and the team review agenda. Its coverage limitation follows protocol v1.16 sections 4 and 5: A to D use supported mechanisms, E has two uncovered environment faults, and F has two code defect controls. Proposed additional tests have not been run.
+
+## New evidence for the next team revision
+
+The frozen product's scripted follow check, reported on 9 October 2026, repaired 17/18 A to D tasks, 0/2 E tasks and 0/2 F tasks, with no protected edits. Counts were checked against the 22 per-task records. The script executes printed commands or preregistered interpretations of named source changes, for at most six rounds. This is a product follow check on constructed instances, not a human usability study or a measurement of real environment-fault coverage.
+
+- Report: local `workbench/claude-h5-acceptance-20261005/EVAL-FOLLOW-CHECK-20261009.md`, SHA256 `eb09e549aa075ab1bde6741d7f16f0f7144de62fe8e28af95e41a49e4c278916`.
+- Per-task record: local `workbench/claude-h5-acceptance-20261005/results/eval-follow-wt-fixedC4-h5.json`, SHA256 `d258600cd587b5a5d0a6eaa8a62282062297a631e7625c74a04109d66c5f17a7`.
+- Caveats to discuss: eb1 lacks an executable replacement; ec3 succeeds using the alternative editable install; ee1's passing headline can mislead; ee2 falls back to unconfirmed generic advice.
+- BugsInPy phase one has 27 reproduced code defects excluding the separately marked PySnooper-2 development case. Phase two can measure wrong environment advice and premature resolution; new real environment failures still need independent selection.
+
+## Version 0.3 cloud addition checked 9 October 2026
+
+Version 0.3 carries forward the version 0.2 evidence below and adds section 5.6. Aggregate values and source identities are in `docs/report-assets/B11-results-v0.3-20261009.json`. The local and cloud results are separate: local cells have five repetitions and cloud cells have three.
+
+| Evidence | Source and interpretation |
+|---|---|
+| Cloud primary result | Local `workbench/codex-deepseek-comparison-20261009/analysis-20261009/UPLIFT-MAIN.json`: 132 runs, 54/54 scope repairs in each arm; ratios 0.82 turns, 0.71 time and 0.72 tokens over 18 tasks. First-attempt analysis is byte-identical because no retries occurred |
+| Independent recomputation and record check | Local `workbench/claude-h5-acceptance-20261005/DEEPSEEK-RESULTS-CHECK-20261009.md`; matches the registered analysis and independently checks 14,321 archived files and 1,320 requests/replies. This is independent AI review, not human replication |
+| Exploratory descriptions and cost | The same review and its retained per-task tables: five-task savings partition is post hoc; F totals use a different aggregation. CNY 4.73 formal / 5.05 with probes are peak-price usage accounting, not the actual off-peak bill |
+| Conditions | Registration `7dca2f77...` bound protocol v1.15 at launch. Protocol v1.16 subsequently records results only. Frozen product `5c224cf`, H5 and task pack remain unchanged; provider sampling, reasoning amount, cache and model alias are not frozen |
+
+Source SHA256 values:
+
+- Primary analysis: `c35b345f48ae2813f4fc35826271affc4711fefff7325d9d0c13bb6eb455b1e0`.
+- Completion audit: `81a8076e95a748fa4c6b50febf61f39df33aa5396ad22e33adfab4e91155858f`.
+- Independent review: `959cdc6556ee6f109827a88e898172f7beb5294a4be98c11f95951ba2269aec3`.
+- Launch registration: `7dca2f775447bcb5c572c3606c15b99894a27ac175e5510eda2430617c55dc17`.
+- Launch protocol v1.15: `ca950b0d50ed62a1da4712449b6a63729420fb25010c222d9a7c4774b62cee48`.
+- Results-only protocol v1.16: `50110399fb763b96a68c6c7f95ba17ff33745f3e9f2d9b208928e441c1291461`.
+
+## Version 0.2 source register checked 9 October 2026
+
+The original skeleton register below is historical. This table identifies the populated version 0.2. Aggregate values and source SHA256 values are retained in `docs/report-assets/B11-results-20261009.json`. Workbench artifacts are local records, not files assumed to be present in public main.
+
+| Section or figure | Evidence | Interpretation |
+|---|---|---|
+| Business case and literature | Mukherjee et al. ISSTA 2021 author PDF; Horton and Parnin arXiv:1905.11127; Widyasari et al. FSE 2020 author preprint; primary tool documentation in the bibliography | Original titles, authors and findings opened and checked; historical study percentages are not general market estimates |
+| Frozen product and Figure 1 | Tag `b7-freeze-20261007`, commit `5c224cf`; `src/fixfirst/knowledge/domain.toml`, `rules.toml`; `docs/validation/2026-10-04-tree-integration.md` | 132 rules, 737 removal entries, 12 deprecation entries, 190 sources, default 81 feature model; entry counts are not complete semantic verification |
+| Historical component evaluation | `examples/diagnosis-evaluation/REPORT.md` and `metrics.json` | Historical 44 feature results, separate from the final 81 feature release; development protocols |
+| A2 first step scores | `examples/heldout-2026-10/scores-summary.md`, `scores-review.md`, `report-notes.md`, original independent CSVs | 4 correct, 1 partial, 6 generic, 1 wrong out of 12; agreement 9/12 and kappa 0.66 |
+| B3 real-project comparison | [Fixed result report at ebe2a709](https://github.com/ZihangHe13123/FixFirst/blob/ebe2a709abbf82bbf2988c6fdd6fdd2ba693469b/experiments/diagnosis_baseline/real-results-20261003/REPORT.md), PR #66 | 36 requests, missing answers retained; advice scored but not executed |
+| B3 generated comparison | [Fixed result report at 0f66baaa](https://github.com/ZihangHe13123/FixFirst/blob/0f66baaae518bc5ceb758c389df073fac66ad306/experiments/diagnosis_baseline/generated-results-20261004/REPORT.md), PR #69; local `workbench/codex-b3-generated-results-20261004/COMPARISON.json` | 750 model requests over 220 ordinary and 30 difficult cases; related to training and rule development |
+| B7 tables and Figure 2 | Local `workbench/codex-b7-formal-20261007/analysis-20261009/UPLIFT-ANALYSIS.json`; independent `FORMAL-RESULTS-CHECK-20261009.md` | 660 runs; primary analysis is 18 constructed scope tasks and 90 runs per model per arm; strict result and registered sensitivity together |
+| Grouping | `examples/grouping-evaluation/collection/metrics.json` and `execution/metrics.json` | Exact and TF IDF have identical scores on the recorded controlled pair sets |
+| B12 and user study status | `examples/bugsinpy-verification/README.md`; `docs/user-study/DATA.md` and `fixtures/README.md` | Reproduction and demonstration fixtures are not completed product or participant evaluations |
+| Appendix C and guide Figures 1 to 3 | `docs/USER_GUIDE.md`; actual frozen product screenshots in `docs/user-guide-images`; `docs/report-assets/B14-verification-20261009.json` | Fresh macOS setup, four source fixes and four passing tests, CLI and MCP checks; independent Windows/macOS installation remains pending |
+
+Standalone figures retain SVG source files in `docs/report-assets/`. The Word documents use bundled Liberation Serif and Liberation Mono for reliable PDF text extraction; the original skeleton is unchanged. The guide's Word pictures use native cropping of unchanged screenshots.
+
+## Historical skeleton register
+
 每张图、表和每个数字在这里登记：它在报告里的位置、来自仓库里的哪个文件或哪次运行、由哪个任务产出、现在的状态。
 
 报告里不写中文文件名：导出 PDF 的机器没有中文字体时，中文会显示成空白。骨架里的 **technical guide §n** 指 `docs/技术原理详解.md` 的第 n 节。

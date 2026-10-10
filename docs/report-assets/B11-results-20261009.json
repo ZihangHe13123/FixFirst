@@ -1,0 +1,445 @@
+{
+  "report_version": "0.2",
+  "date": "2026-10-09",
+  "product_commit": "5c224cf28896e487015106a7a7acd84f69f7ba26",
+  "product_tag": "b7-freeze-20261007",
+  "package_version": "0.8.0rc2",
+  "scope": "Completed local B7 batch; no cloud outcomes or participant data",
+  "knowledge_counts": {
+    "rules": 132,
+    "removed_entries": 737,
+    "deprecated_entries": 12,
+    "source_records": 190
+  },
+  "b7": {
+    "total_runs": 660,
+    "scope_tasks": 18,
+    "control_tasks": 4,
+    "runs_per_cell": 5,
+    "models": {
+      "Qwen3.6-35B-A3B-6bit": {
+        "strict": {
+          "tasks": 18,
+          "baseline": 0.8777777777777778,
+          "mcp": 0.9888888888888889,
+          "uplift": 0.1111111111111111,
+          "interval": [
+            0.011111111111111115,
+            0.2222222222222222
+          ],
+          "tasks_up": 5,
+          "tasks_down": 1,
+          "sign_p": 0.21875
+        },
+        "scope_runs_per_arm": 90,
+        "counts": {
+          "baseline": 79,
+          "mcp": 89
+        },
+        "sensitivity_other_pytest_option": {
+          "tasks": 18,
+          "baseline": 0.9666666666666666,
+          "mcp": 0.9888888888888889,
+          "uplift": 0.022222222222222216,
+          "interval": [
+            -0.022222222222222216,
+            0.06666666666666665
+          ],
+          "tasks_up": 3,
+          "tasks_down": 1,
+          "sign_p": 0.625
+        },
+        "sensitivity_final_compliant_state": {
+          "tasks": 18,
+          "baseline": 0.9444444444444444,
+          "mcp": 1.0,
+          "uplift": 0.05555555555555555,
+          "interval": [
+            0.011111111111111108,
+            0.1111111111111111
+          ],
+          "tasks_up": 4,
+          "tasks_down": 0,
+          "sign_p": 0.125
+        },
+        "efficiency_tasks": 15,
+        "efficiency_ratios": {
+          "turns": {
+            "geometric_mean": 0.5447664260900166,
+            "interval": [
+              0.42901263997161854,
+              0.6941604587565188
+            ],
+            "tasks_higher": 2,
+            "tasks_lower": 11,
+            "sign_p": 0.0224609375,
+            "n": 15
+          },
+          "time": {
+            "geometric_mean": 0.4607504617166548,
+            "interval": [
+              0.383038937537222,
+              0.5593309642906492
+            ],
+            "tasks_higher": 0,
+            "tasks_lower": 15,
+            "sign_p": 6.103515625e-05,
+            "n": 15
+          },
+          "tokens": {
+            "geometric_mean": 0.35989130724411644,
+            "interval": [
+              0.2822099099420237,
+              0.45960417209888
+            ],
+            "tasks_higher": 0,
+            "tasks_lower": 15,
+            "sign_p": 6.103515625e-05,
+            "n": 15
+          }
+        },
+        "controls": {
+          "E": {
+            "tasks": 2,
+            "baseline": 1.0,
+            "mcp": 1.0,
+            "uplift": 0.0,
+            "interval": null,
+            "tasks_up": 0,
+            "tasks_down": 0,
+            "sign_p": null
+          },
+          "F": {
+            "tasks": 2,
+            "baseline": 1.0,
+            "mcp": 1.0,
+            "uplift": 0.0,
+            "interval": null,
+            "tasks_up": 0,
+            "tasks_down": 0,
+            "sign_p": null
+          }
+        }
+      },
+      "Qwen3.8-27B-MLX-4bit": {
+        "strict": {
+          "tasks": 18,
+          "baseline": 0.9333333333333333,
+          "mcp": 0.9555555555555555,
+          "uplift": 0.022222222222222223,
+          "interval": [
+            0.0,
+            0.06666666666666668
+          ],
+          "tasks_up": 1,
+          "tasks_down": 0,
+          "sign_p": 1.0
+        },
+        "scope_runs_per_arm": 90,
+        "counts": {
+          "baseline": 84,
+          "mcp": 86
+        },
+        "sensitivity_other_pytest_option": {
+          "tasks": 18,
+          "baseline": 0.9333333333333333,
+          "mcp": 0.9555555555555555,
+          "uplift": 0.022222222222222223,
+          "interval": [
+            0.0,
+            0.06666666666666668
+          ],
+          "tasks_up": 1,
+          "tasks_down": 0,
+          "sign_p": 1.0
+        },
+        "sensitivity_final_compliant_state": {
+          "tasks": 18,
+          "baseline": 0.9333333333333333,
+          "mcp": 0.9555555555555555,
+          "uplift": 0.022222222222222223,
+          "interval": [
+            0.0,
+            0.06666666666666668
+          ],
+          "tasks_up": 1,
+          "tasks_down": 0,
+          "sign_p": 1.0
+        },
+        "efficiency_tasks": 17,
+        "efficiency_ratios": {
+          "turns": {
+            "geometric_mean": 0.8175242646119206,
+            "interval": [
+              0.6841090964188301,
+              0.9786060516150058
+            ],
+            "tasks_higher": 3,
+            "tasks_lower": 12,
+            "sign_p": 0.03515625,
+            "n": 17
+          },
+          "time": {
+            "geometric_mean": 0.7286231363016566,
+            "interval": [
+              0.601085033951336,
+              0.8889943600003868
+            ],
+            "tasks_higher": 4,
+            "tasks_lower": 13,
+            "sign_p": 0.049041748046875,
+            "n": 17
+          },
+          "tokens": {
+            "geometric_mean": 0.7376880158804546,
+            "interval": [
+              0.5909877642908039,
+              0.9117601717992855
+            ],
+            "tasks_higher": 5,
+            "tasks_lower": 12,
+            "sign_p": 0.143463134765625,
+            "n": 17
+          }
+        },
+        "controls": {
+          "E": {
+            "tasks": 2,
+            "baseline": 1.0,
+            "mcp": 1.0,
+            "uplift": 0.0,
+            "interval": null,
+            "tasks_up": 0,
+            "tasks_down": 0,
+            "sign_p": null
+          },
+          "F": {
+            "tasks": 2,
+            "baseline": 1.0,
+            "mcp": 1.0,
+            "uplift": 0.0,
+            "interval": null,
+            "tasks_up": 0,
+            "tasks_down": 0,
+            "sign_p": null
+          }
+        }
+      },
+      "gemma-4-26B-A4B-it-qat-4bit": {
+        "strict": {
+          "tasks": 18,
+          "baseline": 0.3888888888888889,
+          "mcp": 0.8999999999999999,
+          "uplift": 0.5111111111111111,
+          "interval": [
+            0.35555555555555557,
+            0.6555555555555556
+          ],
+          "tasks_up": 16,
+          "tasks_down": 1,
+          "sign_p": 0.000274658203125
+        },
+        "scope_runs_per_arm": 90,
+        "counts": {
+          "baseline": 35,
+          "mcp": 81
+        },
+        "sensitivity_other_pytest_option": {
+          "tasks": 18,
+          "baseline": 0.3888888888888889,
+          "mcp": 0.8999999999999999,
+          "uplift": 0.5111111111111111,
+          "interval": [
+            0.35555555555555557,
+            0.6555555555555556
+          ],
+          "tasks_up": 16,
+          "tasks_down": 1,
+          "sign_p": 0.000274658203125
+        },
+        "sensitivity_final_compliant_state": {
+          "tasks": 18,
+          "baseline": 0.41111111111111115,
+          "mcp": 0.8999999999999999,
+          "uplift": 0.48888888888888893,
+          "interval": [
+            0.3333333333333333,
+            0.6333333333333333
+          ],
+          "tasks_up": 16,
+          "tasks_down": 1,
+          "sign_p": 0.000274658203125
+        },
+        "efficiency_tasks": 7,
+        "efficiency_ratios": {
+          "turns": {
+            "geometric_mean": 0.5522164126112551,
+            "interval": [
+              0.34345260158436414,
+              0.8965695748432327
+            ],
+            "tasks_higher": 1,
+            "tasks_lower": 6,
+            "sign_p": 0.125,
+            "n": 7
+          },
+          "time": {
+            "geometric_mean": 1.0306050796548967,
+            "interval": [
+              0.7232714039165473,
+              1.4260578829366362
+            ],
+            "tasks_higher": 5,
+            "tasks_lower": 2,
+            "sign_p": 0.453125,
+            "n": 7
+          },
+          "tokens": {
+            "geometric_mean": 0.6251621600742019,
+            "interval": [
+              0.36886213638316995,
+              1.0386434567400236
+            ],
+            "tasks_higher": 2,
+            "tasks_lower": 5,
+            "sign_p": 0.453125,
+            "n": 7
+          }
+        },
+        "controls": {
+          "E": {
+            "tasks": 2,
+            "baseline": 0.8,
+            "mcp": 0.8,
+            "uplift": 0.0,
+            "interval": null,
+            "tasks_up": 0,
+            "tasks_down": 0,
+            "sign_p": null
+          },
+          "F": {
+            "tasks": 2,
+            "baseline": 1.0,
+            "mcp": 0.8,
+            "uplift": -0.2,
+            "interval": null,
+            "tasks_up": 0,
+            "tasks_down": 1,
+            "sign_p": null
+          }
+        }
+      }
+    }
+  },
+  "a2": {
+    "projects": 12,
+    "correct": 4,
+    "partial": 1,
+    "generic": 6,
+    "wrong": 1,
+    "scoring_agreement": "9/12",
+    "kappa": 0.66,
+    "version": "v0.7.0"
+  },
+  "b3_generated": {
+    "ordinary_cases": 220,
+    "difficult_cases": 30,
+    "model_requests": 750,
+    "correct": {
+      "v0.7.0": [
+        220,
+        30
+      ],
+      "ff92446": [
+        215,
+        30
+      ],
+      "Qwen3.6": [
+        203,
+        15
+      ],
+      "Gemma": [
+        213,
+        15
+      ],
+      "Qwen3.8": [
+        216,
+        18
+      ]
+    },
+    "status": "Development-related category comparison, not a repair test"
+  },
+  "b3_real": {
+    "requests": 36,
+    "faults": 11,
+    "projects": 12,
+    "correct_causes": {
+      "Qwen3.6": 9,
+      "Qwen3.8": 8,
+      "Gemma": 3,
+      "v0.7.0": 8
+    },
+    "correct_advice": {
+      "Qwen3.6": 6,
+      "Qwen3.8": 5,
+      "Gemma": 0,
+      "v0.7.0": 4
+    },
+    "missing_answers": {
+      "Qwen3.6": 1,
+      "Qwen3.8": 2,
+      "Gemma": 2,
+      "v0.7.0": 0
+    }
+  },
+  "source_artifacts": [
+    {
+      "artifact": "workbench/codex-b7-formal-20261007/analysis-20261009/UPLIFT-ANALYSIS.json",
+      "sha256": "0b72ef81fc580e34ab06cfea2fdc364a511d10b14b870c46aade9b90b244eaad"
+    },
+    {
+      "artifact": "workbench/claude-h5-acceptance-20261005/FORMAL-RESULTS-CHECK-20261009.md",
+      "sha256": "fe9aa520939605a9550eb1ab661a4577980eaa451edcdcd32a7ccd05e08a6cb1"
+    },
+    {
+      "artifact": "workbench/codex-b3-generated-results-20261004/COMPARISON.json",
+      "sha256": "4b1215c9f284ddde401d2845d014e20e6c51cbe1e201b8f1e9dd03f80b5d62ff"
+    },
+    {
+      "artifact": "examples/heldout-2026-10/scores-summary.md",
+      "sha256": "0cbf5b0631e9111402e4474e7d5e5435400dc68d879cf24557f29b6adc7d98ab"
+    },
+    {
+      "artifact": "examples/heldout-2026-10/scores-review.md",
+      "sha256": "01b197548eed74653319873af6b93ec5946ee6c0733adf0c4a6821dd7602b6dd"
+    },
+    {
+      "artifact": "docs/validation/2026-10-04-tree-integration.md",
+      "sha256": "011da48441740fdec8c4b7d68996ff9f5d29d799f42064c51dbd60a54371b3e7"
+    },
+    {
+      "artifact": "examples/diagnosis-evaluation/metrics.json",
+      "sha256": "2997d0151b404a591c8daf1a99f7ed26965c95098e6ad580fd2dcacda9c6f96b"
+    },
+    {
+      "artifact": "examples/grouping-evaluation/collection/metrics.json",
+      "sha256": "fdb2917a1d2ffd00b943d07b7a62464e14d39ee15ba7ff0fee46d7831620da02"
+    },
+    {
+      "artifact": "examples/grouping-evaluation/execution/metrics.json",
+      "sha256": "1bb0ecd5f996c930b437f939cfbd533e75e02f2b9e34fc5471ea189ea7bbefd8"
+    },
+    {
+      "artifact": "src/fixfirst/knowledge/domain.toml",
+      "sha256": "9cfaf23d1418a4201159a57fe77f48ab422f73e95b533fe8d1ce17c0479b6398"
+    },
+    {
+      "artifact": "src/fixfirst/knowledge/rules.toml",
+      "sha256": "c04c9591b92e7cc093f6d49b29c49ca31a26d8e2952b5922d0df72b485fe10e3"
+    },
+    {
+      "artifact": "B3 real-project report at ebe2a709abbf82bbf2988c6fdd6fdd2ba693469b",
+      "sha256": "e3ea37d419466159913c1f7a6d2dfb6a3ec7e79c261fa1c3cb8c5b4ac9f30e16"
+    }
+  ]
+}

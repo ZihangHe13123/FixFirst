@@ -1,0 +1,2370 @@
+{
+  "report_version": "0.3",
+  "date": "2026-10-09",
+  "product_commit": "5c224cf28896e487015106a7a7acd84f69f7ba26",
+  "product_tag": "b7-freeze-20261007",
+  "package_version": "0.8.0rc2",
+  "scope": "Completed local and independently reviewed cloud B7 batches; no participant data",
+  "knowledge_counts": {
+    "rules": 132,
+    "removed_entries": 737,
+    "deprecated_entries": 12,
+    "source_records": 190
+  },
+  "b7": {
+    "total_runs": 660,
+    "scope_tasks": 18,
+    "control_tasks": 4,
+    "runs_per_cell": 5,
+    "models": {
+      "Qwen3.6-35B-A3B-6bit": {
+        "strict": {
+          "tasks": 18,
+          "baseline": 0.8777777777777778,
+          "mcp": 0.9888888888888889,
+          "uplift": 0.1111111111111111,
+          "interval": [
+            0.011111111111111115,
+            0.2222222222222222
+          ],
+          "tasks_up": 5,
+          "tasks_down": 1,
+          "sign_p": 0.21875
+        },
+        "scope_runs_per_arm": 90,
+        "counts": {
+          "baseline": 79,
+          "mcp": 89
+        },
+        "sensitivity_other_pytest_option": {
+          "tasks": 18,
+          "baseline": 0.9666666666666666,
+          "mcp": 0.9888888888888889,
+          "uplift": 0.022222222222222216,
+          "interval": [
+            -0.022222222222222216,
+            0.06666666666666665
+          ],
+          "tasks_up": 3,
+          "tasks_down": 1,
+          "sign_p": 0.625
+        },
+        "sensitivity_final_compliant_state": {
+          "tasks": 18,
+          "baseline": 0.9444444444444444,
+          "mcp": 1.0,
+          "uplift": 0.05555555555555555,
+          "interval": [
+            0.011111111111111108,
+            0.1111111111111111
+          ],
+          "tasks_up": 4,
+          "tasks_down": 0,
+          "sign_p": 0.125
+        },
+        "efficiency_tasks": 15,
+        "efficiency_ratios": {
+          "turns": {
+            "geometric_mean": 0.5447664260900166,
+            "interval": [
+              0.42901263997161854,
+              0.6941604587565188
+            ],
+            "tasks_higher": 2,
+            "tasks_lower": 11,
+            "sign_p": 0.0224609375,
+            "n": 15
+          },
+          "time": {
+            "geometric_mean": 0.4607504617166548,
+            "interval": [
+              0.383038937537222,
+              0.5593309642906492
+            ],
+            "tasks_higher": 0,
+            "tasks_lower": 15,
+            "sign_p": 6.103515625e-05,
+            "n": 15
+          },
+          "tokens": {
+            "geometric_mean": 0.35989130724411644,
+            "interval": [
+              0.2822099099420237,
+              0.45960417209888
+            ],
+            "tasks_higher": 0,
+            "tasks_lower": 15,
+            "sign_p": 6.103515625e-05,
+            "n": 15
+          }
+        },
+        "controls": {
+          "E": {
+            "tasks": 2,
+            "baseline": 1.0,
+            "mcp": 1.0,
+            "uplift": 0.0,
+            "interval": null,
+            "tasks_up": 0,
+            "tasks_down": 0,
+            "sign_p": null
+          },
+          "F": {
+            "tasks": 2,
+            "baseline": 1.0,
+            "mcp": 1.0,
+            "uplift": 0.0,
+            "interval": null,
+            "tasks_up": 0,
+            "tasks_down": 0,
+            "sign_p": null
+          }
+        }
+      },
+      "Qwen3.8-27B-MLX-4bit": {
+        "strict": {
+          "tasks": 18,
+          "baseline": 0.9333333333333333,
+          "mcp": 0.9555555555555555,
+          "uplift": 0.022222222222222223,
+          "interval": [
+            0.0,
+            0.06666666666666668
+          ],
+          "tasks_up": 1,
+          "tasks_down": 0,
+          "sign_p": 1.0
+        },
+        "scope_runs_per_arm": 90,
+        "counts": {
+          "baseline": 84,
+          "mcp": 86
+        },
+        "sensitivity_other_pytest_option": {
+          "tasks": 18,
+          "baseline": 0.9333333333333333,
+          "mcp": 0.9555555555555555,
+          "uplift": 0.022222222222222223,
+          "interval": [
+            0.0,
+            0.06666666666666668
+          ],
+          "tasks_up": 1,
+          "tasks_down": 0,
+          "sign_p": 1.0
+        },
+        "sensitivity_final_compliant_state": {
+          "tasks": 18,
+          "baseline": 0.9333333333333333,
+          "mcp": 0.9555555555555555,
+          "uplift": 0.022222222222222223,
+          "interval": [
+            0.0,
+            0.06666666666666668
+          ],
+          "tasks_up": 1,
+          "tasks_down": 0,
+          "sign_p": 1.0
+        },
+        "efficiency_tasks": 17,
+        "efficiency_ratios": {
+          "turns": {
+            "geometric_mean": 0.8175242646119206,
+            "interval": [
+              0.6841090964188301,
+              0.9786060516150058
+            ],
+            "tasks_higher": 3,
+            "tasks_lower": 12,
+            "sign_p": 0.03515625,
+            "n": 17
+          },
+          "time": {
+            "geometric_mean": 0.7286231363016566,
+            "interval": [
+              0.601085033951336,
+              0.8889943600003868
+            ],
+            "tasks_higher": 4,
+            "tasks_lower": 13,
+            "sign_p": 0.049041748046875,
+            "n": 17
+          },
+          "tokens": {
+            "geometric_mean": 0.7376880158804546,
+            "interval": [
+              0.5909877642908039,
+              0.9117601717992855
+            ],
+            "tasks_higher": 5,
+            "tasks_lower": 12,
+            "sign_p": 0.143463134765625,
+            "n": 17
+          }
+        },
+        "controls": {
+          "E": {
+            "tasks": 2,
+            "baseline": 1.0,
+            "mcp": 1.0,
+            "uplift": 0.0,
+            "interval": null,
+            "tasks_up": 0,
+            "tasks_down": 0,
+            "sign_p": null
+          },
+          "F": {
+            "tasks": 2,
+            "baseline": 1.0,
+            "mcp": 1.0,
+            "uplift": 0.0,
+            "interval": null,
+            "tasks_up": 0,
+            "tasks_down": 0,
+            "sign_p": null
+          }
+        }
+      },
+      "gemma-4-26B-A4B-it-qat-4bit": {
+        "strict": {
+          "tasks": 18,
+          "baseline": 0.3888888888888889,
+          "mcp": 0.8999999999999999,
+          "uplift": 0.5111111111111111,
+          "interval": [
+            0.35555555555555557,
+            0.6555555555555556
+          ],
+          "tasks_up": 16,
+          "tasks_down": 1,
+          "sign_p": 0.000274658203125
+        },
+        "scope_runs_per_arm": 90,
+        "counts": {
+          "baseline": 35,
+          "mcp": 81
+        },
+        "sensitivity_other_pytest_option": {
+          "tasks": 18,
+          "baseline": 0.3888888888888889,
+          "mcp": 0.8999999999999999,
+          "uplift": 0.5111111111111111,
+          "interval": [
+            0.35555555555555557,
+            0.6555555555555556
+          ],
+          "tasks_up": 16,
+          "tasks_down": 1,
+          "sign_p": 0.000274658203125
+        },
+        "sensitivity_final_compliant_state": {
+          "tasks": 18,
+          "baseline": 0.41111111111111115,
+          "mcp": 0.8999999999999999,
+          "uplift": 0.48888888888888893,
+          "interval": [
+            0.3333333333333333,
+            0.6333333333333333
+          ],
+          "tasks_up": 16,
+          "tasks_down": 1,
+          "sign_p": 0.000274658203125
+        },
+        "efficiency_tasks": 7,
+        "efficiency_ratios": {
+          "turns": {
+            "geometric_mean": 0.5522164126112551,
+            "interval": [
+              0.34345260158436414,
+              0.8965695748432327
+            ],
+            "tasks_higher": 1,
+            "tasks_lower": 6,
+            "sign_p": 0.125,
+            "n": 7
+          },
+          "time": {
+            "geometric_mean": 1.0306050796548967,
+            "interval": [
+              0.7232714039165473,
+              1.4260578829366362
+            ],
+            "tasks_higher": 5,
+            "tasks_lower": 2,
+            "sign_p": 0.453125,
+            "n": 7
+          },
+          "tokens": {
+            "geometric_mean": 0.6251621600742019,
+            "interval": [
+              0.36886213638316995,
+              1.0386434567400236
+            ],
+            "tasks_higher": 2,
+            "tasks_lower": 5,
+            "sign_p": 0.453125,
+            "n": 7
+          }
+        },
+        "controls": {
+          "E": {
+            "tasks": 2,
+            "baseline": 0.8,
+            "mcp": 0.8,
+            "uplift": 0.0,
+            "interval": null,
+            "tasks_up": 0,
+            "tasks_down": 0,
+            "sign_p": null
+          },
+          "F": {
+            "tasks": 2,
+            "baseline": 1.0,
+            "mcp": 0.8,
+            "uplift": -0.2,
+            "interval": null,
+            "tasks_up": 0,
+            "tasks_down": 1,
+            "sign_p": null
+          }
+        }
+      }
+    }
+  },
+  "a2": {
+    "projects": 12,
+    "correct": 4,
+    "partial": 1,
+    "generic": 6,
+    "wrong": 1,
+    "scoring_agreement": "9/12",
+    "kappa": 0.66,
+    "version": "v0.7.0"
+  },
+  "b3_generated": {
+    "ordinary_cases": 220,
+    "difficult_cases": 30,
+    "model_requests": 750,
+    "correct": {
+      "v0.7.0": [
+        220,
+        30
+      ],
+      "ff92446": [
+        215,
+        30
+      ],
+      "Qwen3.6": [
+        203,
+        15
+      ],
+      "Gemma": [
+        213,
+        15
+      ],
+      "Qwen3.8": [
+        216,
+        18
+      ]
+    },
+    "status": "Development-related category comparison, not a repair test"
+  },
+  "b3_real": {
+    "requests": 36,
+    "faults": 11,
+    "projects": 12,
+    "correct_causes": {
+      "Qwen3.6": 9,
+      "Qwen3.8": 8,
+      "Gemma": 3,
+      "v0.7.0": 8
+    },
+    "correct_advice": {
+      "Qwen3.6": 6,
+      "Qwen3.8": 5,
+      "Gemma": 0,
+      "v0.7.0": 4
+    },
+    "missing_answers": {
+      "Qwen3.6": 1,
+      "Qwen3.8": 2,
+      "Gemma": 2,
+      "v0.7.0": 0
+    }
+  },
+  "source_artifacts": [
+    {
+      "artifact": "workbench/codex-b7-formal-20261007/analysis-20261009/UPLIFT-ANALYSIS.json",
+      "sha256": "0b72ef81fc580e34ab06cfea2fdc364a511d10b14b870c46aade9b90b244eaad"
+    },
+    {
+      "artifact": "workbench/claude-h5-acceptance-20261005/FORMAL-RESULTS-CHECK-20261009.md",
+      "sha256": "fe9aa520939605a9550eb1ab661a4577980eaa451edcdcd32a7ccd05e08a6cb1"
+    },
+    {
+      "artifact": "workbench/codex-b3-generated-results-20261004/COMPARISON.json",
+      "sha256": "4b1215c9f284ddde401d2845d014e20e6c51cbe1e201b8f1e9dd03f80b5d62ff"
+    },
+    {
+      "artifact": "examples/heldout-2026-10/scores-summary.md",
+      "sha256": "0cbf5b0631e9111402e4474e7d5e5435400dc68d879cf24557f29b6adc7d98ab"
+    },
+    {
+      "artifact": "examples/heldout-2026-10/scores-review.md",
+      "sha256": "01b197548eed74653319873af6b93ec5946ee6c0733adf0c4a6821dd7602b6dd"
+    },
+    {
+      "artifact": "docs/validation/2026-10-04-tree-integration.md",
+      "sha256": "011da48441740fdec8c4b7d68996ff9f5d29d799f42064c51dbd60a54371b3e7"
+    },
+    {
+      "artifact": "examples/diagnosis-evaluation/metrics.json",
+      "sha256": "2997d0151b404a591c8daf1a99f7ed26965c95098e6ad580fd2dcacda9c6f96b"
+    },
+    {
+      "artifact": "examples/grouping-evaluation/collection/metrics.json",
+      "sha256": "fdb2917a1d2ffd00b943d07b7a62464e14d39ee15ba7ff0fee46d7831620da02"
+    },
+    {
+      "artifact": "examples/grouping-evaluation/execution/metrics.json",
+      "sha256": "1bb0ecd5f996c930b437f939cfbd533e75e02f2b9e34fc5471ea189ea7bbefd8"
+    },
+    {
+      "artifact": "src/fixfirst/knowledge/domain.toml",
+      "sha256": "9cfaf23d1418a4201159a57fe77f48ab422f73e95b533fe8d1ce17c0479b6398"
+    },
+    {
+      "artifact": "src/fixfirst/knowledge/rules.toml",
+      "sha256": "c04c9591b92e7cc093f6d49b29c49ca31a26d8e2952b5922d0df72b485fe10e3"
+    },
+    {
+      "artifact": "B3 real-project report at ebe2a709abbf82bbf2988c6fdd6fdd2ba693469b",
+      "sha256": "e3ea37d419466159913c1f7a6d2dfb6a3ec7e79c261fa1c3cb8c5b4ac9f30e16"
+    },
+    {
+      "artifact": "workbench/codex-deepseek-comparison-20261009/analysis-20261009/UPLIFT-MAIN.json",
+      "sha256": "c35b345f48ae2813f4fc35826271affc4711fefff7325d9d0c13bb6eb455b1e0"
+    },
+    {
+      "artifact": "workbench/codex-deepseek-comparison-20261009/COMPLETION-AUDIT-20261009.json",
+      "sha256": "81a8076e95a748fa4c6b50febf61f39df33aa5396ad22e33adfab4e91155858f"
+    },
+    {
+      "artifact": "workbench/claude-h5-acceptance-20261005/DEEPSEEK-RESULTS-CHECK-20261009.md",
+      "sha256": "959cdc6556ee6f109827a88e898172f7beb5294a4be98c11f95951ba2269aec3"
+    },
+    {
+      "artifact": "workbench/claude-b7-uplift-20261005/PLAN.md at version 1.16",
+      "sha256": "50110399fb763b96a68c6c7f95ba17ff33745f3e9f2d9b208928e441c1291461"
+    },
+    {
+      "artifact": "workbench/codex-deepseek-comparison-20261009/CLOUD-REGISTRATION.json",
+      "sha256": "7dca2f775447bcb5c572c3606c15b99894a27ac175e5510eda2430617c55dc17"
+    },
+    {
+      "artifact": "workbench/codex-deepseek-comparison-20261009/inputs/PLAN-v1.15.md",
+      "sha256": "ca950b0d50ed62a1da4712449b6a63729420fb25010c222d9a7c4774b62cee48"
+    }
+  ],
+  "b7_cloud": {
+    "model": "deepseek-flash",
+    "protocol_at_launch": "v1.15",
+    "results_only_plan_update": "v1.16",
+    "total_runs": 132,
+    "tasks": 22,
+    "scope_tasks": 18,
+    "runs_per_cell": 3,
+    "scope_runs_per_arm": 54,
+    "scope_correct": {
+      "baseline": 54,
+      "mcp": 54
+    },
+    "all_correct": {
+      "baseline": 66,
+      "mcp": 66
+    },
+    "analysis": {
+      "health": {
+        "baseline": {
+          "runs": 66,
+          "ended_cut_or_toolless": 0,
+          "cut_or_toolless_with_all_turns_used": 0,
+          "at_time_limit": 0,
+          "allowed_at_time_limit": 6,
+          "lost": 0,
+          "criteria_met": true,
+          "replies": 704,
+          "replies_without_token_counts": 0,
+          "replies_cut_for_length": 0,
+          "cut_below_the_limit_sent": 0,
+          "longest_reply_tokens": 4940,
+          "prompt_tokens": 4890772,
+          "cached_prompt_tokens": 4569216,
+          "replies_after_the_first": 638,
+          "replies_after_the_first_without_cached_tokens": 0
+        },
+        "mcp": {
+          "runs": 66,
+          "ended_cut_or_toolless": 0,
+          "cut_or_toolless_with_all_turns_used": 0,
+          "at_time_limit": 0,
+          "allowed_at_time_limit": 6,
+          "lost": 0,
+          "criteria_met": true,
+          "replies": 616,
+          "replies_without_token_counts": 0,
+          "replies_cut_for_length": 0,
+          "cut_below_the_limit_sent": 0,
+          "longest_reply_tokens": 3216,
+          "prompt_tokens": 2783370,
+          "cached_prompt_tokens": 2539648,
+          "replies_after_the_first": 550,
+          "replies_after_the_first_without_cached_tokens": 0
+        }
+      },
+      "metric1": {
+        "strict": {
+          "groups": {
+            "A to D": {
+              "tasks": 18,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": [
+                0.0,
+                0.0
+              ],
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "A": {
+              "tasks": 4,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "B": {
+              "tasks": 4,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "C": {
+              "tasks": 5,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "D": {
+              "tasks": 5,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "E": {
+              "tasks": 2,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "F": {
+              "tasks": 2,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            }
+          },
+          "per_task": {
+            "ea1-pkgres-removed": {
+              "stratum": "A",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ea2-missing-httpx-mock": {
+              "stratum": "A",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ea3-missing-pycryptodome": {
+              "stratum": "A",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ea4-py-spec-625": {
+              "stratum": "A",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "eb1-sqlalchemy-databases": {
+              "stratum": "B",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "eb2-scipy-kulsinski": {
+              "stratum": "B",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "eb3-werkzeug-bind-arguments": {
+              "stratum": "B",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "eb4-sklearn-multi-class": {
+              "stratum": "B",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ec1-old-pytest-pyproject": {
+              "stratum": "C",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ec2-lib-layout": {
+              "stratum": "C",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ec3-metadata-needs-install": {
+              "stratum": "C",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ec4-django-makefile": {
+              "stratum": "C",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ec5-django-runtests": {
+              "stratum": "C",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ed1-pptx-and-pinv2": {
+              "stratum": "D",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ed2-toolchain-layered": {
+              "stratum": "D",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ed3-three-independent": {
+              "stratum": "D",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ed4-layout-dependency-kwarg": {
+              "stratum": "D",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ed5-django-settings-and-signal": {
+              "stratum": "D",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ee1-addopts-missing-plugin": {
+              "stratum": "E",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ee2-xlrd-xlsx": {
+              "stratum": "E",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ef1-code-defect-easy": {
+              "stratum": "F",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ef2-code-defect-moderate": {
+              "stratum": "F",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            }
+          }
+        },
+        "only_other_option": {
+          "groups": {
+            "A to D": {
+              "tasks": 18,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": [
+                0.0,
+                0.0
+              ],
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "A": {
+              "tasks": 4,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "B": {
+              "tasks": 4,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "C": {
+              "tasks": 5,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "D": {
+              "tasks": 5,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "E": {
+              "tasks": 2,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "F": {
+              "tasks": 2,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            }
+          },
+          "per_task": {
+            "ea1-pkgres-removed": {
+              "stratum": "A",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ea2-missing-httpx-mock": {
+              "stratum": "A",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ea3-missing-pycryptodome": {
+              "stratum": "A",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ea4-py-spec-625": {
+              "stratum": "A",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "eb1-sqlalchemy-databases": {
+              "stratum": "B",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "eb2-scipy-kulsinski": {
+              "stratum": "B",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "eb3-werkzeug-bind-arguments": {
+              "stratum": "B",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "eb4-sklearn-multi-class": {
+              "stratum": "B",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ec1-old-pytest-pyproject": {
+              "stratum": "C",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ec2-lib-layout": {
+              "stratum": "C",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ec3-metadata-needs-install": {
+              "stratum": "C",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ec4-django-makefile": {
+              "stratum": "C",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ec5-django-runtests": {
+              "stratum": "C",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ed1-pptx-and-pinv2": {
+              "stratum": "D",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ed2-toolchain-layered": {
+              "stratum": "D",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ed3-three-independent": {
+              "stratum": "D",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ed4-layout-dependency-kwarg": {
+              "stratum": "D",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ed5-django-settings-and-signal": {
+              "stratum": "D",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ee1-addopts-missing-plugin": {
+              "stratum": "E",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ee2-xlrd-xlsx": {
+              "stratum": "E",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ef1-code-defect-easy": {
+              "stratum": "F",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ef2-code-defect-moderate": {
+              "stratum": "F",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            }
+          }
+        },
+        "nothing_left_at_end": {
+          "groups": {
+            "A to D": {
+              "tasks": 18,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": [
+                0.0,
+                0.0
+              ],
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "A": {
+              "tasks": 4,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "B": {
+              "tasks": 4,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "C": {
+              "tasks": 5,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "D": {
+              "tasks": 5,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "E": {
+              "tasks": 2,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            },
+            "F": {
+              "tasks": 2,
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "interval": null,
+              "tasks_up": 0,
+              "tasks_down": 0,
+              "sign_p": null
+            }
+          },
+          "per_task": {
+            "ea1-pkgres-removed": {
+              "stratum": "A",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ea2-missing-httpx-mock": {
+              "stratum": "A",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ea3-missing-pycryptodome": {
+              "stratum": "A",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ea4-py-spec-625": {
+              "stratum": "A",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "eb1-sqlalchemy-databases": {
+              "stratum": "B",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "eb2-scipy-kulsinski": {
+              "stratum": "B",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "eb3-werkzeug-bind-arguments": {
+              "stratum": "B",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "eb4-sklearn-multi-class": {
+              "stratum": "B",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ec1-old-pytest-pyproject": {
+              "stratum": "C",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ec2-lib-layout": {
+              "stratum": "C",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ec3-metadata-needs-install": {
+              "stratum": "C",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ec4-django-makefile": {
+              "stratum": "C",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ec5-django-runtests": {
+              "stratum": "C",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ed1-pptx-and-pinv2": {
+              "stratum": "D",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ed2-toolchain-layered": {
+              "stratum": "D",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ed3-three-independent": {
+              "stratum": "D",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ed4-layout-dependency-kwarg": {
+              "stratum": "D",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ed5-django-settings-and-signal": {
+              "stratum": "D",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ee1-addopts-missing-plugin": {
+              "stratum": "E",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ee2-xlrd-xlsx": {
+              "stratum": "E",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ef1-code-defect-easy": {
+              "stratum": "F",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            },
+            "ef2-code-defect-moderate": {
+              "stratum": "F",
+              "baseline": 1.0,
+              "mcp": 1.0,
+              "uplift": 0.0,
+              "runs": 3
+            }
+          }
+        }
+      },
+      "metric2": {
+        "minimum": 2,
+        "fallback_runs": 0,
+        "readings": {
+          "both fixed": {
+            "tasks": 18,
+            "per_task": {
+              "ea1-pkgres-removed": {
+                "turns": {
+                  "baseline": 5,
+                  "mcp": 5,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 15.92,
+                  "mcp": 16.74,
+                  "ratio": 1.0515075376884422
+                },
+                "tokens": {
+                  "baseline": 32625,
+                  "mcp": 40813,
+                  "ratio": 1.2509731800766284
+                }
+              },
+              "ea2-missing-httpx-mock": {
+                "turns": {
+                  "baseline": 4,
+                  "mcp": 2,
+                  "ratio": 0.5
+                },
+                "time": {
+                  "baseline": 14.42,
+                  "mcp": 10.9,
+                  "ratio": 0.7558945908460472
+                },
+                "tokens": {
+                  "baseline": 23535,
+                  "mcp": 20795,
+                  "ratio": 0.8835776503080518
+                }
+              },
+              "ea3-missing-pycryptodome": {
+                "turns": {
+                  "baseline": 4,
+                  "mcp": 4,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 14.71,
+                  "mcp": 16.09,
+                  "ratio": 1.0938137321549966
+                },
+                "tokens": {
+                  "baseline": 28623,
+                  "mcp": 31713,
+                  "ratio": 1.1079551409705481
+                }
+              },
+              "ea4-py-spec-625": {
+                "turns": {
+                  "baseline": 13,
+                  "mcp": 4,
+                  "ratio": 0.3076923076923077
+                },
+                "time": {
+                  "baseline": 79.66,
+                  "mcp": 16.7,
+                  "ratio": 0.20964097414009542
+                },
+                "tokens": {
+                  "baseline": 334434,
+                  "mcp": 50545,
+                  "ratio": 0.15113594909608472
+                }
+              },
+              "eb1-sqlalchemy-databases": {
+                "turns": {
+                  "baseline": 5,
+                  "mcp": 5,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 14.65,
+                  "mcp": 15.27,
+                  "ratio": 1.0423208191126279
+                },
+                "tokens": {
+                  "baseline": 32237,
+                  "mcp": 29149,
+                  "ratio": 0.9042094487700468
+                }
+              },
+              "eb2-scipy-kulsinski": {
+                "turns": {
+                  "baseline": 6,
+                  "mcp": 5,
+                  "ratio": 0.8333333333333334
+                },
+                "time": {
+                  "baseline": 26.38,
+                  "mcp": 20.27,
+                  "ratio": 0.768385140257771
+                },
+                "tokens": {
+                  "baseline": 37949,
+                  "mcp": 34837,
+                  "ratio": 0.9179952040896994
+                }
+              },
+              "eb3-werkzeug-bind-arguments": {
+                "turns": {
+                  "baseline": 10,
+                  "mcp": 6,
+                  "ratio": 0.6
+                },
+                "time": {
+                  "baseline": 49.9,
+                  "mcp": 16.64,
+                  "ratio": 0.3334669338677355
+                },
+                "tokens": {
+                  "baseline": 122524,
+                  "mcp": 37614,
+                  "ratio": 0.30699291567366394
+                }
+              },
+              "eb4-sklearn-multi-class": {
+                "turns": {
+                  "baseline": 4,
+                  "mcp": 4,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 27.94,
+                  "mcp": 32.83,
+                  "ratio": 1.1750178954903363
+                },
+                "tokens": {
+                  "baseline": 20598,
+                  "mcp": 28032,
+                  "ratio": 1.3609088260996214
+                }
+              },
+              "ec1-old-pytest-pyproject": {
+                "turns": {
+                  "baseline": 4,
+                  "mcp": 5,
+                  "ratio": 1.25
+                },
+                "time": {
+                  "baseline": 17.12,
+                  "mcp": 18.23,
+                  "ratio": 1.0648364485981308
+                },
+                "tokens": {
+                  "baseline": 49609,
+                  "mcp": 46949,
+                  "ratio": 0.9463806970509383
+                }
+              },
+              "ec2-lib-layout": {
+                "turns": {
+                  "baseline": 5,
+                  "mcp": 5,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 12.47,
+                  "mcp": 14.52,
+                  "ratio": 1.16439454691259
+                },
+                "tokens": {
+                  "baseline": 25886,
+                  "mcp": 32689,
+                  "ratio": 1.262806150042494
+                }
+              },
+              "ec3-metadata-needs-install": {
+                "turns": {
+                  "baseline": 4,
+                  "mcp": 5,
+                  "ratio": 1.25
+                },
+                "time": {
+                  "baseline": 22.52,
+                  "mcp": 22.46,
+                  "ratio": 0.9973357015985791
+                },
+                "tokens": {
+                  "baseline": 29447,
+                  "mcp": 50297,
+                  "ratio": 1.7080517539987095
+                }
+              },
+              "ec4-django-makefile": {
+                "turns": {
+                  "baseline": 8,
+                  "mcp": 5,
+                  "ratio": 0.625
+                },
+                "time": {
+                  "baseline": 55.99,
+                  "mcp": 18.51,
+                  "ratio": 0.33059474906233255
+                },
+                "tokens": {
+                  "baseline": 105853,
+                  "mcp": 37030,
+                  "ratio": 0.34982475697429455
+                }
+              },
+              "ec5-django-runtests": {
+                "turns": {
+                  "baseline": 8,
+                  "mcp": 6,
+                  "ratio": 0.75
+                },
+                "time": {
+                  "baseline": 73.96,
+                  "mcp": 18.4,
+                  "ratio": 0.24878312601406166
+                },
+                "tokens": {
+                  "baseline": 179415,
+                  "mcp": 40565,
+                  "ratio": 0.22609592286040744
+                }
+              },
+              "ed1-pptx-and-pinv2": {
+                "turns": {
+                  "baseline": 7,
+                  "mcp": 5,
+                  "ratio": 0.7142857142857143
+                },
+                "time": {
+                  "baseline": 21.8,
+                  "mcp": 19.02,
+                  "ratio": 0.8724770642201835
+                },
+                "tokens": {
+                  "baseline": 40045,
+                  "mcp": 32993,
+                  "ratio": 0.8238981146210513
+                }
+              },
+              "ed2-toolchain-layered": {
+                "turns": {
+                  "baseline": 13,
+                  "mcp": 6,
+                  "ratio": 0.46153846153846156
+                },
+                "time": {
+                  "baseline": 92.71,
+                  "mcp": 29.96,
+                  "ratio": 0.32315823535756666
+                },
+                "tokens": {
+                  "baseline": 368478,
+                  "mcp": 70488,
+                  "ratio": 0.19129500268672756
+                }
+              },
+              "ed3-three-independent": {
+                "turns": {
+                  "baseline": 8,
+                  "mcp": 8,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 21.06,
+                  "mcp": 26.04,
+                  "ratio": 1.2364672364672364
+                },
+                "tokens": {
+                  "baseline": 55549,
+                  "mcp": 63940,
+                  "ratio": 1.1510558245873013
+                }
+              },
+              "ed4-layout-dependency-kwarg": {
+                "turns": {
+                  "baseline": 9,
+                  "mcp": 11,
+                  "ratio": 1.2222222222222223
+                },
+                "time": {
+                  "baseline": 28.58,
+                  "mcp": 25.4,
+                  "ratio": 0.8887333799860042
+                },
+                "tokens": {
+                  "baseline": 65433,
+                  "mcp": 68291,
+                  "ratio": 1.0436782663182187
+                }
+              },
+              "ed5-django-settings-and-signal": {
+                "turns": {
+                  "baseline": 7,
+                  "mcp": 9,
+                  "ratio": 1.2857142857142858
+                },
+                "time": {
+                  "baseline": 32.16,
+                  "mcp": 38.96,
+                  "ratio": 1.211442786069652
+                },
+                "tokens": {
+                  "baseline": 80808,
+                  "mcp": 104640,
+                  "ratio": 1.294921294921295
+                }
+              }
+            },
+            "ratio": {
+              "turns": {
+                "geometric_mean": 0.821737136893582,
+                "interval": [
+                  0.6823547686249517,
+                  0.9728953498424951
+                ],
+                "tasks_higher": 4,
+                "tasks_lower": 8,
+                "sign_p": 0.3876953125,
+                "n": 18
+              },
+              "time": {
+                "geometric_mean": 0.7114990975616606,
+                "interval": [
+                  0.5337490188313155,
+                  0.9191331374722299
+                ],
+                "tasks_higher": 8,
+                "tasks_lower": 10,
+                "sign_p": 0.8145294189453125,
+                "n": 18
+              },
+              "tokens": {
+                "geometric_mean": 0.7175170360309292,
+                "interval": [
+                  0.5038399148342096,
+                  0.9890846676785322
+                ],
+                "tasks_higher": 8,
+                "tasks_lower": 10,
+                "sign_p": 0.8145294189453125,
+                "n": 18
+              }
+            }
+          },
+          "wide": {
+            "tasks": 18,
+            "per_task": {
+              "ea1-pkgres-removed": {
+                "turns": {
+                  "baseline": 5,
+                  "mcp": 5,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 15.92,
+                  "mcp": 16.74,
+                  "ratio": 1.0515075376884422
+                },
+                "tokens": {
+                  "baseline": 32625,
+                  "mcp": 40813,
+                  "ratio": 1.2509731800766284
+                }
+              },
+              "ea2-missing-httpx-mock": {
+                "turns": {
+                  "baseline": 4,
+                  "mcp": 2,
+                  "ratio": 0.5
+                },
+                "time": {
+                  "baseline": 14.42,
+                  "mcp": 10.9,
+                  "ratio": 0.7558945908460472
+                },
+                "tokens": {
+                  "baseline": 23535,
+                  "mcp": 20795,
+                  "ratio": 0.8835776503080518
+                }
+              },
+              "ea3-missing-pycryptodome": {
+                "turns": {
+                  "baseline": 4,
+                  "mcp": 4,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 14.71,
+                  "mcp": 16.09,
+                  "ratio": 1.0938137321549966
+                },
+                "tokens": {
+                  "baseline": 28623,
+                  "mcp": 31713,
+                  "ratio": 1.1079551409705481
+                }
+              },
+              "ea4-py-spec-625": {
+                "turns": {
+                  "baseline": 13,
+                  "mcp": 4,
+                  "ratio": 0.3076923076923077
+                },
+                "time": {
+                  "baseline": 79.66,
+                  "mcp": 16.7,
+                  "ratio": 0.20964097414009542
+                },
+                "tokens": {
+                  "baseline": 334434,
+                  "mcp": 50545,
+                  "ratio": 0.15113594909608472
+                }
+              },
+              "eb1-sqlalchemy-databases": {
+                "turns": {
+                  "baseline": 5,
+                  "mcp": 5,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 14.65,
+                  "mcp": 15.27,
+                  "ratio": 1.0423208191126279
+                },
+                "tokens": {
+                  "baseline": 32237,
+                  "mcp": 29149,
+                  "ratio": 0.9042094487700468
+                }
+              },
+              "eb2-scipy-kulsinski": {
+                "turns": {
+                  "baseline": 6,
+                  "mcp": 5,
+                  "ratio": 0.8333333333333334
+                },
+                "time": {
+                  "baseline": 26.38,
+                  "mcp": 20.27,
+                  "ratio": 0.768385140257771
+                },
+                "tokens": {
+                  "baseline": 37949,
+                  "mcp": 34837,
+                  "ratio": 0.9179952040896994
+                }
+              },
+              "eb3-werkzeug-bind-arguments": {
+                "turns": {
+                  "baseline": 10,
+                  "mcp": 6,
+                  "ratio": 0.6
+                },
+                "time": {
+                  "baseline": 49.9,
+                  "mcp": 16.64,
+                  "ratio": 0.3334669338677355
+                },
+                "tokens": {
+                  "baseline": 122524,
+                  "mcp": 37614,
+                  "ratio": 0.30699291567366394
+                }
+              },
+              "eb4-sklearn-multi-class": {
+                "turns": {
+                  "baseline": 4,
+                  "mcp": 4,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 27.94,
+                  "mcp": 32.83,
+                  "ratio": 1.1750178954903363
+                },
+                "tokens": {
+                  "baseline": 20598,
+                  "mcp": 28032,
+                  "ratio": 1.3609088260996214
+                }
+              },
+              "ec1-old-pytest-pyproject": {
+                "turns": {
+                  "baseline": 4,
+                  "mcp": 5,
+                  "ratio": 1.25
+                },
+                "time": {
+                  "baseline": 17.12,
+                  "mcp": 18.23,
+                  "ratio": 1.0648364485981308
+                },
+                "tokens": {
+                  "baseline": 49609,
+                  "mcp": 46949,
+                  "ratio": 0.9463806970509383
+                }
+              },
+              "ec2-lib-layout": {
+                "turns": {
+                  "baseline": 5,
+                  "mcp": 5,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 12.47,
+                  "mcp": 14.52,
+                  "ratio": 1.16439454691259
+                },
+                "tokens": {
+                  "baseline": 25886,
+                  "mcp": 32689,
+                  "ratio": 1.262806150042494
+                }
+              },
+              "ec3-metadata-needs-install": {
+                "turns": {
+                  "baseline": 4,
+                  "mcp": 5,
+                  "ratio": 1.25
+                },
+                "time": {
+                  "baseline": 22.52,
+                  "mcp": 22.46,
+                  "ratio": 0.9973357015985791
+                },
+                "tokens": {
+                  "baseline": 29447,
+                  "mcp": 50297,
+                  "ratio": 1.7080517539987095
+                }
+              },
+              "ec4-django-makefile": {
+                "turns": {
+                  "baseline": 8,
+                  "mcp": 5,
+                  "ratio": 0.625
+                },
+                "time": {
+                  "baseline": 55.99,
+                  "mcp": 18.51,
+                  "ratio": 0.33059474906233255
+                },
+                "tokens": {
+                  "baseline": 105853,
+                  "mcp": 37030,
+                  "ratio": 0.34982475697429455
+                }
+              },
+              "ec5-django-runtests": {
+                "turns": {
+                  "baseline": 8,
+                  "mcp": 6,
+                  "ratio": 0.75
+                },
+                "time": {
+                  "baseline": 73.96,
+                  "mcp": 18.4,
+                  "ratio": 0.24878312601406166
+                },
+                "tokens": {
+                  "baseline": 179415,
+                  "mcp": 40565,
+                  "ratio": 0.22609592286040744
+                }
+              },
+              "ed1-pptx-and-pinv2": {
+                "turns": {
+                  "baseline": 7,
+                  "mcp": 5,
+                  "ratio": 0.7142857142857143
+                },
+                "time": {
+                  "baseline": 21.8,
+                  "mcp": 19.02,
+                  "ratio": 0.8724770642201835
+                },
+                "tokens": {
+                  "baseline": 40045,
+                  "mcp": 32993,
+                  "ratio": 0.8238981146210513
+                }
+              },
+              "ed2-toolchain-layered": {
+                "turns": {
+                  "baseline": 13,
+                  "mcp": 6,
+                  "ratio": 0.46153846153846156
+                },
+                "time": {
+                  "baseline": 92.71,
+                  "mcp": 29.96,
+                  "ratio": 0.32315823535756666
+                },
+                "tokens": {
+                  "baseline": 368478,
+                  "mcp": 70488,
+                  "ratio": 0.19129500268672756
+                }
+              },
+              "ed3-three-independent": {
+                "turns": {
+                  "baseline": 8,
+                  "mcp": 8,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 21.06,
+                  "mcp": 26.04,
+                  "ratio": 1.2364672364672364
+                },
+                "tokens": {
+                  "baseline": 55549,
+                  "mcp": 63940,
+                  "ratio": 1.1510558245873013
+                }
+              },
+              "ed4-layout-dependency-kwarg": {
+                "turns": {
+                  "baseline": 9,
+                  "mcp": 11,
+                  "ratio": 1.2222222222222223
+                },
+                "time": {
+                  "baseline": 28.58,
+                  "mcp": 25.4,
+                  "ratio": 0.8887333799860042
+                },
+                "tokens": {
+                  "baseline": 65433,
+                  "mcp": 68291,
+                  "ratio": 1.0436782663182187
+                }
+              },
+              "ed5-django-settings-and-signal": {
+                "turns": {
+                  "baseline": 7,
+                  "mcp": 9,
+                  "ratio": 1.2857142857142858
+                },
+                "time": {
+                  "baseline": 32.16,
+                  "mcp": 38.96,
+                  "ratio": 1.211442786069652
+                },
+                "tokens": {
+                  "baseline": 80808,
+                  "mcp": 104640,
+                  "ratio": 1.294921294921295
+                }
+              }
+            },
+            "ratio": {
+              "turns": {
+                "geometric_mean": 0.821737136893582,
+                "interval": [
+                  0.6823547686249517,
+                  0.9728953498424951
+                ],
+                "tasks_higher": 4,
+                "tasks_lower": 8,
+                "sign_p": 0.3876953125,
+                "n": 18
+              },
+              "time": {
+                "geometric_mean": 0.7114990975616606,
+                "interval": [
+                  0.5337490188313155,
+                  0.9191331374722299
+                ],
+                "tasks_higher": 8,
+                "tasks_lower": 10,
+                "sign_p": 0.8145294189453125,
+                "n": 18
+              },
+              "tokens": {
+                "geometric_mean": 0.7175170360309292,
+                "interval": [
+                  0.5038399148342096,
+                  0.9890846676785322
+                ],
+                "tasks_higher": 8,
+                "tasks_lower": 10,
+                "sign_p": 0.8145294189453125,
+                "n": 18
+              }
+            }
+          },
+          "all runs": {
+            "tasks": 18,
+            "per_task": {
+              "ea1-pkgres-removed": {
+                "turns": {
+                  "baseline": 5,
+                  "mcp": 5,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 15.92,
+                  "mcp": 16.74,
+                  "ratio": 1.0515075376884422
+                },
+                "tokens": {
+                  "baseline": 32625,
+                  "mcp": 40813,
+                  "ratio": 1.2509731800766284
+                }
+              },
+              "ea2-missing-httpx-mock": {
+                "turns": {
+                  "baseline": 4,
+                  "mcp": 2,
+                  "ratio": 0.5
+                },
+                "time": {
+                  "baseline": 14.42,
+                  "mcp": 10.9,
+                  "ratio": 0.7558945908460472
+                },
+                "tokens": {
+                  "baseline": 23535,
+                  "mcp": 20795,
+                  "ratio": 0.8835776503080518
+                }
+              },
+              "ea3-missing-pycryptodome": {
+                "turns": {
+                  "baseline": 4,
+                  "mcp": 4,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 14.71,
+                  "mcp": 16.09,
+                  "ratio": 1.0938137321549966
+                },
+                "tokens": {
+                  "baseline": 28623,
+                  "mcp": 31713,
+                  "ratio": 1.1079551409705481
+                }
+              },
+              "ea4-py-spec-625": {
+                "turns": {
+                  "baseline": 13,
+                  "mcp": 4,
+                  "ratio": 0.3076923076923077
+                },
+                "time": {
+                  "baseline": 79.66,
+                  "mcp": 16.7,
+                  "ratio": 0.20964097414009542
+                },
+                "tokens": {
+                  "baseline": 334434,
+                  "mcp": 50545,
+                  "ratio": 0.15113594909608472
+                }
+              },
+              "eb1-sqlalchemy-databases": {
+                "turns": {
+                  "baseline": 5,
+                  "mcp": 5,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 14.65,
+                  "mcp": 15.27,
+                  "ratio": 1.0423208191126279
+                },
+                "tokens": {
+                  "baseline": 32237,
+                  "mcp": 29149,
+                  "ratio": 0.9042094487700468
+                }
+              },
+              "eb2-scipy-kulsinski": {
+                "turns": {
+                  "baseline": 6,
+                  "mcp": 5,
+                  "ratio": 0.8333333333333334
+                },
+                "time": {
+                  "baseline": 26.38,
+                  "mcp": 20.27,
+                  "ratio": 0.768385140257771
+                },
+                "tokens": {
+                  "baseline": 37949,
+                  "mcp": 34837,
+                  "ratio": 0.9179952040896994
+                }
+              },
+              "eb3-werkzeug-bind-arguments": {
+                "turns": {
+                  "baseline": 10,
+                  "mcp": 6,
+                  "ratio": 0.6
+                },
+                "time": {
+                  "baseline": 49.9,
+                  "mcp": 16.64,
+                  "ratio": 0.3334669338677355
+                },
+                "tokens": {
+                  "baseline": 122524,
+                  "mcp": 37614,
+                  "ratio": 0.30699291567366394
+                }
+              },
+              "eb4-sklearn-multi-class": {
+                "turns": {
+                  "baseline": 4,
+                  "mcp": 4,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 27.94,
+                  "mcp": 32.83,
+                  "ratio": 1.1750178954903363
+                },
+                "tokens": {
+                  "baseline": 20598,
+                  "mcp": 28032,
+                  "ratio": 1.3609088260996214
+                }
+              },
+              "ec1-old-pytest-pyproject": {
+                "turns": {
+                  "baseline": 4,
+                  "mcp": 5,
+                  "ratio": 1.25
+                },
+                "time": {
+                  "baseline": 17.12,
+                  "mcp": 18.23,
+                  "ratio": 1.0648364485981308
+                },
+                "tokens": {
+                  "baseline": 49609,
+                  "mcp": 46949,
+                  "ratio": 0.9463806970509383
+                }
+              },
+              "ec2-lib-layout": {
+                "turns": {
+                  "baseline": 5,
+                  "mcp": 5,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 12.47,
+                  "mcp": 14.52,
+                  "ratio": 1.16439454691259
+                },
+                "tokens": {
+                  "baseline": 25886,
+                  "mcp": 32689,
+                  "ratio": 1.262806150042494
+                }
+              },
+              "ec3-metadata-needs-install": {
+                "turns": {
+                  "baseline": 4,
+                  "mcp": 5,
+                  "ratio": 1.25
+                },
+                "time": {
+                  "baseline": 22.52,
+                  "mcp": 22.46,
+                  "ratio": 0.9973357015985791
+                },
+                "tokens": {
+                  "baseline": 29447,
+                  "mcp": 50297,
+                  "ratio": 1.7080517539987095
+                }
+              },
+              "ec4-django-makefile": {
+                "turns": {
+                  "baseline": 8,
+                  "mcp": 5,
+                  "ratio": 0.625
+                },
+                "time": {
+                  "baseline": 55.99,
+                  "mcp": 18.51,
+                  "ratio": 0.33059474906233255
+                },
+                "tokens": {
+                  "baseline": 105853,
+                  "mcp": 37030,
+                  "ratio": 0.34982475697429455
+                }
+              },
+              "ec5-django-runtests": {
+                "turns": {
+                  "baseline": 8,
+                  "mcp": 6,
+                  "ratio": 0.75
+                },
+                "time": {
+                  "baseline": 73.96,
+                  "mcp": 18.4,
+                  "ratio": 0.24878312601406166
+                },
+                "tokens": {
+                  "baseline": 179415,
+                  "mcp": 40565,
+                  "ratio": 0.22609592286040744
+                }
+              },
+              "ed1-pptx-and-pinv2": {
+                "turns": {
+                  "baseline": 7,
+                  "mcp": 5,
+                  "ratio": 0.7142857142857143
+                },
+                "time": {
+                  "baseline": 21.8,
+                  "mcp": 19.02,
+                  "ratio": 0.8724770642201835
+                },
+                "tokens": {
+                  "baseline": 40045,
+                  "mcp": 32993,
+                  "ratio": 0.8238981146210513
+                }
+              },
+              "ed2-toolchain-layered": {
+                "turns": {
+                  "baseline": 13,
+                  "mcp": 6,
+                  "ratio": 0.46153846153846156
+                },
+                "time": {
+                  "baseline": 92.71,
+                  "mcp": 29.96,
+                  "ratio": 0.32315823535756666
+                },
+                "tokens": {
+                  "baseline": 368478,
+                  "mcp": 70488,
+                  "ratio": 0.19129500268672756
+                }
+              },
+              "ed3-three-independent": {
+                "turns": {
+                  "baseline": 8,
+                  "mcp": 8,
+                  "ratio": 1.0
+                },
+                "time": {
+                  "baseline": 21.06,
+                  "mcp": 26.04,
+                  "ratio": 1.2364672364672364
+                },
+                "tokens": {
+                  "baseline": 55549,
+                  "mcp": 63940,
+                  "ratio": 1.1510558245873013
+                }
+              },
+              "ed4-layout-dependency-kwarg": {
+                "turns": {
+                  "baseline": 9,
+                  "mcp": 11,
+                  "ratio": 1.2222222222222223
+                },
+                "time": {
+                  "baseline": 28.58,
+                  "mcp": 25.4,
+                  "ratio": 0.8887333799860042
+                },
+                "tokens": {
+                  "baseline": 65433,
+                  "mcp": 68291,
+                  "ratio": 1.0436782663182187
+                }
+              },
+              "ed5-django-settings-and-signal": {
+                "turns": {
+                  "baseline": 7,
+                  "mcp": 9,
+                  "ratio": 1.2857142857142858
+                },
+                "time": {
+                  "baseline": 32.16,
+                  "mcp": 38.96,
+                  "ratio": 1.211442786069652
+                },
+                "tokens": {
+                  "baseline": 80808,
+                  "mcp": 104640,
+                  "ratio": 1.294921294921295
+                }
+              }
+            },
+            "ratio": {
+              "turns": {
+                "geometric_mean": 0.821737136893582,
+                "interval": [
+                  0.6823547686249517,
+                  0.9728953498424951
+                ],
+                "n": 18
+              },
+              "time": {
+                "geometric_mean": 0.7114990975616606,
+                "interval": [
+                  0.5337490188313155,
+                  0.9191331374722299
+                ],
+                "n": 18
+              },
+              "tokens": {
+                "geometric_mean": 0.7175170360309292,
+                "interval": [
+                  0.5038399148342096,
+                  0.9890846676785322
+                ],
+                "n": 18
+              }
+            }
+          }
+        }
+      },
+      "records": {
+        "baseline": {
+          "runs": 66,
+          "fixed": 66,
+          "not_graded": 0,
+          "runs_with_a_violation": 0,
+          "violations_by_category": {},
+          "finish_called_on_a_failing_suite": 0,
+          "finish_not_called": 0,
+          "ends": {
+            "finish": 66
+          },
+          "final_state_not_checked": 0,
+          "other_option_suite_not_checkable": 0,
+          "runs_with_a_reminder": 0,
+          "reminders": 0,
+          "runs_with_an_empty_reply": 0,
+          "empty_replies": 0,
+          "length_continuations": 0,
+          "median_turns": 9.0,
+          "median_agent_s": 21.4
+        },
+        "mcp": {
+          "runs": 66,
+          "fixed": 66,
+          "not_graded": 0,
+          "runs_with_a_violation": 0,
+          "violations_by_category": {},
+          "finish_called_on_a_failing_suite": 0,
+          "finish_not_called": 0,
+          "ends": {
+            "finish": 66
+          },
+          "final_state_not_checked": 0,
+          "other_option_suite_not_checkable": 0,
+          "runs_with_a_reminder": 0,
+          "reminders": 0,
+          "runs_with_an_empty_reply": 0,
+          "empty_replies": 0,
+          "length_continuations": 0,
+          "median_turns": 9.0,
+          "median_agent_s": 18.2,
+          "diagnose_called": 66,
+          "check_again_called": 65,
+          "median_first_diagnose_turn": 1.0,
+          "median_fixfirst_s": 2.3,
+          "first_step_read": 63,
+          "first_step_concrete": 57,
+          "diagnose_first_reply_without_steps": 3,
+          "diagnose_never_listed_steps": [
+            "ee1-addopts-missing-plugin seed 2026109055",
+            "ee1-addopts-missing-plugin seed 2026109056",
+            "ee1-addopts-missing-plugin seed 2026109057"
+          ],
+          "first_step_kinds": {
+            "command": 30,
+            "configuration": 15,
+            "location": 18
+          },
+          "first_step_carried_out": 51,
+          "first_step_commands": 30,
+          "first_step_requirement_text_as_given": 15,
+          "first_step_not_carried_out": [
+            "ea1-pkgres-removed seed 2026109001",
+            "ea1-pkgres-removed seed 2026109002",
+            "ea1-pkgres-removed seed 2026109003",
+            "ed3-three-independent seed 2026109046",
+            "ed3-three-independent seed 2026109047",
+            "ed3-three-independent seed 2026109048"
+          ]
+        }
+      },
+      "wording": {
+        "no_uplift_measured": false,
+        "trigger_1_uplift_20_points": false,
+        "trigger_2_efficiency": true
+      }
+    },
+    "exploratory_partition": {
+      "status": "post hoc descriptive partition",
+      "five_tasks": [
+        "ea4-py-spec-625",
+        "eb3-werkzeug-bind-arguments",
+        "ec4-django-makefile",
+        "ec5-django-runtests",
+        "ed2-toolchain-layered"
+      ],
+      "five_time_ratio": 0.2843231414994307,
+      "five_token_ratio": 0.23402842271282254,
+      "other_thirteen_time_ratio": 1.0124895814849562,
+      "other_thirteen_token_ratio": 1.1040076112884116
+    },
+    "F_control_totals": {
+      "tasks": 2,
+      "runs_per_arm": 6,
+      "baseline_seconds": 43.56,
+      "mcp_seconds": 80.15,
+      "baseline_tokens": 101712,
+      "mcp_tokens": 180217
+    },
+    "high_price_accounting_CNY": {
+      "baseline": "3.13098464",
+      "mcp": "1.59762992",
+      "formal": "4.72861456",
+      "including_probes": "5.05139408"
+    },
+    "accounting_note": "Usage-based peak-price upper bound; not the actual off-peak bill",
+    "independent_review_sha256": "959cdc6556ee6f109827a88e898172f7beb5294a4be98c11f95951ba2269aec3"
+  }
+}
