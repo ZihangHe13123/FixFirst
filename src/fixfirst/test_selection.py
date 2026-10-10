@@ -6,6 +6,22 @@ from pathlib import Path
 import stat
 
 
+def canonical_nodeid(value):
+    """Remove the old Python class Instance segment, never text inside parameters."""
+    if not isinstance(value, str):
+        return value
+    head, bracket, parameters = value.partition("[")
+    parts = head.split("::")
+    if not parts[0].endswith(".py"):
+        return value
+    if (len(parts) >= 4 and parts[-2] == "()" and parts[-1].isidentifier()
+            and all(part.isidentifier() for part in parts[1:-2])):
+        del parts[-2]
+    elif len(parts) >= 3 and parts[-1] == "()" and all(part.isidentifier() for part in parts[1:-1]):
+        parts.pop()
+    return "::".join(parts) + bracket + parameters
+
+
 def normalize_tests(root, tests, *, require_files=True):
     if tests is None:
         return []
@@ -45,7 +61,7 @@ def normalize_tests(root, tests, *, require_files=True):
                 regular = False
             if not regular:
                 raise ValueError(f"Selected test file does not exist or is not a regular file: {relative}")
-        value = relative.as_posix() + (separator + node if separator else "")
+        value = canonical_nodeid(relative.as_posix() + (separator + node if separator else ""))
         if value in normalized:
             raise ValueError("Choose distinct test files or node IDs")
         normalized.append(value)
@@ -65,6 +81,7 @@ def comparable_scopes(left, right):
 
 
 def node_selected(selector, node):
+    selector, node = canonical_nodeid(selector), canonical_nodeid(node)
     return node == selector or node.startswith(selector + "::") or node.startswith(selector + "[")
 
 

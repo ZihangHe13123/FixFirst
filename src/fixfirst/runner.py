@@ -310,6 +310,8 @@ def search_releases(session: Session, targets: list[str]) -> Run:
 
 
 def validate_targets(session: Session, targets: list[str]):
+    from .test_selection import canonical_nodeid
+
     if not targets or len(targets) > 200 or len(targets) != len(set(targets)):
         raise ValueError("Choose 1-200 distinct, previously observed test nodes")
     known = {
@@ -335,7 +337,7 @@ def validate_targets(session: Session, targets: list[str]):
         if (
             path.is_absolute()
             or not (root / path).resolve().is_relative_to(root)
-            or node not in known
+            or node not in known and canonical_nodeid(node) not in known
         ):
             raise ValueError("Only nodes observed in this project with the current interpreter can be re-run")
 

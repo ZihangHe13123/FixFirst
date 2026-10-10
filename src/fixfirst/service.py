@@ -68,6 +68,9 @@ def create_session(
 
 def ingest(session: Session, runs: list[Run]):
     from .test_selection import comparable_scopes
+    from .legacy_pytest import normalize_history
+
+    normalize_history(session)
 
     fresh = []
     event_batch = []
