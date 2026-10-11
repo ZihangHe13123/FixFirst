@@ -78,14 +78,25 @@ def activated(folder: Path) -> dict:
     return env
 
 
+# A project whose own config asks for colour (`addopts = --color=yes`) wraps every
+# line of the output in escape codes, so `=+ ... =+` never matches the banner and
+# the fallback below returns a line that still carries the timing.  Two identical
+# runs then look different and the project is dropped as unstable.  Strip the
+# codes before looking for the summary line.
+ANSI_ESCAPE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+
+
 def summary_line(output: str) -> str:
     """pytest's last line without its timing, e.g. '2 failed, 14 errors'."""
-    lines = [line.strip() for line in output.splitlines() if line.strip()]
+    lines = [ANSI_ESCAPE.sub("", line).strip() for line in output.splitlines()]
+    lines = [line for line in lines if line]
     for line in reversed(lines):
         match = re.fullmatch(r"=+ (.+?) =+", line)
         if match:
             return re.sub(r" in [\d.]+s\b.*$", "", match.group(1))
-    return lines[-1][:200] if lines else "(no output)"
+    # No banner (a hard crash, or an interrupted collection): the last line is the
+    # message itself, and its timing has to go as well.
+    return re.sub(r" in [\d.]+s\b.*$", "", lines[-1])[:200] if lines else "(no output)"
 
 
 def outcome(run: dict) -> tuple:
