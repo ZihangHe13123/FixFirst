@@ -660,6 +660,156 @@ The static snapshot and grader reports are structured observations inside the
 existing sandbox grading boundary, not signed independent measurements of
 malicious test code. There is no change to FixFirst product code or its model.
 
+## Formal run on the frozen 0.8.0rc2 (7 to 9 October 2026)
+
+The question: the same agent, with FixFirst's MCP tools added to its basic tools, repairs how
+many more failing Python projects, and with how much less effort? Every number in this section
+comes from `formal-20261007/analysis.txt` and `formal-20261007/cloud-analysis.txt` (with the same
+content as `.json`), the outputs of the analysis on the complete records.
+
+### What differs from the task card
+
+The card planned six to eight of the new real projects and six hard scenarios, three runs per
+cell. The comparison on two real projects that preceded this run (registered in
+`a2-development-20261004/`; 84 runs) ended with two formal successes and could not show a difference: one project is an
+application-logic defect outside FixFirst's scope, the other states its cause in the error text,
+and the run conditions cut the models short. The formal run therefore uses constructed tasks in
+layers, with the expectation for each layer written down before any model was run, and the
+evaluation tasks kept sealed until the product was frozen.
+
+### Design
+
+| | |
+|---|---|
+| Arms | `baseline`: the basic tools. `mcp`: the same plus FixFirst's `diagnose`, `check_again` and `explain` |
+| Product | Tag `b7-freeze-20261007`, commit `5c224cf` (package version 0.8.0rc2), frozen before the evaluation tasks were opened |
+| Tasks | 22 small projects with a real failure and a verified reference repair. In scope and analysed together: A install or upgrade (4), B change project code for a removed interface (4), C the handy repair is forbidden (5), D several faults (5). Reported apart: E an environment fault FixFirst does not cover (2), F an application-logic defect (2) |
+| Local models | Qwen3.6-35B-A3B-6bit, gemma-4-26B-A4B-it-qat-4bit, Qwen3.8-27B-MLX-4bit (low reasoning effort); 5 runs per task and arm, 660 runs |
+| Cloud model | DeepSeek V4.1 Flash; 3 runs per task and arm, 132 runs. Run because a trigger fixed in advance was met by the local results |
+| Order | The two arms of a task and repetition run next to each other with the same seed; each arm goes first half of the time |
+| Limits per run | 30 turns, 900 seconds |
+| Grading | `--grading-policy h5-v1` (section "H5 grading" above): the whole test suite must pass in a clean copy, and nothing protected may have been changed at any time during the run, even if it was restored (test files, `conftest.py`, every pytest option except `pythonpath` and `DJANGO_SETTINGS_MODULE`). This is the strict reading |
+
+Two further readings of the repair rate were registered beforehand: a run whose only violation
+is another pytest option also counts as repaired; a run with no violation left at its end counts
+as repaired.
+
+### Repair rate, layers A to D (18 tasks, 90 runs per model and arm)
+
+| Model | Reading | baseline | mcp | Difference in points (95% interval) |
+|---|---|---:|---:|---|
+| Qwen3.6 | strict | 87.8% | 98.9% | +11.1 (+1.1 to +22.2) |
+| | only another pytest option | 96.7% | 98.9% | +2.2 (−2.2 to +6.7) |
+| | nothing left at the end | 94.4% | 100% | +5.6 (+1.1 to +11.1) |
+| Gemma | strict | 38.9% | 90.0% | +51.1 (+35.6 to +65.6) |
+| | only another pytest option | 38.9% | 90.0% | +51.1 (+35.6 to +65.6) |
+| | nothing left at the end | 41.1% | 90.0% | +48.9 (+33.3 to +63.3) |
+| Qwen3.8 | all three | 93.3% | 95.6% | +2.2 (0 to +6.7) |
+
+By task: Qwen3.6 rises on 5 and falls on 1; Gemma rises on 16 and falls on 1; Qwen3.8 rises
+on 1.
+
+By layer, strict reading, baseline → mcp in percent:
+
+| Model | A | B | C | D | E | F |
+|---|---|---|---|---|---|---|
+| Qwen3.6 | 100 → 100 | 95 → 100 | 76 → 100 | 84 → 96 | 100 → 100 | 100 → 100 |
+| Gemma | 55 → 100 | 50 → 75 | 28 → 100 | 28 → 84 | 80 → 80 | 100 → 80 |
+| Qwen3.8 | 100 → 100 | 75 → 85 | 100 → 100 | 96 → 96 | 100 → 100 | 100 → 100 |
+
+How to read each model:
+
+- **Gemma** gains repair ability, and the three readings agree. Without MCP 42 of its 55 unrepaired
+  runs used up the 30 turns.
+- **Qwen3.6**: the +11 points depend on the strict reading. Of its 11 unrepaired baseline runs, 8
+  passed every test and had only set another pytest option (three Django tasks); by test outcome
+  alone the arms are nearly equal (96.7% and 98.9%). Both numbers belong together.
+- **Qwen3.8**: no difference in repair rate can be claimed. All 10 of its unrepaired runs are
+  time-outs, 8 of them on one task.
+
+### Effort on the tasks both arms repair
+
+mcp relative to baseline; below 1 means less with MCP. Geometric mean over tasks of the ratio of
+medians, with the 95% interval.
+
+| Model | Tasks both arms repair | Turns | Time | Tokens |
+|---|---:|---|---|---|
+| Qwen3.6 | 15 | 0.54 (0.43 to 0.69) | 0.46 (0.38 to 0.56) | 0.36 (0.28 to 0.46) |
+| Gemma | 7 | 0.55 (0.34 to 0.90) | 1.03 (0.72 to 1.43) | 0.63 (0.37 to 1.04) |
+| Qwen3.8 | 17 | 0.82 (0.68 to 0.98) | 0.73 (0.60 to 0.89) | 0.74 (0.59 to 0.91) |
+
+Gemma does not save time on the seven tasks it repairs in both arms. The other registered
+version, all 18 tasks with unrepaired runs counted at the limits, gives it 0.09 for time; that
+number comes from the many unrepaired baseline runs counted at 900 seconds, not from faster
+repairs.
+
+### The control layers and how runs ended
+
+Outside the scope nothing improves, as expected (table above, E and F). Gemma's fall in F comes
+from two runs that ended early after the three reminders for an empty reply were used up; a third
+such run is in layer D and was already unrepaired by the strict reading. All three are kept and
+counted as unrepaired; counting them as repaired changes nothing in layers A to D. The plan's
+criteria for a usable run are defined on the baseline arm, where all three models meet them;
+`analysis.txt` prints that they do not hold for Gemma's mcp arm because of these three runs.
+
+| Model | Arm | Called finish | Used up the turns | Time limit | Ended early |
+|---|---|---:|---:|---:|---:|
+| Qwen3.6 | baseline | 109 | 0 | 1 | 0 |
+| | mcp | 109 | 1 | 0 | 0 |
+| Qwen3.8 | baseline | 104 | 0 | 6 | 0 |
+| | mcp | 106 | 0 | 4 | 0 |
+| Gemma | baseline | 64 | 46 | 0 | 0 |
+| | mcp | 95 | 12 | 0 | 3 |
+
+In the mcp arm every one of the 330 runs called `diagnose`, at the median in the first turn.
+Where the first step gave an action, it was followed in 95 of 95 runs (Qwen3.6), 93 of 95
+(Gemma) and 80 of 92 (Qwen3.8).
+
+### The cloud model
+
+DeepSeek V4.1 Flash repaired every task in both arms: 54 of 54 and 54 of 54 in layers A to D in
+all three readings, and all 12 runs of E and all 12 of F. The tasks left no room for a difference in repair
+rate, which says neither that FixFirst helps this model nor that it does not.
+
+| On the 18 tasks of A to D | mcp relative to baseline (95% interval) | Tasks with less | Tasks with more | Unchanged |
+|---|---|---:|---:|---:|
+| Turns | 0.82 (0.68 to 0.97) | 8 | 4 | 6 |
+| Time | 0.71 (0.53 to 0.92) | 10 | 8 | 0 |
+| Tokens | 0.72 (0.50 to 0.99) | 10 | 8 | 0 |
+
+The mean saving is not spread evenly: about as many tasks got more expensive as cheaper. Looking
+at the table per task afterwards (a description, not a registered reading), five tasks on which
+the model alone needed 8 to 13 turns carry the saving (time 0.28, tokens 0.23), and the other
+thirteen are level or slightly dearer (time 1.01, tokens 1.10). In layer F, where FixFirst cannot
+help, the mcp arm took about 1.8 times the time and tokens.
+
+### What has to be said with these numbers
+
+1. Qwen3.6's +11 points depend on strict grading; with only "another pytest option" allowed it is
+   +2 with an interval that includes 0.
+2. Qwen3.8 shows no difference in repair rate; its unrepaired runs are all time-outs, so another
+   time limit could give another result.
+3. Gemma saves no time on tasks it repairs in both arms.
+4. These are 22 constructed small projects. They measure the gain when the fault lies inside what
+   FixFirst covers and say nothing about how often that is the case in real projects.
+5. Five runs per task and arm (three for the cloud model): a single task's rate is coarse, and
+   conclusions rest on the mean over tasks.
+6. The three local models are quantised and were measured on one machine with one server setup.
+7. The prompt of both arms names the two allowed pytest options and says how the grader starts
+   the tests. Both help only the baseline arm, so the measured gain is on the low side.
+8. The experiment measured 0.8.0rc2. On the later 0.8.0rc5 no agent run was made. For 17 of the
+   18 tasks of A to D the first report an agent would get is word for word the same as then; for
+   one (`eb1`) it differs, and the conclusion for that task does not carry over.
+
+### Records
+
+`formal-20261007/` holds the analysis outputs for the 660 and the 132 runs. The runs themselves
+(archives of 22,120 and 14,321 files), the plan with its revisions and the two task packs are
+kept outside the repository. The batch of 660 ran once, in
+27.67 hours, with no interruption, rerun or lost run; the batch of 132 ran once in 68 minutes.
+The analysis was computed twice, by the author of the runner and independently from the archive,
+with byte-identical output.
+
 ## Hard scenarios as agent tasks (2 Oct, scripted checks only)
 
 The six hard scenarios (`src/fixfirst/hard_cases.py`) could not be run: `--cases` looked only at the
