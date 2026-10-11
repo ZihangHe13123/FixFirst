@@ -35,7 +35,7 @@
 | B10 | 骨架完成 | PR #35。还差在置顶的 X1 里说明骨架在哪里 |
 | B12 | 第一阶段完成 | 27 个缺陷复现（PR #32）；第二阶段等冻结 |
 | B13 | 材料完成 | 方案、同意书、问卷（PR #32）；`analysis.py` 本批用虚构数据写好并验证，正式分析等 C 交数据 |
-| B3 | 开发试跑完成 | PR #34；正式全量等冻结 |
+| B3 | 真实项目评分汇总完成；生成数据和难例正式全量待跑 | [真实项目结果](../../experiments/diagnosis_baseline/real-results-20261003/REPORT.md)；保留原试跑与 v0.7.0 结果 |
 | B17 | 判分口径已定 | 两个朴素对照组已实现（PR #33）；FixFirst 一侧冻结后做 |
 | B5 | 正式冻结流程已获授权，状态以远端记录为准 | 干净public历史通过正常PR合main；v0.7.0标签、安装包摘要及CI见[B5 #19](https://github.com/ZihangHe13123/FixFirst/issues/19)和[交付记录](../freeze/PUBLIC_DELIVERY.md)。本次通知授权仅限B5任务，未代发其他任务公告；Windows及C1/A2前置分列 |
 | B6、B7、B9、B11、B14、B15、B16 | 未开始 | 见下面的推进顺序 |

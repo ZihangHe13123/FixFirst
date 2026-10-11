@@ -1,0 +1,8 @@
+{
+  "commit": "769028d344ebee312be1554e996a393b5014fc9e",
+  "files": {
+    "reference/labels.csv": "e689bd3b1bd38c10e1c3a63fa59128b2897f157e6be98feeeff6009c1e77417e",
+    "reference/fixfirst-scores.csv": "1eaba7008c6909b8a0383c91b87581bd7dc8febc99476ece87fdae0b949dc4b2",
+    "reference/scoring-rubric.md": "05d4681bf5c20b2693bb833dcd5a46c707530e07a213affdc4197987914d6d44"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "status": "awaiting_independent_A_C_scores",
+  "completed_on": "2026-10-03",
+  "timezone": "Asia/Singapore",
+  "scope": "B3 one-shot real-project answers and unscored blinded handoff; not all B3 tasks complete",
+  "runner_commit": "5cff6702351272829e2424c54f0d1232963d021f",
+  "input_batch_sha256": "aded7ae0d8d85ff1fdd78a7264809724dd8e99b79c943dc947b38725951d63f8",
+  "cases_sha256": "ef1629efb62c2890c52585373d9b8963d75cc51ab4451c1859e373094f873230",
+  "model_identity_receipt_sha256": "129a8158cf84ab8643dcb6c190bb6ee652d9e5d506ea3fe5c2d25c0bd35cdec0",
+  "system_prompt_sha256": "07a640bb986cf5328a517f2cea7120ab9a2780fb6e9405bb25be38e2c30c1d46",
+  "answer_seal_sha256": "3eca6a65c45424c90dbc476604a0dd2e2fa200ba9fe623310fd2409ccbc16c9d",
+  "answers_sha256": "e723093e4fbd8152dd31a0f86a26af4f56384a701c28b40e28045e7ef5655f9d",
+  "protocol_sha256": "4fbb8c7810bfb4a206ca29fe4cf0c27a4952c9bb1a84a000685bbe2a7f973a42",
+  "label_source": {
+    "commit": "769028d344ebee312be1554e996a393b5014fc9e",
+    "path": "examples/heldout-2026-10/labels.csv",
+    "sha256": "e689bd3b1bd38c10e1c3a63fa59128b2897f157e6be98feeeff6009c1e77417e",
+    "read_after_complete_seal": true
+  },
+  "total_requests": 36,
+  "model_count": 3,
+  "cases_per_model": 12,
+  "parse_valid_answers": 31,
+  "service_no_answer": 5,
+  "retries": 0,
+  "human_scores_filled": 0,
+  "answer_status_counts": {
+    "ok": 31,
+    "invalid": 4,
+    "request_error": 1
+  },
+  "decoding": {
+    "temperature": 0,
+    "top_p": 1,
+    "max_tokens": 1024,
+    "thinking": false,
+    "seed": 20260929
+  },
+  "context_tokens": 262144,
+  "tools": false,
+  "socket_io_timeout_s": 1200,
+  "hard_wall_clock_deadline_s": null,
+  "input_policy": "fixed bounded sanitized initial A2 evidence, same prepared evidence for each model, no failure-driven shortening",
+  "independent_integrity_audit": "passed; token accounting caveat retained locally until unblinding",
+  "privacy": "True model mapping, original responses, input evidence, service logs and configs retained outside the public handoff until scoring is complete.",
+  "delivery_revision": 3,
+  "archives": {
+    "B3-scoring-A.zip": "4513dc7752e19989bfd6f2a665cfcf6270191c2683a310f48cbdb115e416bf65",
+    "B3-scoring-C.zip": "ab6a2510f30172c5fb6a65aae63edc735617c4a84a5620cdfeec26eee92bb22f"
+  }
+}
