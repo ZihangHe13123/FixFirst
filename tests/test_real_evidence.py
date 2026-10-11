@@ -192,7 +192,7 @@ def test_preserves_positional_only_keyword_binding_observation(tmp_path):
 
 
 def test_preserves_actual_static_project_producer_shapes(tmp_path):
-    """Exercise the frozen producer on invented files; never execute their code."""
+    """Exercise the installed producer on invented files; never execute their code."""
     from types import SimpleNamespace
 
     from fixfirst.project import collect_project
@@ -238,9 +238,14 @@ def test_preserves_actual_static_project_producer_shapes(tmp_path):
     rendered = rows[0]["evidence"]["project"]
     omitted = manifest["evidence_field_policy"]["project_omitted"]
     assert set(omitted) == {"conda_mappings"}
-    assert set(rendered) == set(original) - set(omitted)
+    # b3-real-evidence-v1 was frozen on v0.7.0. Later products write more project fields; the frozen
+    # allowlist leaves them out (FIELD_POLICY["unknown_fields"]) and the published B3 inputs never had
+    # them. Name each one here, so a new field is a decision and not a silent drop.
+    added_after_freeze = {"django_configuration", "editable_project", "local_module_candidates",
+                          "pytest_warning_filters"} & set(original)
+    assert set(rendered) == set(original) - set(omitted) - added_after_freeze
     for key, value in original.items():
-        if key not in omitted and key != "environment_run_id":
+        if key not in omitted and key not in added_after_freeze and key != "environment_run_id":
             assert rendered[key] == value, key
     assert rows[0]["evidence"]["truncation"] == []
 
