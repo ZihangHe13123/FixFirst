@@ -26,6 +26,7 @@ bundled model or compared with a different feature layout without identifying th
 | `dependency-demo/` | `pip check` passes but the project's declaration is not met | `01-broken.html` |
 | `historical-regressions/` | Four upstream library defects replayed offline with official wheels | `REPORT.md` |
 | `grouping-evaluation/` | Message grouping, exact matching against TF-IDF (task B9): the two controlled datasets, saved event streams of development data and real projects, and constructed hard pairs | `REPORT.md` |
+| `ordering-evaluation/` | Next-step ordering on the five multi-fault cases (task B17): FixFirst against two naive orderings, the grouping ablations, and whether FixFirst's first step is an allowed repair | `REPORT.md` |
 | `public-data/` | What PyDFix and BugsInPy contain and the parts FixFirst can use: 22 distinct PyDFix import errors, an index of 501 BugsInPy bugs | `README.md` |
 | `dataset/`, `execution-dataset/` | The controlled datasets used for grouping only, both generated again on 12 October 2026 with the code of 0.8.0rc5 (the execution suite after a repair of its generator, see the grouping report) | `manifest.json` |
 
