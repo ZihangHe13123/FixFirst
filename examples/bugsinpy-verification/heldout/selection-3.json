@@ -1,0 +1,1188 @@
+{
+ "rule": "registry addendum 121",
+ "bugsinpy_commit": "11c5f1eea954a42132cfd06bf257766a7963e0fd",
+ "selected": [
+  {
+   "case": "ansible-8",
+   "project": "ansible",
+   "bug": 8,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/units/plugins/shell/test_powershell.py::test_join_path_unc"
+   ],
+   "fixed_commit": "fc7980af9a42676913b4054163570ee438b82e9c",
+   "patched_files": [
+    "lib/ansible/plugins/shell/powershell.py"
+   ],
+   "installed": [
+    "cffi==2.0.0",
+    "cryptography==50.0.2",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "jinja2==3.1.6",
+    "markupsafe==3.0.4",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pycparser==2.23",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "pyyaml==6.0.3",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "ansible-10",
+   "project": "ansible",
+   "bug": 10,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/units/modules/system/test_pamd.py::PamdServiceTestCase::test_remove_first_rule",
+    "test/units/modules/system/test_pamd.py::PamdServiceTestCase::test_remove_last_rule"
+   ],
+   "fixed_commit": "a4b59d021368285490f7cda50c11ac4f7a8030b5",
+   "patched_files": [
+    "lib/ansible/modules/system/pamd.py"
+   ],
+   "installed": [
+    "cffi==2.0.0",
+    "cryptography==50.0.2",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "jinja2==3.1.6",
+    "markupsafe==3.0.4",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pycparser==2.23",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "pyyaml==6.0.3",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "ansible-11",
+   "project": "ansible",
+   "bug": 11,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/units/modules/network/ios/test_ios_banner.py::TestIosBannerModule::test_ios_banner_nochange",
+    "test/units/modules/network/ios/test_ios_banner.py::TestIosBannerIos12Module::test_ios_banner_nochange"
+   ],
+   "fixed_commit": "52f3ce8a808f943561803bd664e695fed1841fe8",
+   "patched_files": [
+    "lib/ansible/modules/network/ios/ios_banner.py"
+   ],
+   "installed": [
+    "cffi==2.0.0",
+    "cryptography==50.0.2",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "jinja2==3.1.6",
+    "markupsafe==3.0.4",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pycparser==2.23",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "pyyaml==6.0.3",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "ansible-12",
+   "project": "ansible",
+   "bug": 12,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/units/plugins/lookup/test_env.py"
+   ],
+   "fixed_commit": "2fa8f9cfd80daf32c7d222190edf7cfc7234582a",
+   "patched_files": [
+    "lib/ansible/plugins/lookup/env.py"
+   ],
+   "installed": [
+    "cffi==2.0.0",
+    "cryptography==50.0.2",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "jinja2==3.1.6",
+    "markupsafe==3.0.4",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pycparser==2.23",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "pyyaml==6.0.3",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "black-7",
+   "project": "black",
+   "bug": 7,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel",
+    "setuptools_scm",
+    "aiohttp",
+    "aiohttp-cors"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_black.py::BlackTestCase::test_tuple_assign"
+   ],
+   "fixed_commit": "de806405d2934b629d67e2a6317ad7e826765a20",
+   "patched_files": [
+    "black.py"
+   ],
+   "installed": [
+    "aiohappyeyeballs==2.6.1",
+    "aiohttp==3.13.5",
+    "aiohttp-cors==0.8.1",
+    "aiosignal==1.4.0",
+    "appdirs==1.4.4",
+    "async-timeout==5.0.1",
+    "attrs==26.1.0",
+    "click==8.1.8",
+    "exceptiongroup==1.3.1",
+    "frozenlist==1.8.0",
+    "idna==3.20",
+    "iniconfig==2.1.0",
+    "multidict==6.7.1",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "propcache==0.4.1",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "setuptools==69.5.1",
+    "setuptools-scm==10.3.4",
+    "toml==0.10.2",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "vcs-versioning==2.6.0",
+    "wheel==0.48.0",
+    "yarl==1.22.0"
+   ]
+  },
+  {
+   "case": "black-8",
+   "project": "black",
+   "bug": 8,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel",
+    "setuptools_scm",
+    "aiohttp",
+    "aiohttp-cors"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_black.py::BlackTestCase::test_comments7"
+   ],
+   "fixed_commit": "6b994fdb8ab70ce4c2eafb8f2f0ff2648f3ff1ef",
+   "patched_files": [
+    "black.py"
+   ],
+   "installed": [
+    "aiohappyeyeballs==2.6.1",
+    "aiohttp==3.13.5",
+    "aiohttp-cors==0.8.1",
+    "aiosignal==1.4.0",
+    "appdirs==1.4.4",
+    "async-timeout==5.0.1",
+    "attrs==26.1.0",
+    "click==8.1.8",
+    "exceptiongroup==1.3.1",
+    "frozenlist==1.8.0",
+    "idna==3.20",
+    "iniconfig==2.1.0",
+    "multidict==6.7.1",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "propcache==0.4.1",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "setuptools==69.5.1",
+    "setuptools-scm==10.3.4",
+    "toml==0.10.2",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "vcs-versioning==2.6.0",
+    "wheel==0.48.0",
+    "yarl==1.22.0"
+   ]
+  },
+  {
+   "case": "black-9",
+   "project": "black",
+   "bug": 9,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel",
+    "setuptools_scm",
+    "aiohttp",
+    "aiohttp-cors"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_black.py::BlackTestCase::test_python2_print_function"
+   ],
+   "fixed_commit": "d6db1c12a8e14833fe22da377cddc2bd1f43dc14",
+   "patched_files": [
+    "black.py"
+   ],
+   "installed": [
+    "aiohappyeyeballs==2.6.1",
+    "aiohttp==3.13.5",
+    "aiohttp-cors==0.8.1",
+    "aiosignal==1.4.0",
+    "appdirs==1.4.4",
+    "async-timeout==5.0.1",
+    "attrs==26.1.0",
+    "click==8.1.8",
+    "exceptiongroup==1.3.1",
+    "frozenlist==1.8.0",
+    "idna==3.20",
+    "iniconfig==2.1.0",
+    "multidict==6.7.1",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "propcache==0.4.1",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "setuptools==69.5.1",
+    "setuptools-scm==10.3.4",
+    "toml==0.10.2",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "vcs-versioning==2.6.0",
+    "wheel==0.48.0",
+    "yarl==1.22.0"
+   ]
+  },
+  {
+   "case": "black-10",
+   "project": "black",
+   "bug": 10,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel",
+    "setuptools_scm",
+    "aiohttp",
+    "aiohttp-cors"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_black.py::BlackTestCase::test_comment_indentation"
+   ],
+   "fixed_commit": "66aa676278948368dff251dffd58c850cb8b889e",
+   "patched_files": [
+    "blib2to3/pgen2/driver.py"
+   ],
+   "installed": [
+    "aiohappyeyeballs==2.6.1",
+    "aiohttp==3.13.5",
+    "aiohttp-cors==0.8.1",
+    "aiosignal==1.4.0",
+    "appdirs==1.4.4",
+    "async-timeout==5.0.1",
+    "attrs==26.1.0",
+    "click==8.1.8",
+    "exceptiongroup==1.3.1",
+    "frozenlist==1.8.0",
+    "idna==3.20",
+    "iniconfig==2.1.0",
+    "multidict==6.7.1",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "propcache==0.4.1",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "setuptools==69.5.1",
+    "setuptools-scm==10.3.4",
+    "toml==0.10.2",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "vcs-versioning==2.6.0",
+    "wheel==0.48.0",
+    "yarl==1.22.0"
+   ]
+  },
+  {
+   "case": "luigi-6",
+   "project": "luigi",
+   "bug": 6,
+   "deps": [
+    "pytest==5.4.3",
+    "nose",
+    "mock",
+    "setuptools<70",
+    "wheel",
+    "psutil==5.7.0"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/parameter_test.py::TestParametersHashability::test_list_dict",
+    "test/parameter_test.py::TestParametersHashability::test_tuple_dict"
+   ],
+   "fixed_commit": "ce881b2a95743887c6147ff4ba23ce5f622b3f5e",
+   "patched_files": [
+    "luigi/parameter.py"
+   ],
+   "installed": [
+    "attrs==26.1.0",
+    "docutils==0.23",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "lockfile==0.12.2",
+    "mock==5.2.0",
+    "more-itertools==10.8.0",
+    "nose==1.3.7",
+    "packaging==26.3",
+    "pluggy==0.13.1",
+    "psutil==5.7.0",
+    "py==1.11.0",
+    "pygments==2.21.0",
+    "pytest==5.4.3",
+    "python-daemon==2.3.2",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "tornado==4.5.3",
+    "typing-extensions==4.16.0",
+    "wcwidth==0.9.2",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "luigi-7",
+   "project": "luigi",
+   "bug": 7,
+   "deps": [
+    "pytest",
+    "nose",
+    "mock",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/scheduler_api_test.py::SchedulerApiTest::test_status_wont_override"
+   ],
+   "fixed_commit": "daf9ce99a3a7ed4227d1564570c5fce8848357e5",
+   "patched_files": [
+    "luigi/scheduler.py"
+   ],
+   "installed": [
+    "docutils==0.23",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "lockfile==0.12.2",
+    "mock==5.2.0",
+    "nose==1.3.7",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "python-daemon==2.3.2",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "tornado==4.5.3",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "luigi-8",
+   "project": "luigi",
+   "bug": 8,
+   "deps": [
+    "pytest",
+    "nose",
+    "mock",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/contrib/redshift_test.py::TestS3CopyToSchemaTable::test_s3_copy_to_table"
+   ],
+   "fixed_commit": "8874b93165953c4f6bbe7b747804654d13290018",
+   "patched_files": [
+    "luigi/contrib/redshift.py"
+   ],
+   "installed": [
+    "docutils==0.23",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "lockfile==0.12.2",
+    "mock==5.2.0",
+    "nose==1.3.7",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "python-daemon==2.3.2",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "tornado==4.5.3",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "luigi-9",
+   "project": "luigi",
+   "bug": 9,
+   "deps": [
+    "pytest",
+    "nose",
+    "mock",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/execution_summary_test.py::ExecutionSummaryTest::test_status_with_task_retry"
+   ],
+   "fixed_commit": "b7115974c3deadf77113686248b39567cb67e38f",
+   "patched_files": [
+    "luigi/execution_summary.py",
+    "test/retcodes_test.py"
+   ],
+   "installed": [
+    "docutils==0.23",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "lockfile==0.12.2",
+    "mock==5.2.0",
+    "nose==1.3.7",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "python-daemon==2.3.2",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "tornado==4.5.3",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "scrapy-8",
+   "project": "scrapy",
+   "bug": 8,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_item.py::ItemMetaTest::test_new_method_propagates_classcell",
+    "tests/test_item.py::ItemMetaClassCellRegression::test_item_meta_classcell_regression"
+   ],
+   "fixed_commit": "4e765acaed7a914630ee5320fa6f6523890a2b9d",
+   "patched_files": [
+    "scrapy/item.py"
+   ],
+   "installed": [
+    "attrs==26.1.0",
+    "automat==25.4.16",
+    "cffi==2.0.0",
+    "constantly==23.10.4",
+    "cryptography==50.0.2",
+    "cssselect==1.3.0",
+    "exceptiongroup==1.3.1",
+    "hyperlink==21.0.0",
+    "idna==3.20",
+    "incremental==24.11.0",
+    "iniconfig==2.1.0",
+    "jmespath==1.1.0",
+    "lxml==6.1.3",
+    "packaging==26.3",
+    "parsel==1.10.0",
+    "pluggy==1.6.0",
+    "pycparser==2.23",
+    "pydispatcher==2.0.7",
+    "pygments==2.21.0",
+    "pyopenssl==26.4.0",
+    "pytest==8.4.2",
+    "queuelib==1.8.0",
+    "service-identity==26.1.0",
+    "setuptools==69.5.1",
+    "six==1.17.0",
+    "tomli==2.5.0",
+    "twisted==25.5.0",
+    "typing-extensions==4.16.0",
+    "w3lib==2.3.1",
+    "wheel==0.48.0",
+    "zope-interface==8.0.1"
+   ]
+  },
+  {
+   "case": "scrapy-9",
+   "project": "scrapy",
+   "bug": 9,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_mail.py::MailSenderTest::test_send_single_values_to_and_cc"
+   ],
+   "fixed_commit": "ff3aec661355a82a6f77355a95e1f391fa586c2b",
+   "patched_files": [
+    "scrapy/mail.py"
+   ],
+   "installed": [
+    "attrs==26.1.0",
+    "automat==25.4.16",
+    "cffi==2.0.0",
+    "constantly==23.10.4",
+    "cryptography==50.0.2",
+    "cssselect==1.3.0",
+    "exceptiongroup==1.3.1",
+    "hyperlink==21.0.0",
+    "idna==3.20",
+    "incremental==24.11.0",
+    "iniconfig==2.1.0",
+    "jmespath==1.1.0",
+    "lxml==6.1.3",
+    "packaging==26.3",
+    "parsel==1.10.0",
+    "pluggy==1.6.0",
+    "pycparser==2.23",
+    "pydispatcher==2.0.7",
+    "pygments==2.21.0",
+    "pyopenssl==26.4.0",
+    "pytest==8.4.2",
+    "queuelib==1.8.0",
+    "service-identity==26.1.0",
+    "setuptools==69.5.1",
+    "six==1.17.0",
+    "tomli==2.5.0",
+    "twisted==25.5.0",
+    "typing-extensions==4.16.0",
+    "w3lib==2.3.1",
+    "wheel==0.48.0",
+    "zope-interface==8.0.1"
+   ]
+  },
+  {
+   "case": "scrapy-10",
+   "project": "scrapy",
+   "bug": 10,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_downloadermiddleware_redirect.py::RedirectMiddlewareTest::test_latin1_location",
+    "tests/test_downloadermiddleware_redirect.py::RedirectMiddlewareTest::test_utf8_location"
+   ],
+   "fixed_commit": "db408528928b2d15043593032913fe40d6eb6783",
+   "patched_files": [
+    "scrapy/downloadermiddlewares/redirect.py"
+   ],
+   "installed": [
+    "attrs==26.1.0",
+    "automat==25.4.16",
+    "cffi==2.0.0",
+    "constantly==23.10.4",
+    "cryptography==50.0.2",
+    "cssselect==1.3.0",
+    "exceptiongroup==1.3.1",
+    "hyperlink==21.0.0",
+    "idna==3.20",
+    "incremental==24.11.0",
+    "iniconfig==2.1.0",
+    "jmespath==1.1.0",
+    "lxml==6.1.3",
+    "packaging==26.3",
+    "parsel==1.10.0",
+    "pluggy==1.6.0",
+    "pycparser==2.23",
+    "pydispatcher==2.0.7",
+    "pygments==2.21.0",
+    "pyopenssl==26.4.0",
+    "pytest==8.4.2",
+    "queuelib==1.8.0",
+    "service-identity==26.1.0",
+    "setuptools==69.5.1",
+    "six==1.17.0",
+    "tomli==2.5.0",
+    "twisted==25.5.0",
+    "typing-extensions==4.16.0",
+    "w3lib==2.3.1",
+    "wheel==0.48.0",
+    "zope-interface==8.0.1"
+   ]
+  },
+  {
+   "case": "scrapy-12",
+   "project": "scrapy",
+   "bug": 12,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_selector.py::SelectorTestCase::test_selector_bad_args"
+   ],
+   "fixed_commit": "2c9a38d1f54a12c33d7c9a19e021c840c4a32dee",
+   "patched_files": [
+    "scrapy/selector/unified.py"
+   ],
+   "installed": [
+    "attrs==26.1.0",
+    "automat==25.4.16",
+    "cffi==2.0.0",
+    "constantly==23.10.4",
+    "cryptography==50.0.2",
+    "cssselect==1.3.0",
+    "exceptiongroup==1.3.1",
+    "hyperlink==21.0.0",
+    "idna==3.20",
+    "incremental==24.11.0",
+    "iniconfig==2.1.0",
+    "jmespath==1.1.0",
+    "lxml==6.1.3",
+    "packaging==26.3",
+    "parsel==1.10.0",
+    "pluggy==1.6.0",
+    "pycparser==2.23",
+    "pydispatcher==2.0.7",
+    "pygments==2.21.0",
+    "pyopenssl==26.4.0",
+    "pytest==8.4.2",
+    "queuelib==1.8.0",
+    "service-identity==26.1.0",
+    "setuptools==69.5.1",
+    "six==1.17.0",
+    "tomli==2.5.0",
+    "twisted==25.5.0",
+    "typing-extensions==4.16.0",
+    "w3lib==2.3.1",
+    "wheel==0.48.0",
+    "zope-interface==8.0.1"
+   ]
+  },
+  {
+   "case": "youtube-dl-6",
+   "project": "youtube-dl",
+   "bug": 6,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/test_utils.py::TestUtil::test_parse_dfxp_time_expr"
+   ],
+   "fixed_commit": "d631d5f9f27f93767226192e4288990413fa9dbd",
+   "patched_files": [
+    "youtube_dl/utils.py"
+   ],
+   "installed": [
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "youtube-dl-7",
+   "project": "youtube-dl",
+   "bug": 7,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/test_utils.py::TestUtil::test_js_to_json_realworld"
+   ],
+   "fixed_commit": "d01949dc89feb2441f251e42e8a6bfa4711b9715",
+   "patched_files": [
+    "youtube_dl/utils.py"
+   ],
+   "installed": [
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "youtube-dl-8",
+   "project": "youtube-dl",
+   "bug": 8,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/test_YoutubeDL.py::TestFormatSelection::test_youtube_format_selection"
+   ],
+   "fixed_commit": "f5f4a27a964b41646303921104f4d6d6fd2098e4",
+   "patched_files": [
+    "youtube_dl/YoutubeDL.py"
+   ],
+   "installed": [
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "youtube-dl-9",
+   "project": "youtube-dl",
+   "bug": 9,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/test_YoutubeDL.py::TestFormatSelection::test_youtube_format_selection"
+   ],
+   "fixed_commit": "cf2ac6df6896dac4d23918867bb86fac1e1088d9",
+   "patched_files": [
+    "youtube_dl/YoutubeDL.py"
+   ],
+   "installed": [
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "thefuck-9",
+   "project": "thefuck",
+   "bug": 9,
+   "deps": [
+    "pytest==3.10.1",
+    "mock",
+    "pytest-mock",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/rules/test_git_push.py::test_get_new_command"
+   ],
+   "fixed_commit": "feb36ede5c518fdc3b6eddf945b2d8b1e2294d15",
+   "patched_files": [
+    "thefuck/rules/git_push.py"
+   ],
+   "installed": [
+    "atomicwrites==1.4.1",
+    "attrs==26.1.0",
+    "colorama==0.4.6",
+    "decorator==5.3.1",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "mock==5.2.0",
+    "more-itertools==10.8.0",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "psutil==7.2.2",
+    "py==1.11.0",
+    "pygments==2.21.0",
+    "pytest==3.10.1",
+    "pytest-mock==3.2.0",
+    "setuptools==69.5.1",
+    "six==1.17.0",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "thefuck-10",
+   "project": "thefuck",
+   "bug": 10,
+   "deps": [
+    "pytest==3.10.1",
+    "mock",
+    "pytest-mock",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/rules/test_man.py::test_get_new_command"
+   ],
+   "fixed_commit": "0c84eefa55fc1b4bc4940b41d74568884344e35c",
+   "patched_files": [
+    "thefuck/rules/man.py"
+   ],
+   "installed": [
+    "atomicwrites==1.4.1",
+    "attrs==26.1.0",
+    "colorama==0.4.6",
+    "decorator==5.3.1",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "mock==5.2.0",
+    "more-itertools==10.8.0",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "psutil==7.2.2",
+    "py==1.11.0",
+    "pygments==2.21.0",
+    "pytest==3.10.1",
+    "pytest-mock==3.2.0",
+    "setuptools==69.5.1",
+    "six==1.17.0",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "thefuck-11",
+   "project": "thefuck",
+   "bug": 11,
+   "deps": [
+    "pytest==3.10.1",
+    "mock",
+    "pytest-mock",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/rules/test_git_push.py::test_get_new_command"
+   ],
+   "fixed_commit": "db7dffdb44ae5c7be8de088765463fbda96197d1",
+   "patched_files": [
+    "thefuck/rules/git_push.py"
+   ],
+   "installed": [
+    "atomicwrites==1.4.1",
+    "attrs==26.1.0",
+    "colorama==0.4.6",
+    "decorator==5.3.1",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "mock==5.2.0",
+    "more-itertools==10.8.0",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "psutil==7.2.2",
+    "py==1.11.0",
+    "pygments==2.21.0",
+    "pytest==3.10.1",
+    "pytest-mock==3.2.0",
+    "setuptools==69.5.1",
+    "six==1.17.0",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "thefuck-12",
+   "project": "thefuck",
+   "bug": 12,
+   "deps": [
+    "pytest==3.10.1",
+    "mock",
+    "pytest-mock",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/rules/test_no_command.py::test_not_match",
+    "tests/rules/test_no_command.py::test_match"
+   ],
+   "fixed_commit": "ca787a1cba3cc9b26b43919c5e60acb40ebcd919",
+   "patched_files": [
+    "thefuck/rules/no_command.py"
+   ],
+   "installed": [
+    "atomicwrites==1.4.1",
+    "attrs==26.1.0",
+    "colorama==0.4.6",
+    "decorator==5.3.1",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "mock==5.2.0",
+    "more-itertools==10.8.0",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "psutil==7.2.2",
+    "py==1.11.0",
+    "pygments==2.21.0",
+    "pytest==3.10.1",
+    "pytest-mock==3.2.0",
+    "setuptools==69.5.1",
+    "six==1.17.0",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "fastapi-10",
+   "project": "fastapi",
+   "bug": 10,
+   "deps": [
+    "pytest",
+    "requests",
+    "flit<4",
+    "flit_core<4",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_skip_defaults.py::test_return_defaults"
+   ],
+   "fixed_commit": "38495fffa560fa57a8f0e6437d8e43c36c8e5612",
+   "patched_files": [
+    "fastapi/routing.py"
+   ],
+   "installed": [
+    "certifi==2026.7.22",
+    "charset-normalizer==3.5.2",
+    "docutils==0.23",
+    "exceptiongroup==1.3.1",
+    "flit==3.12.0",
+    "flit-core==3.12.0",
+    "idna==3.20",
+    "iniconfig==2.1.0",
+    "packaging==26.3",
+    "pip==26.0.1",
+    "pluggy==1.6.0",
+    "pydantic==0.30",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "requests==2.32.5",
+    "setuptools==69.5.1",
+    "starlette==0.12.7",
+    "tomli==2.5.0",
+    "tomli-w==1.2.0",
+    "typing-extensions==4.16.0",
+    "urllib3==2.6.3",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "fastapi-11",
+   "project": "fastapi",
+   "bug": 11,
+   "deps": [
+    "pytest",
+    "requests",
+    "flit<4",
+    "flit_core<4",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_union_body.py::test_item_openapi_schema",
+    "tests/test_union_body.py::test_post_other_item",
+    "tests/test_union_body.py::test_post_item",
+    "tests/test_union_inherited_body.py::test_inherited_item_openapi_schema",
+    "tests/test_union_inherited_body.py::test_post_extended_item",
+    "tests/test_union_inherited_body.py::test_post_item"
+   ],
+   "fixed_commit": "06eb4219345a77d23484528c9d164eb8d2097fec",
+   "patched_files": [
+    "fastapi/dependencies/utils.py"
+   ],
+   "installed": [
+    "certifi==2026.7.22",
+    "charset-normalizer==3.5.2",
+    "docutils==0.23",
+    "exceptiongroup==1.3.1",
+    "flit==3.12.0",
+    "flit-core==3.12.0",
+    "idna==3.20",
+    "iniconfig==2.1.0",
+    "packaging==26.3",
+    "pip==26.0.1",
+    "pluggy==1.6.0",
+    "pydantic==0.30",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "requests==2.32.5",
+    "setuptools==69.5.1",
+    "starlette==0.12.7",
+    "tomli==2.5.0",
+    "tomli-w==1.2.0",
+    "typing-extensions==4.16.0",
+    "urllib3==2.6.3",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "fastapi-12",
+   "project": "fastapi",
+   "bug": 12,
+   "deps": [
+    "pytest",
+    "requests",
+    "flit<4",
+    "flit_core<4",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_security_http_bearer_optional.py::test_security_http_bearer_incorrect_scheme_credentials"
+   ],
+   "fixed_commit": "d262f6e9296993e528e2327f0a73f7bf5514e7c6",
+   "patched_files": [
+    "fastapi/security/http.py"
+   ],
+   "installed": [
+    "certifi==2026.7.22",
+    "charset-normalizer==3.5.2",
+    "docutils==0.23",
+    "exceptiongroup==1.3.1",
+    "flit==3.12.0",
+    "flit-core==3.12.0",
+    "idna==3.20",
+    "iniconfig==2.1.0",
+    "packaging==26.3",
+    "pip==26.0.1",
+    "pluggy==1.6.0",
+    "pydantic==0.26",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "requests==2.32.5",
+    "setuptools==69.5.1",
+    "starlette==0.12.0",
+    "tomli==2.5.0",
+    "tomli-w==1.2.0",
+    "typing-extensions==4.16.0",
+    "urllib3==2.6.3",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "fastapi-13",
+   "project": "fastapi",
+   "bug": 13,
+   "deps": [
+    "pytest",
+    "requests",
+    "flit<4",
+    "flit_core<4",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_additional_responses_router.py::test_openapi_schema"
+   ],
+   "fixed_commit": "c8df3ae57c57e119d115dd3c1f44efa78de1022a",
+   "patched_files": [
+    "fastapi/routing.py"
+   ],
+   "installed": [
+    "certifi==2026.7.22",
+    "charset-normalizer==3.5.2",
+    "docutils==0.23",
+    "exceptiongroup==1.3.1",
+    "flit==3.12.0",
+    "flit-core==3.12.0",
+    "idna==3.20",
+    "iniconfig==2.1.0",
+    "packaging==26.3",
+    "pip==26.0.1",
+    "pluggy==1.6.0",
+    "pydantic==0.21",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "requests==2.32.5",
+    "setuptools==69.5.1",
+    "starlette==0.11.1",
+    "tomli==2.5.0",
+    "tomli-w==1.2.0",
+    "typing-extensions==4.16.0",
+    "urllib3==2.6.3",
+    "wheel==0.48.0"
+   ]
+  }
+ ]
+}

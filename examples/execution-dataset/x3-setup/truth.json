@@ -11,7 +11,7 @@
     "test_runtime_error"
   ],
   "event_groups": {
-    "event-1ea1feb59daf": "test_cart.py::test_fixture"
+    "event-a5d4fc183669": "test_cart.py::test_fixture"
   },
   "repair": "Restore owned cart.py and conftest.py from HEALTHY/FIXTURE"
 }

@@ -1,5 +1,13 @@
 # One-shot diagnosis baseline (task B3)
 
+## Real-project results (3 October 2026)
+
+The 12-project batch has completed A/C scoring, reconciliation and unblinding.
+See [the report](real-results-20261003/REPORT.md) and its reproducible public summary.
+The original blank delivery is retained in [real-scoring-20261003](real-scoring-20261003/).
+The generated-data and 30-hard-case formal runs remain outstanding; the development
+trials below do not complete those runs.
+
 A local model gets the same evidence as FixFirst and names the root cause and the first step,
 with no tools and no chance to run anything. This measures what the model *knows*, independently
 of how well it can act as an agent (that is B7's question).
@@ -149,3 +157,7 @@ Gemma-4-26B-A4B), the decoding settings, the FixFirst commit (the frozen v0.7.0)
 hard cases were used to develop rules H07 and H08, so FixFirst's results on them are development
 results. On the real projects the models' first steps are scored by A and C without knowing which
 model wrote them (A2, step 7). No paid remote model is used.
+
+## 生成案例的已封存结果
+
+[250 例、五个系统的类别对照](generated-results-20261004/README.md)：750 条模型回答与两版 FixFirst 的离线重放。含原始输入、封存、逐例预测和离线核对脚本；开发数据，第一步质量未评分。

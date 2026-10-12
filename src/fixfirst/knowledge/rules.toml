@@ -292,7 +292,7 @@ id = "D16"
 phase = "diagnose"
 description = "No installed, standard or known package has this name, but a similarly named project module exists: it was probably renamed or moved."
 when = [
-  ["?i", "missing_module", "?m"], ["?m", "similar_local", "?p"],
+  ["?i", "missing_module", "?m"], ["?i", "renamed_module_candidate", "?p"],
   ["not", "?m", "provided_by", "?_"], ["not", "?m", "in_stdlib", "yes"], ["not", "?m", "is_local", "?_"],
   ["not", "?m", "import_name_of", "?_"], ["not", "?m", "declared_in", "?_"], ["not", "?m", "removed_from", "?_"],
 ]
@@ -920,7 +920,7 @@ verification = "Re-run the original test command with the same interpreter and t
 id = "P13"
 phase = "plan"
 description = "Renamed or moved module: update the imports."
-when = [["?i", "remedy", "fix_renamed_module"], ["?i", "missing_module", "?m"], ["?m", "similar_local", "?p"]]
+when = [["?i", "remedy", "fix_renamed_module"], ["?i", "missing_module", "?m"], ["?i", "renamed_module_candidate", "?p"]]
 [rule.action]
 id = "fix-import-{?m}"
 kind = "manual_fix"

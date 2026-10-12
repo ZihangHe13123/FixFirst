@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "allow_formal_only": true,
+  "approval_basis": "Codex pre-reviewed fixed rule; completed evidence checked by machine",
+  "reviewed_at_utc": "2026-10-04T13:22:35.542247+00:00",
+  "reviewed_by": "Codex; user previously authorized this experiment and automatic smoke-to-main progression",
+  "original_registration_commit": "232f2ba6d12854439ba61b5d6da89ca104be7340",
+  "product_commit": "804cc3c455061517cbc5edb21a9fe4b66626b453",
+  "protocol": "3bf846ae",
+  "retained_smoke_runs": 9,
+  "main_runs": 78,
+  "allowed_gaps": [
+    {
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "arm": "facts",
+      "reason": "basic agent tools were not exercised"
+    },
+    {
+      "model": "gemma-4-26B-A4B-it-qat-4bit",
+      "arm": "mcp",
+      "reason": "basic agent tools were not exercised"
+    }
+  ],
+  "remote_url": "https://github.com/ZihangHe13123/FixFirst.git",
+  "push_branch": "codex/b7-a2-port-continuation-20261004",
+  "paths_sha256": "4e5603a81023a8918922a1ee656506b2d7301bc0bb9e2584489840187f121f6a",
+  "script_sha256": {
+    "run_batch.py": "fed886e27f091044cb581a7091284157bac22b90e3ee191806b1d89e423c3ee5",
+    "prepare_registration.py": "e1c2e355dfb67676aa6bd0fd71a1d4c02b23bf95d0d4d258a2e24b162377eaf8",
+    "supervise.py": "75209a28322a1144cb67eb621f08860489dbfd51c9b88b5da04d689e733070d1"
+  },
+  "model_behavior_unchanged": true,
+  "automatic_retry": false,
+  "publication_scope": [
+    "reviewed-main/review.public.json",
+    "reviewed-main/REGISTRATION.json"
+  ],
+  "approval_limits": "Only the exact recorded tool-use gaps may be resolved by the predeclared no-model capability route. Any other gap, identity, cleanup, publication or preflight problem stops execution."
+}

@@ -45,6 +45,10 @@ class Execution(Record):
 
 
 def check_scope(session, tool):
+    if tool == "pytest_run" and session.test_targets:
+        from .test_selection import selection_id
+
+        return "tests:requested:" + selection_id(session)
     if tool not in ("python_run", "unittest_run"):
         return PROJECT_SCOPES.get(tool)
     payload = {"project": session.project_root,
@@ -77,6 +81,7 @@ class Run(Record):
     notes: list[str] = Field(default_factory=list)
     records: list[dict] = Field(default_factory=list)
     targets: list[str] = Field(default_factory=list)
+    requested_tests: list[str] = Field(default_factory=list)
     passed_nodes: list[str] = Field(default_factory=list)
     test_summary: dict[str, int] = Field(default_factory=dict)
     execution_kind: str = ""
@@ -177,6 +182,7 @@ class Session(Record):
     created_at: str = Field(default_factory=now)
     goal: Goal = "collect_tests"
     execution: Execution | None = None
+    test_targets: list[str] = Field(default_factory=list)
     grouping: Literal["exact", "tfidf", "sbert"] = "tfidf"
     threshold: float = Field(default=0.82, ge=0, le=1)
     model_path: str | None = None

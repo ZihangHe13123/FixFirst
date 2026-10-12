@@ -1,0 +1,182 @@
+{
+ "total": {
+  "sessions": 593,
+  "runs_with_events": 613,
+  "events": 623,
+  "same_block_pairs": 10,
+  "same_block_pairs_with_different_text": 10,
+  "merged_exact": 0,
+  "merged_tfidf": 0,
+  "merged_by_tfidf_only": 0,
+  "merged_by_exact_only": 0
+ },
+ "sources": 15,
+ "examples_of_a_difference": [],
+ "by_source": {
+  "data/snapshots/diagnosis": {
+   "sessions": 220,
+   "runs_with_events": 230,
+   "events": 230,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "data/snapshots/hard": {
+   "sessions": 30,
+   "runs_with_events": 30,
+   "events": 30,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "examples/diagnosis-dataset": {
+   "sessions": 215,
+   "runs_with_events": 225,
+   "events": 225,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "examples/hard-dataset": {
+   "sessions": 30,
+   "runs_with_events": 30,
+   "events": 30,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "examples/toolchain-dataset/t625-py110": {
+   "sessions": 5,
+   "runs_with_events": 5,
+   "events": 10,
+   "same_block_pairs": 5,
+   "same_block_pairs_with_different_text": 5,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "examples/toolchain-dataset/t625-py111": {
+   "sessions": 2,
+   "runs_with_events": 2,
+   "events": 2,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "examples/toolchain-dataset/t701-py111": {
+   "sessions": 4,
+   "runs_with_events": 4,
+   "events": 4,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "examples/toolchain-dataset/t713-py110": {
+   "sessions": 5,
+   "runs_with_events": 5,
+   "events": 10,
+   "same_block_pairs": 5,
+   "same_block_pairs_with_different_text": 5,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "examples/toolchain-dataset/t722": {
+   "sessions": 12,
+   "runs_with_events": 12,
+   "events": 12,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "examples/toolchain-dataset/t8": {
+   "sessions": 25,
+   "runs_with_events": 25,
+   "events": 25,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "examples/toolchain-dataset/t8-django": {
+   "sessions": 25,
+   "runs_with_events": 25,
+   "events": 25,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "examples/toolchain-dataset/t8-django-pytest": {
+   "sessions": 5,
+   "runs_with_events": 5,
+   "events": 5,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "examples/toolchain-dataset/t8-nose": {
+   "sessions": 5,
+   "runs_with_events": 5,
+   "events": 5,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "examples/toolchain-dataset/t8-setuptools84": {
+   "sessions": 5,
+   "runs_with_events": 5,
+   "events": 5,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "examples/toolchain-dataset/t8-six115": {
+   "sessions": 5,
+   "runs_with_events": 5,
+   "events": 5,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  }
+ }
+}

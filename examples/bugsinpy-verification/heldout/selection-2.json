@@ -1,0 +1,1188 @@
+{
+ "rule": "registry addendum 111",
+ "bugsinpy_commit": "11c5f1eea954a42132cfd06bf257766a7963e0fd",
+ "selected": [
+  {
+   "case": "ansible-1",
+   "project": "ansible",
+   "bug": 1,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/units/galaxy/test_collection.py::test_verify_collections_no_version"
+   ],
+   "fixed_commit": "343ffaa18b63c92e182b16c3ad84b8d81ca4df69",
+   "patched_files": [
+    "lib/ansible/galaxy/collection.py"
+   ],
+   "installed": [
+    "cffi==2.0.0",
+    "cryptography==50.0.2",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "jinja2==3.1.6",
+    "markupsafe==3.0.4",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pycparser==2.23",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "pyyaml==6.0.3",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "ansible-2",
+   "project": "ansible",
+   "bug": 2,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/units/utils/test_version.py::test_alpha",
+    "test/units/utils/test_version.py::test_numeric"
+   ],
+   "fixed_commit": "5b9418c06ca6d51507468124250bb58046886be6",
+   "patched_files": [
+    "lib/ansible/utils/version.py"
+   ],
+   "installed": [
+    "cffi==2.0.0",
+    "cryptography==50.0.2",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "jinja2==3.1.6",
+    "markupsafe==3.0.4",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pycparser==2.23",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "pyyaml==6.0.3",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "ansible-4",
+   "project": "ansible",
+   "bug": 4,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/units/playbook/test_collectionsearch.py::test_collection_static_warning"
+   ],
+   "fixed_commit": "18a66e291dad71128a32d662aa808213acefe0e9",
+   "patched_files": [
+    "lib/ansible/playbook/collectionsearch.py"
+   ],
+   "installed": [
+    "cffi==2.0.0",
+    "cryptography==50.0.2",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "jinja2==3.1.6",
+    "markupsafe==3.0.4",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pycparser==2.23",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "pyyaml==6.0.3",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "ansible-5",
+   "project": "ansible",
+   "bug": 5,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/units/module_utils/common/validation/test_check_required_arguments.py::test_check_required_arguments_missing_multiple"
+   ],
+   "fixed_commit": "3c3ffc09c203d1b2262f6a319cceadd727749761",
+   "patched_files": [
+    "lib/ansible/module_utils/common/validation.py",
+    "test/units/module_utils/common/validation/test_check_mutually_exclusive.py"
+   ],
+   "installed": [
+    "cffi==2.0.0",
+    "cryptography==50.0.2",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "jinja2==3.1.6",
+    "markupsafe==3.0.4",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pycparser==2.23",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "pyyaml==6.0.3",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "ansible-7",
+   "project": "ansible",
+   "bug": 7,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/units/modules/network/eos/test_eos_vlans.py::TestEosVlansModule::test_eos_vlan_replaced"
+   ],
+   "fixed_commit": "4ec1437212b2fb3c313e44ed5a76b105f2151622",
+   "patched_files": [
+    "lib/ansible/module_utils/network/eos/config/vlans/vlans.py"
+   ],
+   "installed": [
+    "cffi==2.0.0",
+    "cryptography==50.0.2",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "jinja2==3.1.6",
+    "markupsafe==3.0.4",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pycparser==2.23",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "pyyaml==6.0.3",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "black-1",
+   "project": "black",
+   "bug": 1,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel",
+    "setuptools_scm",
+    "aiohttp",
+    "aiohttp-cors"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_black.py::BlackTestCase::test_works_in_mono_process_only_environment"
+   ],
+   "fixed_commit": "c0a7582e3d4cc8bec3b7f5a6c52b36880dcb57d7",
+   "patched_files": [
+    "black.py"
+   ],
+   "installed": [
+    "aiohappyeyeballs==2.6.1",
+    "aiohttp==3.13.5",
+    "aiohttp-cors==0.8.1",
+    "aiosignal==1.4.0",
+    "appdirs==1.4.4",
+    "async-timeout==5.0.1",
+    "attrs==26.1.0",
+    "click==8.1.8",
+    "exceptiongroup==1.3.1",
+    "frozenlist==1.8.0",
+    "idna==3.20",
+    "iniconfig==2.1.0",
+    "multidict==6.7.1",
+    "mypy-extensions==1.1.0",
+    "packaging==26.3",
+    "pathspec==0.12.1",
+    "pluggy==1.6.0",
+    "propcache==0.4.1",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "regex==2026.1.15",
+    "setuptools==69.5.1",
+    "setuptools-scm==10.3.4",
+    "toml==0.10.2",
+    "tomli==2.5.0",
+    "typed-ast==1.5.5",
+    "typing-extensions==4.16.0",
+    "vcs-versioning==2.6.0",
+    "wheel==0.48.0",
+    "yarl==1.22.0"
+   ]
+  },
+  {
+   "case": "black-2",
+   "project": "black",
+   "bug": 2,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel",
+    "setuptools_scm",
+    "aiohttp",
+    "aiohttp-cors"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_black.py::BlackTestCase::test_fmtonoff4"
+   ],
+   "fixed_commit": "892eddacd215d685e136686b7f629ade70adca83",
+   "patched_files": [
+    "black.py"
+   ],
+   "installed": [
+    "aiohappyeyeballs==2.6.1",
+    "aiohttp==3.13.5",
+    "aiohttp-cors==0.8.1",
+    "aiosignal==1.4.0",
+    "appdirs==1.4.4",
+    "async-timeout==5.0.1",
+    "attrs==26.1.0",
+    "click==8.1.8",
+    "exceptiongroup==1.3.1",
+    "frozenlist==1.8.0",
+    "idna==3.20",
+    "iniconfig==2.1.0",
+    "multidict==6.7.1",
+    "mypy-extensions==1.1.0",
+    "packaging==26.3",
+    "pathspec==0.12.1",
+    "pluggy==1.6.0",
+    "propcache==0.4.1",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "regex==2026.1.15",
+    "setuptools==69.5.1",
+    "setuptools-scm==10.3.4",
+    "toml==0.10.2",
+    "tomli==2.5.0",
+    "typed-ast==1.5.5",
+    "typing-extensions==4.16.0",
+    "vcs-versioning==2.6.0",
+    "wheel==0.48.0",
+    "yarl==1.22.0"
+   ]
+  },
+  {
+   "case": "black-3",
+   "project": "black",
+   "bug": 3,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel",
+    "setuptools_scm",
+    "aiohttp",
+    "aiohttp-cors"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_black.py::BlackTestCase::test_invalid_config_return_code"
+   ],
+   "fixed_commit": "7a14a37981862ef418f3cdb4a7e2375856f97529",
+   "patched_files": [
+    "black.py"
+   ],
+   "installed": [
+    "aiohappyeyeballs==2.6.1",
+    "aiohttp==3.13.5",
+    "aiohttp-cors==0.8.1",
+    "aiosignal==1.4.0",
+    "appdirs==1.4.4",
+    "async-timeout==5.0.1",
+    "attrs==26.1.0",
+    "click==8.1.8",
+    "exceptiongroup==1.3.1",
+    "frozenlist==1.8.0",
+    "idna==3.20",
+    "iniconfig==2.1.0",
+    "multidict==6.7.1",
+    "mypy-extensions==1.1.0",
+    "packaging==26.3",
+    "pathspec==0.12.1",
+    "pluggy==1.6.0",
+    "propcache==0.4.1",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "regex==2026.1.15",
+    "setuptools==69.5.1",
+    "setuptools-scm==10.3.4",
+    "toml==0.10.2",
+    "tomli==2.5.0",
+    "typed-ast==1.5.5",
+    "typing-extensions==4.16.0",
+    "vcs-versioning==2.6.0",
+    "wheel==0.48.0",
+    "yarl==1.22.0"
+   ]
+  },
+  {
+   "case": "black-4",
+   "project": "black",
+   "bug": 4,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel",
+    "setuptools_scm",
+    "aiohttp",
+    "aiohttp-cors"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_black.py::BlackTestCase::test_beginning_backslash"
+   ],
+   "fixed_commit": "c7495b9aa098ef7a358fc74556359d21c6a4ba11",
+   "patched_files": [
+    "black.py"
+   ],
+   "installed": [
+    "aiohappyeyeballs==2.6.1",
+    "aiohttp==3.13.5",
+    "aiohttp-cors==0.8.1",
+    "aiosignal==1.4.0",
+    "appdirs==1.4.4",
+    "async-timeout==5.0.1",
+    "attrs==26.1.0",
+    "click==8.1.8",
+    "exceptiongroup==1.3.1",
+    "frozenlist==1.8.0",
+    "idna==3.20",
+    "iniconfig==2.1.0",
+    "multidict==6.7.1",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "propcache==0.4.1",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "setuptools==69.5.1",
+    "setuptools-scm==10.3.4",
+    "toml==0.10.2",
+    "tomli==2.5.0",
+    "typed-ast==1.5.5",
+    "typing-extensions==4.16.0",
+    "vcs-versioning==2.6.0",
+    "wheel==0.48.0",
+    "yarl==1.22.0"
+   ]
+  },
+  {
+   "case": "black-5",
+   "project": "black",
+   "bug": 5,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel",
+    "setuptools_scm",
+    "aiohttp",
+    "aiohttp-cors"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_black.py::BlackTestCase::test_function_trailing_comma"
+   ],
+   "fixed_commit": "9394de150ebf0adc426523f46dc08e8b2b2b0b63",
+   "patched_files": [
+    "black.py"
+   ],
+   "installed": [
+    "aiohappyeyeballs==2.6.1",
+    "aiohttp==3.13.5",
+    "aiohttp-cors==0.8.1",
+    "aiosignal==1.4.0",
+    "appdirs==1.4.4",
+    "async-timeout==5.0.1",
+    "attrs==26.1.0",
+    "click==8.1.8",
+    "exceptiongroup==1.3.1",
+    "frozenlist==1.8.0",
+    "idna==3.20",
+    "iniconfig==2.1.0",
+    "multidict==6.7.1",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "propcache==0.4.1",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "setuptools==69.5.1",
+    "setuptools-scm==10.3.4",
+    "toml==0.10.2",
+    "tomli==2.5.0",
+    "typed-ast==1.5.5",
+    "typing-extensions==4.16.0",
+    "vcs-versioning==2.6.0",
+    "wheel==0.48.0",
+    "yarl==1.22.0"
+   ]
+  },
+  {
+   "case": "luigi-1",
+   "project": "luigi",
+   "bug": 1,
+   "deps": [
+    "pytest",
+    "nose",
+    "mock",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/server_test.py::MetricsHandlerTest::test_get"
+   ],
+   "fixed_commit": "aec5dc2ed8db53fc282a0bd24aabe59031b6d1ba",
+   "patched_files": [
+    "luigi/server.py"
+   ],
+   "installed": [
+    "docutils==0.23",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "lockfile==0.12.2",
+    "mock==5.2.0",
+    "nose==1.3.7",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "python-daemon==2.1.2",
+    "python-dateutil==2.9.0.post0",
+    "setuptools==69.5.1",
+    "six==1.17.0",
+    "tomli==2.5.0",
+    "tornado==4.5.3",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "luigi-2",
+   "project": "luigi",
+   "bug": 2,
+   "deps": [
+    "pytest",
+    "nose",
+    "mock",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/contrib/beam_dataflow_test.py::BeamDataflowTest::test_get_target_path"
+   ],
+   "fixed_commit": "24e85945ae39e5975491527e00c3f0f64b42ea6e",
+   "patched_files": [
+    "luigi/contrib/beam_dataflow.py"
+   ],
+   "installed": [
+    "docutils==0.23",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "lockfile==0.12.2",
+    "mock==5.2.0",
+    "nose==1.3.7",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "python-daemon==2.1.2",
+    "python-dateutil==2.9.0.post0",
+    "setuptools==69.5.1",
+    "six==1.17.0",
+    "tomli==2.5.0",
+    "tornado==4.5.3",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "luigi-3",
+   "project": "luigi",
+   "bug": 3,
+   "deps": [
+    "pytest==5.4.3",
+    "nose",
+    "mock",
+    "setuptools<70",
+    "wheel",
+    "psutil==5.7.0"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/parameter_test.py::TestSerializeTupleParameter::testSerialize"
+   ],
+   "fixed_commit": "3a0bfbff69addfb3be1107adab3d4914bcae3e4b",
+   "patched_files": [
+    "luigi/parameter.py"
+   ],
+   "installed": [
+    "attrs==26.1.0",
+    "docutils==0.23",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "lockfile==0.12.2",
+    "mock==5.2.0",
+    "more-itertools==10.8.0",
+    "nose==1.3.7",
+    "packaging==26.3",
+    "pluggy==0.13.1",
+    "psutil==5.7.0",
+    "py==1.11.0",
+    "pygments==2.21.0",
+    "pytest==5.4.3",
+    "python-daemon==2.1.2",
+    "python-dateutil==2.7.5",
+    "setuptools==69.5.1",
+    "six==1.17.0",
+    "tomli==2.5.0",
+    "tornado==4.5.3",
+    "typing-extensions==4.16.0",
+    "wcwidth==0.9.2",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "luigi-4",
+   "project": "luigi",
+   "bug": 4,
+   "deps": [
+    "pytest",
+    "nose",
+    "mock",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/contrib/redshift_test.py::TestS3CopyToTable::test_s3_copy_with_nonetype_columns"
+   ],
+   "fixed_commit": "8501e5dbb8d3040453a89bb0d3562526086d51e5",
+   "patched_files": [
+    "luigi/contrib/redshift.py"
+   ],
+   "installed": [
+    "docutils==0.23",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "lockfile==0.12.2",
+    "mock==5.2.0",
+    "nose==1.3.7",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "python-daemon==2.3.2",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "tornado==4.5.3",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "luigi-5",
+   "project": "luigi",
+   "bug": 5,
+   "deps": [
+    "pytest",
+    "nose",
+    "mock",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/util_test.py::BasicsTest::test_inherits_has_effect_MRO",
+    "test/util_test.py::BasicsTest::test_requires_has_effect_MRO"
+   ],
+   "fixed_commit": "1fbec18ceb7c5de352e6d1df12960c61f09e67c2",
+   "patched_files": [
+    "luigi/util.py"
+   ],
+   "installed": [
+    "docutils==0.23",
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "lockfile==0.12.2",
+    "mock==5.2.0",
+    "nose==1.3.7",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "python-daemon==2.3.2",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "tornado==4.5.3",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "sanic-1",
+   "project": "sanic",
+   "bug": 1,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_blueprints.py::test_bp_middleware_order"
+   ],
+   "fixed_commit": "44973125c15304b4262c51c78b5a86bd1daafa86",
+   "patched_files": [
+    "sanic/app.py"
+   ],
+   "installed": [
+    "aiofiles==25.1.0",
+    "certifi==2026.7.22",
+    "chardet==3.0.4",
+    "exceptiongroup==1.3.1",
+    "h11==0.9.0",
+    "h2==3.2.0",
+    "hpack==3.0.0",
+    "hstspreload==2025.1.1",
+    "httptools==0.8.0",
+    "httpx==0.11.1",
+    "hyperframe==5.2.0",
+    "idna==2.10",
+    "iniconfig==2.1.0",
+    "multidict==4.7.6",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "rfc3986==1.5.0",
+    "setuptools==69.5.1",
+    "sniffio==1.3.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "ujson==5.11.0",
+    "urllib3==1.26.20",
+    "uvloop==0.23.0",
+    "websockets==8.1",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "sanic-3",
+   "project": "sanic",
+   "bug": 3,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_url_for.py::test_routes_with_host"
+   ],
+   "fixed_commit": "861e87347a2d373d6ffa387965a6887c83af632c",
+   "patched_files": [
+    "sanic/app.py"
+   ],
+   "installed": [
+    "aiofiles==25.1.0",
+    "certifi==2026.7.22",
+    "chardet==3.0.4",
+    "exceptiongroup==1.3.1",
+    "h11==0.8.1",
+    "h2==3.2.0",
+    "hpack==3.0.0",
+    "hstspreload==2025.1.1",
+    "httptools==0.8.0",
+    "httpx==0.9.3",
+    "hyperframe==5.2.0",
+    "idna==2.10",
+    "iniconfig==2.1.0",
+    "multidict==4.7.6",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "rfc3986==1.5.0",
+    "setuptools==69.5.1",
+    "sniffio==1.3.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "ujson==5.11.0",
+    "uvloop==0.23.0",
+    "websockets==8.1",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "sanic-5",
+   "project": "sanic",
+   "bug": 5,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_logging.py::test_logging_modified_root_logger_config"
+   ],
+   "fixed_commit": "b63c06c75a54752d7f3115d3c635580db44b8399",
+   "patched_files": [
+    "sanic/log.py"
+   ],
+   "installed": [
+    "aiofiles==25.1.0",
+    "exceptiongroup==1.3.1",
+    "httptools==0.8.0",
+    "iniconfig==2.1.0",
+    "multidict==4.7.6",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "ujson==5.11.0",
+    "uvloop==0.23.0",
+    "websockets==6.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "scrapy-2",
+   "project": "scrapy",
+   "bug": 2,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_utils_datatypes.py::LocalCacheTest::test_cache_without_limit"
+   ],
+   "fixed_commit": "439a3e59b8e858441f8d97dbc32f398db392330d",
+   "patched_files": [
+    "scrapy/utils/datatypes.py"
+   ],
+   "installed": [
+    "attrs==26.1.0",
+    "automat==25.4.16",
+    "cffi==2.0.0",
+    "constantly==23.10.4",
+    "cryptography==50.0.2",
+    "cssselect==1.3.0",
+    "exceptiongroup==1.3.1",
+    "hyperlink==21.0.0",
+    "idna==3.20",
+    "incremental==24.11.0",
+    "iniconfig==2.1.0",
+    "jmespath==1.1.0",
+    "lxml==6.1.3",
+    "packaging==26.3",
+    "parsel==1.10.0",
+    "pluggy==1.6.0",
+    "protego==0.5.0",
+    "pycparser==2.23",
+    "pydispatcher==2.0.7",
+    "pygments==2.21.0",
+    "pyopenssl==26.4.0",
+    "pytest==8.4.2",
+    "queuelib==1.8.0",
+    "service-identity==26.1.0",
+    "setuptools==69.5.1",
+    "six==1.17.0",
+    "tomli==2.5.0",
+    "twisted==25.5.0",
+    "typing-extensions==4.16.0",
+    "w3lib==2.3.1",
+    "wheel==0.48.0",
+    "zope-interface==8.0.1"
+   ]
+  },
+  {
+   "case": "scrapy-3",
+   "project": "scrapy",
+   "bug": 3,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_downloadermiddleware_redirect.py::RedirectMiddlewareTest::test_redirect_302_relative"
+   ],
+   "fixed_commit": "66cbceeb0a9104fc0fa238898e38d0d9ce9cbcf6",
+   "patched_files": [
+    "scrapy/downloadermiddlewares/redirect.py"
+   ],
+   "installed": [
+    "attrs==26.1.0",
+    "automat==25.4.16",
+    "cffi==2.0.0",
+    "constantly==23.10.4",
+    "cryptography==50.0.2",
+    "cssselect==1.3.0",
+    "exceptiongroup==1.3.1",
+    "hyperlink==21.0.0",
+    "idna==3.20",
+    "incremental==24.11.0",
+    "iniconfig==2.1.0",
+    "jmespath==1.1.0",
+    "lxml==6.1.3",
+    "packaging==26.3",
+    "parsel==1.10.0",
+    "pluggy==1.6.0",
+    "protego==0.5.0",
+    "pycparser==2.23",
+    "pydispatcher==2.0.7",
+    "pygments==2.21.0",
+    "pyopenssl==26.4.0",
+    "pytest==8.4.2",
+    "queuelib==1.8.0",
+    "service-identity==26.1.0",
+    "setuptools==69.5.1",
+    "six==1.17.0",
+    "tomli==2.5.0",
+    "twisted==25.5.0",
+    "typing-extensions==4.16.0",
+    "w3lib==2.3.1",
+    "wheel==0.48.0",
+    "zope-interface==8.0.1"
+   ]
+  },
+  {
+   "case": "scrapy-4",
+   "project": "scrapy",
+   "bug": 4,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_contracts.py::ContractsManagerTest::test_errback"
+   ],
+   "fixed_commit": "16dad81715d3970149c0cf7a318e73a0d84be1ff",
+   "patched_files": [
+    "scrapy/contracts/__init__.py"
+   ],
+   "installed": [
+    "attrs==26.1.0",
+    "automat==25.4.16",
+    "cffi==2.0.0",
+    "constantly==23.10.4",
+    "cryptography==50.0.2",
+    "cssselect==1.3.0",
+    "exceptiongroup==1.3.1",
+    "hyperlink==21.0.0",
+    "idna==3.20",
+    "incremental==24.11.0",
+    "iniconfig==2.1.0",
+    "jmespath==1.1.0",
+    "lxml==6.1.3",
+    "packaging==26.3",
+    "parsel==1.10.0",
+    "pluggy==1.6.0",
+    "pycparser==2.23",
+    "pydispatcher==2.0.7",
+    "pygments==2.21.0",
+    "pyopenssl==26.4.0",
+    "pytest==8.4.2",
+    "queuelib==1.8.0",
+    "service-identity==26.1.0",
+    "setuptools==69.5.1",
+    "six==1.17.0",
+    "tomli==2.5.0",
+    "twisted==25.5.0",
+    "typing-extensions==4.16.0",
+    "w3lib==2.3.1",
+    "wheel==0.48.0",
+    "zope-interface==8.0.1"
+   ]
+  },
+  {
+   "case": "scrapy-5",
+   "project": "scrapy",
+   "bug": 5,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_http_response.py::BaseResponseTest::test_follow_None_url"
+   ],
+   "fixed_commit": "acd2b8d43b5ebec7ffd364b6f335427041a0b98d",
+   "patched_files": [
+    "scrapy/http/response/__init__.py"
+   ],
+   "installed": [
+    "attrs==26.1.0",
+    "automat==25.4.16",
+    "cffi==2.0.0",
+    "constantly==23.10.4",
+    "cryptography==50.0.2",
+    "cssselect==1.3.0",
+    "exceptiongroup==1.3.1",
+    "hyperlink==21.0.0",
+    "idna==3.20",
+    "incremental==24.11.0",
+    "iniconfig==2.1.0",
+    "jmespath==1.1.0",
+    "lxml==6.1.3",
+    "packaging==26.3",
+    "parsel==1.10.0",
+    "pluggy==1.6.0",
+    "pycparser==2.23",
+    "pydispatcher==2.0.7",
+    "pygments==2.21.0",
+    "pyopenssl==26.4.0",
+    "pytest==8.4.2",
+    "queuelib==1.8.0",
+    "service-identity==26.1.0",
+    "setuptools==69.5.1",
+    "six==1.17.0",
+    "tomli==2.5.0",
+    "twisted==25.5.0",
+    "typing-extensions==4.16.0",
+    "w3lib==2.3.1",
+    "wheel==0.48.0",
+    "zope-interface==8.0.1"
+   ]
+  },
+  {
+   "case": "scrapy-7",
+   "project": "scrapy",
+   "bug": 7,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "tests/test_http_request.py::FormRequestTest::test_spaces_in_action"
+   ],
+   "fixed_commit": "074caf434e255bc96f106e57e3e288028f372485",
+   "patched_files": [
+    "scrapy/http/request/form.py"
+   ],
+   "installed": [
+    "attrs==26.1.0",
+    "automat==25.4.16",
+    "cffi==2.0.0",
+    "constantly==23.10.4",
+    "cryptography==50.0.2",
+    "cssselect==1.3.0",
+    "exceptiongroup==1.3.1",
+    "hyperlink==21.0.0",
+    "idna==3.20",
+    "incremental==24.11.0",
+    "iniconfig==2.1.0",
+    "jmespath==1.1.0",
+    "lxml==6.1.3",
+    "packaging==26.3",
+    "parsel==1.10.0",
+    "pluggy==1.6.0",
+    "pycparser==2.23",
+    "pydispatcher==2.0.7",
+    "pygments==2.21.0",
+    "pyopenssl==26.4.0",
+    "pytest==8.4.2",
+    "queuelib==1.8.0",
+    "service-identity==26.1.0",
+    "setuptools==69.5.1",
+    "six==1.17.0",
+    "tomli==2.5.0",
+    "twisted==25.5.0",
+    "typing-extensions==4.16.0",
+    "w3lib==2.3.1",
+    "wheel==0.48.0",
+    "zope-interface==8.0.1"
+   ]
+  },
+  {
+   "case": "youtube-dl-1",
+   "project": "youtube-dl",
+   "bug": 1,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/test_utils.py::TestUtil::test_match_str"
+   ],
+   "fixed_commit": "1cc47c667419e0eadc0a6989256ab7b276852adf",
+   "patched_files": [
+    "youtube_dl/utils.py"
+   ],
+   "installed": [
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "youtube-dl-2",
+   "project": "youtube-dl",
+   "bug": 2,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/test_InfoExtractor.py::TestInfoExtractor::test_parse_mpd_formats"
+   ],
+   "fixed_commit": "9d6ac71c27b1dfb662c795ef598dbfd0286682da",
+   "patched_files": [
+    "youtube_dl/extractor/common.py"
+   ],
+   "installed": [
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "youtube-dl-3",
+   "project": "youtube-dl",
+   "bug": 3,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/test_utils.py::TestUtil::test_unescape_html"
+   ],
+   "fixed_commit": "95f3f7c20a05e7ac490e768b8470b20538ef8581",
+   "patched_files": [
+    "youtube_dl/utils.py"
+   ],
+   "installed": [
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "youtube-dl-4",
+   "project": "youtube-dl",
+   "bug": 4,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/test_jsinterp.py::TestJSInterpreter::test_call"
+   ],
+   "fixed_commit": "189935f15960300d316e8b07108b076ac6c2186a",
+   "patched_files": [
+    "youtube_dl/jsinterp.py"
+   ],
+   "installed": [
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  },
+  {
+   "case": "youtube-dl-5",
+   "project": "youtube-dl",
+   "bug": 5,
+   "deps": [
+    "pytest",
+    "setuptools<70",
+    "wheel"
+   ],
+   "python": "3.9.6",
+   "tests": [
+    "test/test_utils.py::TestUtil::test_unified_timestamps"
+   ],
+   "fixed_commit": "7dc2a74e0ac9cfa74cc9de6f586ffd5cc8bac0d9",
+   "patched_files": [
+    "youtube_dl/utils.py"
+   ],
+   "installed": [
+    "exceptiongroup==1.3.1",
+    "iniconfig==2.1.0",
+    "packaging==26.3",
+    "pluggy==1.6.0",
+    "pygments==2.21.0",
+    "pytest==8.4.2",
+    "setuptools==69.5.1",
+    "tomli==2.5.0",
+    "typing-extensions==4.16.0",
+    "wheel==0.48.0"
+   ]
+  }
+ ]
+}

@@ -750,6 +750,27 @@ def observed(subject, predicate, value, refs) -> Fact:
     )
 
 
+def renamed_module_candidates(session: Session, evidence: dict, candidates: list[str]) -> list[str]:
+    """Filter D16's candidates without changing the similarity evidence for the tree."""
+    leaf = evidence["missing_module"].rsplit(".", 1)[-1]
+    test_names = {f"{prefix}{leaf}" for prefix in ("test_", "tests_")} | {
+        f"{leaf}{suffix}" for suffix in ("_test", "_tests")
+    }
+
+    def path_key(value):
+        value = value.replace("\\", "/")
+        if not value.startswith("/") and not WINDOWS_ABSOLUTE.match(value):
+            value = posixpath.join(session.project_root.replace("\\", "/"), value)
+        value = posixpath.normpath(value)
+        return value.casefold() if WINDOWS_ABSOLUTE.match(value) else value
+
+    # An outer project caller is not the importer when the exception is raised in a library.
+    location = (evidence.get("source_location") or "") if evidence.get("raised_in") in ("project", "test") else ""
+    importer = path_key(location.rsplit(":", 1)[0]) if location else None
+    return [path for path in candidates
+            if path_key(path) != importer and (PurePosixPath(path).parent.name if PurePosixPath(path).name == "__init__.py" else PurePosixPath(path).stem) not in test_names]
+
+
 def observations(session: Session, issues: list[Issue], *, interface_history=True) -> tuple[list[Fact], dict]:
     """Observed facts for the rule base plus per-issue evidence and feature vectors."""
     facts: list[Fact] = []
@@ -904,6 +925,14 @@ def observations(session: Session, issues: list[Issue], *, interface_history=Tru
                 facts.append(observed(subject, "similar_local", path, project_ref))
             for source in context["declared"]:
                 facts.append(observed(subject, "declared_in", source, project_ref))
+    if project_run:
+        for issue in diagnosable:
+            evidence = details[issue.issue_id]
+            module = evidence["missing_module"]
+            if module:
+                for path in renamed_module_candidates(session, evidence, contexts[module]["similar"]):
+                    facts.append(observed(issue.issue_id, "renamed_module_candidate", path,
+                                          issue.evidence_refs + project_ref))
     # Requires-Dist remains available even in uv environments without pip. A
     # conflicting lower bound is evidence for upgrading, not for searching back.
     from .dependency_context import context, requirements_for, combined_specifier

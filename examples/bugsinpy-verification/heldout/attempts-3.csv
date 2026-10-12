@@ -1,0 +1,38 @@
+bug,python,deps,result,note
+ansible-8,3.9.6,pytest setuptools<70 wheel,reproduced,
+ansible-9,3.9.6,pytest setuptools<70 wheel,not reproduced,exit codes 1 and 1
+ansible-10,3.9.6,pytest setuptools<70 wheel,reproduced,
+ansible-11,3.9.6,pytest setuptools<70 wheel,reproduced,
+ansible-12,3.9.6,pytest setuptools<70 wheel,reproduced,
+black-6,3.9.6,pytest setuptools<70 wheel setuptools_scm aiohttp aiohttp-cors,unavailable,"subprocess.CalledProcessError: Command '['git', 'apply', '<work>/heldout3/work/black/results/black-6-bu"
+black-7,3.9.6,pytest setuptools<70 wheel setuptools_scm aiohttp aiohttp-cors,reproduced,
+black-8,3.9.6,pytest setuptools<70 wheel setuptools_scm aiohttp aiohttp-cors,reproduced,
+black-9,3.9.6,pytest setuptools<70 wheel setuptools_scm aiohttp aiohttp-cors,reproduced,
+black-10,3.9.6,pytest setuptools<70 wheel setuptools_scm aiohttp aiohttp-cors,reproduced,
+luigi-6,3.9.6,pytest nose mock setuptools<70 wheel,error,exit codes 4 and 4
+luigi-6,3.9.6,pytest==5.4.3 nose mock setuptools<70 wheel psutil==5.7.0,reproduced,
+luigi-7,3.9.6,pytest nose mock setuptools<70 wheel,reproduced,
+luigi-8,3.9.6,pytest nose mock setuptools<70 wheel,reproduced,
+luigi-9,3.9.6,pytest nose mock setuptools<70 wheel,reproduced,
+scrapy-8,3.9.6,pytest setuptools<70 wheel,reproduced,
+scrapy-9,3.9.6,pytest setuptools<70 wheel,reproduced,
+scrapy-10,3.9.6,pytest setuptools<70 wheel,reproduced,
+scrapy-11,3.9.6,pytest setuptools<70 wheel,not reproduced,exit codes 0 and 0
+scrapy-11,3.9.6,pytest==5.4.2 setuptools<70 wheel,not reproduced,exit codes 0 and 0
+scrapy-12,3.9.6,pytest setuptools<70 wheel,reproduced,
+youtube-dl-6,3.9.6,pytest setuptools<70 wheel,reproduced,
+youtube-dl-7,3.9.6,pytest setuptools<70 wheel,reproduced,
+youtube-dl-8,3.9.6,pytest setuptools<70 wheel,reproduced,
+youtube-dl-9,3.9.6,pytest setuptools<70 wheel,reproduced,
+thefuck-9,3.9.6,pytest mock pytest-mock setuptools<70 wheel,not reproduced,exit codes 1 and 1
+thefuck-9,3.9.6,pytest==3.10.1 mock pytest-mock setuptools<70 wheel,reproduced,
+thefuck-10,3.9.6,pytest mock pytest-mock setuptools<70 wheel,not reproduced,exit codes 1 and 1
+thefuck-10,3.9.6,pytest==3.10.1 mock pytest-mock setuptools<70 wheel,reproduced,
+thefuck-11,3.9.6,pytest mock pytest-mock setuptools<70 wheel,not reproduced,exit codes 1 and 1
+thefuck-11,3.9.6,pytest==3.10.1 mock pytest-mock setuptools<70 wheel,reproduced,
+thefuck-12,3.9.6,pytest mock pytest-mock setuptools<70 wheel,not reproduced,exit codes 1 and 1
+thefuck-12,3.9.6,pytest==3.10.1 mock pytest-mock setuptools<70 wheel,reproduced,
+fastapi-10,3.9.6,pytest requests flit<4 flit_core<4 setuptools<70 wheel,reproduced,
+fastapi-11,3.9.6,pytest requests flit<4 flit_core<4 setuptools<70 wheel,reproduced,
+fastapi-12,3.9.6,pytest requests flit<4 flit_core<4 setuptools<70 wheel,reproduced,
+fastapi-13,3.9.6,pytest requests flit<4 flit_core<4 setuptools<70 wheel,reproduced,

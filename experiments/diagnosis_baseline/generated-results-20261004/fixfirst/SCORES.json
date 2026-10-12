@@ -1,0 +1,358 @@
+{
+  "generated_scores_sha256": "67eaf4575b7d4ef3143f3c8620e976e6edaf49a9ad40f244b51ee4e2117d5b06",
+  "label_sha256": "b66463810b614cbdfeed002a69fd86119bd379199f471abe8faabee381bbce76",
+  "policy": "Fixed recorded observations. Full 250 denominator, no alternative selection, unknown counts incorrect. First-step text quality unscored.",
+  "versions": {
+    "v070": {
+      "commit": "c8151af7bd6c19d71605dd3add38ea2dcda98ec2",
+      "metrics": {
+        "diagnosis": {
+          "n": 220,
+          "correct": 220,
+          "accuracy": 1.0,
+          "no_valid_root_cause": 0,
+          "complete_answers": 220,
+          "answer_status_counts": {
+            "ok": 220,
+            "invalid": 0,
+            "request_error": 0
+          },
+          "root_cause_without_first_step": 0,
+          "macro_f1_fixed_five": 1.0,
+          "macro_f1_registered_support": 1.0,
+          "registered_support": [
+            "missing_dependency",
+            "local_module",
+            "version_incompatibility",
+            "config_missing",
+            "code_defect"
+          ],
+          "fixed_five_f1_perfect_prediction_ceiling": 1.0,
+          "per_label": {
+            "missing_dependency": {
+              "support": 30,
+              "predicted": 30,
+              "correct": 30,
+              "tp": 30,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "local_module": {
+              "support": 30,
+              "predicted": 30,
+              "correct": 30,
+              "tp": 30,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "version_incompatibility": {
+              "support": 70,
+              "predicted": 70,
+              "correct": 70,
+              "tp": 70,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "config_missing": {
+              "support": 30,
+              "predicted": 30,
+              "correct": 30,
+              "tp": 30,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "code_defect": {
+              "support": 60,
+              "predicted": 60,
+              "correct": 60,
+              "tp": 60,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            }
+          },
+          "qualification_counts": {
+            "confirmed": 170,
+            "model": 32,
+            "heuristic": 18
+          },
+          "first_step_quality": "unscored"
+        },
+        "hard": {
+          "n": 30,
+          "correct": 30,
+          "accuracy": 1.0,
+          "no_valid_root_cause": 0,
+          "complete_answers": 30,
+          "answer_status_counts": {
+            "ok": 30,
+            "invalid": 0,
+            "request_error": 0
+          },
+          "root_cause_without_first_step": 0,
+          "macro_f1_fixed_five": 0.4,
+          "macro_f1_registered_support": 1.0,
+          "registered_support": [
+            "local_module",
+            "version_incompatibility"
+          ],
+          "fixed_five_f1_perfect_prediction_ceiling": 0.4,
+          "per_label": {
+            "missing_dependency": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "local_module": {
+              "support": 5,
+              "predicted": 5,
+              "correct": 5,
+              "tp": 5,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "version_incompatibility": {
+              "support": 25,
+              "predicted": 25,
+              "correct": 25,
+              "tp": 25,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "config_missing": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "code_defect": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            }
+          },
+          "qualification_counts": {
+            "heuristic": 25,
+            "confirmed": 5
+          },
+          "first_step_quality": "unscored"
+        }
+      },
+      "input_replay_errors": 0,
+      "recorded_diagnosis_triplet_matches": 250
+    },
+    "v08": {
+      "commit": "ff92446c5d0de26564f1cbf50e45036c90b87713",
+      "metrics": {
+        "diagnosis": {
+          "n": 220,
+          "correct": 215,
+          "accuracy": 0.9772727272727273,
+          "no_valid_root_cause": 5,
+          "complete_answers": 215,
+          "answer_status_counts": {
+            "ok": 215,
+            "invalid": 5,
+            "request_error": 0
+          },
+          "root_cause_without_first_step": 0,
+          "macro_f1_fixed_five": 0.9925925925925926,
+          "macro_f1_registered_support": 0.9925925925925926,
+          "registered_support": [
+            "missing_dependency",
+            "local_module",
+            "version_incompatibility",
+            "config_missing",
+            "code_defect"
+          ],
+          "fixed_five_f1_perfect_prediction_ceiling": 1.0,
+          "per_label": {
+            "missing_dependency": {
+              "support": 30,
+              "predicted": 30,
+              "correct": 30,
+              "tp": 30,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "local_module": {
+              "support": 30,
+              "predicted": 30,
+              "correct": 30,
+              "tp": 30,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "version_incompatibility": {
+              "support": 70,
+              "predicted": 65,
+              "correct": 65,
+              "tp": 65,
+              "fp": 0,
+              "fn": 5,
+              "precision": 1.0,
+              "recall": 0.9285714285714286,
+              "f1": 0.9629629629629629
+            },
+            "config_missing": {
+              "support": 30,
+              "predicted": 30,
+              "correct": 30,
+              "tp": 30,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "code_defect": {
+              "support": 60,
+              "predicted": 60,
+              "correct": 60,
+              "tp": 60,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            }
+          },
+          "qualification_counts": {
+            "confirmed": 172,
+            "model": 32,
+            "unknown": 5,
+            "heuristic": 11
+          },
+          "first_step_quality": "unscored"
+        },
+        "hard": {
+          "n": 30,
+          "correct": 30,
+          "accuracy": 1.0,
+          "no_valid_root_cause": 0,
+          "complete_answers": 30,
+          "answer_status_counts": {
+            "ok": 30,
+            "invalid": 0,
+            "request_error": 0
+          },
+          "root_cause_without_first_step": 0,
+          "macro_f1_fixed_five": 0.4,
+          "macro_f1_registered_support": 1.0,
+          "registered_support": [
+            "local_module",
+            "version_incompatibility"
+          ],
+          "fixed_five_f1_perfect_prediction_ceiling": 0.4,
+          "per_label": {
+            "missing_dependency": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "local_module": {
+              "support": 5,
+              "predicted": 5,
+              "correct": 5,
+              "tp": 5,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "version_incompatibility": {
+              "support": 25,
+              "predicted": 25,
+              "correct": 25,
+              "tp": 25,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "config_missing": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "code_defect": {
+              "support": 0,
+              "predicted": 0,
+              "correct": 0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            }
+          },
+          "qualification_counts": {
+            "heuristic": 25,
+            "confirmed": 5
+          },
+          "first_step_quality": "unscored"
+        }
+      },
+      "input_replay_errors": 0,
+      "recorded_diagnosis_triplet_matches": 234
+    }
+  }
+}

@@ -10,6 +10,30 @@
 title = "FixFirst Python troubleshooting knowledge"
 updated = "2026-10-03"
 
+[[behavior]]
+id = "sqlalchemy-sqlite-dialect-import"
+distribution = "sqlalchemy"
+version = "2.0"
+without_version_record = true
+summary = "SQLAlchemy 2.0 removed the legacy sqlalchemy.databases package; the failing project statement imports its SQLite dialect."
+action_title = "Move the SQLite dialect import to sqlalchemy.dialects"
+replacement = "At the reported import line, replace from sqlalchemy.databases import sqlite with from sqlalchemy.dialects import sqlite, preserving any as alias. Keep the SQLite dialect calls and SQL statement unchanged, then rerun the original tests. The replacement module provides the dialect-specific types and SQL constructs; an unverified downgrade is not needed for this import migration."
+source = "sqlalchemy-2.0-changelog-general"
+
+[[behavior]]
+id = "xlrd-xlsx-reading"
+distribution = "xlrd"
+version = "2.0"
+without_version_record = true
+summary = "xlrd 2.0 removed XLSX support and accepts only the older XLS format; the observed xlrd.open_workbook call rejects an XLSX workbook."
+action_title = "Migrate XLSX reading to openpyxl"
+replacement = "Use openpyxl to read the XLSX file. Add openpyxl to the project's dependencies and install it with the same Python interpreter. Replace book = xlrd.open_workbook(path) with book = openpyxl.load_workbook(path, read_only=True, data_only=True), select the sheet with sheet = book[sheet_name], and read rows with [list(row) for row in sheet.iter_rows(values_only=True)]; import openpyxl and close the workbook in finally. The APIs are not interchangeable: verify blank cells (None versus an empty string), dates, cached formula values and row shape with the original tests. Keep xlrd for genuine XLS files when those are still required."
+source = "xlrd-2.0-xlsx-support"
+
+[sources."xlrd-2.0-xlsx-support"]
+title = "xlrd 2.0.0: removal of formats other than XLS"
+url = "https://xlrd.readthedocs.io/en/latest/changes.html"
+
 # Tool failures are matched to raw failure mechanisms before their version bounds
 # are applied. They are not classifier features or universal Python support claims.
 # Lower bounds are inclusive; fixed_version/python_before are exclusive. The lower

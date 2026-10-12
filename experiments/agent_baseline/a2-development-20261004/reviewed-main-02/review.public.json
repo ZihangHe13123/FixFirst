@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "decision": {
+    "decision": "allow_formal_only",
+    "model_behavior_unchanged": true,
+    "retained_smoke_runs": 9,
+    "formal_runs": 78,
+    "allowed_gaps": [
+      {
+        "model": "gemma-4-26B-A4B-it-qat-4bit",
+        "arm": "facts",
+        "reason": "basic agent tools were not exercised"
+      },
+      {
+        "model": "gemma-4-26B-A4B-it-qat-4bit",
+        "arm": "mcp",
+        "reason": "basic agent tools were not exercised"
+      },
+      {
+        "model": "Qwen3.8-27B-MLX-4bit",
+        "arm": "facts",
+        "reason": "observe returned no verified facts report"
+      }
+    ],
+    "smoke_gate_sha256": "dab493654264ae7c4cde4eab238d4f0dd3a97650c78a94d7bfffa21b0dfab4ad",
+    "capability_sha256": "ce18d8856c36ef7bffa5311eaa5c6ee6d90694af205424486c8d829aa3059812",
+    "reviewed_at_utc": "2026-10-04T14:02:24.104002+00:00",
+    "reviewed_by": "Codex, including independent read-only review",
+    "basis": "Original pre-inference PROTOCOL permits a separate no-model tool capability check when the model does not choose an optional tool; no new smoke requests or changed repair outcomes.",
+    "third_gap_row_sha256": "a2ef22c42a7fd2a77261c360547a1077130e2374c528edc5bb2b19b03bf308fd",
+    "third_gap_transcript_sha256": "eb07d5eee72c293de5d574cc6a234a9f2f9d0c66207c119884eaa3ca66b4f535",
+    "third_gap_qualification": "The recorded complete requests never call observe; no failed, clipped, or unanswered observe request is waived. The final incomplete model response is not inferred or replayed.",
+    "preserved_termination": "time_cap; fixed=false; 900.06 seconds",
+    "wire_evidence_limit": "Tool availability is supported by frozen code, system prompt, and MCP initialization; a complete HTTP request capture was not retained.",
+    "previous_supervisor_status_sha256": "8fd733776754c66bc67048089c354dfb5629d265b14f59f7044b8fd039e2faca"
+  },
+  "original_smoke_gate_passed": false,
+  "real_smoke_runs": 9,
+  "new_smoke_requests": 0,
+  "fake_capability_runs": 3,
+  "fake_runs_in_model_results": false,
+  "full_launch_preflight": "must pass after registration; separate local receipt"
+}

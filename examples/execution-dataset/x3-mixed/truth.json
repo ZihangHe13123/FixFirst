@@ -3,11 +3,11 @@
   "variant": "mixed",
   "labels": [
     {
-      "issue_id": "issue-c4bdfd6d7715c0",
+      "issue_id": "issue-aa716a7f312318",
       "label": "test_assertion"
     },
     {
-      "issue_id": "issue-944da3d4728a6b",
+      "issue_id": "issue-1edf11edd105a5",
       "label": "test_assertion"
     }
   ],
@@ -15,8 +15,8 @@
     "test_assertion"
   ],
   "event_groups": {
-    "event-45d913b5f32b": "test_cart.py::test_discount",
-    "event-24af83c28337": "test_cart.py::test_tax"
+    "event-159550577656": "test_cart.py::test_discount",
+    "event-bcb123bce2e0": "test_cart.py::test_tax"
   },
   "repair": "Restore owned cart.py and conftest.py from HEALTHY/FIXTURE"
 }

@@ -177,6 +177,9 @@ def _text_failure_blocks(lines):
 
 
 def parse(run: Run) -> list[Event]:
+    from .legacy_pytest import normalize_records
+
+    normalize_records(run)
     run.verified_pass = False
     run.coverage_complete = False
     run.passed_nodes = []

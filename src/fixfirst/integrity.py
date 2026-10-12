@@ -60,6 +60,10 @@ UNREADABLE = "!"  # prefix of a value that stands for content FixFirst could not
 
 def scope_of(session) -> str | None:
     if session.goal in ("collect_tests", "pass_tests"):
+        if session.test_targets:
+            from .test_selection import selection_id
+
+            return "pytest:requested:" + selection_id(session)
         return "pytest"
     if session.goal == "pass_unittest" and session.execution:
         return f"unittest:{session.execution.entry}:{session.execution.pattern or 'test*.py'}"
@@ -202,8 +206,17 @@ def snapshot(session, scope: str) -> dict:
     if scope == "ruff":
         return {"files": {}, "settings": ruff_settings(root), "problems": problems}
     files = _python_files(root, problems)
-    settings = pytest_settings(root) if scope == "pytest" else {}
-    if scope == "pytest" and (addopts := os.environ.get("PYTEST_ADDOPTS", "")):
+    if scope.startswith("pytest:requested:"):
+        for target in session.test_targets:
+            name = target.split("::", 1)[0]
+            value, _, problem = _hash(root / name)
+            if value is not None:
+                files[name] = value
+            elif problem:
+                files[name] = UNREADABLE + problem
+    pytest_scope = scope == "pytest" or scope.startswith("pytest:")
+    settings = pytest_settings(root) if pytest_scope else {}
+    if pytest_scope and (addopts := os.environ.get("PYTEST_ADDOPTS", "")):
         # Keep external option changes in the same baseline boundary as file options,
         # without putting another raw copy of potential option secrets in the baseline.
         settings["pytest:PYTEST_ADDOPTS"] = hashlib.sha256(addopts.encode("utf-8", "surrogatepass")).hexdigest()
@@ -228,10 +241,16 @@ def _collected(session, scope: str, candidates: set) -> set:
     ids = set()
     for run in session.runs:
         if run.tool in tools and run.source == "executed":
+            if scope.startswith("pytest:requested:") and not run.scope.removesuffix(":partial").replace(
+                    "tests:", "pytest:", 1) == scope:
+                continue
             ids.update(run.passed_nodes)
             ids.update(r["nodeid"] for r in run.records if isinstance(r, dict) and r.get("nodeid"))
     for issue in session.issues:
         if issue.tool in tools:
+            if scope.startswith("pytest:requested:") and issue.scope.removesuffix(":partial").replace(
+                    "tests:", "pytest:", 1) != scope:
+                continue
             ids.update(issue.targets)
     found = set()
     start = scope.split(":")[1].strip("./") if scope.startswith("unittest:") else ""
@@ -261,7 +280,8 @@ def test_files(session, scope: str, base: dict, current: dict) -> set:
                   if PurePosixPath(p).name == "conftest.py"
                   or any(fnmatch.fnmatch(PurePosixPath(p).name, pattern) for pattern in patterns)
                   or TEST_DIRS & set(PurePosixPath(p).parts[:-1])}
-    return chosen | _collected(session, scope, candidates)
+    requested = {t.split("::", 1)[0] for t in session.test_targets} if scope.startswith("pytest:requested:") else set()
+    return chosen | requested | _collected(session, scope, candidates)
 
 
 def compare(session, scope: str, base: dict) -> dict:

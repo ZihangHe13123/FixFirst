@@ -1,0 +1,40 @@
+bug,python,deps,result,note
+ansible-1,3.9.6,pytest setuptools<70 wheel,reproduced,
+ansible-2,3.9.6,pytest setuptools<70 wheel,reproduced,
+ansible-3,3.9.6,pytest setuptools<70 wheel,not reproduced,exit codes 1 and 1
+ansible-4,3.9.6,pytest setuptools<70 wheel,reproduced,
+ansible-5,3.9.6,pytest setuptools<70 wheel,reproduced,
+ansible-6,3.9.6,pytest setuptools<70 wheel,not reproduced,exit codes 1 and 1
+ansible-7,3.9.6,pytest setuptools<70 wheel,reproduced,
+black-1,3.9.6,pytest setuptools<70 wheel setuptools_scm aiohttp aiohttp-cors,reproduced,
+black-2,3.9.6,pytest setuptools<70 wheel setuptools_scm aiohttp aiohttp-cors,reproduced,
+black-3,3.9.6,pytest setuptools<70 wheel setuptools_scm aiohttp aiohttp-cors,reproduced,
+black-4,3.9.6,pytest setuptools<70 wheel setuptools_scm aiohttp aiohttp-cors,reproduced,
+black-5,3.9.6,pytest setuptools<70 wheel setuptools_scm aiohttp aiohttp-cors,reproduced,
+luigi-1,3.9.6,pytest nose mock setuptools<70 wheel,reproduced,
+luigi-2,3.9.6,pytest nose mock setuptools<70 wheel,reproduced,
+luigi-3,3.9.6,pytest nose mock setuptools<70 wheel,error,exit codes 4 and 4
+luigi-3,3.9.6,pytest==5.4.3 nose mock setuptools<70 wheel psutil==5.7.0,reproduced,
+luigi-4,3.9.6,pytest nose mock setuptools<70 wheel,reproduced,
+luigi-5,3.9.6,pytest nose mock setuptools<70 wheel,reproduced,
+sanic-1,3.9.6,pytest setuptools<70 wheel,reproduced,
+sanic-2,3.9.6,pytest setuptools<70 wheel,not reproduced,exit codes 0 and 0
+sanic-2,3.9.6,pytest==5.2.1 setuptools<70 wheel,not reproduced,exit codes 0 and 0
+sanic-3,3.9.6,pytest setuptools<70 wheel,reproduced,
+sanic-4,3.9.6,pytest setuptools<70 wheel,error,install failed
+sanic-4,3.9.6,pytest==5.2.1 setuptools<70 wheel,error,install failed
+sanic-5,3.9.6,pytest setuptools<70 wheel,reproduced,
+scrapy-1,3.9.6,pytest setuptools<70 wheel,error,exit codes 4 and 4
+scrapy-1,3.9.6,pytest==5.4.2 setuptools<70 wheel,error,exit codes 4 and 4
+scrapy-2,3.9.6,pytest setuptools<70 wheel,reproduced,
+scrapy-3,3.9.6,pytest setuptools<70 wheel,reproduced,
+scrapy-4,3.9.6,pytest setuptools<70 wheel,reproduced,
+scrapy-5,3.9.6,pytest setuptools<70 wheel,reproduced,
+scrapy-6,3.9.6,pytest setuptools<70 wheel,error,exit codes 4 and 4
+scrapy-6,3.9.6,pytest==5.4.2 setuptools<70 wheel pillow==7.1.2,error,install failed
+scrapy-7,3.9.6,pytest setuptools<70 wheel,reproduced,
+youtube-dl-1,3.9.6,pytest setuptools<70 wheel,reproduced,
+youtube-dl-2,3.9.6,pytest setuptools<70 wheel,reproduced,
+youtube-dl-3,3.9.6,pytest setuptools<70 wheel,reproduced,
+youtube-dl-4,3.9.6,pytest setuptools<70 wheel,reproduced,
+youtube-dl-5,3.9.6,pytest setuptools<70 wheel,reproduced,

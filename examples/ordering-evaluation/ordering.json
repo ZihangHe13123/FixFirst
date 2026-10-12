@@ -1,0 +1,2167 @@
+{
+ "rows": [
+  {
+   "case": "M1",
+   "template": "flat-shop",
+   "method": "fixfirst",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 3,
+     "open_issue_titles": [
+      "ModuleNotFoundError: No module named 'helper'",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 4,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Update imports of helper: the project has helpers.py",
+      "cause": "local_module",
+      "rule_ids": [
+       "P13"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "No installed package, standard module or known distribution is called helper, but the project contains helpers.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+      "explanation": "No installed package, standard module or known distribution is called helper, but the project contains helpers.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Update imports of helper: the project has helpers.py",
+      "cause": "local_module",
+      "rule_ids": [
+       "P13"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "No installed package, standard module or known distribution is called helper, but the project contains helpers.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+      "explanation": "No installed package, standard module or known distribution is called helper, but the project contains helpers.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it."
+     },
+     "issue_cause_shown": "local_module",
+     "issue_cause_source": "rule",
+     "issue": "ModuleNotFoundError: No module named 'helper'",
+     "issue_tool": "pytest_run",
+     "fault": "renamed_helper"
+    },
+    {
+     "repaired_before": [
+      "renamed_helper"
+     ],
+     "open_issues": 3,
+     "open_issue_titles": [
+      "AttributeError · test_app.py::test_order_total",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Replace numpy.float: removed in numpy 1.24",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: app.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: app.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified d"
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Replace numpy.float: removed in numpy 1.24",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: app.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: app.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified d"
+     },
+     "issue_cause_shown": "version_incompatibility",
+     "issue_cause_source": "rule",
+     "issue": "AttributeError · test_app.py::test_order_total",
+     "issue_tool": "pytest_run",
+     "fault": "numpy_alias"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "renamed_helper",
+    "numpy_alias"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M1",
+   "template": "flat-shop",
+   "method": "fixfirst-exact",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 3,
+     "open_issue_titles": [
+      "ModuleNotFoundError: No module named 'helper'",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 4,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Update imports of helper: the project has helpers.py",
+      "cause": "local_module",
+      "rule_ids": [
+       "P13"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "No installed package, standard module or known distribution is called helper, but the project contains helpers.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+      "explanation": "No installed package, standard module or known distribution is called helper, but the project contains helpers.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Update imports of helper: the project has helpers.py",
+      "cause": "local_module",
+      "rule_ids": [
+       "P13"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "No installed package, standard module or known distribution is called helper, but the project contains helpers.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+      "explanation": "No installed package, standard module or known distribution is called helper, but the project contains helpers.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it."
+     },
+     "issue_cause_shown": "local_module",
+     "issue_cause_source": "rule",
+     "issue": "ModuleNotFoundError: No module named 'helper'",
+     "issue_tool": "pytest_run",
+     "fault": "renamed_helper"
+    },
+    {
+     "repaired_before": [
+      "renamed_helper"
+     ],
+     "open_issues": 3,
+     "open_issue_titles": [
+      "AttributeError · test_app.py::test_order_total",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Replace numpy.float: removed in numpy 1.24",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: app.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: app.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified d"
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Replace numpy.float: removed in numpy 1.24",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: app.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: app.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified d"
+     },
+     "issue_cause_shown": "version_incompatibility",
+     "issue_cause_source": "rule",
+     "issue": "AttributeError · test_app.py::test_order_total",
+     "issue_tool": "pytest_run",
+     "fault": "numpy_alias"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "renamed_helper",
+    "numpy_alias"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M1",
+   "template": "flat-shop",
+   "method": "fixfirst-ungrouped",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 3,
+     "open_issue_titles": [
+      "ModuleNotFoundError: No module named 'helper'",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 4,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Update imports of helper: the project has helpers.py",
+      "cause": "local_module",
+      "rule_ids": [
+       "P13"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "No installed package, standard module or known distribution is called helper, but the project contains helpers.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+      "explanation": "No installed package, standard module or known distribution is called helper, but the project contains helpers.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Update imports of helper: the project has helpers.py",
+      "cause": "local_module",
+      "rule_ids": [
+       "P13"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "No installed package, standard module or known distribution is called helper, but the project contains helpers.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+      "explanation": "No installed package, standard module or known distribution is called helper, but the project contains helpers.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it."
+     },
+     "issue_cause_shown": "local_module",
+     "issue_cause_source": "rule",
+     "issue": "ModuleNotFoundError: No module named 'helper'",
+     "issue_tool": "pytest_run",
+     "fault": "renamed_helper"
+    },
+    {
+     "repaired_before": [
+      "renamed_helper"
+     ],
+     "open_issues": 3,
+     "open_issue_titles": [
+      "AttributeError · test_app.py::test_order_total",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Replace numpy.float: removed in numpy 1.24",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: app.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: app.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified d"
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Replace numpy.float: removed in numpy 1.24",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: app.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: app.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified d"
+     },
+     "issue_cause_shown": "version_incompatibility",
+     "issue_cause_source": "rule",
+     "issue": "AttributeError · test_app.py::test_order_total",
+     "issue_tool": "pytest_run",
+     "fault": "numpy_alias"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "renamed_helper",
+    "numpy_alias"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M1",
+   "template": "flat-shop",
+   "method": "message_order",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 3,
+     "open_issue_titles": [
+      "ModuleNotFoundError: No module named 'helper'",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "ModuleNotFoundError: No module named 'helper'",
+     "issue_tool": "pytest_run",
+     "fault": "renamed_helper"
+    },
+    {
+     "repaired_before": [
+      "renamed_helper"
+     ],
+     "open_issues": 3,
+     "open_issue_titles": [
+      "AttributeError · test_app.py::test_order_total",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "AttributeError · test_app.py::test_order_total",
+     "issue_tool": "pytest_run",
+     "fault": "numpy_alias"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "renamed_helper",
+    "numpy_alias"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M1",
+   "template": "flat-shop",
+   "method": "category_order",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 3,
+     "open_issue_titles": [
+      "ModuleNotFoundError: No module named 'helper'",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "ModuleNotFoundError: No module named 'helper'",
+     "issue_tool": "pytest_run",
+     "fault": "renamed_helper"
+    },
+    {
+     "repaired_before": [
+      "renamed_helper"
+     ],
+     "open_issues": 3,
+     "open_issue_titles": [
+      "AttributeError · test_app.py::test_order_total",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "AttributeError · test_app.py::test_order_total",
+     "issue_tool": "pytest_run",
+     "fault": "numpy_alias"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "renamed_helper",
+    "numpy_alias"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M2",
+   "template": "src-billing",
+   "method": "fixfirst",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+      "`sklearn.utils._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "inspect",
+      "title": "Find a compatible scikit-learn release that provides sklearn.utils._print_elapsed_time",
+      "cause": null,
+      "rule_ids": [
+       "P58"
+      ],
+      "command": [],
+      "targets": [
+       "scikit-learn",
+       "sklearn.utils._print_elapsed_time"
+      ],
+      "instructions": "",
+      "explanation": "sklearn.utils._print_elapsed_time is unavailable in scikit-learn 1.9.1; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole appl"
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "inspect",
+      "title": "Find a compatible scikit-learn release that provides sklearn.utils._print_elapsed_time",
+      "cause": null,
+      "rule_ids": [
+       "P58"
+      ],
+      "command": [],
+      "targets": [
+       "scikit-learn",
+       "sklearn.utils._print_elapsed_time"
+      ],
+      "instructions": "",
+      "explanation": "sklearn.utils._print_elapsed_time is unavailable in scikit-learn 1.9.1; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole appl"
+     },
+     "issue_cause_shown": "version_incompatibility",
+     "issue_cause_source": "heuristic",
+     "issue": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+     "issue_tool": "pytest_run",
+     "fault": "private_moved"
+    },
+    {
+     "repaired_before": [
+      "private_moved"
+     ],
+     "open_issues": 5,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_invoice.py::test_invoice_total",
+      "KeyError · tests/test_invoice.py::test_invoice_amount",
+      "`sklearn.utils._user_interface._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 6,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Provide the configuration value BILLING_DB_URL",
+      "cause": "config_missing",
+      "rule_ids": [
+       "P18"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "The code needs BILLING_DB_URL at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values.",
+      "explanation": "The code needs BILLING_DB_URL at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Provide the configuration value BILLING_DB_URL",
+      "cause": "config_missing",
+      "rule_ids": [
+       "P18"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "The code needs BILLING_DB_URL at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values.",
+      "explanation": "The code needs BILLING_DB_URL at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values."
+     },
+     "issue_cause_shown": "config_missing",
+     "issue_cause_source": "rule",
+     "issue": "KeyError · tests/test_invoice.py::test_invoice_amount",
+     "issue_tool": "pytest_run",
+     "fault": "env_missing"
+    },
+    {
+     "repaired_before": [
+      "private_moved",
+      "env_missing"
+     ],
+     "open_issues": 5,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_invoice.py::test_invoice_amount",
+      "Assertion failed · tests/test_invoice.py::test_invoice_total",
+      "`sklearn.utils._user_interface._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Compare the failed assertion's expected and actual values",
+      "cause": null,
+      "rule_ids": [
+       "P49"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Compare the failed assertion's expected and actual values",
+      "cause": null,
+      "rule_ids": [
+       "P49"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite."
+     },
+     "issue_cause_shown": "code_defect",
+     "issue_cause_source": "rule",
+     "issue": "Assertion failed · tests/test_invoice.py::test_invoice_amount",
+     "issue_tool": "pytest_run",
+     "fault": "total_off_by_one"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "private_moved",
+    "env_missing",
+    "total_off_by_one"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M2",
+   "template": "src-billing",
+   "method": "fixfirst-exact",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+      "`sklearn.utils._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "inspect",
+      "title": "Find a compatible scikit-learn release that provides sklearn.utils._print_elapsed_time",
+      "cause": null,
+      "rule_ids": [
+       "P58"
+      ],
+      "command": [],
+      "targets": [
+       "scikit-learn",
+       "sklearn.utils._print_elapsed_time"
+      ],
+      "instructions": "",
+      "explanation": "sklearn.utils._print_elapsed_time is unavailable in scikit-learn 1.9.1; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole appl"
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "inspect",
+      "title": "Find a compatible scikit-learn release that provides sklearn.utils._print_elapsed_time",
+      "cause": null,
+      "rule_ids": [
+       "P58"
+      ],
+      "command": [],
+      "targets": [
+       "scikit-learn",
+       "sklearn.utils._print_elapsed_time"
+      ],
+      "instructions": "",
+      "explanation": "sklearn.utils._print_elapsed_time is unavailable in scikit-learn 1.9.1; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole appl"
+     },
+     "issue_cause_shown": "version_incompatibility",
+     "issue_cause_source": "heuristic",
+     "issue": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+     "issue_tool": "pytest_run",
+     "fault": "private_moved"
+    },
+    {
+     "repaired_before": [
+      "private_moved"
+     ],
+     "open_issues": 5,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_invoice.py::test_invoice_total",
+      "KeyError · tests/test_invoice.py::test_invoice_amount",
+      "`sklearn.utils._user_interface._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 6,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Provide the configuration value BILLING_DB_URL",
+      "cause": "config_missing",
+      "rule_ids": [
+       "P18"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "The code needs BILLING_DB_URL at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values.",
+      "explanation": "The code needs BILLING_DB_URL at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Provide the configuration value BILLING_DB_URL",
+      "cause": "config_missing",
+      "rule_ids": [
+       "P18"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "The code needs BILLING_DB_URL at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values.",
+      "explanation": "The code needs BILLING_DB_URL at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values."
+     },
+     "issue_cause_shown": "config_missing",
+     "issue_cause_source": "rule",
+     "issue": "KeyError · tests/test_invoice.py::test_invoice_amount",
+     "issue_tool": "pytest_run",
+     "fault": "env_missing"
+    },
+    {
+     "repaired_before": [
+      "private_moved",
+      "env_missing"
+     ],
+     "open_issues": 5,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_invoice.py::test_invoice_amount",
+      "Assertion failed · tests/test_invoice.py::test_invoice_total",
+      "`sklearn.utils._user_interface._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Compare the failed assertion's expected and actual values",
+      "cause": null,
+      "rule_ids": [
+       "P49"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Compare the failed assertion's expected and actual values",
+      "cause": null,
+      "rule_ids": [
+       "P49"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite."
+     },
+     "issue_cause_shown": "code_defect",
+     "issue_cause_source": "rule",
+     "issue": "Assertion failed · tests/test_invoice.py::test_invoice_amount",
+     "issue_tool": "pytest_run",
+     "fault": "total_off_by_one"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "private_moved",
+    "env_missing",
+    "total_off_by_one"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M2",
+   "template": "src-billing",
+   "method": "fixfirst-ungrouped",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+      "`sklearn.utils._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "inspect",
+      "title": "Find a compatible scikit-learn release that provides sklearn.utils._print_elapsed_time",
+      "cause": null,
+      "rule_ids": [
+       "P58"
+      ],
+      "command": [],
+      "targets": [
+       "scikit-learn",
+       "sklearn.utils._print_elapsed_time"
+      ],
+      "instructions": "",
+      "explanation": "sklearn.utils._print_elapsed_time is unavailable in scikit-learn 1.9.1; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole appl"
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "inspect",
+      "title": "Find a compatible scikit-learn release that provides sklearn.utils._print_elapsed_time",
+      "cause": null,
+      "rule_ids": [
+       "P58"
+      ],
+      "command": [],
+      "targets": [
+       "scikit-learn",
+       "sklearn.utils._print_elapsed_time"
+      ],
+      "instructions": "",
+      "explanation": "sklearn.utils._print_elapsed_time is unavailable in scikit-learn 1.9.1; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole appl"
+     },
+     "issue_cause_shown": "version_incompatibility",
+     "issue_cause_source": "heuristic",
+     "issue": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+     "issue_tool": "pytest_run",
+     "fault": "private_moved"
+    },
+    {
+     "repaired_before": [
+      "private_moved"
+     ],
+     "open_issues": 5,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_invoice.py::test_invoice_total",
+      "KeyError · tests/test_invoice.py::test_invoice_amount",
+      "`sklearn.utils._user_interface._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 6,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Provide the configuration value BILLING_DB_URL",
+      "cause": "config_missing",
+      "rule_ids": [
+       "P18"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "The code needs BILLING_DB_URL at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values.",
+      "explanation": "The code needs BILLING_DB_URL at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Provide the configuration value BILLING_DB_URL",
+      "cause": "config_missing",
+      "rule_ids": [
+       "P18"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "The code needs BILLING_DB_URL at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values.",
+      "explanation": "The code needs BILLING_DB_URL at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values."
+     },
+     "issue_cause_shown": "config_missing",
+     "issue_cause_source": "rule",
+     "issue": "KeyError · tests/test_invoice.py::test_invoice_amount",
+     "issue_tool": "pytest_run",
+     "fault": "env_missing"
+    },
+    {
+     "repaired_before": [
+      "private_moved",
+      "env_missing"
+     ],
+     "open_issues": 5,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_invoice.py::test_invoice_amount",
+      "Assertion failed · tests/test_invoice.py::test_invoice_total",
+      "`sklearn.utils._user_interface._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Compare the failed assertion's expected and actual values",
+      "cause": null,
+      "rule_ids": [
+       "P49"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Compare the failed assertion's expected and actual values",
+      "cause": null,
+      "rule_ids": [
+       "P49"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite."
+     },
+     "issue_cause_shown": "code_defect",
+     "issue_cause_source": "rule",
+     "issue": "Assertion failed · tests/test_invoice.py::test_invoice_amount",
+     "issue_tool": "pytest_run",
+     "fault": "total_off_by_one"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "private_moved",
+    "env_missing",
+    "total_off_by_one"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M2",
+   "template": "src-billing",
+   "method": "message_order",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+      "`sklearn.utils._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+     "issue_tool": "pytest_run",
+     "fault": "private_moved"
+    },
+    {
+     "repaired_before": [
+      "private_moved"
+     ],
+     "open_issues": 5,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_invoice.py::test_invoice_total",
+      "KeyError · tests/test_invoice.py::test_invoice_amount",
+      "`sklearn.utils._user_interface._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "KeyError · tests/test_invoice.py::test_invoice_amount",
+     "issue_tool": "pytest_run",
+     "fault": "env_missing"
+    },
+    {
+     "repaired_before": [
+      "private_moved",
+      "env_missing"
+     ],
+     "open_issues": 5,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_invoice.py::test_invoice_amount",
+      "Assertion failed · tests/test_invoice.py::test_invoice_total",
+      "`sklearn.utils._user_interface._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "Assertion failed · tests/test_invoice.py::test_invoice_amount",
+     "issue_tool": "pytest_run",
+     "fault": "total_off_by_one"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "private_moved",
+    "env_missing",
+    "total_off_by_one"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M2",
+   "template": "src-billing",
+   "method": "category_order",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+      "`sklearn.utils._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+     "issue_tool": "pytest_run",
+     "fault": "private_moved"
+    },
+    {
+     "repaired_before": [
+      "private_moved"
+     ],
+     "open_issues": 5,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_invoice.py::test_invoice_total",
+      "KeyError · tests/test_invoice.py::test_invoice_amount",
+      "`sklearn.utils._user_interface._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "KeyError · tests/test_invoice.py::test_invoice_amount",
+     "issue_tool": "pytest_run",
+     "fault": "env_missing"
+    },
+    {
+     "repaired_before": [
+      "private_moved",
+      "env_missing"
+     ],
+     "open_issues": 5,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_invoice.py::test_invoice_amount",
+      "Assertion failed · tests/test_invoice.py::test_invoice_total",
+      "`sklearn.utils._user_interface._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "Assertion failed · tests/test_invoice.py::test_invoice_amount",
+     "issue_tool": "pytest_run",
+     "fault": "total_off_by_one"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "private_moved",
+    "env_missing",
+    "total_off_by_one"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M3",
+   "template": "pkg-inventory",
+   "method": "fixfirst",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 5,
+     "open_issue_titles": [
+      "ModuleNotFoundError: No module named 'imp'",
+      "`imp` imported but unused",
+      "`json` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 4,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Replace imp: removed in Python 3.12",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: inventory/stock.py:2. The target interpreter has Python 3.12.13, which no longer provides imp (removed in 3.12). Change the code to use importlib (for example importlib.util / importlib.reload). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: inventory/stock.py:2. The target interpreter has Python 3.12.13, which no longer provides imp (removed in 3.12). Change the code to use importlib (for example importlib.util / importlib.reload). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downg"
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Replace imp: removed in Python 3.12",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: inventory/stock.py:2. The target interpreter has Python 3.12.13, which no longer provides imp (removed in 3.12). Change the code to use importlib (for example importlib.util / importlib.reload). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: inventory/stock.py:2. The target interpreter has Python 3.12.13, which no longer provides imp (removed in 3.12). Change the code to use importlib (for example importlib.util / importlib.reload). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downg"
+     },
+     "issue_cause_shown": "version_incompatibility",
+     "issue_cause_source": "rule",
+     "issue": "ModuleNotFoundError: No module named 'imp'",
+     "issue_tool": "pytest_run",
+     "fault": "stdlib_removed"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "stdlib_removed"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M3",
+   "template": "pkg-inventory",
+   "method": "fixfirst-exact",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 5,
+     "open_issue_titles": [
+      "ModuleNotFoundError: No module named 'imp'",
+      "`imp` imported but unused",
+      "`json` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 4,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Replace imp: removed in Python 3.12",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: inventory/stock.py:2. The target interpreter has Python 3.12.13, which no longer provides imp (removed in 3.12). Change the code to use importlib (for example importlib.util / importlib.reload). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: inventory/stock.py:2. The target interpreter has Python 3.12.13, which no longer provides imp (removed in 3.12). Change the code to use importlib (for example importlib.util / importlib.reload). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downg"
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Replace imp: removed in Python 3.12",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: inventory/stock.py:2. The target interpreter has Python 3.12.13, which no longer provides imp (removed in 3.12). Change the code to use importlib (for example importlib.util / importlib.reload). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: inventory/stock.py:2. The target interpreter has Python 3.12.13, which no longer provides imp (removed in 3.12). Change the code to use importlib (for example importlib.util / importlib.reload). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downg"
+     },
+     "issue_cause_shown": "version_incompatibility",
+     "issue_cause_source": "rule",
+     "issue": "ModuleNotFoundError: No module named 'imp'",
+     "issue_tool": "pytest_run",
+     "fault": "stdlib_removed"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "stdlib_removed"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M3",
+   "template": "pkg-inventory",
+   "method": "fixfirst-ungrouped",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 5,
+     "open_issue_titles": [
+      "ModuleNotFoundError: No module named 'imp'",
+      "`imp` imported but unused",
+      "`json` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 4,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Replace imp: removed in Python 3.12",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: inventory/stock.py:2. The target interpreter has Python 3.12.13, which no longer provides imp (removed in 3.12). Change the code to use importlib (for example importlib.util / importlib.reload). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: inventory/stock.py:2. The target interpreter has Python 3.12.13, which no longer provides imp (removed in 3.12). Change the code to use importlib (for example importlib.util / importlib.reload). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downg"
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Replace imp: removed in Python 3.12",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: inventory/stock.py:2. The target interpreter has Python 3.12.13, which no longer provides imp (removed in 3.12). Change the code to use importlib (for example importlib.util / importlib.reload). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: inventory/stock.py:2. The target interpreter has Python 3.12.13, which no longer provides imp (removed in 3.12). Change the code to use importlib (for example importlib.util / importlib.reload). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downg"
+     },
+     "issue_cause_shown": "version_incompatibility",
+     "issue_cause_source": "rule",
+     "issue": "ModuleNotFoundError: No module named 'imp'",
+     "issue_tool": "pytest_run",
+     "fault": "stdlib_removed"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "stdlib_removed"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M3",
+   "template": "pkg-inventory",
+   "method": "message_order",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 5,
+     "open_issue_titles": [
+      "ModuleNotFoundError: No module named 'imp'",
+      "`imp` imported but unused",
+      "`json` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "ModuleNotFoundError: No module named 'imp'",
+     "issue_tool": "pytest_run",
+     "fault": "stdlib_removed"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "stdlib_removed"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M3",
+   "template": "pkg-inventory",
+   "method": "category_order",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 5,
+     "open_issue_titles": [
+      "ModuleNotFoundError: No module named 'imp'",
+      "`imp` imported but unused",
+      "`json` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "ModuleNotFoundError: No module named 'imp'",
+     "issue_tool": "pytest_run",
+     "fault": "stdlib_removed"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "stdlib_removed"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M4",
+   "template": "unittest-grades",
+   "method": "fixfirst",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_grades.py::TestStudent::test_total",
+      "KeyError · tests/test_grades.py::TestStudent::test_final_grade",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 6,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Provide the configuration value GRADES_SERVICE_KEY",
+      "cause": "config_missing",
+      "rule_ids": [
+       "P18"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "The code needs GRADES_SERVICE_KEY at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values.",
+      "explanation": "The code needs GRADES_SERVICE_KEY at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Provide the configuration value GRADES_SERVICE_KEY",
+      "cause": "config_missing",
+      "rule_ids": [
+       "P18"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "The code needs GRADES_SERVICE_KEY at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values.",
+      "explanation": "The code needs GRADES_SERVICE_KEY at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values."
+     },
+     "issue_cause_shown": "config_missing",
+     "issue_cause_source": "rule",
+     "issue": "KeyError · tests/test_grades.py::TestStudent::test_final_grade",
+     "issue_tool": "pytest_run",
+     "fault": "env_missing"
+    },
+    {
+     "repaired_before": [
+      "env_missing"
+     ],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_grades.py::TestStudent::test_final_grade",
+      "Assertion failed · tests/test_grades.py::TestStudent::test_total",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Compare the failed assertion's expected and actual values",
+      "cause": null,
+      "rule_ids": [
+       "P49"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Compare the failed assertion's expected and actual values",
+      "cause": null,
+      "rule_ids": [
+       "P49"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite."
+     },
+     "issue_cause_shown": "code_defect",
+     "issue_cause_source": "rule",
+     "issue": "Assertion failed · tests/test_grades.py::TestStudent::test_final_grade",
+     "issue_tool": "pytest_run",
+     "fault": "total_off_by_one"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "env_missing",
+    "total_off_by_one"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M4",
+   "template": "unittest-grades",
+   "method": "fixfirst-exact",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_grades.py::TestStudent::test_total",
+      "KeyError · tests/test_grades.py::TestStudent::test_final_grade",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 6,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Provide the configuration value GRADES_SERVICE_KEY",
+      "cause": "config_missing",
+      "rule_ids": [
+       "P18"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "The code needs GRADES_SERVICE_KEY at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values.",
+      "explanation": "The code needs GRADES_SERVICE_KEY at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Provide the configuration value GRADES_SERVICE_KEY",
+      "cause": "config_missing",
+      "rule_ids": [
+       "P18"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "The code needs GRADES_SERVICE_KEY at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values.",
+      "explanation": "The code needs GRADES_SERVICE_KEY at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values."
+     },
+     "issue_cause_shown": "config_missing",
+     "issue_cause_source": "rule",
+     "issue": "KeyError · tests/test_grades.py::TestStudent::test_final_grade",
+     "issue_tool": "pytest_run",
+     "fault": "env_missing"
+    },
+    {
+     "repaired_before": [
+      "env_missing"
+     ],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_grades.py::TestStudent::test_final_grade",
+      "Assertion failed · tests/test_grades.py::TestStudent::test_total",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Compare the failed assertion's expected and actual values",
+      "cause": null,
+      "rule_ids": [
+       "P49"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Compare the failed assertion's expected and actual values",
+      "cause": null,
+      "rule_ids": [
+       "P49"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite."
+     },
+     "issue_cause_shown": "code_defect",
+     "issue_cause_source": "rule",
+     "issue": "Assertion failed · tests/test_grades.py::TestStudent::test_final_grade",
+     "issue_tool": "pytest_run",
+     "fault": "total_off_by_one"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "env_missing",
+    "total_off_by_one"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M4",
+   "template": "unittest-grades",
+   "method": "fixfirst-ungrouped",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_grades.py::TestStudent::test_total",
+      "KeyError · tests/test_grades.py::TestStudent::test_final_grade",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 6,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Provide the configuration value GRADES_SERVICE_KEY",
+      "cause": "config_missing",
+      "rule_ids": [
+       "P18"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "The code needs GRADES_SERVICE_KEY at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values.",
+      "explanation": "The code needs GRADES_SERVICE_KEY at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Provide the configuration value GRADES_SERVICE_KEY",
+      "cause": "config_missing",
+      "rule_ids": [
+       "P18"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "The code needs GRADES_SERVICE_KEY at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values.",
+      "explanation": "The code needs GRADES_SERVICE_KEY at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values."
+     },
+     "issue_cause_shown": "config_missing",
+     "issue_cause_source": "rule",
+     "issue": "KeyError · tests/test_grades.py::TestStudent::test_final_grade",
+     "issue_tool": "pytest_run",
+     "fault": "env_missing"
+    },
+    {
+     "repaired_before": [
+      "env_missing"
+     ],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_grades.py::TestStudent::test_final_grade",
+      "Assertion failed · tests/test_grades.py::TestStudent::test_total",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Compare the failed assertion's expected and actual values",
+      "cause": null,
+      "rule_ids": [
+       "P49"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Compare the failed assertion's expected and actual values",
+      "cause": null,
+      "rule_ids": [
+       "P49"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+      "explanation": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite."
+     },
+     "issue_cause_shown": "code_defect",
+     "issue_cause_source": "rule",
+     "issue": "Assertion failed · tests/test_grades.py::TestStudent::test_final_grade",
+     "issue_tool": "pytest_run",
+     "fault": "total_off_by_one"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "env_missing",
+    "total_off_by_one"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M4",
+   "template": "unittest-grades",
+   "method": "message_order",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_grades.py::TestStudent::test_total",
+      "KeyError · tests/test_grades.py::TestStudent::test_final_grade",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "KeyError · tests/test_grades.py::TestStudent::test_final_grade",
+     "issue_tool": "pytest_run",
+     "fault": "env_missing"
+    },
+    {
+     "repaired_before": [
+      "env_missing"
+     ],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_grades.py::TestStudent::test_final_grade",
+      "Assertion failed · tests/test_grades.py::TestStudent::test_total",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "Assertion failed · tests/test_grades.py::TestStudent::test_final_grade",
+     "issue_tool": "pytest_run",
+     "fault": "total_off_by_one"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "env_missing",
+    "total_off_by_one"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M4",
+   "template": "unittest-grades",
+   "method": "category_order",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_grades.py::TestStudent::test_total",
+      "KeyError · tests/test_grades.py::TestStudent::test_final_grade",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "KeyError · tests/test_grades.py::TestStudent::test_final_grade",
+     "issue_tool": "pytest_run",
+     "fault": "env_missing"
+    },
+    {
+     "repaired_before": [
+      "env_missing"
+     ],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "Assertion failed · tests/test_grades.py::TestStudent::test_final_grade",
+      "Assertion failed · tests/test_grades.py::TestStudent::test_total",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "Assertion failed · tests/test_grades.py::TestStudent::test_final_grade",
+     "issue_tool": "pytest_run",
+     "fault": "total_off_by_one"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "env_missing",
+    "total_off_by_one"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M5",
+   "template": "fixture-orders",
+   "method": "fixfirst",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "ModuleNotFoundError: No module named 'orders.tax'",
+      "`sklearn.utils._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 4,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Update imports of orders.tax: the project has orders/taxes.py",
+      "cause": "local_module",
+      "rule_ids": [
+       "P13"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "No installed package, standard module or known distribution is called orders.tax, but the project contains orders/taxes.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+      "explanation": "No installed package, standard module or known distribution is called orders.tax, but the project contains orders/taxes.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Update imports of orders.tax: the project has orders/taxes.py",
+      "cause": "local_module",
+      "rule_ids": [
+       "P13"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "No installed package, standard module or known distribution is called orders.tax, but the project contains orders/taxes.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+      "explanation": "No installed package, standard module or known distribution is called orders.tax, but the project contains orders/taxes.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it."
+     },
+     "issue_cause_shown": "local_module",
+     "issue_cause_source": "rule",
+     "issue": "ModuleNotFoundError: No module named 'orders.tax'",
+     "issue_tool": "pytest_run",
+     "fault": "renamed_helper"
+    },
+    {
+     "repaired_before": [
+      "renamed_helper"
+     ],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+      "`sklearn.utils._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "inspect",
+      "title": "Find a compatible scikit-learn release that provides sklearn.utils._print_elapsed_time",
+      "cause": null,
+      "rule_ids": [
+       "P58"
+      ],
+      "command": [],
+      "targets": [
+       "scikit-learn",
+       "sklearn.utils._print_elapsed_time"
+      ],
+      "instructions": "",
+      "explanation": "sklearn.utils._print_elapsed_time is unavailable in scikit-learn 1.9.1; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole appl"
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "inspect",
+      "title": "Find a compatible scikit-learn release that provides sklearn.utils._print_elapsed_time",
+      "cause": null,
+      "rule_ids": [
+       "P58"
+      ],
+      "command": [],
+      "targets": [
+       "scikit-learn",
+       "sklearn.utils._print_elapsed_time"
+      ],
+      "instructions": "",
+      "explanation": "sklearn.utils._print_elapsed_time is unavailable in scikit-learn 1.9.1; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole appl"
+     },
+     "issue_cause_shown": "version_incompatibility",
+     "issue_cause_source": "heuristic",
+     "issue": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+     "issue_tool": "pytest_run",
+     "fault": "private_moved"
+    },
+    {
+     "repaired_before": [
+      "renamed_helper",
+      "private_moved"
+     ],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "AttributeError · tests/test_service.py::test_checkout_total",
+      "`sklearn.utils._user_interface._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Replace numpy.float: removed in numpy 1.24",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: orders/service.py:16. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: orders/service.py:16. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an u"
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Replace numpy.float: removed in numpy 1.24",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: orders/service.py:16. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: orders/service.py:16. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an u"
+     },
+     "issue_cause_shown": "version_incompatibility",
+     "issue_cause_source": "rule",
+     "issue": "AttributeError · tests/test_service.py::test_checkout_total",
+     "issue_tool": "pytest_run",
+     "fault": "numpy_alias"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "renamed_helper",
+    "private_moved",
+    "numpy_alias"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M5",
+   "template": "fixture-orders",
+   "method": "fixfirst-exact",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "ModuleNotFoundError: No module named 'orders.tax'",
+      "`sklearn.utils._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 4,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Update imports of orders.tax: the project has orders/taxes.py",
+      "cause": "local_module",
+      "rule_ids": [
+       "P13"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "No installed package, standard module or known distribution is called orders.tax, but the project contains orders/taxes.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+      "explanation": "No installed package, standard module or known distribution is called orders.tax, but the project contains orders/taxes.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Update imports of orders.tax: the project has orders/taxes.py",
+      "cause": "local_module",
+      "rule_ids": [
+       "P13"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "No installed package, standard module or known distribution is called orders.tax, but the project contains orders/taxes.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+      "explanation": "No installed package, standard module or known distribution is called orders.tax, but the project contains orders/taxes.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it."
+     },
+     "issue_cause_shown": "local_module",
+     "issue_cause_source": "rule",
+     "issue": "ModuleNotFoundError: No module named 'orders.tax'",
+     "issue_tool": "pytest_run",
+     "fault": "renamed_helper"
+    },
+    {
+     "repaired_before": [
+      "renamed_helper"
+     ],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+      "`sklearn.utils._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "inspect",
+      "title": "Find a compatible scikit-learn release that provides sklearn.utils._print_elapsed_time",
+      "cause": null,
+      "rule_ids": [
+       "P58"
+      ],
+      "command": [],
+      "targets": [
+       "scikit-learn",
+       "sklearn.utils._print_elapsed_time"
+      ],
+      "instructions": "",
+      "explanation": "sklearn.utils._print_elapsed_time is unavailable in scikit-learn 1.9.1; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole appl"
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "inspect",
+      "title": "Find a compatible scikit-learn release that provides sklearn.utils._print_elapsed_time",
+      "cause": null,
+      "rule_ids": [
+       "P58"
+      ],
+      "command": [],
+      "targets": [
+       "scikit-learn",
+       "sklearn.utils._print_elapsed_time"
+      ],
+      "instructions": "",
+      "explanation": "sklearn.utils._print_elapsed_time is unavailable in scikit-learn 1.9.1; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole appl"
+     },
+     "issue_cause_shown": "version_incompatibility",
+     "issue_cause_source": "heuristic",
+     "issue": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+     "issue_tool": "pytest_run",
+     "fault": "private_moved"
+    },
+    {
+     "repaired_before": [
+      "renamed_helper",
+      "private_moved"
+     ],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "AttributeError · tests/test_service.py::test_checkout_total",
+      "`sklearn.utils._user_interface._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Replace numpy.float: removed in numpy 1.24",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: orders/service.py:16. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: orders/service.py:16. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an u"
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Replace numpy.float: removed in numpy 1.24",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: orders/service.py:16. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: orders/service.py:16. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an u"
+     },
+     "issue_cause_shown": "version_incompatibility",
+     "issue_cause_source": "rule",
+     "issue": "AttributeError · tests/test_service.py::test_checkout_total",
+     "issue_tool": "pytest_run",
+     "fault": "numpy_alias"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "renamed_helper",
+    "private_moved",
+    "numpy_alias"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M5",
+   "template": "fixture-orders",
+   "method": "fixfirst-ungrouped",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "ModuleNotFoundError: No module named 'orders.tax'",
+      "`sklearn.utils._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 4,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Update imports of orders.tax: the project has orders/taxes.py",
+      "cause": "local_module",
+      "rule_ids": [
+       "P13"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "No installed package, standard module or known distribution is called orders.tax, but the project contains orders/taxes.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+      "explanation": "No installed package, standard module or known distribution is called orders.tax, but the project contains orders/taxes.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it."
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Update imports of orders.tax: the project has orders/taxes.py",
+      "cause": "local_module",
+      "rule_ids": [
+       "P13"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "No installed package, standard module or known distribution is called orders.tax, but the project contains orders/taxes.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+      "explanation": "No installed package, standard module or known distribution is called orders.tax, but the project contains orders/taxes.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it."
+     },
+     "issue_cause_shown": "local_module",
+     "issue_cause_source": "rule",
+     "issue": "ModuleNotFoundError: No module named 'orders.tax'",
+     "issue_tool": "pytest_run",
+     "fault": "renamed_helper"
+    },
+    {
+     "repaired_before": [
+      "renamed_helper"
+     ],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+      "`sklearn.utils._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "inspect",
+      "title": "Find a compatible scikit-learn release that provides sklearn.utils._print_elapsed_time",
+      "cause": null,
+      "rule_ids": [
+       "P58"
+      ],
+      "command": [],
+      "targets": [
+       "scikit-learn",
+       "sklearn.utils._print_elapsed_time"
+      ],
+      "instructions": "",
+      "explanation": "sklearn.utils._print_elapsed_time is unavailable in scikit-learn 1.9.1; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole appl"
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "inspect",
+      "title": "Find a compatible scikit-learn release that provides sklearn.utils._print_elapsed_time",
+      "cause": null,
+      "rule_ids": [
+       "P58"
+      ],
+      "command": [],
+      "targets": [
+       "scikit-learn",
+       "sklearn.utils._print_elapsed_time"
+      ],
+      "instructions": "",
+      "explanation": "sklearn.utils._print_elapsed_time is unavailable in scikit-learn 1.9.1; this observation alone does not prove it was removed. FixFirst can test earlier releases that satisfy the recorded dependency constraints in a temporary environment with this Python. It downloads wheels from PyPI and runs no build scripts. A search result verifies the checked API and dependency requirements, not the whole appl"
+     },
+     "issue_cause_shown": "version_incompatibility",
+     "issue_cause_source": "heuristic",
+     "issue": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+     "issue_tool": "pytest_run",
+     "fault": "private_moved"
+    },
+    {
+     "repaired_before": [
+      "renamed_helper",
+      "private_moved"
+     ],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "AttributeError · tests/test_service.py::test_checkout_total",
+      "`sklearn.utils._user_interface._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "actions_shown": 5,
+     "position_of_the_step_taken": 0,
+     "very_first_action": {
+      "kind": "manual_fix",
+      "title": "Replace numpy.float: removed in numpy 1.24",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: orders/service.py:16. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: orders/service.py:16. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an u"
+     },
+     "very_first_action_has_an_open_issue": true,
+     "step_taken": {
+      "kind": "manual_fix",
+      "title": "Replace numpy.float: removed in numpy 1.24",
+      "cause": "version_incompatibility",
+      "rule_ids": [
+       "P10"
+      ],
+      "command": [],
+      "targets": [],
+      "instructions": "Observed project location: orders/service.py:16. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+      "explanation": "Observed project location: orders/service.py:16. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an u"
+     },
+     "issue_cause_shown": "version_incompatibility",
+     "issue_cause_source": "rule",
+     "issue": "AttributeError · tests/test_service.py::test_checkout_total",
+     "issue_tool": "pytest_run",
+     "fault": "numpy_alias"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "renamed_helper",
+    "private_moved",
+    "numpy_alias"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M5",
+   "template": "fixture-orders",
+   "method": "message_order",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "ModuleNotFoundError: No module named 'orders.tax'",
+      "`sklearn.utils._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "ModuleNotFoundError: No module named 'orders.tax'",
+     "issue_tool": "pytest_run",
+     "fault": "renamed_helper"
+    },
+    {
+     "repaired_before": [
+      "renamed_helper"
+     ],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+      "`sklearn.utils._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+     "issue_tool": "pytest_run",
+     "fault": "private_moved"
+    },
+    {
+     "repaired_before": [
+      "renamed_helper",
+      "private_moved"
+     ],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "AttributeError · tests/test_service.py::test_checkout_total",
+      "`sklearn.utils._user_interface._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "AttributeError · tests/test_service.py::test_checkout_total",
+     "issue_tool": "pytest_run",
+     "fault": "numpy_alias"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "renamed_helper",
+    "private_moved",
+    "numpy_alias"
+   ],
+   "an_acceptable_order": true
+  },
+  {
+   "case": "M5",
+   "template": "fixture-orders",
+   "method": "category_order",
+   "steps": [
+    {
+     "repaired_before": [],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "ModuleNotFoundError: No module named 'orders.tax'",
+      "`sklearn.utils._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "ModuleNotFoundError: No module named 'orders.tax'",
+     "issue_tool": "pytest_run",
+     "fault": "renamed_helper"
+    },
+    {
+     "repaired_before": [
+      "renamed_helper"
+     ],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+      "`sklearn.utils._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "ImportError: cannot import name '_print_elapsed_time' from 'sklearn.utils'",
+     "issue_tool": "pytest_run",
+     "fault": "private_moved"
+    },
+    {
+     "repaired_before": [
+      "renamed_helper",
+      "private_moved"
+     ],
+     "open_issues": 4,
+     "open_issue_titles": [
+      "AttributeError · tests/test_service.py::test_checkout_total",
+      "`sklearn.utils._user_interface._print_elapsed_time` imported but unused",
+      "Import block is un-sorted or un-formatted",
+      "Import block is un-sorted or un-formatted"
+     ],
+     "issue": "AttributeError · tests/test_service.py::test_checkout_total",
+     "issue_tool": "pytest_run",
+     "fault": "numpy_alias"
+    }
+   ],
+   "first_issue_right": true,
+   "wrong_issue_attempts": 0,
+   "reached_goal": true,
+   "order": [
+    "renamed_helper",
+    "private_moved",
+    "numpy_alias"
+   ],
+   "an_acceptable_order": true
+  }
+ ]
+}

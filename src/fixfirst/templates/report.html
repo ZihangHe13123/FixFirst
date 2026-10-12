@@ -48,6 +48,7 @@ input[type=search],input[type=text]{border:1px solid var(--line);border-radius:8
 <p class="muted">Goal: {{ goal_name }} · {{ 'session stopped' if session.stopped else 'in progress' }}</p></div>
 <span class="badge {{ session.goal_status }}">{{ {'unknown':'Not yet verified','blocked':'Goal not reached','achieved':'Goal verified'}[session.goal_status] }}</span></div>
 <p class="note">{{ session.session_id }} · created {{ session.created_at }}</p>
+{% if session.test_targets %}<p>Tests to run: <code>{{ session.test_targets|join(', ') }}</code>. This report covers the saved selection.</p>{% endif %}
 <div class="stats"><div class="stat"><b>{{ counts.open }}</b><span>Issue groups still failing</span></div><div class="stat"><b>{{ counts.resolved }}</b><span>Verified fixed</span></div><div class="stat"><b>{{ counts.not_observed + counts.awaiting_verification }}</b><span>Unchecked or awaiting verification</span></div><div class="stat"><b>{{ session.runs|length }}</b><span>Checks and imports</span></div></div>
 {% if installation_records %}<p class="note">{{ installation_records }} installation record(s) are retained below as history. They do not count as currently failing or verified fixed checks.</p>{% endif %}
 <div class="pipeline">Collect evidence → group symptoms → diagnose the cause → plan the next step → you change the code → verify with a real check</div>

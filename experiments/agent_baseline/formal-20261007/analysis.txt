@@ -1,0 +1,156 @@
+3 preparation files, 660 commands, 660 planned rows; 22 tasks; models ['Qwen3.6-35B-A3B-6bit', 'Qwen3.8-27B-MLX-4bit', 'gemma-4-26B-A4B-it-qat-4bit']; 5 runs per cell; commit 5c224cf28896; identity 590dbc2d32e5
+
+1. THE PLAN: as section 6 of PLAN.md, every cell complete
+   THE RECORDS: 660 rows of 660 planned; all as planned
+   THE STATEMENT, Qwen3.6-35B-A3B-6bit: baseline one text in 110 runs; mcp one text in 110 runs; the mcp text begins with the baseline text; says how the grader starts the suite: yes
+   THE STATEMENT, Qwen3.8-27B-MLX-4bit: baseline one text in 110 runs; mcp one text in 110 runs; the mcp text begins with the baseline text; says how the grader starts the suite: yes
+   THE STATEMENT, gemma-4-26B-A4B-it-qat-4bit: baseline one text in 110 runs; mcp one text in 110 runs; the mcp text begins with the baseline text; says how the grader starts the suite: yes
+
+====================================================================================================
+MODEL Qwen3.6-35B-A3B-6bit
+2. HOW THE RUNS WENT
+   baseline  110 runs: ended early on a cut-off or tool-less reply 0; at the time limit 1 (allowed 11); lost 0 -> the three criteria hold | replies 1297, without token counts 0, cut for length 1 (below the limit sent: 0), longest 32768 tokens
+             prompt tokens 9420222, of these from the server's cache 7118848 (76%); replies after a run's first that took nothing from the cache: 136 of 1187
+             runs that began with cached tokens: 0; later replies with a longer prompt 1187: took every whole block of 2048 tokens of the prompt before 1187, fewer 0, not in whole blocks 0
+   mcp       110 runs: ended early on a cut-off or tool-less reply 0; at the time limit 0 (allowed 11); lost 0 -> the three criteria hold | replies 913, without token counts 0, cut for length 0 (below the limit sent: 0), longest 1829 tokens
+             prompt tokens 4233297, of these from the server's cache 2881536 (68%); replies after a run's first that took nothing from the cache: 0 of 803
+             runs that began with cached tokens: 0; later replies with a longer prompt 803: took every whole block of 2048 tokens of the prompt before 803, fewer 0, not in whole blocks 0
+3. METRIC 1: the fix rate and its uplift (mcp minus baseline), mean over tasks
+   strict (main result)   A to D (18 tasks): baseline  87.8%  mcp  98.9%  uplift  +11.1 points  95% interval +1.1 to +22.2  tasks up 5, down 1, sign test p = 0.219
+   only another option    A to D (18 tasks): baseline  96.7%  mcp  98.9%  uplift   +2.2 points  95% interval -2.2 to +6.7  tasks up 3, down 1, sign test p = 0.625
+   nothing left at end    A to D (18 tasks): baseline  94.4%  mcp 100.0%  uplift   +5.6 points  95% interval +1.1 to +11.1  tasks up 4, down 0, sign test p = 0.125
+   by stratum (strict): A 100.0% -> 100.0% (+0.0); B  95.0% -> 100.0% (+5.0); C  76.0% -> 100.0% (+24.0); D  84.0% ->  96.0% (+12.0); E 100.0% -> 100.0% (+0.0); F 100.0% -> 100.0% (+0.0)
+   task                           stratum baseline   mcp   uplift
+   ea1-pkgres-removed             A       100.0%  100.0%    +0.0
+   ea2-missing-httpx-mock         A       100.0%  100.0%    +0.0
+   ea3-missing-pycryptodome       A       100.0%  100.0%    +0.0
+   ea4-py-spec-625                A       100.0%  100.0%    +0.0
+   eb1-sqlalchemy-databases       B       100.0%  100.0%    +0.0
+   eb2-scipy-kulsinski            B        80.0%  100.0%   +20.0
+   eb3-werkzeug-bind-arguments    B       100.0%  100.0%    +0.0
+   eb4-sklearn-multi-class        B       100.0%  100.0%    +0.0
+   ec1-old-pytest-pyproject       C       100.0%  100.0%    +0.0
+   ec2-lib-layout                 C       100.0%  100.0%    +0.0
+   ec3-metadata-needs-install     C       100.0%  100.0%    +0.0
+   ec4-django-makefile            C        40.0%  100.0%   +60.0
+   ec5-django-runtests            C        40.0%  100.0%   +60.0
+   ed1-pptx-and-pinv2             D       100.0%  100.0%    +0.0
+   ed2-toolchain-layered          D       100.0%  100.0%    +0.0
+   ed3-three-independent          D       100.0%   80.0%   -20.0
+   ed4-layout-dependency-kwarg    D        80.0%  100.0%   +20.0
+   ed5-django-settings-and-signal D        40.0%  100.0%   +60.0
+   ee1-addopts-missing-plugin     E       100.0%  100.0%    +0.0
+   ee2-xlrd-xlsx                  E       100.0%  100.0%    +0.0
+   ef1-code-defect-easy           F       100.0%  100.0%    +0.0
+   ef2-code-defect-moderate       F       100.0%  100.0%    +0.0
+4. METRIC 2: mcp to baseline on the tasks of A to D that both arms fix (at least 3 of 5 runs each); below 1 means less with MCP
+   fixed runs, both arms fix                15 tasks: turns x0.54 (0.43 to 0.69); time x0.46 (0.38 to 0.56); tokens x0.36 (0.28 to 0.46)
+   all runs, unfixed = limits               18 tasks: turns x0.48 (0.38 to 0.62); time x0.33 (0.22 to 0.47); tokens x0.37 (0.30 to 0.46)
+5. OTHER RECORDS
+   baseline  fixed 99/110; not graded 0; runs with a violation 10 {'configuration_carriers': 2, 'other_pytest_option': 9, 'selection_or_outcome': 2}; finish on a failing suite 0; finish not called 1; median turns 11.0, seconds 74.4; final state not checked (no credit in the second reading) 0
+             reminders 0 in 0 runs; empty replies 0 in 0 runs; continuations 1
+   mcp       fixed 109/110; not graded 0; runs with a violation 1 {'test_content': 1}; finish on a failing suite 0; finish not called 1; median turns 7.0, seconds 39.1; final state not checked (no credit in the second reading) 0; diagnose called in 110, check_again in 52, first diagnose at turn 1.0 (median), FixFirst seconds 2.4 (median); first step names an action in 95 of 105 {'command': 50, 'configuration': 25, 'location': 30}, carried out afterwards in 95; of 50 pip commands 36 with the requirement text as given (approximate); first diagnose call answered without steps in 5, no diagnose reply with steps in 5
+             reminders 0 in 0 runs; empty replies 0 in 0 runs; continuations 0
+6. THE WORDING FIXED IN ADVANCE
+   'no uplift measured' (uplift below 5 points and all three reductions below one tenth): False
+   flagship trigger 1 (uplift of 20 points in A to D): False; trigger 2 (fix rate not lower, two of three reduced by a quarter): True
+
+====================================================================================================
+MODEL Qwen3.8-27B-MLX-4bit
+2. HOW THE RUNS WENT
+   baseline  110 runs: ended early on a cut-off or tool-less reply 0; at the time limit 6 (allowed 11); lost 0 -> the three criteria hold | replies 1188, without token counts 0, cut for length 0 (below the limit sent: 0), longest 6885 tokens
+             prompt tokens 7357637, of these from the server's cache 5349376 (73%); replies after a run's first that took nothing from the cache: 134 of 1078
+             runs that began with cached tokens: 0; later replies with a longer prompt 1078: took every whole block of 2048 tokens of the prompt before 1078, fewer 0, not in whole blocks 0
+   mcp       110 runs: ended early on a cut-off or tool-less reply 0; at the time limit 4 (allowed 11); lost 0 -> the three criteria hold | replies 1105, without token counts 0, cut for length 0 (below the limit sent: 0), longest 9090 tokens
+             prompt tokens 5853952, of these from the server's cache 4171776 (71%); replies after a run's first that took nothing from the cache: 0 of 995
+             runs that began with cached tokens: 0; later replies with a longer prompt 995: took every whole block of 2048 tokens of the prompt before 995, fewer 0, not in whole blocks 0
+3. METRIC 1: the fix rate and its uplift (mcp minus baseline), mean over tasks
+   strict (main result)   A to D (18 tasks): baseline  93.3%  mcp  95.6%  uplift   +2.2 points  95% interval +0.0 to +6.7  tasks up 1, down 0, sign test p = 1.000
+   only another option    A to D (18 tasks): baseline  93.3%  mcp  95.6%  uplift   +2.2 points  95% interval +0.0 to +6.7  tasks up 1, down 0, sign test p = 1.000
+   nothing left at end    A to D (18 tasks): baseline  93.3%  mcp  95.6%  uplift   +2.2 points  95% interval +0.0 to +6.7  tasks up 1, down 0, sign test p = 1.000
+   by stratum (strict): A 100.0% -> 100.0% (+0.0); B  75.0% ->  85.0% (+10.0); C 100.0% -> 100.0% (+0.0); D  96.0% ->  96.0% (+0.0); E 100.0% -> 100.0% (+0.0); F 100.0% -> 100.0% (+0.0)
+   task                           stratum baseline   mcp   uplift
+   ea1-pkgres-removed             A       100.0%  100.0%    +0.0
+   ea2-missing-httpx-mock         A       100.0%  100.0%    +0.0
+   ea3-missing-pycryptodome       A       100.0%  100.0%    +0.0
+   ea4-py-spec-625                A       100.0%  100.0%    +0.0
+   eb1-sqlalchemy-databases       B       100.0%  100.0%    +0.0
+   eb2-scipy-kulsinski            B         0.0%   40.0%   +40.0
+   eb3-werkzeug-bind-arguments    B       100.0%  100.0%    +0.0
+   eb4-sklearn-multi-class        B       100.0%  100.0%    +0.0
+   ec1-old-pytest-pyproject       C       100.0%  100.0%    +0.0
+   ec2-lib-layout                 C       100.0%  100.0%    +0.0
+   ec3-metadata-needs-install     C       100.0%  100.0%    +0.0
+   ec4-django-makefile            C       100.0%  100.0%    +0.0
+   ec5-django-runtests            C       100.0%  100.0%    +0.0
+   ed1-pptx-and-pinv2             D       100.0%  100.0%    +0.0
+   ed2-toolchain-layered          D        80.0%   80.0%    +0.0
+   ed3-three-independent          D       100.0%  100.0%    +0.0
+   ed4-layout-dependency-kwarg    D       100.0%  100.0%    +0.0
+   ed5-django-settings-and-signal D       100.0%  100.0%    +0.0
+   ee1-addopts-missing-plugin     E       100.0%  100.0%    +0.0
+   ee2-xlrd-xlsx                  E       100.0%  100.0%    +0.0
+   ef1-code-defect-easy           F       100.0%  100.0%    +0.0
+   ef2-code-defect-moderate       F       100.0%  100.0%    +0.0
+4. METRIC 2: mcp to baseline on the tasks of A to D that both arms fix (at least 3 of 5 runs each); below 1 means less with MCP
+   fixed runs, both arms fix                17 tasks: turns x0.82 (0.68 to 0.98); time x0.73 (0.60 to 0.89); tokens x0.74 (0.59 to 0.91)
+   all runs, unfixed = limits               18 tasks: turns x0.83 (0.70 to 0.99); time x0.74 (0.62 to 0.89); tokens x0.78 (0.62 to 0.96)
+5. OTHER RECORDS
+   baseline  fixed 104/110; not graded 0; runs with a violation 0 {}; finish on a failing suite 0; finish not called 6; median turns 10.0, seconds 297.0; final state not checked (no credit in the second reading) 0
+             reminders 0 in 0 runs; empty replies 0 in 0 runs; continuations 0
+   mcp       fixed 106/110; not graded 0; runs with a violation 0 {}; finish on a failing suite 0; finish not called 4; median turns 9.5, seconds 230.9; final state not checked (no credit in the second reading) 0; diagnose called in 110, check_again in 101, first diagnose at turn 1.0 (median), FixFirst seconds 2.9 (median); first step names an action in 92 of 102 {'command': 49, 'configuration': 24, 'location': 29}, carried out afterwards in 80; of 49 pip commands 31 with the requirement text as given (approximate); first diagnose call answered without steps in 8, no diagnose reply with steps in 8
+             reminders 0 in 0 runs; empty replies 0 in 0 runs; continuations 0
+6. THE WORDING FIXED IN ADVANCE
+   'no uplift measured' (uplift below 5 points and all three reductions below one tenth): False
+   flagship trigger 1 (uplift of 20 points in A to D): False; trigger 2 (fix rate not lower, two of three reduced by a quarter): True
+
+====================================================================================================
+MODEL gemma-4-26B-A4B-it-qat-4bit
+2. HOW THE RUNS WENT
+   baseline  110 runs: ended early on a cut-off or tool-less reply 0 (and 1 on such a reply with all turns used); at the time limit 0 (allowed 11); lost 0 -> the three criteria hold | replies 2215, without token counts 0, cut for length 1 (below the limit sent: 0), longest 32768 tokens
+             prompt tokens 16480542, of these from the server's cache 14318592 (87%); replies after a run's first that took nothing from the cache: 0 of 2105
+             runs that began with cached tokens: 0; later replies with a longer prompt 2105: took every whole block of 1024 tokens of the prompt before 2105, fewer 0, not in whole blocks 0
+   mcp       110 runs: ended early on a cut-off or tool-less reply 3; at the time limit 0 (allowed 11); lost 0 -> the three criteria DO NOT HOLD | replies 1233, without token counts 0, cut for length 0 (below the limit sent: 0), longest 1095 tokens
+             prompt tokens 5698922, of these from the server's cache 4502528 (79%); replies after a run's first that took nothing from the cache: 0 of 1123
+             runs that began with cached tokens: 0; later replies with a longer prompt 1123: took every whole block of 1024 tokens of the prompt before 1123, fewer 0, not in whole blocks 0
+3. METRIC 1: the fix rate and its uplift (mcp minus baseline), mean over tasks
+   strict (main result)   A to D (18 tasks): baseline  38.9%  mcp  90.0%  uplift  +51.1 points  95% interval +35.6 to +65.6  tasks up 16, down 1, sign test p = 0.000
+   only another option    A to D (18 tasks): baseline  38.9%  mcp  90.0%  uplift  +51.1 points  95% interval +35.6 to +65.6  tasks up 16, down 1, sign test p = 0.000
+   nothing left at end    A to D (18 tasks): baseline  41.1%  mcp  90.0%  uplift  +48.9 points  95% interval +33.3 to +63.3  tasks up 16, down 1, sign test p = 0.000
+   by stratum (strict): A  55.0% -> 100.0% (+45.0); B  50.0% ->  75.0% (+25.0); C  28.0% -> 100.0% (+72.0); D  28.0% ->  84.0% (+56.0); E  80.0% ->  80.0% (+0.0); F 100.0% ->  80.0% (-20.0)
+   task                           stratum baseline   mcp   uplift
+   ea1-pkgres-removed             A        60.0%  100.0%   +40.0
+   ea2-missing-httpx-mock         A        60.0%  100.0%   +40.0
+   ea3-missing-pycryptodome       A       100.0%  100.0%    +0.0
+   ea4-py-spec-625                A         0.0%  100.0%  +100.0
+   eb1-sqlalchemy-databases       B       100.0%   80.0%   -20.0
+   eb2-scipy-kulsinski            B        20.0%   60.0%   +40.0
+   eb3-werkzeug-bind-arguments    B        20.0%   60.0%   +40.0
+   eb4-sklearn-multi-class        B        60.0%  100.0%   +40.0
+   ec1-old-pytest-pyproject       C        40.0%  100.0%   +60.0
+   ec2-lib-layout                 C        20.0%  100.0%   +80.0
+   ec3-metadata-needs-install     C        80.0%  100.0%   +20.0
+   ec4-django-makefile            C         0.0%  100.0%  +100.0
+   ec5-django-runtests            C         0.0%  100.0%  +100.0
+   ed1-pptx-and-pinv2             D        80.0%  100.0%   +20.0
+   ed2-toolchain-layered          D        20.0%  100.0%   +80.0
+   ed3-three-independent          D        40.0%   80.0%   +40.0
+   ed4-layout-dependency-kwarg    D         0.0%   80.0%   +80.0
+   ed5-django-settings-and-signal D         0.0%   60.0%   +60.0
+   ee1-addopts-missing-plugin     E        80.0%   80.0%    +0.0
+   ee2-xlrd-xlsx                  E        80.0%   80.0%    +0.0
+   ef1-code-defect-easy           F       100.0%   60.0%   -40.0
+   ef2-code-defect-moderate       F       100.0%  100.0%    +0.0
+4. METRIC 2: mcp to baseline on the tasks of A to D that both arms fix (at least 3 of 5 runs each); below 1 means less with MCP
+   fixed runs, both arms fix                 7 tasks: turns x0.55 (0.34 to 0.90); time x1.03 (0.72 to 1.43); tokens x0.63 (0.37 to 1.04)
+   all runs, unfixed = limits               18 tasks: turns x0.29 (0.21 to 0.41); time x0.09 (0.04 to 0.23); tokens x0.27 (0.17 to 0.44)
+5. OTHER RECORDS
+   baseline  fixed 53/110; not graded 0; runs with a violation 7 {'configuration_carriers': 4, 'selection_or_outcome': 6, 'test_content': 1}; finish on a failing suite 9; finish not called 46; median turns 21.0, seconds 32.8; final state not checked (no credit in the second reading) 0
+             reminders 62 in 39 runs; empty replies 63 in 39 runs; continuations 1
+   mcp       fixed 97/110; not graded 0; runs with a violation 2 {'configuration_carriers': 2, 'selection_or_outcome': 2}; finish on a failing suite 1; finish not called 15; median turns 9.0, seconds 19.2; final state not checked (no credit in the second reading) 0; diagnose called in 110, check_again in 87, first diagnose at turn 1.0 (median), FixFirst seconds 2.5 (median); first step names an action in 95 of 105 {'command': 50, 'configuration': 25, 'location': 30}, carried out afterwards in 93; of 50 pip commands 45 with the requirement text as given (approximate); first diagnose call answered without steps in 58, no diagnose reply with steps in 5
+             reminders 47 in 30 runs; empty replies 50 in 30 runs; continuations 0
+6. THE WORDING FIXED IN ADVANCE
+   'no uplift measured' (uplift below 5 points and all three reductions below one tenth): False
+   flagship trigger 1 (uplift of 20 points in A to D): True; trigger 2 (fix rate not lower, two of three reduced by a quarter): True
+
+PLAN AND RECORDS HOLD; the three run criteria do not hold everywhere

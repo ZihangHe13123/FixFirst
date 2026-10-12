@@ -65,6 +65,7 @@ def parser():
     init.add_argument("--name")
     init.add_argument("--goal", choices=["auto", *GOALS], default="auto")
     execution_arguments(init)
+    init.add_argument("--tests", nargs="+", help="Project test files or pytest node IDs to save for pass_tests")
     init.add_argument("--grouping", choices=["exact", "tfidf", "sbert"], default="tfidf")
     init.add_argument("--model", help="root-cause decision tree JSON (default: bundled model)")
     init.add_argument("--no-classifier", action="store_true", help="use rules and knowledge only")
@@ -104,7 +105,7 @@ def parser():
         if name == "scan":
             command.add_argument("--checks", nargs="+", choices=TOOLS)
             command.add_argument(
-                "--nodes", nargs="+", help="re-run observed test nodes only (with --checks pytest_run)"
+                "--nodes", nargs="+", help="save project test files/node IDs to run (with --checks pytest_run)"
             )
         if name == "run":
             command.add_argument("action")
@@ -130,6 +131,7 @@ def parser():
             command.add_argument("--goal", choices=["auto", *GOALS])
             command.add_argument("--python")
             execution_arguments(command)
+            command.add_argument("--tests", nargs="*", help="Save test files/node IDs; --tests without values restores default discovery")
         if name == "graph":
             command.add_argument("--output", required=True)
         if name == "ask":
@@ -171,6 +173,8 @@ def show(session):
 
     print(f"\n{session.name} · {session.session_id}")
     print(f"Goal: {GOALS[session.goal]} | {session.goal_status}")
+    if session.test_targets:
+        print("Tests to run: " + ", ".join(session.test_targets))
     for issue in session.issues:
         cause = f"  → {issue.diagnosis} ({issue.diagnosis_source})" if issue.diagnosis else ""
         print(f"  [{issue_state(issue.tool, issue.status)}] {issue.issue_id}  {issue.title[:110]}{cause}")
@@ -306,6 +310,7 @@ def main(argv=None):
                 args.model,
                 args.sbert_model,
                 execution=execution_settings(args),
+                tests=args.tests,
                 structured_evidence=args.structured_evidence,
                 bounded_actions=args.bounded_actions,
             )
@@ -345,7 +350,13 @@ def main(argv=None):
             session = store.load(args.session)
             path = store.directory(args.session) / "report.html"
             if args.command == "scan":
-                scan(session, args.checks, args.timeout, targets=args.nodes)
+                if args.nodes:
+                    if args.checks != ["pytest_run"]:
+                        raise ValueError("--nodes must be used on its own with --checks pytest_run")
+                    from .test_selection import configure_tests
+
+                    configure_tests(session, args.nodes)
+                scan(session, args.checks, args.timeout)
             elif args.command == "import":
                 import_log(session, args.file, args.tool, args.exit_code)
             elif args.command == "run":
@@ -374,8 +385,11 @@ def main(argv=None):
                     args, session.execution if not args.goal or args.goal == session.goal else None)
                 validated = create_session(
                     session.project_root, args.python or session.target_python,
-                    goal=args.goal or session.goal, execution=configured)
+                    goal=args.goal or session.goal, execution=configured,
+                    tests=args.tests if args.tests is not None else session.test_targets
+                    if not args.goal or args.goal == session.goal else None)
                 session.goal, session.execution = validated.goal, validated.execution
+                session.test_targets = validated.test_targets
                 session.target_python = validated.target_python
                 session.environment = {}
                 session.history.append({"time": now(), "kind": "execution_change"})
