@@ -1,6 +1,6 @@
 # Report and guide completion checklist
 
-Version 0.6 is an incomplete working draft for discussion by all three members. It incorporates
+Version 0.7 is an incomplete working draft for discussion by all three members. It incorporates
 the published A2/B3 results, separate local and cloud MCP experiments, scripted follow checks,
 BugsInPy and held-out checks, and the diagnosis, ordering and grouping evaluations.
 
@@ -8,7 +8,7 @@ BugsInPy and held-out checks, and the diagnosis, ordering and grouping evaluatio
 
 | Item | Required completion |
 | --- | --- |
-| Report review | All three members review the wording and evidence; Claude checks the merged additions. Section 2 and reference entries were preserved, not researched again in this revision |
+| Report review | All three members review the wording and evidence; Claude rechecks the corrected bibliography. Background-paper numbers and descriptions have been checked; the group still decides whether to extend the literature review |
 | Real user study C2 | The user chose small real-participant sessions during the week of 12 October. Actual sessions, anonymous source tables and reviewed analysis remain pending. Exclude demonstration fixtures and the unusable submission in #67 |
 | Windows C3 | A teammate installs the trial freeze on a real Windows machine and records the result |
 | Independent installation | Someone who did not write the guide follows it on their own machine |

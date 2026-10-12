@@ -1,5 +1,28 @@
 # 报告中图、表和数字的来源
 
+## Version 0.7 literature correction on 12 October 2026
+
+The literature correction follows `LITERATURE-CHECK-20261012.md` and
+`REFERENCES-ADDITIONS-20261012.md`. The latter's seven English entries are included verbatim,
+with matching in-text numbers. Their complete hashes are in `LITERATURE-v0.7-20261012.json`.
+
+- Corrected Rubio-González, the published ICSE DockerizeMe entry, two original title colons,
+  and the pipdeptree organisation. The paper's 493 BugsInPy defects remain separate from the
+  repository snapshot's 501; all eight additional indexed defects are in black.
+- MCP cites implemented revision 2025-11-25. scikit-learn is cited for fitting the tree and
+  computing TF IDF similarity. SUS cites the chapter DOI and its electronic-edition pages,
+  207–212; participant results remain pending.
+- Model cards identify the official Qwen models and evaluated quantised conversions. The
+  stored Qwen revisions agree with those entries. Gemma has no recorded revision; its local
+  chat template differs from the online copy, and the archived hashes identify what was run.
+  DeepSeek remains a provider-controlled API alias rather than a frozen weight snapshot.
+- Crossref metadata for DockerizeMe and SUS and the implementation sources were checked.
+  The bibliography update does not change the experiment or participant data. Version 0.6's
+  numerical receipt remains the source of the measured results.
+
+The background review still covers three papers. Added implementation references do not make
+it a comprehensive survey; the group should decide whether further background work is needed.
+
 ## Version 0.6 merged draft on 12 October 2026
 
 The additions were supplied in `REPORT-ADDITIONS-DRAFT-20261012.md` and checked against main

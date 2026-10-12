@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-12",
+  "report_version": "0.7 DRAFT",
+  "base_commit": "43ba80097e79fadcad9705f2f427e7e4cc51fffd",
+  "peer_review_sha256": "5d0c2186e6605abf91e6e5a5ae1aba949063c032f7fdd711082b3b0a3fa13f32",
+  "reference_additions_sha256": "4ffc8b3316359a542fced6762c0559c624de04b525455d47be27b3ba2feeca86",
+  "required_corrections": [
+    "Rubio-González spelling twice",
+    "DockerizeMe ICSE publication and DOI",
+    "Two original title colons",
+    "tox-dev attribution",
+    "493 versus 501 indexed bugs"
+  ],
+  "reference_entries_9_to_15": [
+    "[9] Model Context Protocol. Specification, revision 2025-11-25. https://modelcontextprotocol.io/specification/2025-11-25. Accessed 12 October 2026.",
+    "[10] F. Pedregosa, G. Varoquaux, A. Gramfort et al. 2011. Scikit-learn: Machine Learning in Python. Journal of Machine Learning Research 12, 2825-2830. https://www.jmlr.org/papers/v12/pedregosa11a.html.",
+    "[11] Qwen. 2026. Qwen3.6-35B-A3B. Model card. https://huggingface.co/Qwen/Qwen3.6-35B-A3B. Run as the 6 bit MLX conversion mlx-community/Qwen3.6-35B-A3B-6bit, revision cb7e092. https://huggingface.co/mlx-community/Qwen3.6-35B-A3B-6bit. Accessed 12 October 2026.",
+    "[12] Qwen. 2026. Qwen3.8-27B. Model card. https://huggingface.co/Qwen/Qwen3.8-27B. Run as the 4 bit MLX conversion lmstudio-community/Qwen3.8-27B-MLX-4bit, revision 6067b15. https://huggingface.co/lmstudio-community/Qwen3.8-27B-MLX-4bit. Accessed 12 October 2026.",
+    "[13] mlx-community. 2026. gemma-4-26B-A4B-it-qat-4bit. Model card. 4 bit MLX build of Gemma 4 26B A4B, instruction tuned, quantisation aware trained. https://huggingface.co/mlx-community/gemma-4-26B-A4B-it-qat-4bit. Accessed 12 October 2026.",
+    "[14] DeepSeek. Models & Pricing. DeepSeek API Docs. https://api-docs.deepseek.com/quick_start/pricing. Accessed 12 October 2026.",
+    "[15] J. Brooke. 1996. SUS: A 'Quick and Dirty' Usability Scale. In P. W. Jordan, B. Thomas, I. L. McClelland and B. Weerdmeester (eds.), Usability Evaluation in Industry. CRC Press, 207-212. DOI 10.1201/9781498710411-35."
+  ],
+  "source_checks": {
+    "entries_match_peer_additions_verbatim": true,
+    "in_text_reference_ids_complete": true,
+    "indexed_bugs": 501,
+    "projects": 17,
+    "black_indexed_bugs": 23,
+    "paper_black_bugs": 15,
+    "paper_count_source": "peer review of the paper table",
+    "crossref": {
+      "DockerizeMe": {
+        "doi": "10.1109/ICSE.2019.00047",
+        "conference": "ICSE 2019",
+        "pages": "328-338"
+      },
+      "SUS": {
+        "doi": "10.1201/9781498710411-35",
+        "year": 1996,
+        "electronic_edition_pages": "207-212"
+      }
+    },
+    "supported_mcp_revision": "2025-11-25",
+    "qwen_conversion_revisions": [
+      "cb7e092",
+      "6067b15"
+    ],
+    "gemma_revision_recorded": false,
+    "gemma_template_difference_disclosed": true
+  },
+  "measurement_source_unchanged": "docs/report-assets/B11-results-v0.6-20261012.json",
+  "scope": "Citation correction and implementation/model provenance; not a new experiment or a comprehensive literature survey"
+}
