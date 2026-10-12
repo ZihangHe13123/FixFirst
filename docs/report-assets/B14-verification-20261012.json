@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-12",
+  "product_commit": "646c12a4b8f8ea076ab888092a5f885fe9c4e2be",
+  "product_tag": "b12-rc5-freeze-20261010",
+  "package_version": "0.8.0rc5",
+  "status": "trial baseline; final delivery version pending",
+  "platform": "macOS arm64",
+  "cli": [
+    "init --tests",
+    "selected failing scan",
+    "same selected scope passes after source edit",
+    "show achieved",
+    "HTML export"
+  ],
+  "mcp": [
+    "initialize",
+    "tests input schema",
+    "diagnose with tests",
+    "check_again reuses tests and passes"
+  ],
+  "unselected_test": "deliberately failing; not included in this selected-scope result",
+  "test_files_unchanged": true,
+  "language_model_requests": 0,
+  "fresh_independent_installation": "pending",
+  "windows_real_device": "pending",
+  "screenshots": "unchanged earlier rc2 sample, explicitly labelled in the updated guide",
+  "cli_evidence_sha256": "57c3e704151589503ea332377f4bf3d20a0289e771d6984892d105a6ba16af6e",
+  "mcp_evidence_sha256": "e39654a095ea027925e9c6ea3f869a0cedee2b7e82840e10d3a1aacca54d7d69"
+}

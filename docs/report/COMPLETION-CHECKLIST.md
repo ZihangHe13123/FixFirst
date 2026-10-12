@@ -1,24 +1,36 @@
 # Report and guide completion checklist
 
-Version 0.4 is an incomplete working draft for group discussion. It contains the recorded A2, B3, local B7 and independently recomputed DeepSeek results, system description, literature, limitations and the full installation guide. The cloud comparison is reported separately. All three members should discuss the wording and remaining work before finalising; see [TEAM-REVIEW.md](TEAM-REVIEW.md).
+Version 0.6 is an incomplete working draft for discussion by all three members. It incorporates
+the published A2/B3 results, separate local and cloud MCP experiments, scripted follow checks,
+BugsInPy and held-out checks, and the diagnosis, ordering and grouping evaluations.
 
-## Evidence still needed
+## Work still needed
 
 | Item | Required completion |
-|---|---|
-| User study C2 | Human-run sessions, anonymous source tables and reviewed analysis; demonstration fixtures must remain excluded |
-| Windows C3 | Teammate installs the frozen release and follows the guide on a real machine; record problems and screenshots |
-| Independent guide installation | A person who did not write the guide follows it on macOS and Windows |
-| B12 phase two | Complete the before and after FixFirst verification results; reproduction alone is not a product evaluation |
-| B17 | Finish the registered next-step ordering and feature ablations, or disclose their absence |
-| Proposal attachment | Identify and attach the original submitted proposal without rewriting it |
-| Individual contributions | Each member writes their own reflection and peer evaluation; do not generate them with AI |
-| Final packaging | Apply the course submission names and final SystemCode layout, update guide paths and check the packaged copy |
+| --- | --- |
+| Report review | All three members review the wording and evidence; Claude checks the merged additions. Section 2 and reference entries were preserved, not researched again in this revision |
+| Real user study C2 | The user chose small real-participant sessions during the week of 12 October. Actual sessions, anonymous source tables and reviewed analysis remain pending. Exclude demonstration fixtures and the unusable submission in #67 |
+| Windows C3 | A teammate installs the trial freeze on a real Windows machine and records the result |
+| Independent installation | Someone who did not write the guide follows it on their own machine |
+| rc5 trial feedback | Record the project, exact command/test selection, observed failure, advice followed and result. Decide the final version after feedback |
+| Final release identity | A final version/tag has not been approved. Update installation and submission identities after that decision |
+| Original proposal | Attach the original submitted proposal unchanged |
+| Two videos | Prepare scripts, check claims, and have people record narration; no AI-generated narration |
+| Individual contributions | Each member writes their own reflection and peer evaluation |
+| Final packaging | Apply the course filenames and SystemCode layout, check the packaged copy, then upload before the deadline |
 
-## Publication and review
+## Publication and interpretation
 
-- B3 real-project and generated result packages are in PRs #66 and #69. This report cites their fixed commits; their publication merges are separate from product changes.
-- A and C should review the descriptions of labels, scoring, agreement and AI assistance before final submission.
-- Product source, model, runner and original scores remain frozen. The documentation branch must not change those files.
-- The current community offering is free. Future paid services are stated as hypotheses, with no invented customer or revenue figures.
-- Finalise the report after the pending evidence is returned, then render and inspect every page again.
+- The cited A2/B3, B7, B12, diagnosis, ordering and grouping evidence is published in main and
+  pinned in [SOURCES.md](SOURCES.md). The original scores and evaluated tags stay unchanged.
+- Agent effects belong to `5c224cf` (rc2). Later output compatibility and product verification
+  checks are reported separately; they do not remeasure rc5 agent performance.
+- B12 and B17 are no longer unrun tasks. Their limitations remain: default runs often miss the
+  bug test, the available ordering cases show no advantage, and removing evidence display needs
+  a participant arm that has not been run.
+- Hard-pair grouping precision is 0.274, below the proposal target of 0.90. Keep this result.
+- Main includes a later execution-dataset generator repair (#95); the frozen tags identify the
+  product and runner actually evaluated. This documentation work does not alter them.
+- The current guide installs the immutable rc5 trial tag. Earlier screenshots are labelled as
+  the rc2 sample workflow. Windows and independent human installation are still pending.
+- After human review and remaining evidence, render and inspect the final documents again.

@@ -1,6 +1,6 @@
 # FixFirst installation and user guide
 
-This guide covers the frozen v0.8 product at `b7-freeze-20261007` (commit `5c224cf`, package version `0.8.0rc2`). Use the browser or command line to diagnose your project, or connect the same checks to a coding agent through MCP. You make the changes; FixFirst checks their effect.
+This guide covers the 0.8.0rc5 trial baseline at `b12-rc5-freeze-20261010` (commit `646c12a4b8f8ea076ab888092a5f885fe9c4e2be`). The final delivery version awaits teammate feedback. This guide is a working draft for team review. Use the browser or command line to diagnose your project, or connect the same checks to a coding agent through MCP. You make the changes; FixFirst checks their effect.
 
 ## 1 What you need
 
@@ -19,7 +19,7 @@ If you downloaded the source ZIP, extract it and open a terminal in that folder.
 Open a terminal and run:
 
 ```bash
-git clone --branch b7-freeze-20261007 --depth 1 \
+git clone --branch b12-rc5-freeze-20261010 --depth 1 \
   https://github.com/ZihangHe13123/FixFirst.git
 cd FixFirst
 bash scripts/setup.sh python3.12
@@ -35,7 +35,7 @@ If your Python has another command or location, replace `python3.12` with it. Th
 Open PowerShell and run:
 
 ```powershell
-git clone --branch b7-freeze-20261007 --depth 1 `
+git clone --branch b12-rc5-freeze-20261010 --depth 1 `
   https://github.com/ZihangHe13123/FixFirst.git
 cd FixFirst
 powershell -ExecutionPolicy Bypass -File scripts\setup.ps1
@@ -87,6 +87,8 @@ Enter your **project folder**, not a single source file. Select its Python execu
 - **Just get the tests to load** checks collection without executing test bodies.
 - **Clean up code-check warnings** uses Ruff for the code-check goal.
 
+**Name the tests when the project has its own way of running them.** By default **Make my tests pass** runs pytest from the project folder with no selection. Many repositories do not work that way: their test files have other names, some need packages you have not installed, or a helper file stops collection. FixFirst then reports **Default pytest did not find any tests** or a failure that has nothing to do with yours. In that case fill in **Tests to run (optional, one file or pytest node ID per line)**, for example `tests/test_orders.py` or `tests/test_orders.py::test_total`. The selection is saved with the session and used again by **Check again**. Its result covers the named tests only.
+
 For a program, select the entry you normally run. Put each argument on a separate line and supply standard input when the program uses `input()`. A complete exit code 0 produces **Program completed successfully**. This verifies that entry and input, not all business logic or assignment answers.
 
 Follow the first concrete step, then press **Check again**. Installation commands use the selected project interpreter. Review the command and the project's declarations before executing it. A conflicting version pin can require a source migration or declaration review instead of an installation command.
@@ -107,7 +109,9 @@ The selected notebook environment also needs `ipykernel`. Cells execute in a fre
 
 **Technical details** contains the session graph and raw check output. **Find it**, when offered, tries a bounded set of older releases in an isolated environment and needs internet access. A successful trial verifies its particular import; it does not prove every test will pass with that release.
 
-Changing the entry, input or interpreter requires fresh verification. A partial, timed-out or cancelled check does not close an original issue. When FixFirst omits execution-changing pytest options, a passing recorded check does not replace your own normal test command; run that command as well.
+Changing the entry, input or interpreter requires fresh verification. A partial, timed-out or cancelled check does not close an original issue. When the project sets its own pytest options, FixFirst checks with fixed options first and then confirms a repair by a second run that uses the project's options. The issue is closed only if that run executes the same tests and all pass (**Verified with the project's pytest options**); otherwise you see **Project pytest options were not verified** with the reason, and should run your usual test command yourself.
+
+Three messages mean that the check itself was incomplete, not that a cause was found. **Default pytest did not find any tests**: name the tests as in Section 4. **Test records are incomplete**: the suite produced more records than FixFirst keeps; the failures seen are retained, and a smaller test range gives a complete check. **pytest stopped with an internal error**: pytest itself failed before finishing; the cause is not confirmed.
 
 Editing tests, conftest files or protected selection settings is not taken as repairing the original failure. If you intentionally change the project specification, the human interface can accept a new baseline. An MCP agent cannot use that operation.
 
@@ -124,6 +128,14 @@ The following commands run from the FixFirst checkout. Replace `/path/to/project
 .venv/bin/fixfirst show SESSION_ID
 .venv/bin/fixfirst report SESSION_ID --open
 .venv/bin/fixfirst export SESSION_ID --output shared.html
+```
+
+To name the tests on the command line, add `--tests` with files or node IDs:
+
+```bash
+.venv/bin/fixfirst init /path/to/project \
+  --python /path/to/project/.venv/bin/python --goal pass_tests \
+  --tests tests/test_orders.py::test_total
 ```
 
 For a project without tests:
@@ -174,6 +186,8 @@ Example `diagnose` arguments for tests:
 }
 ```
 
+To limit the check to particular tests, add `"tests": ["tests/test_orders.py::test_total"]`. The selection is kept for `check_again`.
+
 For a script, use `goal: "run_project"` and add `execution: {"kind":"script","entry":"main.py"}`. Omit `execution` for `pass_tests`, `collect_tests` and `check_style`. If the tool says to remove an extra parameter, correct it and retry the same goal.
 
 The agent performs source edits and dependency installations; MCP does not silently do those repairs. Use the returned `session_id` with `check_again`. Stop after a verified goal, or when the tool identifies a boundary that needs human investigation. Do not keep calling it as an algorithm repair engine.
@@ -206,4 +220,4 @@ MCP sessions normally live in `~/.fixfirst/sessions`. To inspect them in the bro
 
 Stop the running server and remove FixFirst's installation folder when you no longer need it. Your checked project's source is separate and should not be deleted. CLI/web session records may be in `.fixfirst/` or your custom store; MCP sessions may be in `~/.fixfirst/sessions`. Back up or export records you want to keep before removing those stores.
 
-Product identity, screenshots and command verification for this guide are recorded in `docs/report-assets/B14-verification-20261009.json`. Final independent macOS and Windows installation checks remain in the submission checklist.
+The screenshots above retain the earlier rc2 sample workflow. rc5 adds the optional tests field described in Section 4; the core sample repair is unchanged. Updated guide identity and syntax checks are recorded in `docs/report-assets/B14-verification-20261012.json`; earlier screenshot identities remain in the 9 October record. Final independent macOS and Windows installation checks remain in the submission checklist.

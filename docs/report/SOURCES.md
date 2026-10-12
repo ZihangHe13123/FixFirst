@@ -1,17 +1,54 @@
 # 报告中图、表和数字的来源
 
+## Version 0.6 merged draft on 12 October 2026
+
+The additions were supplied in `REPORT-ADDITIONS-DRAFT-20261012.md` and checked against main
+commit `ae6c4ec35d2614cfcd561eb0869e2cc27cf19119`. The recorded A2/B3 and agent scores are unchanged.
+New numerical evidence was recounted from the published CSV/JSON files, without a model or a
+new defect execution. Full file hashes are in `B11-results-v0.6-20261012.json`.
+
+| Report section | Published evidence | Scope |
+| --- | --- | --- |
+| 3.3 and 4.3 | The four evaluated tags and their knowledge files | rc2 has 190 source records; rc5 has 191. The 132 rules and 81-feature tree retain their evaluated identities |
+| 4.3 later output checks | Independently accepted candidate and follow-check reports | Initial-output compatibility only; no rc5 agent effect estimate |
+| 5.2 | `examples/diagnosis-evaluation/frozen-0.8.0rc5/REPORT.md`, `per-case.csv`, `product-replay.json` | Development data, including scenarios that informed rules and features |
+| 5.3 and 5.4 | `examples/heldout-2026-10/`; the real and generated B3 packages under `experiments/diagnosis_baseline/` | Older v0.7.0 and `ff92446`; hedged causes and public scorer timing disclosed |
+| 5.5 and 5.6 | `experiments/agent_baseline/formal-20261007/analysis.txt`, `cloud-analysis.txt` | Frozen product and runner `5c224cf`; local and cloud conditions kept separate |
+| 5.5 early history | `experiments/agent_baseline/a2-development-20261004/RESULTS.md` | 78 + 6, with exact product/runner commits; nine smoke runs excluded |
+| 5.7 | `examples/bugsinpy-verification/README.md`, `results.csv`, `heldout/` | Reference-patch verification; new defects in familiar projects in set 3; not an automatic repair rate |
+| 5.8 | `examples/ordering-evaluation/REPORT.md`, `ordering.json`, `advice.json` | Five non-discriminating development cases and one advice rater; evidence-display arm not run |
+| 5.9 | `examples/grouping-evaluation/REPORT.md`; `experiments/grouping_hard/` | Natural stream comparison and constructed isolated text pairs |
+| Appendix C | `docs/USER_GUIDE.md`, `B14-verification-20261012.json` | rc5 trial tag and selected-scope CLI/MCP check; old sample images explicitly labelled |
+
+In the second held-out set, a Sanic target node is recorded but the intended defect does not
+reproduce offline. Valid failure-observation counts require reproduction; it stays in the
+28-case denominator as a failure. The 75 development defects include the separately marked
+PySnooper 2 case, whereas the earlier unseen phase-two result excludes it.
+
+Section 2 and its reference entries were preserved, not rechecked against the publications in
+this revision. Real participant data, Windows acceptance and a final version decision remain
+pending. The histories below describe their own earlier drafts.
+
+## Version 0.5 follow-check and BugsInPy update
+
+Sections 5.7 and 5.8 incorporate the evidence below. `docs/report-assets/B11-results-v0.5-20261009.json` retains prior numerical results and adds these outcomes. Independent recount of 28 raw records and saved sessions agrees with the registered BugsInPy counts: 27 unseen defects reproduced, 27 runs without mandatory command advice, 2 exact-name target matches and 0 closure successes. Supplementary parameter matching confirms 3 actual observed target failures; it does not replace the registered count. The remaining 24 target failures were not executed by the product. This is not evidence of 27 correct diagnoses or a completed closure-verification claim.
+
+- Peer report: local `workbench/claude-h5-acceptance-20261005/B12-PHASE2-CHECK-20261009.md`, SHA256 `9f4f4be0e0e9d4b67c82107728caa7870213f2bd3809f52bbfca4a33e0b7a27b`.
+- Independent receipt: `docs/report-assets/B12-recount-20261009.json`, including per-case record/session identities and the supplementary outcome details.
+- Product identity and scope: clean peer checkout at `5c224cf`; frozen CLI and runner confirm that `--nodes` permits reruns of previously observed nodes, not initial selection of arbitrary unseen tests. Unittest/program goals were not tested in this B12 batch.
+
 ## Version 0.4 draft status
 
 Version 0.4 keeps the v0.3 numerical evidence unchanged and adds draft notices and the team review agenda. Its coverage limitation follows protocol v1.16 sections 4 and 5: A to D use supported mechanisms, E has two uncovered environment faults, and F has two code defect controls. Proposed additional tests have not been run.
 
-## New evidence for the next team revision
+## Product follow-check evidence incorporated in v0.5
 
 The frozen product's scripted follow check, reported on 9 October 2026, repaired 17/18 A to D tasks, 0/2 E tasks and 0/2 F tasks, with no protected edits. Counts were checked against the 22 per-task records. The script executes printed commands or preregistered interpretations of named source changes, for at most six rounds. This is a product follow check on constructed instances, not a human usability study or a measurement of real environment-fault coverage.
 
 - Report: local `workbench/claude-h5-acceptance-20261005/EVAL-FOLLOW-CHECK-20261009.md`, SHA256 `eb09e549aa075ab1bde6741d7f16f0f7144de62fe8e28af95e41a49e4c278916`.
 - Per-task record: local `workbench/claude-h5-acceptance-20261005/results/eval-follow-wt-fixedC4-h5.json`, SHA256 `d258600cd587b5a5d0a6eaa8a62282062297a631e7625c74a04109d66c5f17a7`.
 - Caveats to discuss: eb1 lacks an executable replacement; ec3 succeeds using the alternative editable install; ee1's passing headline can mislead; ee2 falls back to unconfirmed generic advice.
-- BugsInPy phase one has 27 reproduced code defects excluding the separately marked PySnooper-2 development case. Phase two can measure wrong environment advice and premature resolution; new real environment failures still need independent selection.
+- BugsInPy phase two is now recorded above, excluding the separately marked PySnooper-2 development case. New real environment failures still need independent selection.
 
 ## Version 0.3 cloud addition checked 9 October 2026
 
