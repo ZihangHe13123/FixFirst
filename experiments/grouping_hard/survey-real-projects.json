@@ -1,0 +1,116 @@
+{
+ "total": {
+  "sessions": 281,
+  "runs_with_events": 811,
+  "events": 3546,
+  "same_block_pairs": 1640,
+  "same_block_pairs_with_different_text": 0,
+  "merged_exact": 1640,
+  "merged_tfidf": 1640,
+  "merged_by_tfidf_only": 0,
+  "merged_by_exact_only": 0
+ },
+ "sources": 61,
+ "examples_of_a_difference": [],
+ "by_source": {
+  "ansible": {
+   "sessions": 36,
+   "runs_with_events": 90,
+   "events": 146,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "black": {
+   "sessions": 36,
+   "runs_with_events": 87,
+   "events": 219,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "fastapi": {
+   "sessions": 40,
+   "runs_with_events": 88,
+   "events": 429,
+   "same_block_pairs": 68,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 68,
+   "merged_tfidf": 68,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "httpie": {
+   "sessions": 9,
+   "runs_with_events": 28,
+   "events": 40,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "luigi": {
+   "sessions": 36,
+   "runs_with_events": 90,
+   "events": 754,
+   "same_block_pairs": 288,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 288,
+   "merged_tfidf": 288,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "sanic": {
+   "sessions": 12,
+   "runs_with_events": 48,
+   "events": 136,
+   "same_block_pairs": 16,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 16,
+   "merged_tfidf": 16,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "scrapy": {
+   "sessions": 36,
+   "runs_with_events": 90,
+   "events": 558,
+   "same_block_pairs": 1268,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 1268,
+   "merged_tfidf": 1268,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "thefuck": {
+   "sessions": 40,
+   "runs_with_events": 200,
+   "events": 633,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  },
+  "youtube-dl": {
+   "sessions": 36,
+   "runs_with_events": 90,
+   "events": 631,
+   "same_block_pairs": 0,
+   "same_block_pairs_with_different_text": 0,
+   "merged_exact": 0,
+   "merged_tfidf": 0,
+   "merged_by_tfidf_only": 0,
+   "merged_by_exact_only": 0
+  }
+ }
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "created_at": "2026-09-08T01:12:51+00:00",
+  "created_at": "2026-10-12T03:38:45+00:00",
   "origin": "controlled_injection",
   "license": "CC0-1.0 for generated fixture code",
   "cases": [
@@ -13,7 +13,7 @@
       "path": "p1-missing_module",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p1-missing_config",
@@ -24,7 +24,7 @@
       "path": "p1-missing_config",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p1-style",
@@ -35,7 +35,7 @@
       "path": "p1-style",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p1-code_check",
@@ -46,7 +46,7 @@
       "path": "p1-code_check",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p1-dependency",
@@ -57,7 +57,7 @@
       "path": "p1-dependency",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p1-mixed",
@@ -68,7 +68,7 @@
       "path": "p1-mixed",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p2-missing_module",
@@ -79,7 +79,7 @@
       "path": "p2-missing_module",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p2-missing_config",
@@ -90,7 +90,7 @@
       "path": "p2-missing_config",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p2-style",
@@ -101,7 +101,7 @@
       "path": "p2-style",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p2-code_check",
@@ -112,7 +112,7 @@
       "path": "p2-code_check",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p2-dependency",
@@ -123,7 +123,7 @@
       "path": "p2-dependency",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p2-mixed",
@@ -134,7 +134,7 @@
       "path": "p2-mixed",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p3-missing_module",
@@ -145,7 +145,7 @@
       "path": "p3-missing_module",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p3-missing_config",
@@ -156,7 +156,7 @@
       "path": "p3-missing_config",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p3-style",
@@ -167,7 +167,7 @@
       "path": "p3-style",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p3-code_check",
@@ -178,7 +178,7 @@
       "path": "p3-code_check",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p3-dependency",
@@ -189,7 +189,7 @@
       "path": "p3-dependency",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p3-mixed",
@@ -200,7 +200,7 @@
       "path": "p3-mixed",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p4-missing_module",
@@ -211,7 +211,7 @@
       "path": "p4-missing_module",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p4-missing_config",
@@ -222,7 +222,7 @@
       "path": "p4-missing_config",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p4-style",
@@ -233,7 +233,7 @@
       "path": "p4-style",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p4-code_check",
@@ -244,7 +244,7 @@
       "path": "p4-code_check",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p4-dependency",
@@ -255,7 +255,7 @@
       "path": "p4-dependency",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p4-mixed",
@@ -266,7 +266,7 @@
       "path": "p4-mixed",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p5-missing_module",
@@ -277,7 +277,7 @@
       "path": "p5-missing_module",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p5-missing_config",
@@ -288,7 +288,7 @@
       "path": "p5-missing_config",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p5-style",
@@ -299,7 +299,7 @@
       "path": "p5-style",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p5-code_check",
@@ -310,7 +310,7 @@
       "path": "p5-code_check",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p5-dependency",
@@ -321,7 +321,7 @@
       "path": "p5-dependency",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     },
     {
       "case_id": "p5-mixed",
@@ -332,9 +332,8 @@
       "path": "p5-mixed",
       "baseline_pass": true,
       "restored_pass": true,
-      "raw_runs": 12
+      "raw_runs": 15
     }
   ],
-  "limitations": "五个生成项目共用相近模板，不是五个独立真实开源项目；只验证受控流程。",
-  "distribution_note": "Personal paths replaced; disposable runtimes and caches excluded. Recreate with fixfirst dataset to rerun checks."
+  "limitations": "Five generated projects share one template; they are not independent real projects and only exercise the controlled workflow."
 }

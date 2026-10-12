@@ -3,7 +3,7 @@
   "variant": "missing_module",
   "labels": [
     {
-      "issue_id": "issue-6a765ea258fc60",
+      "issue_id": "issue-87802eaf661dae",
       "label": "import_failure"
     }
   ],

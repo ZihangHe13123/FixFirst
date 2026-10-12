@@ -3,11 +3,11 @@
   "variant": "mixed",
   "labels": [
     {
-      "issue_id": "issue-93185473b48cc6",
+      "issue_id": "issue-b8f93d1bdaf6e2",
       "label": "import_failure"
     },
     {
-      "issue_id": "issue-1862cb2741f4a6",
+      "issue_id": "issue-030c09264c8468",
       "label": "style_issue"
     }
   ],

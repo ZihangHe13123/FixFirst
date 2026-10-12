@@ -1,0 +1,3639 @@
+{
+ "pairs": 394,
+ "threshold": 0.82,
+ "overall": {
+  "exact": {
+   "merged_rightly": 0,
+   "missed": 70,
+   "merged_wrongly": 0,
+   "kept_apart_rightly": 324,
+   "precision": null,
+   "recall": 0.0,
+   "f1": null
+  },
+  "tfidf": {
+   "merged_rightly": 69,
+   "missed": 1,
+   "merged_wrongly": 183,
+   "kept_apart_rightly": 141,
+   "precision": 0.27380952380952384,
+   "recall": 0.9857142857142858,
+   "f1": 0.4285714285714286
+  }
+ },
+ "by_family": {
+  "number": {
+   "pairs": 23,
+   "expected": "merge",
+   "merged_by_exact": 0,
+   "merged_by_tfidf": 23,
+   "cosine_min": 0.9019,
+   "cosine_median": 0.9854,
+   "cosine_max": 0.9991
+  },
+  "line": {
+   "pairs": 10,
+   "expected": "merge",
+   "merged_by_exact": 0,
+   "merged_by_tfidf": 10,
+   "cosine_min": 0.9454,
+   "cosine_median": 0.9482,
+   "cosine_max": 0.9508
+  },
+  "path": {
+   "pairs": 37,
+   "expected": "merge",
+   "merged_by_exact": 0,
+   "merged_by_tfidf": 36,
+   "cosine_min": 0.7778,
+   "cosine_median": 0.8793,
+   "cosine_max": 0.9227
+  },
+  "near identifier": {
+   "pairs": 162,
+   "expected": "apart",
+   "merged_by_exact": 0,
+   "merged_by_tfidf": 144,
+   "cosine_min": 0.6915,
+   "cosine_median": 0.9191,
+   "cosine_max": 0.9992
+  },
+  "unrelated identifier": {
+   "pairs": 162,
+   "expected": "apart",
+   "merged_by_exact": 0,
+   "merged_by_tfidf": 39,
+   "cosine_min": 0.1908,
+   "cosine_median": 0.7415,
+   "cosine_max": 0.9967
+  }
+ },
+ "positives_without_temporary_paths": {
+  "exact": {
+   "merged_rightly": 0,
+   "missed": 70,
+   "merged_wrongly": 0,
+   "kept_apart_rightly": 324,
+   "precision": null,
+   "recall": 0.0,
+   "f1": null
+  },
+  "tfidf": {
+   "merged_rightly": 69,
+   "missed": 1,
+   "merged_wrongly": 183,
+   "kept_apart_rightly": 141,
+   "precision": 0.27380952380952384,
+   "recall": 0.9857142857142858,
+   "f1": 0.4285714285714286
+  }
+ },
+ "rows": [
+  {
+   "pair_id": "0001",
+   "family": "line",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9454,
+   "characters": 95
+  },
+  {
+   "pair_id": "0002",
+   "family": "line",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9454,
+   "characters": 95
+  },
+  {
+   "pair_id": "0003",
+   "family": "line",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9503,
+   "characters": 104
+  },
+  {
+   "pair_id": "0004",
+   "family": "line",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9482,
+   "characters": 100
+  },
+  {
+   "pair_id": "0005",
+   "family": "line",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9508,
+   "characters": 105
+  },
+  {
+   "pair_id": "0006",
+   "family": "line",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9498,
+   "characters": 103
+  },
+  {
+   "pair_id": "0007",
+   "family": "line",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9482,
+   "characters": 100
+  },
+  {
+   "pair_id": "0008",
+   "family": "line",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9471,
+   "characters": 98
+  },
+  {
+   "pair_id": "0009",
+   "family": "line",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9454,
+   "characters": 95
+  },
+  {
+   "pair_id": "0010",
+   "family": "line",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9454,
+   "characters": 95
+  },
+  {
+   "pair_id": "0011",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9353,
+   "characters": 51
+  },
+  {
+   "pair_id": "0012",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.5163,
+   "characters": 51
+  },
+  {
+   "pair_id": "0013",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9397,
+   "characters": 55
+  },
+  {
+   "pair_id": "0014",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.4993,
+   "characters": 55
+  },
+  {
+   "pair_id": "0015",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9409,
+   "characters": 53
+  },
+  {
+   "pair_id": "0016",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.5153,
+   "characters": 53
+  },
+  {
+   "pair_id": "0017",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9371,
+   "characters": 53
+  },
+  {
+   "pair_id": "0018",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.5288,
+   "characters": 53
+  },
+  {
+   "pair_id": "0019",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9343,
+   "characters": 51
+  },
+  {
+   "pair_id": "0020",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.578,
+   "characters": 51
+  },
+  {
+   "pair_id": "0021",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9991,
+   "characters": 1824
+  },
+  {
+   "pair_id": "0022",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9992,
+   "characters": 1824
+  },
+  {
+   "pair_id": "0023",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9967,
+   "characters": 1824
+  },
+  {
+   "pair_id": "0024",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9209,
+   "characters": 177
+  },
+  {
+   "pair_id": "0025",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9773,
+   "characters": 177
+  },
+  {
+   "pair_id": "0026",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8995,
+   "characters": 177
+  },
+  {
+   "pair_id": "0027",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7778,
+   "characters": 83
+  },
+  {
+   "pair_id": "0028",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9422,
+   "characters": 83
+  },
+  {
+   "pair_id": "0029",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7459,
+   "characters": 83
+  },
+  {
+   "pair_id": "0030",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9209,
+   "characters": 177
+  },
+  {
+   "pair_id": "0031",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9773,
+   "characters": 177
+  },
+  {
+   "pair_id": "0032",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.894,
+   "characters": 177
+  },
+  {
+   "pair_id": "0033",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9117,
+   "characters": 138
+  },
+  {
+   "pair_id": "0034",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.977,
+   "characters": 138
+  },
+  {
+   "pair_id": "0035",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8928,
+   "characters": 138
+  },
+  {
+   "pair_id": "0036",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9041,
+   "characters": 130
+  },
+  {
+   "pair_id": "0037",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.98,
+   "characters": 130
+  },
+  {
+   "pair_id": "0038",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8934,
+   "characters": 130
+  },
+  {
+   "pair_id": "0039",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9203,
+   "characters": 176
+  },
+  {
+   "pair_id": "0040",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9771,
+   "characters": 176
+  },
+  {
+   "pair_id": "0041",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9423,
+   "characters": 176
+  },
+  {
+   "pair_id": "0042",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8504,
+   "characters": 110
+  },
+  {
+   "pair_id": "0043",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9555,
+   "characters": 110
+  },
+  {
+   "pair_id": "0044",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8572,
+   "characters": 110
+  },
+  {
+   "pair_id": "0045",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8814,
+   "characters": 123
+  },
+  {
+   "pair_id": "0046",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9684,
+   "characters": 123
+  },
+  {
+   "pair_id": "0047",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8398,
+   "characters": 123
+  },
+  {
+   "pair_id": "0048",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9227,
+   "characters": 183
+  },
+  {
+   "pair_id": "0049",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9778,
+   "characters": 183
+  },
+  {
+   "pair_id": "0050",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8977,
+   "characters": 183
+  },
+  {
+   "pair_id": "0051",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9209,
+   "characters": 177
+  },
+  {
+   "pair_id": "0052",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9773,
+   "characters": 177
+  },
+  {
+   "pair_id": "0053",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.886,
+   "characters": 177
+  },
+  {
+   "pair_id": "0054",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8824,
+   "characters": 137
+  },
+  {
+   "pair_id": "0055",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9657,
+   "characters": 137
+  },
+  {
+   "pair_id": "0056",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8007,
+   "characters": 137
+  },
+  {
+   "pair_id": "0057",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8679,
+   "characters": 124
+  },
+  {
+   "pair_id": "0058",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9624,
+   "characters": 124
+  },
+  {
+   "pair_id": "0059",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8279,
+   "characters": 124
+  },
+  {
+   "pair_id": "0060",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.885,
+   "characters": 151
+  },
+  {
+   "pair_id": "0061",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9724,
+   "characters": 151
+  },
+  {
+   "pair_id": "0062",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8497,
+   "characters": 151
+  },
+  {
+   "pair_id": "0063",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8251,
+   "characters": 102
+  },
+  {
+   "pair_id": "0064",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9555,
+   "characters": 102
+  },
+  {
+   "pair_id": "0065",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8107,
+   "characters": 102
+  },
+  {
+   "pair_id": "0066",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8574,
+   "characters": 116
+  },
+  {
+   "pair_id": "0067",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9582,
+   "characters": 116
+  },
+  {
+   "pair_id": "0068",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8722,
+   "characters": 116
+  },
+  {
+   "pair_id": "0069",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8593,
+   "characters": 117
+  },
+  {
+   "pair_id": "0070",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9596,
+   "characters": 117
+  },
+  {
+   "pair_id": "0071",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8249,
+   "characters": 117
+  },
+  {
+   "pair_id": "0072",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8607,
+   "characters": 119
+  },
+  {
+   "pair_id": "0073",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9589,
+   "characters": 119
+  },
+  {
+   "pair_id": "0074",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.811,
+   "characters": 119
+  },
+  {
+   "pair_id": "0075",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8801,
+   "characters": 130
+  },
+  {
+   "pair_id": "0076",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.965,
+   "characters": 130
+  },
+  {
+   "pair_id": "0077",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8337,
+   "characters": 130
+  },
+  {
+   "pair_id": "0078",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8649,
+   "characters": 121
+  },
+  {
+   "pair_id": "0079",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9611,
+   "characters": 121
+  },
+  {
+   "pair_id": "0080",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8161,
+   "characters": 121
+  },
+  {
+   "pair_id": "0081",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8504,
+   "characters": 110
+  },
+  {
+   "pair_id": "0082",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9555,
+   "characters": 110
+  },
+  {
+   "pair_id": "0083",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8277,
+   "characters": 110
+  },
+  {
+   "pair_id": "0084",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8609,
+   "characters": 113
+  },
+  {
+   "pair_id": "0085",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9652,
+   "characters": 113
+  },
+  {
+   "pair_id": "0086",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8271,
+   "characters": 113
+  },
+  {
+   "pair_id": "0087",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8542,
+   "characters": 108
+  },
+  {
+   "pair_id": "0088",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9634,
+   "characters": 108
+  },
+  {
+   "pair_id": "0089",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8306,
+   "characters": 108
+  },
+  {
+   "pair_id": "0090",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8827,
+   "characters": 130
+  },
+  {
+   "pair_id": "0091",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.967,
+   "characters": 130
+  },
+  {
+   "pair_id": "0092",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8942,
+   "characters": 130
+  },
+  {
+   "pair_id": "0093",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8666,
+   "characters": 122
+  },
+  {
+   "pair_id": "0094",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9607,
+   "characters": 122
+  },
+  {
+   "pair_id": "0095",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7782,
+   "characters": 122
+  },
+  {
+   "pair_id": "0096",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8916,
+   "characters": 146
+  },
+  {
+   "pair_id": "0097",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9686,
+   "characters": 146
+  },
+  {
+   "pair_id": "0098",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7865,
+   "characters": 146
+  },
+  {
+   "pair_id": "0099",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8828,
+   "characters": 152
+  },
+  {
+   "pair_id": "0100",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9716,
+   "characters": 152
+  },
+  {
+   "pair_id": "0101",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8625,
+   "characters": 152
+  },
+  {
+   "pair_id": "0102",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8323,
+   "characters": 107
+  },
+  {
+   "pair_id": "0103",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9569,
+   "characters": 107
+  },
+  {
+   "pair_id": "0104",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7347,
+   "characters": 107
+  },
+  {
+   "pair_id": "0105",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8905,
+   "characters": 143
+  },
+  {
+   "pair_id": "0106",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9682,
+   "characters": 143
+  },
+  {
+   "pair_id": "0107",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7979,
+   "characters": 143
+  },
+  {
+   "pair_id": "0108",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8847,
+   "characters": 136
+  },
+  {
+   "pair_id": "0109",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9664,
+   "characters": 136
+  },
+  {
+   "pair_id": "0110",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8339,
+   "characters": 136
+  },
+  {
+   "pair_id": "0111",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8859,
+   "characters": 151
+  },
+  {
+   "pair_id": "0112",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9725,
+   "characters": 151
+  },
+  {
+   "pair_id": "0113",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9212,
+   "characters": 151
+  },
+  {
+   "pair_id": "0114",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.879,
+   "characters": 148
+  },
+  {
+   "pair_id": "0115",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9709,
+   "characters": 148
+  },
+  {
+   "pair_id": "0116",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8607,
+   "characters": 148
+  },
+  {
+   "pair_id": "0117",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8788,
+   "characters": 131
+  },
+  {
+   "pair_id": "0118",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9646,
+   "characters": 131
+  },
+  {
+   "pair_id": "0119",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.871,
+   "characters": 131
+  },
+  {
+   "pair_id": "0120",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8793,
+   "characters": 127
+  },
+  {
+   "pair_id": "0121",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9647,
+   "characters": 127
+  },
+  {
+   "pair_id": "0122",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8821,
+   "characters": 127
+  },
+  {
+   "pair_id": "0123",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.874,
+   "characters": 124
+  },
+  {
+   "pair_id": "0124",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9642,
+   "characters": 124
+  },
+  {
+   "pair_id": "0125",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8156,
+   "characters": 124
+  },
+  {
+   "pair_id": "0126",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8373,
+   "characters": 101
+  },
+  {
+   "pair_id": "0127",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9589,
+   "characters": 101
+  },
+  {
+   "pair_id": "0128",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7803,
+   "characters": 101
+  },
+  {
+   "pair_id": "0129",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8953,
+   "characters": 157
+  },
+  {
+   "pair_id": "0130",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.975,
+   "characters": 157
+  },
+  {
+   "pair_id": "0131",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9111,
+   "characters": 157
+  },
+  {
+   "pair_id": "0132",
+   "family": "path",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8777,
+   "characters": 127
+  },
+  {
+   "pair_id": "0133",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9642,
+   "characters": 127
+  },
+  {
+   "pair_id": "0134",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9177,
+   "characters": 127
+  },
+  {
+   "pair_id": "0135",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8919,
+   "characters": 44
+  },
+  {
+   "pair_id": "0136",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7302,
+   "characters": 44
+  },
+  {
+   "pair_id": "0137",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8972,
+   "characters": 47
+  },
+  {
+   "pair_id": "0138",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7415,
+   "characters": 47
+  },
+  {
+   "pair_id": "0139",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8972,
+   "characters": 47
+  },
+  {
+   "pair_id": "0140",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7415,
+   "characters": 47
+  },
+  {
+   "pair_id": "0141",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8903,
+   "characters": 43
+  },
+  {
+   "pair_id": "0142",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7437,
+   "characters": 43
+  },
+  {
+   "pair_id": "0143",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.895,
+   "characters": 46
+  },
+  {
+   "pair_id": "0144",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7114,
+   "characters": 46
+  },
+  {
+   "pair_id": "0145",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9069,
+   "characters": 52
+  },
+  {
+   "pair_id": "0146",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.652,
+   "characters": 52
+  },
+  {
+   "pair_id": "0147",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.895,
+   "characters": 46
+  },
+  {
+   "pair_id": "0148",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6744,
+   "characters": 46
+  },
+  {
+   "pair_id": "0149",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9013,
+   "characters": 49
+  },
+  {
+   "pair_id": "0150",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6523,
+   "characters": 49
+  },
+  {
+   "pair_id": "0151",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8972,
+   "characters": 47
+  },
+  {
+   "pair_id": "0152",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7119,
+   "characters": 47
+  },
+  {
+   "pair_id": "0153",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8972,
+   "characters": 47
+  },
+  {
+   "pair_id": "0154",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7119,
+   "characters": 47
+  },
+  {
+   "pair_id": "0155",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8927,
+   "characters": 45
+  },
+  {
+   "pair_id": "0156",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.728,
+   "characters": 45
+  },
+  {
+   "pair_id": "0157",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8927,
+   "characters": 45
+  },
+  {
+   "pair_id": "0158",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.728,
+   "characters": 45
+  },
+  {
+   "pair_id": "0159",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9103,
+   "characters": 54
+  },
+  {
+   "pair_id": "0160",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7131,
+   "characters": 54
+  },
+  {
+   "pair_id": "0161",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8927,
+   "characters": 45
+  },
+  {
+   "pair_id": "0162",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7119,
+   "characters": 45
+  },
+  {
+   "pair_id": "0163",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8972,
+   "characters": 47
+  },
+  {
+   "pair_id": "0164",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6636,
+   "characters": 47
+  },
+  {
+   "pair_id": "0165",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8993,
+   "characters": 48
+  },
+  {
+   "pair_id": "0166",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7027,
+   "characters": 48
+  },
+  {
+   "pair_id": "0167",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9217,
+   "characters": 62
+  },
+  {
+   "pair_id": "0168",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.5762,
+   "characters": 62
+  },
+  {
+   "pair_id": "0169",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8903,
+   "characters": 44
+  },
+  {
+   "pair_id": "0170",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6391,
+   "characters": 44
+  },
+  {
+   "pair_id": "0171",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9103,
+   "characters": 54
+  },
+  {
+   "pair_id": "0172",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6393,
+   "characters": 54
+  },
+  {
+   "pair_id": "0173",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9217,
+   "characters": 62
+  },
+  {
+   "pair_id": "0174",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.5681,
+   "characters": 62
+  },
+  {
+   "pair_id": "0175",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8942,
+   "characters": 45
+  },
+  {
+   "pair_id": "0176",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7663,
+   "characters": 45
+  },
+  {
+   "pair_id": "0177",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9026,
+   "characters": 49
+  },
+  {
+   "pair_id": "0178",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7123,
+   "characters": 49
+  },
+  {
+   "pair_id": "0179",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8927,
+   "characters": 45
+  },
+  {
+   "pair_id": "0180",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7425,
+   "characters": 45
+  },
+  {
+   "pair_id": "0181",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8903,
+   "characters": 44
+  },
+  {
+   "pair_id": "0182",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7325,
+   "characters": 44
+  },
+  {
+   "pair_id": "0183",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9,
+   "characters": 47
+  },
+  {
+   "pair_id": "0184",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6362,
+   "characters": 47
+  },
+  {
+   "pair_id": "0185",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9069,
+   "characters": 52
+  },
+  {
+   "pair_id": "0186",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6108,
+   "characters": 52
+  },
+  {
+   "pair_id": "0187",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9069,
+   "characters": 52
+  },
+  {
+   "pair_id": "0188",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6108,
+   "characters": 52
+  },
+  {
+   "pair_id": "0189",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9121,
+   "characters": 48
+  },
+  {
+   "pair_id": "0190",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6735,
+   "characters": 48
+  },
+  {
+   "pair_id": "0191",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8972,
+   "characters": 47
+  },
+  {
+   "pair_id": "0192",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6416,
+   "characters": 47
+  },
+  {
+   "pair_id": "0193",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9032,
+   "characters": 50
+  },
+  {
+   "pair_id": "0194",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6761,
+   "characters": 50
+  },
+  {
+   "pair_id": "0195",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8927,
+   "characters": 45
+  },
+  {
+   "pair_id": "0196",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6874,
+   "characters": 45
+  },
+  {
+   "pair_id": "0197",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9013,
+   "characters": 49
+  },
+  {
+   "pair_id": "0198",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6695,
+   "characters": 49
+  },
+  {
+   "pair_id": "0199",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8993,
+   "characters": 48
+  },
+  {
+   "pair_id": "0200",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.5357,
+   "characters": 48
+  },
+  {
+   "pair_id": "0201",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9229,
+   "characters": 63
+  },
+  {
+   "pair_id": "0202",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.5777,
+   "characters": 63
+  },
+  {
+   "pair_id": "0203",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9173,
+   "characters": 58
+  },
+  {
+   "pair_id": "0204",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6088,
+   "characters": 58
+  },
+  {
+   "pair_id": "0205",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9252,
+   "characters": 61
+  },
+  {
+   "pair_id": "0206",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.5649,
+   "characters": 61
+  },
+  {
+   "pair_id": "0207",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9204,
+   "characters": 61
+  },
+  {
+   "pair_id": "0208",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.5914,
+   "characters": 61
+  },
+  {
+   "pair_id": "0209",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8903,
+   "characters": 44
+  },
+  {
+   "pair_id": "0210",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7152,
+   "characters": 44
+  },
+  {
+   "pair_id": "0211",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8972,
+   "characters": 47
+  },
+  {
+   "pair_id": "0212",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6984,
+   "characters": 47
+  },
+  {
+   "pair_id": "0213",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.895,
+   "characters": 46
+  },
+  {
+   "pair_id": "0214",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7629,
+   "characters": 46
+  },
+  {
+   "pair_id": "0215",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8903,
+   "characters": 44
+  },
+  {
+   "pair_id": "0216",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7574,
+   "characters": 44
+  },
+  {
+   "pair_id": "0217",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8903,
+   "characters": 44
+  },
+  {
+   "pair_id": "0218",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7574,
+   "characters": 44
+  },
+  {
+   "pair_id": "0219",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8903,
+   "characters": 44
+  },
+  {
+   "pair_id": "0220",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7425,
+   "characters": 44
+  },
+  {
+   "pair_id": "0221",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8927,
+   "characters": 45
+  },
+  {
+   "pair_id": "0222",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7142,
+   "characters": 45
+  },
+  {
+   "pair_id": "0223",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9685,
+   "characters": 102
+  },
+  {
+   "pair_id": "0224",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8775,
+   "characters": 102
+  },
+  {
+   "pair_id": "0225",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7711,
+   "characters": 20
+  },
+  {
+   "pair_id": "0226",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.2715,
+   "characters": 20
+  },
+  {
+   "pair_id": "0227",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9888,
+   "characters": 194
+  },
+  {
+   "pair_id": "0228",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9605,
+   "characters": 194
+  },
+  {
+   "pair_id": "0229",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9588,
+   "characters": 22
+  },
+  {
+   "pair_id": "0230",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9907,
+   "characters": 64
+  },
+  {
+   "pair_id": "0231",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9907,
+   "characters": 64
+  },
+  {
+   "pair_id": "0232",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9901,
+   "characters": 61
+  },
+  {
+   "pair_id": "0233",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9901,
+   "characters": 61
+  },
+  {
+   "pair_id": "0234",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9149,
+   "characters": 55
+  },
+  {
+   "pair_id": "0235",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8155,
+   "characters": 55
+  },
+  {
+   "pair_id": "0236",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9134,
+   "characters": 53
+  },
+  {
+   "pair_id": "0237",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7933,
+   "characters": 53
+  },
+  {
+   "pair_id": "0238",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9163,
+   "characters": 56
+  },
+  {
+   "pair_id": "0239",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7537,
+   "characters": 56
+  },
+  {
+   "pair_id": "0240",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9191,
+   "characters": 58
+  },
+  {
+   "pair_id": "0241",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7548,
+   "characters": 58
+  },
+  {
+   "pair_id": "0242",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9163,
+   "characters": 56
+  },
+  {
+   "pair_id": "0243",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6431,
+   "characters": 56
+  },
+  {
+   "pair_id": "0244",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9482,
+   "characters": 83
+  },
+  {
+   "pair_id": "0245",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.702,
+   "characters": 83
+  },
+  {
+   "pair_id": "0246",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9446,
+   "characters": 77
+  },
+  {
+   "pair_id": "0247",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6822,
+   "characters": 77
+  },
+  {
+   "pair_id": "0248",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9465,
+   "characters": 80
+  },
+  {
+   "pair_id": "0249",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6924,
+   "characters": 80
+  },
+  {
+   "pair_id": "0250",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9488,
+   "characters": 84
+  },
+  {
+   "pair_id": "0251",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7051,
+   "characters": 84
+  },
+  {
+   "pair_id": "0252",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.939,
+   "characters": 75
+  },
+  {
+   "pair_id": "0253",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6504,
+   "characters": 75
+  },
+  {
+   "pair_id": "0254",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9191,
+   "characters": 58
+  },
+  {
+   "pair_id": "0255",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7455,
+   "characters": 58
+  },
+  {
+   "pair_id": "0256",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9535,
+   "characters": 84
+  },
+  {
+   "pair_id": "0257",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8459,
+   "characters": 84
+  },
+  {
+   "pair_id": "0258",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9535,
+   "characters": 84
+  },
+  {
+   "pair_id": "0259",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8459,
+   "characters": 84
+  },
+  {
+   "pair_id": "0260",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.937,
+   "characters": 88
+  },
+  {
+   "pair_id": "0261",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7891,
+   "characters": 88
+  },
+  {
+   "pair_id": "0262",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9475,
+   "characters": 107
+  },
+  {
+   "pair_id": "0263",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8469,
+   "characters": 107
+  },
+  {
+   "pair_id": "0264",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9357,
+   "characters": 89
+  },
+  {
+   "pair_id": "0265",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8224,
+   "characters": 89
+  },
+  {
+   "pair_id": "0266",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.953,
+   "characters": 89
+  },
+  {
+   "pair_id": "0267",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8195,
+   "characters": 89
+  },
+  {
+   "pair_id": "0268",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9229,
+   "characters": 61
+  },
+  {
+   "pair_id": "0269",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7993,
+   "characters": 61
+  },
+  {
+   "pair_id": "0270",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9134,
+   "characters": 54
+  },
+  {
+   "pair_id": "0271",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7779,
+   "characters": 54
+  },
+  {
+   "pair_id": "0272",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9252,
+   "characters": 63
+  },
+  {
+   "pair_id": "0273",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7557,
+   "characters": 63
+  },
+  {
+   "pair_id": "0274",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9324,
+   "characters": 70
+  },
+  {
+   "pair_id": "0275",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7971,
+   "characters": 70
+  },
+  {
+   "pair_id": "0276",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9204,
+   "characters": 59
+  },
+  {
+   "pair_id": "0277",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.753,
+   "characters": 59
+  },
+  {
+   "pair_id": "0278",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9257,
+   "characters": 61
+  },
+  {
+   "pair_id": "0279",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7575,
+   "characters": 61
+  },
+  {
+   "pair_id": "0280",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9933,
+   "characters": 495
+  },
+  {
+   "pair_id": "0281",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9837,
+   "characters": 495
+  },
+  {
+   "pair_id": "0282",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9928,
+   "characters": 484
+  },
+  {
+   "pair_id": "0283",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9824,
+   "characters": 484
+  },
+  {
+   "pair_id": "0284",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9134,
+   "characters": 54
+  },
+  {
+   "pair_id": "0285",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8084,
+   "characters": 54
+  },
+  {
+   "pair_id": "0286",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9946,
+   "characters": 600
+  },
+  {
+   "pair_id": "0287",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9869,
+   "characters": 600
+  },
+  {
+   "pair_id": "0288",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9149,
+   "characters": 55
+  },
+  {
+   "pair_id": "0289",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8084,
+   "characters": 55
+  },
+  {
+   "pair_id": "0290",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9913,
+   "characters": 415
+  },
+  {
+   "pair_id": "0291",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9787,
+   "characters": 415
+  },
+  {
+   "pair_id": "0292",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9186,
+   "characters": 57
+  },
+  {
+   "pair_id": "0293",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8163,
+   "characters": 57
+  },
+  {
+   "pair_id": "0294",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9204,
+   "characters": 59
+  },
+  {
+   "pair_id": "0295",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.82,
+   "characters": 59
+  },
+  {
+   "pair_id": "0296",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9922,
+   "characters": 473
+  },
+  {
+   "pair_id": "0297",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9812,
+   "characters": 473
+  },
+  {
+   "pair_id": "0298",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.937,
+   "characters": 59
+  },
+  {
+   "pair_id": "0299",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8095,
+   "characters": 59
+  },
+  {
+   "pair_id": "0300",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9204,
+   "characters": 59
+  },
+  {
+   "pair_id": "0301",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7593,
+   "characters": 59
+  },
+  {
+   "pair_id": "0302",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9229,
+   "characters": 61
+  },
+  {
+   "pair_id": "0303",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7665,
+   "characters": 61
+  },
+  {
+   "pair_id": "0304",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9134,
+   "characters": 53
+  },
+  {
+   "pair_id": "0305",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.739,
+   "characters": 53
+  },
+  {
+   "pair_id": "0306",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9204,
+   "characters": 58
+  },
+  {
+   "pair_id": "0307",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7569,
+   "characters": 58
+  },
+  {
+   "pair_id": "0308",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9667,
+   "characters": 70
+  },
+  {
+   "pair_id": "0309",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9182,
+   "characters": 70
+  },
+  {
+   "pair_id": "0310",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6616,
+   "characters": 70
+  },
+  {
+   "pair_id": "0311",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9667,
+   "characters": 70
+  },
+  {
+   "pair_id": "0312",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9182,
+   "characters": 70
+  },
+  {
+   "pair_id": "0313",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6391,
+   "characters": 70
+  },
+  {
+   "pair_id": "0314",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9683,
+   "characters": 71
+  },
+  {
+   "pair_id": "0315",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9221,
+   "characters": 71
+  },
+  {
+   "pair_id": "0316",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6607,
+   "characters": 71
+  },
+  {
+   "pair_id": "0317",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9659,
+   "characters": 68
+  },
+  {
+   "pair_id": "0318",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9163,
+   "characters": 68
+  },
+  {
+   "pair_id": "0319",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6511,
+   "characters": 68
+  },
+  {
+   "pair_id": "0320",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9672,
+   "characters": 71
+  },
+  {
+   "pair_id": "0321",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9195,
+   "characters": 71
+  },
+  {
+   "pair_id": "0322",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6274,
+   "characters": 71
+  },
+  {
+   "pair_id": "0323",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8026,
+   "characters": 26
+  },
+  {
+   "pair_id": "0324",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.2006,
+   "characters": 26
+  },
+  {
+   "pair_id": "0325",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8026,
+   "characters": 26
+  },
+  {
+   "pair_id": "0326",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.2006,
+   "characters": 26
+  },
+  {
+   "pair_id": "0327",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8366,
+   "characters": 30
+  },
+  {
+   "pair_id": "0328",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.1908,
+   "characters": 30
+  },
+  {
+   "pair_id": "0329",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8366,
+   "characters": 30
+  },
+  {
+   "pair_id": "0330",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.1908,
+   "characters": 30
+  },
+  {
+   "pair_id": "0331",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8172,
+   "characters": 28
+  },
+  {
+   "pair_id": "0332",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.1924,
+   "characters": 28
+  },
+  {
+   "pair_id": "0333",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8172,
+   "characters": 28
+  },
+  {
+   "pair_id": "0334",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.1924,
+   "characters": 28
+  },
+  {
+   "pair_id": "0335",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8172,
+   "characters": 28
+  },
+  {
+   "pair_id": "0336",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.2022,
+   "characters": 28
+  },
+  {
+   "pair_id": "0337",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8172,
+   "characters": 28
+  },
+  {
+   "pair_id": "0338",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.2022,
+   "characters": 28
+  },
+  {
+   "pair_id": "0339",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8026,
+   "characters": 26
+  },
+  {
+   "pair_id": "0340",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.2791,
+   "characters": 26
+  },
+  {
+   "pair_id": "0341",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8026,
+   "characters": 26
+  },
+  {
+   "pair_id": "0342",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.2791,
+   "characters": 26
+  },
+  {
+   "pair_id": "0343",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7097,
+   "characters": 18
+  },
+  {
+   "pair_id": "0344",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.3141,
+   "characters": 18
+  },
+  {
+   "pair_id": "0345",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.765,
+   "characters": 22
+  },
+  {
+   "pair_id": "0346",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.2606,
+   "characters": 22
+  },
+  {
+   "pair_id": "0347",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7757,
+   "characters": 23
+  },
+  {
+   "pair_id": "0348",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.3367,
+   "characters": 23
+  },
+  {
+   "pair_id": "0349",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6915,
+   "characters": 17
+  },
+  {
+   "pair_id": "0350",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.3536,
+   "characters": 17
+  },
+  {
+   "pair_id": "0351",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7402,
+   "characters": 20
+  },
+  {
+   "pair_id": "0352",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.337,
+   "characters": 20
+  },
+  {
+   "pair_id": "0353",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.765,
+   "characters": 22
+  },
+  {
+   "pair_id": "0354",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.3478,
+   "characters": 22
+  },
+  {
+   "pair_id": "0355",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6915,
+   "characters": 17
+  },
+  {
+   "pair_id": "0356",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.3601,
+   "characters": 17
+  },
+  {
+   "pair_id": "0357",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7532,
+   "characters": 21
+  },
+  {
+   "pair_id": "0358",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.2617,
+   "characters": 21
+  },
+  {
+   "pair_id": "0359",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7854,
+   "characters": 24
+  },
+  {
+   "pair_id": "0360",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.2951,
+   "characters": 24
+  },
+  {
+   "pair_id": "0361",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8549,
+   "characters": 39
+  },
+  {
+   "pair_id": "0362",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.5926,
+   "characters": 39
+  },
+  {
+   "pair_id": "0363",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9376,
+   "characters": 79
+  },
+  {
+   "pair_id": "0364",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.753,
+   "characters": 79
+  },
+  {
+   "pair_id": "0365",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9252,
+   "characters": 79
+  },
+  {
+   "pair_id": "0366",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.8188,
+   "characters": 79
+  },
+  {
+   "pair_id": "0367",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9032,
+   "characters": 64
+  },
+  {
+   "pair_id": "0368",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7218,
+   "characters": 64
+  },
+  {
+   "pair_id": "0369",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9857,
+   "characters": 64
+  },
+  {
+   "pair_id": "0370",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8878,
+   "characters": 55
+  },
+  {
+   "pair_id": "0371",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6966,
+   "characters": 55
+  },
+  {
+   "pair_id": "0372",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9877,
+   "characters": 66
+  },
+  {
+   "pair_id": "0373",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9108,
+   "characters": 66
+  },
+  {
+   "pair_id": "0374",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7599,
+   "characters": 66
+  },
+  {
+   "pair_id": "0375",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9013,
+   "characters": 63
+  },
+  {
+   "pair_id": "0376",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7024,
+   "characters": 63
+  },
+  {
+   "pair_id": "0377",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9854,
+   "characters": 63
+  },
+  {
+   "pair_id": "0378",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9013,
+   "characters": 63
+  },
+  {
+   "pair_id": "0379",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7024,
+   "characters": 63
+  },
+  {
+   "pair_id": "0380",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9854,
+   "characters": 63
+  },
+  {
+   "pair_id": "0381",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.908,
+   "characters": 66
+  },
+  {
+   "pair_id": "0382",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7203,
+   "characters": 66
+  },
+  {
+   "pair_id": "0383",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9865,
+   "characters": 66
+  },
+  {
+   "pair_id": "0384",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9086,
+   "characters": 67
+  },
+  {
+   "pair_id": "0385",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.7824,
+   "characters": 67
+  },
+  {
+   "pair_id": "0386",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9866,
+   "characters": 67
+  },
+  {
+   "pair_id": "0387",
+   "family": "near identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.8781,
+   "characters": 67
+  },
+  {
+   "pair_id": "0388",
+   "family": "unrelated identifier",
+   "expected": "apart",
+   "exact": false,
+   "tfidf": false,
+   "cosine": 0.6206,
+   "characters": 67
+  },
+  {
+   "pair_id": "0389",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9978,
+   "characters": 208
+  },
+  {
+   "pair_id": "0390",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9019,
+   "characters": 54
+  },
+  {
+   "pair_id": "0391",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9087,
+   "characters": 57
+  },
+  {
+   "pair_id": "0392",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9087,
+   "characters": 57
+  },
+  {
+   "pair_id": "0393",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9087,
+   "characters": 57
+  },
+  {
+   "pair_id": "0394",
+   "family": "number",
+   "expected": "merge",
+   "exact": false,
+   "tfidf": true,
+   "cosine": 0.9087,
+   "characters": 57
+  }
+ ]
+}

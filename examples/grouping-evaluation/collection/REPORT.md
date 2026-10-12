@@ -7,4 +7,4 @@
 | exact | 1.000 | 1.000 | 15 | 0 | 0 |
 | tfidf | 1.000 | 1.000 | 15 | 0 | 0 |
 
-五个生成项目共用相近模板，不是五个独立真实开源项目；只验证受控流程。
+Five generated projects share one template; they are not independent real projects and only exercise the controlled workflow.
