@@ -7,4 +7,4 @@
 | exact | 1.000 | 1.000 | 5 | 0 | 0 |
 | tfidf | 1.000 | 1.000 | 5 | 0 | 0 |
 
-购物车模板的受控执行故障；五个项目变体结构相近，不是自然开源故障。
+Controlled execution faults in a shopping-cart template; the five variants are structurally similar and not naturally occurring failures.

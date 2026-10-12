@@ -22,20 +22,22 @@ The second step is what this task compares:
 | Dataset | Cases | Pairs that belong together | exact: precision / recall | TF-IDF: precision / recall |
 |---|---:|---:|---|---|
 | `examples/dataset` (collection), regenerated for this report | 30 | 15 | 1.000 / 1.000 | 1.000 / 1.000 |
-| `examples/execution-dataset`, as stored on 8 September | 30 | 5 | 1.000 / 1.000 | 1.000 / 1.000 |
+| `examples/execution-dataset`, regenerated for this report | 30 | 5 | 1.000 / 1.000 | 1.000 / 1.000 |
 
 No wrong and no missed pair for either method, as in the report of 24 September. Every pair that
 belongs together has the same message twice, so the two methods cannot differ here.
 
-**Regeneration.** `examples/dataset` was generated again with the present code (`fixfirst dataset
---suite collection`, then the product's own `public_data()` for publication): the same 30 cases,
-the same events by kind, English text throughout. `examples/execution-dataset` could **not** be
-generated again: `fixfirst dataset --suite execution` stops at its second case. Two of its fault
-variants are repaired by restoring `conftest.py`; the product now treats a changed `conftest.py`
-as changed tests and leaves the issue "awaiting verification", and the generator requires the
-goal to be reached. The stored data of 8 September therefore stay, with the interface text of
-that version in them, until the generator is corrected. Its numbers above come from evaluating
-the stored data with the present code.
+**Regeneration.** Both datasets were generated again with the present code (`fixfirst dataset
+--suite collection` and `--suite execution`, then the product's own `public_data()` for
+publication): the same 30 + 30 cases, the same events by kind, English text throughout, and the
+same result as the recordings of 8 September gave.
+
+The execution suite needed a repair of its generator first. Two of its fault variants put the
+fault into `conftest.py`; repairing them changes a test file, and the product then leaves the
+issue "awaiting verification" until a person accepts the tests, while the generator required the
+goal to be reached at once and stopped. The generator now accepts the tests the way `fixfirst
+accept-baseline` does and checks again. In the regenerated data the ten restored sessions of these
+two variants show that step; the other twenty need none.
 
 ## 2 Saved event streams
 
@@ -131,7 +133,7 @@ method saw a pair.
 | File | Content |
 |---|---|
 | `collection/` | `fixfirst evaluate` on the regenerated `examples/dataset`, unedited |
-| `execution/` | The report of 24 September on `examples/execution-dataset`, as it was |
+| `execution/` | `fixfirst evaluate` on the regenerated `examples/execution-dataset`, unedited |
 | `experiments/grouping_hard/pairs.json`, `results.json` | The 394 constructed pairs and the result per pair |
 | `experiments/grouping_hard/survey-repository.json`, `survey-real-projects.json` | Section 2 |
 | `experiments/grouping_hard/README.md` | How to run everything again |

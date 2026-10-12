@@ -3,7 +3,7 @@
   "variant": "runtime_config",
   "labels": [
     {
-      "issue_id": "issue-20ac3d0d6dc191",
+      "issue_id": "issue-1307a8fef09cd6",
       "label": "explicit_config_missing"
     }
   ],
@@ -11,7 +11,7 @@
     "explicit_config_missing"
   ],
   "event_groups": {
-    "event-a661157d595a": "test_cart.py::test_discount"
+    "event-3c2d92e29bf1": "test_cart.py::test_discount"
   },
   "repair": "Restore owned cart.py and conftest.py from HEALTHY/FIXTURE"
 }
