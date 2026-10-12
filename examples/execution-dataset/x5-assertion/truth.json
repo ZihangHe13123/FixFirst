@@ -3,7 +3,7 @@
   "variant": "assertion",
   "labels": [
     {
-      "issue_id": "issue-46c313e46ecf28",
+      "issue_id": "issue-b69484ba0ace62",
       "label": "test_assertion"
     }
   ],
@@ -11,7 +11,7 @@
     "test_assertion"
   ],
   "event_groups": {
-    "event-c5341f6f5c00": "test_cart.py::test_discount"
+    "event-efd90ee6e8b8": "test_cart.py::test_discount"
   },
   "repair": "Restore owned cart.py and conftest.py from HEALTHY/FIXTURE"
 }

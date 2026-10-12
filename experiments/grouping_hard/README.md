@@ -20,10 +20,11 @@ Both outputs come out byte for byte as the files stored here. `survey-real-proje
 made with `--sessions` on the session files of the held-out tests of
 `examples/bugsinpy-verification`, which are kept outside the repository.
 
-`publish.py RAW OUT CHECKOUT` is the step that made a freshly generated collection dataset
-(`fixfirst dataset --suite collection --output RAW`) into `examples/dataset`: the product's
-`public_data()` on every saved session, the checkout's path written as `<checkout>`, the
-disposable `runtime/` environments left out.
+`publish.py RAW OUT CHECKOUT` is the step that made the freshly generated datasets (`fixfirst
+dataset --suite collection --output RAW`, and `--suite execution`) into `examples/dataset` and
+`examples/execution-dataset`: the product's `public_data()` on every saved session, the
+checkout's path written as `<checkout>`, the disposable `runtime/` environments and pytest's
+cache folders left out.
 
 The rule for the pairs was fixed, and the set built, before either method was run on it. After
 the first build three places where the code did not follow the rule were corrected, by reading

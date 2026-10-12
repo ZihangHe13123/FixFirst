@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "created_at": "2026-09-08T01:59:26+00:00",
+  "created_at": "2026-10-12T04:12:47+00:00",
   "origin": "controlled_execution_injection",
   "license": "CC0-1.0 for generated fixture code",
   "cases": [
@@ -13,7 +13,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x1-setup",
@@ -24,7 +24,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 16
     },
     {
       "case_id": "x1-teardown",
@@ -35,7 +35,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 16
     },
     {
       "case_id": "x1-runtime_import",
@@ -46,7 +46,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x1-mixed",
@@ -57,7 +57,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x1-runtime_config",
@@ -68,7 +68,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x2-assertion",
@@ -79,7 +79,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x2-setup",
@@ -90,7 +90,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 16
     },
     {
       "case_id": "x2-teardown",
@@ -101,7 +101,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 16
     },
     {
       "case_id": "x2-runtime_import",
@@ -112,7 +112,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x2-mixed",
@@ -123,7 +123,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x2-runtime_config",
@@ -134,7 +134,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x3-assertion",
@@ -145,7 +145,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x3-setup",
@@ -156,7 +156,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 16
     },
     {
       "case_id": "x3-teardown",
@@ -167,7 +167,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 16
     },
     {
       "case_id": "x3-runtime_import",
@@ -178,7 +178,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x3-mixed",
@@ -189,7 +189,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x3-runtime_config",
@@ -200,7 +200,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x4-assertion",
@@ -211,7 +211,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x4-setup",
@@ -222,7 +222,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 16
     },
     {
       "case_id": "x4-teardown",
@@ -233,7 +233,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 16
     },
     {
       "case_id": "x4-runtime_import",
@@ -244,7 +244,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x4-mixed",
@@ -255,7 +255,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x4-runtime_config",
@@ -266,7 +266,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x5-assertion",
@@ -277,7 +277,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x5-setup",
@@ -288,7 +288,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 16
     },
     {
       "case_id": "x5-teardown",
@@ -299,7 +299,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 16
     },
     {
       "case_id": "x5-runtime_import",
@@ -310,7 +310,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x5-mixed",
@@ -321,7 +321,7 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     },
     {
       "case_id": "x5-runtime_config",
@@ -332,9 +332,8 @@
       "restored_pass": true,
       "baseline_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
       "restored_sha256": "20c67959c9a527403046649993ac5f663d913c2215fabac1d164cf4d02354b5b",
-      "raw_runs": 6
+      "raw_runs": 12
     }
   ],
-  "limitations": "购物车模板的受控执行故障；五个项目变体结构相近，不是自然开源故障。",
-  "distribution_note": "Personal paths replaced; caches excluded. Recreate with fixfirst dataset --suite execution to rerun."
+  "limitations": "Controlled execution faults in a shopping-cart template; the five variants are structurally similar and not naturally occurring failures."
 }

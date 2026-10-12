@@ -6,7 +6,8 @@
 CHECKOUT is the FixFirst checkout the data were generated in (its .venv is the interpreter). Its path is
 written as <checkout>. Then every saved session (baseline.json, input.json, restored.json) goes through the
 product's own public_data(): project folder -> <project>, interpreter -> <python>, home folders -> <home>.
-The disposable runtime/ environments of the dependency cases are not copied (the stored dataset has none).
+The disposable runtime/ environments of the dependency cases and the caches that pytest and Python leave in a
+project folder are not copied (the stored datasets have none).
 """
 import json
 import sys
@@ -22,7 +23,7 @@ NEUTRAL = "/fixfirst-checkout"  # a path none of the product's redaction pattern
 count = {"sessions": 0, "copied": 0}
 for path in sorted(p for p in raw.rglob("*") if p.is_file()):
     relative = path.relative_to(raw)
-    if "runtime" in relative.parts:
+    if {"runtime", ".pytest_cache", "__pycache__"} & set(relative.parts):
         continue
     text = path.read_text(encoding="utf-8")
     for private in (checkout, checkout.replace("/private/tmp/", "/tmp/")):
