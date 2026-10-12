@@ -15,6 +15,7 @@ bundled model or compared with a different feature layout without identifying th
 |---|---|---|
 | `playground/` | Four faults, four root causes, fixed step by step; the best overview of the product | `01-first-scan.html` |
 | `diagnosis-evaluation/` | The root-cause experiment: baselines, rules with/without the knowledge graph, decision tree, hybrid; two cross-validation protocols | `REPORT.md` |
+| `diagnosis-evaluation/frozen-0.8.0rc5/` | The same experiment on the frozen 0.8.0rc5 (task B6): 220 and 30 saved cases, ablations, what the product displays, three language models on the same cases, real projects apart. Development data, no new execution | `REPORT.md` |
 | `diagnosis-dataset/` | 215 executed single-fault cases (5 templates × 43 scenarios) with labels; `environment.json` is the shared interpreter snapshot | `manifest.json` |
 | `hard-dataset/` | 30 executed hard cases (5 templates × 6 scenarios): documented behaviour changes of installed libraries (NumPy 2, PyYAML 6, pydantic 2, Click 8.2) and a two-layer fault; never used to train the tree, but H07 and H08 were written after seeing them, so they are development data | `manifest.json` |
 | `hard-evaluation/` | Diagnosis on the hard cases with the tree trained on the 215 cases; `before/` leaves out the heuristics H07 and H08, which were written after seeing these cases | `REPORT.md` |

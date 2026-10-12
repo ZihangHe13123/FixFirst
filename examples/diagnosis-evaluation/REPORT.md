@@ -1,5 +1,10 @@
 # Root-cause diagnosis experiment
 
+> This is the evaluation of 24 September 2026: 215 cases, the rules and knowledge of that time and the
+> 44-feature tree. It is kept as it was. The frozen 0.8.0rc5 is evaluated in
+> [frozen-0.8.0rc5/REPORT.md](frozen-0.8.0rc5/REPORT.md): 220 and 30 cases, the ablations, what the product
+> displays, three language models on the same cases, and the real projects in a section of their own.
+
 215 executed cases (215 failing-test issues; 0 generated cases rejected because the fault was not observed). Labels: code_defect 60, config_missing 30, local_module 30, missing_dependency 30, version_incompatibility 65. Python 3.12.14; Jinja2 3.1.6, MarkupSafe 3.0.3, PyYAML 6.0.3, click 8.5.0, numpy 2.5.3, packaging 26.3, pydantic 2.13.5, pytest 9.1.1, scikit-learn 1.9.0, scipy 1.18.1.
 
 Each case is a small project with exactly one injected fault, run for real against the installed libraries. Labels come from the scenario definition. The decision tree is retrained for every fold without the held-out group; the rule base and knowledge graph are fixed and were written by the project team, so their scores on scenarios the team designed are optimistic. Scenarios marked *not covered* use removed APIs, packages or configuration patterns that the knowledge graph does not list. The heuristic rules H01/H02 (a name missing from an installed library suggests a version change) were added after testing on real projects (docs/REAL_PROJECTS.md); rows without heuristics are kept for comparison.

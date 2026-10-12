@@ -177,7 +177,9 @@ integration candidate. They have not been recomputed with its expanded rules and
 Descriptions of what the knowledge base covers refer to those recorded versions. The 0.8.0rc1
 candidate now ships the fixed 81-feature model; the released v0.7.0 tag and its 44-feature model
 remain unchanged. See [candidate validation](docs/validation/2026-10-04-tree-integration.md)
-for the separate current-source evaluation, counterexamples and release checks.
+for the separate current-source evaluation, counterexamples and release checks. The frozen 0.8.0rc5 is
+evaluated on 220 and 30 saved cases, beside three language models and with the real projects
+apart, in [examples/diagnosis-evaluation/frozen-0.8.0rc5/REPORT.md](examples/diagnosis-evaluation/frozen-0.8.0rc5/REPORT.md).
 
 215 executed single-fault cases (5 project templates × 43 scenarios, real libraries, labels from
 the scenario definition). Accuracy of naming the root cause, with 95% bootstrap intervals:

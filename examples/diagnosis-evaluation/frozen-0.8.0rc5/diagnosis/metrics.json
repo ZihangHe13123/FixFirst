@@ -1,0 +1,1729 @@
+{
+  "origin": "diagnosis_injection",
+  "cases": 220,
+  "issues": 220,
+  "rejected_cases": 0,
+  "labels": {
+    "missing_dependency": 30,
+    "local_module": 30,
+    "version_incompatibility": 70,
+    "config_missing": 30,
+    "code_defect": 60
+  },
+  "library_versions": {
+    "numpy": "2.5.3",
+    "click": "8.5.0",
+    "packaging": "26.3",
+    "scikit-learn": "1.9.0",
+    "pytest": "9.1.1",
+    "pydantic": "2.13.5",
+    "PyYAML": "6.0.3",
+    "Jinja2": "3.1.6",
+    "MarkupSafe": "3.0.3",
+    "scipy": "1.18.1"
+  },
+  "python": "3.12.14",
+  "min_confidence": 0.6,
+  "tree_hyperparameters": {
+    "max_depth": 6,
+    "min_samples_leaf": 2
+  },
+  "rule_hits": {
+    "D21": 15,
+    "D20": 5,
+    "none": 48,
+    "D16": 5,
+    "D13": 5,
+    "D10": 5,
+    "D11": 5,
+    "D14": 5,
+    "D15": 5,
+    "D01": 5,
+    "D02": 42,
+    "D04": 5,
+    "D30": 10,
+    "D32": 5,
+    "D31": 5,
+    "D33": 5,
+    "D40": 5,
+    "D41": 20,
+    "D43": 15,
+    "D42": 5
+  },
+  "protocols": {
+    "leave_one_template_out": {
+      "overall": {
+        "naive_v03": {
+          "n": 220,
+          "accuracy": 0.4091,
+          "macro_f1": 0.2755,
+          "coverage": 1.0,
+          "precision_when_answered": 0.4091,
+          "accuracy_95ci": [
+            0.3455,
+            0.4727
+          ]
+        },
+        "rules_no_kg": {
+          "n": 220,
+          "accuracy": 0.4773,
+          "macro_f1": 0.6026,
+          "coverage": 0.5,
+          "precision_when_answered": 0.9545,
+          "accuracy_95ci": [
+            0.4136,
+            0.5455
+          ]
+        },
+        "rules": {
+          "n": 220,
+          "accuracy": 0.7818,
+          "macro_f1": 0.8837,
+          "coverage": 0.7818,
+          "precision_when_answered": 1.0,
+          "accuracy_95ci": [
+            0.7273,
+            0.8364
+          ]
+        },
+        "rules_heur": {
+          "n": 220,
+          "accuracy": 0.8318,
+          "macro_f1": 0.9027,
+          "coverage": 0.8318,
+          "precision_when_answered": 1.0,
+          "accuracy_95ci": [
+            0.7818,
+            0.8818
+          ]
+        },
+        "tree": {
+          "n": 220,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "coverage": 1.0,
+          "precision_when_answered": 1.0,
+          "accuracy_95ci": [
+            1.0,
+            1.0
+          ]
+        },
+        "hybrid_no_kg": {
+          "n": 220,
+          "accuracy": 0.9318,
+          "macro_f1": 0.9452,
+          "coverage": 1.0,
+          "precision_when_answered": 0.9318,
+          "accuracy_95ci": [
+            0.9,
+            0.9636
+          ]
+        },
+        "hybrid": {
+          "n": 220,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "coverage": 1.0,
+          "precision_when_answered": 1.0,
+          "accuracy_95ci": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "knowledge_covered": {
+        "naive_v03": {
+          "n": 70,
+          "accuracy": 0.2143,
+          "macro_f1": 0.1111,
+          "coverage": 1.0,
+          "precision_when_answered": 0.2143
+        },
+        "rules_no_kg": {
+          "n": 70,
+          "accuracy": 0.0714,
+          "macro_f1": 0.2,
+          "coverage": 0.1429,
+          "precision_when_answered": 0.5
+        },
+        "rules": {
+          "n": 70,
+          "accuracy": 0.9,
+          "macro_f1": 0.5849,
+          "coverage": 0.9,
+          "precision_when_answered": 1.0
+        },
+        "rules_heur": {
+          "n": 70,
+          "accuracy": 0.9,
+          "macro_f1": 0.5849,
+          "coverage": 0.9,
+          "precision_when_answered": 1.0
+        },
+        "tree": {
+          "n": 70,
+          "accuracy": 1.0,
+          "macro_f1": 0.6,
+          "coverage": 1.0,
+          "precision_when_answered": 1.0
+        },
+        "hybrid_no_kg": {
+          "n": 70,
+          "accuracy": 0.7857,
+          "macro_f1": 0.5361,
+          "coverage": 1.0,
+          "precision_when_answered": 0.7857
+        },
+        "hybrid": {
+          "n": 70,
+          "accuracy": 1.0,
+          "macro_f1": 0.6,
+          "coverage": 1.0,
+          "precision_when_answered": 1.0
+        }
+      },
+      "knowledge_not_covered": {
+        "naive_v03": {
+          "n": 150,
+          "accuracy": 0.5,
+          "macro_f1": 0.2895,
+          "coverage": 1.0,
+          "precision_when_answered": 0.5
+        },
+        "rules_no_kg": {
+          "n": 150,
+          "accuracy": 0.6667,
+          "macro_f1": 0.6532,
+          "coverage": 0.6667,
+          "precision_when_answered": 1.0
+        },
+        "rules": {
+          "n": 150,
+          "accuracy": 0.7267,
+          "macro_f1": 0.7774,
+          "coverage": 0.7267,
+          "precision_when_answered": 1.0
+        },
+        "rules_heur": {
+          "n": 150,
+          "accuracy": 0.8,
+          "macro_f1": 0.8532,
+          "coverage": 0.8,
+          "precision_when_answered": 1.0
+        },
+        "tree": {
+          "n": 150,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "coverage": 1.0,
+          "precision_when_answered": 1.0
+        },
+        "hybrid_no_kg": {
+          "n": 150,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "coverage": 1.0,
+          "precision_when_answered": 1.0
+        },
+        "hybrid": {
+          "n": 150,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "coverage": 1.0,
+          "precision_when_answered": 1.0
+        }
+      },
+      "hybrid_per_class": {
+        "missing_dependency": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 30.0
+        },
+        "local_module": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 30.0
+        },
+        "version_incompatibility": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 70.0
+        },
+        "config_missing": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 30.0
+        },
+        "code_defect": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 60.0
+        }
+      },
+      "hybrid_confusion": {
+        "missing_dependency": {
+          "missing_dependency": 30,
+          "local_module": 0,
+          "version_incompatibility": 0,
+          "config_missing": 0,
+          "code_defect": 0,
+          "none": 0
+        },
+        "local_module": {
+          "missing_dependency": 0,
+          "local_module": 30,
+          "version_incompatibility": 0,
+          "config_missing": 0,
+          "code_defect": 0,
+          "none": 0
+        },
+        "version_incompatibility": {
+          "missing_dependency": 0,
+          "local_module": 0,
+          "version_incompatibility": 70,
+          "config_missing": 0,
+          "code_defect": 0,
+          "none": 0
+        },
+        "config_missing": {
+          "missing_dependency": 0,
+          "local_module": 0,
+          "version_incompatibility": 0,
+          "config_missing": 30,
+          "code_defect": 0,
+          "none": 0
+        },
+        "code_defect": {
+          "missing_dependency": 0,
+          "local_module": 0,
+          "version_incompatibility": 0,
+          "config_missing": 0,
+          "code_defect": 60,
+          "none": 0
+        }
+      },
+      "per_scenario": [
+        {
+          "scenario": "cd_assertion",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_attribute_typo",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_dict_key",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.0,
+          "rules_heur": 0.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_fixture_bug",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.0,
+          "rules_heur": 0.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_index_error",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_local_kwarg",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_missing_name",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_name_error",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_syntax_error",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_value_error",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.0,
+          "rules_heur": 0.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_wrong_arguments",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_zero_division",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cm_config_file",
+          "label": "config_missing",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cm_environ",
+          "label": "config_missing",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cm_explicit",
+          "label": "config_missing",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cm_fixture_env",
+          "label": "config_missing",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cm_getenv_none",
+          "label": "config_missing",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cm_settings_key",
+          "label": "config_missing",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.0,
+          "rules_heur": 0.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "lm_circular",
+          "label": "local_module",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "lm_relative",
+          "label": "local_module",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "lm_renamed",
+          "label": "local_module",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "lm_shadow_library",
+          "label": "local_module",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "lm_shadow_stdlib",
+          "label": "local_module",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "lm_src_layout",
+          "label": "local_module",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "md_declared",
+          "label": "missing_dependency",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "md_declared_alias",
+          "label": "missing_dependency",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "md_known_import",
+          "label": "missing_dependency",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "md_known_runtime",
+          "label": "missing_dependency",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "md_unknown_runtime",
+          "label": "missing_dependency",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.0,
+          "rules_heur": 0.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "md_unknown_test",
+          "label": "missing_dependency",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.0,
+          "rules_heur": 0.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_asyncio_coroutine",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_collections_abc",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_jinja2",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_library_import",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.8,
+          "rules_heur": 0.8,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_library_runtime",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.8,
+          "rules_heur": 0.8,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_numpy2",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_numpy_alias",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_private_moved",
+          "label": "version_incompatibility",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.4,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_removed_kwarg",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 0.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_stdlib_module",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 0.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_unittest_alias",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.0,
+          "rules_heur": 0.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 0.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_unknown_attribute",
+          "label": "version_incompatibility",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_unknown_import",
+          "label": "version_incompatibility",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.4,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_unknown_submodule",
+          "label": "version_incompatibility",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        }
+      ]
+    },
+    "leave_one_scenario_out": {
+      "overall": {
+        "naive_v03": {
+          "n": 220,
+          "accuracy": 0.4091,
+          "macro_f1": 0.2755,
+          "coverage": 1.0,
+          "precision_when_answered": 0.4091,
+          "accuracy_95ci": [
+            0.3455,
+            0.4727
+          ]
+        },
+        "rules_no_kg": {
+          "n": 220,
+          "accuracy": 0.4773,
+          "macro_f1": 0.6026,
+          "coverage": 0.5,
+          "precision_when_answered": 0.9545,
+          "accuracy_95ci": [
+            0.4136,
+            0.5455
+          ]
+        },
+        "rules": {
+          "n": 220,
+          "accuracy": 0.7818,
+          "macro_f1": 0.8837,
+          "coverage": 0.7818,
+          "precision_when_answered": 1.0,
+          "accuracy_95ci": [
+            0.7273,
+            0.8364
+          ]
+        },
+        "rules_heur": {
+          "n": 220,
+          "accuracy": 0.8318,
+          "macro_f1": 0.9027,
+          "coverage": 0.8318,
+          "precision_when_answered": 1.0,
+          "accuracy_95ci": [
+            0.7818,
+            0.8818
+          ]
+        },
+        "tree": {
+          "n": 220,
+          "accuracy": 0.8682,
+          "macro_f1": 0.8444,
+          "coverage": 1.0,
+          "precision_when_answered": 0.8682,
+          "accuracy_95ci": [
+            0.8227,
+            0.9136
+          ]
+        },
+        "hybrid_no_kg": {
+          "n": 220,
+          "accuracy": 0.9318,
+          "macro_f1": 0.9452,
+          "coverage": 1.0,
+          "precision_when_answered": 0.9318,
+          "accuracy_95ci": [
+            0.9,
+            0.9636
+          ]
+        },
+        "hybrid": {
+          "n": 220,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "coverage": 1.0,
+          "precision_when_answered": 1.0,
+          "accuracy_95ci": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "knowledge_covered": {
+        "naive_v03": {
+          "n": 70,
+          "accuracy": 0.2143,
+          "macro_f1": 0.1111,
+          "coverage": 1.0,
+          "precision_when_answered": 0.2143
+        },
+        "rules_no_kg": {
+          "n": 70,
+          "accuracy": 0.0714,
+          "macro_f1": 0.2,
+          "coverage": 0.1429,
+          "precision_when_answered": 0.5
+        },
+        "rules": {
+          "n": 70,
+          "accuracy": 0.9,
+          "macro_f1": 0.5849,
+          "coverage": 0.9,
+          "precision_when_answered": 1.0
+        },
+        "rules_heur": {
+          "n": 70,
+          "accuracy": 0.9,
+          "macro_f1": 0.5849,
+          "coverage": 0.9,
+          "precision_when_answered": 1.0
+        },
+        "tree": {
+          "n": 70,
+          "accuracy": 0.9286,
+          "macro_f1": 0.5609,
+          "coverage": 1.0,
+          "precision_when_answered": 0.9286
+        },
+        "hybrid_no_kg": {
+          "n": 70,
+          "accuracy": 0.7857,
+          "macro_f1": 0.5361,
+          "coverage": 1.0,
+          "precision_when_answered": 0.7857
+        },
+        "hybrid": {
+          "n": 70,
+          "accuracy": 1.0,
+          "macro_f1": 0.6,
+          "coverage": 1.0,
+          "precision_when_answered": 1.0
+        }
+      },
+      "knowledge_not_covered": {
+        "naive_v03": {
+          "n": 150,
+          "accuracy": 0.5,
+          "macro_f1": 0.2895,
+          "coverage": 1.0,
+          "precision_when_answered": 0.5
+        },
+        "rules_no_kg": {
+          "n": 150,
+          "accuracy": 0.6667,
+          "macro_f1": 0.6532,
+          "coverage": 0.6667,
+          "precision_when_answered": 1.0
+        },
+        "rules": {
+          "n": 150,
+          "accuracy": 0.7267,
+          "macro_f1": 0.7774,
+          "coverage": 0.7267,
+          "precision_when_answered": 1.0
+        },
+        "rules_heur": {
+          "n": 150,
+          "accuracy": 0.8,
+          "macro_f1": 0.8532,
+          "coverage": 0.8,
+          "precision_when_answered": 1.0
+        },
+        "tree": {
+          "n": 150,
+          "accuracy": 0.84,
+          "macro_f1": 0.8076,
+          "coverage": 1.0,
+          "precision_when_answered": 0.84
+        },
+        "hybrid_no_kg": {
+          "n": 150,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "coverage": 1.0,
+          "precision_when_answered": 1.0
+        },
+        "hybrid": {
+          "n": 150,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "coverage": 1.0,
+          "precision_when_answered": 1.0
+        }
+      },
+      "hybrid_per_class": {
+        "missing_dependency": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 30.0
+        },
+        "local_module": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 30.0
+        },
+        "version_incompatibility": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 70.0
+        },
+        "config_missing": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 30.0
+        },
+        "code_defect": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 60.0
+        }
+      },
+      "hybrid_confusion": {
+        "missing_dependency": {
+          "missing_dependency": 30,
+          "local_module": 0,
+          "version_incompatibility": 0,
+          "config_missing": 0,
+          "code_defect": 0,
+          "none": 0
+        },
+        "local_module": {
+          "missing_dependency": 0,
+          "local_module": 30,
+          "version_incompatibility": 0,
+          "config_missing": 0,
+          "code_defect": 0,
+          "none": 0
+        },
+        "version_incompatibility": {
+          "missing_dependency": 0,
+          "local_module": 0,
+          "version_incompatibility": 70,
+          "config_missing": 0,
+          "code_defect": 0,
+          "none": 0
+        },
+        "config_missing": {
+          "missing_dependency": 0,
+          "local_module": 0,
+          "version_incompatibility": 0,
+          "config_missing": 30,
+          "code_defect": 0,
+          "none": 0
+        },
+        "code_defect": {
+          "missing_dependency": 0,
+          "local_module": 0,
+          "version_incompatibility": 0,
+          "config_missing": 0,
+          "code_defect": 60,
+          "none": 0
+        }
+      },
+      "per_scenario": [
+        {
+          "scenario": "cd_assertion",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_attribute_typo",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_dict_key",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.0,
+          "rules_heur": 0.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_fixture_bug",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.0,
+          "rules_heur": 0.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_index_error",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_local_kwarg",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_missing_name",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 0.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_name_error",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_syntax_error",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_value_error",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.0,
+          "rules_heur": 0.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_wrong_arguments",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cd_zero_division",
+          "label": "code_defect",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cm_config_file",
+          "label": "config_missing",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cm_environ",
+          "label": "config_missing",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cm_explicit",
+          "label": "config_missing",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cm_fixture_env",
+          "label": "config_missing",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cm_getenv_none",
+          "label": "config_missing",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "cm_settings_key",
+          "label": "config_missing",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.0,
+          "rules_heur": 0.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "lm_circular",
+          "label": "local_module",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 0.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "lm_relative",
+          "label": "local_module",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 0.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "lm_renamed",
+          "label": "local_module",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "lm_shadow_library",
+          "label": "local_module",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "lm_shadow_stdlib",
+          "label": "local_module",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "lm_src_layout",
+          "label": "local_module",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 0.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "md_declared",
+          "label": "missing_dependency",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 1.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "md_declared_alias",
+          "label": "missing_dependency",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "md_known_import",
+          "label": "missing_dependency",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "md_known_runtime",
+          "label": "missing_dependency",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "md_unknown_runtime",
+          "label": "missing_dependency",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.0,
+          "rules_heur": 0.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "md_unknown_test",
+          "label": "missing_dependency",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 1.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.0,
+          "rules_heur": 0.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_asyncio_coroutine",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_collections_abc",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_jinja2",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_library_import",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.8,
+          "rules_heur": 0.8,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_library_runtime",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.8,
+          "rules_heur": 0.8,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_numpy2",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_numpy_alias",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_private_moved",
+          "label": "version_incompatibility",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.4,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_removed_kwarg",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 0.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_stdlib_module",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 0.0,
+          "hybrid_no_kg": 0.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_unittest_alias",
+          "label": "version_incompatibility",
+          "knowledge_covered": true,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.0,
+          "rules_heur": 0.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 0.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_unknown_attribute",
+          "label": "version_incompatibility",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 1.0,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_unknown_import",
+          "label": "version_incompatibility",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.4,
+          "rules_heur": 1.0,
+          "tree": 1.0,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        },
+        {
+          "scenario": "vi_unknown_submodule",
+          "label": "version_incompatibility",
+          "knowledge_covered": false,
+          "n": 5,
+          "naive_v03": 0.0,
+          "rules_no_kg": 0.0,
+          "rules": 0.0,
+          "rules_heur": 1.0,
+          "tree": 0.2,
+          "hybrid_no_kg": 1.0,
+          "hybrid": 1.0
+        }
+      ]
+    }
+  },
+  "final_tree": {
+    "nodes": 13,
+    "leaves": 7,
+    "feature_importances": {
+      "module_mentioned": 0.1908,
+      "context_configuration": 0.1928,
+      "context_project_names": 0.1524,
+      "context_external_api": 0.3247,
+      "interface_history_match": 0.0507,
+      "context_local_symbol": 0.0887
+    }
+  }
+}
