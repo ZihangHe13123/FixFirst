@@ -1,0 +1,184 @@
+{
+ "rater": "one rater (the author of the report), reading each step as written against the allowed repairs of docs/B4_SCENARIOS.md",
+ "steps": [
+  {
+   "case": "M1",
+   "state": 1,
+   "repaired_before": [],
+   "fault_behind_the_issue": "renamed_helper",
+   "allowed_repair": "move the helper file back, or import the new name",
+   "step_kind": "manual_fix",
+   "step_title": "Update imports of helper: the project has helpers.py",
+   "step_instructions": "No installed package, standard module or known distribution is called helper, but the project contains helpers.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+   "cause_shown": "local_module",
+   "cause_source": "rule",
+   "judgement": "correct",
+   "judgement_strict_reading": "correct",
+   "reason": "Says the module was renamed or moved and to update the imports or restore the file: both allowed repairs."
+  },
+  {
+   "case": "M1",
+   "state": 2,
+   "repaired_before": [
+    "renamed_helper"
+   ],
+   "fault_behind_the_issue": "numpy_alias",
+   "allowed_repair": "use the builtin float",
+   "step_kind": "manual_fix",
+   "step_title": "Replace numpy.float: removed in numpy 1.24",
+   "step_instructions": "Observed project location: app.py:15. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+   "cause_shown": "version_incompatibility",
+   "cause_source": "rule",
+   "judgement": "correct",
+   "judgement_strict_reading": "correct",
+   "reason": "Says to use the builtin type instead of numpy.float: the allowed repair."
+  },
+  {
+   "case": "M2",
+   "state": 1,
+   "repaired_before": [],
+   "fault_behind_the_issue": "private_moved",
+   "allowed_repair": "import from sklearn.utils._user_interface",
+   "step_kind": "inspect",
+   "step_title": "Find a compatible scikit-learn release that provides sklearn.utils._print_elapsed_time",
+   "step_instructions": "",
+   "cause_shown": "version_incompatibility",
+   "cause_source": "heuristic",
+   "judgement": "generic",
+   "judgement_strict_reading": "generic",
+   "reason": "An inspecting step with no instructions: find a scikit-learn release that still has the name. It names no concrete change, and its direction is the library version, not the import from sklearn.utils._user_interface."
+  },
+  {
+   "case": "M2",
+   "state": 2,
+   "repaired_before": [
+    "private_moved"
+   ],
+   "fault_behind_the_issue": "env_missing",
+   "allowed_repair": "provide a default for the variable",
+   "step_kind": "manual_fix",
+   "step_title": "Provide the configuration value BILLING_DB_URL",
+   "step_instructions": "The code needs BILLING_DB_URL at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values.",
+   "cause_shown": "config_missing",
+   "cause_source": "rule",
+   "judgement": "correct",
+   "judgement_strict_reading": "wrong",
+   "reason": "Says to provide the value (in the shell or a configuration the tests load). Read as within 'provide a default for the variable' it is the allowed repair; read strictly, only a default in the code is allowed and this is another action."
+  },
+  {
+   "case": "M2",
+   "state": 3,
+   "repaired_before": [
+    "private_moved",
+    "env_missing"
+   ],
+   "fault_behind_the_issue": "total_off_by_one",
+   "allowed_repair": "restore sum(self.values)",
+   "step_kind": "manual_fix",
+   "step_title": "Compare the failed assertion's expected and actual values",
+   "step_instructions": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+   "cause_shown": "code_defect",
+   "cause_source": "rule",
+   "judgement": "generic",
+   "judgement_strict_reading": "generic",
+   "reason": "Says to compare expected and actual values and check the implementation: no concrete change."
+  },
+  {
+   "case": "M3",
+   "state": 1,
+   "repaired_before": [],
+   "fault_behind_the_issue": "stdlib_removed",
+   "allowed_repair": "remove the import (use importlib)",
+   "step_kind": "manual_fix",
+   "step_title": "Replace imp: removed in Python 3.12",
+   "step_instructions": "Observed project location: inventory/stock.py:2. The target interpreter has Python 3.12.13, which no longer provides imp (removed in 3.12). Change the code to use importlib (for example importlib.util / importlib.reload). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+   "cause_shown": "version_incompatibility",
+   "cause_source": "rule",
+   "judgement": "correct",
+   "judgement_strict_reading": "correct",
+   "reason": "Says to change the code to use importlib: the allowed repair."
+  },
+  {
+   "case": "M4",
+   "state": 1,
+   "repaired_before": [],
+   "fault_behind_the_issue": "env_missing",
+   "allowed_repair": "provide a default for the variable",
+   "step_kind": "manual_fix",
+   "step_title": "Provide the configuration value GRADES_SERVICE_KEY",
+   "step_instructions": "The code needs GRADES_SERVICE_KEY at run time and it is not set. Set it in the shell or the test configuration (for example a .env file the project loads) and document it. Do not commit secret values.",
+   "cause_shown": "config_missing",
+   "cause_source": "rule",
+   "judgement": "correct",
+   "judgement_strict_reading": "wrong",
+   "reason": "Says to provide the value (in the shell or a configuration the tests load). Read as within 'provide a default for the variable' it is the allowed repair; read strictly, only a default in the code is allowed and this is another action."
+  },
+  {
+   "case": "M4",
+   "state": 2,
+   "repaired_before": [
+    "env_missing"
+   ],
+   "fault_behind_the_issue": "total_off_by_one",
+   "allowed_repair": "restore sum(self.values)",
+   "step_kind": "manual_fix",
+   "step_title": "Compare the failed assertion's expected and actual values",
+   "step_instructions": "Read the failing test node, its assertion and the original traceback, then check the business expectation against the implementation. Verify the related nodes first, then the full test suite.",
+   "cause_shown": "code_defect",
+   "cause_source": "rule",
+   "judgement": "generic",
+   "judgement_strict_reading": "generic",
+   "reason": "Says to compare expected and actual values and check the implementation: no concrete change."
+  },
+  {
+   "case": "M5",
+   "state": 1,
+   "repaired_before": [],
+   "fault_behind_the_issue": "renamed_helper",
+   "allowed_repair": "move the helper file back, or import the new name",
+   "step_kind": "manual_fix",
+   "step_title": "Update imports of orders.tax: the project has orders/taxes.py",
+   "step_instructions": "No installed package, standard module or known distribution is called orders.tax, but the project contains orders/taxes.py. The module was probably renamed or moved; update the imports or restore the file. Installing a package with this name would not fix it.",
+   "cause_shown": "local_module",
+   "cause_source": "rule",
+   "judgement": "correct",
+   "judgement_strict_reading": "correct",
+   "reason": "Says the module was renamed or moved and to update the imports or restore the file: both allowed repairs."
+  },
+  {
+   "case": "M5",
+   "state": 2,
+   "repaired_before": [
+    "renamed_helper"
+   ],
+   "fault_behind_the_issue": "private_moved",
+   "allowed_repair": "import from sklearn.utils._user_interface",
+   "step_kind": "inspect",
+   "step_title": "Find a compatible scikit-learn release that provides sklearn.utils._print_elapsed_time",
+   "step_instructions": "",
+   "cause_shown": "version_incompatibility",
+   "cause_source": "heuristic",
+   "judgement": "generic",
+   "judgement_strict_reading": "generic",
+   "reason": "An inspecting step with no instructions: find a scikit-learn release that still has the name. It names no concrete change, and its direction is the library version, not the import from sklearn.utils._user_interface."
+  },
+  {
+   "case": "M5",
+   "state": 3,
+   "repaired_before": [
+    "renamed_helper",
+    "private_moved"
+   ],
+   "fault_behind_the_issue": "numpy_alias",
+   "allowed_repair": "use the builtin float",
+   "step_kind": "manual_fix",
+   "step_title": "Replace numpy.float: removed in numpy 1.24",
+   "step_instructions": "Observed project location: orders/service.py:16. The target interpreter has numpy 2.5.3, which no longer provides numpy.float (removed in 1.24). Change the code to use the builtin type, or an explicit NumPy scalar such as numpy.float64. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative.",
+   "cause_shown": "version_incompatibility",
+   "cause_source": "rule",
+   "judgement": "correct",
+   "judgement_strict_reading": "correct",
+   "reason": "Says to use the builtin type instead of numpy.float: the allowed repair."
+  }
+ ]
+}
