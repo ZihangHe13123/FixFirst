@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 
 from .cases import require_demo_tools, source_fingerprint, write
+from .integrity import accept
 from .models import now
 from .report import render
 from .service import create_session, scan, mark_fixed
@@ -122,6 +123,13 @@ def build_dataset(output: Path, projects=5):
                 write(root / "cart.py", HEALTHY)
                 write(root / "conftest.py", FIXTURE)
                 scan(session, ["pytest", "pytest_run"])
+                if session.baseline_check.get("state") == "changed":
+                    # The setup and teardown faults live in conftest.py, so repairing them changes
+                    # a test file and FixFirst waits for a person to accept the tests. The generator
+                    # owns this fixture and decides as `fixfirst accept-baseline` does, then checks
+                    # again; the saved session keeps both steps.
+                    accept(session)
+                    scan(session, ["pytest", "pytest_run"])
                 write(directory / "restored.json", session.model_dump_json(indent=2))
                 require_healthy(session)
                 manifest["cases"].append(
