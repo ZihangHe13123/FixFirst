@@ -25,9 +25,9 @@ bundled model or compared with a different feature layout without identifying th
 | `execution-demo/` | Failing tests: a selected-node pass, a skipped test that is *not* a fix, full recovery | `01-two-failures.html` |
 | `dependency-demo/` | `pip check` passes but the project's declaration is not met | `01-broken.html` |
 | `historical-regressions/` | Four upstream library defects replayed offline with official wheels | `REPORT.md` |
-| `grouping-evaluation/` | Message grouping (exact vs TF-IDF) on the controlled datasets | `collection/REPORT.md` |
+| `grouping-evaluation/` | Message grouping, exact matching against TF-IDF (task B9): the two controlled datasets, saved event streams of development data and real projects, and constructed hard pairs | `REPORT.md` |
 | `public-data/` | What PyDFix and BugsInPy contain and the parts FixFirst can use: 22 distinct PyDFix import errors, an index of 501 BugsInPy bugs | `README.md` |
-| `dataset/`, `execution-dataset/` | The v0.1/v0.2 controlled datasets (used for grouping only) | `manifest.json` |
+| `dataset/`, `execution-dataset/` | The controlled datasets used for grouping only. `dataset/` was generated again with 0.8.0rc5 on 12 October 2026; `execution-dataset/` is the recording of 8 September (its generator does not complete with the present code, see the grouping report) | `manifest.json` |
 
 ## Reproduce
 
