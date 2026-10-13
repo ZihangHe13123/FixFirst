@@ -30,10 +30,11 @@ Symlink tests run on Windows when creation succeeds. Actual `WinError 1314`
 other errors still fail. The pre-existing blanket Windows skip on the resolved-path
 comparison was removed. FIFO tests skip where `os.mkfifo` is unavailable.
 
-Three tests inspect macOS sandbox profile syntax and run only on macOS: the two
+Three tests inspect macOS sandbox profile syntax and skip only on Windows: the two
 profile-policy tests in the card, plus `test_profile_paths_are_real_paths`. The latter
 also asserts POSIX quoting and would fail on Windows even if symlink creation were
-permitted. This does not skip a product execution check. Long file-page parameter
+permitted. These inspect profile text without launching the sandbox, so they run on
+both Linux and macOS. This does not skip a product execution check. Long file-page parameter
 values have short IDs, and the affected UTF-8 JSON/MCP test clients decode explicitly.
 The two timing tests and all original assertions are unchanged.
 

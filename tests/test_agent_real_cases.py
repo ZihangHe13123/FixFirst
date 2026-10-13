@@ -247,7 +247,7 @@ def test_the_install_step_of_the_project_is_returned_for_the_sandbox(tmp_path):
     assert commands == [[str(python), "-m", "pip", "install", "-q", "--no-deps", "-e", "."]]
 
 
-@pytest.mark.skipif(sys.platform != "darwin", reason="macOS sandbox profile and path syntax")
+@pytest.mark.skipif(sys.platform == "win32", reason="Windows paths differ from the POSIX sandbox profile assertions")
 def test_a_sandbox_profile_denies_the_private_areas_and_allows_only_the_run(tmp_path):
     run, other = tmp_path / "out" / "runs" / "a", tmp_path / "out" / "runs" / "b"
     policy = iso.Policy(writable=(run / "project", run / "tmp"), readable=(tmp_path / "python",), network=False,
@@ -263,7 +263,7 @@ def test_a_sandbox_profile_denies_the_private_areas_and_allows_only_the_run(tmp_
     assert "(deny network*)" not in iso.profile_text(iso.Policy((), (), network=True, owner=iso.new_mark()), denied=())
 
 
-@pytest.mark.skipif(sys.platform != "darwin", reason="macOS sandbox profile and path syntax")
+@pytest.mark.skipif(sys.platform == "win32", reason="Windows paths differ from the POSIX sandbox profile assertions")
 def test_protected_files_are_denied_after_everything_the_policy_allows(tmp_path):
     answers = tmp_path / "readable" / "answers.json"
     answers.parent.mkdir()
@@ -333,7 +333,7 @@ def test_the_budget_does_not_count_paused_time():
     assert budget.used() < 0.05 and budget.remaining() > 9.9
 
 
-@pytest.mark.skipif(sys.platform != "darwin", reason="macOS sandbox profile and path syntax")
+@pytest.mark.skipif(sys.platform == "win32", reason="Windows paths differ from the POSIX sandbox profile assertions")
 def test_profile_paths_are_real_paths(make_symlink, tmp_path):
     target = tmp_path / "real"
     target.mkdir()

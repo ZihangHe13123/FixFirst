@@ -11,7 +11,7 @@ This implements the user-supplied 13 October Windows modification card against
 - Render the package version and goal state in the HTML report, using the existing
   version source and goal states.
 - Skip symlink fixtures only when Windows actually refuses symlink creation; guard
-  FIFO and macOS-only sandbox tests, shorten the long parameter IDs, and decode UTF-8
+  FIFO tests and skip POSIX-path sandbox-profile tests only on Windows, shorten the long parameter IDs, and decode UTF-8
   explicitly in the affected test clients. Preserve all original assertions.
 - Make the hard-case writer preserve the registered test bytes. Do not rewrite its
   published results or manifests, or change the two timing tests.
