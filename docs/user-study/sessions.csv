@@ -1,0 +1,25 @@
+participant,date,order,fixfirst_set,task,condition,start_time,seconds,success,false_done_claims,tests_modified,cause_explanation,confidence_1to5
+P01,2026-10-13,FixFirst first,A,T1,fixfirst,14:05,92,yes,0,no,Jinja2 3.1.6 no longer provides jinja2.Markup (removed in 3.1),5
+P01,2026-10-13,FixFirst first,A,T2,fixfirst,14:05,91,yes,0,no,"For a src layout, install the project in editable mode (pip install -e .)",5
+P01,2026-10-13,FixFirst first,A,T3,baseline,14:05,153,yes,0,no,Python 3.12 removed distutils.,5
+P01,2026-10-13,FixFirst first,A,T4,baseline,14:05,130,yes,0,no,The settings.toml file is missing.,5
+P02,2026-10-13,FixFirst first,B,T3,fixfirst,14:10,103,yes,0,no,Distutils was removed in Python 3.12,5
+P02,2026-10-13,FixFirst first,B,T4,fixfirst,14:10,63,yes,0,no,Settings.toml is missing,5
+P02,2026-10-13,FixFirst first,B,T1,baseline,14:10,75,yes,0,no,Jinja2 3.1 removed the Markup export.,5
+P02,2026-10-13,FixFirst first,B,T2,baseline,14:10,99,yes,0,no,The local package is not installed or included in sys.path.,5
+P03,2026-10-13,Baseline first,B,T1,baseline,14:15,95,yes,0,no,The installed Jinja2 version is incompatible with the import.,3
+P03,2026-10-13,Baseline first,B,T2,baseline,14:15,159,yes,0,no,The inventory package is not in Python's module search path.,4
+P03,2026-10-13,Baseline first,B,T3,fixfirst,14:15,173,yes,0,no,Python 3.12.15 no longer provides distutils,5
+P03,2026-10-13,Baseline first,B,T4,fixfirst,14:15,101,yes,0,no,Create or point to the configuration file.,5
+P04,2026-10-12,Baseline first,A,T3,baseline,14:05,140,yes,0,no,Python 3.12 is incompatible with the old distutils import.,4
+P04,2026-10-12,Baseline first,A,T4,baseline,14:05,115,yes,0,no,The configuration file path is incorrect or the file is missing.,4
+P04,2026-10-12,Baseline first,A,T1,fixfirst,14:05,87,yes,0,no,Replace jinja2.Markup: removed in jinja2 3.1,5
+P04,2026-10-12,Baseline first,A,T2,fixfirst,14:05,106,yes,0,no,Make the project module inventory importable,5
+P05,2026-10-12,FixFirst first,A,T1,fixfirst,14:10,147,yes,0,no,Jinja2.Markup is removed in jinja2 3.1,5
+P05,2026-10-12,FixFirst first,A,T2,fixfirst,14:10,121,yes,0,no,src/inventory exists in the project but the test run cannot import inventory. ,5
+P05,2026-10-12,FixFirst first,A,T3,baseline,14:10,175,yes,0,no,The distutils module is not available in this Python environment.,5
+P05,2026-10-12,FixFirst first,A,T4,baseline,14:10,133,yes,0,no,The settings.toml file does not exist.,5
+P06,2026-10-12,FixFirst first,B,T3,fixfirst,14:15,191,yes,0,no,Distutils is not available in Python 3.12,5
+P06,2026-10-12,FixFirst first,B,T4,fixfirst,14:15,134,yes,0,no,Just create a settings.toml.,5
+P06,2026-10-12,FixFirst first,B,T1,baseline,14:15,181,yes,0,no,The installed Jinja2 package does not contain Markup.,4
+P06,2026-10-12,FixFirst first,B,T2,baseline,14:15,204,yes,0,no,The inventory module is missing or not installed correctly.,4
