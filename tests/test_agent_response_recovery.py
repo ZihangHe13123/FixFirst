@@ -267,7 +267,8 @@ def test_a_reminder_never_extends_the_turn_or_time_cap(tmp_path, monkeypatch):
     assert stats["end"] == "time_cap" and stats["no_tool_reminders"] == len(records) == 1 and not calls
 
 
-@pytest.mark.parametrize("text", ["", "START\n" + "x" * 19000 + "\nEND", "开头\r\n" + "🙂é\r" * 6500 + "结尾"])
+@pytest.mark.parametrize("text", ["", "START\n" + "x" * 19000 + "\nEND", "开头\r\n" + "🙂é\r" * 6500 + "结尾"],
+                         ids=["empty", "long_lines", "unicode_and_crlf"])
 def test_file_pages_reconstruct_the_entire_file_without_skipping_long_lines_or_unicode(tmp_path, text):
     (tmp_path / "code.py").write_bytes(text.encode())
     run = SimpleNamespace(project=tmp_path)
@@ -305,7 +306,10 @@ def test_pages_and_legacy_tail_have_distinct_tool_contracts_and_respect_project_
     assert page["text"] == "head" and page["next_offset"] == 4 and not page["eof"]
     outside = tmp_path.parent / "outside.py"
     outside.write_text("private")
-    (tmp_path / "link.py").symlink_to(outside)
+    try:
+        (tmp_path / "link.py").symlink_to(outside)
+    except OSError:
+        pytest.skip("no symlinks here")
     assert ap.run_tool("read_file", {"path": "link.py"}, run, {"file_read_mode": "paged"}, None, None, 1).startswith("error:")
     assert ap.basic_tools("tail") == ap.BASIC_TOOLS
     read = next(t["function"] for t in ap.basic_tools("paged") if t["function"]["name"] == "read_file")

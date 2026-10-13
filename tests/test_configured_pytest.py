@@ -282,7 +282,10 @@ def test_unsafe_configuration_cannot_block_the_host_or_earn_confirmation(tmp_pat
         path.write_text("[pytest]\naddopts=--maxfail=1\n#" + "x" * 128000)
     else:
         path.rename(tmp_path / "config.ini")
-        path.symlink_to(tmp_path / "config.ini")
+        try:
+            path.symlink_to(tmp_path / "config.ini")
+        except OSError:
+            pytest.skip("no symlinks here")
     (tmp_path / "app.py").write_text("READY = True\n")
     scan(session, ["pytest_run"])
     assert len(pytest_runs(session)) == 1

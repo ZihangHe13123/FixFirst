@@ -146,7 +146,10 @@ def test_feedback_is_bounded_and_never_waits_on_special_files(tmp_path, special)
     if special == "symlink":
         target = tmp_path / "other.log"
         target.write_text("ERROR: No matching distribution found for rich")
-        path.symlink_to(target)
+        try:
+            path.symlink_to(target)
+        except OSError:
+            pytest.skip("no symlinks here")
     elif special == "fifo":
         if not hasattr(os, "mkfifo"):
             pytest.skip("FIFO requires POSIX")

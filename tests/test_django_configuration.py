@@ -76,12 +76,17 @@ def test_unsafe_files_are_not_read_and_do_not_block_other_candidates(tmp_path, u
     if unsafe == "symlink":
         outside = tmp_path.parent / "outside-django-settings.py"
         outside.write_text("raise RuntimeError('never')")
-        path.symlink_to(outside)
+        try:
+            path.symlink_to(outside)
+        except OSError:
+            pytest.skip("no symlinks here")
     elif unsafe == "oversized":
         path.write_text("x" * 128001)
     elif unsafe == "directory":
         path.mkdir()
     else:
+        if not hasattr(os, "mkfifo"):
+            pytest.skip("FIFO requires POSIX")
         os.mkfifo(path)
     (tmp_path / "pytest.ini").write_text("[pytest]\nDJANGO_SETTINGS_MODULE=suite.config\n")
     result = recorded_configuration(tmp_path)

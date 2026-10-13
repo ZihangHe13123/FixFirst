@@ -269,7 +269,7 @@ def test_post_grading_harness_error_invalidates_finish_measurement(tmp_path, mon
     monkeypatch.setattr(ap, "run_generated", crash)
     output = tmp_path / "out"
     ap.main(["--model", "stub", "--cases", "pkg-inventory:lm_renamed", "--arms", "baseline", "--out", str(output)])
-    row = json.loads((output / "results.jsonl").read_text())
+    row = json.loads((output / "results.jsonl").read_text(encoding="utf-8"))
     assert row["grading"] == "not_graded" and row["fixed"] is None
     assert row["finish_check_status"] == "not_checked" and row["finish_fixed"] is None
     assert row["final_state_fixed"] is None and row["final_violations"] is None

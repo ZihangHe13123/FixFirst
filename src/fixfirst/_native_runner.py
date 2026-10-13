@@ -72,7 +72,13 @@ def main():
 
     sys.excepthook = observe
     sys.argv[:] = [entry, *arguments]
-    sys.orig_argv = [sys.executable, *(['-m', entry] if kind == 'module' else [entry]), *arguments]
+    # Keep the OS-reported program and replace only what follows: on Windows a venv
+    # launcher reports the base interpreter, exactly as a direct run of the same
+    # interpreter does; sys.executable there is the venv path, which would not match.
+    # (orig_argv exists from Python 3.10; on 3.9 fall back to the interpreter path.)
+    original_argv = getattr(sys, 'orig_argv', None)
+    program = original_argv[0] if original_argv else sys.executable
+    sys.orig_argv = [program, *(['-m', entry] if kind == 'module' else [entry]), *arguments]
     sys.path[0] = path0
     module = type(sys)('__main__')
     sys.modules['__main__'] = module

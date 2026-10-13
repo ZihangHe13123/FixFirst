@@ -188,7 +188,8 @@ def make_reference(dest: Path, pristine: Path, start: Path, t: dc.Template, entr
         if text.count(old) != 1:
             return [f"the registered repair does not apply: {old!r} occurs {text.count(old)} times in {t.service}"]
         text = text.replace(old, new)
-    path.write_text(text, encoding="utf-8")
+    # LF everywhere: instance digests are compared across platforms.
+    path.write_text(text, encoding="utf-8", newline="\n")
     if rc.integrity(dest) != rc.integrity(start):
         return ["the registered repair changes tests or pytest settings"]
     return []

@@ -2,8 +2,10 @@
 
 import hashlib
 import json
+import ntpath
 import os
 from pathlib import Path
+import posixpath
 import re
 import subprocess
 import tempfile
@@ -78,9 +80,23 @@ def venv_site_packages(root: Path) -> Path:
 
 
 def environment_id(python: str) -> str:
-    # Do not resolve symlinks: distinct venv interpreters may point at the same binary.
-    # normcase makes C:\\Venv and c:\\venv the same interpreter on Windows (no-op elsewhere).
-    return hashlib.sha256(os.path.normcase(os.path.abspath(python)).encode()).hexdigest()[:16]
+    """The identity of an interpreter, computed the same way on every platform.
+
+    Do not resolve symlinks: distinct venv interpreters may point at the same binary.
+    A recorded session keeps the path style of the machine that recorded it
+    ("/venv/bin/python" from a POSIX host, a drive path from Windows), so the id is
+    computed in that path's own style; `abspath` would rewrite a foreign absolute
+    path with the local drive, making stored sessions look like another environment.
+    Live interpreters are absolute drive paths on Windows and absolute POSIX paths
+    elsewhere, where this is bit-for-bit the previous result.
+    """
+    if ntpath.isabs(python) and ntpath.splitdrive(python)[0]:
+        path = ntpath.normcase(ntpath.normpath(python))
+    elif python.startswith("/"):
+        path = posixpath.normpath(python)
+    else:
+        path = os.path.normcase(os.path.abspath(python))
+    return hashlib.sha256(path.encode()).hexdigest()[:16]
 
 
 def redact_data(value):
@@ -210,14 +226,16 @@ def execute(
         proc.stderr.close()
     run.exit_code = proc.returncode
     run.duration_s = round(time.monotonic() - start, 3)
-    stdout = buffers["stdout"].decode("utf-8", errors="replace")
+    # A child started in text mode writes CRLF on Windows; the captured text is
+    # line-ending neutral everywhere (parsers and byte comparisons assume LF).
+    stdout = buffers["stdout"].decode("utf-8", errors="replace").replace("\r\n", "\n")
     run.stdout = redact(stdout)
     if tool == "environment":
         try:
             run.stdout = json.dumps(redact_data(json.loads(stdout)), ensure_ascii=False)
         except ValueError:
             pass
-    run.stderr = redact(buffers["stderr"].decode("utf-8", errors="replace"))
+    run.stderr = redact(buffers["stderr"].decode("utf-8", errors="replace").replace("\r\n", "\n"))
     return run
 
 

@@ -97,7 +97,10 @@ def test_config_symlinks_are_rejected_even_if_their_target_is_inside_root(tmp_pa
     project.mkdir()
     target = (project if target_inside else tmp_path) / "actual.ini"
     target.write_text("[pytest]\nfilterwarnings=error\n", encoding="utf-8")
-    (project / "pytest.ini").symlink_to(target)
+    try:
+        (project / "pytest.ini").symlink_to(target)
+    except OSError:
+        pytest.skip("no symlinks here")
     assert pytest_settings.recorded_warning_filters(project) == []
 
 
@@ -107,7 +110,10 @@ def test_symlink_root_and_nonregular_configuration_are_rejected(tmp_path):
     (project / "pytest.ini").mkdir()
     assert pytest_settings.recorded_warning_filters(project) == []
     alias = tmp_path / "alias"
-    alias.symlink_to(project, target_is_directory=True)
+    try:
+        alias.symlink_to(project, target_is_directory=True)
+    except OSError:
+        pytest.skip("no symlinks here")
     assert pytest_settings.recorded_warning_filters(alias) == []
 
 

@@ -128,7 +128,10 @@ def test_selection_validation_is_before_execution(tmp_path):
     outside = tmp_path / "outside.py"
     outside.write_text("raise RuntimeError('must not run')\n")
     link = root / "linked.py"
-    link.symlink_to(outside)
+    try:
+        link.symlink_to(outside)
+    except OSError:
+        pytest.skip("no symlinks here")
     for tests in (["--help"], ["../outside.py"], [str(outside)], ["linked.py"], ["."],
                   ["tests_ledger.py::"], ["tests_ledger.py\n"], ["missing.py"],
                   ["tests_ledger.py", "./tests_ledger.py"], "tests_ledger.py", [1]):

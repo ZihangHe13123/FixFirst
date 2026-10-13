@@ -177,7 +177,10 @@ def test_mapping_must_be_outside_scoring_directory(sealed, tmp_path, location):
     elif location == "same":
         mapping = output
     else:
-        (tmp_path / "shortcut").symlink_to(output, target_is_directory=True)
+        try:
+            (tmp_path / "shortcut").symlink_to(output, target_is_directory=True)
+        except OSError:
+            pytest.skip("no symlinks here")
         mapping = tmp_path / "shortcut" / "mapping.json"
     with pytest.raises(ValueError, match="outside"):
         blind_scores.export_scores(tmp_path / "answers", tmp_path / "labels.csv", output, mapping)

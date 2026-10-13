@@ -303,6 +303,47 @@ print(MARK + json.dumps({"records": results, "loaded": loaded}))
 '''
 
 
+def _venv_python(directory: str) -> str:
+    """The interpreter of a venv made here: bin/python on POSIX, Scripts\\python.exe on Windows."""
+    if os.name == "nt":
+        return os.path.join(directory, "Scripts", "python.exe")
+    return os.path.join(directory, "bin", "python")
+
+
+class ReferenceWorkspace(verify.Workspace):
+    """verify.Workspace with the venv layout of the running platform. The base class joins bin/python,
+    the layout of the machine the record was made on; a uv venv on Windows keeps its interpreter under
+    Scripts. Everywhere else this is exactly the base class. Mirrors verify.Workspace.python_for."""
+
+    def python_for(self, env):
+        if os.name != "nt":
+            return super().python_for(env)
+        if env.python not in verify.find_pythons():
+            raise verify.MissingInterpreter(f"interpreter {env.python} is not installed (uv python install {env.python})")
+        if not env.pkgs:
+            return os.path.abspath(verify.find_pythons()[env.python])
+        if env in self.envs:
+            return self.envs[env]
+        h = hashlib.sha1(repr((env.python, env.pkgs, env.only_binary)).encode()).hexdigest()[:10]
+        d = os.path.join(self.base, f"env-{env.python}-{h}")
+        py = _venv_python(d)
+        # uv reports interpreters it manages under the working directory as relative paths; the
+        # runs of the product start in the project's folder, so the path below must be absolute.
+        subprocess.run([verify.UV, "venv", "--quiet", "--python", os.path.abspath(verify.find_pythons()[env.python]), d],
+                       check=True, capture_output=True, text=True, env=self.env_vars)
+        cmd = [verify.UV, "pip", "install", "--quiet", "--python", py]
+        if env.only_binary:
+            cmd += ["--only-binary", ":all:"]
+        cmd += list(env.pkgs)
+        t0 = time.time()
+        r = subprocess.run(cmd, capture_output=True, text=True, env=self.env_vars)
+        self.install_log.append((env, r.returncode, round(time.time() - t0, 1), (r.stderr or r.stdout)[-1500:]))
+        if r.returncode != 0:
+            raise verify.EnvError(f"cannot install {env.label()}: {(r.stderr or r.stdout)[-800:]}")
+        self.envs[env] = py
+        return py
+
+
 class PersistentWorkspace(verify.Workspace):
     """Reuse the environments of an earlier run in the same --base directory (authoring only; a reference run starts empty)."""
 
@@ -1048,7 +1089,7 @@ def main(argv=None) -> int:
         os.makedirs(a.base, exist_ok=True)
         ws = PersistentWorkspace(base=os.path.abspath(a.base), keep=True)
     else:
-        ws = verify.Workspace(keep=a.keep_envs)
+        ws = ReferenceWorkspace(keep=a.keep_envs)
     lines = []
 
     def out(text=""):
