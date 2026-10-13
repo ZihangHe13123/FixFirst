@@ -97,8 +97,10 @@ IMPORTS, BODY, TEST_IMPORTS, FIXTURES = (
 
 
 def write(path: Path, text: str):
+    # Case files are compared byte for byte (admission, manifests, digests); write LF on
+    # every platform so a case generated on Windows is identical to one generated on macOS.
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text, encoding="utf-8")
+    path.write_text(text, encoding="utf-8", newline="")
 
 
 def build_template(root: Path, t: Template):
@@ -159,7 +161,8 @@ class Project:
         text = path.read_text(encoding="utf-8")
         if marker not in text:
             raise ValueError(f"{rel} has no {marker}")
-        path.write_text(text.replace(marker, code.rstrip("\n") + "\n" + marker, 1), encoding="utf-8")
+        path.write_text(text.replace(marker, code.rstrip("\n") + "\n" + marker, 1),
+                        encoding="utf-8", newline="")
 
     def imports(self, code):
         self.inject(self.t.service, IMPORTS, code)
@@ -175,7 +178,8 @@ class Project:
 
     def add_test(self, code):
         path = self.root / self.t.test
-        path.write_text(path.read_text(encoding="utf-8") + "\n\n" + code, "utf-8")
+        path.write_text(path.read_text(encoding="utf-8") + "\n\n" + code,
+                        encoding="utf-8", newline="")
 
     def write(self, rel, text):
         write(self.root / rel, text)
@@ -220,7 +224,7 @@ def _(p):
 def _(p):
     name = p.pick(["tabulate", "simplejson", "ujson", "cachetools", "wrapt"])
     path = p.root / "requirements.txt"
-    path.write_text(path.read_text(encoding="utf-8") + f"{name}>=0.1\n")
+    path.write_text(path.read_text(encoding="utf-8") + f"{name}>=0.1\n", encoding="utf-8", newline="")
     p.imports(f"import {name}")
 
 
@@ -231,7 +235,7 @@ def _(p):
          ("dotenv", "python-dotenv"), ("attr", "attrs")]
     )
     path = p.root / "requirements.txt"
-    path.write_text(path.read_text(encoding="utf-8") + f"{dist}>=0.1\n")
+    path.write_text(path.read_text(encoding="utf-8") + f"{dist}>=0.1\n", encoding="utf-8", newline="")
     p.imports(f"import {module}")
 
 
@@ -256,7 +260,7 @@ def _(p):
 @s("lm_src_layout", "local_module", False, "Package moved under src/ without putting src on the path")
 def _(p):
     if p.t.path_dir == "src":
-        (p.root / "pytest.ini").write_text("[pytest]\ntestpaths = tests\n", encoding="utf-8")
+        (p.root / "pytest.ini").write_text("[pytest]\ntestpaths = tests\n", encoding="utf-8", newline="")
         return
     (p.root / "src").mkdir()
     top = {p.t.service.split("/")[0], p.t.helper.split("/")[0]}
@@ -476,7 +480,7 @@ def _(p):
 @s("cd_syntax_error", "code_defect", False, "Syntax error in a project module")
 def _(p):
     path = p.root / p.t.service
-    path.write_text(path.read_text(encoding="utf-8") + "\n\ndef broken(:\n    pass\n")
+    path.write_text(path.read_text(encoding="utf-8") + "\n\ndef broken(:\n    pass\n", encoding="utf-8", newline="")
 
 
 @s("cd_wrong_arguments", "code_defect", False, "Project function called with too many arguments")

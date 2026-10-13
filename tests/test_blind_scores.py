@@ -170,14 +170,14 @@ def test_csv_duplicate_ids_are_rejected(sealed, tmp_path):
 
 
 @pytest.mark.parametrize("location", ["inside", "same", "symlink_inside"])
-def test_mapping_must_be_outside_scoring_directory(sealed, tmp_path, location):
+def test_mapping_must_be_outside_scoring_directory(make_symlink, sealed, tmp_path, location):
     output = tmp_path / "sheets"
     if location == "inside":
         mapping = output / "mapping.json"
     elif location == "same":
         mapping = output
     else:
-        (tmp_path / "shortcut").symlink_to(output, target_is_directory=True)
+        make_symlink(tmp_path / "shortcut", output, target_is_directory=True)
         mapping = tmp_path / "shortcut" / "mapping.json"
     with pytest.raises(ValueError, match="outside"):
         blind_scores.export_scores(tmp_path / "answers", tmp_path / "labels.csv", output, mapping)

@@ -403,6 +403,11 @@ candidate, not a Windows acceptance result. Its Windows execution and sign-off a
 pending: [candidate handoff](docs/freeze/WINDOWS_HANDOFF.md) and
 [blank acceptance receipt](docs/freeze/ACCEPTANCE_RECEIPT_TEMPLATE.md).
 
+The [13 October Windows portability corrections](docs/validation/windows-portability-20261013.md)
+cover CRLF output, reproducible checkout bytes and recorded-session replay. Their
+macOS checks and Windows rerun requirements are listed separately; the version
+remains `0.8.0rc5` pending the next release decision.
+
 ```bash
 .venv/bin/ruff check src tests scripts experiments
 .venv/bin/pytest -q
