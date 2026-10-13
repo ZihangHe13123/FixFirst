@@ -12,6 +12,7 @@ can be compared honestly.
 """
 
 from dataclasses import dataclass
+import hashlib
 import json
 from pathlib import Path
 import shutil
@@ -98,7 +99,7 @@ IMPORTS, BODY, TEST_IMPORTS, FIXTURES = (
 
 def write(path: Path, text: str):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text, encoding="utf-8")
+    path.write_text(text, encoding="utf-8", newline="")
 
 
 def build_template(root: Path, t: Template):
@@ -159,7 +160,8 @@ class Project:
         text = path.read_text(encoding="utf-8")
         if marker not in text:
             raise ValueError(f"{rel} has no {marker}")
-        path.write_text(text.replace(marker, code.rstrip("\n") + "\n" + marker, 1), encoding="utf-8")
+        path.write_text(text.replace(marker, code.rstrip("\n") + "\n" + marker, 1),
+                        encoding="utf-8", newline="")
 
     def imports(self, code):
         self.inject(self.t.service, IMPORTS, code)
@@ -175,7 +177,8 @@ class Project:
 
     def add_test(self, code):
         path = self.root / self.t.test
-        path.write_text(path.read_text(encoding="utf-8") + "\n\n" + code, "utf-8")
+        path.write_text(path.read_text(encoding="utf-8") + "\n\n" + code,
+                        encoding="utf-8", newline="")
 
     def write(self, rel, text):
         write(self.root / rel, text)
@@ -557,7 +560,19 @@ def load_session(dataset: Path, data: dict, cache={}) -> Session:
             cache[path] = json.loads(path.read_text(encoding="utf-8"))
         data = {**data, "environment": {**cache[path], **{
             k: v for k, v in environment.items() if k.startswith("_")}}}
-    return Session.model_validate(data)
+    session = Session.model_validate(data)
+    # Published datasets use this POSIX placeholder, not a real host interpreter.
+    # Windows abspath/normcase give it a different identity. Rebind only the known
+    # portable identity; a stale or foreign snapshot must remain stale.
+    portable_id = hashlib.sha256(PORTABLE_PYTHON.encode()).hexdigest()[:16]
+    current_id = environment_id(PORTABLE_PYTHON)
+    if session.target_python == PORTABLE_PYTHON and portable_id != current_id:
+        if session.environment.get("_environment_id") == portable_id:
+            session.environment["_environment_id"] = current_id
+        for record in [*session.runs, *session.issues]:
+            if record.environment_id == portable_id:
+                record.environment_id = current_id
+    return session
 
 
 def build_dataset(output: Path, python: str | None = None, templates=TEMPLATES, scenarios=None):

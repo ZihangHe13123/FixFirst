@@ -210,14 +210,16 @@ def execute(
         proc.stderr.close()
     run.exit_code = proc.returncode
     run.duration_s = round(time.monotonic() - start, 3)
-    stdout = buffers["stdout"].decode("utf-8", errors="replace")
+    # Match text-mode subprocess output across platforms, before redaction or parsing.
+    # A bare CR can be progress output, so only collapse paired CRLF.
+    stdout = buffers["stdout"].decode("utf-8", errors="replace").replace("\r\n", "\n")
     run.stdout = redact(stdout)
     if tool == "environment":
         try:
             run.stdout = json.dumps(redact_data(json.loads(stdout)), ensure_ascii=False)
         except ValueError:
             pass
-    run.stderr = redact(buffers["stderr"].decode("utf-8", errors="replace"))
+    run.stderr = redact(buffers["stderr"].decode("utf-8", errors="replace").replace("\r\n", "\n"))
     return run
 
 
