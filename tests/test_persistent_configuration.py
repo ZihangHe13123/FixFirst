@@ -334,7 +334,7 @@ def test_default_user_entries_and_their_rechecks_offer_the_saved_import_path(
         ]
         result = subprocess.run(
             [*prefix, "mcp"], input="".join(json.dumps(r) + "\n" for r in requests),
-            capture_output=True, text=True, timeout=120, check=True,
+            capture_output=True, text=True, encoding="utf-8", timeout=120, check=True,
         )
         answers = [json.loads(line) for line in result.stdout.splitlines()]
         tools = [a["result"] for a in answers if a.get("id") in {2, 3}]

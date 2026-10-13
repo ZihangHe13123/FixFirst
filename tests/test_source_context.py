@@ -78,7 +78,10 @@ def test_wildcard_imports_and_external_links_leave_provenance_unknown(tmp_path):
     (tmp_path / "app.py").write_text("import json\nfrom uncertain import *\njson.loads('{}')\n")
     outside = tmp_path.parent / (tmp_path.name + "-outside.py")
     outside.write_text("import json\njson.loads('{}')\n")
-    (tmp_path / "link.py").symlink_to(outside)
+    try:
+        (tmp_path / "link.py").symlink_to(outside)
+    except OSError:
+        pytest.skip("no symlinks here")
     try:
         assert index_source_context(tmp_path, ["app.py", "link.py"], 128000)["calls"] == {}
     finally:

@@ -126,7 +126,10 @@ def test_symlink_files_and_directories_do_not_supply_candidates(tmp_path):
     project = tmp_path / "project"
     write(external, "helpers.py")
     project.mkdir()
-    (project / "source").symlink_to(external, target_is_directory=True)
+    try:
+        (project / "source").symlink_to(external, target_is_directory=True)
+    except OSError:
+        pytest.skip("no symlinks here")
     assert index(project) == []
 
 

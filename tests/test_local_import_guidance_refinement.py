@@ -80,7 +80,10 @@ def test_unsafe_build_files_do_not_authorize_install(tmp_path, unsafe):
     if unsafe == "symlink":
         outside = tmp_path / "outside.toml"
         outside.write_text(BUILD)
-        target.symlink_to(outside)
+        try:
+            target.symlink_to(outside)
+        except OSError:
+            pytest.skip("no symlinks here")
     elif unsafe == "directory":
         target.mkdir()
     else:
