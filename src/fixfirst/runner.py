@@ -228,6 +228,7 @@ def execute(
     run.duration_s = round(time.monotonic() - start, 3)
     # A child started in text mode writes CRLF on Windows; the captured text is
     # line-ending neutral everywhere (parsers and byte comparisons assume LF).
+    # Only paired CRLF is collapsed: a bare CR can be progress output.
     stdout = buffers["stdout"].decode("utf-8", errors="replace").replace("\r\n", "\n")
     run.stdout = redact(stdout)
     if tool == "environment":

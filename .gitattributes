@@ -1,3 +1,16 @@
+# Keep published captures and hashes byte-for-byte on every checkout. In particular,
+# CSV records and captured terminal output may intentionally contain CRLF or CR.
+* -text
+
+# Authored source is LF even when core.autocrlf is enabled.
+*.py text eol=lf
+*.toml text eol=lf
+*.md text eol=lf
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+src/fixfirst/templates/* text eol=lf
+
 # Generated reports preserve whitespace inside captured command text.
 examples/demo/*.html -whitespace
 examples/execution-demo/*.html -whitespace
@@ -10,12 +23,3 @@ examples/historical-regressions/**/*.html -whitespace
 
 # Preserve whitespace in the captured HTML export used as delivery evidence.
 docs/freeze/validation-20261001/entry-checks/shared.html -whitespace
-
-# Recorded evidence and artifact identities are compared byte for byte against
-# digests committed with them (MANIFEST JSON, the classifier trees, the demo
-# results). A CRLF checkout on Windows would change those bytes; force LF so
-# every platform checks these out exactly as committed.
-experiments/agent_baseline/** text eol=lf
-docs/user-study/** text eol=lf
-src/fixfirst/knowledge/** text eol=lf
-tests/fixtures/*.json text eol=lf

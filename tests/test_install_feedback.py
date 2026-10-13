@@ -138,7 +138,7 @@ def test_feedback_does_not_cross_changed_context(tmp_path, changed):
 
 
 @pytest.mark.parametrize("special", ["symlink", "fifo", "oversized"])
-def test_feedback_is_bounded_and_never_waits_on_special_files(tmp_path, special):
+def test_feedback_is_bounded_and_never_waits_on_special_files(make_symlink, tmp_path, special):
     session = recorded_session(tmp_path, "rich\nclick\n", [], "ModuleNotFoundError: No module named 'rich'")
     action = first_action(session)
     path = Path(action.command[action.command.index("--log") + 1])
@@ -146,10 +146,7 @@ def test_feedback_is_bounded_and_never_waits_on_special_files(tmp_path, special)
     if special == "symlink":
         target = tmp_path / "other.log"
         target.write_text("ERROR: No matching distribution found for rich")
-        try:
-            path.symlink_to(target)
-        except OSError:
-            pytest.skip("no symlinks here")
+        make_symlink(path, target)
     elif special == "fifo":
         if not hasattr(os, "mkfifo"):
             pytest.skip("FIFO requires POSIX")

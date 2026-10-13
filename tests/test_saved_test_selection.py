@@ -123,15 +123,12 @@ def test_missing_skipped_or_incomplete_selected_test_never_verifies(tmp_path, ch
     assert session.goal_status != "achieved"
 
 
-def test_selection_validation_is_before_execution(tmp_path):
+def test_selection_validation_is_before_execution(make_symlink, tmp_path):
     root = project(tmp_path / "project")
     outside = tmp_path / "outside.py"
     outside.write_text("raise RuntimeError('must not run')\n")
     link = root / "linked.py"
-    try:
-        link.symlink_to(outside)
-    except OSError:
-        pytest.skip("no symlinks here")
+    make_symlink(link, outside)
     for tests in (["--help"], ["../outside.py"], [str(outside)], ["linked.py"], ["."],
                   ["tests_ledger.py::"], ["tests_ledger.py\n"], ["missing.py"],
                   ["tests_ledger.py", "./tests_ledger.py"], "tests_ledger.py", [1]):

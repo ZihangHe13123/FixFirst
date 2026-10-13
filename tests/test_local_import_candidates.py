@@ -121,23 +121,20 @@ def test_packaging_roots_cannot_escape_or_enable_excluded_paths(tmp_path, value)
     assert index(tmp_path) == []
 
 
-def test_symlink_files_and_directories_do_not_supply_candidates(tmp_path):
+def test_symlink_files_and_directories_do_not_supply_candidates(make_symlink, tmp_path):
     external = tmp_path / "external"
     project = tmp_path / "project"
     write(external, "helpers.py")
     project.mkdir()
-    try:
-        (project / "source").symlink_to(external, target_is_directory=True)
-    except OSError:
-        pytest.skip("no symlinks here")
+    make_symlink(project / "source", external, target_is_directory=True)
     assert index(project) == []
 
 
     (project / "source").unlink()
     (project / "source").mkdir()
-    (project / "source/helpers.py").symlink_to(external / "helpers.py")
+    make_symlink(project / "source/helpers.py", external / "helpers.py")
     assert index(project) == []
-    (project / "pyproject.toml").symlink_to(write(external, "pyproject.toml", '[tool.setuptools.package-dir]\n""="source"\n'))
+    make_symlink(project / "pyproject.toml", write(external, "pyproject.toml", '[tool.setuptools.package-dir]\n""="source"\n'))
     assert index(project) == []
 
 

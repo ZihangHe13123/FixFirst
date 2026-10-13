@@ -1,6 +1,7 @@
 """Configuration recipes preserve scope and require the current execution snapshot."""
 
 import json
+import os
 import shlex
 import subprocess
 import sys
@@ -305,20 +306,24 @@ def test_default_user_entries_and_their_rechecks_offer_the_saved_import_path(
     monkeypatch.setenv("FIXFIRST_STORE", str(store))
     prefix = [sys.executable, "-m", "fixfirst"]
     if entry == "cli":
+        # The CLI echoes absolute paths; make it write UTF-8 whatever the console code page
+        # is (a Chinese project path is otherwise written in the local encoding).
+        child_env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
         created = subprocess.run(
             [*prefix, "init", str(project), "--python", sys.executable, "--goal", "pass_tests"],
-            capture_output=True, text=True, timeout=60, check=True,
+            capture_output=True, text=True, encoding="utf-8", timeout=60, check=True, env=child_env,
         )
         session_id = created.stdout.splitlines()[0]
         first = subprocess.run(
-            [*prefix, "scan", session_id], capture_output=True, text=True, timeout=60, check=True
+            [*prefix, "scan", session_id], capture_output=True, text=True, encoding="utf-8",
+            timeout=60, check=True, env=child_env,
         )
         command = next(line.removeprefix("Check again: ") for line in first.stdout.splitlines()
                        if line.startswith("Check again: "))
         # Execute exactly the printed arguments, through this installed interpreter.
         second = subprocess.run(
             [sys.executable, "-m", *shlex.split(command)],
-            capture_output=True, text=True, timeout=60, check=True,
+            capture_output=True, text=True, encoding="utf-8", timeout=60, check=True, env=child_env,
         )
         texts = [first.stdout, second.stdout]
     else:

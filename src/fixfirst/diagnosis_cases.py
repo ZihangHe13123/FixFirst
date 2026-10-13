@@ -12,6 +12,7 @@ can be compared honestly.
 """
 
 from dataclasses import dataclass
+import hashlib
 import json
 from pathlib import Path
 import shutil
@@ -100,7 +101,7 @@ def write(path: Path, text: str):
     # Case files are compared byte for byte (admission, manifests, digests); write LF on
     # every platform so a case generated on Windows is identical to one generated on macOS.
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text, encoding="utf-8", newline="\n")
+    path.write_text(text, encoding="utf-8", newline="")
 
 
 def build_template(root: Path, t: Template):
@@ -161,7 +162,8 @@ class Project:
         text = path.read_text(encoding="utf-8")
         if marker not in text:
             raise ValueError(f"{rel} has no {marker}")
-        path.write_text(text.replace(marker, code.rstrip("\n") + "\n" + marker, 1), encoding="utf-8", newline="\n")
+        path.write_text(text.replace(marker, code.rstrip("\n") + "\n" + marker, 1),
+                        encoding="utf-8", newline="")
 
     def imports(self, code):
         self.inject(self.t.service, IMPORTS, code)
@@ -177,7 +179,8 @@ class Project:
 
     def add_test(self, code):
         path = self.root / self.t.test
-        path.write_text(path.read_text(encoding="utf-8") + "\n\n" + code, "utf-8", newline="\n")
+        path.write_text(path.read_text(encoding="utf-8") + "\n\n" + code,
+                        encoding="utf-8", newline="")
 
     def write(self, rel, text):
         write(self.root / rel, text)
@@ -222,7 +225,7 @@ def _(p):
 def _(p):
     name = p.pick(["tabulate", "simplejson", "ujson", "cachetools", "wrapt"])
     path = p.root / "requirements.txt"
-    path.write_text(path.read_text(encoding="utf-8") + f"{name}>=0.1\n", encoding="utf-8", newline="\n")
+    path.write_text(path.read_text(encoding="utf-8") + f"{name}>=0.1\n", encoding="utf-8", newline="")
     p.imports(f"import {name}")
 
 
@@ -233,7 +236,7 @@ def _(p):
          ("dotenv", "python-dotenv"), ("attr", "attrs")]
     )
     path = p.root / "requirements.txt"
-    path.write_text(path.read_text(encoding="utf-8") + f"{dist}>=0.1\n", encoding="utf-8", newline="\n")
+    path.write_text(path.read_text(encoding="utf-8") + f"{dist}>=0.1\n", encoding="utf-8", newline="")
     p.imports(f"import {module}")
 
 
@@ -258,7 +261,7 @@ def _(p):
 @s("lm_src_layout", "local_module", False, "Package moved under src/ without putting src on the path")
 def _(p):
     if p.t.path_dir == "src":
-        (p.root / "pytest.ini").write_text("[pytest]\ntestpaths = tests\n", encoding="utf-8", newline="\n")
+        (p.root / "pytest.ini").write_text("[pytest]\ntestpaths = tests\n", encoding="utf-8", newline="")
         return
     (p.root / "src").mkdir()
     top = {p.t.service.split("/")[0], p.t.helper.split("/")[0]}
@@ -478,7 +481,7 @@ def _(p):
 @s("cd_syntax_error", "code_defect", False, "Syntax error in a project module")
 def _(p):
     path = p.root / p.t.service
-    path.write_text(path.read_text(encoding="utf-8") + "\n\ndef broken(:\n    pass\n", encoding="utf-8", newline="\n")
+    path.write_text(path.read_text(encoding="utf-8") + "\n\ndef broken(:\n    pass\n", encoding="utf-8", newline="")
 
 
 @s("cd_wrong_arguments", "code_defect", False, "Project function called with too many arguments")
@@ -559,7 +562,19 @@ def load_session(dataset: Path, data: dict, cache={}) -> Session:
             cache[path] = json.loads(path.read_text(encoding="utf-8"))
         data = {**data, "environment": {**cache[path], **{
             k: v for k, v in environment.items() if k.startswith("_")}}}
-    return Session.model_validate(data)
+    session = Session.model_validate(data)
+    # Published datasets use this POSIX placeholder, not a real host interpreter.
+    # Windows abspath/normcase give it a different identity. Rebind only the known
+    # portable identity; a stale or foreign snapshot must remain stale.
+    portable_id = hashlib.sha256(PORTABLE_PYTHON.encode()).hexdigest()[:16]
+    current_id = environment_id(PORTABLE_PYTHON)
+    if session.target_python == PORTABLE_PYTHON and portable_id != current_id:
+        if session.environment.get("_environment_id") == portable_id:
+            session.environment["_environment_id"] = current_id
+        for record in [*session.runs, *session.issues]:
+            if record.environment_id == portable_id:
+                record.environment_id = current_id
+    return session
 
 
 def build_dataset(output: Path, python: str | None = None, templates=TEMPLATES, scenarios=None):

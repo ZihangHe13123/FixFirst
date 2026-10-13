@@ -19,9 +19,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "experiments" / "ag
 import isolation as iso  # noqa: E402
 import real_cases as rc  # noqa: E402
 
-# sandbox-exec and its profile syntax exist on macOS only; elsewhere the module is never run.
-SANDBOX = pytest.mark.skipif(sys.platform != "darwin", reason="sandbox-exec profiles are macOS-only")
-
 
 def write(path: Path, text: str) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -250,7 +247,7 @@ def test_the_install_step_of_the_project_is_returned_for_the_sandbox(tmp_path):
     assert commands == [[str(python), "-m", "pip", "install", "-q", "--no-deps", "-e", "."]]
 
 
-@SANDBOX
+@pytest.mark.skipif(sys.platform == "win32", reason="Windows paths differ from the POSIX sandbox profile assertions")
 def test_a_sandbox_profile_denies_the_private_areas_and_allows_only_the_run(tmp_path):
     run, other = tmp_path / "out" / "runs" / "a", tmp_path / "out" / "runs" / "b"
     policy = iso.Policy(writable=(run / "project", run / "tmp"), readable=(tmp_path / "python",), network=False,
@@ -266,7 +263,7 @@ def test_a_sandbox_profile_denies_the_private_areas_and_allows_only_the_run(tmp_
     assert "(deny network*)" not in iso.profile_text(iso.Policy((), (), network=True, owner=iso.new_mark()), denied=())
 
 
-@SANDBOX
+@pytest.mark.skipif(sys.platform == "win32", reason="Windows paths differ from the POSIX sandbox profile assertions")
 def test_protected_files_are_denied_after_everything_the_policy_allows(tmp_path):
     answers = tmp_path / "readable" / "answers.json"
     answers.parent.mkdir()
@@ -282,7 +279,6 @@ def test_protected_files_are_denied_after_everything_the_policy_allows(tmp_path)
     assert [line for line in lines if line not in rules] == plain  # nothing else changes
 
 
-@SANDBOX
 def test_a_protected_folder_is_denied_with_all_below_it_after_everything_the_policy_allows(tmp_path):
     clones, answers = tmp_path / "readable" / "source-clones", tmp_path / "readable" / "answers.json"
     policy = iso.Policy(writable=(), readable=(clones.parent,), owner=iso.new_mark())
@@ -314,10 +310,9 @@ def test_shared_paths_are_found_whatever_the_case_or_the_unicode_form(tmp_path):
     assert not iso.overlap(tmp_path / "Repo" / "SRC", tmp_path / "repo" / "srcs")
 
 
-@pytest.mark.skipif(os.name == "nt", reason="links to folders need a privilege on Windows")
-def test_paths_are_compared_as_resolved_so_a_link_shares_what_its_target_shares(tmp_path):
+def test_paths_are_compared_as_resolved_so_a_link_shares_what_its_target_shares(make_symlink, tmp_path):
     (tmp_path / "real" / "inner").mkdir(parents=True)
-    (tmp_path / "link").symlink_to(tmp_path / "real", target_is_directory=True)
+    make_symlink(tmp_path / "link", tmp_path / "real", target_is_directory=True)
     assert iso.overlap(tmp_path / "link" / "inner", tmp_path / "real") and iso.overlap(tmp_path / "real", tmp_path / "link")
     assert not iso.overlap(tmp_path / "link", tmp_path / "elsewhere")
 
@@ -338,12 +333,12 @@ def test_the_budget_does_not_count_paused_time():
     assert budget.used() < 0.05 and budget.remaining() > 9.9
 
 
-@SANDBOX
-def test_profile_paths_are_real_paths(tmp_path):
+@pytest.mark.skipif(sys.platform == "win32", reason="Windows paths differ from the POSIX sandbox profile assertions")
+def test_profile_paths_are_real_paths(make_symlink, tmp_path):
     target = tmp_path / "real"
     target.mkdir()
     link = tmp_path / "link"
-    link.symlink_to(target)
+    make_symlink(link, target)
     text = iso.profile_text(iso.Policy(writable=(link,), readable=(), owner=iso.new_mark()), denied=())
     assert f'(subpath "{os.path.realpath(target)}")' in text and str(link) not in text
 

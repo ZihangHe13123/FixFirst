@@ -1,3 +1,0 @@
-# Preserve the exact bytes covered by receipts on every platform.
-* -text
-*.csv whitespace=cr-at-eol
