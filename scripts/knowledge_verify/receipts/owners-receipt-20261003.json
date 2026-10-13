@@ -53,7 +53,7 @@
    "pytest_settings.py": "992945f2a49ed93c831959914d3c45547ce6428bdacb35462fe46a2084000efb",
    "reasoning.py": "5d93dd543cc30308c2cc65785b33ed5dd5f6fc85411c348bff24865e2aa0d803",
    "removal_ownership.py": "ba69c6a520a174d855b78ed038a2a7c317c91352473de181b435b48b335af05f",
-   "runner.py": "435cc0bad180b81d1a9496ea7b84592a24baa573dc3029c9796801d562cf9ed2",
+   "runner.py": "64eb84a075750e7650a490cc293d1336d4fc6817a9b8d6d9602d2c02acfeca97",
    "service.py": "0c4f1350d9b129a096df959b7d1a4cd14dbcfdd0db9627770910e755dbff77e1",
    "source_context.py": "c174ddc9e7c8a614f534caf6ae1537a38a2c9092a71889c48b30d8e9c4a06cfb",
    "symbol_advice.py": "66b5da1923f94b973940f340155587d0c3fdd85a61652e85fef1bbfd222e65e4",
@@ -202,9 +202,9 @@
    "P85": "4055cd0e29ce8d1f0a0f7cd326cb779e9b967d3b167f15f429006d41aa76eb41",
    "P86": "51cd2258277caa9d8a6cb4c71d1877fd7117ec326faa788800f5de449dad16d8"
   },
-  "package_sha256": "524dbdfc890f933b942dbea088413bb481d9ddef74fe37d949590fdfd021e959",
-  "generated": "2026-10-10",
-  "python": "3.12.13"
+  "package_sha256": "d1d3f67e95bead82b801ce4e77d38ef670b48eac1149dbf0a3ea0081f450f1e4",
+  "generated": "2026-10-13",
+  "python": "3.12.14"
  },
  "results": [
   {
@@ -3055,7 +3055,7 @@
       "numpy.ndarray"
      ],
      "dists": {
-      "numpy": "2.5.3"
+      "numpy": "2.5.4"
      }
     }
    },
@@ -3077,7 +3077,7 @@
      "steps": [
       [
        "Replace numpy.ndarray.ptp: removed in numpy 2.0",
-       "Observed project location: main.py:3. The target interpreter has numpy 2.5.3, which no longer provides numpy.ndarray.ptp (removed in 2.0). Change the code to use numpy.ptp(array, ...) instead of array.ptp(...); preserve the existing axis, out and keepdims arguments. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has numpy 2.5.4, which no longer provides numpy.ndarray.ptp (removed in 2.0). Change the code to use numpy.ptp(array, ...) instead of array.ptp(...); preserve the existing axis, out and keepdims arguments. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -3228,7 +3228,7 @@
       "numpy.ndarray"
      ],
      "dists": {
-      "numpy": "2.5.3"
+      "numpy": "2.5.4"
      }
     }
    },
@@ -3250,7 +3250,7 @@
      "steps": [
       [
        "Replace numpy.ndarray.newbyteorder: removed in numpy 2.0",
-       "Observed project location: main.py:3. The target interpreter has numpy 2.5.3, which no longer provides numpy.ndarray.newbyteorder (removed in 2.0). Change the code to use array.view(array.dtype.newbyteorder(order)) instead of array.newbyteorder(order), preserving the intended byte-order view semantics. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has numpy 2.5.4, which no longer provides numpy.ndarray.newbyteorder (removed in 2.0). Change the code to use array.view(array.dtype.newbyteorder(order)) instead of array.newbyteorder(order), preserving the intended byte-order view semantics. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -5570,7 +5570,7 @@
       "numpy.lib.npyio.NpzFile"
      ],
      "dists": {
-      "numpy": "2.5.3"
+      "numpy": "2.5.4"
      }
     }
    },
@@ -5592,7 +5592,7 @@
      "steps": [
       [
        "Replace NpzFile.iteritems: removed in numpy 1.23",
-       "Observed project location: main.py:7. The target interpreter has numpy 2.5.3, which no longer provides NpzFile.iteritems (removed in 1.23). Change the code to use items() and keys() on the object returned by numpy.load for a .npz file; it is a mapping, so the Python 2 style iteritems() and iterkeys() are simply items() and keys(). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:7. The target interpreter has numpy 2.5.4, which no longer provides NpzFile.iteritems (removed in 1.23). Change the code to use items() and keys() on the object returned by numpy.load for a .npz file; it is a mapping, so the Python 2 style iteritems() and iterkeys() are simply items() and keys(). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -5764,7 +5764,7 @@
       "numpy.lib.npyio.NpzFile"
      ],
      "dists": {
-      "numpy": "2.5.3"
+      "numpy": "2.5.4"
      }
     }
    },
@@ -5786,7 +5786,7 @@
      "steps": [
       [
        "Replace NpzFile.iterkeys: removed in numpy 1.23",
-       "Observed project location: main.py:7. The target interpreter has numpy 2.5.3, which no longer provides NpzFile.iterkeys (removed in 1.23). Change the code to use items() and keys() on the object returned by numpy.load for a .npz file; it is a mapping, so the Python 2 style iteritems() and iterkeys() are simply items() and keys(). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:7. The target interpreter has numpy 2.5.4, which no longer provides NpzFile.iterkeys (removed in 1.23). Change the code to use items() and keys() on the object returned by numpy.load for a .npz file; it is a mapping, so the Python 2 style iteritems() and iterkeys() are simply items() and keys(). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -5937,7 +5937,7 @@
       "numpy.ndarray"
      ],
      "dists": {
-      "numpy": "2.5.3"
+      "numpy": "2.5.4"
      }
     }
    },
@@ -5959,7 +5959,7 @@
      "steps": [
       [
        "Replace numpy.ndarray.itemset: removed in numpy 2.0",
-       "Observed project location: main.py:3. The target interpreter has numpy 2.5.3, which no longer provides numpy.ndarray.itemset (removed in 2.0). Change the code to use arr[index] = value in place of arr.itemset(index, value), and arr.flat[i] = value for a flat position i; item reads use arr.item(...). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has numpy 2.5.4, which no longer provides numpy.ndarray.itemset (removed in 2.0). Change the code to use arr[index] = value in place of arr.itemset(index, value), and arr.flat[i] = value for a flat position i; item reads use arr.item(...). Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -6110,7 +6110,7 @@
       "numpy.ndarray"
      ],
      "dists": {
-      "numpy": "2.5.3"
+      "numpy": "2.5.4"
      }
     }
    },
@@ -6132,7 +6132,7 @@
      "steps": [
       [
        "Replace numpy.ndarray.tostring: removed in numpy 2.3",
-       "Observed project location: main.py:3. The target interpreter has numpy 2.5.3, which no longer provides numpy.ndarray.tostring (removed in 2.3). Change the code to use array.tobytes(), which returns the same bytes; tostring was a deprecated alias since NumPy 1.19. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has numpy 2.5.4, which no longer provides numpy.ndarray.tostring (removed in 2.3). Change the code to use array.tobytes(), which returns the same bytes; tostring was a deprecated alias since NumPy 1.19. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -23973,7 +23973,7 @@
       "pydantic.fields.FieldInfo"
      ],
      "dists": {
-      "pydantic": "2.14.0"
+      "pydantic": "2.14.1"
      }
     }
    },
@@ -23995,7 +23995,7 @@
      "steps": [
       [
        "Replace FieldInfo.required: removed in pydantic 2.0",
-       "Observed project location: main.py:5. The target interpreter has pydantic 2.14.0, which no longer provides FieldInfo.required (removed in 2.0). Change the code to use FieldInfo.is_required(), a method returning the same boolean: write field.is_required() where V1 read field.required. model_fields[name] holds the FieldInfo objects in V2 (BaseModel.__fields__ is a deprecated alias of it).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:5. The target interpreter has pydantic 2.14.1, which no longer provides FieldInfo.required (removed in 2.0). Change the code to use FieldInfo.is_required(), a method returning the same boolean: write field.is_required() where V1 read field.required. model_fields[name] holds the FieldInfo objects in V2 (BaseModel.__fields__ is a deprecated alias of it).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -24184,7 +24184,7 @@
       "pydantic.fields.FieldInfo"
      ],
      "dists": {
-      "pydantic": "2.14.0"
+      "pydantic": "2.14.1"
      }
     }
    },
@@ -24206,7 +24206,7 @@
      "steps": [
       [
        "Replace FieldInfo.type_: removed in pydantic 2.0",
-       "Observed project location: main.py:5. The target interpreter has pydantic 2.14.0, which no longer provides FieldInfo.type_ (removed in 2.0). Change the code to use FieldInfo.annotation, the declared type including its generic parameters. V1 stripped Optional from type_ and outer_type_ and set allow_none, while V2 keeps Optional[X] in annotation, so unwrap it where the old code saw the bare X; the element type that type_ gave for a container field comes from typing.get_args(field.annotation).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:5. The target interpreter has pydantic 2.14.1, which no longer provides FieldInfo.type_ (removed in 2.0). Change the code to use FieldInfo.annotation, the declared type including its generic parameters. V1 stripped Optional from type_ and outer_type_ and set allow_none, while V2 keeps Optional[X] in annotation, so unwrap it where the old code saw the bare X; the element type that type_ gave for a container field comes from typing.get_args(field.annotation).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -24395,7 +24395,7 @@
       "pydantic.fields.FieldInfo"
      ],
      "dists": {
-      "pydantic": "2.14.0"
+      "pydantic": "2.14.1"
      }
     }
    },
@@ -24417,7 +24417,7 @@
      "steps": [
       [
        "Replace FieldInfo.outer_type_: removed in pydantic 2.0",
-       "Observed project location: main.py:5. The target interpreter has pydantic 2.14.0, which no longer provides FieldInfo.outer_type_ (removed in 2.0). Change the code to use FieldInfo.annotation, the declared type including its generic parameters. V1 stripped Optional from type_ and outer_type_ and set allow_none, while V2 keeps Optional[X] in annotation, so unwrap it where the old code saw the bare X; the element type that type_ gave for a container field comes from typing.get_args(field.annotation).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:5. The target interpreter has pydantic 2.14.1, which no longer provides FieldInfo.outer_type_ (removed in 2.0). Change the code to use FieldInfo.annotation, the declared type including its generic parameters. V1 stripped Optional from type_ and outer_type_ and set allow_none, while V2 keeps Optional[X] in annotation, so unwrap it where the old code saw the bare X; the element type that type_ gave for a container field comes from typing.get_args(field.annotation).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -24606,7 +24606,7 @@
       "pydantic.fields.FieldInfo"
      ],
      "dists": {
-      "pydantic": "2.14.0"
+      "pydantic": "2.14.1"
      }
     }
    },
@@ -24628,7 +24628,7 @@
      "steps": [
       [
        "Replace FieldInfo.name: removed in pydantic 2.0",
-       "Observed project location: main.py:5. The target interpreter has pydantic 2.14.0, which no longer provides FieldInfo.name (removed in 2.0). Change the code to use the key the field is stored under: iterate model_fields.items() to get (name, FieldInfo) pairs, and inside a @field_validator read info.field_name. FieldInfo objects do not carry their own name.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:5. The target interpreter has pydantic 2.14.1, which no longer provides FieldInfo.name (removed in 2.0). Change the code to use the key the field is stored under: iterate model_fields.items() to get (name, FieldInfo) pairs, and inside a @field_validator read info.field_name. FieldInfo objects do not carry their own name.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -24817,7 +24817,7 @@
       "pydantic.fields.FieldInfo"
      ],
      "dists": {
-      "pydantic": "2.14.0"
+      "pydantic": "2.14.1"
      }
     }
    },
@@ -24839,7 +24839,7 @@
      "steps": [
       [
        "Replace FieldInfo.field_info: removed in pydantic 2.0",
-       "Observed project location: main.py:5. The target interpreter has pydantic 2.14.0, which no longer provides FieldInfo.field_info (removed in 2.0). Change the code to use the FieldInfo itself: in V2 model_fields[name] already is the FieldInfo, so drop the .field_info step and read default, alias, metadata or json_schema_extra (V1's field_info.extra) from it directly.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:5. The target interpreter has pydantic 2.14.1, which no longer provides FieldInfo.field_info (removed in 2.0). Change the code to use the FieldInfo itself: in V2 model_fields[name] already is the FieldInfo, so drop the .field_info step and read default, alias, metadata or json_schema_extra (V1's field_info.extra) from it directly.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -29617,7 +29617,7 @@
       "openai.OpenAI"
      ],
      "dists": {
-      "openai": "3.28.0"
+      "openai": "3.29.0"
      }
     }
    },
@@ -29639,7 +29639,7 @@
      "steps": [
       [
        "Replace OpenAI.edits: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.28.0, which no longer provides OpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.29.0, which no longer provides OpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -29852,7 +29852,7 @@
       "openai.OpenAI"
      ],
      "dists": {
-      "openai": "3.28.0"
+      "openai": "3.29.0"
      }
     }
    },
@@ -29874,7 +29874,7 @@
      "steps": [
       [
        "Replace OpenAI.fine_tunes: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.28.0, which no longer provides OpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.29.0, which no longer provides OpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -30087,7 +30087,7 @@
       "openai.AsyncOpenAI"
      ],
      "dists": {
-      "openai": "3.28.0"
+      "openai": "3.29.0"
      }
     }
    },
@@ -30109,7 +30109,7 @@
      "steps": [
       [
        "Replace AsyncOpenAI.edits: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.28.0, which no longer provides AsyncOpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.29.0, which no longer provides AsyncOpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -30322,7 +30322,7 @@
       "openai.AsyncOpenAI"
      ],
      "dists": {
-      "openai": "3.28.0"
+      "openai": "3.29.0"
      }
     }
    },
@@ -30344,7 +30344,7 @@
      "steps": [
       [
        "Replace AsyncOpenAI.fine_tunes: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.28.0, which no longer provides AsyncOpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.29.0, which no longer provides AsyncOpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
