@@ -1,5 +1,34 @@
 # 报告中图、表和数字的来源
 
+## Version 0.8 participant study on 14 October 2026
+
+Section 5.11, its summary, the evidence table, limitations and proposal deviations follow
+`REPORT-USER-STUDY-DRAFT-20261014.md` (SHA256
+`48447c2eb5b8bee9aed9c6b2096178527f57ae79472fdfeba63b7fb2df68a8b3`).
+Only the second-round data are used: #67 was merged as
+`7287367613a7e6f6a3d9d87caf546d0cdb027aab`, from data commit
+`c3b00856c89805044ae9c776c017b43e9a4255c8`. The merge record explicitly supersedes the
+3 October submission; reused participant identifiers do not combine the two rounds.
+
+- `docs/user-study/analysis.py` was run on `sessions.csv` (24 rows) and `questionnaire.csv`
+  (6 rows). [The numerical receipt](../report-assets/USER-STUDY-v0.8-20261014.json) records
+  complete source hashes, parameters and aggregate output. A separate standard-library
+  recount agrees, including exact enumeration of all 64 sign assignments for the paired test.
+- The medians, 104.5 s and 136.5 s, use 12 task records per condition. The 23.4% is a
+  reduction in median time, not an increase in speed. Five of six participants have a
+  lower mean task time with FixFirst. The paired, two-sided Wilcoxon test is W = 2,
+  p = 0.09375 (reported 0.094), based on six participant means; it is not significant.
+- All 24 task records show completion. Mean SUS is 79.5833 (reported 79.6) from the standard
+  ten-item scale. Cause explanations are present but have not been independently scored;
+  no cause-understanding accuracy is claimed.
+- The four tasks and allowed tools come from `experiments/user_study/README.md` and
+  `docs/user-study/PROTOCOL.md`. Own-computer use, three participants at a time and no pilot
+  come from the experimenter's account, relayed in the supplied additions; arithmetic
+  verification does not independently verify that account or session conduct.
+
+The product remains an rc5 trial baseline, and final Windows acceptance is pending.
+Older source sections below describe their respective draft dates.
+
 ## Version 0.7 literature correction on 12 October 2026
 
 The literature correction follows `LITERATURE-CHECK-20261012.md` and

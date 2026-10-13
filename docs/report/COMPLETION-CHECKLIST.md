@@ -1,16 +1,24 @@
 # Report and guide completion checklist
 
-Version 0.7 is an incomplete working draft for discussion by all three members. It incorporates
+Version 0.8 is an incomplete working draft for discussion by all three members. It incorporates
 the published A2/B3 results, separate local and cloud MCP experiments, scripted follow checks,
-BugsInPy and held-out checks, and the diagnosis, ordering and grouping evaluations.
+BugsInPy and held-out checks, the diagnosis, ordering and grouping evaluations, and the
+second-round participant study.
+
+## Completed participant study
+
+C2 is complete: six participants across the sessions on 12 and 13 October, with 24 task
+records and six questionnaires in `docs/user-study/sessions.csv` and `questionnaire.csv`.
+The second-round data are in main via #67. The first-round submission was superseded and
+is not used. Arithmetic is verified; session procedures are reported by the experimenter.
+Small-sample interpretation and final wording still need group review.
 
 ## Work still needed
 
 | Item | Required completion |
 | --- | --- |
 | Report review | All three members review the wording and evidence; Claude rechecks the corrected bibliography. Background-paper numbers and descriptions have been checked; the group still decides whether to extend the literature review |
-| Real user study C2 | The user chose small real-participant sessions during the week of 12 October. Actual sessions, anonymous source tables and reviewed analysis remain pending. Exclude demonstration fixtures and the unusable submission in #67 |
-| Windows C3 | A teammate installs the trial freeze on a real Windows machine and records the result |
+| Windows C3 | #100 at `14bfb63` has passing CI; Wei Yi still needs to run the full Windows suite on that commit and attach the log before the merge decision |
 | Independent installation | Someone who did not write the guide follows it on their own machine |
 | rc5 trial feedback | Record the project, exact command/test selection, observed failure, advice followed and result. Decide the final version after feedback |
 | Final release identity | A final version/tag has not been approved. Update installation and submission identities after that decision |
@@ -21,7 +29,7 @@ BugsInPy and held-out checks, and the diagnosis, ordering and grouping evaluatio
 
 ## Publication and interpretation
 
-- The cited A2/B3, B7, B12, diagnosis, ordering and grouping evidence is published in main and
+- The cited A2/B3, B7, B12, diagnosis, ordering, grouping and participant evidence is published in main and
   pinned in [SOURCES.md](SOURCES.md). The original scores and evaluated tags stay unchanged.
 - Agent effects belong to `5c224cf` (rc2). Later output compatibility and product verification
   checks are reported separately; they do not remeasure rc5 agent performance.
