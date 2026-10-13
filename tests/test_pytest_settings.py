@@ -92,22 +92,22 @@ def test_read_and_filter_limits_return_unknown_without_partial_filter_order(tmp_
 
 
 @pytest.mark.parametrize("target_inside", [False, True])
-def test_config_symlinks_are_rejected_even_if_their_target_is_inside_root(tmp_path, target_inside):
+def test_config_symlinks_are_rejected_even_if_their_target_is_inside_root(make_symlink, tmp_path, target_inside):
     project = tmp_path / "project"
     project.mkdir()
     target = (project if target_inside else tmp_path) / "actual.ini"
     target.write_text("[pytest]\nfilterwarnings=error\n", encoding="utf-8")
-    (project / "pytest.ini").symlink_to(target)
+    make_symlink(project / "pytest.ini", target)
     assert pytest_settings.recorded_warning_filters(project) == []
 
 
-def test_symlink_root_and_nonregular_configuration_are_rejected(tmp_path):
+def test_symlink_root_and_nonregular_configuration_are_rejected(make_symlink, tmp_path):
     project = tmp_path / "project"
     project.mkdir()
     (project / "pytest.ini").mkdir()
     assert pytest_settings.recorded_warning_filters(project) == []
     alias = tmp_path / "alias"
-    alias.symlink_to(project, target_is_directory=True)
+    make_symlink(alias, project, target_is_directory=True)
     assert pytest_settings.recorded_warning_filters(alias) == []
 
 

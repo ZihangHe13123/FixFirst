@@ -8,7 +8,7 @@ import sys
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
-from . import domain
+from . import __version__, domain
 from .knowledge_graph import build_graph, query_graph
 from .models import Session, GOAL_CHECKS
 from .runner import redact
@@ -253,6 +253,7 @@ def html(session: Session, store_root: Path, public=False, live: dict | None = N
                 sources[ref] = domain.source(ref)
     goal_run = next((r for r in reversed(session.runs) if r.tool == GOAL_CHECKS[session.goal]), None)
     text = ENV.get_template("report.html").render(
+        version=__version__,
         session=data,
         goal_name=GOALS[session.goal],
         goals=GOALS,

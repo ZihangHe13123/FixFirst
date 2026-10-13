@@ -71,17 +71,19 @@ def test_substitutions_invalid_or_duplicate_configuration_is_not_guessed(tmp_pat
 
 
 @pytest.mark.parametrize("unsafe", ["symlink", "oversized", "directory", "fifo"])
-def test_unsafe_files_are_not_read_and_do_not_block_other_candidates(tmp_path, unsafe):
+def test_unsafe_files_are_not_read_and_do_not_block_other_candidates(make_symlink, tmp_path, unsafe):
     path = tmp_path / "runtests.py"
     if unsafe == "symlink":
         outside = tmp_path.parent / "outside-django-settings.py"
         outside.write_text("raise RuntimeError('never')")
-        path.symlink_to(outside)
+        make_symlink(path, outside)
     elif unsafe == "oversized":
         path.write_text("x" * 128001)
     elif unsafe == "directory":
         path.mkdir()
     else:
+        if not hasattr(os, "mkfifo"):
+            pytest.skip("Named pipes require os.mkfifo")
         os.mkfifo(path)
     (tmp_path / "pytest.ini").write_text("[pytest]\nDJANGO_SETTINGS_MODULE=suite.config\n")
     result = recorded_configuration(tmp_path)

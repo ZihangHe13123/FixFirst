@@ -267,7 +267,8 @@ def test_a_reminder_never_extends_the_turn_or_time_cap(tmp_path, monkeypatch):
     assert stats["end"] == "time_cap" and stats["no_tool_reminders"] == len(records) == 1 and not calls
 
 
-@pytest.mark.parametrize("text", ["", "START\n" + "x" * 19000 + "\nEND", "开头\r\n" + "🙂é\r" * 6500 + "结尾"])
+@pytest.mark.parametrize("text", ["", "START\n" + "x" * 19000 + "\nEND", "开头\r\n" + "🙂é\r" * 6500 + "结尾"],
+                         ids=["empty", "long-ascii", "long-unicode"])
 def test_file_pages_reconstruct_the_entire_file_without_skipping_long_lines_or_unicode(tmp_path, text):
     (tmp_path / "code.py").write_bytes(text.encode())
     run = SimpleNamespace(project=tmp_path)
@@ -295,7 +296,7 @@ def test_invalid_page_ranges_are_refused(tmp_path, values):
     assert reply.startswith("error:")
 
 
-def test_pages_and_legacy_tail_have_distinct_tool_contracts_and_respect_project_boundaries(tmp_path):
+def test_pages_and_legacy_tail_have_distinct_tool_contracts_and_respect_project_boundaries(make_symlink, tmp_path):
     (tmp_path / "code.py").write_text("head" + "x" * 6000 + "tail")
     run = SimpleNamespace(project=tmp_path)
     legacy = ap.run_tool("read_file", {"path": "code.py"}, run, {}, None, None, 1)
@@ -305,7 +306,7 @@ def test_pages_and_legacy_tail_have_distinct_tool_contracts_and_respect_project_
     assert page["text"] == "head" and page["next_offset"] == 4 and not page["eof"]
     outside = tmp_path.parent / "outside.py"
     outside.write_text("private")
-    (tmp_path / "link.py").symlink_to(outside)
+    make_symlink(tmp_path / "link.py", outside)
     assert ap.run_tool("read_file", {"path": "link.py"}, run, {"file_read_mode": "paged"}, None, None, 1).startswith("error:")
     assert ap.basic_tools("tail") == ap.BASIC_TOOLS
     read = next(t["function"] for t in ap.basic_tools("paged") if t["function"]["name"] == "read_file")
