@@ -20,6 +20,6 @@ P05,2026-10-12,FixFirst first,A,T2,fixfirst,14:10,121,yes,0,no,src/inventory exi
 P05,2026-10-12,FixFirst first,A,T3,baseline,14:10,175,yes,0,no,The distutils module is not available in this Python environment.,5
 P05,2026-10-12,FixFirst first,A,T4,baseline,14:10,133,yes,0,no,The settings.toml file does not exist.,5
 P06,2026-10-12,FixFirst first,B,T3,fixfirst,14:15,191,yes,0,no,Distutils is not available in Python 3.12,5
-P06,2026-10-12,FixFirst first,B,T4,fixfirst,14:15,134,yes,0,no,,5
+P06,2026-10-12,FixFirst first,B,T4,fixfirst,14:15,134,yes,0,no,Just create a settings.toml.,5
 P06,2026-10-12,FixFirst first,B,T1,baseline,14:15,181,yes,0,no,The installed Jinja2 package does not contain Markup.,4
 P06,2026-10-12,FixFirst first,B,T2,baseline,14:15,204,yes,0,no,The inventory module is missing or not installed correctly.,4
