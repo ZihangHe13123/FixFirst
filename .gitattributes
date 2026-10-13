@@ -10,3 +10,12 @@ examples/historical-regressions/**/*.html -whitespace
 
 # Preserve whitespace in the captured HTML export used as delivery evidence.
 docs/freeze/validation-20261001/entry-checks/shared.html -whitespace
+
+# Recorded evidence and artifact identities are compared byte for byte against
+# digests committed with them (MANIFEST JSON, the classifier trees, the demo
+# results). A CRLF checkout on Windows would change those bytes; force LF so
+# every platform checks these out exactly as committed.
+experiments/agent_baseline/** text eol=lf
+docs/user-study/** text eol=lf
+src/fixfirst/knowledge/** text eol=lf
+tests/fixtures/*.json text eol=lf
