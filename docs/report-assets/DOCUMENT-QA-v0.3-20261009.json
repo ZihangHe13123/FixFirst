@@ -1,0 +1,250 @@
+{
+  "date": "2026-10-09",
+  "report_version": "0.3",
+  "product_commit": "5c224cf28896e487015106a7a7acd84f69f7ba26",
+  "original_template_unchanged": true,
+  "preserved_artifacts": {
+    "docs/report/FixFirst_Report_v0.2_20261009.docx": "0343ccec76ffaed20ae943c809c28e227beae04ef10f11043cf0636431c96fb5",
+    "docs/report/FixFirst_Report_v0.2_20261009.pdf": "44d0ed4c7e91f1965e237cb2f111464e3a70a5e058d3dda1132059dd9a9a7b7f",
+    "docs/report/FixFirst_Report_v0.2_20261009.md": "34be5b92abae1ff9107e46eeb7a8ff8d250ab6373b58655bd97e8f727fe9cae8",
+    "docs/report/FixFirst_User_Guide_v0.1_20261009.docx": "f801ec59876cdeb4b5ebb154a6bf3dd707950daa4aa13eccf18dab792a5b103e",
+    "docs/report/FixFirst_User_Guide_v0.1_20261009.pdf": "da1c33bdaa8e7f0b25c88c336c9a8749ec4f5a324565ad03452a15b5d58f01f2",
+    "docs/USER_GUIDE.md": "ffba9d2039ec454080d5dc287c62919bd4397940805dc8ea15140c07f59533c6"
+  },
+  "production_change_files": [],
+  "source_artifacts_checked": [
+    {
+      "artifact": "workbench/codex-b7-formal-20261007/analysis-20261009/UPLIFT-ANALYSIS.json",
+      "sha256": "0b72ef81fc580e34ab06cfea2fdc364a511d10b14b870c46aade9b90b244eaad",
+      "matched": true
+    },
+    {
+      "artifact": "workbench/claude-h5-acceptance-20261005/FORMAL-RESULTS-CHECK-20261009.md",
+      "sha256": "fe9aa520939605a9550eb1ab661a4577980eaa451edcdcd32a7ccd05e08a6cb1",
+      "matched": true
+    },
+    {
+      "artifact": "workbench/codex-b3-generated-results-20261004/COMPARISON.json",
+      "sha256": "4b1215c9f284ddde401d2845d014e20e6c51cbe1e201b8f1e9dd03f80b5d62ff",
+      "matched": true
+    },
+    {
+      "artifact": "examples/heldout-2026-10/scores-summary.md",
+      "sha256": "0cbf5b0631e9111402e4474e7d5e5435400dc68d879cf24557f29b6adc7d98ab",
+      "matched": true
+    },
+    {
+      "artifact": "examples/heldout-2026-10/scores-review.md",
+      "sha256": "01b197548eed74653319873af6b93ec5946ee6c0733adf0c4a6821dd7602b6dd",
+      "matched": true
+    },
+    {
+      "artifact": "docs/validation/2026-10-04-tree-integration.md",
+      "sha256": "011da48441740fdec8c4b7d68996ff9f5d29d799f42064c51dbd60a54371b3e7",
+      "matched": true
+    },
+    {
+      "artifact": "examples/diagnosis-evaluation/metrics.json",
+      "sha256": "2997d0151b404a591c8daf1a99f7ed26965c95098e6ad580fd2dcacda9c6f96b",
+      "matched": true
+    },
+    {
+      "artifact": "examples/grouping-evaluation/collection/metrics.json",
+      "sha256": "fdb2917a1d2ffd00b943d07b7a62464e14d39ee15ba7ff0fee46d7831620da02",
+      "matched": true
+    },
+    {
+      "artifact": "examples/grouping-evaluation/execution/metrics.json",
+      "sha256": "1bb0ecd5f996c930b437f939cfbd533e75e02f2b9e34fc5471ea189ea7bbefd8",
+      "matched": true
+    },
+    {
+      "artifact": "src/fixfirst/knowledge/domain.toml",
+      "sha256": "9cfaf23d1418a4201159a57fe77f48ab422f73e95b533fe8d1ce17c0479b6398",
+      "matched": true
+    },
+    {
+      "artifact": "src/fixfirst/knowledge/rules.toml",
+      "sha256": "c04c9591b92e7cc093f6d49b29c49ca31a26d8e2952b5922d0df72b485fe10e3",
+      "matched": true
+    },
+    {
+      "artifact": "B3 real-project report at ebe2a709abbf82bbf2988c6fdd6fdd2ba693469b",
+      "sha256": "e3ea37d419466159913c1f7a6d2dfb6a3ec7e79c261fa1c3cb8c5b4ac9f30e16",
+      "matched": true
+    },
+    {
+      "artifact": "workbench/codex-deepseek-comparison-20261009/analysis-20261009/UPLIFT-MAIN.json",
+      "sha256": "c35b345f48ae2813f4fc35826271affc4711fefff7325d9d0c13bb6eb455b1e0",
+      "matched": true
+    },
+    {
+      "artifact": "workbench/codex-deepseek-comparison-20261009/COMPLETION-AUDIT-20261009.json",
+      "sha256": "81a8076e95a748fa4c6b50febf61f39df33aa5396ad22e33adfab4e91155858f",
+      "matched": true
+    },
+    {
+      "artifact": "workbench/claude-h5-acceptance-20261005/DEEPSEEK-RESULTS-CHECK-20261009.md",
+      "sha256": "959cdc6556ee6f109827a88e898172f7beb5294a4be98c11f95951ba2269aec3",
+      "matched": true
+    },
+    {
+      "artifact": "workbench/claude-b7-uplift-20261005/PLAN.md at version 1.16",
+      "sha256": "50110399fb763b96a68c6c7f95ba17ff33745f3e9f2d9b208928e441c1291461",
+      "matched": true
+    },
+    {
+      "artifact": "workbench/codex-deepseek-comparison-20261009/CLOUD-REGISTRATION.json",
+      "sha256": "7dca2f775447bcb5c572c3606c15b99894a27ac175e5510eda2430617c55dc17",
+      "matched": true
+    },
+    {
+      "artifact": "workbench/codex-deepseek-comparison-20261009/inputs/PLAN-v1.15.md",
+      "sha256": "ca950b0d50ed62a1da4712449b6a63729420fb25010c222d9a7c4774b62cee48",
+      "matched": true
+    }
+  ],
+  "output": {
+    "document": "docs/report/FixFirst_Report_v0.3_20261009.docx",
+    "docx_sha256": "6703c866e54a5d3c1392b121b9928f7c248bebe067aca91bf7a891be02f59738",
+    "pdf": "docs/report/FixFirst_Report_v0.3_20261009.pdf",
+    "pdf_sha256": "9658ac894ea33cecb702a29d2f93b3963ac89d19359ba3b1f3321ec4949c6e92",
+    "markdown_sha256": "49923d0017afc1208241b4e0ec9ee718aae56249aa736e527e061b9a6d5365ae",
+    "pages": 23,
+    "page_inspections": [
+      {
+        "page": 1,
+        "sha256": "4759bde2ce9b6fa6d407fbc6a02baf8a8a0d203530ad9a856ae30da3e7e0c402",
+        "inspection": "visually reviewed at original resolution"
+      },
+      {
+        "page": 2,
+        "sha256": "38d13d60d26d912e0f7529b8948259b076175699f8bbd82519f0ffd1cb242914",
+        "inspection": "visually reviewed at original resolution"
+      },
+      {
+        "page": 3,
+        "sha256": "971460e6a293745fa5dce8df9920ea754c224b5e0f537af4732a52dd5fbcde82",
+        "inspection": "visually reviewed at original resolution"
+      },
+      {
+        "page": 4,
+        "sha256": "042ba4b24ebf256868e7d0ecef556859bbf81ef5c2799c38f189f9902716de0f",
+        "inspection": "visually reviewed at original resolution"
+      },
+      {
+        "page": 5,
+        "sha256": "ab4b01440dc2cdee18f5780be11ea0306985e5b7f3ebb9a06031f052f07d6273",
+        "inspection": "byte-identical to previously visually reviewed page",
+        "prior_render": "report-render-5/page-5.png"
+      },
+      {
+        "page": 6,
+        "sha256": "c1ee10e4777e20aecfb22c45e1f585f60546deda96cd90aec58ec2724df88bc5",
+        "inspection": "byte-identical to previously visually reviewed page",
+        "prior_render": "report-render-5/page-6.png"
+      },
+      {
+        "page": 7,
+        "sha256": "8bb8f45f4667b6621c798ab73115271de9935b60123d92547274a5349272bcfb",
+        "inspection": "byte-identical to previously visually reviewed page",
+        "prior_render": "report-render-5/page-7.png"
+      },
+      {
+        "page": 8,
+        "sha256": "e5b83298a76f5e2a3a4b77ff7d4712d3a6b7b7099b645155e0dadd58ecddcee0",
+        "inspection": "byte-identical to previously visually reviewed page",
+        "prior_render": "report-render-5/page-8.png"
+      },
+      {
+        "page": 9,
+        "sha256": "1a3f1f8eda4ef1cd2c753f70e19d4ffe36b00532e738bfe6808bb789a2cdf7c4",
+        "inspection": "byte-identical to previously visually reviewed page",
+        "prior_render": "report-render-5/page-9.png"
+      },
+      {
+        "page": 10,
+        "sha256": "92112e06347d9165e8998155cbfeb103b419a9ee8b5e505eba4d30e44a437ad4",
+        "inspection": "byte-identical to previously visually reviewed page",
+        "prior_render": "report-render-5/page-10.png"
+      },
+      {
+        "page": 11,
+        "sha256": "8a4a31702bccf149cc35bca19d7909afdf4661548b8f253582e77d2e5d5864b6",
+        "inspection": "byte-identical to previously visually reviewed page",
+        "prior_render": "report-v03-render-1/page-11.png"
+      },
+      {
+        "page": 12,
+        "sha256": "f05a72e75a45b444f7afc34f8ae6660b67ab92852e51e92fea2e65696e938ed0",
+        "inspection": "visually reviewed at original resolution"
+      },
+      {
+        "page": 13,
+        "sha256": "7386067a57ca1293b1007452babe8a30044147fca7fb3ddeb5255d2d7fe66fc8",
+        "inspection": "visually reviewed at original resolution"
+      },
+      {
+        "page": 14,
+        "sha256": "160fc1482ded19bf72dfce47070ffab3135016519a1b362ccc437de9d547891e",
+        "inspection": "visually reviewed at original resolution"
+      },
+      {
+        "page": 15,
+        "sha256": "5a411e9534b6bc69fc5e3416171fad682fc1d967261863d178b18c64225a66ee",
+        "inspection": "visually reviewed at original resolution"
+      },
+      {
+        "page": 16,
+        "sha256": "8f2de80b379c1041a1a848f603e60c61a99dab8db2bcb77289383285e5cb8e68",
+        "inspection": "visually reviewed at original resolution"
+      },
+      {
+        "page": 17,
+        "sha256": "e50b3dcb77741023164984889c91448f11b53a7e0bbd65b80a67ed050b9227a5",
+        "inspection": "visually reviewed at original resolution"
+      },
+      {
+        "page": 18,
+        "sha256": "335bfb16cb184def608035cab5f6e9362aee6f3dde80c7c3b051d8af3716b66d",
+        "inspection": "visually reviewed at original resolution"
+      },
+      {
+        "page": 19,
+        "sha256": "82a01cd6253b52f414c6d5d9b16c2c2caab5840ab34847dc137673e29d7333f9",
+        "inspection": "byte-identical to previously visually reviewed page",
+        "prior_render": "report-render-5/page-18.png"
+      },
+      {
+        "page": 20,
+        "sha256": "76bc4e81653a5ef1314bb10767cef804594f543933e8991c0d80d7bc6f60296e",
+        "inspection": "byte-identical to previously visually reviewed page",
+        "prior_render": "report-render-5/page-19.png"
+      },
+      {
+        "page": 21,
+        "sha256": "15d1f1d9eb28077cd7841917b3f85430959c6f568dfb0b7e6be3a03c890307c7",
+        "inspection": "byte-identical to previously visually reviewed page",
+        "prior_render": "report-render-5/page-20.png"
+      },
+      {
+        "page": 22,
+        "sha256": "b09cfa55cee739c48792115ec914b8aecf8f73c2e65f2048e9f76acd1a304608",
+        "inspection": "byte-identical to previously visually reviewed page",
+        "prior_render": "report-render-5/page-21.png"
+      },
+      {
+        "page": 23,
+        "sha256": "b64a4a9482e326d08651b42e393e31d40d46648bf4abe47445d2b002d4eaec05",
+        "inspection": "visually reviewed at original resolution"
+      }
+    ],
+    "text_extraction": "no corrupt control characters"
+  },
+  "limitations": [
+    "Review draft; human sessions, independent installation, Windows acceptance and final submission material remain pending",
+    "Local cells have five repetitions; cloud cells have three",
+    "No new model inference or product execution in this report update"
+  ],
+  "numeric_checks": "Cloud table values and intervals equal the registered analysis rounded to two decimals; all scoring readings have 18 scope tasks, 22 total tasks and three runs per cell"
+}

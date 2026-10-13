@@ -1,20 +1,35 @@
-# 小组报告（任务 B10、B11）
+# FixFirst report working drafts
 
-报告用 **Word 或 WPS** 编辑，最终导出 PDF 提交。
+The current report is **v0.8 dated 14 October 2026**. It is marked **DRAFT — INCOMPLETE — FOR
+TEAM DISCUSSION**, and is not ready for submission. All three members should review it; Claude
+will check the merged additions and the numbers.
 
-| 文件 | 内容 |
-|---|---|
-| `FixFirst_Report_v0.1_20260929.docx` | 报告骨架：按课程要求排好的章节、证据表和占位 |
-| `report-skeleton.md` | 生成 v0.1 骨架的源文件（`pandoc report-skeleton.md -o <文件名>.docx --toc --toc-depth=2 --metadata toc-title="Contents"`） |
-| `VERSIONS.md` | 版本记录 |
-| `SOURCES.md` | 每张图、每张表、每个数字来自仓库里的哪个文件 |
+| Current file | Purpose |
+| --- | --- |
+| [Report Word](FixFirst_Report_DRAFT_v0.8_20261014.docx) | Editable report for group review |
+| [Report PDF](FixFirst_Report_DRAFT_v0.8_20261014.pdf) | Rendered review copy |
+| [Report Markdown](FixFirst_Report_DRAFT_v0.8_20261014.md) | Content used for this Word version |
+| [Guide Word](FixFirst_User_Guide_DRAFT_v0.2_20261012.docx) | Updated rc5 trial installation and usage guide |
+| [Guide PDF](FixFirst_User_Guide_DRAFT_v0.2_20261012.pdf) | Rendered guide copy |
+| [Repository guide](../USER_GUIDE.md) | The same guide in Markdown |
 
-**从 v0.1 起以 docx 为准**，直接在 Word 或 WPS 里改。`report-skeleton.md` 只用来生成第一版，之后不再同步。
+The report preserves the six course sections and appendices. It adds later product versions,
+real-defect checks, the rc5 diagnosis comparison, and ordering/grouping results. Agent results
+retain their rc2 identity. Version 0.7 corrects the bibliography after the literature check,
+states the indexed BugsInPy count, and adds protocol, library, model and SUS references.
+Version 0.8 adds the second-round participant study: 24 completed tasks, median time 23.4%
+lower, a non-significant paired difference (p = 0.094), and mean SUS 79.6. It records the small
+sample and the experimenter-reported departures from the protocol.
+The guide is also included in Appendix C.
 
-- **目录**：打开文件后在目录上右键，选"更新域"（WPS 里叫"更新目录"），目录就会填上。
-- **占位**：`[PLACEHOLDER: …]` 是待写的正文；`[PENDING: 任务, 来源]` 是还没跑出来的数字，由对应任务交结果后填。定稿前全文搜索这两个词，确认一个不剩。
-- **版本**：每到一个节点（初稿 10/19、定稿 10/23、提交版 10/24），另存为新文件 `FixFirst_Report_v0.<n>_<日期>.docx`，并在 `VERSIONS.md` 里加一行。旧版本不删。
-- **只用英文**：正文和文件名都用英文。导出 PDF 的机器没有中文字体时，中文会显示成空白（v0.1 第一次生成时第 3、6 页的 `docs/技术原理详解.md` 就是这样）。要引用中文文档，写 "technical guide §n"，对照见 `SOURCES.md`。每次导出 PDF 后逐页看一遍。
-- **图表**：图片的源文件和导出的 PNG 放在 `docs/report-assets/`，文件名以任务编号开头；每张图、表在 `SOURCES.md` 里登记来源。报告里的数字都要能在那里找到出处。
-- **必须有的部分**：AI 使用声明（附录 E）、局限、与 proposal 的偏离（第 5 部分的表）。个人反思（附录 D）由每人自己写，不用 AI。
-- **提交**：定稿后导出 PDF，按课程命名规则命名，放进 `ProjectReport/`（任务 B15 建这个文件夹）。
+rc5 remains a **trial baseline**, not an approved final release. The guide installs
+`b12-rc5-freeze-20261010`; a final tag awaits user feedback. Participant tables from 12 and
+13 October are now in main. Windows acceptance and final team review remain pending.
+
+Earlier Word files remain unchanged. The pending v0.5 report is preserved as an intermediate
+draft. After manual Word edits, reconcile them before regenerating from Markdown. The Contents
+list is static.
+
+See [SOURCES.md](SOURCES.md), [TEAM-REVIEW.md](TEAM-REVIEW.md),
+[COMPLETION-CHECKLIST.md](COMPLETION-CHECKLIST.md), and the
+[document QA receipt](../report-assets/DOCUMENT-QA-v0.8-20261014.json).

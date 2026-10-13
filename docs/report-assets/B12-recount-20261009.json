@@ -1,0 +1,859 @@
+{
+  "date": "2026-10-09",
+  "product_commit": "5c224cf28896e487015106a7a7acd84f69f7ba26",
+  "product_tree_clean": true,
+  "no_product_or_model_execution": true,
+  "report_sha256": "9f4f4be0e0e9d4b67c82107728caa7870213f2bd3809f52bbfca4a33e0b7a27b",
+  "method": "Independent recount of raw records and saved product sessions; parameter matching is supplementary and does not replace registered exact matching",
+  "summary": {
+    "bugs": 27,
+    "projects": {
+      "cookiecutter": 3,
+      "tornado": 15,
+      "tqdm": 9
+    },
+    "reproduced": 27,
+    "without_must_fix_commands": 27,
+    "with_optional_commands": 0,
+    "exact_target_seen": 2,
+    "registered_closure_pass": 0,
+    "target_failure_observed_including_parameters": 3,
+    "target_failure_not_observed": 24,
+    "tornado_D16_first_steps": 11
+  },
+  "rows": [
+    {
+      "case": "PySnooper-2",
+      "project": "PySnooper",
+      "development_case": true,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": true,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": true,
+      "target_outcomes_before": [
+        {
+          "node": "tests/test_pysnooper.py::test_custom_repr_single",
+          "outcome": "failed"
+        }
+      ],
+      "target_outcomes_after": [
+        {
+          "node": "tests/test_pysnooper.py::test_custom_repr_single",
+          "outcome": "passed"
+        }
+      ],
+      "target_issues_after": [
+        {
+          "targets": [
+            "tests/test_pysnooper.py::test_custom_repr_single"
+          ],
+          "status": "awaiting_verification"
+        }
+      ],
+      "selected_before": 33,
+      "incomplete_before": 0,
+      "first_rule": [
+        "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+      ],
+      "record_sha256": "80c31ecc9542824b44a3dff4e108c1d194227b198553df4d620037608ff850ca",
+      "session_sha256": "0edc0b43a484a1693952e9e60fc37eff2288a602ffdcce9bf2064e12b39df087"
+    },
+    {
+      "case": "cookiecutter-2",
+      "project": "cookiecutter",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": true,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": true,
+      "target_outcomes_before": [
+        {
+          "node": "tests/test_hooks.py::TestFindHooks::test_find_hook",
+          "outcome": "failed"
+        },
+        {
+          "node": "tests/test_hooks.py::TestExternalHooks::test_run_hook",
+          "outcome": "failed"
+        }
+      ],
+      "target_outcomes_after": [
+        {
+          "node": "tests/test_hooks.py::TestFindHooks::test_find_hook",
+          "outcome": "passed"
+        },
+        {
+          "node": "tests/test_hooks.py::TestExternalHooks::test_run_hook",
+          "outcome": "passed"
+        }
+      ],
+      "target_issues_after": [
+        {
+          "targets": [
+            "tests/test_hooks.py::TestFindHooks::test_find_hook"
+          ],
+          "status": "awaiting_verification"
+        },
+        {
+          "targets": [
+            "tests/test_hooks.py::TestExternalHooks::test_run_hook"
+          ],
+          "status": "awaiting_verification"
+        }
+      ],
+      "selected_before": 286,
+      "incomplete_before": 0,
+      "first_rule": [
+        "D40: A test assertion failed: the observed behaviour differs from the test's expectation."
+      ],
+      "record_sha256": "b97393700d1557a6b50a0db427153aaf932833c29cd4e16393360272e636665a",
+      "session_sha256": "dfdc023b9cf27ebf78ccc611bec0455ba40d514f222d5a8af8f29a4af961967c"
+    },
+    {
+      "case": "cookiecutter-3",
+      "project": "cookiecutter",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": true,
+      "target_outcomes_before": [
+        {
+          "node": "tests/test_read_user_choice.py::test_click_invocation[1-hello]",
+          "outcome": "failed"
+        },
+        {
+          "node": "tests/test_read_user_choice.py::test_click_invocation[2-world]",
+          "outcome": "failed"
+        },
+        {
+          "node": "tests/test_read_user_choice.py::test_click_invocation[3-foo]",
+          "outcome": "failed"
+        },
+        {
+          "node": "tests/test_read_user_choice.py::test_click_invocation[4-bar]",
+          "outcome": "failed"
+        }
+      ],
+      "target_outcomes_after": [
+        {
+          "node": "tests/test_read_user_choice.py::test_click_invocation[1-hello]",
+          "outcome": "passed"
+        },
+        {
+          "node": "tests/test_read_user_choice.py::test_click_invocation[2-world]",
+          "outcome": "passed"
+        },
+        {
+          "node": "tests/test_read_user_choice.py::test_click_invocation[3-foo]",
+          "outcome": "passed"
+        },
+        {
+          "node": "tests/test_read_user_choice.py::test_click_invocation[4-bar]",
+          "outcome": "passed"
+        }
+      ],
+      "target_issues_after": [
+        {
+          "targets": [
+            "tests/test_read_user_choice.py::test_click_invocation[1-hello]"
+          ],
+          "status": "awaiting_verification"
+        },
+        {
+          "targets": [
+            "tests/test_read_user_choice.py::test_click_invocation[2-world]"
+          ],
+          "status": "awaiting_verification"
+        },
+        {
+          "targets": [
+            "tests/test_read_user_choice.py::test_click_invocation[3-foo]"
+          ],
+          "status": "awaiting_verification"
+        },
+        {
+          "targets": [
+            "tests/test_read_user_choice.py::test_click_invocation[4-bar]"
+          ],
+          "status": "awaiting_verification"
+        }
+      ],
+      "selected_before": 262,
+      "incomplete_before": 0,
+      "first_rule": [
+        "D40: A test assertion failed: the observed behaviour differs from the test's expectation."
+      ],
+      "record_sha256": "03066b01082d8dac826950cee7d6ee165b7974200b1a813e10edfb565e9c6b50",
+      "session_sha256": "ce1e31637ec608164195d6eeccf05c14fc28b51ea3f241b9b95c792ef3626a46"
+    },
+    {
+      "case": "cookiecutter-4",
+      "project": "cookiecutter",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": true,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": true,
+      "target_outcomes_before": [
+        {
+          "node": "tests/test_hooks.py::TestExternalHooks::test_run_failing_hook",
+          "outcome": "failed"
+        }
+      ],
+      "target_outcomes_after": [],
+      "target_issues_after": [
+        {
+          "targets": [
+            "tests/test_hooks.py::TestExternalHooks::test_run_failing_hook"
+          ],
+          "status": "not_observed"
+        }
+      ],
+      "selected_before": 156,
+      "incomplete_before": 0,
+      "first_rule": [
+        "D40: A test assertion failed: the observed behaviour differs from the test's expectation."
+      ],
+      "record_sha256": "19235da097f0ec4997e386344f2cdfe1203c0727dca5ab3d86e47742672e7a85",
+      "session_sha256": "6ed6a6f05615ae78d2721af9273161d0316f60e753d12ff9dac9aac42bce0083"
+    },
+    {
+      "case": "tornado-1",
+      "project": "tornado",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 1191,
+      "incomplete_before": 1191,
+      "first_rule": [
+        "D16: No installed, standard or known package has this name, but a similarly named project module exists: it was probably renamed or moved."
+      ],
+      "record_sha256": "ddebb3498ac5e32e3d69c324a46d4d182e2d5b1af7dc8837856dd4f1d02ec411",
+      "session_sha256": "ad435f9d998326e124addc18a39edc24dc35a8a8ca0dc4f1c24c849c1c271b40"
+    },
+    {
+      "case": "tornado-10",
+      "project": "tornado",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 0,
+      "incomplete_before": 0,
+      "first_rule": [
+        "D16: No installed, standard or known package has this name, but a similarly named project module exists: it was probably renamed or moved."
+      ],
+      "record_sha256": "3ded70af918b3778f8f165b5d26652ef8fd05f838654db11252c6e8a67336c32",
+      "session_sha256": "11c1e90b6e2a94748b4b39d56f5a1fa0276f9c55c14589328f6e4fad45bfe04a"
+    },
+    {
+      "case": "tornado-11",
+      "project": "tornado",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 0,
+      "incomplete_before": 0,
+      "first_rule": [
+        "D16: No installed, standard or known package has this name, but a similarly named project module exists: it was probably renamed or moved."
+      ],
+      "record_sha256": "5cd6916043c1a41b0a70198fb98661cdab5bffcfdb893607a1ba918f7dc9959d",
+      "session_sha256": "8cb786d8c7e845b2048e6ae9a30e513855ad5b28a12c80a10c6a19ef77989638"
+    },
+    {
+      "case": "tornado-12",
+      "project": "tornado",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 0,
+      "incomplete_before": 0,
+      "first_rule": [
+        "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+      ],
+      "record_sha256": "13c7ec1293802babbba2c46cbc787741e11fbb2ec97600540edd9c088d517c79",
+      "session_sha256": "457a0b0433ad9e2f14ebd4d7907122fd778a9bc93ec25cf75c73419e894adfb2"
+    },
+    {
+      "case": "tornado-13",
+      "project": "tornado",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 0,
+      "incomplete_before": 0,
+      "first_rule": [
+        "D16: No installed, standard or known package has this name, but a similarly named project module exists: it was probably renamed or moved."
+      ],
+      "record_sha256": "cd02b832c33500742d797dfaecc3d345fd5275523acffe43c8b28e47169baa56",
+      "session_sha256": "0a4c0c0952d91296c67f669f5621091f5919e6d274f636c3d4041eff85847f4b"
+    },
+    {
+      "case": "tornado-14",
+      "project": "tornado",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 502,
+      "incomplete_before": 502,
+      "first_rule": [
+        "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+      ],
+      "record_sha256": "1b4b219dc373a6a5d723da80df8d5859f5e12e29aaeb0794443b7d3a7cda27bb",
+      "session_sha256": "272a597efbc22b2b12fafd302a349281e3993f6ca8551236ae416d59b7a8a25f"
+    },
+    {
+      "case": "tornado-15",
+      "project": "tornado",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 0,
+      "incomplete_before": 0,
+      "first_rule": [
+        "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+      ],
+      "record_sha256": "900dbef4a39b799ceb2800489efb0b79be51e5ddc0771a473a4f5a20602b60f8",
+      "session_sha256": "1e8eb57ae736a91b636793fc2527424853a814f570ecb6ad388f87c0976e9dfd"
+    },
+    {
+      "case": "tornado-16",
+      "project": "tornado",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 0,
+      "incomplete_before": 0,
+      "first_rule": [
+        "F01: No diagnosis rule matched; the decision tree trained on labelled cases suggests a likely cause."
+      ],
+      "record_sha256": "42ac5ce9feac3ab8fbf989e061f467c8fed6263c58441f1cc05eda1ec24be4ed",
+      "session_sha256": "9fe251b5897c97c5b2ee00c3edb0eefae7f230c0e47ecbec331447b25356dc22"
+    },
+    {
+      "case": "tornado-2",
+      "project": "tornado",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 1185,
+      "incomplete_before": 1185,
+      "first_rule": [
+        "D16: No installed, standard or known package has this name, but a similarly named project module exists: it was probably renamed or moved."
+      ],
+      "record_sha256": "b0200066f9290c7589305fd22aa3e2e0c9d4bca8a37ba73e3f492de5a1758d5d",
+      "session_sha256": "327bf508384bada1d0756bc16701153bd8258ff77f7f9288b041b78e19895f37"
+    },
+    {
+      "case": "tornado-4",
+      "project": "tornado",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 1166,
+      "incomplete_before": 1166,
+      "first_rule": [
+        "D16: No installed, standard or known package has this name, but a similarly named project module exists: it was probably renamed or moved."
+      ],
+      "record_sha256": "f4e03770ecabdfb284deca3cb595f41123fd0212bf060885b18d7b0b6a62a001",
+      "session_sha256": "3439fae8f966cf21f6e4744a2583f527cc88f4b2bf9cf223da47447162803358"
+    },
+    {
+      "case": "tornado-5",
+      "project": "tornado",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 682,
+      "incomplete_before": 682,
+      "first_rule": [
+        "D16: No installed, standard or known package has this name, but a similarly named project module exists: it was probably renamed or moved."
+      ],
+      "record_sha256": "1b0ab6fd6df07167f3933ee4be9f14972f83c7e4d548427e012af0ed8a3de66f",
+      "session_sha256": "907881d6c64e92ef61491731fe5b63952da9de17191599a736058d85aaa99ae5"
+    },
+    {
+      "case": "tornado-6",
+      "project": "tornado",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 676,
+      "incomplete_before": 676,
+      "first_rule": [
+        "D16: No installed, standard or known package has this name, but a similarly named project module exists: it was probably renamed or moved."
+      ],
+      "record_sha256": "26446782364123b25be13ac27963926bf363ef647a6098a9111a56637afc0e50",
+      "session_sha256": "4d5333495512d82dd72eb8b728b83658fccddc4ce633a53836a912d13167861d"
+    },
+    {
+      "case": "tornado-7",
+      "project": "tornado",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 0,
+      "incomplete_before": 0,
+      "first_rule": [
+        "D16: No installed, standard or known package has this name, but a similarly named project module exists: it was probably renamed or moved."
+      ],
+      "record_sha256": "d69162805864f3e9591a691e9041b6ff16c4fa937c26b54f3956d6e1ed5083cb",
+      "session_sha256": "06337f209b6710167096342658658b4f8c9d23d68d60a0256ee819b18ebe2f48"
+    },
+    {
+      "case": "tornado-8",
+      "project": "tornado",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 0,
+      "incomplete_before": 0,
+      "first_rule": [
+        "D16: No installed, standard or known package has this name, but a similarly named project module exists: it was probably renamed or moved."
+      ],
+      "record_sha256": "d450303be5468abcf92c8a293a687fe3d4b5b16375daa22358d6b8f466f1d861",
+      "session_sha256": "d689a4e08c27a83273a27c6c16c55f1b281d0966209a3853b5ef6d33c1604aa0"
+    },
+    {
+      "case": "tornado-9",
+      "project": "tornado",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 566,
+      "incomplete_before": 566,
+      "first_rule": [
+        "D16: No installed, standard or known package has this name, but a similarly named project module exists: it was probably renamed or moved."
+      ],
+      "record_sha256": "e0cdaf23ee61414bfdeb9e348dd67f0d21120d0450d137041afc29e3d20dcbc3",
+      "session_sha256": "8fdc4eb18e88fcb1125bdd34878d185a14457874c412f133ca4015e2643e4ae6"
+    },
+    {
+      "case": "tqdm-1",
+      "project": "tqdm",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 0,
+      "incomplete_before": 0,
+      "first_rule": [],
+      "record_sha256": "008f8a08ebd03040730283a5e8790ccd5aaeb005105c11ec4a6f9b1f8cda866b",
+      "session_sha256": "60340a0be836023a7c34b7ec5888b6f9773635c07ab866d28fa1f0e8b5b3a9fb"
+    },
+    {
+      "case": "tqdm-2",
+      "project": "tqdm",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 0,
+      "incomplete_before": 0,
+      "first_rule": [],
+      "record_sha256": "582f4a2d79601be63ee7a30e53b29a501bc6f000689440098e12d4708d5879bc",
+      "session_sha256": "0f0b3ff1282061ccc02af5c8347aa970d62dce5d59a669f894db2549c8db01a2"
+    },
+    {
+      "case": "tqdm-3",
+      "project": "tqdm",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 0,
+      "incomplete_before": 0,
+      "first_rule": [],
+      "record_sha256": "6dfb982a1a9d7c5e53d4ec19eae933e1c2b97d51ec644c3166d1c7b109cb00a1",
+      "session_sha256": "fe20a0b696d4df4f56b725c951fc4c5d6a2b03dc6d2d014dcf24326d9485d4f9"
+    },
+    {
+      "case": "tqdm-4",
+      "project": "tqdm",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 0,
+      "incomplete_before": 0,
+      "first_rule": [],
+      "record_sha256": "15ae814d232453af17d8088389c5103d93877f281864bb3faee441061b2d51c5",
+      "session_sha256": "c03ffbf39f5fc86054c73dd7cd92a7b3630c8a73dbe4446048b6a0d69cf95c0d"
+    },
+    {
+      "case": "tqdm-5",
+      "project": "tqdm",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 0,
+      "incomplete_before": 0,
+      "first_rule": [],
+      "record_sha256": "e4f122360cd06535d82809450c61238c626a769920ce4a4ad27b580742480d02",
+      "session_sha256": "c4e1522d6d14b77a7c9796ce65356914ec1ba8a78741027f7f1f0f8a8aed916f"
+    },
+    {
+      "case": "tqdm-6",
+      "project": "tqdm",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 0,
+      "incomplete_before": 0,
+      "first_rule": [],
+      "record_sha256": "ad1e2506b3399d2a510a331ceeeb21599a8f33f30a39c829823f57257a270e6d",
+      "session_sha256": "64fd6c12e4adc7f62260779c57dee9ee59c757355b3f482e2a58b3a88e46d102"
+    },
+    {
+      "case": "tqdm-7",
+      "project": "tqdm",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 0,
+      "incomplete_before": 0,
+      "first_rule": [],
+      "record_sha256": "bbc0ddd59d250a9d67ace52ec770d1cbf5face1d9728b32c14e85f15ccbb9ca7",
+      "session_sha256": "9ee463c7c3addadc84748076e443c165bfafefe26d1759317bebbbb6b400ffc2"
+    },
+    {
+      "case": "tqdm-8",
+      "project": "tqdm",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 0,
+      "incomplete_before": 0,
+      "first_rule": [],
+      "record_sha256": "b5ad22595a14c66232f0d1cf5190bce59a816b1e7cffc6d871a2e345ad047d37",
+      "session_sha256": "bbac43ef0b92bc30b43097dff84ca3a2fe701a1c85154437e8438c470de35749"
+    },
+    {
+      "case": "tqdm-9",
+      "project": "tqdm",
+      "development_case": false,
+      "reproduced": true,
+      "must_fix_commands": 0,
+      "optional_commands": 0,
+      "registered_exact_target_seen": false,
+      "registered_closure_pass": false,
+      "target_failed_in_product_run": false,
+      "target_outcomes_before": [],
+      "target_outcomes_after": [],
+      "target_issues_after": [],
+      "selected_before": 0,
+      "incomplete_before": 0,
+      "first_rule": [],
+      "record_sha256": "45a869cf3d577b060fc5081dbe1e2e406e8638c19d5f269a30224d8399039a75",
+      "session_sha256": "b23b429a168daf8b501b572aa2055580172b192386fe1f530dd2586486d6cd25"
+    }
+  ],
+  "record_manifest": [
+    {
+      "file": "PySnooper-2.json",
+      "sha256": "80c31ecc9542824b44a3dff4e108c1d194227b198553df4d620037608ff850ca",
+      "session_sha256": "0edc0b43a484a1693952e9e60fc37eff2288a602ffdcce9bf2064e12b39df087"
+    },
+    {
+      "file": "cookiecutter-2.json",
+      "sha256": "b97393700d1557a6b50a0db427153aaf932833c29cd4e16393360272e636665a",
+      "session_sha256": "dfdc023b9cf27ebf78ccc611bec0455ba40d514f222d5a8af8f29a4af961967c"
+    },
+    {
+      "file": "cookiecutter-3.json",
+      "sha256": "03066b01082d8dac826950cee7d6ee165b7974200b1a813e10edfb565e9c6b50",
+      "session_sha256": "ce1e31637ec608164195d6eeccf05c14fc28b51ea3f241b9b95c792ef3626a46"
+    },
+    {
+      "file": "cookiecutter-4.json",
+      "sha256": "19235da097f0ec4997e386344f2cdfe1203c0727dca5ab3d86e47742672e7a85",
+      "session_sha256": "6ed6a6f05615ae78d2721af9273161d0316f60e753d12ff9dac9aac42bce0083"
+    },
+    {
+      "file": "tornado-1.json",
+      "sha256": "ddebb3498ac5e32e3d69c324a46d4d182e2d5b1af7dc8837856dd4f1d02ec411",
+      "session_sha256": "ad435f9d998326e124addc18a39edc24dc35a8a8ca0dc4f1c24c849c1c271b40"
+    },
+    {
+      "file": "tornado-10.json",
+      "sha256": "3ded70af918b3778f8f165b5d26652ef8fd05f838654db11252c6e8a67336c32",
+      "session_sha256": "11c1e90b6e2a94748b4b39d56f5a1fa0276f9c55c14589328f6e4fad45bfe04a"
+    },
+    {
+      "file": "tornado-11.json",
+      "sha256": "5cd6916043c1a41b0a70198fb98661cdab5bffcfdb893607a1ba918f7dc9959d",
+      "session_sha256": "8cb786d8c7e845b2048e6ae9a30e513855ad5b28a12c80a10c6a19ef77989638"
+    },
+    {
+      "file": "tornado-12.json",
+      "sha256": "13c7ec1293802babbba2c46cbc787741e11fbb2ec97600540edd9c088d517c79",
+      "session_sha256": "457a0b0433ad9e2f14ebd4d7907122fd778a9bc93ec25cf75c73419e894adfb2"
+    },
+    {
+      "file": "tornado-13.json",
+      "sha256": "cd02b832c33500742d797dfaecc3d345fd5275523acffe43c8b28e47169baa56",
+      "session_sha256": "0a4c0c0952d91296c67f669f5621091f5919e6d274f636c3d4041eff85847f4b"
+    },
+    {
+      "file": "tornado-14.json",
+      "sha256": "1b4b219dc373a6a5d723da80df8d5859f5e12e29aaeb0794443b7d3a7cda27bb",
+      "session_sha256": "272a597efbc22b2b12fafd302a349281e3993f6ca8551236ae416d59b7a8a25f"
+    },
+    {
+      "file": "tornado-15.json",
+      "sha256": "900dbef4a39b799ceb2800489efb0b79be51e5ddc0771a473a4f5a20602b60f8",
+      "session_sha256": "1e8eb57ae736a91b636793fc2527424853a814f570ecb6ad388f87c0976e9dfd"
+    },
+    {
+      "file": "tornado-16.json",
+      "sha256": "42ac5ce9feac3ab8fbf989e061f467c8fed6263c58441f1cc05eda1ec24be4ed",
+      "session_sha256": "9fe251b5897c97c5b2ee00c3edb0eefae7f230c0e47ecbec331447b25356dc22"
+    },
+    {
+      "file": "tornado-2.json",
+      "sha256": "b0200066f9290c7589305fd22aa3e2e0c9d4bca8a37ba73e3f492de5a1758d5d",
+      "session_sha256": "327bf508384bada1d0756bc16701153bd8258ff77f7f9288b041b78e19895f37"
+    },
+    {
+      "file": "tornado-4.json",
+      "sha256": "f4e03770ecabdfb284deca3cb595f41123fd0212bf060885b18d7b0b6a62a001",
+      "session_sha256": "3439fae8f966cf21f6e4744a2583f527cc88f4b2bf9cf223da47447162803358"
+    },
+    {
+      "file": "tornado-5.json",
+      "sha256": "1b0ab6fd6df07167f3933ee4be9f14972f83c7e4d548427e012af0ed8a3de66f",
+      "session_sha256": "907881d6c64e92ef61491731fe5b63952da9de17191599a736058d85aaa99ae5"
+    },
+    {
+      "file": "tornado-6.json",
+      "sha256": "26446782364123b25be13ac27963926bf363ef647a6098a9111a56637afc0e50",
+      "session_sha256": "4d5333495512d82dd72eb8b728b83658fccddc4ce633a53836a912d13167861d"
+    },
+    {
+      "file": "tornado-7.json",
+      "sha256": "d69162805864f3e9591a691e9041b6ff16c4fa937c26b54f3956d6e1ed5083cb",
+      "session_sha256": "06337f209b6710167096342658658b4f8c9d23d68d60a0256ee819b18ebe2f48"
+    },
+    {
+      "file": "tornado-8.json",
+      "sha256": "d450303be5468abcf92c8a293a687fe3d4b5b16375daa22358d6b8f466f1d861",
+      "session_sha256": "d689a4e08c27a83273a27c6c16c55f1b281d0966209a3853b5ef6d33c1604aa0"
+    },
+    {
+      "file": "tornado-9.json",
+      "sha256": "e0cdaf23ee61414bfdeb9e348dd67f0d21120d0450d137041afc29e3d20dcbc3",
+      "session_sha256": "8fdc4eb18e88fcb1125bdd34878d185a14457874c412f133ca4015e2643e4ae6"
+    },
+    {
+      "file": "tqdm-1.json",
+      "sha256": "008f8a08ebd03040730283a5e8790ccd5aaeb005105c11ec4a6f9b1f8cda866b",
+      "session_sha256": "60340a0be836023a7c34b7ec5888b6f9773635c07ab866d28fa1f0e8b5b3a9fb"
+    },
+    {
+      "file": "tqdm-2.json",
+      "sha256": "582f4a2d79601be63ee7a30e53b29a501bc6f000689440098e12d4708d5879bc",
+      "session_sha256": "0f0b3ff1282061ccc02af5c8347aa970d62dce5d59a669f894db2549c8db01a2"
+    },
+    {
+      "file": "tqdm-3.json",
+      "sha256": "6dfb982a1a9d7c5e53d4ec19eae933e1c2b97d51ec644c3166d1c7b109cb00a1",
+      "session_sha256": "fe20a0b696d4df4f56b725c951fc4c5d6a2b03dc6d2d014dcf24326d9485d4f9"
+    },
+    {
+      "file": "tqdm-4.json",
+      "sha256": "15ae814d232453af17d8088389c5103d93877f281864bb3faee441061b2d51c5",
+      "session_sha256": "c03ffbf39f5fc86054c73dd7cd92a7b3630c8a73dbe4446048b6a0d69cf95c0d"
+    },
+    {
+      "file": "tqdm-5.json",
+      "sha256": "e4f122360cd06535d82809450c61238c626a769920ce4a4ad27b580742480d02",
+      "session_sha256": "c4e1522d6d14b77a7c9796ce65356914ec1ba8a78741027f7f1f0f8a8aed916f"
+    },
+    {
+      "file": "tqdm-6.json",
+      "sha256": "ad1e2506b3399d2a510a331ceeeb21599a8f33f30a39c829823f57257a270e6d",
+      "session_sha256": "64fd6c12e4adc7f62260779c57dee9ee59c757355b3f482e2a58b3a88e46d102"
+    },
+    {
+      "file": "tqdm-7.json",
+      "sha256": "bbc0ddd59d250a9d67ace52ec770d1cbf5face1d9728b32c14e85f15ccbb9ca7",
+      "session_sha256": "9ee463c7c3addadc84748076e443c165bfafefe26d1759317bebbbb6b400ffc2"
+    },
+    {
+      "file": "tqdm-8.json",
+      "sha256": "b5ad22595a14c66232f0d1cf5190bce59a816b1e7cffc6d871a2e345ad047d37",
+      "session_sha256": "bbac43ef0b92bc30b43097dff84ca3a2fe701a1c85154437e8438c470de35749"
+    },
+    {
+      "file": "tqdm-9.json",
+      "sha256": "45a869cf3d577b060fc5081dbe1e2e406e8638c19d5f269a30224d8399039a75",
+      "session_sha256": "b23b429a168daf8b501b572aa2055580172b192386fe1f530dd2586486d6cd25"
+    }
+  ],
+  "interpretation": "No must-fix install/upgrade/pin command is narrower than correct diagnosis; 24 target failures were not observed",
+  "test_selection": "CLI --nodes exists for re-running previously observed nodes; initial arbitrary pytest selection/command is unavailable. Unittest/program goals were not tested in this B12 batch."
+}

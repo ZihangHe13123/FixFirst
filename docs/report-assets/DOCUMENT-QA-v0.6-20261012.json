@@ -1,0 +1,100 @@
+{
+  "date": "2026-10-12",
+  "status": "rendered and reviewed draft; incomplete and awaiting team review",
+  "report_version": "0.6 DRAFT",
+  "guide_version": "0.2 DRAFT",
+  "source_main_commit": "ae6c4ec35d2614cfcd561eb0869e2cc27cf19119",
+  "render_tool": "documents skill render_docx.py with bundled runtime and LibreOffice",
+  "retained_template": "v0.5 report and v0.1 guide; styles and media preserved",
+  "report_markdown_sha256": "efc6791ffed13e5beda8a336713bc477de05590a0f4bb1c941b406fbdeaf26ee",
+  "guide_markdown_sha256": "9dbee9a28b0585dd6f1af841a65b5ac99f69c5e2da5ceb09cc5fbd454f56cac2",
+  "outputs": [
+    {
+      "document": "report",
+      "docx": "docs/report/FixFirst_Report_DRAFT_v0.6_20261012.docx",
+      "docx_sha256": "8e804a5a7510ff069eac2240f06df11c86e10f1c629bcd19a4a24cb7941848eb",
+      "pdf": "docs/report/FixFirst_Report_DRAFT_v0.6_20261012.pdf",
+      "pdf_sha256": "b31c1f55d481db2e7103124db14d6fe39649c735b75942fbab3c1bdc2a480650",
+      "pages": 32,
+      "draft_mark_on_every_page": true,
+      "visual_review": "all pages inspected; unchanged final pages compared by pixel identity",
+      "page_image_sha256": [
+        "1132a12799969dc8bc4aed6efdab5310cb9c5280b1af78723f946ef4a64ad4e1",
+        "506c6042093da1c36480f39555cbd0e90bd6e047654d21b3a84298ec1b1ddec6",
+        "5769356fb3d8c52d7b8227a77d461758d4b311470b5bcbb4897b3e7214293a32",
+        "fb9b229b95d49c3b9f0f1ab02cfb6d50eec9f5d68f164dd14d04c9aa60137235",
+        "0467fee3d7547299237d7218a68ebd1cbff986e11cdabc470019bedb21fbc4e8",
+        "30e80c341650da5c79ff15382872c01232cb0030e3504e599af5e18a3897e8d2",
+        "9525d342279a7ddbb6ea9513e4d91dd5b62e81d190f45dd690271af2895e788e",
+        "1c7e8e91aa19c2c26eb8090e73a6d3e6a52eeefc902ac859f0aacc4e79478a57",
+        "7dc58e31cd50e232839907f13ab0c4d0732d0f30e21cb920d4524288f3f58fe9",
+        "075e71c07e05624d457cea3bd5771e3e4bf5d062737edafbb5a052d55f7edec1",
+        "ae7cb6ad973f083ff03262abb8d2aa5c7bab4a0356827b2845a60be12084fa7e",
+        "3f48f77222a1ef67cf4b92fce4237bd6e9c80404188e7a3a14722fc4527791ba",
+        "740a42d9d68fa0d74d95e939ef11a51c9eef930c6ba61dc3487c307e698ccd00",
+        "84093a9fd15819809fc5a5d762e66c0b85d20ed42e20bd569a223f2c736fdd5a",
+        "71394a0a23015067eaebb7441139ee3fc31d697402896891156ecf37b803e0dd",
+        "66397d0307efb7bba9e4292aaf36912d5a30b4ff6b62801809164c76a11fbc47",
+        "916871e38bf7b6a61917402cd56b39b4c36c66245fdfa7b3bda966ea0ed8347f",
+        "6414ff2ac8429350e65d60586626ca203d8329e386bc2a4cc879a02b53150294",
+        "c06e43c606734258dc615af32112e01e0a2da539df4c037550123428e553e87e",
+        "8b9811bad4aa64d0504e2ac2bde4f2044db5d8ba67ee2d7bf83ff08f1ba7a8d4",
+        "30ef1d6fbf082ecec572dc393a38353981d068bf188926505a7e42ad50bfd6f9",
+        "87da05089e79e36ddc502508dfefefbc4213676b89296f1b86ac95de1634672e",
+        "9b93f3dda63ce2e273a165320583e21a82584d84e9c8497a6c7884b868d30cc2",
+        "4c89c440942be04e5244bdb7eeefa7d1ea79f3e702fc43c05d4d4f326baa5a3f",
+        "64fc1f8f0cbefa82f6d20aaefcdbc5fc13ec037b724b8c160cc00f079dbaa9c7",
+        "0644494d3318fe54d7cfa766767ba49fc22c5b2b136f9c61d02b3f05bb081d9d",
+        "5e1843008623ab54ec67603a8f6b4d7deaeaf7b02245d3306551963da2d260d0",
+        "89618ae2c3a7bf285e2fd86dc743cbe4ec5225c46ac1527e5be7ec82331c518b",
+        "4c569c8d64b162f2f3c8e9b8edc6936d8634113c2f830fa6a57d4fa722c4c48b",
+        "c38eb0cebccb759d5c0f3502d75e52e82a6add9c1b347df7ac6b680b06b7cd64",
+        "03d4cff6d76066653150e8817a433f943ee3b16f2517437d3d95c5c6ceab0505",
+        "c6b192d7c2a91f9b287170c23ff1e6a9dbf3ea48df52d697f454a4fada772ef7"
+      ]
+    },
+    {
+      "document": "guide",
+      "docx": "docs/report/FixFirst_User_Guide_DRAFT_v0.2_20261012.docx",
+      "docx_sha256": "54492c3240d6b651f22b716d7db5e31e0acf723dd980924fad66361ddca219eb",
+      "pdf": "docs/report/FixFirst_User_Guide_DRAFT_v0.2_20261012.pdf",
+      "pdf_sha256": "2b9825844a6ec0b33e16336caf309ba3766268aa91800ef0ef3c2d4655173bdb",
+      "pages": 8,
+      "draft_mark_on_every_page": true,
+      "visual_review": "all pages inspected; unchanged final pages compared by pixel identity",
+      "page_image_sha256": [
+        "52396b46f0472f2717bb034c919b5904ddee81122c921e1e5866713328689e0a",
+        "05674ecc2b53873a99906deb121123e23f1ef1d32d1ad4b50c39f6d47b6d89e4",
+        "198a2f7f0591f7b73d67b25c29bf84dc1db0a2dbe84c54e7e93b4a9be19ae030",
+        "5d61a5aebb48ffccdbf2d9e0bb4de2d7d4e3d29a4a860120d2b3a1e1a7e666b0",
+        "16ccda822d8ab3ce39754311aca4524707cc62539f9ee235d659a72924a1ac1b",
+        "358c3fb93adef7c9090da87341e86eb1f2d54cd66e4950cc59f793eae06df011",
+        "688bfb505389c9c7a6ce2453022bc27426e0a1d0f3a4e0e0a580210afdc36cd8",
+        "b3a87e4b24751fc5ed60f0eb6b3c2952eb00b9e9758884a44eff9d683980e68c"
+      ]
+    }
+  ],
+  "section_2": "Markdown and Word section preserved; publications not rechecked in this revision",
+  "references": "Entries preserved; no new literature review in this revision",
+  "numerical_checks": {
+    "published_evidence_recount": "passed",
+    "prior_agent_results_unchanged": true,
+    "results_file": "docs/report-assets/B11-results-v0.6-20261012.json",
+    "results_sha256": "9dada6009c75769728845777b04e35b82fc8508eb8a08ef0b09fa2ac42c6e608"
+  },
+  "guide_checks": "selected-scope CLI and MCP flow passed; see B14-verification-20261012.json",
+  "model_requests": 0,
+  "new_real_defect_runs": 0,
+  "retained_pending_v05_files": "byte-for-byte; intermediate historical draft",
+  "layout_fixes": [
+    "Numerical table widths",
+    "Keep ordering table rows together",
+    "Separate sample numbered steps"
+  ],
+  "still_pending": [
+    "Teammate rc5 feedback and final version decision",
+    "Real participant data and analysis",
+    "Independent installation and Windows acceptance",
+    "Course proposal attachment, human narration, personal reflections and final packaging"
+  ]
+}

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="620" height="245" preserveAspectRatio="xMinYMin meet" viewBox="0 0 620 245" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="620" height="245"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-245)" style="clip-path: url(#clip)">
+		<g transform="">
+			<text x="15" y="224" style="font-family: Helvetica-Bold; font-size: 15px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,448) scale(1,-1)">Repair rate increase with MCP</text>
+			<text x="15" y="204" style="font-family: Helvetica; font-size: 10px;fill: rgb(40%,44%,42%); stroke:none;" transform="translate(0,408) scale(1,-1)">18 scope tasks   5 repeats per arm   strict H5 grading</text>
+			<path d="M 177.666667,45 L 177.666667,180 Z" style="stroke: rgb(87%,89%,88%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="174.88666666666666" y="29" style="font-family: Helvetica; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,58) scale(1,-1)">0</text>
+			<path d="M 288.333333,45 L 288.333333,180 Z" style="stroke: rgb(87%,89%,88%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="282.7733333333333" y="29" style="font-family: Helvetica; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,58) scale(1,-1)">20</text>
+			<path d="M 399,45 L 399,180 Z" style="stroke: rgb(87%,89%,88%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="393.44" y="29" style="font-family: Helvetica; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,58) scale(1,-1)">40</text>
+			<path d="M 509.666667,45 L 509.666667,180 Z" style="stroke: rgb(87%,89%,88%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="504.1066666666667" y="29" style="font-family: Helvetica; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,58) scale(1,-1)">60</text>
+			<text x="15" y="156" style="font-family: Helvetica; font-size: 12px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,312) scale(1,-1)">Qwen3.6</text>
+			<path d="M 183.814815,160 L 300.62963,160 Z" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 2;"/>
+			<path d="M 183.814815,155 L 183.814815,165 Z" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<path d="M 300.62963,155 L 300.62963,165 Z" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<circle cx="239.14814814814815" cy="160" r="4" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,25%); fill-rule: evenodd;"/>
+			<text x="583.594" y="156" style="font-family: Helvetica-Bold; font-size: 11px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,312) scale(1,-1)">11.1</text>
+			<text x="15" y="108" style="font-family: Helvetica; font-size: 12px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,216) scale(1,-1)">Gemma</text>
+			<path d="M 374.407407,112 L 540.407407,112 Z" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 2;"/>
+			<path d="M 374.407407,107 L 374.407407,117 Z" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<path d="M 540.407407,107 L 540.407407,117 Z" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<circle cx="460.48148148148147" cy="112" r="4" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,25%); fill-rule: evenodd;"/>
+			<text x="583.594" y="108" style="font-family: Helvetica-Bold; font-size: 11px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,216) scale(1,-1)">51.1</text>
+			<text x="15" y="60" style="font-family: Helvetica; font-size: 12px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,120) scale(1,-1)">Qwen3.8</text>
+			<path d="M 177.666667,64 L 214.555556,64 Z" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 2;"/>
+			<path d="M 177.666667,59 L 177.666667,69 Z" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<path d="M 214.555556,59 L 214.555556,69 Z" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<circle cx="189.96296296296296" cy="64" r="4" style="stroke: rgb(14%,29%,25%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,25%); fill-rule: evenodd;"/>
+			<text x="589.71" y="60" style="font-family: Helvetica-Bold; font-size: 11px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,120) scale(1,-1)">2.2</text>
+			<text x="216.06" y="8" style="font-family: Helvetica; font-size: 10px;fill: rgb(40%,44%,42%); stroke:none;" transform="translate(0,16) scale(1,-1)">MCP minus baseline in percentage points with 95% intervals</text>
+		</g>
+	</g>
+</svg>
