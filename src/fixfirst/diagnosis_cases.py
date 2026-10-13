@@ -12,7 +12,6 @@ can be compared honestly.
 """
 
 from dataclasses import dataclass
-import hashlib
 import json
 from pathlib import Path
 import shutil
@@ -562,19 +561,7 @@ def load_session(dataset: Path, data: dict, cache={}) -> Session:
             cache[path] = json.loads(path.read_text(encoding="utf-8"))
         data = {**data, "environment": {**cache[path], **{
             k: v for k, v in environment.items() if k.startswith("_")}}}
-    session = Session.model_validate(data)
-    # Published datasets use this POSIX placeholder, not a real host interpreter.
-    # Windows abspath/normcase give it a different identity. Rebind only the known
-    # portable identity; a stale or foreign snapshot must remain stale.
-    portable_id = hashlib.sha256(PORTABLE_PYTHON.encode()).hexdigest()[:16]
-    current_id = environment_id(PORTABLE_PYTHON)
-    if session.target_python == PORTABLE_PYTHON and portable_id != current_id:
-        if session.environment.get("_environment_id") == portable_id:
-            session.environment["_environment_id"] = current_id
-        for record in [*session.runs, *session.issues]:
-            if record.environment_id == portable_id:
-                record.environment_id = current_id
-    return session
+    return Session.model_validate(data)
 
 
 def build_dataset(output: Path, python: str | None = None, templates=TEMPLATES, scenarios=None):
