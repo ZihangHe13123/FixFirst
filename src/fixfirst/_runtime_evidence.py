@@ -520,18 +520,27 @@ def import_error(error):
     return len(mro) <= 16 and any(base is ImportError for base in mro)
 
 
+# pluggy 1.7 defines its call loop in pluggy._execution; pluggy._callers only re-exports it.
+_PLUGGY_CALL_LOOPS = ("pluggy._execution", "pluggy._callers")
+
+
 def _pytest_exception_forwarder(tb, following, error):
     """Recognize the loaded tool's exact transparent forwarding frame only."""
-    module = sys.modules.get("pluggy._callers")
-    if type(module) is not types.ModuleType or following.tb_frame is not tb.tb_frame:
+    if following.tb_frame is not tb.tb_frame:
         return False
-    namespace = vars(module)
-    function = namespace.get("_multicall")
-    return (type(function) is types.FunctionType and function.__code__ is tb.tb_frame.f_code
-            and function.__globals__ is namespace and tb.tb_frame.f_globals is namespace
-            and type(namespace.get("__file__")) is str
-            and function.__code__.co_filename == namespace["__file__"]
-            and tb.tb_frame.f_locals.get("exception") is error)
+    for name in _PLUGGY_CALL_LOOPS:
+        module = sys.modules.get(name)
+        if type(module) is not types.ModuleType:
+            continue
+        namespace = vars(module)
+        function = namespace.get("_multicall")
+        if (type(function) is types.FunctionType and function.__code__ is tb.tb_frame.f_code
+                and function.__globals__ is namespace and tb.tb_frame.f_globals is namespace
+                and type(namespace.get("__file__")) is str
+                and function.__code__.co_filename == namespace["__file__"]
+                and tb.tb_frame.f_locals.get("exception") is error):
+            return True
+    return False
 
 
 def module_getattr_import(error, tracebacks):
