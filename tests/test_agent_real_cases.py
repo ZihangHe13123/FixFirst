@@ -472,6 +472,8 @@ def test_write_file_replaces_the_contents_and_does_not_follow_a_link(tmp_path):
     rc.write_regular(tmp_path / "new.txt", "line\nline")
     assert (tmp_path / "new.txt").read_bytes() == b"line\nline"
     outside = write(tmp_path / "outside.txt", "keep")
+    if not hasattr(os, "O_NOFOLLOW"):  # Windows: the agent runs were made on macOS
+        pytest.skip("write_regular refuses links through O_NOFOLLOW, which this platform does not have")
     try:
         (tmp_path / "link.txt").symlink_to(outside)
     except OSError:
