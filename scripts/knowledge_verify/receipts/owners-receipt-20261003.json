@@ -18,7 +18,7 @@
    "__init__.py": "26aaa36539e3cb74601063925d9a0a53e4ac73cba74f1c0bd64235ab48f4178f",
    "_native_runner.py": "e70493dc57c17f27bf5b473f34638cf5495bdd49959f187930ffc675ccdb5b65",
    "_notebook_runner.py": "896b692b9fb49a6f6b605ecb9292e63e179cfda9865f559244bca9e0d448cf14",
-   "_runtime_evidence.py": "71f32ae4933e362cafa4b2ffa850e126fbd8243c8d3e65256afb919b02d56bef",
+   "_runtime_evidence.py": "038a76b42ebdc935c4e814ff3afe1b197c82683479898a19b5b16e8d456b74b4",
    "_unittest_runner.py": "ca5e745e05f5c0146cefb5e94d9335e465fcceaff5c3eef18a1840a897da4f54",
    "behavior.py": "f2ad929a528c043c1f393fd02967b4eae12c47eb5dbb3a9aa78bd26597931208",
    "binding_advice.py": "388ec311b49b71ff85e13f1634ac4bf6017c51209111a082f552e35a4372b773",
@@ -202,9 +202,9 @@
    "P85": "4055cd0e29ce8d1f0a0f7cd326cb779e9b967d3b167f15f429006d41aa76eb41",
    "P86": "51cd2258277caa9d8a6cb4c71d1877fd7117ec326faa788800f5de449dad16d8"
   },
-  "package_sha256": "f0ecf325b9511aabcaa3594df988c5f895a1ec4f2c4577993cb749f0a3427ffd",
-  "generated": "2026-10-13",
-  "python": "3.12.14"
+  "package_sha256": "5ed6aeda85ed7750860b55ac75af95912195b5280c423f3920118c1cd6ed57ce",
+  "generated": "2026-10-20",
+  "python": "3.12.13"
  },
  "results": [
   {
@@ -25078,7 +25078,7 @@
       "sqlalchemy.engine.base.Engine"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -25100,7 +25100,7 @@
      "steps": [
       [
        "Replace Engine.table_names: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Engine.table_names (removed in 2.0). Change the code to use sqlalchemy.inspect(engine).get_table_names() (from sqlalchemy import inspect), which returns the table names of the default schema.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides Engine.table_names (removed in 2.0). Change the code to use sqlalchemy.inspect(engine).get_table_names() (from sqlalchemy import inspect), which returns the table names of the default schema.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -25339,7 +25339,7 @@
       "sqlalchemy.engine.base.Engine"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -25361,7 +25361,7 @@
      "steps": [
       [
        "Replace Engine.has_table: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Engine.has_table (removed in 2.0). Change the code to use sqlalchemy.inspect(engine).has_table('name') (Inspector.has_table), which checks for a table by name.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides Engine.has_table (removed in 2.0). Change the code to use sqlalchemy.inspect(engine).has_table('name') (Inspector.has_table), which checks for a table by name.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -25600,7 +25600,7 @@
       "sqlalchemy.engine.base.Engine"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -25622,7 +25622,7 @@
      "steps": [
       [
        "Replace Engine.scalar: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Engine.scalar (removed in 2.0). Change the code to use an explicit connection: with engine.connect() as conn: conn.scalar(text(sql)) for engine.scalar(sql), and conn.execute(text(sql), params) for engine.execute(sql, params). Use the result inside the with block, use engine.begin() for statements that must commit, and bind parameters instead of formatting values into the SQL.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides Engine.scalar (removed in 2.0). Change the code to use an explicit connection: with engine.connect() as conn: conn.scalar(text(sql)) for engine.scalar(sql), and conn.execute(text(sql), params) for engine.execute(sql, params). Use the result inside the with block, use engine.begin() for statements that must commit, and bind parameters instead of formatting values into the SQL.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -25829,7 +25829,7 @@
       "sqlalchemy.sql.schema.MetaData"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -25851,7 +25851,7 @@
      "steps": [
       [
        "Replace MetaData.bind: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides MetaData.bind (removed in 2.0). Change the code to use no attribute: keep the Engine in your own variable and pass it explicitly (metadata.create_all(engine), metadata.reflect(bind=engine), connection.execute(select(table))); in 2.0 assigning metadata.bind silently does nothing.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides MetaData.bind (removed in 2.0). Change the code to use no attribute: keep the Engine in your own variable and pass it explicitly (metadata.create_all(engine), metadata.reflect(bind=engine), connection.execute(select(table))); in 2.0 assigning metadata.bind silently does nothing.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -26057,7 +26057,7 @@
       "sqlalchemy.orm.session.Session"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -26079,7 +26079,7 @@
      "steps": [
       [
        "Replace Session.transaction: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:4. The target interpreter has sqlalchemy 2.1.4, which no longer provides Session.transaction (removed in 2.0). Change the code to use Session.get_transaction() for the current SessionTransaction (None when no transaction is active), or Session.in_transaction() for a boolean; the Session.transaction attribute was removed in 2.0.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:4. The target interpreter has sqlalchemy 2.1.5, which no longer provides Session.transaction (removed in 2.0). Change the code to use Session.get_transaction() for the current SessionTransaction (None when no transaction is active), or Session.in_transaction() for a boolean; the Session.transaction attribute was removed in 2.0.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -26799,7 +26799,7 @@
       "PIL.ImageFont.FreeTypeFont"
      ],
      "dists": {
-      "Pillow": "12.3.0",
+      "Pillow": "13.0.0",
       "reportlab": "5.0.1"
      }
     }
@@ -26822,7 +26822,7 @@
      "steps": [
       [
        "Replace FreeTypeFont.getsize: removed in pillow 10.0",
-       "Observed project location: main.py:5. The target interpreter has pillow 12.3.0, which no longer provides FreeTypeFont.getsize (removed in 10.0). Change the code to use font.getbbox(text), which returns (left, top, right, bottom) relative to the drawing origin, or font.getlength(text) for the advance width. The old getsize() result was (right - left, bottom): its height included the top offset, so keep width = right - left and height = bottom to get the old numbers, or use bottom - top for the tight height of the ink that Pillow's documentation suggests. Re-check centring or box sizing that used the old height, or position the text with draw.text(xy, text, font=font, anchor='mm') instead.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:5. The target interpreter has pillow 13.0.0, which no longer provides FreeTypeFont.getsize (removed in 10.0). Change the code to use font.getbbox(text), which returns (left, top, right, bottom) relative to the drawing origin, or font.getlength(text) for the advance width. The old getsize() result was (right - left, bottom): its height included the top offset, so keep width = right - left and height = bottom to get the old numbers, or use bottom - top for the tight height of the ink that Pillow's documentation suggests. Re-check centring or box sizing that used the old height, or position the text with draw.text(xy, text, font=font, anchor='mm') instead.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -27016,7 +27016,7 @@
       "PIL.ImageFont.FreeTypeFont"
      ],
      "dists": {
-      "Pillow": "12.3.0",
+      "Pillow": "13.0.0",
       "reportlab": "5.0.1"
      }
     }
@@ -27039,7 +27039,7 @@
      "steps": [
       [
        "Replace FreeTypeFont.getoffset: removed in pillow 10.0",
-       "Observed project location: main.py:5. The target interpreter has pillow 12.3.0, which no longer provides FreeTypeFont.getoffset (removed in 10.0). Change the code to use the first two values of font.getbbox(text): left, top = font.getbbox(text)[:2] gives the same offset that getoffset(text) returned. getbbox() returns the right and bottom edges too, so it replaces getsize() and getoffset() together.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:5. The target interpreter has pillow 13.0.0, which no longer provides FreeTypeFont.getoffset (removed in 10.0). Change the code to use the first two values of font.getbbox(text): left, top = font.getbbox(text)[:2] gives the same offset that getoffset(text) returned. getbbox() returns the right and bottom edges too, so it replaces getsize() and getoffset() together.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -27233,7 +27233,7 @@
       "PIL.ImageFont.FreeTypeFont"
      ],
      "dists": {
-      "Pillow": "12.3.0",
+      "Pillow": "13.0.0",
       "reportlab": "5.0.1"
      }
     }
@@ -27256,7 +27256,7 @@
      "steps": [
       [
        "Replace FreeTypeFont.getsize_multiline: removed in pillow 10.0",
-       "Observed project location: main.py:5. The target interpreter has pillow 12.3.0, which no longer provides FreeTypeFont.getsize_multiline (removed in 10.0). Change the code to use ImageDraw.multiline_textbbox((0, 0), text, font=font), which returns (left, top, right, bottom) for the whole text including its newlines; for ordinary left-aligned text the old width (the widest line) equals right - left. The old height was the line count times the height of 'A' plus the spacing, minus one spacing, whereas the box follows the real ink (descenders in the last line, top offset), so heights can differ by a few pixels: compare bottom - top and re-check layouts that depend on it.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:5. The target interpreter has pillow 13.0.0, which no longer provides FreeTypeFont.getsize_multiline (removed in 10.0). Change the code to use ImageDraw.multiline_textbbox((0, 0), text, font=font), which returns (left, top, right, bottom) for the whole text including its newlines; for ordinary left-aligned text the old width (the widest line) equals right - left. The old height was the line count times the height of 'A' plus the spacing, minus one spacing, whereas the box follows the real ink (descenders in the last line, top offset), so heights can differ by a few pixels: compare bottom - top and re-check layouts that depend on it.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -27446,7 +27446,7 @@
       "PIL.ImageDraw.ImageDraw"
      ],
      "dists": {
-      "Pillow": "12.3.0",
+      "Pillow": "13.0.0",
       "reportlab": "5.0.1"
      }
     }
@@ -27469,7 +27469,7 @@
      "steps": [
       [
        "Replace ImageDraw.textsize: removed in pillow 10.0",
-       "Observed project location: main.py:5. The target interpreter has pillow 12.3.0, which no longer provides ImageDraw.textsize (removed in 10.0). Change the code to use draw.textbbox((0, 0), text, font=font), which returns (left, top, right, bottom), or draw.textlength(text, font=font) for the advance width as a float (it can differ from the old width by a pixel or two). The old textsize() result was (right - left, bottom): its height included the top offset, so use bottom - top for the tight ink height. textbbox() accepts texts with newlines too. For centring, draw.text(xy, text, font=font, anchor='mm') avoids measuring at all.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:5. The target interpreter has pillow 13.0.0, which no longer provides ImageDraw.textsize (removed in 10.0). Change the code to use draw.textbbox((0, 0), text, font=font), which returns (left, top, right, bottom), or draw.textlength(text, font=font) for the advance width as a float (it can differ from the old width by a pixel or two). The old textsize() result was (right - left, bottom): its height included the top offset, so use bottom - top for the tight ink height. textbbox() accepts texts with newlines too. For centring, draw.text(xy, text, font=font, anchor='mm') avoids measuring at all.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -27659,7 +27659,7 @@
       "PIL.ImageDraw.ImageDraw"
      ],
      "dists": {
-      "Pillow": "12.3.0",
+      "Pillow": "13.0.0",
       "reportlab": "5.0.1"
      }
     }
@@ -27682,7 +27682,7 @@
      "steps": [
       [
        "Replace ImageDraw.multiline_textsize: removed in pillow 10.0",
-       "Observed project location: main.py:5. The target interpreter has pillow 12.3.0, which no longer provides ImageDraw.multiline_textsize (removed in 10.0). Change the code to use draw.multiline_textbbox((0, 0), text, font=font), which returns (left, top, right, bottom) for the whole text; for ordinary left-aligned text the old width (the widest line) equals right - left. The old height was the line count times the height of 'A' plus the spacing, minus one spacing, whereas the box follows the real ink, so heights can differ by a few pixels: compare bottom - top and re-check layouts that depend on it.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:5. The target interpreter has pillow 13.0.0, which no longer provides ImageDraw.multiline_textsize (removed in 10.0). Change the code to use draw.multiline_textbbox((0, 0), text, font=font), which returns (left, top, right, bottom) for the whole text; for ordinary left-aligned text the old width (the widest line) equals right - left. The old height was the line count times the height of 'A' plus the spacing, minus one spacing, whereas the box follows the real ink, so heights can differ by a few pixels: compare bottom - top and re-check layouts that depend on it.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -29617,7 +29617,7 @@
       "openai.OpenAI"
      ],
      "dists": {
-      "openai": "3.29.0"
+      "openai": "3.35.1"
      }
     }
    },
@@ -29639,7 +29639,7 @@
      "steps": [
       [
        "Replace OpenAI.edits: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.29.0, which no longer provides OpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.35.1, which no longer provides OpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -29852,7 +29852,7 @@
       "openai.OpenAI"
      ],
      "dists": {
-      "openai": "3.29.0"
+      "openai": "3.35.1"
      }
     }
    },
@@ -29874,7 +29874,7 @@
      "steps": [
       [
        "Replace OpenAI.fine_tunes: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.29.0, which no longer provides OpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.35.1, which no longer provides OpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -30087,7 +30087,7 @@
       "openai.AsyncOpenAI"
      ],
      "dists": {
-      "openai": "3.29.0"
+      "openai": "3.35.1"
      }
     }
    },
@@ -30109,7 +30109,7 @@
      "steps": [
       [
        "Replace AsyncOpenAI.edits: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.29.0, which no longer provides AsyncOpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.35.1, which no longer provides AsyncOpenAI.edits (removed in 1.7.2). Change the code to use client.chat.completions.create(model=..., messages=[...]) with the instruction and the text in the prompt: the Edits endpoint is no longer part of the SDK, and the client.edits resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -30322,7 +30322,7 @@
       "openai.AsyncOpenAI"
      ],
      "dists": {
-      "openai": "3.29.0"
+      "openai": "3.35.1"
      }
     }
    },
@@ -30344,7 +30344,7 @@
      "steps": [
       [
        "Replace AsyncOpenAI.fine_tunes: removed in openai 1.7.2",
-       "Observed project location: main.py:3. The target interpreter has openai 3.29.0, which no longer provides AsyncOpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has openai 3.35.1, which no longer provides AsyncOpenAI.fine_tunes (removed in 1.7.2). Change the code to use client.fine_tuning.jobs: jobs.create(training_file=..., model=...), jobs.list(), jobs.retrieve(job_id), jobs.cancel(job_id) and jobs.list_events(job_id). The client.fine_tunes resource that the openai 1.0 migration guide lists was removed in 1.7.2 together with the other deprecated endpoints.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -32096,7 +32096,7 @@
       "sqlalchemy.sql.schema.Table"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -32118,7 +32118,7 @@
      "steps": [
       [
        "Replace Table.exists: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Table.exists (removed in 2.0). Change the code to use sqlalchemy.inspect(engine).has_table('table_name') (or inspect(connection).has_table(...)), which checks for the table by name; Table.exists() and its bind argument were removed.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides Table.exists (removed in 2.0). Change the code to use sqlalchemy.inspect(engine).has_table('table_name') (or inspect(connection).has_table(...)), which checks for the table by name; Table.exists() and its bind argument were removed.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -32477,7 +32477,7 @@
       "sqlalchemy.sql.selectable.Select"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -32499,7 +32499,7 @@
      "steps": [
       [
        "Replace Select.apply_labels: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Select.apply_labels (removed in 2.0). Change the code to use select(...).set_label_style(LABEL_STYLE_TABLENAME_PLUS_COL) (from sqlalchemy import LABEL_STYLE_TABLENAME_PLUS_COL), the 1.4+ form that labels columns as table_column; Select is immutable, so use the statement the call returns.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides Select.apply_labels (removed in 2.0). Change the code to use select(...).set_label_style(LABEL_STYLE_TABLENAME_PLUS_COL) (from sqlalchemy import LABEL_STYLE_TABLENAME_PLUS_COL), the 1.4+ form that labels columns as table_column; Select is immutable, so use the statement the call returns.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -32791,7 +32791,7 @@
       "sqlalchemy.orm.query.Query"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -32813,7 +32813,7 @@
      "steps": [
       [
        "Replace Query.from_self: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:10. The target interpreter has sqlalchemy 2.1.4, which no longer provides Query.from_self (removed in 2.0). Change the code to use an explicit subquery with aliased(): subq = select(User, Address.email_address).join(User.addresses).subquery(); ua = aliased(User, subq); aa = aliased(Address, subq); stmt = select(ua, aa).order_by(aa.email_address), executed with session.execute(stmt); the same works with session.query(ua, aa).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:10. The target interpreter has sqlalchemy 2.1.5, which no longer provides Query.from_self (removed in 2.0). Change the code to use an explicit subquery with aliased(): subq = select(User, Address.email_address).join(User.addresses).subquery(); ua = aliased(User, subq); aa = aliased(Address, subq); stmt = select(ua, aa).order_by(aa.email_address), executed with session.execute(stmt); the same works with session.query(ua, aa).. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -33128,7 +33128,7 @@
       "sqlalchemy.sql.dml.Insert"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -33150,7 +33150,7 @@
      "steps": [
       [
        "Replace Insert.execute: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Insert.execute (removed in 2.0). Change the code to use executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides Insert.execute (removed in 2.0). Change the code to use executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -33468,7 +33468,7 @@
       "sqlalchemy.sql.dml.Update"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -33490,7 +33490,7 @@
      "steps": [
       [
        "Replace Update.execute: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Update.execute (removed in 2.0). Change the code to use executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides Update.execute (removed in 2.0). Change the code to use executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -33802,7 +33802,7 @@
       "sqlalchemy.sql.dml.Delete"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -33824,7 +33824,7 @@
      "steps": [
       [
        "Replace Delete.execute: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Delete.execute (removed in 2.0). Change the code to use executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides Delete.execute (removed in 2.0). Change the code to use executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -34183,7 +34183,7 @@
       "sqlalchemy.sql.selectable.Select"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -34205,7 +34205,7 @@
      "steps": [
       [
        "Replace Select.execute: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Select.execute (removed in 2.0). Change the code to use executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides Select.execute (removed in 2.0). Change the code to use executing the statement on a connection: with engine.begin() as conn: conn.execute(stmt) (conn.scalar(stmt) for a single value). Statements no longer execute themselves, because bound metadata and implicit execution were removed in 2.0; engine.begin() (or conn.commit()) commits.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -34546,7 +34546,7 @@
       "sqlalchemy.sql.selectable.Select"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -34568,7 +34568,7 @@
      "steps": [
       [
        "Replace Select.c: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Select.c (removed in 2.1). Change the code to use Select.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides Select.c (removed in 2.1). Change the code to use Select.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -34909,7 +34909,7 @@
       "sqlalchemy.sql.selectable.Select"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -34931,7 +34931,7 @@
      "steps": [
       [
        "Replace Select.columns: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Select.columns (removed in 2.1). Change the code to use Select.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides Select.columns (removed in 2.1). Change the code to use Select.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -35272,7 +35272,7 @@
       "sqlalchemy.sql.selectable.Select"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -35294,7 +35294,7 @@
      "steps": [
       [
        "Replace Select.select: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides Select.select (removed in 2.1). Change the code to use Select.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides Select.select (removed in 2.1). Change the code to use Select.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -35615,7 +35615,7 @@
       "sqlalchemy.sql.selectable.CompoundSelect"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -35637,7 +35637,7 @@
      "steps": [
       [
        "Replace CompoundSelect.c: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides CompoundSelect.c (removed in 2.1). Change the code to use CompoundSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides CompoundSelect.c (removed in 2.1). Change the code to use CompoundSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -35958,7 +35958,7 @@
       "sqlalchemy.sql.selectable.CompoundSelect"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -35980,7 +35980,7 @@
      "steps": [
       [
        "Replace CompoundSelect.columns: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides CompoundSelect.columns (removed in 2.1). Change the code to use CompoundSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides CompoundSelect.columns (removed in 2.1). Change the code to use CompoundSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -36301,7 +36301,7 @@
       "sqlalchemy.sql.selectable.CompoundSelect"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -36323,7 +36323,7 @@
      "steps": [
       [
        "Replace CompoundSelect.select: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides CompoundSelect.select (removed in 2.1). Change the code to use CompoundSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides CompoundSelect.select (removed in 2.1). Change the code to use CompoundSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -36619,7 +36619,7 @@
       "sqlalchemy.sql.selectable.TextualSelect"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -36641,7 +36641,7 @@
      "steps": [
       [
        "Replace TextualSelect.c: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides TextualSelect.c (removed in 2.1). Change the code to use TextualSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides TextualSelect.c (removed in 2.1). Change the code to use TextualSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -36937,7 +36937,7 @@
       "sqlalchemy.sql.selectable.TextualSelect"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -36959,7 +36959,7 @@
      "steps": [
       [
        "Replace TextualSelect.columns: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides TextualSelect.columns (removed in 2.1). Change the code to use TextualSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides TextualSelect.columns (removed in 2.1). Change the code to use TextualSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -37255,7 +37255,7 @@
       "sqlalchemy.sql.selectable.TextualSelect"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -37277,7 +37277,7 @@
      "steps": [
       [
        "Replace TextualSelect.select: removed in sqlalchemy 2.1",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides TextualSelect.select (removed in 2.1). Change the code to use TextualSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides TextualSelect.select (removed in 2.1). Change the code to use TextualSelect.selected_columns for the columns the statement returns (stmt.selected_columns.name), and an explicit subquery when it is used as a FROM element: stmt.subquery().c.name, stmt.subquery().select(). Select, CompoundSelect and TextualSelect no longer implicitly create a subquery.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
@@ -43457,7 +43457,7 @@
       "sqlalchemy.engine.base.Engine"
      ],
      "dists": {
-      "sqlalchemy": "2.1.4"
+      "sqlalchemy": "2.1.5"
      }
     }
    },
@@ -43479,7 +43479,7 @@
      "steps": [
       [
        "Replace sqlalchemy.engine.base.Engine.execute: removed in sqlalchemy 2.0",
-       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.4, which no longer provides sqlalchemy.engine.base.Engine.execute (removed in 2.0). Change the code to use an explicit connection: import text from sqlalchemy; use with engine.connect() as connection: and execute connection.execute(text(sql), parameters) inside that block. Consume the result before closing the connection. For statements that must commit changes, use engine.begin() instead; preserve bound parameters rather than formatting values into SQL.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
+       "Observed project location: main.py:3. The target interpreter has sqlalchemy 2.1.5, which no longer provides sqlalchemy.engine.base.Engine.execute (removed in 2.0). Change the code to use an explicit connection: import text from sqlalchemy; use with engine.connect() as connection: and execute connection.execute(text(sql), parameters) inside that block. Consume the result before closing the connection. For statements that must commit changes, use engine.begin() instead; preserve bound parameters rather than formatting values into SQL.. Keeping the old API would require a separately verified library and Python combination; an older library may have no compatible wheel for this interpreter, so an unverified downgrade is not offered as a working alternative."
       ],
       [
        "Re-run the same program",
