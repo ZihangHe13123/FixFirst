@@ -267,7 +267,7 @@ def test_external_execution_options_are_not_adopted(tmp_path, monkeypatch):
 
 
 @pytest.mark.parametrize("kind", ["oversized", "symlink", "fifo"])
-def test_unsafe_configuration_cannot_block_the_host_or_earn_confirmation(tmp_path, kind):
+def test_unsafe_configuration_cannot_block_the_host_or_earn_confirmation(make_symlink, tmp_path, kind):
     if kind == "fifo":
         if not hasattr(os, "mkfifo"):
             pytest.skip("Named-pipe creation is unavailable on this platform")
@@ -282,7 +282,7 @@ def test_unsafe_configuration_cannot_block_the_host_or_earn_confirmation(tmp_pat
         path.write_text("[pytest]\naddopts=--maxfail=1\n#" + "x" * 128000)
     else:
         path.rename(tmp_path / "config.ini")
-        path.symlink_to(tmp_path / "config.ini")
+        make_symlink(path, tmp_path / "config.ini")
     (tmp_path / "app.py").write_text("READY = True\n")
     scan(session, ["pytest_run"])
     assert len(pytest_runs(session)) == 1

@@ -73,14 +73,14 @@ def test_setup_cfg_needs_a_build_entrypoint_and_is_never_executed(tmp_path):
 
 
 @pytest.mark.parametrize("unsafe", ["symlink", "directory", "oversized"])
-def test_unsafe_build_files_do_not_authorize_install(tmp_path, unsafe):
+def test_unsafe_build_files_do_not_authorize_install(make_symlink, tmp_path, unsafe):
     root = tmp_path / "project"
     root.mkdir()
     target = root / "pyproject.toml"
     if unsafe == "symlink":
         outside = tmp_path / "outside.toml"
         outside.write_text(BUILD)
-        target.symlink_to(outside)
+        make_symlink(target, outside)
     elif unsafe == "directory":
         target.mkdir()
     else:

@@ -25,6 +25,24 @@ def instance(folder, template="flat-shop", scenario=YAML):
     return t, built["pristine"], built["start"], folder / "reference", problems
 
 
+def test_registered_test_bytes_survive_windows_text_output(tmp_path, monkeypatch):
+    original_open = Path.open
+
+    def windows_open(path, mode="r", buffering=-1, encoding=None, errors=None, newline=None):
+        if "b" not in mode and any(flag in mode for flag in "wax") and newline is None:
+            newline = "\r\n"
+        return original_open(path, mode, buffering, encoding, errors, newline)
+
+    monkeypatch.setattr(Path, "open", windows_open)
+    for t in dc.TEMPLATES:
+        for scenario in hi.hard_scenarios():
+            _, pristine, start, reference, problems = instance(
+                tmp_path / f"{t.name}-{scenario}", t.name, scenario)
+            assert problems == []
+            assert hi.admit(pristine, start, t, REGISTRY[scenario]) == []
+            assert hi.rc.integrity(reference) == hi.rc.integrity(start)
+
+
 def test_the_registry_is_exactly_the_generators_hard_scenarios():
     assert sorted(REGISTRY) == hi.hard_scenarios() == ["ml_renamed_then_alias", "vb_click_mix_stderr", "vb_numpy_promotion",
                                                        "vb_numpy_repr", "vb_pydantic_coercion", "vb_yaml_loader"]

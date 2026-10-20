@@ -725,7 +725,10 @@ def episode(model, arm, run: Run, settings: Settings, fake, green, state_digest)
             try:
                 data = chat(model, messages, tools, settings, fake, budget.remaining())
             except ModelTimeout as error:
-                stats["end"] = "time_cap" if budget.remaining() <= 0 else "model_error"
+                # The reply was cut off by the deadline it was handed - the time left at the
+                # request. Sleep and the clock can report a hair of that deadline as unspent,
+                # so the deadline, not the leftover's sign, decides: this is the time cap.
+                stats["end"] = "time_cap"
                 stats["error"] = f"{type(error).__name__}: {error}"[:500]
                 break
             except (httpx.HTTPError, ValueError, ModelError) as error:

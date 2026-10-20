@@ -1,3 +1,16 @@
+# Keep published captures and hashes byte-for-byte on every checkout. In particular,
+# CSV records and captured terminal output may intentionally contain CRLF or CR.
+* -text
+
+# Authored source is LF even when core.autocrlf is enabled.
+*.py text eol=lf
+*.toml text eol=lf
+*.md text eol=lf
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+src/fixfirst/templates/* text eol=lf
+
 # Generated reports preserve whitespace inside captured command text.
 examples/demo/*.html -whitespace
 examples/execution-demo/*.html -whitespace
