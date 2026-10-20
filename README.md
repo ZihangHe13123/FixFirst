@@ -8,7 +8,11 @@ cause of each failure, ranks what to do next for your goal, and closes an issue 
 completed check of the same scope proves it fixed. It runs locally, never edits your code and
 never installs anything into your environment (it gives you the command instead).
 
-NUS-ISS Intelligent Reasoning Systems practice module, Group 24 · version 0.8.0rc1 (release candidate)
+NUS-ISS Intelligent Reasoning Systems practice module, Group 24 · version 0.8.0
+
+Version 0.8.0 is the course delivery: the frozen 0.8.0rc5 (tag `b12-rc5-freeze-20261010`) with the Windows
+portability corrections and compatibility with pluggy 1.7 (pull request #100) and a repair of the execution-dataset
+generator (pull request #95).
 
 See the [freeze and delivery record](docs/freeze/PUBLIC_DELIVERY.md) for the immutable
 `v0.7.0` identity, source ZIP recipe, actual validation and remaining evaluation gates.
@@ -174,8 +178,8 @@ Where the data comes from: [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md).
 
 The tables and project results below preserve recorded evaluations from before the v0.8
 integration candidate. They have not been recomputed with its expanded rules and knowledge.
-Descriptions of what the knowledge base covers refer to those recorded versions. The 0.8.0rc1
-candidate now ships the fixed 81-feature model; the released v0.7.0 tag and its 44-feature model
+Descriptions of what the knowledge base covers refer to those recorded versions. Version 0.8
+ships the fixed 81-feature model; the released v0.7.0 tag and its 44-feature model
 remain unchanged. See [candidate validation](docs/validation/2026-10-04-tree-integration.md)
 for the separate current-source evaluation, counterexamples and release checks. The frozen 0.8.0rc5 is
 evaluated on 220 and 30 saved cases, beside three language models and with the real projects
@@ -398,15 +402,12 @@ environment says about the modules involved) as JSON, with no cause, ranking or 
 | `scripts/` | setup (macOS/Linux/Windows), real-project set-up and batch runs, demo recording |
 
 The separate macOS real-process harness recorded **58 passed** for candidate
-`99c8086a2fb5445d05e3e7a9fb6e1ace8b2e9681`. These are recorded results for that
-candidate, not a Windows acceptance result. Its Windows execution and sign-off are
-pending: [candidate handoff](docs/freeze/WINDOWS_HANDOFF.md) and
-[blank acceptance receipt](docs/freeze/ACCEPTANCE_RECEIPT_TEMPLATE.md).
+`99c8086a2fb5445d05e3e7a9fb6e1ace8b2e9681`; it is a macOS record, not a Windows one.
 
-The [13 October Windows portability corrections](docs/validation/windows-portability-20261013.md)
-cover CRLF output, reproducible checkout bytes and recorded-session replay. Their
-macOS checks and Windows rerun requirements are listed separately; the version
-remains `0.8.0rc5` pending the next release decision.
+On Windows, a team member accepted 0.8.0rc5 on Windows 11 on 13 October with the manual checklist. The
+[Windows portability corrections](docs/validation/windows-portability-20261013.md) repair what that run exposed:
+CRLF output, reproducible checkout bytes and recorded-session replay. Since pull request #100 the full suite runs
+on Ubuntu and on Windows for every pull request and every push to main.
 
 ```bash
 .venv/bin/ruff check src tests scripts experiments
