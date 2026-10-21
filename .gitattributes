@@ -9,17 +9,17 @@
 *.sh text eol=lf
 *.yml text eol=lf
 *.yaml text eol=lf
-src/fixfirst/templates/* text eol=lf
+SystemCode/src/fixfirst/templates/* text eol=lf
 
 # Generated reports preserve whitespace inside captured command text.
-examples/demo/*.html -whitespace
-examples/execution-demo/*.html -whitespace
-examples/dependency-demo/*.html -whitespace
-examples/historical-regressions/**/*.html -whitespace
+SystemCode/examples/demo/*.html -whitespace
+SystemCode/examples/execution-demo/*.html -whitespace
+SystemCode/examples/dependency-demo/*.html -whitespace
+SystemCode/examples/historical-regressions/**/*.html -whitespace
 
 # Windows launchers need CRLF line endings.
 *.bat text eol=crlf
 *.ps1 text eol=crlf
 
 # Preserve whitespace in the captured HTML export used as delivery evidence.
-docs/freeze/validation-20261001/entry-checks/shared.html -whitespace
+SystemCode/docs/freeze/validation-20261001/entry-checks/shared.html -whitespace

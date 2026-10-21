@@ -2,6 +2,9 @@
 
 **Find the root cause of Python errors from real evidence, then verify the next run.**
 
+> This is the technical README of the code in `SystemCode/`. The course submission overview is the
+> [root README](../README.md). Run every command below from this folder.
+
 FixFirst runs your project's own checks (environment snapshot, dependency declarations,
 `pip check`, native programs, unittest, optional notebooks, pytest and Ruff), groups repeated errors, diagnoses the root
 cause of each failure, ranks what to do next for your goal, and closes an issue only when a
@@ -296,7 +299,7 @@ reads `mcpServers` (for example a project's `.mcp.json`):
 {
   "mcpServers": {
     "fixfirst": {
-      "command": "/path/to/FixFirst/.venv/bin/python",
+      "command": "/path/to/FixFirst/SystemCode/.venv/bin/python",
       "args": ["-m", "fixfirst", "mcp"]
     }
   }

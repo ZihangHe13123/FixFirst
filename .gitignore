@@ -12,7 +12,7 @@ build/
 .playwright-cli/
 output/
 .DS_Store
-examples/real-world/results-latest.json
+SystemCode/examples/real-world/results-latest.json
 .astra/
 # Local audit evidence contains machine-specific paths and is not a release artifact.
-docs/WINDOWS_AUDIT_20260924.md
+SystemCode/docs/WINDOWS_AUDIT_20260924.md

@@ -126,6 +126,7 @@ A1、C1 和 B 的冻结准备互不等待。A2 要同时满足两件事才能运
 ## 卡片里的约定
 
 - 主仓库默认放在 `~/FixFirst`（macOS / Linux）或 `C:\dev\FixFirst`（Windows），放在别处时把命令里的路径换掉。
+- B15（10/21）以后，代码在仓库的 `SystemCode/` 里，卡片里的命令都在 `SystemCode/` 里运行。
 - 命令先写 macOS / Linux 版（bash 或 zsh），和 Windows 不同的地方再写一份 PowerShell 版。
 - 命令里 `<…>` 的部分要连同尖括号一起换成实际的值，例如 `<id>` 换成 `flask-sqlalchemy`。PowerShell 会把没换掉的 `<` 当成语法错误。
 - "私有仓库"指 A 在自己账号下建的 `fixfirst-heldout`，只邀请 C。
