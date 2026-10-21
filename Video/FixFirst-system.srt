@@ -1,0 +1,244 @@
+1
+00:00:00,350 --> 00:00:04,000
+This video explains how FixFirst works inside.
+
+2
+00:00:04,350 --> 00:00:10,092
+FixFirst is a hybrid reasoning system: it combines observed evidence, expert rules,
+
+3
+00:00:10,132 --> 00:00:12,739
+a knowledge graph and a learned model,
+
+4
+00:00:12,779 --> 00:00:17,100
+and it checks its own conclusions against real test runs.
+
+5
+00:00:18,450 --> 00:00:20,200
+First, the architecture.
+
+6
+00:00:20,550 --> 00:00:25,041
+At the top are three interfaces: a web page, a command line,
+
+7
+00:00:25,081 --> 00:00:28,150
+and an MCP server for coding agents.
+
+8
+00:00:28,500 --> 00:00:33,400
+All three call one session service, so people and agents get the same diagnosis.
+
+9
+00:00:33,750 --> 00:00:38,650
+Below it, the observation layer runs the project's checks and reads its files.
+
+10
+00:00:39,000 --> 00:00:44,400
+The interpretation layer turns raw output into grouped issues and evidence.
+
+11
+00:00:44,750 --> 00:00:49,688
+The reasoning layer combines a knowledge graph, rules and a decision tree,
+
+12
+00:00:49,728 --> 00:00:52,500
+plans the next step and verifies it.
+
+13
+00:00:52,850 --> 00:00:56,050
+A session graph stores everything that happened.
+
+14
+00:00:57,233 --> 00:00:59,333
+Diagnosis runs in five phases.
+
+15
+00:00:59,683 --> 00:01:04,783
+132 forward-chaining production rules derive causes and actions.
+
+16
+00:01:04,983 --> 00:01:07,838
+They consult a domain knowledge graph
+
+17
+00:01:07,878 --> 00:01:12,220
+with 737 entries on removed APIs and 12 on deprecations,
+
+18
+00:01:12,260 --> 00:01:15,583
+backed by 191 official source records.
+
+19
+00:01:15,833 --> 00:01:19,101
+Only when no rule settles a case does a decision tree
+
+20
+00:01:19,141 --> 00:01:23,983
+over 81 evidence features suggest a likely cause, marked as unconfirmed.
+
+21
+00:01:25,524 --> 00:01:30,311
+Use case one: a developer takes over a teammate's project. Several things are broken,
+
+22
+00:01:30,351 --> 00:01:35,017
+and the tests will not even start. Let's follow it through the architecture.
+
+23
+00:01:35,286 --> 00:01:39,519
+Observe: the check runner starts pytest with the project's own Python.
+
+24
+00:01:39,559 --> 00:01:42,350
+Collection stops with two import errors.
+
+25
+00:01:42,572 --> 00:01:46,234
+Interpret: the parsers turn the output into two issues.
+
+26
+00:01:46,274 --> 00:01:51,282
+The evidence says that Mapping is imported from collections on Python 3.12,
+
+27
+00:01:51,322 --> 00:01:56,922
+and that no package called helper exists, but the project contains helpers.py.
+
+28
+00:01:57,143 --> 00:02:01,473
+Reason: the knowledge graph knows that Mapping was removed in 3.10
+
+29
+00:02:01,513 --> 00:02:06,903
+and now lives in collections.abc, so rule D02 concludes a version incompatibility.
+
+30
+00:02:06,943 --> 00:02:12,399
+For helper, the rules conclude a wrong local import, so no installation is offered.
+
+31
+00:02:12,439 --> 00:02:17,160
+Both stop the tests from starting, so the planner puts them first.
+
+32
+00:02:17,238 --> 00:02:20,445
+The developer edits two lines
+
+33
+00:02:29,891 --> 00:02:35,572
+and presses Check again. The verifier confirms both, and the tests run at last,
+
+34
+00:02:35,612 --> 00:02:39,266
+revealing two hidden failures: numpy.float is gone,
+
+35
+00:02:39,306 --> 00:02:42,336
+and a configuration value is missing.
+
+36
+00:02:42,859 --> 00:02:47,266
+FixFirst plans again, and after two more edits
+
+37
+00:03:03,351 --> 00:03:08,320
+all four issues are fixed and verified.
+
+38
+00:03:08,514 --> 00:03:12,664
+Use case two: a coding agent repairs the same project on its own.
+
+39
+00:03:12,864 --> 00:03:16,463
+Through MCP it calls diagnose, gets the same steps,
+
+40
+00:03:16,503 --> 00:03:19,424
+edits the files and calls check again.
+
+41
+00:03:19,464 --> 00:03:23,164
+A step only counts as fixed when the real tests pass.
+
+42
+00:03:24,281 --> 00:03:26,731
+We evaluated each part separately.
+
+43
+00:03:27,081 --> 00:03:33,606
+On 220 generated development cases, rules alone found the right cause in 105,
+
+44
+00:03:33,646 --> 00:03:39,659
+and the full hybrid in all 220; this shows how the parts work together,
+
+45
+00:03:39,699 --> 00:03:42,181
+not accuracy on new data.
+
+46
+00:03:42,531 --> 00:03:48,101
+For agents, 660 runs compared three local models with and without FixFirst,
+
+47
+00:03:48,141 --> 00:03:52,231
+on tasks kept sealed until the product was frozen.
+
+48
+00:03:52,581 --> 00:03:56,581
+Gemma improved from 38.9 to 90.0 percent.
+
+49
+00:03:56,781 --> 00:04:02,245
+On real BugsInPy bugs it had never seen, with the failing test named,
+
+50
+00:04:02,285 --> 00:04:07,828
+three successive versions closed 9 of 19, 21 of 28, and 27 of 28 bugs,
+
+51
+00:04:07,868 --> 00:04:10,531
+and never closed one wrongly.
+
+52
+00:04:10,881 --> 00:04:16,734
+With six participants, the median time was 23.4 percent lower with FixFirst;
+
+53
+00:04:16,774 --> 00:04:20,381
+that is a trend, not a significant result.
+
+54
+00:04:21,891 --> 00:04:26,741
+To conclude, the complete system, with the course techniques marked.
+
+55
+00:04:27,091 --> 00:04:29,991
+The rule engine is decision automation.
+
+56
+00:04:30,141 --> 00:04:33,641
+The decision tree and message grouping are knowledge discovery.
+
+57
+00:04:33,991 --> 00:04:35,315
+The knowledge graphs,
+
+58
+00:04:35,355 --> 00:04:39,600
+the explanations and the agent interface are cognitive techniques,
+
+59
+00:04:39,640 --> 00:04:43,691
+and a bounded release search adds part of a fourth group.
+
+60
+00:04:44,041 --> 00:04:49,291
+Together they let FixFirst find what to fix first, and know when it is fixed.
+
+61
+00:04:49,641 --> 00:04:50,841
+Thank you.
+

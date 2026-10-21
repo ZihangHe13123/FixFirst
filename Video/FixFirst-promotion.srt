@@ -1,0 +1,228 @@
+1
+00:00:00,300 --> 00:00:04,600
+You've just taken over a teammate's Python project.
+
+2
+00:00:04,950 --> 00:00:06,700
+The deadline is tomorrow.
+
+3
+00:00:07,050 --> 00:00:10,500
+You run the tests, and this is what you get.
+
+4
+00:00:10,850 --> 00:00:12,250
+Which error matters?
+
+5
+00:00:12,600 --> 00:00:13,850
+Where do you start?
+
+6
+00:00:14,200 --> 00:00:18,750
+"No module named helper" looks like something to install.
+
+7
+00:00:19,100 --> 00:00:22,156
+But helper is a file in your own project,
+
+8
+00:00:22,196 --> 00:00:26,700
+and installing a package with that name would not help.
+
+9
+00:00:27,050 --> 00:00:31,700
+Mapping was removed from collections in Python 3.10.
+
+10
+00:00:32,050 --> 00:00:35,100
+numpy.float is gone from newer NumPy.
+
+11
+00:00:35,450 --> 00:00:41,600
+Every error needs a different kind of fix, and fixing one can uncover the next.
+
+12
+00:00:41,950 --> 00:00:44,700
+AI assistants help, but not always.
+
+13
+00:00:45,050 --> 00:00:51,221
+In the 2025 Stack Overflow survey, two thirds of developers who named a frustration
+
+14
+00:00:51,261 --> 00:00:56,850
+with AI tools pointed to answers that are almost right, but not quite.
+
+15
+00:00:57,200 --> 00:01:02,400
+And after you change something, how do you know it is really fixed?
+
+16
+00:01:04,400 --> 00:01:06,500
+FixFirst sorts out the mess.
+
+17
+00:01:06,850 --> 00:01:11,500
+It finds what to fix first, and tells you when it is really fixed.
+
+18
+00:01:11,850 --> 00:01:15,914
+It runs your project's own tests with your project's own Python,
+
+19
+00:01:15,954 --> 00:01:21,050
+explains each failure with evidence, and gives you one concrete next step.
+
+20
+00:01:21,400 --> 00:01:24,600
+It never edits your code or installs anything by itself.
+
+21
+00:01:24,950 --> 00:01:26,450
+You stay in control.
+
+22
+00:01:27,805 --> 00:01:30,912
+Let's try it on a small shop project. I choose the folder,
+
+23
+00:01:30,952 --> 00:01:33,255
+FixFirst finds the project's Python,
+
+24
+00:01:33,405 --> 00:01:37,855
+and my goal is: make the tests pass.
+
+25
+00:01:37,955 --> 00:01:41,455
+Two problems stop the tests from even starting.
+
+26
+00:01:42,105 --> 00:01:49,526
+Step one: collections.Mapping was removed in Python 3.10. FixFirst shows the error,
+
+27
+00:01:49,566 --> 00:01:55,459
+the rule behind its conclusion, the official Python documentation,
+
+28
+00:01:55,499 --> 00:01:58,905
+and how the fix will be confirmed.
+
+29
+00:01:59,205 --> 00:02:04,618
+Step two: helper is not a missing package. The project has a file called helpers.py,
+
+30
+00:02:04,658 --> 00:02:06,955
+so the import is simply wrong.
+
+31
+00:02:07,655 --> 00:02:11,425
+I make the two changes myself.
+
+32
+00:02:23,367 --> 00:02:30,171
+And I press Check again. Both imports are confirmed. Now the tests actually run,
+
+33
+00:02:30,211 --> 00:02:34,667
+and two failures appear that were hidden before.
+
+34
+00:02:34,767 --> 00:02:40,875
+FixFirst updates the plan: numpy.float no longer exists,
+
+35
+00:02:40,915 --> 00:02:45,767
+and one test needs a configuration value.
+
+36
+00:02:46,167 --> 00:02:48,677
+I fix both,
+
+37
+00:03:04,584 --> 00:03:06,534
+and check again. All tests pass.
+
+38
+00:03:06,584 --> 00:03:12,638
+All four problems are listed as fixed and verified, because a real test run passed,
+
+39
+00:03:12,678 --> 00:03:15,044
+not because someone said so.
+
+40
+00:03:15,084 --> 00:03:19,934
+And I can share a report with my teammate.
+
+41
+00:03:20,363 --> 00:03:23,213
+Coding agents can use the same diagnosis.
+
+42
+00:03:23,563 --> 00:03:28,193
+Through the Model Context Protocol, an agent asks FixFirst what is wrong,
+
+43
+00:03:28,233 --> 00:03:31,712
+gets the next step with its evidence, makes the change,
+
+44
+00:03:31,752 --> 00:03:34,213
+and asks FixFirst to check again.
+
+45
+00:03:34,563 --> 00:03:37,335
+In our experiment on 18 repair tasks
+
+46
+00:03:37,375 --> 00:03:43,193
+that were kept secret until the product was finished, a local model, Gemma,
+
+47
+00:03:43,233 --> 00:03:49,363
+repaired 39 percent of the tasks on its own, and 90 percent with FixFirst.
+
+48
+00:03:50,977 --> 00:03:57,677
+We also tried FixFirst on 28 real bugs from open-source projects that it had never seen.
+
+49
+00:03:58,027 --> 00:04:04,811
+When told which test fails, it closed 27 of them only after the real fix was in,
+
+50
+00:04:04,851 --> 00:04:08,527
+and never called a bug fixed too early.
+
+51
+00:04:08,877 --> 00:04:12,576
+In a small study with six developers,
+
+52
+00:04:12,616 --> 00:04:18,436
+the median repair time was 23 percent lower with FixFirst,
+
+53
+00:04:18,476 --> 00:04:23,777
+and they rated its usability about 80 out of 100.
+
+54
+00:04:24,127 --> 00:04:29,377
+With six people, that is a trend, not a proof.
+
+55
+00:04:29,727 --> 00:04:31,437
+FixFirst.
+
+56
+00:04:31,477 --> 00:04:34,427
+Free, local, no account needed.
+
+57
+00:04:34,727 --> 00:04:41,877
+Find what to fix first, and know when it is fixed.
+
