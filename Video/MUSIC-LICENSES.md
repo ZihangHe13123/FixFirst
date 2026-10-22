@@ -11,5 +11,5 @@ attribution is not required, and content may not be sold or distributed on its o
 looped and mixed under the narration, and each video ends with a one-line credit naming the track, the creator, Pixabay
 and the licence. The music files themselves are not part of this repository.
 
-Both tracks are registered with YouTube Content ID, so an upload of the videos to YouTube may receive an automatic
-claim; the track pages above are the licence evidence.
+Both tracks are registered with YouTube Content ID, so the unlisted YouTube copies of the videos may carry an
+automatic claim; the track pages above are the licence evidence.

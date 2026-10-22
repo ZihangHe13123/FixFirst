@@ -38,12 +38,11 @@ Student IDs are masked in this public repository; the Canvas submission carries 
 
 ## SECTION 4 : VIDEO OF SYSTEM MODELLING & USE CASE DEMO
 
-- Promotion video: [Video/FixFirst-promotion.mp4](Video/FixFirst-promotion.mp4), with captions:
-  [Video/FixFirst-promotion-captioned.mp4](Video/FixFirst-promotion-captioned.mp4)
-- System video: [Video/FixFirst-system.mp4](Video/FixFirst-system.mp4), with captions:
-  [Video/FixFirst-system-captioned.mp4](Video/FixFirst-system-captioned.mp4)
+- Promotion video: https://youtu.be/TeOLz7CjBAk
+- System video: https://youtu.be/Ly8fGxLmB5A
 
-Both are under five minutes; [Video/README.md](Video/README.md) lists the narrators and the music licence.
+Both are under five minutes and unlisted on YouTube. [Video/README.md](Video/README.md) lists the narrators, the
+English subtitle files and the music licence.
 
 ---
 
