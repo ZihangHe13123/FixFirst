@@ -1,15 +1,11 @@
 # Videos
 
-| File | What it is | Length |
-|---|---|---|
-| [FixFirst-promotion.mp4](FixFirst-promotion.mp4) | Promotion video: the problem, the value of FixFirst and a use-case demonstration | 4:43 |
-| [FixFirst-promotion-captioned.mp4](FixFirst-promotion-captioned.mp4) | The same with English captions | 4:43 |
-| [FixFirst-promotion.srt](FixFirst-promotion.srt) | The captions as a subtitle file | |
-| [FixFirst-system.mp4](FixFirst-system.mp4) | System video: design, reasoning techniques and technical use cases | 4:54 |
-| [FixFirst-system-captioned.mp4](FixFirst-system-captioned.mp4) | The same with English captions | 4:54 |
-| [FixFirst-system.srt](FixFirst-system.srt) | The captions as a subtitle file | |
+| Video | Link | Length | Subtitles |
+|---|---|---|---|
+| Promotion video: the problem, the value of FixFirst and a use-case demonstration | https://youtu.be/TeOLz7CjBAk | 4:43 | [FixFirst-promotion.srt](FixFirst-promotion.srt) |
+| System video: design, reasoning techniques and technical use cases | https://youtu.be/Ly8fGxLmB5A | 4:54 | [FixFirst-system.srt](FixFirst-system.srt) |
 
-All four are 1920x1080, 30 fps, H.264 with AAC audio, and under five minutes.
+Both videos are unlisted on YouTube, 1920x1080 at 30 fps; the subtitle files hold their English captions.
 
 Narration: WEI YI in the promotion video, CHI YONGJUN in the system video, and HE ZIHANG in the live demonstrations
 (scene 4 of each video) and the agent voice-over (scene 5 of the system video). The agent demonstration is a real run
