@@ -80,7 +80,7 @@
 | 安装 | 新环境安装 0.3.0 wheel；从 /tmp 启动离线复现四例及声明演示；show / ask / graph / 菜单退出通过 |
 | 界面 | Chromium 的声明表、图谱选择与来源路径、模型分歧；1440×1080 / 390×844 无页面横向溢出 |
 
-原始运行证据：`workbench/historical-v03-release`、`workbench/dependency-v03-release`、`workbench/v03-wheel-acceptance`。分享记录：`examples/historical-regressions`、`examples/dependency-demo`。队友说明：`docs/history/V0.3_队友讨论与验收.md`。
+原始运行证据：`workbench/historical-v03-release`、`workbench/dependency-v03-release`、`workbench/v03-wheel-acceptance`。分享记录：`examples/historical-regressions`、`examples/dependency-demo`。队友说明：`docs/history/V0.3_team-discussion-and-acceptance.md`。
 
 下一步仍以不同结构的真实项目、困难归并、模型训练覆盖和真人对照试用为主。当前没有测量实际用户调试耗时，也没有完成课程提交。
 

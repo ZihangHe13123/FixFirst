@@ -60,7 +60,7 @@
 
 ### 系统设计和实现（约 5 页）
 
-以 README 的 How it works、[ARCHITECTURE.md](../ARCHITECTURE.md) 和 [技术原理详解](../技术原理详解.md) 为底稿：
+以 README 的 How it works、[ARCHITECTURE.md](../ARCHITECTURE.md) 和 [技术原理详解](../TECHNICAL_GUIDE_ZH.md) 为底稿：
 
 - 检查 → 分组 → 证据 → 知识 → 规则 → 排序 → 验证；
 - 三类课程技术各在哪里；
@@ -101,7 +101,7 @@
 
 ### 讨论、局限和后续工作（约 1.5 页）
 
-局限可以从 [技术原理详解](../技术原理详解.md) 第 11 节开始写。冻结后发现的问题，也写进这一节。
+局限可以从 [技术原理详解](../TECHNICAL_GUIDE_ZH.md) 第 11 节开始写。冻结后发现的问题，也写进这一节。
 
 ### AI 使用声明
 
