@@ -401,7 +401,7 @@ environment says about the modules involved) as JSON, with no cause, ranking or 
 | `tests/` | Main regression suite. Candidate `99c8086`: **776 passed, 1 skipped on macOS**; see the [versioned Round 11 evidence](experiments/core_diagnosis/ROUND11.md) |
 | `experiments/` | agent baseline: local models fixing failures with and without FixFirst ([README](experiments/agent_baseline/README.md)) |
 | `examples/` | recorded runs, datasets, experiment reports and the real-world check ([overview](examples/README.md)) |
-| `docs/` | architecture, data sources, generalisation check, real-project case studies, course alignment, team plan and task cards (`后续计划.md`, `tasks/`), a technical study guide in Chinese (`技术原理详解.md`), team notes (`队友说明.md`), optimisation log; `docs/history/` keeps earlier versions' records |
+| `docs/` | architecture, data sources, generalisation check, real-project case studies, course alignment, team plan and task cards (`FOLLOW_UP_PLAN.md`, `tasks/`), a technical study guide in Chinese (`TECHNICAL_GUIDE_ZH.md`), team notes (`TEAM_NOTES.md`), optimisation log; `docs/history/` keeps earlier versions' records |
 | `scripts/` | setup (macOS/Linux/Windows), real-project set-up and batch runs, demo recording |
 
 The separate macOS real-process harness recorded **58 passed** for candidate

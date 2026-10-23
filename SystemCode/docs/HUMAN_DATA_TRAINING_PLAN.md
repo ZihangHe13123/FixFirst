@@ -10,7 +10,7 @@
 
 本计划记录一条有余力时可以增加的路线：**先整理人工验证的真实开发案例，做小规模训练对照，再根据结果决定是否扩充生成数据。**
 
-当前仍按[任务清单](tasks/README.md)、[B 的任务](tasks/B-tasks.md)和[后续计划](后续计划.md)推进。本文不新增任务编号、负责人承诺或截止日期，也不增加 A、C 当前需要交付的数据量。
+当前仍按[任务清单](tasks/README.md)、[B 的任务](tasks/B-tasks.md)和[后续计划](FOLLOW_UP_PLAN.md)推进。本文不新增任务编号、负责人承诺或截止日期，也不增加 A、C 当前需要交付的数据量。
 
 启动时满足以下条件，并记录实际可用时间和参与者：
 
@@ -197,7 +197,7 @@
 
 ## 参考位置
 
-- [现行任务清单](tasks/README.md)、[B 的任务](tasks/B-tasks.md)、[后续计划](后续计划.md)。
+- [现行任务清单](tasks/README.md)、[B 的任务](tasks/B-tasks.md)、[后续计划](FOLLOW_UP_PLAN.md)。
 - [A1 数据准备及 AI 辅助边界](tasks/A1-heldout-projects.md)、[C1 复核](tasks/C1-label-review.md)、[A2 正式留出运行](tasks/A2-heldout-run.md)。
 - [旧真实项目标签及修订](../examples/real-world/LABELS.md)、[既有泛化检查与开发历史](GENERALISATION.md)。
 - [证据特征](../src/fixfirst/evidence.py)、[决策树训练](../src/fixfirst/classification.py)、[现有评估实现](../src/fixfirst/evaluation.py)。
